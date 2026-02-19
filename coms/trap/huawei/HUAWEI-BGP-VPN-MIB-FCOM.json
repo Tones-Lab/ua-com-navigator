@@ -1,0 +1,2299 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202007221200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteNumThresholdExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of routes received from the BGP peer exceeds the alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerRouteNumThreshold",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP peer received count $v1 exceeded alarm threshold of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteNumThresholdExceed HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitThreshold u 0",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteNumThresholdExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the maximum number of routes received from the BGP peer."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the alarm threshold (%) of the maximum number of routes received from the BGP peer."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteNumThresholdClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of routes received from the BGP peer decreases below the alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerRouteNumThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP peer count $v1 decreased below alarm threshold of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteNumThresholdClear HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitThreshold u 0",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteNumThresholdClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the maximum number of routes received from the BGP peer."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the alarm threshold (%) of the maximum number of routes received from the BGP peer."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerGRStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the graceful restart status described by hwBgpPeerGRStatus changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwBgpPeerGRStatusChange",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Graceful restart status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerGRStatusChange HUAWEI-BGP-VPN-MIB::hwBgpPeerGRStatus i 1",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerGRStatusChange",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"Graceful restart status of the BGP peer, including:",
+							"1: peerNotBeingHelped, indicating that the BGP peer will not be helped during restarting. ",
+							"2: peerRestarting, indicating that the BGP peer is detected restarting.",
+							"3: peerFinishRestart, indicating that the BGP peer finishes the latest GR.",
+							"4: peerHelping, indicating that the BGP peer is helping the local end to perform GR."
+						],
+						"enums" : {
+							"1" : "peerNotBeingHelped",
+							"2" : "peerRestarting",
+							"3" : "peerFinishRestart",
+							"4" : "peerHelping"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerGRStatus",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerUnavailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when bgp peer session state change from up to down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerAvailability",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "IfName:$v4",
+				"Summary" : "BGP peer unavailable due to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerUnavailable HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalAddrType i 0 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalAddr s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionUnavailableType i 1 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalIfName s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionReason i 1",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerUnavailable",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.4",
+				"variables" : [
+					{
+						"description" : [
+							"Bgp peer session local address type."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalAddrType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Bgp peer session local address."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalAddr",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Bgp peer unavailable type including:",
+							"1: Up To Down(1)",
+							"2: Always Down(2)"
+						],
+						"enums" : {
+							"1" : "uptodown",
+							"2" : "alwaysdown"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionUnavailableType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Bgp peer session local IFName."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalIfName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Bgp peer down reason including:",
+							"1: Configuration lead peer down(1)",
+							"2: Receive notification(2)",
+							"3: Receive error packet(3) ",
+							"4: Hold timer expire(4)",
+							"5: Remote peer not reachable(5) ",
+							"6: Direct connect-interface down(6) ",
+							"7: Route limit(7)",
+							"8: Peer is not up for a specified long time(8)",
+							"100: Alarm clear(100)"
+						],
+						"enums" : {
+							"1" : "configurationLeadPeerDown",
+							"2" : "receiveNotification",
+							"3" : "receiveErrorPacket",
+							"4" : "holdTimerExpire",
+							"5" : "remotePeerNotReachable",
+							"6" : "directConnectInterfaceDown",
+							"7" : "routeLimit",
+							"8" : "peerIsNotUpForASpecifiedPeriodOfTime",
+							"100" : "alarmClear"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when bgp peer session state change from down to up."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerAvailability",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IfName:$v4",
+				"Summary" : "BGP peer available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAvailable HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalAddrType i 0 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalAddr s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionUnavailableType i 1 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalIfName s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionReason i 1",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAvailable",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.5",
+				"variables" : [
+					{
+						"description" : [
+							"Bgp peer session local address type."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalAddrType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Bgp peer session local address."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalAddr",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Bgp peer unavailable type including:",
+							"1: Up To Down(1)",
+							"2: Always Down(2)"
+						],
+						"enums" : {
+							"1" : "uptodown",
+							"2" : "alwaysdown"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionUnavailableType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Bgp peer session local IFName."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionLocalIfName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Bgp peer down reason including:",
+							"1: Configuration lead peer down(1)",
+							"2: Receive notification(2)",
+							"3: Receive error packet(3) ",
+							"4: Hold timer expire(4)",
+							"5: Remote peer not reachable(5) ",
+							"6: Direct connect-interface down(6) ",
+							"7: Route limit(7)",
+							"8: Peer is not up for a specified long time(8)",
+							"100: Alarm clear(100)"
+						],
+						"enums" : {
+							"1" : "configurationLeadPeerDown",
+							"2" : "receiveNotification",
+							"3" : "receiveErrorPacket",
+							"4" : "holdTimerExpire",
+							"5" : "remotePeerNotReachable",
+							"6" : "directConnectInterfaceDown",
+							"7" : "routeLimit",
+							"8" : "peerIsNotUpForASpecifiedPeriodOfTime",
+							"100" : "alarmClear"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.6.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when bgp peer session route number exceed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerRouteExceedStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP peer session route number $v1 exceeded threshold of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteExceed HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitThreshold u 0",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the maximum number of routes received from the BGP peer."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the alarm threshold (%) of the maximum number of routes received from the BGP peer."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteExceedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when bgp peer session route number exceed clear."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerRouteExceedStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP peer session route threshold alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteExceedClear HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitThreshold u 0",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerRouteExceedClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the maximum number of routes received from the BGP peer."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the alarm threshold (%) of the maximum number of routes received from the BGP peer."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerConfigRouteLimitThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.5.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwL3vpnVrfRouteMidThreshCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of routes",
+				"contained by the specified VRF exceeds the value indicated by",
+				"mplsL3VpnVrfMidRouteThreshold, and then falls below this value. ",
+				"A single notification MUST be generated when this threshold is ",
+				"exceeded, and no other notifications of this type should be issued ",
+				"until the value of mplsL3VpnVrfPerfCurrNumRoutes has fallen below ",
+				"that of mplsL3VpnVrfConfMidRteThresh."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwL3vpnVrfRouteMidThreshCleared",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "VRF route count $v1 dropped below threshold of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwL3vpnVrfRouteMidThreshCleared MPLS-L3VPN-STD-MIB::mplsL3VpnVrfPerfCurrNumRoutes u 9999 MPLS-L3VPN-STD-MIB::mplsL3VpnVrfConfMidRteThresh u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwL3vpnVrfRouteMidThreshCleared",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.8",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the number of routes currently used by this",
+							"VRF."
+						],
+						"name" : "MPLS-L3VPN-STD-MIB::mplsL3VpnVrfPerfCurrNumRoutes",
+						"oid" : "1.3.6.1.2.1.10.166.11.1.3.1.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Denotes mid-level water marker for the number",
+							"of routes that this VRF may hold."
+						],
+						"name" : "MPLS-L3VPN-STD-MIB::mplsL3VpnVrfConfMidRteThresh",
+						"oid" : "1.3.6.1.2.1.10.166.11.1.2.2.1.9",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerEstablished",
+			"certification" : "STANDARD",
+			"description" : [
+				"The BGP Established event is generated when",
+				"the BGP FSM enters the ESTABLISHED state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwBgpPeerEstablished",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "BGP FSM entered into established state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerEstablished HUAWEI-BGP-VPN-MIB::hwBgpPeerLastError s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpPeerState i 1",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerEstablished",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.9",
+				"variables" : [
+					{
+						"description" : [
+							"The last error code and subcode seen by this",
+							"peer on this connection. If no error has",
+							"occurred, this field is zero. Otherwise, the",
+							"first byte of this two byte OCTET STRING",
+							"contains the error code, and the second byte",
+							"contains the subcode."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerLastError",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status of the remote BGP peer, including:",
+							"1: Idle(1) ",
+							"2: Connect(2) ",
+							"3: Active(3) ",
+							"4: Opensent(4) ",
+							"5: Openconfirm(5) ",
+							"6: Established(6) "
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "connect",
+							"3" : "active",
+							"4" : "opensent",
+							"5" : "openconfirm",
+							"6" : "established"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerState",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerBackwardTransition",
+			"certification" : "STANDARD",
+			"description" : [
+				"The BGPBackwardTransition Event is generated",
+				"when the BGP FSM moves from a higher numbered",
+				"state to a lower numbered state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==6) ? 1 : (($v2==1) ? 2 : 3)"
+				},
+				"EventType" : "hwBgpPeerBackwardTransition",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==6) ? 0 : (($v2==1) ? 3 : 2)"
+				},
+				"SubNode" : "ifName:$v4",
+				"Summary" : "BGP FSM backward transition state changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerBackwardTransition HUAWEI-BGP-VPN-MIB::hwBgpPeerLastError s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpPeerState i 1 HUAWEI-BGP-VPN-MIB::hwBgpPeerUnAvaiReason u 9999 IF-MIB::ifName s EXAMPLE",
+				"$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerBackwardTransition HUAWEI-BGP-VPN-MIB::hwBgpPeerLastError s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpPeerState i 6 HUAWEI-BGP-VPN-MIB::hwBgpPeerUnAvaiReason u 9999 IF-MIB::ifName s EXAMPLE",
+				"$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerBackwardTransition HUAWEI-BGP-VPN-MIB::hwBgpPeerLastError s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpPeerState i 2 HUAWEI-BGP-VPN-MIB::hwBgpPeerUnAvaiReason u 9999 IF-MIB::ifName s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerBackwardTransition",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.10",
+				"variables" : [
+					{
+						"description" : [
+							"The last error code and subcode seen by this",
+							"peer on this connection. If no error has",
+							"occurred, this field is zero. Otherwise, the",
+							"first byte of this two byte OCTET STRING",
+							"contains the error code, and the second byte",
+							"contains the subcode."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerLastError",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status of the remote BGP peer, including:",
+							"1: Idle(1) ",
+							"2: Connect(2) ",
+							"3: Active(3) ",
+							"4: Opensent(4) ",
+							"5: Openconfirm(5) ",
+							"6: Established(6) "
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "connect",
+							"3" : "active",
+							"4" : "opensent",
+							"5" : "openconfirm",
+							"6" : "established"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerState",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Bgp peer down reason including:",
+							"1: Configuration lead peer down(1)",
+							"2: Receive notification(2)",
+							"3: Receive error packet(3) ",
+							"4: Hold timer expire(4)",
+							"5: Remote peer not reachable(5) ",
+							"6: Direct connect-interface down(6) ",
+							"7: Route limit(7)"
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerUnAvaiReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.1.2.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThresholdExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of bgp routes exceeds the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpRouteThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP route count $v2 exceeded threshold of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpRouteThresholdExceed HUAWEI-BGP-VPN-MIB::hwBgpRouteLimitindex i 1 HUAWEI-BGP-VPN-MIB::hwBgpRouteCurNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThresholdExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.11",
+				"variables" : [
+					{
+						"description" : [
+							"The index of bgp route limit, including:",
+							"1. ipv4(1): total ipv4 routes number.",
+							"2. ipv6(2): total ipv6 routes number.",
+							"3. ipv4vrf(3): ipv4 vrf routes number.",
+							"4. ipv6vrf(4): ipv6 vrf routes number.",
+							"5. ipv4public(5): ipv4 public routes number.",
+							"6. ipv6public(6): ipv6 public routes number.",
+							"7. l2ad(7): l2ad routes number."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4vrf",
+							"4" : "ipv6vrf",
+							"5" : "ipv4public",
+							"6" : "ipv6public",
+							"7" : "l2ad"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteLimitindex",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteCurNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThresholdClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of routes decreases below the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpRouteThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP route threshold alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpRouteThresholdClear HUAWEI-BGP-VPN-MIB::hwBgpRouteLimitindex i 1",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThresholdClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.12",
+				"variables" : [
+					{
+						"description" : [
+							"The index of bgp route limit, including:",
+							"1. ipv4(1): total ipv4 routes number.",
+							"2. ipv6(2): total ipv6 routes number.",
+							"3. ipv4vrf(3): ipv4 vrf routes number.",
+							"4. ipv6vrf(4): ipv6 vrf routes number.",
+							"5. ipv4public(5): ipv4 public routes number.",
+							"6. ipv6public(6): ipv6 public routes number.",
+							"7. l2ad(7): l2ad routes number."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4vrf",
+							"4" : "ipv6vrf",
+							"5" : "ipv4public",
+							"6" : "ipv6public",
+							"7" : "l2ad"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteLimitindex",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of routes exceeds the maximum number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpRouteMaxStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP route exceeded maximum limit of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxExceed HUAWEI-BGP-VPN-MIB::hwBgpRouteLimitindex i 1 HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.13",
+				"variables" : [
+					{
+						"description" : [
+							"The index of bgp route limit, including:",
+							"1. ipv4(1): total ipv4 routes number.",
+							"2. ipv6(2): total ipv6 routes number.",
+							"3. ipv4vrf(3): ipv4 vrf routes number.",
+							"4. ipv6vrf(4): ipv6 vrf routes number.",
+							"5. ipv4public(5): ipv4 public routes number.",
+							"6. ipv6public(6): ipv6 public routes number.",
+							"7. l2ad(7): l2ad routes number."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4vrf",
+							"4" : "ipv6vrf",
+							"5" : "ipv4public",
+							"6" : "ipv6public",
+							"7" : "l2ad"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteLimitindex",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of routes decreases below the maximum number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpRouteMaxStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP route decreased below maximum limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxClear HUAWEI-BGP-VPN-MIB::hwBgpRouteLimitindex i 1",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.14",
+				"variables" : [
+					{
+						"description" : [
+							"The index of bgp route limit, including:",
+							"1. ipv4(1): total ipv4 routes number.",
+							"2. ipv6(2): total ipv6 routes number.",
+							"3. ipv4vrf(3): ipv4 vrf routes number.",
+							"4. ipv6vrf(4): ipv6 vrf routes number.",
+							"5. ipv4public(5): ipv4 public routes number.",
+							"6. ipv6public(6): ipv6 public routes number.",
+							"7. l2ad(7): l2ad routes number."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4vrf",
+							"4" : "ipv6vrf",
+							"5" : "ipv4public",
+							"6" : "ipv6public",
+							"7" : "l2ad"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteLimitindex",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of peer sessions exceeds the maximum number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerSessionExceedStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP peer session count exceeded maximum limit of $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionExceed HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionMaxNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.15",
+				"variables" : [
+					{
+						"description" : [
+							"The max number of BGP peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionExceedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of peer sessions decreases below the maximum number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerSessionExceedStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP peer session count decreased below maximum limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionExceedClear HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionExceedClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.16",
+				"variables" : [
+					{
+						"description" : [
+							"The max number of BGP peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the total number of BGP peers, including IPv4/IPv6 public peers and VPNv4/VPNv6 peers."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of dynamic peer sessions exceeds the maximum number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpDynamicPeerSessionExceedStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP dynamic peer session count exceeded maximum limit of $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionExceed HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionMaxNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.17",
+				"variables" : [
+					{
+						"description" : [
+							"The max number of BGP dynamic peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionExceedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of dynamic peer sessions decreases below the maximum number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpDynamicPeerSessionExceedStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP dynamic peer session count decreased below maximum limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionExceedClear HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionExceedClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.18",
+				"variables" : [
+					{
+						"description" : [
+							"The max number of BGP dynamic peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The total number of BGP dynamic peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpDynamicPeerSessionNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThresholdExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of peer sessions exceeds the threshold number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerSessionThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP peer session count $v1 exceeded threshold of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThresholdExceed HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThreshold u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionMaxNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThresholdExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.19",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the total number of BGP peers, including IPv4/IPv6 public peers and VPNv4/VPNv6 peers."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of BGP peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The max number of BGP peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThresholdClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of peer sessions decreases below the threshold number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerSessionThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP peer session count $v1 decreased below threshold limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThresholdClear HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThreshold u 9999 HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionMaxNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThresholdClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.20",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the total number of BGP peers, including IPv4/IPv6 public peers and VPNv4/VPNv6 peers."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of BGP peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The max number of BGP peer sessions configured."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerSessionMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.4.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteNumReachThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of routes in the VPN instance reached the alarm threshould."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpVrfRouteNumReachThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "InstName:$v4",
+				"Summary" : "VPN $v4 route count ($v1) hit threshold ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteNumReachThreshold HUAWEI-BGP-VPN-MIB::hwBgpVrfCurrRouteNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpVrfThresholdValue u 9999 HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteType u 9999 HUAWEI-BGP-VPN-MIB::hwBgpVrfInstName s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteNumReachThreshold",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.21",
+				"variables" : [
+					{
+						"description" : [
+							"Current number of routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfCurrRouteNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Threshold value."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfThresholdValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Route type."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The name of VPN instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfInstName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteNumReachThresholdClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of routes in the VPN instance fell below the clear alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpVrfRouteNumReachThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "InstName:$v4",
+				"Summary" : "VPN $v4 route count ($v1) below threshold ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteNumReachThresholdClear HUAWEI-BGP-VPN-MIB::hwBgpVrfCurrRouteNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpVrfThresholdValue u 9999 HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteType u 9999 HUAWEI-BGP-VPN-MIB::hwBgpVrfInstName s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteNumReachThresholdClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.22",
+				"variables" : [
+					{
+						"description" : [
+							"Current number of routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfCurrRouteNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Threshold value."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfThresholdValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Route type."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfRouteType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The name of VPN instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfInstName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwEvpnRouteReachThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of routes reached the alarm threshould."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwEvpnRouteReachThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "EVPN route count $v1 reached alarm threshold of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwEvpnRouteReachThreshold HUAWEI-BGP-VPN-MIB::hwEvpnCurrRouteNum u 9999 HUAWEI-BGP-VPN-MIB::hwEvpnThresholdValue u 9999 HUAWEI-BGP-VPN-MIB::hwEvpnRouteType u 9999 HUAWEI-BGP-VPN-MIB::hwEvpnAddressFamily u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnRouteReachThreshold",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.23",
+				"variables" : [
+					{
+						"description" : [
+							"Current number of routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnCurrRouteNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Threshold value."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnThresholdValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Route type."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnRouteType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.3.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.3.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwEvpnRouteReachThresholdClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of routes fell below the clear alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwEvpnRouteReachThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "EVPN route count $v1 fallen below alarm threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwEvpnRouteReachThresholdClear HUAWEI-BGP-VPN-MIB::hwEvpnCurrRouteNum u 9999 HUAWEI-BGP-VPN-MIB::hwEvpnThresholdValue u 9999 HUAWEI-BGP-VPN-MIB::hwEvpnRouteType u 9999 HUAWEI-BGP-VPN-MIB::hwEvpnAddressFamily u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnRouteReachThresholdClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.24",
+				"variables" : [
+					{
+						"description" : [
+							"Current number of routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnCurrRouteNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Threshold value."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnThresholdValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Route type."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnRouteType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.3.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwEvpnAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.3.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachThresold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of VPN route labels reached the alarm threshould."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwVpnRouteLabelNumReachThresold",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "VPN route label count reached alarm threshould of $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachThresold HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilyAfi i 1 HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilySafi i 1 HUAWEI-BGP-VPN-MIB::hwBgpLabelMaxValue u 9999 HUAWEI-BGP-VPN-MIB::hwBgpLabelLimitThreshold u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachThresold",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.25",
+				"variables" : [
+					{
+						"description" : [
+							"The address family of BGP."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"25" : "vpls",
+							"196" : "l2vpn"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilyAfi",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The sub-address family of BGP."
+						],
+						"enums" : {
+							"1" : "unicast",
+							"2" : "multicast",
+							"4" : "mpls",
+							"5" : "mcast-vpn",
+							"65" : "vpls",
+							"66" : "mdt",
+							"128" : "vpn",
+							"132" : "route-target"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilySafi",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The maximum number of BGP labels."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpLabelMaxValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of BGP labels."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpLabelLimitThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachThresoldClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of VPN route labels fell below the clear alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwVpnRouteLabelNumReachThresold",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "VPN route label count fallen below alarm threshold of $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachThresoldClear HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilyAfi i 1 HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilySafi i 1 HUAWEI-BGP-VPN-MIB::hwBgpLabelMaxValue u 9999 HUAWEI-BGP-VPN-MIB::hwBgpLabelLimitThreshold u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachThresoldClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.26",
+				"variables" : [
+					{
+						"description" : [
+							"The address family of BGP."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"25" : "vpls",
+							"196" : "l2vpn"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilyAfi",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The sub-address family of BGP."
+						],
+						"enums" : {
+							"1" : "unicast",
+							"2" : "multicast",
+							"4" : "mpls",
+							"5" : "mcast-vpn",
+							"65" : "vpls",
+							"66" : "mdt",
+							"128" : "vpn",
+							"132" : "route-target"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilySafi",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The maximum number of BGP labels."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpLabelMaxValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of BGP labels."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpLabelLimitThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachMaximum",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of VPN route labels reached the maximum value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwVpnRouteLabelNumReachMaximum",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "VPN route label count reached maximum limit of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachMaximum HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilyAfi i 1 HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilySafi i 1 HUAWEI-BGP-VPN-MIB::hwBgpLabelMaxValue u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachMaximum",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.27",
+				"variables" : [
+					{
+						"description" : [
+							"The address family of BGP."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"25" : "vpls",
+							"196" : "l2vpn"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilyAfi",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The sub-address family of BGP."
+						],
+						"enums" : {
+							"1" : "unicast",
+							"2" : "multicast",
+							"4" : "mpls",
+							"5" : "mcast-vpn",
+							"65" : "vpls",
+							"66" : "mdt",
+							"128" : "vpn",
+							"132" : "route-target"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilySafi",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The maximum number of BGP labels."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpLabelMaxValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachMaximumClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of VPN route labels fell below the maximum value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwVpnRouteLabelNumReachMaximum",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "VPN route label count fallen below maximum limit of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachMaximumClear HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilyAfi i 1 HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilySafi i 1 HUAWEI-BGP-VPN-MIB::hwBgpLabelMaxValue u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwVpnRouteLabelNumReachMaximumClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.28",
+				"variables" : [
+					{
+						"description" : [
+							"The address family of BGP."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"25" : "vpls",
+							"196" : "l2vpn"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilyAfi",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The sub-address family of BGP."
+						],
+						"enums" : {
+							"1" : "unicast",
+							"2" : "multicast",
+							"4" : "mpls",
+							"5" : "mcast-vpn",
+							"65" : "vpls",
+							"66" : "mdt",
+							"128" : "vpn",
+							"132" : "route-target"
+						},
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpAddrFamilySafi",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The maximum number of BGP labels."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpLabelMaxValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.4.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteThresholdExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of routes received from peers in a BGP address family reached the alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerAddrFamilyRouteThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP address family route count reached alarm threshold of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteThresholdExceed HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold u 9999 HUAWEI-BGP-VPN-MIB::hwBgpProcessName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteThresholdExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.29",
+				"variables" : [
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of a BGP instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpProcessName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteThresholdExceedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of routes received from peers in a BGP address family fell below the alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerAddrFamilyRouteThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP route count fell below threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteThresholdExceedClear HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold u 9999 HUAWEI-BGP-VPN-MIB::hwBgpProcessName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteThresholdExceedClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.30",
+				"variables" : [
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of a BGP instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpProcessName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of routes received from peers in a BGP address family reached the maximum value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerAddrFamilyRouteStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP route count fell below max limit ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteExceed HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpProcessName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.31",
+				"variables" : [
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of a BGP instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpProcessName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteExceedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of routes received from peers in a BGP address family fell below the maximum value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerAddrFamilyRouteStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP address family route count fell below maximum limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteExceedClear HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpProcessName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyRouteExceedClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.32",
+				"variables" : [
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of a BGP instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpProcessName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteThresholdExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of specified routes received from peers in a BGP address family reached the alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerAddrFamilyPerRouteThresholdExceed",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP route count dropped below limit ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteThresholdExceed HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteType s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold u 9999 HUAWEI-BGP-VPN-MIB::hwBgpProcessName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteThresholdExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.33",
+				"variables" : [
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Route type."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of a BGP instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpProcessName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteThresholdExceedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of specified routes received from peers in a BGP address family fell below the alarm threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerAddrFamilyPerRouteThresholdExceed",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP route count fell below threshold ($v4)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteThresholdExceedClear HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteType s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold u 9999 HUAWEI-BGP-VPN-MIB::hwBgpProcessName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteThresholdExceedClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.34",
+				"variables" : [
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Route type."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of a BGP instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpProcessName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of specified routes received from peers in a BGP address family reached the maximum value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBgpPeerAddrFamilyPerRouteStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP address family per-route count exceeded maximum limit of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteExceed HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteType s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpProcessName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.35",
+				"variables" : [
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Route type."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of a BGP instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpProcessName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteExceedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of specified routes received from peers in a BGP address family fell below the maximum value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBgpPeerAddrFamilyPerRouteStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BGP route count dropped below max limit ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteExceedClear HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily u 9999 HUAWEI-BGP-VPN-MIB::hwBgpRouteType s EXAMPLE HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum u 9999 HUAWEI-BGP-VPN-MIB::hwBgpProcessName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwBgpPeerAddrFamilyPerRouteExceedClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.1.3.36",
+				"variables" : [
+					{
+						"description" : [
+							"Address family."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpVrfAddressFamily",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Route type."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of bgp routes."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpRouteMaxNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of a BGP instance."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwBgpProcessName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwTnl2VpnTrapEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates whether the tunnel used by a VPN is reachable",
+				"If the tunnel is unreachable, a trap is sent to notify the user, hwTunnelReachablityEvent is 2.",
+				"If the tunnel is reachable, a trap is sent to notify the user, hwTunnelReachablityEvent is 1."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 1 : 2"
+				},
+				"EventType" : "hwTnl2VpnTrapEvent",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 0 : 5"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v4==1) ? 'VPN $v1 tunnel is reachable' : 'VPN $v1 tunnel is unreachable'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwTnl2VpnTrapEvent HUAWEI-BGP-VPN-MIB::hwVpnId u 9999 HUAWEI-BGP-VPN-MIB::hwVpnPublicNextHop a 192.0.2.1 HUAWEI-BGP-VPN-MIB::hwVpnTrapCkeyValue u 9999 HUAWEI-BGP-VPN-MIB::hwTunnelReachablityEvent u 2",
+				"$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwTnl2VpnTrapEvent HUAWEI-BGP-VPN-MIB::hwVpnId u 9999 HUAWEI-BGP-VPN-MIB::hwVpnPublicNextHop a 192.0.2.1 HUAWEI-BGP-VPN-MIB::hwVpnTrapCkeyValue u 9999 HUAWEI-BGP-VPN-MIB::hwTunnelReachablityEvent u 1"
+			],
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwTnl2VpnTrapEvent",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.8.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the VPN index."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwVpnId",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the public next-hop address."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwVpnPublicNextHop",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.6.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"This object indicates the ckey value.",
+							"This value is used for getting next-hop information."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwVpnTrapCkeyValue",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.6.1.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates whether the tunnel is reachable.",
+							"1--tunnel reachable.",
+							"2--tunnel unreachable."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwTunnelReachablityEvent",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.6.1.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when rpki session ROA number exceed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwRpkiSessionRoaExceed",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "RPKI session ROA number exceeded limit of $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaExceed HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaLimitNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaExceed",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.11.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The limit number of rpki session ROA."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaLimitNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.11.1.1.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaExceedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when rpki session ROA number exceed clear."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwRpkiSessionRoaExceed",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "RPKI session ROA number limit cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaExceedClear HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaLimitNum u 9999",
+			"trap" : {
+				"name" : "HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaExceedClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.177.11.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"The limit number of rpki session ROA."
+						],
+						"name" : "HUAWEI-BGP-VPN-MIB::hwRpkiSessionRoaLimitNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.177.11.1.1.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

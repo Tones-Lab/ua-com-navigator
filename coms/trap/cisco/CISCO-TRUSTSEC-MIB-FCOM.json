@@ -1,0 +1,257 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201401300000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-TRUSTSEC-MIB::ctsSwKeystoreFileErrNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ctsSwKeystoreFileErrNotif is generated when system",
+				"encounters an error while performing operation on the",
+				"software keystore file."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ctsSwKeystoreFileErrNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Error $v1 encountered while performing operation on the software keystore file"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TRUSTSEC-MIB::ctsSwKeystoreFileErrNotif CISCO-TRUSTSEC-MIB::ctsFileErrNotifReason i 1",
+			"trap" : {
+				"name" : "CISCO-TRUSTSEC-MIB::ctsSwKeystoreFileErrNotif",
+				"oid" : "1.3.6.1.4.1.9.9.730.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "openFailedForWrite",
+							"2" : "writeFailed",
+							"3" : "openFailedForRead",
+							"4" : "readFailed",
+							"5" : "badMagic",
+							"6" : "unexpectedEof",
+							"7" : "badHeader"
+						},
+						"name" : "CISCO-TRUSTSEC-MIB::ctsFileErrNotifReason",
+						"oid" : "1.3.6.1.4.1.9.9.730.1.6.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TRUSTSEC-MIB::ctsSwKeystoreSyncFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ctsSwKeystoreSyncFailNotifReason is generated when system",
+				"fails to sync software keystore information from the active",
+				"supervisor to the standby supervisor."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ctsSwKeystoreSyncFailNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Active and standby supervisor have out of sync software keystore information due to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TRUSTSEC-MIB::ctsSwKeystoreSyncFailNotif CISCO-TRUSTSEC-MIB::ctsSwKeystoreSyncFailNotifReason i 1",
+			"trap" : {
+				"name" : "CISCO-TRUSTSEC-MIB::ctsSwKeystoreSyncFailNotif",
+				"oid" : "1.3.6.1.4.1.9.9.730.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "ipcPortCreationFailed",
+							"2" : "ipcPortOpenFailed",
+							"3" : "ipcConnectionFailure",
+							"4" : "ipcSendFailure",
+							"5" : "standbyIncompatible",
+							"6" : "syncProcessCreationFailed"
+						},
+						"name" : "CISCO-TRUSTSEC-MIB::ctsSwKeystoreSyncFailNotifReason",
+						"oid" : "1.3.6.1.4.1.9.9.730.1.6.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TRUSTSEC-MIB::ctsAuthzCacheFileErrNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ctsAuthzCacheFileErrNotif is generated when the system",
+				"encounters error downloading TrustSec authorization",
+				"related environment data to a cache file."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ctsAuthzCacheFileErrNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 ne '') ? '$v1 error downloading TrustSec authorization related env data to a cache file: $v2' : '$v1 error downloading TrustSec authorization related env data to a cache file'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TRUSTSEC-MIB::ctsAuthzCacheFileErrNotif CISCO-TRUSTSEC-MIB::ctsFileErrNotifReason i 1 CISCO-TRUSTSEC-MIB::ctsNotifMessageString s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-TRUSTSEC-MIB::ctsAuthzCacheFileErrNotif",
+				"oid" : "1.3.6.1.4.1.9.9.730.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "openFailedForWrite",
+							"2" : "writeFailed",
+							"3" : "openFailedForRead",
+							"4" : "readFailed",
+							"5" : "badMagic",
+							"6" : "unexpectedEof",
+							"7" : "badHeader"
+						},
+						"name" : "CISCO-TRUSTSEC-MIB::ctsFileErrNotifReason",
+						"oid" : "1.3.6.1.4.1.9.9.730.1.6.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-TRUSTSEC-MIB::ctsNotifMessageString",
+						"oid" : "1.3.6.1.4.1.9.9.730.1.6.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TRUSTSEC-MIB::ctsCacheFileAccessErrNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ctsCacheFileAccessErrNotif is generated when the",
+				"system fails to perform open/read/write operation",
+				"for a TrustSec cache file."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ctsCacheFileAccessErrNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 ne '') ? '$v1 error when performing open/read/write on TrustSec cache file: $v2' : '$v1 error when performing open/read/write on TrustSec cache file'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TRUSTSEC-MIB::ctsCacheFileAccessErrNotif CISCO-TRUSTSEC-MIB::ctsFileErrNotifReason i 1 CISCO-TRUSTSEC-MIB::ctsNotifMessageString s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-TRUSTSEC-MIB::ctsCacheFileAccessErrNotif",
+				"oid" : "1.3.6.1.4.1.9.9.730.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "openFailedForWrite",
+							"2" : "writeFailed",
+							"3" : "openFailedForRead",
+							"4" : "readFailed",
+							"5" : "badMagic",
+							"6" : "unexpectedEof",
+							"7" : "badHeader"
+						},
+						"name" : "CISCO-TRUSTSEC-MIB::ctsFileErrNotifReason",
+						"oid" : "1.3.6.1.4.1.9.9.730.1.6.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-TRUSTSEC-MIB::ctsNotifMessageString",
+						"oid" : "1.3.6.1.4.1.9.9.730.1.6.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TRUSTSEC-MIB::ctsSrcEntropyFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ctsSrcEntropyFailNotif is generated when",
+				"the periodic health tests for the CTR-DRBG (Counter-",
+				"Deterministic Random Bit Generator) implementation",
+				"fails due to issues with the source entropy."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ctsSrcEntropyFailNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Health tests for CTR-DRBG implementation failed due to source entropy issue"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TRUSTSEC-MIB::ctsSrcEntropyFailNotif",
+			"trap" : {
+				"name" : "CISCO-TRUSTSEC-MIB::ctsSrcEntropyFailNotif",
+				"oid" : "1.3.6.1.4.1.9.9.730.0.5"
+			}
+		},
+		{
+			"@objectName" : "CISCO-TRUSTSEC-MIB::ctsSapRandomNumberFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ctsSapRandomNumberFailNotif is generated when the",
+				"the system fails to obtain a random number from",
+				"CTR-DRBG block for SAP (Security Association Protocol)",
+				"key-counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ctsSapRandomNumberFailNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? 'Failed to obtain a random number from CTR-DRBG block for SAP: $v1' : 'Failed to obtain a random number from CTR-DRBG block for SAP'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TRUSTSEC-MIB::ctsSapRandomNumberFailNotif CISCO-TRUSTSEC-MIB::ctsNotifMessageString s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-TRUSTSEC-MIB::ctsSapRandomNumberFailNotif",
+				"oid" : "1.3.6.1.4.1.9.9.730.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-TRUSTSEC-MIB::ctsNotifMessageString",
+						"oid" : "1.3.6.1.4.1.9.9.730.1.6.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

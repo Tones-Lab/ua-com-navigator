@@ -1,0 +1,106 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200804291200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-IETF-FRR-MIB::cmplsFrrProtected",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a tunnel running over an",
+				"interface as specified in the mplsFrrConstTable is initially",
+				"protected by the backup tunnel also specified in the",
+				"cmplsFrrConstTable. This notification should not be generated",
+				"for each subsequent tunnel that is backed up by the FRR feature",
+				"on this LSR, as this may result in potential scaling issues",
+				"with regard to LSR performance and network loading. Note also",
+				"that notifications MUST be generated in accordance with the",
+				"cmplsFrrNotifMaxRate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cmplsFrrProtected",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "There are $v1 tunnel(s) protecting this interface and it is protecting $v2 tunnel(s)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-FRR-MIB::cmplsFrrProtected CISCO-IETF-FRR-MIB::cmplsFrrConstNumProtectingTunOnIf u 9999 CISCO-IETF-FRR-MIB::cmplsFrrConstNumProtectedTunOnIf u 9999 CISCO-IETF-FRR-MIB::cmplsFrrConstBandwidth u 9999",
+			"trap" : {
+				"name" : "CISCO-IETF-FRR-MIB::cmplsFrrProtected",
+				"oid" : "1.3.6.1.4.1.9.10.98.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-FRR-MIB::cmplsFrrConstNumProtectingTunOnIf",
+						"oid" : "1.3.6.1.4.1.9.10.98.2.1.1.1.12",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-IETF-FRR-MIB::cmplsFrrConstNumProtectedTunOnIf",
+						"oid" : "1.3.6.1.4.1.9.10.98.2.1.1.1.13",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-IETF-FRR-MIB::cmplsFrrConstBandwidth",
+						"oid" : "1.3.6.1.4.1.9.10.98.2.1.1.1.10",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-FRR-MIB::cmplsFrrUnProtected",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the final tunnel that is",
+				"being protected by a backup tunnel as specified in the",
+				"cmplsFrrConstTable is restored to normal operation. This",
+				"notification should not be generated for each restored tunnel",
+				"as this may result in potential scaling issues with regard to",
+				"LSR performance and network loading. Note also that",
+				"notifications MUST be generated in accordance with the",
+				"cmplsFrrNotifMaxRate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cmplsFrrUnProtected",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Final tunnel being protected by a backup has been restored"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-FRR-MIB::cmplsFrrUnProtected CISCO-IETF-FRR-MIB::cmplsFrrConstNumProtectingTunOnIf u 9999 CISCO-IETF-FRR-MIB::cmplsFrrConstNumProtectedTunOnIf u 9999 CISCO-IETF-FRR-MIB::cmplsFrrConstBandwidth u 9999",
+			"trap" : {
+				"name" : "CISCO-IETF-FRR-MIB::cmplsFrrUnProtected",
+				"oid" : "1.3.6.1.4.1.9.10.98.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-FRR-MIB::cmplsFrrConstNumProtectingTunOnIf",
+						"oid" : "1.3.6.1.4.1.9.10.98.2.1.1.1.12",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-IETF-FRR-MIB::cmplsFrrConstNumProtectedTunOnIf",
+						"oid" : "1.3.6.1.4.1.9.10.98.2.1.1.1.13",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-IETF-FRR-MIB::cmplsFrrConstBandwidth",
+						"oid" : "1.3.6.1.4.1.9.10.98.2.1.1.1.10",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

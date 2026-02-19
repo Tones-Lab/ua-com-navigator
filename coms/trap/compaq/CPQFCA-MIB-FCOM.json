@@ -1,0 +1,5149 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaLogDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Logical Drive Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a External Array logical drive. The variable",
+				"cpqFcaLogDrvStatus indicates the current logical drive status.",
+				"User Action: If the logical drive status is failed, examine",
+				"the array for failed drives that need replacement."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==2) ? 1 : (($v6==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqFcaLogDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==2) ? 3600 : (($v6==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==2) ? 0 : (($v6==1) ? 1 : (($v6==3 || $v6==8 || $v6==9 || $v6==10 || $v6==11 ||$v6==15) ? 4 : 3))"
+				},
+				"SubNode" : "DriveIndex:$v5",
+				"Summary" : "External array logical drive status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaLogDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaLogDrvIndex i 9999 CPQFCA-MIB::cpqFcaLogDrvStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaLogDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16001",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Logical Drive Index.",
+							"",
+							"This logical drive number keeps track of multiple instances of",
+							"logical drives which are in the same storage box. For each",
+							"storage box index value, the logical drive index starts at 1 and",
+							"increments for each logical drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaLogDrvIndex",
+						"oid" : "1.3.6.1.4.1.232.16.2.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Logical Drive Status.",
+							"",
+							"The logical drive can be in one of the following states:",
+							"",
+							"Ok (2)",
+							"Indicates that the logical drive is in normal operation mode.",
+							"",
+							"Failed (3)",
+							"Indicates that more physical drives have failed than the",
+							"fault tolerance mode of the logical drive can handle without",
+							"data loss.",
+							"",
+							"Unconfigured (4)",
+							"Indicates that the logical drive is not configured.",
+							"",
+							"Recovering (5)",
+							"Indicates that the logical drive is using Interim Recovery Mode.",
+							"In Interim Recovery Mode, at least one physical drive has",
+							"failed, but the logical drive's fault tolerance mode lets the",
+							"drive continue to operate with no data loss.",
+							"",
+							"Ready Rebuild (6)",
+							"Indicates that the logical drive is ready for Automatic Data",
+							"Recovery. The physical drive that failed has been replaced",
+							"but the logical drive is still operating in Interim Recovery",
+							"Mode.",
+							"",
+							"Rebuilding (7)",
+							"Indicates that the logical drive is currently doing Automatic",
+							"Data Recovery. During Automatic Data Recovery, fault tolerance",
+							"algorithms restore data to the replacement drive.",
+							"",
+							"Wrong Drive (8)",
+							"Indicates that the wrong physical drive was replaced after a",
+							"physical drive failure.",
+							"",
+							"Bad Connect (9)",
+							"Indicates that a physical drive is not responding.",
+							"",
+							"Overheating (10)",
+							"Indicates that the storage box that contains the logical drive",
+							"is overheating. The array is still functioning, but",
+							"should be shutdown.",
+							"",
+							"Shutdown (11)",
+							"Indicates that the storage box that contains the logical drive",
+							"has overheated. The logical drive is no longer functioning.",
+							"",
+							"Expanding (12)",
+							"Indicates that the logical drive is currently doing Automatic",
+							"Data Expansion. During Automatic Data Expansion, fault",
+							"tolerance algorithms redistribute logical drive data to the",
+							"newly added physical drive.",
+							"",
+							"Not Available (13)",
+							"Indicates that the logical drive is currently unavailable.",
+							"If a logical drive is expanding and the new configuration",
+							"frees additional disk space, this free space can be",
+							"configured into another logical volume. If this is done",
+							"the new volume will be set to not available.",
+							"",
+							"Queued For Expansion (14)",
+							"Indicates that the logical drive is ready for Automatic Data",
+							"Expansion. The logical drive is in the queue for expansion.",
+							"",
+							"Hard Error (15)",
+							"Indicates that a hard error occurred for this LUN."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "unconfigured",
+							"5" : "recovering",
+							"6" : "readyForRebuild",
+							"7" : "rebuilding",
+							"8" : "wrongDrive",
+							"9" : "badConnect",
+							"10" : "overheating",
+							"11" : "shutdown",
+							"12" : "expanding",
+							"13" : "notAvailable",
+							"14" : "queuedForExpansion",
+							"15" : "hardError"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaLogDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.3.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaSpareStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Spare Drive Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a External Array spare drive. The variable",
+				"cpqFcaSpareStatus indicates the current spare drive status. The",
+				"variable cpqFcaSpareBusNumber indicates the SCSI bus number",
+				"associated with this drive.",
+				"User Action: If the spare drive status is failed, replace the",
+				"drive."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==5 || $v7==2) ? 1 : (($v7==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqFcaSpareStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v7==5 || $v7==2) ? 3600 : (($v7==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 1 : (($v7==5 || $v7==2) ? 0 : (($v7==3) ? 4 : 3))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "External array spare drive on bay $v6 status is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaSpareStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaSpareBusNumber i 9999 CPQFCA-MIB::cpqFcaSpareBay i 0 CPQFCA-MIB::cpqFcaSpareStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaSpareStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16002",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Spare Drive SCSI Bus Number.",
+							"",
+							"The bus number indicates to which SCSI bus this spare drive",
+							"is attached. The first instance is one and increments",
+							"for each SCSI bus on a controller."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaSpareBusNumber",
+						"oid" : "1.3.6.1.4.1.232.16.2.4.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Spare Drive Bay Location.",
+							"",
+							"This value matches the bay location where the physical drive has",
+							"been installed. Each bay is labeled with a separate number so",
+							"that you can identify the location of the drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaSpareBay",
+						"oid" : "1.3.6.1.4.1.232.16.2.4.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Spare Status.",
+							"",
+							"This shows the status of the on-line spare drive.",
+							"",
+							"The following values are valid for the spare status:",
+							"",
+							"Inactive (2)",
+							"The monitored system has an on-line spare configured, but is",
+							"not currently in use.",
+							"",
+							"Failed (3)",
+							"The on-line spare has failed and is no longer available for use.",
+							"",
+							"Building (4)",
+							"A physical drive has failed. Automatic Data Recovery",
+							"is in progress to recover data to the on-line spare.",
+							"",
+							"Active (5)",
+							"A physical drive has failed. Automatic Data Recovery is",
+							"complete. The system is using the on-line spare as a",
+							"replacement for the failed drive."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "inactive",
+							"3" : "failed",
+							"4" : "building",
+							"5" : "active"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaSpareStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.4.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaPhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Physical Drive Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a physical drive. The variable cpaFcaPhyDrvStatus",
+				"indicates the current physical drive status. The variable",
+				"cpqFcaPhyDrvBusNumber indicates the SCSI bus number associated",
+				"with this drive.",
+				"User Action: If the physical drive status is threshExceeded(4)",
+				"predictiveFailure(5) or failed(6), replace the drive."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 3 : (($v7==3) ? 1 : 2)"
+				},
+				"EventType" : "cpqFcaPhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v7==1) ? 3600 : (($v7==3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 1 : (($v7==2) ? 3 : (($v7==3) ? 0 : 4))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "External drive physical drive on bay $v6 status is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaPhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaPhyDrvBusNumber i 9999 CPQFCA-MIB::cpqFcaPhyDrvBay i 0 CPQFCA-MIB::cpqFcaPhyDrvStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaPhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16003",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Physical Drive SCSI Bus Number.",
+							"",
+							"The bus number indicates to which SCSI bus this physical",
+							"drive is attached. The first instance is one and increments",
+							"for each SCSI bus on a controller."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvBusNumber",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.42",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Physical Drive Bay Location.",
+							"",
+							"This value matches the bay location where the physical drive has",
+							"been installed. Each bay is labeled with a separate number so",
+							"that you can identify the location of the drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvBay",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Physical Drive Status.",
+							"",
+							"This shows the status of the physical drive.",
+							"",
+							"The following values are valid for the physical drive status:",
+							"",
+							"other (1)",
+							"Indicates that the instrument agent does not recognize",
+							"the drive. You may need to upgrade your instrument agent",
+							"and/or driver software.",
+							"",
+							"unconfigured (2)",
+							"Indicates the drive is present, but is not part of any",
+							"logical drive configuration.",
+							"",
+							"ok (3)",
+							"Indicates the drive is functioning properly.",
+							"",
+							"thresholdExceeded (4)",
+							"Indicates that the drive has a threshold exceeded error and",
+							"should be replaced.",
+							"",
+							"predictiveFailure (5)",
+							"Indicates that the drive has a predictive failure error and",
+							"should be replaced.",
+							"",
+							"failed (6)",
+							"Indicates that the drive is no longer operating and",
+							"should be replaced.",
+							"",
+							"unsupportedDrive(7)",
+							"Indicates that an unsupported drive has been detected and",
+							"should be replaced. See cpqFcaPhyDrvUnsupportedDrive for",
+							"more details."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unconfigured",
+							"3" : "ok",
+							"4" : "threshExceeded",
+							"5" : "predictiveFailure",
+							"6" : "failed",
+							"7" : "unsupportedDrive"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaAccelStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Accelerator Board Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"cpqFcaAccelStatus of a Array Accelerator Cache Board. The",
+				"current status is represented by the variable cpqFcaAccelStatus.",
+				"User Action: None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==3) ? 1 : 2)"
+				},
+				"EventType" : "cpqFcaAccelStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==3) ? 0 : (($v6==2 || $v6==4) ? 3 : 4))"
+				},
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "External array Accelerator board on slot $v5 status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaAccelStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaAccelBoxIoSlot i 0 CPQFCA-MIB::cpqFcaAccelStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaAccelStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16004",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this accelerator",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Array Accelerator Board Status.",
+							"",
+							"This describes the status of the Array Accelerator Cache.",
+							"",
+							"The status can be:",
+							"",
+							"Other (1)",
+							"Indicates that the instrument agent does not recognize the",
+							"status of the Array Accelerator. You may need to upgrade",
+							"the instrument agent.",
+							"",
+							"Invalid (2)",
+							"Indicates that an Array Accelerator board has not been",
+							"installed in this system or is present but not configured.",
+							"",
+							"Enabled (3)",
+							"Indicates that write cache operations are currently configured",
+							"and enabled for at least one logical drive.",
+							"",
+							"Temporarily Disabled (4)",
+							"Indicates that write cache operations have been temporarily",
+							"disabled. View the Array Accelerator Board Error Code object",
+							"to determine why the write cache operations have been",
+							"temporarily disabled.",
+							"",
+							"Permanently Disabled (5)",
+							"Indicates that write cache operations have been permanently",
+							"disabled. View the Array Accelerator Board Error Code object",
+							"to determine why the write cache operations have been disabled."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "invalid",
+							"3" : "enabled",
+							"4" : "tmpDisabled",
+							"5" : "permDisabled"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaAccelStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaAccelBadDataTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Accelerator Board Bad Data.",
+				"This trap signifies that the agent has detected a Array",
+				"Accelerator Cache Board that has lost battery power. If data",
+				"was being stored in the accelerator memory when the system lost",
+				"power, that data has been lost.",
+				"User Action: Verify that no data has been lost."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqFcaAccelBadDataTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "External array Accelerator board on slot $v5 lost battery power"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaAccelBadDataTrap RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaAccelBoxIoSlot i 0",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaAccelBadDataTrap",
+				"oid" : "1.3.6.1.4.1.232.0.16005",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this accelerator",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaAccelBatteryFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Accelerator Board Battery Failed.",
+				"This trap signifies that the agent has detected a battery",
+				"failure associated with the Array Accelerator Cache Board.",
+				"User Action: Replace the Accelerator Cache Board."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqFcaAccelBatteryFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "External array Accelerator board on slot $v5 battery failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaAccelBatteryFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaAccelBoxIoSlot i 0",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaAccelBatteryFailed",
+				"oid" : "1.3.6.1.4.1.232.0.16006",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this accelerator",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaCntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Controller Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a External Array Controller. The variable",
+				"cpqFcaCntlrStatus indicates the current controller status.",
+				"User Action: If the controller status is offline, access to the",
+				"storage box has been lost. Check the storage box and all fibre",
+				"channel connections for problems."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqFcaCntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1: (($v6==2) ? 0 : (($v6==3 || $v6==4) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "External array Controller on slot $v5 status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaCntlrStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaCntlrBoxIoSlot i 0 CPQFCA-MIB::cpqFcaCntlrStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaCntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16007",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this controller",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaCntlrBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Status.",
+							"",
+							"This value represents the status of the External Array",
+							"Controller. The following values are valid:",
+							"",
+							"other (1)",
+							"Indicates that the agent does not recognize the status of the",
+							"controller. You may need to upgrade the agent.",
+							"",
+							"ok (2)",
+							"All paths to this controller are available.",
+							"",
+							"offline (4)",
+							"No paths are available to this controller.",
+							"",
+							"redundantPathOffline (5)",
+							"At least one path to this controller is available and at least",
+							"one path to this controller is unavailable.",
+							"",
+							"notConnected (6)",
+							"No paths are available to this controller. However, in an",
+							"active/active configuration, this is a valid configuration."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "offline",
+							"5" : "redundantPathOffline",
+							"6" : "notConnected"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcTapeCntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Tape Controller Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a Fiber Channel Tape Controller. The variable",
+				"cpqFcTapeCntlrStatus indicates the current tape controller",
+				"status. The variable cpqFcTapeCntlrWWN indicates the unique",
+				"tape controller world wide name associated with this controller.",
+				"User Action: If the tape controller status is offline, access to",
+				"the tape library and tapes has been lost. Check the tape library",
+				"and all Fibre connections for problems."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 3 : (($v4==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqFcTapeCntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : (($v4==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 1 : (($v4==2) ? 0 : 3)"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Fibre channel Tape controller status is $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcTapeCntlrStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeCntlrWWN s EXAMPLE CPQFCA-MIB::cpqFcTapeCntlrStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcTapeCntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16008",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Controller World Wide Name.",
+							"",
+							"This value can be used to further identify a particular tape",
+							"controller. If the world wide name is not supported, the",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeCntlrWWN",
+						"oid" : "1.3.6.1.4.1.232.16.3.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Controller Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine the status of the tape",
+							"controller.",
+							"",
+							"ok(2)",
+							"The tape controller is OK.",
+							"",
+							"offline(3)",
+							"The tape controller is offline. The tape controller may be powered",
+							"off or there may be a cabling problem."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "offline"
+						},
+						"name" : "CPQFCA-MIB::cpqFcTapeCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.16.3.1.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcTapeLibraryStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Tape Library Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a Fiber Channel Tape library. The variable",
+				"cpqFcTapeLibraryStatus indicates the current tape library",
+				"status. The variable cpqFcTapeLibraryScsiTarget indicates the",
+				"SCSI ID of the tape library.",
+				"User Action: If the tape library is failed or offline, check the tape",
+				"library front panel and all fibre channel connections."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 3 : (($v7==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqFcTapeLibraryStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v7==1) ? 3600 : (($v7==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 1 : (($v7==2) ? 0 : (($v7==4) ? 4 : 3))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Fibre channel Tape library status is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcTapeLibraryStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeCntlrWWN s EXAMPLE CPQFCA-MIB::cpqFcTapeLibraryScsiBus i 0 CPQFCA-MIB::cpqFcTapeLibraryScsiTarget i 0 CPQFCA-MIB::cpqFcTapeLibraryScsiLun i 0 CPQFCA-MIB::cpqFcTapeLibraryStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcTapeLibraryStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16009",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Controller World Wide Name.",
+							"",
+							"This value can be used to further identify a particular tape",
+							"controller. If the world wide name is not supported, the",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeCntlrWWN",
+						"oid" : "1.3.6.1.4.1.232.16.3.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Status.",
+							"",
+							"The library can be in one of the following states:",
+							"",
+							"other(1)",
+							"The library is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the library is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the library has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the library has failed and can no longer",
+							"return data. The library may need to be replaced.",
+							"",
+							"offline(5)",
+							"Indicates that the Insight Agents can no longer communicate with",
+							"the library. This could be caused by a cabling problem or the",
+							"library may be powered off."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "offline"
+						},
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryStatus",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcTapeLibraryDoorStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Tape Library Door Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"door status of a Fiber Channel Tape library. The variable",
+				"cpqFcTapeLibraryDoorStatus indicates the current tape library",
+				"door status. The variable cpqFcTapeLibraryScsiTarget indicates",
+				"the the SCSI ID of the tape library.",
+				"User Action: If the tape library door is open, close the tape",
+				"library door."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 3 : (($v7==2) ? 2 : 1)"
+				},
+				"EventType" : "cpqFcTapeLibraryDoorStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v7==1) ? 3600 : (($v7==2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 1 : (($v7==2) ? 3 : 0)"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Fiber channel Tape library door status is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcTapeLibraryDoorStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeCntlrWWN s EXAMPLE CPQFCA-MIB::cpqFcTapeLibraryScsiBus i 0 CPQFCA-MIB::cpqFcTapeLibraryScsiTarget i 0 CPQFCA-MIB::cpqFcTapeLibraryScsiLun i 0 CPQFCA-MIB::cpqFcTapeLibraryDoorStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcTapeLibraryDoorStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16010",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Controller World Wide Name.",
+							"",
+							"This value can be used to further identify a particular tape",
+							"controller. If the world wide name is not supported, the",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeCntlrWWN",
+						"oid" : "1.3.6.1.4.1.232.16.3.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Door Status.",
+							"",
+							"The door can be in one of the following states:",
+							"",
+							"other(1)",
+							"The door is in a state other than one of those listed",
+							"below.",
+							"",
+							"notSupported(2)",
+							"The door status is not supported by the device.",
+							"",
+							"closed(3)",
+							"The door is closed.",
+							"",
+							"open(4)",
+							"The door is open."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notSupported",
+							"3" : "closed",
+							"4" : "open"
+						},
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryDoorStatus",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcTapeDriveStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Tape Drive Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a Fiber Channel Tape Drive. The variable",
+				"cpqFcTapeDriveStatus indicates the current tape status. The",
+				"variable cpqFcTapeDriveScsiTarget indicates the the SCSI ID of",
+				"the tape drive.",
+				"User Action: If the tape is failed or offline, check the tape",
+				"and all fibre channel connections."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 3 : (($v7==2 || $v7==6) ? 1 : 2)"
+				},
+				"EventType" : "cpqFcTapeDriveStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v7==1) ? 3600 : (($v7==2 || $v7==6) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 1 : (($v7==2 || $v7==6) ? 0 : (($v7==3 || $v7==5) ? 3 : 4))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Fibre channel Tape drive status is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcTapeDriveStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeCntlrWWN s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveScsiBus i 0 CPQFCA-MIB::cpqFcTapeDriveScsiTarget i 0 CPQFCA-MIB::cpqFcTapeDriveScsiLun i 0 CPQFCA-MIB::cpqFcTapeDriveStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcTapeDriveStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16011",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Controller World Wide Name.",
+							"",
+							"This value can be used to further identify a particular tape",
+							"controller. If the world wide name is not supported, the",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeCntlrWWN",
+						"oid" : "1.3.6.1.4.1.232.16.3.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Status.",
+							"",
+							"The tape drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The tape drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the tape drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the tape drive has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the tape drive has failed and can no longer",
+							"return data. The tape drive may need to be replaced.",
+							"",
+							"offline(5)",
+							"Indicates that the agent can no longer communicate with the",
+							"tape drive. This could be caused by a cabling problem or the",
+							"tape drive may be powered off.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a tape drive had a status of OK and is no",
+							"longer present. The drive has been removed.",
+							"",
+							"missingWasOffline(7)",
+							"Indicates that a tape drive had a status of OFFLINE and is no",
+							"longer present. The drive has been removed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "offline",
+							"6" : "missingWasOk",
+							"7" : "missingWasOffline"
+						},
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveStatus",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcTapeDriveCleaningRequired",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Tape Drive Cleaning Required trap.",
+				"The agent has detected a tape drive that needs to have a",
+				"cleaning tape inserted and run. This will cause the tape drive",
+				"heads to be cleaned."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqFcTapeDriveCleaningRequired",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Fibre channel Tape drive cleaning required"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcTapeDriveCleaningRequired RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeCntlrWWN s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveScsiBus i 0 CPQFCA-MIB::cpqFcTapeDriveScsiTarget i 0 CPQFCA-MIB::cpqFcTapeDriveScsiLun i 0",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcTapeDriveCleaningRequired",
+				"oid" : "1.3.6.1.4.1.232.0.16012",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Controller World Wide Name.",
+							"",
+							"This value can be used to further identify a particular tape",
+							"controller. If the world wide name is not supported, the",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeCntlrWWN",
+						"oid" : "1.3.6.1.4.1.232.16.3.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcTapeDriveCleanTapeReplace",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Tape Drive Cleaning Tape Needs Replacing.",
+				"The agent has detected that an autoloader tape unit has a",
+				"cleaning tape that has been fully used and therefore needs to be",
+				"replaced with a new cleaning tape."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqFcTapeDriveCleanTapeReplace",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Cleaning tape needs replacing in Fibre channel Tape drive"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcTapeDriveCleanTapeReplace RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeCntlrWWN s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveScsiBus i 0 CPQFCA-MIB::cpqFcTapeDriveScsiTarget i 0 CPQFCA-MIB::cpqFcTapeDriveScsiLun i 0",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcTapeDriveCleanTapeReplace",
+				"oid" : "1.3.6.1.4.1.232.0.16013",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Controller World Wide Name.",
+							"",
+							"This value can be used to further identify a particular tape",
+							"controller. If the world wide name is not supported, the",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeCntlrWWN",
+						"oid" : "1.3.6.1.4.1.232.16.3.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaCntlrActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Redundant Controller Active.",
+				"This trap signifies that the Storage Agent has detected that",
+				"a backup array controller in a duplexed pair has switched over",
+				"to the active role. The variable cpqFcaCntlrBoxIoSlot indicates",
+				"the new active controller index.",
+				"User Action: Check the partner controller for problems.",
+				"If this was the result of a user initiated switch over",
+				"no action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqFcaCntlrActive",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "Controller on slot $v5 is now active on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaCntlrActive RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaCntlrBoxIoSlot i 0",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaCntlrActive",
+				"oid" : "1.3.6.1.4.1.232.0.16014",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this controller",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaCntlrBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFcaHostCntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Host Controller Status Change.",
+				"This trap signifies that the Insight Agent has detected a change",
+				"in the status of a Fibre Channel Host Controller. The variable",
+				"cpqFcaHostCntlrStatus indicates the current controller status.",
+				"User Action: If the controller status is failed, replace the",
+				"controller."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 3 : (($v4==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqFcaHostCntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : (($v4==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 1 : (($v4==2) ? 0 : (($v4==4 || $v4==7) ? 3 : 4))"
+				},
+				"SubNode" : "ControllerSlot:$v3",
+				"Summary" : "Host controller on slot $v3 status is $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFcaHostCntlrStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcaHostCntlrSlot i 0 CPQFCA-MIB::cpqFcaHostCntlrStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFcaHostCntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16015",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Slot.",
+							"",
+							"This identifies the physical slot where the Fibre Channel Host",
+							"Controller resides in the system. For example, if this value is",
+							"three, the controller is located in slot three of your computer.",
+							"If the slot cannot be determined, the value is set to 255."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Status.",
+							"",
+							"The host controller can be in one of the following states:",
+							"",
+							"Other (1)",
+							"The agent is unable to determine the status of the host",
+							"controller.",
+							"",
+							"Ok (2)",
+							"Indicates that the host controller is in normal operation mode.",
+							"",
+							"Failed (3)",
+							"Indicates that the host controller has failed and should be",
+							"replaced.",
+							"",
+							"Shutdown (4)",
+							"Indicates that the host controller has been shutdown.",
+							"",
+							"LoopDegraded (5)",
+							"Indicates that the fibre channel connection is degraded.",
+							"",
+							"LoopFailed (6)",
+							"Indicates that the fibre channel connection is failed.",
+							"",
+							"NotConnected (7)",
+							"Indicates that the fibre channel port is not connected or the",
+							"device to which it is connected is powered down."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "shutdown",
+							"5" : "loopDegraded",
+							"6" : "loopFailed",
+							"7" : "notConnected"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFca2PhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Physical Drive Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a physical drive. The variable cpaFcaPhyDrvStatus",
+				"indicates the current physical drive status.",
+				"User Action: If the physical drive status is threshExceeded(4)",
+				"predictiveFailure(5), failed(6) or unsupportedDrive(7), replace",
+				"the drive."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 3 : (($v7==3) ? 1 : 2)"
+				},
+				"EventType" : "cpqFca2PhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v7==1) ? 3600 : (($v7==3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 1 : (($v7==3) ? 0 : (($v7==2) ? 3 : 4))"
+				},
+				"SubNode" : "DriveSerialNo:$v9",
+				"Summary" : "Physical drive on bus $v5, bay $v6 status is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFca2PhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaPhyDrvBusNumber i 9999 CPQFCA-MIB::cpqFcaPhyDrvBay i 0 CPQFCA-MIB::cpqFcaPhyDrvStatus i 1 CPQFCA-MIB::cpqFcaPhyDrvModel s EXAMPLE CPQFCA-MIB::cpqFcaPhyDrvSerialNum s EXAMPLE CPQFCA-MIB::cpqFcaPhyDrvFWRev s EXAMPLE CPQFCA-MIB::cpqFcaPhyDrvFailureCode i 9999",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFca2PhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16016",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Physical Drive SCSI Bus Number.",
+							"",
+							"The bus number indicates to which SCSI bus this physical",
+							"drive is attached. The first instance is one and increments",
+							"for each SCSI bus on a controller."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvBusNumber",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.42",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Physical Drive Bay Location.",
+							"",
+							"This value matches the bay location where the physical drive has",
+							"been installed. Each bay is labeled with a separate number so",
+							"that you can identify the location of the drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvBay",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Physical Drive Status.",
+							"",
+							"This shows the status of the physical drive.",
+							"",
+							"The following values are valid for the physical drive status:",
+							"",
+							"other (1)",
+							"Indicates that the instrument agent does not recognize",
+							"the drive. You may need to upgrade your instrument agent",
+							"and/or driver software.",
+							"",
+							"unconfigured (2)",
+							"Indicates the drive is present, but is not part of any",
+							"logical drive configuration.",
+							"",
+							"ok (3)",
+							"Indicates the drive is functioning properly.",
+							"",
+							"thresholdExceeded (4)",
+							"Indicates that the drive has a threshold exceeded error and",
+							"should be replaced.",
+							"",
+							"predictiveFailure (5)",
+							"Indicates that the drive has a predictive failure error and",
+							"should be replaced.",
+							"",
+							"failed (6)",
+							"Indicates that the drive is no longer operating and",
+							"should be replaced.",
+							"",
+							"unsupportedDrive(7)",
+							"Indicates that an unsupported drive has been detected and",
+							"should be replaced. See cpqFcaPhyDrvUnsupportedDrive for",
+							"more details."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unconfigured",
+							"3" : "ok",
+							"4" : "threshExceeded",
+							"5" : "predictiveFailure",
+							"6" : "failed",
+							"7" : "unsupportedDrive"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Physical Drive Model.",
+							"",
+							"This is a text description of the physical drive. The text that",
+							"appears depends upon who manufactured the drive and the drive",
+							"type.",
+							"",
+							"If a drive fails, note the model to identify the type of drive",
+							"necessary for replacement."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvModel",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Physical Drive Serial Number.",
+							"",
+							"This is the serial number assigned to the physical drive.",
+							"This value is based upon the serial number as returned by the",
+							"SCSI inquiry command but may have been modified due to space",
+							"limitations. This can be used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvSerialNum",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.43",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Array Physical Drive Firmware Revision.",
+							"",
+							"This shows the physical drive firmware revision number."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvFWRev",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Physical Drive Failure Code.",
+							"",
+							"This value is the drive failure reason code returned by the",
+							"array firmware. It is valid only when the drive is failed.",
+							"If the drive is not failed, 0 is returned."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaPhyDrvFailureCode",
+						"oid" : "1.3.6.1.4.1.232.16.2.5.1.1.47",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFca2AccelStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Accelerator Board Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a Array Accelerator Cache Board. The current status",
+				"is represented by the variable cpqFcaAccelStatus.",
+				"User Action: If the accelerator board status is permDisabled(5)",
+				"you may need to replace the accelerator board."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==3) ? 1 : 2)"
+				},
+				"EventType" : "cpqFca2AccelStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==3) ? 0 : (($v6==5) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "Accelerator board on slot $v5 status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFca2AccelStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaAccelBoxIoSlot i 0 CPQFCA-MIB::cpqFcaAccelStatus i 1 CPQFCA-MIB::cpqFcaCntlrModel i 1 CPQFCA-MIB::cpqFcaAccelSerialNumber s EXAMPLE CPQFCA-MIB::cpqFcaAccelTotalMemory i 9999 CPQFCA-MIB::cpqFcaAccelErrCode i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFca2AccelStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16017",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this accelerator",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Array Accelerator Board Status.",
+							"",
+							"This describes the status of the Array Accelerator Cache.",
+							"",
+							"The status can be:",
+							"",
+							"Other (1)",
+							"Indicates that the instrument agent does not recognize the",
+							"status of the Array Accelerator. You may need to upgrade",
+							"the instrument agent.",
+							"",
+							"Invalid (2)",
+							"Indicates that an Array Accelerator board has not been",
+							"installed in this system or is present but not configured.",
+							"",
+							"Enabled (3)",
+							"Indicates that write cache operations are currently configured",
+							"and enabled for at least one logical drive.",
+							"",
+							"Temporarily Disabled (4)",
+							"Indicates that write cache operations have been temporarily",
+							"disabled. View the Array Accelerator Board Error Code object",
+							"to determine why the write cache operations have been",
+							"temporarily disabled.",
+							"",
+							"Permanently Disabled (5)",
+							"Indicates that write cache operations have been permanently",
+							"disabled. View the Array Accelerator Board Error Code object",
+							"to determine why the write cache operations have been disabled."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "invalid",
+							"3" : "enabled",
+							"4" : "tmpDisabled",
+							"5" : "permDisabled"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaAccelStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Model.",
+							"",
+							"The type of controller card. The valid types are:",
+							"",
+							"Other (1)",
+							"You may need to upgrade your driver software and\\or instrument",
+							"agent(s). You have an array controller in the storage box",
+							"that the instrument agent does not recognize.",
+							"",
+							"fibreArray (2)",
+							"Compaq StorageWorks RAID Array 4000 Controller.",
+							"",
+							"msa1000 (3)",
+							"Compaq StorageWorks Modular Smart Array 1000 Controller.",
+							"",
+							"smartArrayClusterStorage (4)",
+							"HP StorageWorks Modular Smart Array 500 Controller",
+							"(Formerly Smart Array Cluster Storage Controller).",
+							"",
+							"hsg80 (5)",
+							"Compaq StorageWorks HSG80 RAID Array Controller.",
+							"",
+							"hsv110 (6)",
+							"Compaq StorageWorks HSV110 Virtual Array Controller.",
+							"",
+							"msa500G2 (7)",
+							"HP StorageWorks Modular Smart Array 500 G2 Controller.",
+							"",
+							"msa20 (8)",
+							"HP StorageWorks Modular Smart Array 20 Controller.",
+							"",
+							"msa1510i (9)",
+							"HP StorageWorks Modular Smart Array 1510i Controller.",
+							"",
+							"Reserved (10)"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fibreArray",
+							"3" : "msa1000",
+							"4" : "smartArrayClusterStorage",
+							"5" : "hsg80",
+							"6" : "hsv110",
+							"7" : "msa500G2",
+							"8" : "msa20",
+							"9" : "msa1510i"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaCntlrModel",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Array Accelerator Board Serial Number.",
+							"",
+							"This value can be used to further identify the cache",
+							"controller. If the serial number is not supported, the agent",
+							"will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Array Accelerator Total Memory.",
+							"",
+							"This value is the total amount of accelerator memory in",
+							"megabytes, including both battery-backed and non-battery-backed",
+							"memory."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelTotalMemory",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Array Accelerator Board Error Code.",
+							"",
+							"Use this to determine the status of the write cache operations.",
+							"",
+							"The status can be:",
+							"",
+							"Other (1)",
+							"Indicates that the instrument agent does not recognize the",
+							"error code. You may need to update your software.",
+							"",
+							"Invalid (2)",
+							"Indicates that write cache operations are currently",
+							"configured and enabled for at least one logical drive.",
+							"No write cache errors have occurred.",
+							"",
+							"Bad Configuration (3)",
+							"Indicates that write cache operations are temporarily",
+							"disabled. The Array Accelerator board was configured for a",
+							"different controller. This error could be caused if boards",
+							"were switched from one system to another. Rerun the",
+							"configuration utility and ensurethat the board has been",
+							"properly configured for this system.",
+							"",
+							"Low Battery Power (4)",
+							"Indicates that write cache operations are temporarily",
+							"disabled due to insufficient battery power. Please view",
+							"the Battery Status object instance for more information.",
+							"",
+							"Disable Command Issued (5)",
+							"Indicates that write cache operations are temporarily",
+							"disabled. The device driver issues this command when",
+							"the server is taken down. This condition should not",
+							"exist when the system regains power.",
+							"",
+							"No Resources Available (6)",
+							"Indicates that write cache operations are temporarily",
+							"disabled. The controller does not have sufficient",
+							"resources to perform write cache operations.",
+							"For example, when a replaced drive is being rebuilt",
+							"there will not be sufficient resources. Once the",
+							"operation that requires the resources has completed",
+							"this condition will clear and write cache operations",
+							"will resume.",
+							"",
+							"Board Not Connected (7)",
+							"Indicates that write cache operations are temporarily",
+							"disabled. The Array Accelerator board has been",
+							"configured but is not currently attached to the",
+							"controller. Check the alignment of the board and",
+							"connections.",
+							"",
+							"Bad Mirror Data (8)",
+							"Indicates that write cache operations have been",
+							"permanently disabled. The Array Accelerator board stores",
+							"mirrored copies of all data. If data exists on the",
+							"board when the system is first powered up, the board",
+							"performs a data compare test between the mirrored copies.",
+							"If the data does not match, an error has occurred.",
+							"Data may have been lost. Your board may need servicing.",
+							"",
+							"Read Failure (9)",
+							"Indicates that write cache operations have been permanently",
+							"disabled. The Array Accelerator board stores mirror copies",
+							"of all data. While reading the data from the board, memory",
+							"parity errors have occurred. Both copies were corrupted and",
+							"cannot be retrieved. Data has been lost, and you should",
+							"service the board.",
+							"",
+							"Write Failure (10)",
+							"Indicates that write cache operations have been permanently",
+							"disabled. This error occurs when an unsuccessful attempt was",
+							"made to write data to the Array Accelerator board. Data could",
+							"not be written to write cache memory in duplicate due to the",
+							"detection of parity errors. This error does not indicate data",
+							"loss. You should service the Array Accelerator board.",
+							"",
+							"Config Command (11)",
+							"Indicates that write cache operations have been permanently",
+							"disabled. The configuration of the logical drives has changed.",
+							"You need to reconfigure the Array Accelerator board.",
+							"",
+							"Expand In Progress (12)",
+							"Indicates that cache operations are"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "invalid",
+							"3" : "badConfig",
+							"4" : "lowBattery",
+							"5" : "disableCmd",
+							"6" : "noResources",
+							"7" : "notConnected",
+							"8" : "badMirrorData",
+							"9" : "readErr",
+							"10" : "writeErr",
+							"11" : "configCmd",
+							"12" : "expandInProgress",
+							"13" : "snapshotInProgress",
+							"14" : "redundantLowBattery",
+							"15" : "redundantSizeMismatch",
+							"16" : "redundantCacheFailure",
+							"17" : "excessiveEccErrors",
+							"19" : "postEccErrors"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaAccelErrCode",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFca2AccelBadDataTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Accelerator Board Bad Data.",
+				"This trap signifies that the agent has detected a Array",
+				"Accelerator Cache Board that has lost battery power. If data",
+				"was being stored in the accelerator memory when the system lost",
+				"power, that data has been lost.",
+				"User Action: Verify that no data has been lost."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqFca2AccelBadDataTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "Array Accelerator board on slot $v5 lost battery power"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFca2AccelBadDataTrap RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaAccelBoxIoSlot i 0 CPQFCA-MIB::cpqFcaCntlrModel i 1 CPQFCA-MIB::cpqFcaAccelSerialNumber s EXAMPLE CPQFCA-MIB::cpqFcaAccelTotalMemory i 9999",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFca2AccelBadDataTrap",
+				"oid" : "1.3.6.1.4.1.232.0.16018",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this accelerator",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Model.",
+							"",
+							"The type of controller card. The valid types are:",
+							"",
+							"Other (1)",
+							"You may need to upgrade your driver software and\\or instrument",
+							"agent(s). You have an array controller in the storage box",
+							"that the instrument agent does not recognize.",
+							"",
+							"fibreArray (2)",
+							"Compaq StorageWorks RAID Array 4000 Controller.",
+							"",
+							"msa1000 (3)",
+							"Compaq StorageWorks Modular Smart Array 1000 Controller.",
+							"",
+							"smartArrayClusterStorage (4)",
+							"HP StorageWorks Modular Smart Array 500 Controller",
+							"(Formerly Smart Array Cluster Storage Controller).",
+							"",
+							"hsg80 (5)",
+							"Compaq StorageWorks HSG80 RAID Array Controller.",
+							"",
+							"hsv110 (6)",
+							"Compaq StorageWorks HSV110 Virtual Array Controller.",
+							"",
+							"msa500G2 (7)",
+							"HP StorageWorks Modular Smart Array 500 G2 Controller.",
+							"",
+							"msa20 (8)",
+							"HP StorageWorks Modular Smart Array 20 Controller.",
+							"",
+							"msa1510i (9)",
+							"HP StorageWorks Modular Smart Array 1510i Controller.",
+							"",
+							"Reserved (10)"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fibreArray",
+							"3" : "msa1000",
+							"4" : "smartArrayClusterStorage",
+							"5" : "hsg80",
+							"6" : "hsv110",
+							"7" : "msa500G2",
+							"8" : "msa20",
+							"9" : "msa1510i"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaCntlrModel",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Array Accelerator Board Serial Number.",
+							"",
+							"This value can be used to further identify the cache",
+							"controller. If the serial number is not supported, the agent",
+							"will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Array Accelerator Total Memory.",
+							"",
+							"This value is the total amount of accelerator memory in",
+							"megabytes, including both battery-backed and non-battery-backed",
+							"memory."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelTotalMemory",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFca2AccelBatteryFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Accelerator Board Battery Failed.",
+				"This trap signifies that the agent has detected a battery",
+				"failure associated with the Array Accelerator Cache Board.",
+				"User Action: Replace the Accelerator Cache Board."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqFca2AccelBatteryFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "Array Accelerator board on slot $v5 battery failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFca2AccelBatteryFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaAccelBoxIoSlot i 0 CPQFCA-MIB::cpqFcaCntlrModel i 1 CPQFCA-MIB::cpqFcaAccelSerialNumber s EXAMPLE CPQFCA-MIB::cpqFcaAccelTotalMemory i 9999",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFca2AccelBatteryFailed",
+				"oid" : "1.3.6.1.4.1.232.0.16019",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this accelerator",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Model.",
+							"",
+							"The type of controller card. The valid types are:",
+							"",
+							"Other (1)",
+							"You may need to upgrade your driver software and\\or instrument",
+							"agent(s). You have an array controller in the storage box",
+							"that the instrument agent does not recognize.",
+							"",
+							"fibreArray (2)",
+							"Compaq StorageWorks RAID Array 4000 Controller.",
+							"",
+							"msa1000 (3)",
+							"Compaq StorageWorks Modular Smart Array 1000 Controller.",
+							"",
+							"smartArrayClusterStorage (4)",
+							"HP StorageWorks Modular Smart Array 500 Controller",
+							"(Formerly Smart Array Cluster Storage Controller).",
+							"",
+							"hsg80 (5)",
+							"Compaq StorageWorks HSG80 RAID Array Controller.",
+							"",
+							"hsv110 (6)",
+							"Compaq StorageWorks HSV110 Virtual Array Controller.",
+							"",
+							"msa500G2 (7)",
+							"HP StorageWorks Modular Smart Array 500 G2 Controller.",
+							"",
+							"msa20 (8)",
+							"HP StorageWorks Modular Smart Array 20 Controller.",
+							"",
+							"msa1510i (9)",
+							"HP StorageWorks Modular Smart Array 1510i Controller.",
+							"",
+							"Reserved (10)"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fibreArray",
+							"3" : "msa1000",
+							"4" : "smartArrayClusterStorage",
+							"5" : "hsg80",
+							"6" : "hsv110",
+							"7" : "msa500G2",
+							"8" : "msa20",
+							"9" : "msa1510i"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaCntlrModel",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Array Accelerator Board Serial Number.",
+							"",
+							"This value can be used to further identify the cache",
+							"controller. If the serial number is not supported, the agent",
+							"will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Array Accelerator Total Memory.",
+							"",
+							"This value is the total amount of accelerator memory in",
+							"megabytes, including both battery-backed and non-battery-backed",
+							"memory."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelTotalMemory",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFca2CntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Controller Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a External Array Controller. The variable",
+				"cpqFcaCntlrStatus indicates the current controller status.",
+				"User Action: If the controller status is offline(4), access to",
+				"the storage box has been lost. Check the storage box and all",
+				"fibre channel connections for problems."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==2) ? 1 : 3)"
+				},
+				"EventType" : "cpqFca2CntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==2) ? 0 : (($v6==3 || $v6==4) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerSlot:$v5",
+				"Summary" : "Array Controller on slot $v5 status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFca2CntlrStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaCntlrBoxIoSlot i 0 CPQFCA-MIB::cpqFcaCntlrStatus i 1 CPQFCA-MIB::cpqFcaCntlrModel i 1 CPQFCA-MIB::cpqFcaCntlrSerialNumber s EXAMPLE CPQFCA-MIB::cpqFcaAccelTotalMemory i 9999",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFca2CntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16020",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Box I/O Slot.",
+							"",
+							"This identifies the physical I/O slot where this controller",
+							"resides in the storage box."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaCntlrBoxIoSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Status.",
+							"",
+							"This value represents the status of the External Array",
+							"Controller. The following values are valid:",
+							"",
+							"other (1)",
+							"Indicates that the agent does not recognize the status of the",
+							"controller. You may need to upgrade the agent.",
+							"",
+							"ok (2)",
+							"All paths to this controller are available.",
+							"",
+							"offline (4)",
+							"No paths are available to this controller.",
+							"",
+							"redundantPathOffline (5)",
+							"At least one path to this controller is available and at least",
+							"one path to this controller is unavailable.",
+							"",
+							"notConnected (6)",
+							"No paths are available to this controller. However, in an",
+							"active/active configuration, this is a valid configuration."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "offline",
+							"5" : "redundantPathOffline",
+							"6" : "notConnected"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Model.",
+							"",
+							"The type of controller card. The valid types are:",
+							"",
+							"Other (1)",
+							"You may need to upgrade your driver software and\\or instrument",
+							"agent(s). You have an array controller in the storage box",
+							"that the instrument agent does not recognize.",
+							"",
+							"fibreArray (2)",
+							"Compaq StorageWorks RAID Array 4000 Controller.",
+							"",
+							"msa1000 (3)",
+							"Compaq StorageWorks Modular Smart Array 1000 Controller.",
+							"",
+							"smartArrayClusterStorage (4)",
+							"HP StorageWorks Modular Smart Array 500 Controller",
+							"(Formerly Smart Array Cluster Storage Controller).",
+							"",
+							"hsg80 (5)",
+							"Compaq StorageWorks HSG80 RAID Array Controller.",
+							"",
+							"hsv110 (6)",
+							"Compaq StorageWorks HSV110 Virtual Array Controller.",
+							"",
+							"msa500G2 (7)",
+							"HP StorageWorks Modular Smart Array 500 G2 Controller.",
+							"",
+							"msa20 (8)",
+							"HP StorageWorks Modular Smart Array 20 Controller.",
+							"",
+							"msa1510i (9)",
+							"HP StorageWorks Modular Smart Array 1510i Controller.",
+							"",
+							"Reserved (10)"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fibreArray",
+							"3" : "msa1000",
+							"4" : "smartArrayClusterStorage",
+							"5" : "hsg80",
+							"6" : "hsv110",
+							"7" : "msa500G2",
+							"8" : "msa20",
+							"9" : "msa1510i"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaCntlrModel",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Controller Serial Number.",
+							"",
+							"This value can be used to further identify a particular",
+							"controller. If the serial number is not supported, the agent",
+							"will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaCntlrSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Array Accelerator Total Memory.",
+							"",
+							"This value is the total amount of accelerator memory in",
+							"megabytes, including both battery-backed and non-battery-backed",
+							"memory."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaAccelTotalMemory",
+						"oid" : "1.3.6.1.4.1.232.16.2.2.2.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFca2HostCntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Host Controller Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a Fibre Channel Host Controller. The variable",
+				"cpqFcaHostCntlrStatus indicates the current controller status.",
+				"User Action: If the controller status is failed, replace the",
+				"controller."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 3 : (($v4==2) ? 1 :2)"
+				},
+				"EventType" : "cpqFca2HostCntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : (($v4==2) ? 3600 :2)"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 1 : (($v4==2) ? 0 :(($v4==4 || $v4==7) ? 3 : 4))"
+				},
+				"SubNode" : "ControllerSlot:$v3",
+				"Summary" : "Host controller on slot $v3 status is $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFca2HostCntlrStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcaHostCntlrSlot i 0 CPQFCA-MIB::cpqFcaHostCntlrStatus i 1 CPQFCA-MIB::cpqFcaHostCntlrModel i 1 CPQFCA-MIB::cpqFcaHostCntlrWorldWideName s EXAMPLE",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFca2HostCntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16021",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Slot.",
+							"",
+							"This identifies the physical slot where the Fibre Channel Host",
+							"Controller resides in the system. For example, if this value is",
+							"three, the controller is located in slot three of your computer.",
+							"If the slot cannot be determined, the value is set to 255."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrSlot",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Status.",
+							"",
+							"The host controller can be in one of the following states:",
+							"",
+							"Other (1)",
+							"The agent is unable to determine the status of the host",
+							"controller.",
+							"",
+							"Ok (2)",
+							"Indicates that the host controller is in normal operation mode.",
+							"",
+							"Failed (3)",
+							"Indicates that the host controller has failed and should be",
+							"replaced.",
+							"",
+							"Shutdown (4)",
+							"Indicates that the host controller has been shutdown.",
+							"",
+							"LoopDegraded (5)",
+							"Indicates that the fibre channel connection is degraded.",
+							"",
+							"LoopFailed (6)",
+							"Indicates that the fibre channel connection is failed.",
+							"",
+							"NotConnected (7)",
+							"Indicates that the fibre channel port is not connected or the",
+							"device to which it is connected is powered down."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "shutdown",
+							"5" : "loopDegraded",
+							"6" : "loopFailed",
+							"7" : "notConnected"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Model.",
+							"",
+							"The type of controller card. The valid types are:",
+							"",
+							"Other (1)",
+							"You may need to upgrade your driver software and\\or instrument",
+							"agent(s). You have a drive array controller in the system",
+							"that the instrument agent does not recognize.",
+							"",
+							"fchc-p (2)",
+							"Compaq StorageWorks Fibre Channel Host Bus Adapter/P.",
+							"",
+							"fchc-e (3)",
+							"Compaq StorageWorks Fibre Channel Host Bus Adapter/E.",
+							"",
+							"fchc64 (4)",
+							"Compaq StorageWorks 64-Bit/66-Mhz Fibre Host Bus Adapter.",
+							"",
+							"sa-sam(5)",
+							"Compaq Smart Array, SAN Access Module.",
+							"",
+							"fca-2101(6)",
+							"FCA-2101",
+							"",
+							"sw64-33(7)",
+							"Compaq StorageWorks 64bit/33Mhz PCI to Fibre Channel HBA.",
+							"",
+							"fca-221x(8)",
+							"FCA-221x",
+							"",
+							"dpfcmc(9)",
+							"Dual Port Fibre Channel Mezzanine Card (2 Gb) for BL20Gp2 G2.",
+							"",
+							"fca-2404(10)",
+							"PCI-X 2Gb FCA2404 Fibre Channel HBA",
+							"",
+							"fca-2214(11)",
+							"PCI-X 2Gb FCA2214 Fibre Channel HBA",
+							"",
+							"a7298a(12)",
+							"PCI-X 2Gb A7298A Fibre Channel HBA",
+							"",
+							"fca-2214dc(13)",
+							"PCI-X 2Gb FCA2214DC Fibre Channel HBA",
+							"",
+							"a6826a(14)",
+							"PCI-X Dual Channel 2GB A6826A Fibre Channel HBA",
+							"",
+							"fcmcG3(15)",
+							"Fibre Channel Mezzaine Card G3, BL3x p Series",
+							"",
+							"fcmcG4(16)",
+							"Fibre Channel Mezzaine Card G4, BL2x p Series",
+							"",
+							"ab46xa(17)",
+							"PCI-X 2GB AB466A/AB467A Fibre Channel HBA",
+							"",
+							"fc-generic(18)",
+							"Fibre Channel HBA",
+							"",
+							"fca-1143(19)",
+							"HP FC1143 4Gb PCI-X 2.0 HBA",
+							"",
+							"fca-1243(20)",
+							"HP FC1243 4Gb PCI-X 2.0 DC HBA",
+							"",
+							"fca-2143(21)",
+							"HP FC2143 4Gb PCI-X 2.0 HBA",
+							"",
+							"fca-2243(22)",
+							"HP FC2243 4Gb PCI-X 2.0 DC HBA",
+							"",
+							"fca-1050(23)",
+							"HP StorageWorks 1050 HBA",
+							"",
+							"fca-lpe1105(24)",
+							"Emulex LPe1105-HP 4Gb FC HBA for HP c-Class Blade System",
+							"",
+							"fca-qmh2462(25)",
+							"Qlogic QMH2462 4Gb FC HBA for HP c-Class Blade System",
+							"",
+							"fca-1142sr(26)",
+							"HP FC1142SR 4Gb PCI-e HBA",
+							"",
+							"fca-1242sr(27)",
+							"HP FC1242SR 4Gb PCI-e DC HBA",
+							"",
+							"fca-2142sr(28)",
+							"HP FC2142SR 4Gb PCI-e HBA",
+							"",
+							"fca-2242sr(29)",
+							"HP FC2242SR 4Gb PCI-e DC HBA",
+							"",
+							"fcmc20pe(30)",
+							"Emulex based BL20p Fibre Channel Mezz HBA",
+							"",
+							"fca-81q(31)",
+							"HP StorageWorks 81Q 8Gb PCI-e FC HBA",
+							"",
+							"fca-82q(32)",
+							"HP StorageWorks 82Q 8Gb PCI-e Dual Port FC HBA ",
+							"",
+							"fca-qmh2562(33)",
+							"QLogic QMH2562 8Gb FC HBA for HP BladeSystem c-Class",
+							"",
+							"fca-81e(34)",
+							"HP StorageWorks 81E 8Gb PCI-e FC HBA ",
+							"",
+							"fca-82e(35)",
+							"HP StorageWorks 82E 8Gb PCI-e Dual Port FC HBA",
+							"",
+							"fca-1205(36)",
+							"Emulex LPe 1205-HP 8Gb FC HBA for HP BladeSystem c-Class"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fchc-p",
+							"3" : "fchc-e",
+							"4" : "fchc64",
+							"5" : "sa-sam",
+							"6" : "fca-2101",
+							"7" : "sw64-33",
+							"8" : "fca-221x",
+							"9" : "dpfcmc",
+							"10" : "fca-2404",
+							"11" : "fca-2214",
+							"12" : "a7298a",
+							"13" : "fca-2214dc",
+							"14" : "a6826a",
+							"15" : "fcmcG3",
+							"16" : "fcmcG4",
+							"17" : "ab46xa",
+							"18" : "fc-generic",
+							"19" : "fca-1143",
+							"20" : "fca-1243",
+							"21" : "fca-2143",
+							"22" : "fca-2243",
+							"23" : "fca-1050",
+							"24" : "fca-lpe1105",
+							"25" : "fca-qmh2462",
+							"26" : "fca-1142sr",
+							"27" : "fca-1242sr",
+							"28" : "fca-2142sr",
+							"29" : "fca-2242sr",
+							"30" : "fcmc20pe",
+							"31" : "fca-81q",
+							"32" : "fca-82q",
+							"33" : "fca-qmh2562",
+							"34" : "fca-81e",
+							"35" : "fca-82e",
+							"36" : "fca-1205"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrModel",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller World Wide Node Name.",
+							"",
+							"This value can be used to further identify a particular",
+							"controller. If the world wide node name is not supported",
+							"the agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrWorldWideName",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqExtArrayLogDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Array Logical Drive Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of an External Array logical drive. The variable",
+				"cpqFcaLogDrvStatus indicates the current logical drive status.",
+				"User Action: If the logical drive status is failed, examine",
+				"the array for failed drives that need replacement."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==2) ? 1 : (($v7==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqExtArrayLogDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v7==2) ? 3600 : (($v7==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v7==2) ? 0 : (($v7==1) ? 1 : (($v7==3 || $v7==8 || $v7==9 || $v7==10 || $v7==11 ||$v7==15) ? 4 : 3))"
+				},
+				"SubNode" : "DriveIndex:$v6",
+				"Summary" : "Logical drive $v6 status is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqExtArrayLogDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQFCA-MIB::cpqFcaLogDrvBoxIndex i 9999 CPQFCA-MIB::cpqFcaLogDrvIndex i 9999 CPQFCA-MIB::cpqFcaLogDrvStatus i 1 CPQFCA-MIB::cpqFcaLogDrvOsName s EXAMPLE CPQFCA-MIB::cpqFcaLogDrvFaultTol i 1 CPQFCA-MIB::cpqFcaLogDrvSize i 9999",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqExtArrayLogDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16022",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Logical Drive Storage Box Index.",
+							"",
+							"The storage box index indicates which storage box this",
+							"logical drive is in."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaLogDrvBoxIndex",
+						"oid" : "1.3.6.1.4.1.232.16.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Logical Drive Index.",
+							"",
+							"This logical drive number keeps track of multiple instances of",
+							"logical drives which are in the same storage box. For each",
+							"storage box index value, the logical drive index starts at 1 and",
+							"increments for each logical drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaLogDrvIndex",
+						"oid" : "1.3.6.1.4.1.232.16.2.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Logical Drive Status.",
+							"",
+							"The logical drive can be in one of the following states:",
+							"",
+							"Ok (2)",
+							"Indicates that the logical drive is in normal operation mode.",
+							"",
+							"Failed (3)",
+							"Indicates that more physical drives have failed than the",
+							"fault tolerance mode of the logical drive can handle without",
+							"data loss.",
+							"",
+							"Unconfigured (4)",
+							"Indicates that the logical drive is not configured.",
+							"",
+							"Recovering (5)",
+							"Indicates that the logical drive is using Interim Recovery Mode.",
+							"In Interim Recovery Mode, at least one physical drive has",
+							"failed, but the logical drive's fault tolerance mode lets the",
+							"drive continue to operate with no data loss.",
+							"",
+							"Ready Rebuild (6)",
+							"Indicates that the logical drive is ready for Automatic Data",
+							"Recovery. The physical drive that failed has been replaced",
+							"but the logical drive is still operating in Interim Recovery",
+							"Mode.",
+							"",
+							"Rebuilding (7)",
+							"Indicates that the logical drive is currently doing Automatic",
+							"Data Recovery. During Automatic Data Recovery, fault tolerance",
+							"algorithms restore data to the replacement drive.",
+							"",
+							"Wrong Drive (8)",
+							"Indicates that the wrong physical drive was replaced after a",
+							"physical drive failure.",
+							"",
+							"Bad Connect (9)",
+							"Indicates that a physical drive is not responding.",
+							"",
+							"Overheating (10)",
+							"Indicates that the storage box that contains the logical drive",
+							"is overheating. The array is still functioning, but",
+							"should be shutdown.",
+							"",
+							"Shutdown (11)",
+							"Indicates that the storage box that contains the logical drive",
+							"has overheated. The logical drive is no longer functioning.",
+							"",
+							"Expanding (12)",
+							"Indicates that the logical drive is currently doing Automatic",
+							"Data Expansion. During Automatic Data Expansion, fault",
+							"tolerance algorithms redistribute logical drive data to the",
+							"newly added physical drive.",
+							"",
+							"Not Available (13)",
+							"Indicates that the logical drive is currently unavailable.",
+							"If a logical drive is expanding and the new configuration",
+							"frees additional disk space, this free space can be",
+							"configured into another logical volume. If this is done",
+							"the new volume will be set to not available.",
+							"",
+							"Queued For Expansion (14)",
+							"Indicates that the logical drive is ready for Automatic Data",
+							"Expansion. The logical drive is in the queue for expansion.",
+							"",
+							"Hard Error (15)",
+							"Indicates that a hard error occurred for this LUN."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "unconfigured",
+							"5" : "recovering",
+							"6" : "readyForRebuild",
+							"7" : "rebuilding",
+							"8" : "wrongDrive",
+							"9" : "badConnect",
+							"10" : "overheating",
+							"11" : "shutdown",
+							"12" : "expanding",
+							"13" : "notAvailable",
+							"14" : "queuedForExpansion",
+							"15" : "hardError"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaLogDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Logical Drive OS Name.",
+							"",
+							"The OS name for this array logical drive. This field will be",
+							"a null (size 0) string if the agent does not support OS name."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaLogDrvOsName",
+						"oid" : "1.3.6.1.4.1.232.16.2.3.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Logical Drive Fault Tolerance.",
+							"",
+							"This shows the fault tolerance mode of the logical drive.",
+							"To change the fault tolerance mode, run the configuration",
+							"utility.",
+							"",
+							"The following values are valid for the Logical Drive Fault",
+							"Tolerance:",
+							"",
+							"None (2)",
+							"Fault tolerance is not enabled. If a physical drive reports",
+							"an error, the data cannot be recovered by the array",
+							"controller.",
+							"",
+							"Mirroring (3)",
+							"For each physical drive, there is a second physical drive",
+							"containing identical data. If a drive fails, the data can be",
+							"retrieved from the mirror drive.",
+							"",
+							"Data Guard (4)",
+							"One of the physical drives is used as a data guard drive and",
+							"contains the exclusive OR of the data on the remaining drives.",
+							"If a failure is detected, the External Array Controller",
+							"rebuilds the data using the data guard information plus",
+							"information from the other drives.",
+							"",
+							"Distributed Data Guard (5)",
+							"Distributed Data Guarding, sometimes referred to as RAID 5",
+							"is similar to Data Guarding, but instead of storing the parity",
+							"information on one drive, the information is distributed",
+							"across all of the drives. If a failure is detected, the array",
+							"controller rebuilds the data using the data guard information",
+							"from all the drives.",
+							"",
+							"Advanced Data Guarding (7)",
+							"Advanced Data Guarding (RAID ADG) is the fault tolerance method",
+							"that provides the highest level of data protection. It",
+							"'stripes' data and parity across all the physical drives in the",
+							"configuration to ensure the uninterrupted availability of",
+							"uncorrupted data. This fault-tolerance method is similar to",
+							"distributed data guard (RAID 5) in that parity data is",
+							"distributed across all drives in the array, except in RAID ADG",
+							"the capacity of multiple drives is used to store parity data.",
+							"Assuming the capacity of 2 drives is used for parity data",
+							"this allows continued operation despite simultaneous failure of",
+							"any 2 drives in the array, whereas RAID 4 and RAID 5 can only",
+							"sustain failure of a single drive."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "none",
+							"3" : "mirroring",
+							"4" : "dataGuard",
+							"5" : "distribDataGuard",
+							"7" : "advancedDataGuard"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaLogDrvFaultTol",
+						"oid" : "1.3.6.1.4.1.232.16.2.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Array Logical Drive Size.",
+							"",
+							"This is the size of the logical drive in megabytes. This value",
+							"is calculated using the value 1,048,576 (2^20) as a megabyte.",
+							"Drive manufacturers sometimes use the number 1,000,000 as a",
+							"megabyte when giving drive capacities so this value may",
+							"differ from the advertised size of a drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaLogDrvSize",
+						"oid" : "1.3.6.1.4.1.232.16.2.3.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqExtTapeDriveStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Tape Drive Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of an External Tape Drive. The variable",
+				"cpqFcTapeDriveStatus indicates the current tape status.",
+				"User Action: If the tape is failed or offline, check the tape",
+				"and all connections."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==1) ? 3 : (($v11==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqExtTapeDriveStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v11==1) ? 3600 : (($v11==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v11==1) ? 1 : (($v11==2) ? 0 : (($v11==3 || $v11==5) ? 3 : 4))"
+				},
+				"SubNode" : "ControllerIndex:$v3",
+				"Summary" : "Tape drive ($v10) status is $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqExtTapeDriveStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeDriveCntlrIndex i 9999 CPQFCA-MIB::cpqFcTapeDriveScsiBus i 0 CPQFCA-MIB::cpqFcTapeDriveScsiTarget i 0 CPQFCA-MIB::cpqFcTapeDriveScsiLun i 0 CPQFCA-MIB::cpqFcTapeDriveModel s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveFWRev s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveSerialNumber s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveLocation s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqExtTapeDriveStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16023",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Controller Index.",
+							"",
+							"This value is a logical number whose meaning is OS dependent.",
+							"For tape controller has one unique controller number associated",
+							"with it."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Model.",
+							"",
+							"This is the model name of the tape drive. It can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveModel",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Firmware Revision.",
+							"",
+							"This is firmware revision level of the tape drive. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveFWRev",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Serial Number.",
+							"",
+							"This is the unit serial number for the tape drive. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Location.",
+							"",
+							"This is the location of the tape drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveLocation",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Status.",
+							"",
+							"The tape drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The tape drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the tape drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the tape drive has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the tape drive has failed and can no longer",
+							"return data. The tape drive may need to be replaced.",
+							"",
+							"offline(5)",
+							"Indicates that the agent can no longer communicate with the",
+							"tape drive. This could be caused by a cabling problem or the",
+							"tape drive may be powered off.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a tape drive had a status of OK and is no",
+							"longer present. The drive has been removed.",
+							"",
+							"missingWasOffline(7)",
+							"Indicates that a tape drive had a status of OFFLINE and is no",
+							"longer present. The drive has been removed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "offline",
+							"6" : "missingWasOk",
+							"7" : "missingWasOffline"
+						},
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveStatus",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqExtTapeDriveCleaningRequired",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Tape Drive Cleaning Required.",
+				"The agent has detected a tape drive that needs to have a",
+				"cleaning tape inserted and run. This will cause the tape drive",
+				"heads to be cleaned."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqExtTapeDriveCleaningRequired",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ControllerIndex:$v3",
+				"Summary" : "Cleaning required for Tape drive ($v10)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqExtTapeDriveCleaningRequired RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeDriveCntlrIndex i 9999 CPQFCA-MIB::cpqFcTapeDriveScsiBus i 0 CPQFCA-MIB::cpqFcTapeDriveScsiTarget i 0 CPQFCA-MIB::cpqFcTapeDriveScsiLun i 0 CPQFCA-MIB::cpqFcTapeDriveModel s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveFWRev s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveSerialNumber s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveLocation s EXAMPLE",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqExtTapeDriveCleaningRequired",
+				"oid" : "1.3.6.1.4.1.232.0.16024",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Controller Index.",
+							"",
+							"This value is a logical number whose meaning is OS dependent.",
+							"For tape controller has one unique controller number associated",
+							"with it."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Model.",
+							"",
+							"This is the model name of the tape drive. It can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveModel",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Firmware Revision.",
+							"",
+							"This is firmware revision level of the tape drive. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveFWRev",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Serial Number.",
+							"",
+							"This is the unit serial number for the tape drive. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Location.",
+							"",
+							"This is the location of the tape drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveLocation",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqExtTapeDriveCleanTapeReplace",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Tape Drive Cleaning Tape Needs Replacing.",
+				"The agent has detected that an autoloader tape unit has a",
+				"cleaning tape that has been fully used and therefore needs to be",
+				"replaced with a new cleaning tape."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqExtTapeDriveCleanTapeReplace",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ControllerIndex:$v3",
+				"Summary" : "Cleaning tape needs replacing for Tape drive($v10)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqExtTapeDriveCleanTapeReplace RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeDriveCntlrIndex i 9999 CPQFCA-MIB::cpqFcTapeDriveScsiBus i 0 CPQFCA-MIB::cpqFcTapeDriveScsiTarget i 0 CPQFCA-MIB::cpqFcTapeDriveScsiLun i 0 CPQFCA-MIB::cpqFcTapeDriveModel s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveFWRev s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveSerialNumber s EXAMPLE CPQFCA-MIB::cpqFcTapeDriveLocation s EXAMPLE",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqExtTapeDriveCleanTapeReplace",
+				"oid" : "1.3.6.1.4.1.232.0.16025",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Controller Index.",
+							"",
+							"This value is a logical number whose meaning is OS dependent.",
+							"For tape controller has one unique controller number associated",
+							"with it."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"External Tape Drive Model.",
+							"",
+							"This is the model name of the tape drive. It can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveModel",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Firmware Revision.",
+							"",
+							"This is firmware revision level of the tape drive. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveFWRev",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Serial Number.",
+							"",
+							"This is the unit serial number for the tape drive. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Drive Location.",
+							"",
+							"This is the location of the tape drive."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeDriveLocation",
+						"oid" : "1.3.6.1.4.1.232.16.3.3.1.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqExtTapeLibraryStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Tape Library Status Change.",
+				"This trap signifies that the agent has detected a change in",
+				"the status of an External Tape library. The variable",
+				"cpqFcTapeLibraryStatus indicates the current tape library",
+				"status.",
+				"User Action: If the tape library is failed or offline, check",
+				"the tape library front panel and all connections."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==1) ? 3 : (($v11==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqExtTapeLibraryStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v11==1) ? 3600 : (($v11==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v11==1) ? 1 : (($v11==2) ? 0 : (($v11==4) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerIndex:$v3",
+				"Summary" : "External Tape library ($v10) status is $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqExtTapeLibraryStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeLibraryCntlrIndex i 9999 CPQFCA-MIB::cpqFcTapeLibraryScsiBus i 0 CPQFCA-MIB::cpqFcTapeLibraryScsiTarget i 0 CPQFCA-MIB::cpqFcTapeLibraryScsiLun i 0 CPQFCA-MIB::cpqFcTapeLibraryModel s EXAMPLE CPQFCA-MIB::cpqFcTapeLibraryFWRev s EXAMPLE CPQFCA-MIB::cpqFcTapeLibrarySerialNumber s EXAMPLE CPQFCA-MIB::cpqFcTapeLibraryLocation s EXAMPLE CPQFCA-MIB::cpqFcTapeLibraryStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqExtTapeLibraryStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16026",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Controller Index.",
+							"",
+							"This value is a logical number whose meaning is OS dependent.",
+							"Each tape controller has one unique controller number associated",
+							"with it."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Model.",
+							"",
+							"This is the model name of the tape library. It can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryModel",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Firmware Revision.",
+							"",
+							"This is firmware revision level of the tape library. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryFWRev",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Serial Number.",
+							"",
+							"This is the unit serial number for the tape library. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibrarySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Library Location.",
+							"",
+							"This is the location of the tape library."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryLocation",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Status.",
+							"",
+							"The library can be in one of the following states:",
+							"",
+							"other(1)",
+							"The library is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the library is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the library has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the library has failed and can no longer",
+							"return data. The library may need to be replaced.",
+							"",
+							"offline(5)",
+							"Indicates that the Insight Agents can no longer communicate with",
+							"the library. This could be caused by a cabling problem or the",
+							"library may be powered off."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "offline"
+						},
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryStatus",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqExtTapeLibraryDoorStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"External Tape Library Door Status Change.",
+				"This trap signifies that the agent has detected a change",
+				"in the door status of an External Tape library. The variable",
+				"cpqFcTapeLibraryDoorStatus indicates the current tape library",
+				"door status.",
+				"User Action: If the tape library door is open, close the",
+				"tape library door."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==1) ? 3 : (($v11==2) ? 2 : 1)"
+				},
+				"EventType" : "cpqExtTapeLibraryDoorStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v11==1) ? 3600 : (($v11==2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v11==1) ? 1 : (($v11==2) ? 3 : 0)"
+				},
+				"SubNode" : "ControllerIndex:$v3",
+				"Summary" : "The door is $v11 for tape library ($v10)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqExtTapeLibraryDoorStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcTapeLibraryCntlrIndex i 9999 CPQFCA-MIB::cpqFcTapeLibraryScsiBus i 0 CPQFCA-MIB::cpqFcTapeLibraryScsiTarget i 0 CPQFCA-MIB::cpqFcTapeLibraryScsiLun i 0 CPQFCA-MIB::cpqFcTapeLibraryModel s EXAMPLE CPQFCA-MIB::cpqFcTapeLibraryFWRev s EXAMPLE CPQFCA-MIB::cpqFcTapeLibrarySerialNumber s EXAMPLE CPQFCA-MIB::cpqFcTapeLibraryLocation s EXAMPLE CPQFCA-MIB::cpqFcTapeLibraryDoorStatus i 1",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqExtTapeLibraryDoorStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16027",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Controller Index.",
+							"",
+							"This value is a logical number whose meaning is OS dependent.",
+							"Each tape controller has one unique controller number associated",
+							"with it."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Bus.",
+							"",
+							"The bus index indicates to which SCSI bus instance on a tape",
+							"controller this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiBus",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Target.",
+							"",
+							"The target index indicates to which SCSI ID on a tape controller",
+							"SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiTarget",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Scsi Lun.",
+							"",
+							"The Lun index indicates to which logical unit on a SCSI ID on a",
+							"tape controller SCSI bus this table entry belongs."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryScsiLun",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Model.",
+							"",
+							"This is the model name of the tape library. It can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryModel",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Firmware Revision.",
+							"",
+							"This is firmware revision level of the tape library. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryFWRev",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Serial Number.",
+							"",
+							"This is the unit serial number for the tape library. It can be",
+							"used for identification purposes."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibrarySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"External Tape Library Location.",
+							"",
+							"This is the location of the tape library."
+						],
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryLocation",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Tape Library Door Status.",
+							"",
+							"The door can be in one of the following states:",
+							"",
+							"other(1)",
+							"The door is in a state other than one of those listed",
+							"below.",
+							"",
+							"notSupported(2)",
+							"The door status is not supported by the device.",
+							"",
+							"closed(3)",
+							"The door is closed.",
+							"",
+							"open(4)",
+							"The door is open."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notSupported",
+							"3" : "closed",
+							"4" : "open"
+						},
+						"name" : "CPQFCA-MIB::cpqFcTapeLibraryDoorStatus",
+						"oid" : "1.3.6.1.4.1.232.16.3.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQFCA-MIB::cpqFca3HostCntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fibre Channel Host Controller Status Change.",
+				"This trap signifies that the agent has detected a change in the",
+				"status of a Fibre Channel Host Controller. The variable",
+				"cpqFcaHostCntlrStatus indicates the current controller status.",
+				"User Action: If the controller status is failed, replace the",
+				"controller."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==1) ? 3 : (($v5==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqFca3HostCntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v5==1) ? 3600 : (($v5==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v5==1) ? 1 : (($v5==2) ? 0 : (($v5==4 || $v5==7) ? 3 : 4))"
+				},
+				"SubNode" : "ControllerIndex:$v4",
+				"Summary" : "Host controller $v4 status is $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQFCA-MIB::cpqFca3HostCntlrStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQFCA-MIB::cpqFcaHostCntlrHwLocation s EXAMPLE CPQFCA-MIB::cpqFcaHostCntlrIndex i 9999 CPQFCA-MIB::cpqFcaHostCntlrStatus i 1 CPQFCA-MIB::cpqFcaHostCntlrModel i 1 CPQFCA-MIB::cpqFcaHostCntlrSerialNumber s EXAMPLE CPQFCA-MIB::cpqFcaHostCntlrWorldWideName s EXAMPLE CPQFCA-MIB::cpqFcaHostCntlrWorldWidePortName s EXAMPLE",
+			"trap" : {
+				"name" : "CPQFCA-MIB::cpqFca3HostCntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.16028",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A text description of the hardware location, on complex",
+							"multi SBB hardware only, for the controller.",
+							"A NULL string indicates that the hardware location could not",
+							"be determined or is irrelevant."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrHwLocation",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Index.",
+							"",
+							"This value is a logical number whose meaning is OS dependent.",
+							"Each physical controller has one unique controller number",
+							"associated with it."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Status.",
+							"",
+							"The host controller can be in one of the following states:",
+							"",
+							"Other (1)",
+							"The agent is unable to determine the status of the host",
+							"controller.",
+							"",
+							"Ok (2)",
+							"Indicates that the host controller is in normal operation mode.",
+							"",
+							"Failed (3)",
+							"Indicates that the host controller has failed and should be",
+							"replaced.",
+							"",
+							"Shutdown (4)",
+							"Indicates that the host controller has been shutdown.",
+							"",
+							"LoopDegraded (5)",
+							"Indicates that the fibre channel connection is degraded.",
+							"",
+							"LoopFailed (6)",
+							"Indicates that the fibre channel connection is failed.",
+							"",
+							"NotConnected (7)",
+							"Indicates that the fibre channel port is not connected or the",
+							"device to which it is connected is powered down."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "shutdown",
+							"5" : "loopDegraded",
+							"6" : "loopFailed",
+							"7" : "notConnected"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Model.",
+							"",
+							"The type of controller card. The valid types are:",
+							"",
+							"Other (1)",
+							"You may need to upgrade your driver software and\\or instrument",
+							"agent(s). You have a drive array controller in the system",
+							"that the instrument agent does not recognize.",
+							"",
+							"fchc-p (2)",
+							"Compaq StorageWorks Fibre Channel Host Bus Adapter/P.",
+							"",
+							"fchc-e (3)",
+							"Compaq StorageWorks Fibre Channel Host Bus Adapter/E.",
+							"",
+							"fchc64 (4)",
+							"Compaq StorageWorks 64-Bit/66-Mhz Fibre Host Bus Adapter.",
+							"",
+							"sa-sam(5)",
+							"Compaq Smart Array, SAN Access Module.",
+							"",
+							"fca-2101(6)",
+							"FCA-2101",
+							"",
+							"sw64-33(7)",
+							"Compaq StorageWorks 64bit/33Mhz PCI to Fibre Channel HBA.",
+							"",
+							"fca-221x(8)",
+							"FCA-221x",
+							"",
+							"dpfcmc(9)",
+							"Dual Port Fibre Channel Mezzanine Card (2 Gb) for BL20Gp2 G2.",
+							"",
+							"fca-2404(10)",
+							"PCI-X 2Gb FCA2404 Fibre Channel HBA",
+							"",
+							"fca-2214(11)",
+							"PCI-X 2Gb FCA2214 Fibre Channel HBA",
+							"",
+							"a7298a(12)",
+							"PCI-X 2Gb A7298A Fibre Channel HBA",
+							"",
+							"fca-2214dc(13)",
+							"PCI-X 2Gb FCA2214DC Fibre Channel HBA",
+							"",
+							"a6826a(14)",
+							"PCI-X Dual Channel 2GB A6826A Fibre Channel HBA",
+							"",
+							"fcmcG3(15)",
+							"Fibre Channel Mezzaine Card G3, BL3x p Series",
+							"",
+							"fcmcG4(16)",
+							"Fibre Channel Mezzaine Card G4, BL2x p Series",
+							"",
+							"ab46xa(17)",
+							"PCI-X 2GB AB466A/AB467A Fibre Channel HBA",
+							"",
+							"fc-generic(18)",
+							"Fibre Channel HBA",
+							"",
+							"fca-1143(19)",
+							"HP FC1143 4Gb PCI-X 2.0 HBA",
+							"",
+							"fca-1243(20)",
+							"HP FC1243 4Gb PCI-X 2.0 DC HBA",
+							"",
+							"fca-2143(21)",
+							"HP FC2143 4Gb PCI-X 2.0 HBA",
+							"",
+							"fca-2243(22)",
+							"HP FC2243 4Gb PCI-X 2.0 DC HBA",
+							"",
+							"fca-1050(23)",
+							"HP StorageWorks 1050 HBA",
+							"",
+							"fca-lpe1105(24)",
+							"Emulex LPe1105-HP 4Gb FC HBA for HP c-Class Blade System",
+							"",
+							"fca-qmh2462(25)",
+							"Qlogic QMH2462 4Gb FC HBA for HP c-Class Blade System",
+							"",
+							"fca-1142sr(26)",
+							"HP FC1142SR 4Gb PCI-e HBA",
+							"",
+							"fca-1242sr(27)",
+							"HP FC1242SR 4Gb PCI-e DC HBA",
+							"",
+							"fca-2142sr(28)",
+							"HP FC2142SR 4Gb PCI-e HBA",
+							"",
+							"fca-2242sr(29)",
+							"HP FC2242SR 4Gb PCI-e DC HBA",
+							"",
+							"fcmc20pe(30)",
+							"Emulex based BL20p Fibre Channel Mezz HBA",
+							"",
+							"fca-81q(31)",
+							"HP StorageWorks 81Q 8Gb PCI-e FC HBA",
+							"",
+							"fca-82q(32)",
+							"HP StorageWorks 82Q 8Gb PCI-e Dual Port FC HBA ",
+							"",
+							"fca-qmh2562(33)",
+							"QLogic QMH2562 8Gb FC HBA for HP BladeSystem c-Class",
+							"",
+							"fca-81e(34)",
+							"HP StorageWorks 81E 8Gb PCI-e FC HBA ",
+							"",
+							"fca-82e(35)",
+							"HP StorageWorks 82E 8Gb PCI-e Dual Port FC HBA",
+							"",
+							"fca-1205(36)",
+							"Emulex LPe 1205-HP 8Gb FC HBA for HP BladeSystem c-Class"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fchc-p",
+							"3" : "fchc-e",
+							"4" : "fchc64",
+							"5" : "sa-sam",
+							"6" : "fca-2101",
+							"7" : "sw64-33",
+							"8" : "fca-221x",
+							"9" : "dpfcmc",
+							"10" : "fca-2404",
+							"11" : "fca-2214",
+							"12" : "a7298a",
+							"13" : "fca-2214dc",
+							"14" : "a6826a",
+							"15" : "fcmcG3",
+							"16" : "fcmcG4",
+							"17" : "ab46xa",
+							"18" : "fc-generic",
+							"19" : "fca-1143",
+							"20" : "fca-1243",
+							"21" : "fca-2143",
+							"22" : "fca-2243",
+							"23" : "fca-1050",
+							"24" : "fca-lpe1105",
+							"25" : "fca-qmh2462",
+							"26" : "fca-1142sr",
+							"27" : "fca-1242sr",
+							"28" : "fca-2142sr",
+							"29" : "fca-2242sr",
+							"30" : "fcmc20pe",
+							"31" : "fca-81q",
+							"32" : "fca-82q",
+							"33" : "fca-qmh2562",
+							"34" : "fca-81e",
+							"35" : "fca-82e",
+							"36" : "fca-1205"
+						},
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrModel",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller Serial Number.",
+							"",
+							"This value can be used to further identify a particular",
+							"controller. If the serial number is not supported, the agent",
+							"will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller World Wide Node Name.",
+							"",
+							"This value can be used to further identify a particular",
+							"controller. If the world wide node name is not supported",
+							"the agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrWorldWideName",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fibre Channel Host Controller World Wide Port Name.",
+							"",
+							"This value can be used to further identify a particular",
+							"controller. If the world wide port name is not supported",
+							"the agent will return a NULL string."
+						],
+						"name" : "CPQFCA-MIB::cpqFcaHostCntlrWorldWidePortName",
+						"oid" : "1.3.6.1.4.1.232.16.2.7.1.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

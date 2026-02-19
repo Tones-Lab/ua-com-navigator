@@ -1,0 +1,1952 @@
+{
+    "objects": [
+        {
+            "@objectName": "RCA::DEFAULT",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "Node" : "$.rca.deviceName",
+                "EventCategory": 3,
+                "ExpireTime": 86400,
+                "Severity": 1,
+                "OrigSeverity": 1,
+                "Summary": "Unknown RCA Event - ${.rca.rootCauseEventType}",
+                "SubNode": "None",
+                "EventType": "Unknown",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}+${.event.Summary}",
+                "RootCauseKey" : ""
+            },
+            "method": "rca",
+            "postprocessors": [
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::DEVICEDOWN",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 5,
+                "OrigSeverity": 1,
+                "Summary": "Device is down",
+                "EventType": "Device Down",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "DeviceDown"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "root"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.RootCauseFlag"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 300,
+                                    "targetField": "$.event.ExpireTime"
+                                }
+                            }
+                        ],
+                        "else": [
+                            {
+                                "set": {
+                                    "source": 5,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 2,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::DEVICEUNREACHABLE",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 4,
+                "OrigSeverity": 1,
+                "Summary": "Device is unreachable",
+                "EventType": "Device unreachable",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "DeviceUnreachable"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::BGPSESSIONDOWN",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 4,
+                "OrigSeverity": 1,
+                "Summary": "BGP Session ${.rca.name}",
+                "EventType": "BGP Session Down",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "BGPSessionDown"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseErrorMessage",
+                                    "operator": "==",
+                                    "value": ""
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "BGP Session %s is %s",
+                                    "args": [
+                                        "$.rca.name",
+                                        "$.rca.rootCauseEventMessage"
+                                    ],
+                                    "targetField": "$.event.Summary"
+                                }
+                            }
+                        ],
+                        "else": [
+                            {
+                                "set": {
+                                    "source": "BGP Session %s is %s - %s",
+                                    "args": [
+                                        "$.rca.name",
+                                        "$.rca.rootCauseEventMessage",
+                                        "$.rca.rootCauseErrorMessage"
+                                    ],
+                                    "targetField": "$.event.Summary"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::BGPPEERMISSING",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 600,
+                "Severity": 5,
+                "OrigSeverity": 1,
+                "Summary": "BGP Peer ${.rca.name} is missing",
+                "EventType": "BGP Peer Missing",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "BGPPeerMissing"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "set": {
+                        "source": "BGP Peer %s is missing",
+                        "args": [
+                            "$.rca.name"
+                        ],
+                        "targetField": "$.event.Summary"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::OSPFNEIGHBORSTATEDOWN",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 4,
+                "OrigSeverity": 1,
+                "Summary": "OSPF Neighbor ${.rca.name} state is disabled",
+                "EventType": "OSPF Neighbor State Down",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "OSPFNeighborStateDown"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "set": {
+                        "source": "OSPF Neighbor state %s is %s",
+                        "args": [
+                            "$.rca.name",
+                            "$.rca.rootCauseEventMessage"
+                        ],
+                        "targetField": "$.event.Summary"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::OSPFNEIGHBORMISSING",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 600,
+                "Severity": 5,
+                "OrigSeverity": 1,
+                "Summary": "OSPF Neighbor ${.rca.name} is missing",
+                "EventType": "OSPF Neighbor Missing",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "OSPFNeighborMissing"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "set": {
+                        "source": "OSPF Neighbor %s is missing",
+                        "args": [
+                            "$.rca.name"
+                        ],
+                        "targetField": "$.event.Summary"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::OSPFNEIGHBORSTATEFLAPPING",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 4,
+                "OrigSeverity": 1,
+                "Summary": "OSPF Neighbor ${.rca.name} state is flapping",
+                "EventType": "OSPF Neighbor State Flapping",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "OSPFNeighborStateFlapping"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "set": {
+                        "source": "OSPF Neighbor State %s is flapping",
+                        "args": [
+                            "$.rca.name"
+                        ],
+                        "targetField": "$.event.Summary"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::BGPSESSIONDISABLED",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 4,
+                "OrigSeverity": 1,
+                "Summary": "BGP Session ${.rca.name}",
+                "EventType": "BGP Session disabled",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "BGPSessionDisabled"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "set": {
+                        "source": "BGP Session %s is disabled",
+                        "args": [
+                            "$.rca.name"
+                        ],
+                        "targetField": "$.event.Summary"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::BGPSESSIONFLAPPING",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 4,
+                "OrigSeverity": 1,
+                "Summary": "BGP Session ${.rca.name}",
+                "EventType": "BGP Session Flapping",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "BGPSessionFlapping"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "set": {
+                        "source": "BGP Session %s is flapping",
+                        "args": [
+                            "$.rca.name"
+                        ],
+                        "targetField": "$.event.Summary"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::ENTITYDOWN",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 3,
+                "OrigSeverity": 1,
+                "Summary": "Entity ${.rca.name} is down",
+                "EventType": "Entity Down",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "EntityDown"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::ENTITYMISSING",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 600,
+                "Severity": 5,
+                "OrigSeverity": 1,
+                "Summary": "Entity ${.rca.name} is missing",
+                "EventType": "Entity Missing",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "EntityMissing"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::INTERFACEDOWN",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 4,
+                "OrigSeverity": 4,
+                "Summary": "Interface ${.rca.name} is down",
+                "EventType": "Interface Down",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "InterfaceDown"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::INTERFACEDISABLED",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 3,
+                "OrigSeverity": 1,
+                "Summary": "Interface ${.rca.name} is disabled",
+                "EventType": "Interface Disabled",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "InterfaceDisabled"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::INTERFACEMISSING",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 600,
+                "Severity": 5,
+                "OrigSeverity": 1,
+                "Summary": "Interface ${.rca.name} is missing",
+                "EventType": "Interface Missing",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "InterfaceMissing"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::INTERFACEFLAPPING",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 3,
+                "OrigSeverity": 1,
+                "Summary": "Interface ${.rca.name} is flapping",
+                "EventType": "Interface Flapping",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "InterfaceFlapping"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::ISOLATEDSEGMENT",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 5,
+                "OrigSeverity": 1,
+                "Summary": "Isolated Segment",
+                "EventType": "Isolated Segment",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "IsolatedSegment"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "root"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.RootCauseFlag"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 300,
+                                    "targetField": "$.event.ExpireTime"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::ICMPUNREACHABLE",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "EventCategory": 2,
+                "ExpireTime": 86400,
+                "Severity": 3,
+                "OrigSeverity": 3,
+                "Summary": "ICMP Unreachable",
+                "EventType": "ICMP Unreachable",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "ICMPUnreachable"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::SNMPUNREACHABLE",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "ExpireTime": 86400,
+                "OrigSeverity": 3,
+                "Summary": "SNMP Unreachable",
+                "EventType": "SNMP Unreachable",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "SNMPUnreachable"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ],
+                        "else": [
+                            {
+                                "set": {
+                                    "source": 3,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 2,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "@objectName": "RCA::VCENTERUNREACHABLE",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default RCA FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "SubNode" : "$.rca.name",
+                "Node" : "$.rca.deviceName",
+                "RootCauseKey" : "",
+                "ExpireTime": 86400,
+                "OrigSeverity": 5,
+                "Summary": "vCenter Unreachable",
+                "EventType": "vCenter Unreachable",
+                "Method": "RCA-Availability-Engine",
+                "SubMethod": "RCA-Availability-Engine - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.rca.rootCauseEventType}"
+            },
+            "method": "rca",
+            "rca": {
+                "rootCauseEventType": "vCenterUnreachable"
+            },
+            "postprocessors": [
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.rootCauseType",
+                                    "operator": "==",
+                                    "value": "symptom"
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": "%s+%s+%s",
+                                    "args": [
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.deviceName",
+                                        "$.rca.rootCauseDevice.rootCauseEventType"
+                                    ],
+                                    "targetField": "$.event.RootCauseKey"
+                                }
+                            }
+                        ],
+                        "else": []
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.rca.deviceZone",
+                        "targetField": "$.event.ZoneID"
+                    }
+                },
+                {
+                    "if": {
+                        "conditions": {
+                            "and": [
+                                {
+                                    "property": "$.rca.status",
+                                    "operator": "==",
+                                    "value": 1
+                                }
+                            ]
+                        },
+                        "then": [
+                            {
+                                "set": {
+                                    "source": 0,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ],
+                        "else": [
+                            {
+                                "set": {
+                                    "source": 5,
+                                    "targetField": "$.event.Severity"
+                                }
+                            },
+                            {
+                                "set": {
+                                    "source": 2,
+                                    "targetField": "$.event.EventCategory"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

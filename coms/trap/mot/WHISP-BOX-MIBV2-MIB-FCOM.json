@@ -1,0 +1,187 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200304150000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "WHISP-BOX-MIBV2-MIB::boxLan1DHCPClientEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"Lan1 DHCP Client has received a new address via DHCP"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "boxLan1DHCPClientEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "LanIp:$v1",
+				"Summary" : "Lan1 ($v1) DHCP client received new address via DHCP"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD WHISP-BOX-MIBV2-MIB::boxLan1DHCPClientEvent WHISP-BOX-MIBV2-MIB::dhcpLanIp a 192.0.2.1 WHISP-BOX-MIBV2-MIB::whispBoxEsn s EXAMPLE",
+			"trap" : {
+				"name" : "WHISP-BOX-MIBV2-MIB::boxLan1DHCPClientEvent",
+				"oid" : "1.3.6.1.4.1.161.19.3.3.12.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"LAN interface IP obtained through DHCP."
+						],
+						"name" : "WHISP-BOX-MIBV2-MIB::dhcpLanIp",
+						"oid" : "1.3.6.1.4.1.161.19.3.3.1.13",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Electronic serial number(MAC address) assigned to Radio."
+						],
+						"name" : "WHISP-BOX-MIBV2-MIB::whispBoxEsn",
+						"oid" : "1.3.6.1.4.1.161.19.3.3.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "WHISP-BOX-MIBV2-MIB::boxPoEType2PowerNotPresent",
+			"certification" : "STANDARD",
+			"description" : [
+				"802.3at Type 2 PoE not present, transmit and PoE out disabled"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "boxPoEType2PowerNotPresent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "PoE type 2 power not present"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD WHISP-BOX-MIBV2-MIB::boxPoEType2PowerNotPresent WHISP-BOX-MIBV2-MIB::whispBoxEsn s EXAMPLE",
+			"trap" : {
+				"name" : "WHISP-BOX-MIBV2-MIB::boxPoEType2PowerNotPresent",
+				"oid" : "1.3.6.1.4.1.161.19.3.3.12.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"Electronic serial number(MAC address) assigned to Radio."
+						],
+						"name" : "WHISP-BOX-MIBV2-MIB::whispBoxEsn",
+						"oid" : "1.3.6.1.4.1.161.19.3.3.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "WHISP-BOX-MIBV2-MIB::radioStatusAlarmEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"Radio Alarm Event notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "radioStatusAlarmEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Radio alarm event notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD WHISP-BOX-MIBV2-MIB::radioStatusAlarmEvent WHISP-BOX-MIBV2-MIB::radioStatusAlarmReason i 9999 WHISP-BOX-MIBV2-MIB::whispBoxEsn s EXAMPLE",
+			"trap" : {
+				"name" : "WHISP-BOX-MIBV2-MIB::radioStatusAlarmEvent",
+				"oid" : "1.3.6.1.4.1.161.19.3.3.12.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"Reason code associated with the cause of a Radio Status Alarm being triggered. ",
+							"Provide this code to Cambium Networks Support.",
+							"PMP 450m only."
+						],
+						"name" : "WHISP-BOX-MIBV2-MIB::radioStatusAlarmReason",
+						"oid" : "1.3.6.1.4.1.161.19.3.3.1.274",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Electronic serial number(MAC address) assigned to Radio."
+						],
+						"name" : "WHISP-BOX-MIBV2-MIB::whispBoxEsn",
+						"oid" : "1.3.6.1.4.1.161.19.3.3.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "WHISP-BOX-MIBV2-MIB::minModRateEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"Minimum Modulation Rate Event Notification.",
+				"Value indicates whether or not minimum modulation rate requirement has been satisfied.",
+				"PTP only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "minModRateEvent",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Minimum modulation rate satisfied' : 'Minimum modulation rate not satisfied'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD WHISP-BOX-MIBV2-MIB::minModRateEvent WHISP-BOX-MIBV2-MIB::minModRateSatisfied i 0 WHISP-BOX-MIBV2-MIB::whispBoxEsn s EXAMPLE",
+			"trap" : {
+				"name" : "WHISP-BOX-MIBV2-MIB::minModRateEvent",
+				"oid" : "1.3.6.1.4.1.161.19.3.3.12.4.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates that the minimum modulation rate was satisfied by both devices of the PTP link."
+						],
+						"enums" : {
+							"0" : "minModRateNotSatisfied",
+							"1" : "minModRateSatisfied"
+						},
+						"name" : "WHISP-BOX-MIBV2-MIB::minModRateSatisfied",
+						"oid" : "1.3.6.1.4.1.161.19.3.3.1.282",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Electronic serial number(MAC address) assigned to Radio."
+						],
+						"name" : "WHISP-BOX-MIBV2-MIB::whispBoxEsn",
+						"oid" : "1.3.6.1.4.1.161.19.3.3.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,438 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202312060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "APUMS-MIB::apUmsONSThrottling",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever the Oracle",
+				"Notification Service starts throttling messages. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apUmsONSThrottlingStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "ONS started throttling messages"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsONSThrottling ",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsONSThrottling",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.1"
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsONSThrottlingClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever the Oracle",
+				"Notification Service stops throttling messages. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apUmsONSThrottlingStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "ONS stoped throttling messages"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsONSThrottlingClear ",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsONSThrottlingClear",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.2"
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsDBUsage",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever the DB usage increases",
+				"beyond 80 percentage . "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apUmsDBUsageStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ServerIp:$v2",
+				"Summary" : "DB usage $v1 increases beyond 80&#37;"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsDBUsage APUMS-MIB::apUmsDBUsageLevel i 9999 APUMS-MIB::apUmsServerIp s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsDBUsage",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The database usage in percentage. ."
+						],
+						"name" : "APUMS-MIB::apUmsDBUsageLevel",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"IP address of the UMS server/pod where the UMS service has started"
+						],
+						"name" : "APUMS-MIB::apUmsServerIp",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsDBUsageClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever the DB usage decreases",
+				"below 80 percentage . "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apUmsDBUsageStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ServerIp:$v2",
+				"Summary" : "DB usage $v1 decreases below 80&#37;"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsDBUsageClear APUMS-MIB::apUmsDBUsageLevel i 9999 APUMS-MIB::apUmsServerIp s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsDBUsageClear",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The database usage in percentage. ."
+						],
+						"name" : "APUMS-MIB::apUmsDBUsageLevel",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"IP address of the UMS server/pod where the UMS service has started"
+						],
+						"name" : "APUMS-MIB::apUmsServerIp",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsServiceStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever UMS services are started . "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apUmsServiceStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ServerIp:4v1",
+				"Summary" : "UMS services $v1 started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsServiceStarted APUMS-MIB::apUmsServiceName s EXAMPLE APUMS-MIB::apUmsServerIp s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsServiceStarted",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the UMS service that has started."
+						],
+						"name" : "APUMS-MIB::apUmsServiceName",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP address of the UMS server/pod where the UMS service has started"
+						],
+						"name" : "APUMS-MIB::apUmsServerIp",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsMCERegistration",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever MCE registration fails with UMS . "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apUmsMCERegistrationStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "ServerIp:$v3;RegistrationId:$v2",
+				"Summary" : "MCE registration $v2 failed with UMS $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsMCERegistration APUMS-MIB::apUmsNfName s EXAMPLE APUMS-MIB::apUmsSiteRegistrationId s EXAMPLE APUMS-MIB::apUmsServerIp s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsMCERegistration",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the NF that is trying to register with UMS."
+						],
+						"name" : "APUMS-MIB::apUmsNfName",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The site registration ID with which Mce is trying",
+							"to register with UMS."
+						],
+						"name" : "APUMS-MIB::apUmsSiteRegistrationId",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP address of the UMS server/pod where the UMS service has started"
+						],
+						"name" : "APUMS-MIB::apUmsServerIp",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsMCERegistrationClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever MCE registration succeeds with UMS . "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apUmsMCERegistrationStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ServerIp:$v3;RegistrationId:$v2",
+				"Summary" : "MCE registration $v2 succeeded with UMS $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsMCERegistrationClear APUMS-MIB::apUmsNfName s EXAMPLE APUMS-MIB::apUmsSiteRegistrationId s EXAMPLE APUMS-MIB::apUmsServerIp s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsMCERegistrationClear",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the NF that is trying to register with UMS."
+						],
+						"name" : "APUMS-MIB::apUmsNfName",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The site registration ID with which Mce is trying",
+							"to register with UMS."
+						],
+						"name" : "APUMS-MIB::apUmsSiteRegistrationId",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP address of the UMS server/pod where the UMS service has started"
+						],
+						"name" : "APUMS-MIB::apUmsServerIp",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsInvalidMCERegistration",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever MCE tries to register with UMS with",
+				"a duplication site registration ID or if another MCE is already registered with the site . "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apUmsInvalidMCERegistration",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Invalid MCE registration"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsInvalidMCERegistration APUMS-MIB::apUmsNfName s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsInvalidMCERegistration",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the NF that is trying to register with UMS."
+						],
+						"name" : "APUMS-MIB::apUmsNfName",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsTestTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever UMS generates a test trap",
+				"for a trap receiver. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apUmsTestTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RcvrAddress:$v1",
+				"Summary" : "UMS test trap generated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsTestTrap APUMS-MIB::apUmsTrapRcvrAddress s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsTestTrap",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the trap receiver for which the test trap",
+							"has been generated. "
+						],
+						"name" : "APUMS-MIB::apUmsTrapRcvrAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsNodeUnreachable",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever an NF is unreachable. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apUmsNodeStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "DeviceAddress:$v1",
+				"Summary" : "NF unreachable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsNodeUnreachable APUMS-MIB::apUmsDeviceAddress s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsNodeUnreachable",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The address of the device being managed "
+						],
+						"name" : "APUMS-MIB::apUmsDeviceAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APUMS-MIB::apUmsNodeUnreachableClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever an unreachable NF becomes",
+				"reachable. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apUmsNodeStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "DeviceAddress:$v1",
+				"Summary" : "NF reachable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APUMS-MIB::apUmsNodeUnreachableClear APUMS-MIB::apUmsDeviceAddress s EXAMPLE",
+			"trap" : {
+				"name" : "APUMS-MIB::apUmsNodeUnreachableClear",
+				"oid" : "1.3.6.1.4.1.9148.3.21.3.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The address of the device being managed "
+						],
+						"name" : "APUMS-MIB::apUmsDeviceAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.21.2.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,2351 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201704111600Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondLowUpRateCrossing",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the G.Bond port' upstream",
+				"data rate has reached/dropped below or exceeded the low",
+				"upstream rate threshold, specified by sheGBondThreshLowUpRate.",
+				"This notification MAY be send for the -O subtype ports",
+				"while the port is up, on the crossing event in both",
+				"directions: from normal (rate is above the threshold) to low",
+				"(rate equals the threshold or below it) and from low to",
+				"normal. This notification is not applicable to the -R",
+				"subtypes.",
+				"It is RECOMMENDED that a small debouncing period of 2.5 sec",
+				"between the detection of the condition and notification",
+				"is implemented to prevent simultaneous LinkUp/LinkDown and",
+				"sheGBondLowUpRateCrossing notifications to be sent.",
+				"The adaptive nature of the G.Bond technology allows the port",
+				"to adapt itself to the changes in the copper environment",
+				"e.g. an impulse noise, alien crosstalk or a micro-interruption",
+				"may temporarily drop one or more BCEs in the aggregation",
+				"group, causing a rate degradation of the aggregated G.Bond",
+				"link. The dropped BCEs would then try to re-initialize",
+				"possibly at a lower rate than before, adjusting the rate to",
+				"provide required target SNR margin.",
+				"Generation of this notification is controlled by the",
+				"sheGBondLowRateCrossingEnable object."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 > $v2) ? 1 : 2"
+				},
+				"EventType" : "sheGBondLowUpRateCrossing",
+				"ExpireTime" : {
+					"eval" : "($v1 > $v2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 > $v2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 > $v2) ? 'G.Bond port upstream data rate is in normal range' : 'G.Bond port upstream data rate is below low threshold'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondLowUpRateCrossing SHE-GBOND-MIB::sheGBondUpDataRate u 99 SHE-GBOND-MIB::sheGBondThreshLowUpRate u 999",
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondLowUpRateCrossing SHE-GBOND-MIB::sheGBondUpDataRate u 9999 SHE-GBOND-MIB::sheGBondThreshLowUpRate u 999"
+			],
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondLowUpRateCrossing",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.1",
+				"variables" : [
+					{
+						"description" : [
+							"A current G.Bond port operational Data Rate in the upstream",
+							"direction, in bps.",
+							"This object represents an estimation of the sum of individual",
+							"BCE upstream data rates, modified to compensate for",
+							"fragmentation and encapsulation overhead (e.g. for an Ethernet",
+							"service, the target data rate of 10Mbps SHALL allow lossless",
+							"transmission of full-duplex 10Mbps Ethernet frame stream with",
+							"minimal inter-frame gap).",
+							"",
+							"Note that for symmetrical interfaces sheGBondUpDataRate ==",
+							"sheGBondDownDataRate == ifSpeed."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondUpDataRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.6.1.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"This object configures the G.Bond port low upstream rate",
+							"crossing alarm threshold. When the current value of",
+							"sheGBondUpDataRate for this port reaches/drops below or exceeds",
+							"this threshold, a sheGBondLowUpRateCrossing notification MAY be",
+							"generated if enabled by sheGBondLowRateCrossingEnable.",
+							"This object is valid for the -O subtype G.Bond ports",
+							"and irrelevant for the -R subtypes.",
+							"",
+							"This object MUST be maintained in a persistent manner.",
+							"",
+							"NOTE:",
+							"Support for VDSL2 based GBOND interfaces start with R4.7M."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondThreshLowUpRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.3.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondLowDownRateCrossing",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the G.Bond port' downstream",
+				"data rate has reached/dropped below or exceeded the low",
+				"downstream rate threshold, specified by",
+				"sheGBondThreshLowDownRate.",
+				"This notification MAY be send for the -O subtype ports",
+				"while the port is up, on the crossing event in both",
+				"directions: from normal (rate is above the threshold) to low",
+				"(rate equals the threshold or below it) and from low to",
+				"normal. This notification is not applicable to the -R",
+				"subtypes.",
+				"It is RECOMMENDED that a small debouncing period of 2.5 sec",
+				"between the detection of the condition and notification",
+				"is implemented to prevent simultaneous LinkUp/LinkDown and",
+				"sheGBondLowDownRateCrossing notifications to be sent.",
+				"The adaptive nature of the G.Bond technology allows the port",
+				"to adapt itself to the changes in the copper environment",
+				"e.g. an impulse noise, alien crosstalk or a micro-interruption",
+				"may temporarily drop one or more BCEs in the aggregation",
+				"group, causing a rate degradation of the aggregated G.Bond",
+				"link. The dropped BCEs would then try to re-initialize",
+				"possibly at a lower rate than before, adjusting the rate to",
+				"provide required target SNR margin.",
+				"Generation of this notification is controlled by the",
+				"sheGBondLowRateCrossingEnable object."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 > $v2) ? 1 : 2"
+				},
+				"EventType" : "sheGBondLowDownRateCrossing",
+				"ExpireTime" : {
+					"eval" : "($v1 > $v2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 > $v2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 > $v2) ? 'G.Bond port downstream data rate is in normal range' : 'G.Bond port downstream data rate is below the low threshold'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondLowDownRateCrossing SHE-GBOND-MIB::sheGBondDownDataRate u 99 SHE-GBOND-MIB::sheGBondThreshLowDownRate u 999",
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondLowDownRateCrossing SHE-GBOND-MIB::sheGBondDownDataRate u 9999 SHE-GBOND-MIB::sheGBondThreshLowDownRate u 999"
+			],
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondLowDownRateCrossing",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.2",
+				"variables" : [
+					{
+						"description" : [
+							"A current G.Bond port operational Data Rate in the downstream",
+							"direction, in bps.",
+							"This object represents an estimation of the sum of individual",
+							"BCE downstream data rates, modified to compensate for",
+							"fragmentation and encapsulation overhead (e.g. for an Ethernet",
+							"service, the target data rate of 10Mbps SHALL allow lossless",
+							"transmission of full-duplex 10Mbps Ethernet frame stream with",
+							"minimal inter-frame gap).",
+							"",
+							"Note that for symmetrical interfaces sheGBondUpDataRate ==",
+							"sheGBondDownDataRate == ifSpeed."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondDownDataRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.6.1.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"This object configures the G.Bond port low downstream rate",
+							"crossing alarm threshold. When the current value of",
+							"sheGBondDownDataRate for this port reaches/drops below or exceeds",
+							"this threshold, a sheGBondLowDownRateCrossing notification MAY",
+							"be generated if enabled by sheGBondLowRateCrossingEnable.",
+							"",
+							"This object is valid for the -O subtype G.Bond ports",
+							"and irrelevant for the -R subtypes.",
+							"",
+							"This object MUST be maintained in a persistent manner.",
+							"",
+							"NOTE:",
+							"Support for VDSL2 based GBOND interfaces start with R4.7M."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondThreshLowDownRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.3.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGbondPortCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event for successful portstack creation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGbondPortCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "G.Bond port created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGbondPortCreated SHE-GBOND-MIB::sheGBondPortStackControlIndex i 9999 SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortStackControlAssignedIfList s EXAMPLE SHE-GBOND-MIB::sheGBondPortStackControlBondingType i 1 SHE-GBOND-MIB::sheGBondPortStackControlACIRequestID u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGbondPortCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured bonding-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table.",
+							"",
+							"IMPORTANT:",
+							"Up to and including R4.7.1M, only up to a maximum of 4 entries in the assignedIfList ",
+							"are allowed!"
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlAssignedIfList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"look at table.",
+							"Could never be modified!"
+						],
+						"enums" : {
+							"1" : "atmBond",
+							"2" : "ethBond"
+						},
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlBondingType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This parameter is used by ACI management system to set an unique RequestID during GBondPortStack create command.",
+							"The parameter has NO meaning for the NE himself and will just be returned with the sheGbondPortCreated trap."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlACIRequestID",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.9",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGbondPortStackModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event for successful portstack modification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGbondPortStackModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "G.Bond port stack modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGbondPortStackModified SHE-GBOND-MIB::sheGBondPortStackControlIndex i 9999 SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortStackControlAssignedIfList s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGbondPortStackModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured bonding-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table.",
+							"",
+							"IMPORTANT:",
+							"Up to and including R4.7.1M, only up to a maximum of 4 entries in the assignedIfList ",
+							"are allowed!"
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlAssignedIfList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGbondPortDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event for successful portstack delete."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGbondPortDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "G.Bond port deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGbondPortDeleted SHE-GBOND-MIB::sheGBondPortStackControlIndex i 9999 SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGbondPortDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured bonding-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortConfigurationModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event for successful port conf modification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPortConfigurationModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "G.Bond port configuration modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortConfigurationModified SHE-GBOND-MIB::sheGBondPortConfControlIndex i 9999 SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortConfControlDiscoveryCode s EXAMPLE SHE-GBOND-MIB::sheGBondPortConfControlTargetUpDataRate u 9999 SHE-GBOND-MIB::sheGBondPortConfControlTargetDownDataRate u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortConfigurationModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.4",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured gbond-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table"
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlDiscoveryCode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlTargetUpDataRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlTargetDownDataRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.9",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortThreshConfigurationModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event for successful port threshold modification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPortThreshConfigurationModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "G.Bond port threshold configuration modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortThreshConfigurationModified SHE-GBOND-MIB::sheGBondPortConfControlIndex i 9999 SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortConfControlThreshLowUpRate u 9999 SHE-GBOND-MIB::sheGBondPortConfControlThreshLowDownRate u 9999 SHE-GBOND-MIB::sheGBondPortConfControlLowRateCrossingEnable i 1",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortThreshConfigurationModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.5",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured gbond-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlThreshLowUpRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlThreshLowDownRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlLowRateCrossingEnable",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGbondPortReqResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Result notification for long running commands."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGbondPortReqResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==30 || $v4==32 || $v4==37) ? 2 : 3"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "G.Bond port command $v2 ended with result $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGbondPortReqResult SHE-GBOND-MIB::sheGBondPortStackControlIndex i 9999 SHE-GBOND-MIB::sheGBondPortStackControlRequest i 1 SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortStackControlReqResult i 36",
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGbondPortReqResult SHE-GBOND-MIB::sheGBondPortStackControlIndex i 9998 SHE-GBOND-MIB::sheGBondPortStackControlRequest i 1 SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortStackControlReqResult i 37"
+			],
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGbondPortReqResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.6",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured bonding-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"",
+							"createGBondPort (101):",
+							"sheGBondPortStackControlAssignedIfList",
+							"sheGBondPortStackControlBondingType",
+							"",
+							"modifyGBondPortStack (102):",
+							"sheGBondPortStackControlIndex",
+							"sheGBondPortStackControlAssignedIfList",
+							"",
+							"deleteGBondPort (103):",
+							"sheGBondPortStackControlIndex",
+							""
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"101" : "createGBondPort",
+							"102" : "modifyGBondPortStack",
+							"103" : "deleteGBondPort",
+							"110" : "modifyGBondPortConfiguration",
+							"111" : "modifyGBondPortThreshConfiguration",
+							"112" : "enableGBondPortPmTca",
+							"113" : "disableGBondPortPmTca",
+							"114" : "enableGBondPortLowRateCrossingAlarm",
+							"115" : "disableGBondPortLowRateCrossingAlarm",
+							"121" : "modifyGBondAtmPortConfiguration",
+							"131" : "modifyGBondEthPortConfiguration",
+							"141" : "createPmTcaProfile",
+							"142" : "modifyPmTcaProfile",
+							"143" : "deletePmTcaProfile"
+						},
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The result of the last user command."
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"30" : "comExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"51" : "resourceUnavailable",
+							"52" : "comFailedOnFirmwareRestrictions",
+							"53" : "comFailedOnHWRestrictions",
+							"54" : "comFailedOnUnsupportedBondingType",
+							"55" : "comFailedOnUnsuitableLineConditions",
+							"56" : "comFailedOnInvalidNoOfIFS",
+							"57" : "comFailedOnInvalidPortRange",
+							"58" : "comFailedOnBondingNotSupportedByCardType",
+							"59" : "comFailedOnInvalidMasterChange",
+							"60" : "comFailedOnInvalidShdslPortRates",
+							"61" : "comFailedOnIParameterNotSupportedByVdsl",
+							"100" : "profileNameAlreadyExists",
+							"101" : "profileNameDoesNotExist",
+							"102" : "profileInUse",
+							"103" : "profileAssignmentFailed",
+							"104" : "maxNoOfProfilesReached"
+						},
+						"name" : "SHE-GBOND-MIB::sheGBondPortStackControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.2.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortThreshPmTcaEnabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"Event notification indicating that Threshold Crossing ",
+				"Alerts (TCA) have been enabled for a given GBS port.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPortThreshPmTcaEnabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortConfControlIndex:$v1",
+				"Summary" : "Port PM threshold crossing alert enabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortThreshPmTcaEnabled SHE-GBOND-MIB::sheGBondPortConfControlIndex i 9999 SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortConfControlPmTcaConfProfile s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortThreshPmTcaEnabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.7",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured gbond-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 Reserved for future use only."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlPmTcaConfProfile",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortThreshPmTcaDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"Event notification indicating that Threshold Crossing ",
+				"Alerts (TCA) have been disabled for a given GBS port.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPortThreshPmTcaDisabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortConfControlIndex:$v1",
+				"Summary" : "Port PM threshold crossing alert disabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortThreshPmTcaDisabled SHE-GBOND-MIB::sheGBondPortConfControlIndex i 9999 SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortThreshPmTcaDisabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.8",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured gbond-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortLowRateCrossingAlarmEnableModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the creation of alarms in case of low rate threshold crossing",
+				"has been modified.",
+				"REVISION HISTORY",
+				"R4.7.3M V1.554: Added and supported.",
+				"SR5.1 V1.567: Added and supported."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPortLowRateCrossingAlarmEnableModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Low rate crossing alarm enabled' : 'Low rate crossing alarm disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortLowRateCrossingAlarmEnableModified SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondLowRateCrossingAlarmEnable i 1",
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortLowRateCrossingAlarmEnableModified SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondLowRateCrossingAlarmEnable i 2"
+			],
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortLowRateCrossingAlarmEnableModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.3.9",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortConfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.4.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates whether sheGBondLowUpRateCrossing and",
+							"sheGBondLowDownRateCrossing alarms should be generated",
+							"for this interface. This is in addition to the notifications",
+							"that can be enabled/disabled by sheGBondLowRateCrossingEnable.",
+							"",
+							"This object is valid for the -O subtype G.Bond ports",
+							"and irrelevant for the -R subtypes.",
+							"",
+							"VALUES",
+							"true(1) : alarms enabled",
+							"false(2): alarms disabled (default)",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M V1.554: Added and supported.",
+							"SR5.1 V1.567: Added and supported."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-GBOND-MIB::sheGBondLowRateCrossingAlarmEnable",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortActivationFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Portalarm if the IU reject the gbond portactivation request."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheGBondPortActivationFailed",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'G.Bond port activation failure cleared' : 'G.Bond port activation failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortActivationFailed SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 2",
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortActivationFailed SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9998 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortActivationFailed",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.4",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPmTca15MinESCrossing",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"This notification indicates that the Errored Seconds threshold",
+				"specified by sheGBondPortPmTcaProfileThresh15MinES, has been",
+				"reached or exceeded for the GBS port.",
+				"Generation of this notification is controlled by the",
+				"sheGBondPortConfPmTcaEnable and",
+				"sheGBondPortPmTcaProfileThresh15MinES objects.",
+				"This object maps to the TR-159 notification",
+				"nGroupPerfTca15MinES.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only.",
+				"REFERENCE ",
+				"[TR-159], Section 5.5.1.42"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPmTca15MinESCrossing",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Errored seconds in 15 minutes threshold $v2 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPmTca15MinESCrossing SHE-GBOND-MIB::sheGBondPortPmCur15MinES C 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinES u 0",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPmTca15MinESCrossing",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.5.3",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Errored Seconds (ES) on the GBS in the current",
+							"15-minute performance interval.",
+							"",
+							"This object maps to the TR-159 attribute aGroupPerfCurr15MinES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmCur15MinES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.1.1.7",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Errored Seconds (ES)",
+							"within any given 15-minute performance data collection interval.",
+							"",
+							"If the number of ESs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinESCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPmTca15MinSESCrossing",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"This notification indicates that the Severely Errored Seconds",
+				"threshold, specified by sheGBondPortPmTcaProfileThresh15MinSES",
+				"has been reached or exceeded for the GBS port.",
+				"Generation of this notification is controlled by the",
+				"sheGBondPortConfPmTcaEnable and",
+				"sheGBondPortPmTcaProfileThresh15MinSES objects.",
+				"This object maps to the TR-159 notification",
+				"nGroupPerfTca15MinSES.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only.",
+				"REFERENCE ",
+				"[TR-159], Section 5.5.1.43"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPmTca15MinSESCrossing",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Severely errored seconds in 15 minutes threshold $v2 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPmTca15MinSESCrossing SHE-GBOND-MIB::sheGBondPortPmCur15MinSES C 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinSES u 0",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPmTca15MinSESCrossing",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.5.4",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Severely Errored Seconds (SES) on the GBS in the",
+							"current 15-minute performance interval.",
+							"",
+							"This object maps to the TR-159 attribute aGroupPerfCurr15MinSES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmCur15MinSES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.1.1.8",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Severely Errored Seconds",
+							"(SES) within any given 15-minute performance data collection",
+							"interval.",
+							"",
+							"If the number of SESs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinSESCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinSESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinSES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinSES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPmTca15MinUASCrossing",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"This notification indicates that the Unavailable Seconds",
+				"threshold, specified by sheGBondPortPmTcaProfileThresh15MinUAS",
+				"has been reached or exceeded for the GBS port.",
+				"Generation of this notification is controlled by the",
+				"sheGBondPortConfPmTcaEnable and",
+				"sheGBondPortPmTcaProfileThresh15MinUAS objects.",
+				"This object maps to the TR-159 notification",
+				"nGroupPerfTca15MinUAS.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only.",
+				"REFERENCE ",
+				"[TR-159], Section 5.5.1.44"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPmTca15MinUASCrossing",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Port unavailable seconds in 15 minutes threshold $v2 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPmTca15MinUASCrossing SHE-GBOND-MIB::sheGBondPortPmCur15MinUAS C 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinUAS u 0",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPmTca15MinUASCrossing",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.5.5",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Unavailable Seconds (UAS) on the GBS in the current",
+							"15-minute performance interval.",
+							"",
+							"This object maps to the TR-159 attribute aGroupPerfCurr15MinUAS."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmCur15MinUAS",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.1.1.9",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Unavailable Seconds (UAS)",
+							"within any given 15-minute performance data collection interval.",
+							"",
+							"If the number of UASs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinUASCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinUASCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinUAS."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinUAS",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPmTca1DayESCrossing",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"This notification indicates that the Errored Seconds threshold",
+				"specified by sheGBondPortPmTcaProfileThresh1DayES, has been",
+				"reached or exceeded for the GBS port.",
+				"Generation of this notification is controlled by the",
+				"sheGBondPortConfPmTcaEnable and",
+				"sheGBondPortPmTcaProfileThresh1DayES objects.",
+				"This object maps to the TR-159 notification",
+				"nGroupPerfTca1DayES.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only.",
+				"REFERENCE ",
+				"[TR-159], Section 5.5.1.54"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPmTca1DayESCrossing",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Errored seconds in 1 day threshold $v2 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPmTca1DayESCrossing SHE-GBOND-MIB::sheGBondPortPmCur1DayES C 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayES u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPmTca1DayESCrossing",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.5.6",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Errored Seconds (ES) on the GBS in the current 1-day",
+							"performance interval.",
+							"",
+							"This object maps to the TR-159 attribute aGroupPerfCurr1DayES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmCur1DayES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.1.1.13",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Errored Seconds (ES)",
+							"within any given 1-day performance data collection interval.",
+							"",
+							"If the number of ESs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DayESCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DayESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DayES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPmTca1DaySESCrossing",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"This notification indicates that the Severely Errored Seconds",
+				"threshold, specified by sheGBondPortPmTcaProfileThresh1DaySES",
+				"has been reached or exceeded for the GBS port.",
+				"Generation of this notification is controlled by the",
+				"sheGBondPortConfPmTcaEnable and",
+				"sheGBondPortPmTcaProfileThresh1DaySES objects.",
+				"This object maps to the TR-159 notification",
+				"nGroupPerfTca1DaySES.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only.",
+				"REFERENCE ",
+				"[TR-159], Section 5.5.1.55"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPmTca1DaySESCrossing",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Severely errored seconds in 1 day threshold $v2 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPmTca1DaySESCrossing SHE-GBOND-MIB::sheGBondPortPmCur1DaySES C 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DaySES u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPmTca1DaySESCrossing",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.5.7",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Severely Errored Seconds (SES) on the GBS in the",
+							"current 1-day performance interval.",
+							"",
+							"This object maps to the TR-159 attribute aGroupPerfCurr1DaySES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmCur1DaySES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.1.1.14",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Severely Errored Seconds",
+							"(SES) within any given 1-day performance data collection",
+							"interval.",
+							"",
+							"If the number of SESs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DaySESCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DaySESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DaySES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DaySES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPmTca1DayUASCrossing",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"This notification indicates that the Unavailable Seconds",
+				"threshold, specified by sheGBondPortPmTcaProfileThresh1DayUAS",
+				"has been reached or exceeded for the GBS port.",
+				"Generation of this notification is controlled by the",
+				"sheGBondPortConfPmTcaEnable and",
+				"sheGBondPortPmTcaProfileThresh1DayUAS objects.",
+				"This object maps to the TR-159 notification",
+				"nGroupPerfTca1DayUAS.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only.",
+				"REFERENCE ",
+				"[TR-159], Section 5.5.1.56"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPmTca1DayUASCrossing",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Port unavailable seconds in 1 day threshold $v2 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPmTca1DayUASCrossing SHE-GBOND-MIB::sheGBondPortPmCur1DayUAS C 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayUAS u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPmTca1DayUASCrossing",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.5.8",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Unavailable Seconds (UAS) on the GBS in the current",
+							"1-day performance interval.",
+							"",
+							"This object maps to the TR-159 attribute aGroupPerfCurr1DayUAS."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmCur1DayUAS",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.1.1.15",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Unavailable Seconds (UAS)",
+							"within any given 1-day performance data collection interval.",
+							"",
+							"If the number of UASs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DayUASCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DayUASCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DayUAS."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayUAS",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"Configuration notification indicating that a new ",
+				"sheGBondPortPmTcaProfileEntry has been created.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPortPmTcaProfileEntryCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New PM TCA profile entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryCreated SHE-GBOND-MIB::sheGBondPortPmTcaProfileControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinES u 0 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinSES u 0 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinUAS u 0 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayES u 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DaySES u 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayUAS u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.6.1",
+				"variables" : [
+					{
+						"description" : [
+							"RESERVED FOR FUTURE USE ONLY",
+							"",
+							"The time stamp of the last command (end of command).",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 Reserved for future use only."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.5.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Errored Seconds (ES)",
+							"within any given 15-minute performance data collection interval.",
+							"",
+							"If the number of ESs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinESCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Severely Errored Seconds",
+							"(SES) within any given 15-minute performance data collection",
+							"interval.",
+							"",
+							"If the number of SESs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinSESCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinSESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinSES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinSES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Unavailable Seconds (UAS)",
+							"within any given 15-minute performance data collection interval.",
+							"",
+							"If the number of UASs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinUASCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinUASCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinUAS."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinUAS",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Errored Seconds (ES)",
+							"within any given 1-day performance data collection interval.",
+							"",
+							"If the number of ESs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DayESCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DayESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DayES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Severely Errored Seconds",
+							"(SES) within any given 1-day performance data collection",
+							"interval.",
+							"",
+							"If the number of SESs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DaySESCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DaySESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DaySES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DaySES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Unavailable Seconds (UAS)",
+							"within any given 1-day performance data collection interval.",
+							"",
+							"If the number of UASs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DayUASCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DayUASCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DayUAS."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayUAS",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"Configuration notification indicating that an existing ",
+				"sheGBondPortPmTcaProfileEntry has been modified.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPortPmTcaProfileEntryModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "PM TCA profile entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryModified SHE-GBOND-MIB::sheGBondPortPmTcaProfileControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinES u 0 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinSES u 0 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinUAS u 0 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayES u 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DaySES u 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayUAS u 9999",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.6.2",
+				"variables" : [
+					{
+						"description" : [
+							"RESERVED FOR FUTURE USE ONLY",
+							"",
+							"The time stamp of the last command (end of command).",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 Reserved for future use only."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.5.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Errored Seconds (ES)",
+							"within any given 15-minute performance data collection interval.",
+							"",
+							"If the number of ESs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinESCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Severely Errored Seconds",
+							"(SES) within any given 15-minute performance data collection",
+							"interval.",
+							"",
+							"If the number of SESs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinSESCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinSESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinSES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinSES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Unavailable Seconds (UAS)",
+							"within any given 15-minute performance data collection interval.",
+							"",
+							"If the number of UASs in a particular 15-minute collection",
+							"interval reaches or exceeds this value, a",
+							"sheGBondPmTca15MinUASCrossing notification MAY be generated if",
+							"enabled by sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca15MinUASCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold15MinUAS."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh15MinUAS",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Errored Seconds (ES)",
+							"within any given 1-day performance data collection interval.",
+							"",
+							"If the number of ESs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DayESCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DayESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DayES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Severely Errored Seconds",
+							"(SES) within any given 1-day performance data collection",
+							"interval.",
+							"",
+							"If the number of SESs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DaySESCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DaySESCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DaySES."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DaySES",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A desired threshold for the number of Unavailable Seconds (UAS)",
+							"within any given 1-day performance data collection interval.",
+							"",
+							"If the number of UASs in a particular 1-day collection interval",
+							"reaches or exceeds this value, a sheGBondPmTca1DayUASCrossing",
+							"notification MAY be generated if enabled by",
+							"sheGBondPortConfPmTcaEnable.",
+							"",
+							"At most one notification can be sent per interval.",
+							"Setting this attribute to zero (default) effectively disables",
+							"the sheGBondPmTca1DayUASCrossing notification.",
+							"",
+							"This object maps to the TR-159 attribute",
+							"aGroupPerfThreshold1DayUAS."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileThresh1DayUAS",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.4.1.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"Configuration notification indicating that an existing ",
+				"sheGBondPortPmTcaProfileEntry has been deleted.",
+				"REVISION HISTORY",
+				"SR5.1 Reserved for future use only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGBondPortPmTcaProfileEntryDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ProfileControlName:$v2",
+				"Summary" : "PM TCA $v2 profile entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryDeleted SHE-GBOND-MIB::sheGBondPortPmTcaProfileControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondPortPmTcaProfileControlName s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileEntryDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.6.3",
+				"variables" : [
+					{
+						"description" : [
+							"RESERVED FOR FUTURE USE ONLY",
+							"",
+							"The time stamp of the last command (end of command).",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 Reserved for future use only."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.5.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"RESERVED FOR FUTURE USE ONLY",
+							"",
+							"Name of the sheGBondPortPmTcaProfileEntry.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 Reserved for future use only."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondPortPmTcaProfileControlName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.8.5.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondLowUpRateCrossingAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that the G.Bond port upstream",
+				"data rate has reached/dropped below or exceeded the low",
+				"upstream rate threshold, specified by sheGBondThreshLowUpRate.",
+				"This alarm is sent for the -O subtype ports",
+				"while the port is up, on the crossing event from normal ",
+				"(rate is above the threshold) to low (rate equals the threshold ",
+				"or below it). This alarm is not applicable to the -R",
+				"subtypes.",
+				"A small debouncing period of 2.5 sec, between the detection of ",
+				"the condition and the alarm notification, is implemented to prevent ",
+				"simultaneous LinkUp/LinkDown and sheGBondLowUpRateCrossingAlarm ",
+				"to be sent.",
+				"The adaptive nature of the G.Bond technology allows the port",
+				"to adapt itself to the changes in the copper environment",
+				"e.g. an impulse noise, alien crosstalk or a micro-interruption",
+				"may temporarily drop one or more BCEs in the aggregation",
+				"group, causing a rate degradation of the aggregated G.Bond",
+				"link. The dropped BCEs would then try to re-initialize",
+				"possibly at a lower rate than before, adjusting the rate to",
+				"provide required target SNR margin.",
+				"The alarm will be cleared if the rate again reaches the value ",
+				"specified by sheGBondThreshLowUpRate.",
+				"Generation of this alarm notification is controlled by setting",
+				"and resetting the object sheGBondLowRateCrossingAlarmEnable.",
+				"VALUES",
+				"sheReportingSourceType = interface(2)",
+				"sheReportingSource = ifIndex",
+				"sheAlarmSeverity = determined through the configuration ",
+				"of shePhysPortAlarmSeverityIndex",
+				"REVISION HISTORY",
+				"R4.7.3M V1.554: Added and supported.",
+				"SR5.1 V1.567: Added and supported."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheGBondLowUpRateCrossingAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "AlarmReportingSource:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'G.Bond port upstream data rate is within normal range' : 'G.Bond low upstream data rate threshold crossed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondLowUpRateCrossingAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondLowUpRateCrossingAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondLowUpRateCrossingAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.7",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGBondLowDownRateCrossingAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that the G.Bond port downstream",
+				"data rate has reached/dropped below or exceeded the low",
+				"downstream rate threshold, specified by",
+				"sheGBondThreshLowDownRate.",
+				"This alarm is sent for the -O subtype ports",
+				"while the port is up, on the crossing event from normal ",
+				"(rate is above the threshold) to low (rate equals the ",
+				"threshold or below it). This alarm is not applicable to the -R",
+				"subtypes.",
+				"A small debouncing period of 2.5 sec, between the detection of ",
+				"the condition and the alarm notification, is implemented to prevent ",
+				"simultaneous LinkUp/LinkDown and sheGBondLowDownRateCrossingAlarm ",
+				"to be sent.",
+				"The adaptive nature of the G.Bond technology allows the port",
+				"to adapt itself to the changes in the copper environment",
+				"e.g. an impulse noise, alien crosstalk or a micro-interruption",
+				"may temporarily drop one or more BCEs in the aggregation",
+				"group, causing a rate degradation of the aggregated G.Bond",
+				"link. The dropped BCEs would then try to re-initialize",
+				"possibly at a lower rate than before, adjusting the rate to",
+				"provide required target SNR margin.",
+				"The alarm will be cleared if the rate again reaches the value ",
+				"specified by sheGBondThreshLowDownRate.",
+				"Generation of this alarm notification is controlled by setting ",
+				"and resetting the object sheGBondLowRateCrossingAlarmEnable.",
+				"VALUES",
+				"sheReportingSourceType = interface(2)",
+				"sheReportingSource = ifIndex",
+				"sheAlarmSeverity = determined through the configuration ",
+				"of shePhysPortAlarmSeverityIndex",
+				"REVISION HISTORY",
+				"R4.7.3M V1.554: Added and supported.",
+				"SR5.1 V1.567: Added and supported."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheGBondLowDownRateCrossingAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "AlarmReportingSource:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'G.Bond port downstream data rate is within normal range' : 'G.Bond low downstream data rate threshold crossed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondLowDownRateCrossingAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-GBOND-MIB::sheGBondLowDownRateCrossingAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGBondLowDownRateCrossingAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.1.1.7.8",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGbondAtmPortModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event for successful Atm port modification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGbondAtmPortModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "G.Bond ATM port modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGbondAtmPortModified SHE-GBOND-MIB::sheGBondAtmPortConfControlIndex i 9999 SHE-GBOND-MIB::sheGBondAtmPortConfControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondAtmPortConfControlUpMaxDataRate u 9999 SHE-GBOND-MIB::sheGBondAtmPortConfControlDownMaxDataRate u 9999 SHE-GBOND-MIB::sheGBondAtmPortConfControlUpDiffDelayTolerence u 0 SHE-GBOND-MIB::sheGBondAtmPortConfControlDownDiffDelayTolerence u 0",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGbondAtmPortModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.3.1.4.1",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured gbond-port."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondAtmPortConfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.3.1.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondAtmPortConfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.3.1.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondAtmPortConfControlUpMaxDataRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.3.1.2.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondAtmPortConfControlDownMaxDataRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.3.1.2.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondAtmPortConfControlUpDiffDelayTolerence",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.3.1.2.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondAtmPortConfControlDownDiffDelayTolerence",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.3.1.2.10",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-GBOND-MIB::sheGbondEthPortModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event for successful Eth port modification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheGbondEthPortModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "G.Bond ethernet port modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-GBOND-MIB::sheGbondEthPortModified SHE-GBOND-MIB::sheGBondEthPortConfControlIndex i 9999 SHE-GBOND-MIB::sheGBondEthPortConfControlTimeStamp u 9999 SHE-GBOND-MIB::sheGBondEthPortConfControlTcAdminType i 1",
+			"trap" : {
+				"name" : "SHE-GBOND-MIB::sheGbondEthPortModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.5.1.5.1",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the configured xdsl-interface."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondEthPortConfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.5.1.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-GBOND-MIB::sheGBondEthPortConfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.5.1.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"look at table."
+						],
+						"enums" : {
+							"1" : "tc6465",
+							"2" : "tcHDLC",
+							"3" : "unknown"
+						},
+						"name" : "SHE-GBOND-MIB::sheGBondEthPortConfControlTcAdminType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.26.5.1.2.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

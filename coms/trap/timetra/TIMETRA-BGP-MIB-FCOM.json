@@ -1,0 +1,1905 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201701010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpMaxPrefix90",
+			"certification" : "STANDARD",
+			"description" : [
+				"the number of routes learned from this peer has exceeded 90 percent of",
+				"the configured maximum."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpInstanceIndex>[0-9]+)\\.(?P<tBgpPeerAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpMaxPrefix90",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "InstanceIndex:$tBgpInstanceIndex;PeerAddress:$tBgpPeerAddress",
+				"Summary" : "Number of BGP routes learned from peer $tBgpPeerAddress is over 90% of maximum ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpMaxPrefix90 TIMETRA-BGP-MIB::tBgpPeerMaxPrefix.11.10.123.22.34 u 9999",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpMaxPrefix90",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"configures the maximum number of routes that can",
+							"be learned from this peer. zero means 'no limit'.",
+							"",
+							"if the number of routes exceeds 90% of this limit, then the",
+							"tBgpMaxPrefix90 notification is sent.",
+							"",
+							"if the number of routes exceeds this limit, then",
+							"BGP peering will be dropped. Also, the tBgpMaxPrefix100",
+							"notification will be sent."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerMaxPrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.3.1.16",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpMaxPrefix100",
+			"certification" : "STANDARD",
+			"description" : [
+				"the number of routes learned from this peer has exceeded the",
+				"configured maximum."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpInstanceIndex>[0-9]+)\\.(?P<tBgpPeerAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpMaxPrefix100",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "InstanceIndex:$tBgpInstanceIndex;PeerAddress:$tBgpPeerAddress",
+				"Summary" : "Number of peer routes are more than configured maximum number: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpMaxPrefix100 TIMETRA-BGP-MIB::tBgpPeerMaxPrefix.11.10.123.22.34 u 9999",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpMaxPrefix100",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"configures the maximum number of routes that can",
+							"be learned from this peer. zero means 'no limit'.",
+							"",
+							"if the number of routes exceeds 90% of this limit, then the",
+							"tBgpMaxPrefix90 notification is sent.",
+							"",
+							"if the number of routes exceeds this limit, then",
+							"BGP peering will be dropped. Also, the tBgpMaxPrefix100",
+							"notification will be sent."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerMaxPrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.3.1.16",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpPeerGRStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tBgpPeerGRStatusChange notification is generated when the graceful",
+				"restart status changes for a BGP peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 2 : ($v1==3) ? 1 : 3"
+				},
+				"EventType" : "tBgpPeerGRStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 86400 : ($v1==3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 3 : ($v1==3) ? 0 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "BGP peer graceful restart status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpPeerGRStatusChange TIMETRA-BGP-MIB::tBgpPeerOperGRStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpPeerGRStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerOperGRStatus indicates the graceful restart",
+							"status of the BGP peer.'",
+							"",
+							"The values of tBgpPeerOperGRStatus means:",
+							"notHelping (1), -- Peer is not currently being helped",
+							"restarting (2), -- Received restart request from the peer",
+							"restart-complete (3), -- The peer has completed the most recent restart",
+							"helping (4) -- Peer is helping us in restarting."
+						],
+						"enums" : {
+							"1" : "notHelping",
+							"2" : "restarting",
+							"3" : "restart-complete",
+							"4" : "helping"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerOperGRStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.4.1.24",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpMaxNgPrefix90",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tBgpMaxNgPrefix90 notification is generated when the number of",
+				"routes learned from the peer has exceeded tBgpPeerNgMaxPrefixThreshold",
+				"percent of the configured maximum (tBgpPeerNgMaxPrefix).",
+				"tBgpMaxNgPrefix90 replaces notification object tBgpMaxPrefix90 as the",
+				"latter does not support an IPv6 peer."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpPeerNgInstanceIndex>[0-9]+)\\.(?P<tBgpPeerNgAddressType>[0-9]+)\\.(?P<tBgpPeerNgAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpMaxNgPrefix90",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "InstanceIndex:$tBgpPeerNgInstanceIndex;PeerAddress:$tBgpPeerNgAddress",
+				"Summary" : "Number of BGP routes learned from peer $tBgpPeerNgAddress is over 90% of maximum ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpMaxNgPrefix90 TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefix.11.1.10.123.22.11 u 9999 TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefixThreshold u 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpMaxNgPrefix90",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgMaxPrefix specifies the maximum number of",
+							"routes that can be learned from this peer.",
+							"",
+							"A value of zero specifies that there is no limit to the number of",
+							"routes learned.",
+							"",
+							"The tBgpMaxNgPrefixThreshReached notification is sent when the number",
+							"of routes exceeds a percentage of this limit as specified by",
+							"tBgpPeerNgMaxPrefixThreshold.",
+							"",
+							"If the number of routes exceeds this limit, then BGP peering will be",
+							"disabled and the tBgpMaxNgPrefix100 notification will be sent.",
+							"",
+							"An 'inconsistentValue' error is returned if an attempt is made to set",
+							"this object to its default value. This object can be reset by",
+							"resetting appropriate inheritance bit of tBgpPeerNgInheritance.",
+							"",
+							"This object was obsoleted in release 13.0."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.7.1.19",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgMaxPrefixThreshold specifies a percentage of",
+							"tBgpPeerNgMaxPrefix.",
+							"",
+							"This object was obsoleted in release 13.0."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefixThreshold",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.7.1.72",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpMaxNgPrefix100",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tBgpMaxNgPrefix100 notification is generated when the number of",
+				"routes learned from the peer has exceeded the configured maximum.",
+				"tBgpMaxNgPrefix100 replaces notification object tBgpMaxPrefix100 as",
+				"the latter does not support an IPv6 peer.",
+				"This notification is obsoleted in release 13.0."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpPeerNgInstanceIndex>[0-9]+)\\.(?P<tBgpPeerNgAddressType>[0-9]+)\\.(?P<tBgpPeerNgAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpMaxNgPrefix100",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "InstanceIndex:$tBgpPeerNgInstanceIndex;PeerAddress:$tBgpPeerNgAddress",
+				"Summary" : "Number of peer routes are more than configured maximum: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpMaxNgPrefix100 TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefix.11.1.10.112.22.33 u 9999",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpMaxNgPrefix100",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgMaxPrefix specifies the maximum number of",
+							"routes that can be learned from this peer.",
+							"",
+							"A value of zero specifies that there is no limit to the number of",
+							"routes learned.",
+							"",
+							"The tBgpMaxNgPrefixThreshReached notification is sent when the number",
+							"of routes exceeds a percentage of this limit as specified by",
+							"tBgpPeerNgMaxPrefixThreshold.",
+							"",
+							"If the number of routes exceeds this limit, then BGP peering will be",
+							"disabled and the tBgpMaxNgPrefix100 notification will be sent.",
+							"",
+							"An 'inconsistentValue' error is returned if an attempt is made to set",
+							"this object to its default value. This object can be reset by",
+							"resetting appropriate inheritance bit of tBgpPeerNgInheritance.",
+							"",
+							"This object was obsoleted in release 13.0."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.7.1.19",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpPeerNgGRStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tBgpPeerNgGRStatusChange notification is generated when the graceful",
+				"restart status changes for a BGP peer. tBgpPeerNgGRStatusChange",
+				"replaces notification object tBgpPeerGRStatusChange as the latter does",
+				"not support an IPv6 peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 2 : ($v1==3) ? 1 : 3"
+				},
+				"EventType" : "tBgpPeerGRStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 86400 : ($v1==3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 3 : ($v1==3) ? 0 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "BGP peer neighbor graceful restart status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpPeerNgGRStatusChange TIMETRA-BGP-MIB::tBgpPeerNgOperGRStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpPeerNgGRStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgOperGRStatus indicates the graceful restart",
+							"status of the BGP peer.'",
+							"",
+							"The values of tBgpPeerNgOperGRStatus means:",
+							"notHelping (1), -- Peer is not currently being helped",
+							"restarting (2), -- Received restart request from the peer",
+							"restart-complete (3), -- The peer has completed the most recent",
+							"restart",
+							"helping (4) -- Peer is helping us in restarting."
+						],
+						"enums" : {
+							"1" : "notHelping",
+							"2" : "restarting",
+							"3" : "restart-complete",
+							"4" : "helping"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgOperGRStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.8.1.24",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpNgEstablished",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tBgpNgEstablished notification is generated when the BGP FSM enters",
+				"the ESTABLISHED state.",
+				"tBgpNgEstablished is only generated for ipv6 addresses.",
+				"BGP4-MIB::bgpEstablished is generated for ipv4 addresses."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpPeerNgInstanceIndex>[0-9]+)\\.(?P<tBgpPeerNgAddressType>[0-9]+)\\.(?P<tBgpPeerNgAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tBgpNgSessionState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "InstanceIndex:$tBgpPeerNgInstanceIndex;PeerAddress:$tBgpPeerNgAddress",
+				"Summary" : "BGP peer FSM state: established"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpNgEstablished TIMETRA-BGP-MIB::tBgpPeerNgLastError s EX TIMETRA-BGP-MIB::tBgpPeerNgConnState i 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpNgEstablished",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgLastError indicates the last error code and",
+							"subcode seen by this peer on this connection. If no error has",
+							"occurred, two zero octets are returned. Otherwise, the first octet of",
+							"this two-byte OCTET STRING contains the error code, and the second",
+							"octet contains the subcode."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgLastError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.10.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgConnState indicates the BGP peer connection",
+							"state.",
+							"",
+							"This object is the shadow object of bgpPeerState as existing in the",
+							"BGP4-MIB."
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "connect",
+							"3" : "active",
+							"4" : "opensent",
+							"5" : "openconfirm",
+							"6" : "established"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgConnState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.7.1.59",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpNgBackwardTransition",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tBgpNgBackwardTransition notification is generated when the BGP FSM",
+				"moves from a higher numbered state to a lower numbered state.",
+				"tBgpNgBackwardTransition is only generated for ipv6 addresses.",
+				"BGP4-MIB::bgpBackwardTransition is generated for ipv4 addresses."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpPeerNgInstanceIndex>[0-9]+)\\.(?P<tBgpPeerNgAddressType>[0-9]+)\\.(?P<tBgpPeerNgAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tBgpNgSessionState",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==1) ? 4 : 3"
+				},
+				"SubNode" : "InstanceIndex:$tBgpPeerNgInstanceIndex;PeerAddress:$tBgpPeerNgAddress",
+				"Summary" : "BGP peer FSM state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpNgBackwardTransition TIMETRA-BGP-MIB::tBgpPeerNgLastError s EX TIMETRA-BGP-MIB::tBgpPeerNgConnState i 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpNgBackwardTransition",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgLastError indicates the last error code and",
+							"subcode seen by this peer on this connection. If no error has",
+							"occurred, two zero octets are returned. Otherwise, the first octet of",
+							"this two-byte OCTET STRING contains the error code, and the second",
+							"octet contains the subcode."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgLastError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.10.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgConnState indicates the BGP peer connection",
+							"state.",
+							"",
+							"This object is the shadow object of bgpPeerState as existing in the",
+							"BGP4-MIB."
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "connect",
+							"3" : "active",
+							"4" : "opensent",
+							"5" : "openconfirm",
+							"6" : "established"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgConnState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.7.1.59",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpPeerNgHoldTimeInconsistent",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tBgpPeerNgHoldTimeInconsistent notification is generated for a BGP",
+				"neighbor when a peer tries to establish a peering with a hold time",
+				"less than the configured minimum hold time. The peering would be",
+				"rejected."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpPeerNgInstanceIndex>[0-9]+)\\.(?P<tBgpPeerNgAddressType>[0-9]+)\\.(?P<tBgpPeerNgAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpPeerNgHoldTimeInconsistent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "InstanceIndex:$tBgpPeerNgInstanceIndex;PeerAddress:$tBgpPeerNgAddress",
+				"Summary" : "BGP peering with $tBgpPeerNgAddress failed : Hold time $v1 s is less than configured minimum of $v4 s"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpPeerNgHoldTimeInconsistent TIMETRA-BGP-MIB::tBgpPeerNgHoldTime i 9999 TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgpPeerNgMinHoldTime i 9999",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpPeerNgHoldTimeInconsistent",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgHoldTime specifies the value (in seconds) of",
+							"the BGP Hold Time."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgHoldTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.7.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgMinHoldTime specifies the minimum hold time",
+							"that should be strictly enforced on tBgpPeerNgHoldTime.",
+							"",
+							"When the value of tBgpPeerNgMinHoldTime is configured, BGP will not",
+							"negotiate a hold time lower than the configured value.",
+							"",
+							"When the value of tBgpPeerNgHoldTime is changed, the value of",
+							"tBgpPeerNgMinHoldTime is reset to its default value.",
+							"",
+							"The value of tBgpPeerNgMinHoldTime is inherited from the corresponding",
+							"object value in the tBgpPeerGroupParamsTable, when the inheritance bit",
+							"for tBgpPeerNgHoldTime is set to zero. An 'inconsistentValue' error is",
+							"returned if an attempt is made to set this object to a non-default",
+							"value when the value of tBgpPeerNgHoldTime is inherited from group.",
+							"",
+							"An 'inconsistentValue' error is returned if an attempt is made to set",
+							"this object to a value greater than tBgpPeerNgHoldTime."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgMinHoldTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.10.1.25",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpFlowspecUnsupportdComAction",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgpFlowspecUnsupportdComAction notification is generated",
+				"when the best route for a flow specification NLRI (Network Layer",
+				"Reachability Information) is received from a remote BGP peer with an",
+				"extended community action that is unsupported.",
+				"[EFFECT] The BGP peer dose not create an ip filter entry for the",
+				"received flow route even if the NLRI (Network Layer Reachability",
+				"Information) has valid extended community actions.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpFlowspecUnsupportdComAction",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "BGP remote peer sent best route information with unsupported extended community action: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpFlowspecUnsupportdComAction TIMETRA-BGP-MIB::tBgpFlowspecExtCommunityAction i 0 TIMETRA-BGP-MIB::tBgpFlowspecExtCommActionValue s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpFlowspecUnsupportdComAction",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpFlowspecExtCommunityAction indicates the extended",
+							"community action received as part of flow route from a remote BGP",
+							"peer."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "rateLimit",
+							"2" : "sampleLog",
+							"3" : "redirectToVrf",
+							"4" : "nextEntry",
+							"5" : "markDscp",
+							"6" : "redirectToIp",
+							"7" : "redirectToIf",
+							"8" : "redirectToLsp"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpFlowspecExtCommunityAction",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpFlowspecExtCommActionValue indicates the extended",
+							"community action value received as part of flow route from a remote",
+							"BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpFlowspecExtCommActionValue",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpFlowRouteInvalid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgpFlowRouteInvalid notification is generated when the",
+				"received BGP flow route is invalid.",
+				"[EFFECT] The BGP peer dose not create ip filter entry for the received",
+				"flow route.",
+				"[RECOVERY] There is no recovery required for this notification.",
+				"This notification was obsoleted in release 15.0."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpFlowRouteInvalid",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpFlowRouteInvalid TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgpPeerFlowRouteDestAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerFlowRouteDestAddr s EXAMPLE TIMETRA-BGP-MIB::tBgpFlowRouteInvalidReason s EXAMPLE TIMETRA-BGP-MIB::tBgpFlowRouteNLRI s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpFlowRouteInvalid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerFlowRouteDestAddrType indicates the type of",
+							"address for the BGP peer represented by tBgpPeerFlowRouteDestAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerFlowRouteDestAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerFlowRouteDestAddr indicates the address of the",
+							"destination BGP peer received as part of a flow route."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerFlowRouteDestAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgpFlowRouteInvalidReason indicates the reason why the",
+							"received flow route is invalid."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpFlowRouteInvalidReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgpFlowRouteNLRI contains at most the first 30 octets of",
+							"the NLRI (Network Layer Reachability Information) received in a flow",
+							"route."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpFlowRouteNLRI",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpMaxNgPrefixThreshReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tBgpMaxNgPrefixThreshReached notification is generated when",
+				"the number of routes learned from the peer has exceeded",
+				"tBgpPeerNgMaxPrefixThreshold percent of the configured maximum",
+				"(tBgpPeerNgMaxPrefix). tBgpMaxNgPrefixThreshReached replaces",
+				"notification object tBgpMaxNgPrefix90 as the latter limits the",
+				"threshold to 90 percent.",
+				"[EFFECT] No direct effect but if the peer continues to advertise more",
+				"routes then the number of routes may exceed the configured maximum",
+				"(tBgpPeerNgMaxPrefix). in that case the peer would just be disabled.",
+				"[RECOVERY] Increase the max-prefix for this peer.",
+				"This notification is obsoleted in release 13.0."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpPeerNgInstanceIndex>[0-9]+)\\.(?P<tBgpPeerNgAddressType>[0-9]+)\\.(?P<tBgpPeerNgAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpMaxNgPrefixThreshReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "InstanceIndex:$tBgpPeerNgInstanceIndex;PeerAddress:$tBgpPeerNgAddress",
+				"Summary" : "Number of BGP routes learned from peer $tBgpPeerNgAddress is over $v2% of maximum ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpMaxNgPrefixThreshReached TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefix.11.2.1.1.1.1 u 9999 TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefixThreshold u 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpMaxNgPrefixThreshReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgMaxPrefix specifies the maximum number of",
+							"routes that can be learned from this peer.",
+							"",
+							"A value of zero specifies that there is no limit to the number of",
+							"routes learned.",
+							"",
+							"The tBgpMaxNgPrefixThreshReached notification is sent when the number",
+							"of routes exceeds a percentage of this limit as specified by",
+							"tBgpPeerNgMaxPrefixThreshold.",
+							"",
+							"If the number of routes exceeds this limit, then BGP peering will be",
+							"disabled and the tBgpMaxNgPrefix100 notification will be sent.",
+							"",
+							"An 'inconsistentValue' error is returned if an attempt is made to set",
+							"this object to its default value. This object can be reset by",
+							"resetting appropriate inheritance bit of tBgpPeerNgInheritance.",
+							"",
+							"This object was obsoleted in release 13.0."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.7.1.19",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgMaxPrefixThreshold specifies a percentage of",
+							"tBgpPeerNgMaxPrefix.",
+							"",
+							"This object was obsoleted in release 13.0."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgMaxPrefixThreshold",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.7.1.72",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgp4OptTransPathAttrInvalid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgp4OptTransPathAttrInvalid notification is generated",
+				"when the received optional-transitive path attribute is unknown to",
+				"this BGP peer.",
+				"This notification was obsoleted in R11.0 and replaced with the",
+				"notification tBgp4PathAttrInvalid.",
+				"[EFFECT] The BGP peer simply passes the path attribute to the next BGP",
+				"peer along the route and is not considered responsible for any",
+				"encoding error. In this case the BGP peering is not torn down.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgp4OptTransPathAttrInvalid",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "vRouterID:$v1",
+				"Summary" : "BGP peer invalidated the received optional-transitive path attribute"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgp4OptTransPathAttrInvalid TIMETRA-VRTR-MIB::vRtrID.123 i 9999 TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgp4OptTransPathAttrType i 9999 TIMETRA-BGP-MIB::tBgp4OptTransPathAttrLength u 9999 TIMETRA-BGP-MIB::tBgp4OptTransPathAttribute s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgp4OptTransPathAttrInvalid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgp4OptTransPathAttrType indicates the",
+							"optional-transitive path attribute type received from a remote BGP",
+							"peer.",
+							"",
+							"This object was obsoleted in R11.0 and replaced with",
+							"tBgp4PathAttrType."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4OptTransPathAttrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgp4OptTransPathAttrLength indicates the length of",
+							"optional-transitive path attribute length received from a remote BGP",
+							"peer.",
+							"",
+							"This object was obsoleted in R11.0 and replaced with",
+							"tBgp4PathAttrLength."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4OptTransPathAttrLength",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tBgp4OptTransPathAttribute indicates the",
+							"optional-transitive path attribute value received from a remote BGP",
+							"peer.",
+							"",
+							"This object was obsoleted in R11.0 and replaced with",
+							"tBgp4PathAttribute."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4OptTransPathAttribute",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgp4OptTransWithdrawnRoutes",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgp4OptTransWithdrawnRoutes notification is generated",
+				"when the processing of optional-transitive path attribute results in",
+				"the withdrawal of the routes included in the BGP update.",
+				"This notification was obsoleted in R11.0 and replaced with the",
+				"notification tBgp4WithdrawnRtFromUpdateError.",
+				"[EFFECT] This notification has no direct effect. The withdrawn routes",
+				"are logged to aid debugging and tracking back the root cause of the",
+				"problem.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgp4OptTransWithdrawnRoutes",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Processing of optional-transitive path attribute resulted in withdrawal of routes in BGP update message"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgp4OptTransWithdrawnRoutes TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgp4OTWithdrawnRouteLength u 9999 TIMETRA-BGP-MIB::tBgp4OTWithdrawnRoutePrefix s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgp4OptTransWithdrawnRoutes",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgp4OTWithdrawnRouteLength indicates the length of the",
+							"route withdrawn as a result of optional-transitive path attribute",
+							"error.",
+							"",
+							"This object was obsoleted in R11.0."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4OTWithdrawnRouteLength",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tBgp4OTWithdrawnRoutePrefix indicates the prefix of the",
+							"route withdrawn as a result of optional-transitive path attribute",
+							"error.",
+							"",
+							"This object was obsoleted in R11.0 and replaced with",
+							"tBgp4WithdrawnRoutePrefix."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4OTWithdrawnRoutePrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgp4RouteInvalid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgp4RouteInvalid notification is generated when the",
+				"received route is invalid for a specific reason and the route can not",
+				"be used or advertised further.",
+				"[EFFECT] The BGP peer ignores the route and flags the path attribute",
+				"and the route so that the peer/tribe that was attempting to advertise",
+				"the associated route can skip this route. The BGP peering is not torn",
+				"down in this case.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgp4RouteInvalid",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$v1",
+				"Summary" : "$v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgp4RouteInvalid TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgpRouteInvalidReason s EXAMPLE TIMETRA-BGP-MIB::tBgpRouteNLRI s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgp4RouteInvalid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgpRouteInvalidReason indicates the reason why the",
+							"received route is invalid."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpRouteInvalidReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgpRouteNLRI contains at most the first 255 octets of",
+							"the NLRI (Network Layer Reachability Information) received in a route."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpRouteNLRI",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgp4PathAttrInvalid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgp4PathAttrInvalid notification is generated when an",
+				"error with a path attribute tBgp4PathAttribute is detected.",
+				"[EFFECT] A log entry is generated for each withdrawn route. Further",
+				"effect depends on fault-tolerance and graceful-restart settings.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgp4PathAttrInvalid",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Path attribute:$v6 error detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgp4PathAttrInvalid TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgp4PathAttrType i 9999 TIMETRA-BGP-MIB::tBgp4PathAttrLength u 9999 TIMETRA-BGP-MIB::tBgp4PathAttribute s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgp4PathAttrInvalid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgp4PathAttrType indicates the path attribute type",
+							"received from a remote BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4PathAttrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.16",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgp4PathAttrLength indicates the length of path",
+							"attribute received from a remote BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4PathAttrLength",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.17",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tBgp4PathAttribute indicates the path attribute value",
+							"received from a remote BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4PathAttribute",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgp4WithdrawnRtFromUpdateError",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgp4WithdrawnRtFromUpdateError notification is generated",
+				"when NLRI is withdrawn because of error in BGP update message.",
+				"[EFFECT] This notification has no direct effect. The withdrawn routes",
+				"are logged to aid debugging and tracking back the root cause of the",
+				"problem.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgp4WithdrawnRtFromUpdateError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "NLRI route is withdrawn because of error in BGP update message"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgp4WithdrawnRtFromUpdateError TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgp4WithdrawnRoutePrefix s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgp4WithdrawnRtFromUpdateError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgp4WithdrawnRoutePrefix indicates the prefix of the",
+							"route withdrawn as a result of path attribute error."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4WithdrawnRoutePrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgp4UpdateInvalid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgp4UpdateInvalid notification is generated when an",
+				"UPDATE message has a critical length error or an error not specific to",
+				"any path attribute.",
+				"[EFFECT] A log entry is generated for each withdrawn route. Further",
+				"effect depends on fault-tolerance and graceful-restart settings.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgp4UpdateInvalid",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP update message has an invalid length"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgp4UpdateInvalid TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgp4UpdateMessage s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgp4UpdateInvalid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgp4UpdateMessage contains at most the first 255 octets",
+							"of the UPDATE message received from a remote BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4UpdateMessage",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.20",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpReceivedInvalidNlri",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgpReceivedInvalidNlri notification is generated when",
+				"there is a parsing error in BGP routes in update messages that is not",
+				"related to attribute errors. Fault tolerance is not applicable here.",
+				"[EFFECT] BGP will send a notification message to the peer and bring",
+				"down the peering.",
+				"[RECOVERY] Peering will be re-established with the offending peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpReceivedInvalidNlri",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BGP routes have parsing error in update message: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpReceivedInvalidNlri TIMETRA-BGP-MIB::tBgp4BadErrorMessage s EXAMPLE TIMETRA-BGP-MIB::tBgp4BadErrorMessageType i 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpReceivedInvalidNlri",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgp4BadErrorMessage contains at most the first 255",
+							"octets of the Error part of the BGP packet."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4BadErrorMessage",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgp4BadErrorMessageType indicates the type of the error",
+							"in the BGP packet."
+						],
+						"enums" : {
+							"1" : "badNetworkError"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgp4BadErrorMessageType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpMaxNgPfxLmt",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tBgpMaxNgPfxLmt notification is generated when the number of",
+				"routes learned from the peer has exceeded the configured maximum.",
+				"[EFFECT] No direct effect but if the peer continues to advertise more",
+				"routes then the number of routes may exceed the configured maximum",
+				"(tBgpPeerNgPfxLmtMaxPrefix). In that case the peer would just be",
+				"disabled.",
+				"[RECOVERY] Increase the max-prefix for this peer."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpPeerNgInstanceIndex>[0-9]+)\\.(?P<tBgpPeerNgAddressType>[0-9]+)\\.(?P<tBgpPeerNgAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.(?P<tBgpPeerNgPfxLmtFamily>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpMaxNgPfxLmtAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "InstanceIndex:$tBgpPeerNgInstanceIndex;PeerAddress:$tBgpPeerNgAddress",
+				"Summary" : "Number of peer routes are more than the configured maximum: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpMaxNgPfxLmt TIMETRA-BGP-MIB::tBgpPeerNgPfxLmtMaxPrefix u 9999",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpMaxNgPfxLmt",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgPfxLmtMaxPrefix specifies the maximum number of",
+							"routes that can be learned from this peer.",
+							"",
+							"A value of zero specifies that there is no limit to the number of",
+							"routes learned.",
+							"",
+							"The tBgpMaxNgPfxLmtThresholdReached notification is sent when the",
+							"number of routes exceeds a percentage of this limit as specified by",
+							"tBgpPeerNgPfxLmtThreshold.",
+							"",
+							"If the number of routes exceeds this limit, then BGP peering will be",
+							"disabled and the tBgpMaxNgPfxLmt notification will be sent.",
+							"",
+							"An 'inconsistentValue' error is returned if an attempt is made to set",
+							"this object to its default value. This object can be reset by setting",
+							"the inheritance object tBgpPeerNgPfxLmtInheritance to 'true'."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgPfxLmtMaxPrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.13.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpMaxNgPfxLmtThresholdReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tBgpMaxNgPfxLmtThresholdReached notification is generated",
+				"when the number of routes learned from the peer has exceeded",
+				"tBgpPeerNgPfxLmtThreshold percent of the configured maximum",
+				"(tBgpPeerNgPfxLmtMaxPrefix).",
+				"[EFFECT] No direct effect but if the peer continues to advertise more",
+				"routes then the number of routes may exceed the configured maximum",
+				"(tBgpPeerNgPfxLmtMaxPrefix). In that case the peer would just be",
+				"disabled.",
+				"[RECOVERY] Increase the max-prefix for this peer."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpPeerNgInstanceIndex>[0-9]+)\\.(?P<tBgpPeerNgAddressType>[0-9]+)\\.(?P<tBgpPeerNgAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.(?P<tBgpPeerNgPfxLmtFamily>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpMaxNgPfxLmtAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Number of peer routes is over $v2 % of the maximum allowed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpMaxNgPfxLmtThresholdReached TIMETRA-BGP-MIB::tBgpPeerNgPfxLmtMaxPrefix u 9999 TIMETRA-BGP-MIB::tBgpPeerNgPfxLmtThreshold u 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpMaxNgPfxLmtThresholdReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPeerNgPfxLmtMaxPrefix specifies the maximum number of",
+							"routes that can be learned from this peer.",
+							"",
+							"A value of zero specifies that there is no limit to the number of",
+							"routes learned.",
+							"",
+							"The tBgpMaxNgPfxLmtThresholdReached notification is sent when the",
+							"number of routes exceeds a percentage of this limit as specified by",
+							"tBgpPeerNgPfxLmtThreshold.",
+							"",
+							"If the number of routes exceeds this limit, then BGP peering will be",
+							"disabled and the tBgpMaxNgPfxLmt notification will be sent.",
+							"",
+							"An 'inconsistentValue' error is returned if an attempt is made to set",
+							"this object to its default value. This object can be reset by setting",
+							"the inheritance object tBgpPeerNgPfxLmtInheritance to 'true'."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgPfxLmtMaxPrefix",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.13.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgPfxLmtThreshold specifies a percentage of",
+							"tBgpPeerNgPfxLmtMaxPrefix."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgPfxLmtThreshold",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.4.13.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpInstanceDynamicPeerLmtReachd",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tBgpInstanceDynamicPeerLmtReachd notification is generated",
+				"when the dynamic peer limit for this BGP instance is reached.",
+				"[EFFECT] Whenever an incoming connection for a new dynamic session",
+				"would cause dynamic peer limit for this BGP instance to be exceeded",
+				"the connection attempt is rejected.",
+				"[RECOVERY] Increase the dynamic peer limit for this BGP instance."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpInstanceIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpInstanceDynamicPeerLmtReachd",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "InstanceIndex:$tBgpInstanceIndex",
+				"Summary" : "BGP instance dynamic peer limit:$v1 reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpInstanceDynamicPeerLmtReachd TIMETRA-BGP-MIB::tBgpInstanceDynamicPeerLimit u 0",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpInstanceDynamicPeerLmtReachd",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpInstanceDynamicPeerLimit specifies the value of",
+							"dynamic peer limit for this BGP instance.",
+							"",
+							"If tBgpInstanceDynamicPeerLimit is set to zero (0), the dynamic peer",
+							"limit is disabled for this BGP instance."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpInstanceDynamicPeerLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.2.6.1.46",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpPGDynamicPeerLmtReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tBgpPGDynamicPeerLmtReached notification is generated when",
+				"the dynamic peer limit for this group is reached.",
+				"[EFFECT] Whenever an incoming connection for a new dynamic session",
+				"would cause dynamic peer limit for this group to be exceeded, the",
+				"connection attempt is rejected.",
+				"[RECOVERY] Increase the dynamic peer limit for this group."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tBgpInstanceIndex>[0-9]+)\\.(?P<tBgpPeerGroupName>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpPGDynamicPeerLmtReached",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "InstanceIndex:$tBgpInstanceIndex",
+				"Summary" : "BGP session dynamic peer limit: $v1 for a group reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpPGDynamicPeerLmtReached TIMETRA-BGP-MIB::tBgpPGDynamicPeerLimit u 0",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpPGDynamicPeerLmtReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpPGDynamicPeerLimit specifies the value of dynamic",
+							"peer limit for this BGP group.",
+							"",
+							"If tBgpPGDynamicPeerLimit is set to zero (0), the dynamic peer limit",
+							"is disabled for this BGP group."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPGDynamicPeerLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.3.5.1.40",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgp4PathAttrDiscarded",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgp4PathAttrDiscarded notification is generated when a",
+				"path attribute tBgp4PathAttribute is discarded from an UPDATE message.",
+				"A path attribute may be discarded because it is malformed.",
+				"[EFFECT] A log entry is generated for each path attribute discarded",
+				"from an UPDATE message. The UPDATE message continues to be processed.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgp4PathAttrDiscarded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$v1",
+				"Summary" : "Path attribute is discarded from BGP update message"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgp4PathAttrDiscarded TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-BGP-MIB::tBgpPeerNgAddrType i 0 TIMETRA-BGP-MIB::tBgpPeerNgAddr s EXAMPLE TIMETRA-BGP-MIB::tBgp4PathAttrType i 9999 TIMETRA-BGP-MIB::tBgp4PathAttrLength u 9999 TIMETRA-BGP-MIB::tBgp4PathAttribute s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgp4PathAttrDiscarded",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddrType indicates the type of address for the",
+							"BGP peer represented by tBgpPeerNgAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpPeerNgAddr indicates the address for the BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgpPeerNgAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tBgp4PathAttrType indicates the path attribute type",
+							"received from a remote BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4PathAttrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.16",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tBgp4PathAttrLength indicates the length of path",
+							"attribute received from a remote BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4PathAttrLength",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.17",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tBgp4PathAttribute indicates the path attribute value",
+							"received from a remote BGP peer."
+						],
+						"name" : "TIMETRA-BGP-MIB::tBgp4PathAttribute",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-BGP-MIB::tBgpInstConvStateTransition",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tBgpInstConvStateTransition notification is generated",
+				"when the convergence state for IPv4-unicast transitions from partial",
+				"to converged.",
+				"[EFFECT] A log entry is generated.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tBgpInstConvStateTransition",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "BGP instance current convergence state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-BGP-MIB::tBgpInstConvStateTransition TIMETRA-BGP-MIB::tBgpConvergenceState i 1 TIMETRA-BGP-MIB::tBgpConvergenceFamily i 0 TIMETRA-BGP-MIB::tBgpOldConvergenceState i 1",
+			"trap" : {
+				"name" : "TIMETRA-BGP-MIB::tBgpInstConvStateTransition",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.14.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tBgpConvergenceState indicates the convergence state of",
+							"the address family."
+						],
+						"enums" : {
+							"1" : "waiting",
+							"2" : "started",
+							"3" : "partial",
+							"4" : "timeout",
+							"5" : "converged"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpConvergenceState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.2.28.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpConvergenceFamily specifies the address family for",
+							"which the convergence selection applies."
+						],
+						"enums" : {
+							"0" : "unused",
+							"1" : "ipv4",
+							"2" : "vpnIpv4",
+							"3" : "ipv6",
+							"4" : "mcastIpv4",
+							"5" : "vpnIpv6",
+							"6" : "l2vpn",
+							"7" : "mvpnIpv4",
+							"8" : "mdtSafi",
+							"9" : "mspw",
+							"10" : "flowIpv4",
+							"11" : "routeTarget",
+							"12" : "mcastVpnIpv4",
+							"13" : "mvpnIpv6",
+							"14" : "flowIpv6",
+							"15" : "evpn",
+							"16" : "mcastIpv6",
+							"17" : "labelIpv4",
+							"18" : "labelIpv6",
+							"19" : "bgpLs",
+							"20" : "mcastVpnIpv6",
+							"21" : "srplcyIpv4",
+							"22" : "reserved22"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpConvergenceFamily",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.2.28.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tBgpOldConvergenceState indicates the convergence state",
+							"of the address family."
+						],
+						"enums" : {
+							"1" : "waiting",
+							"2" : "started",
+							"3" : "partial",
+							"4" : "timeout",
+							"5" : "converged"
+						},
+						"name" : "TIMETRA-BGP-MIB::tBgpOldConvergenceState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.14.7.23",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

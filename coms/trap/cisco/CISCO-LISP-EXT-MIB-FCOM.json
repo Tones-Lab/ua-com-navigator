@@ -1,0 +1,676 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201505130000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtUseMapResolverStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the map-resolver",
+				"reachability state changes. The lispUseMapResolverAddressLength",
+				"and lispUseMapResolverAddress values are attached to the notification ",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "clispExtUseMapResolverStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Map-resolver is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtUseMapResolverStateChange LISP-MIB::lispUseMapResolverState i 1",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtUseMapResolverStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"State of this Map-Resolver configured on this device",
+							"(1 = Map-Resolver is up; 2 = Map-Resolver is down)."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "LISP-MIB::lispUseMapResolverState",
+						"oid" : "1.3.6.1.2.1.220.1.13.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtReliableTransportStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the reliable transport",
+				"session state changes. The clispReliableTransportSessionPeerAddressLength",
+				"clispReliableTransportSessionPeerAddress",
+				"clispReliableTransportSessionPeerPort",
+				"clispReliableTransportSessionLocalAddressLength, ",
+				"clispReliableTransportSessionLocalAddress",
+				"clispReliableTransportSessionLocalPort values are attached to the",
+				"notification object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "clispExtReliableTransportStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Reliable transport session is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtReliableTransportStateChange CISCO-LISP-EXT-MIB::clispExtReliableTransportSessionState i 1",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtReliableTransportStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the state of the reliable transport session."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-LISP-EXT-MIB::clispExtReliableTransportSessionState",
+						"oid" : "1.3.6.1.4.1.9.9.825.1.3.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtMappingDatabaseEidRegFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the xTR fails to",
+				"register a database mapping with the map-server. ",
+				"The lispMappingDatabaseEidLength, lispMappingDatabaseEid",
+				"lispUseMapServerAddressLength, lispUseMapServerAddress values ",
+				"are attached to the notification object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtMappingDatabaseEidRegFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "XTR failed to register database mapping with map-server. Server state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtMappingDatabaseEidRegFailure LISP-MIB::lispMappingDatabaseTimeStamp t 31536000 LISP-MIB::lispUseMapServerState i 1",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtMappingDatabaseEidRegFailure",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sysUpTime at which the EID Prefix information",
+							"represented by this mapping database entry was configured",
+							"on this device.",
+							"",
+							"If this information was present at the most recent",
+							"reinitialization of the local management subsystem, then",
+							"this object contains a zero value."
+						],
+						"name" : "LISP-MIB::lispMappingDatabaseTimeStamp",
+						"oid" : "1.3.6.1.2.1.220.1.4.1.5",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"State of this Map-Server configured on this device",
+							"(1 = Map-Server is up; 2 = Map-Server is down)."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "unreachable"
+						},
+						"name" : "LISP-MIB::lispUseMapServerState",
+						"oid" : "1.3.6.1.2.1.220.1.12.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtUseMapServerStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the map-server",
+				"reachability state changes. The lispUseMapServerAddressLength",
+				"and lispUseMapServerAddress values are attached to the notification",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "clispExtUseMapServerStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Map-server is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtUseMapServerStateChange LISP-MIB::lispUseMapServerState i 1",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtUseMapServerStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"State of this Map-Server configured on this device",
+							"(1 = Map-Server is up; 2 = Map-Server is down)."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "unreachable"
+						},
+						"name" : "LISP-MIB::lispUseMapServerState",
+						"oid" : "1.3.6.1.2.1.220.1.12.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtUseProxyEtrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the proxy ETR",
+				"reachability state changes. The lispUseProxyEtrAddressLength and",
+				"lispUseProxyEtrAddress values are attached to the notification",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "clispExtUseProxyEtrStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Proxy ETR is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtUseProxyEtrStateChange LISP-MIB::lispUseProxyEtrState i 0",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtUseProxyEtrStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"State of this Proxy ETR configured on this device",
+							"(0 = Proxy ETR is down; 1 = Proxy ETR is up)."
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "LISP-MIB::lispUseProxyEtrState",
+						"oid" : "1.3.6.1.2.1.220.1.14.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtEidRegSiteAllRegistrationsExpired",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when all the registration",
+				"for a site expires on the map-server. The lispEidRegistrationEidLength",
+				"and lispEidRegistrationEid values are attached to the notification",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtEidRegSiteAllRegistrationsExpired",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "All registrations for $v1 expired on the map-server"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtEidRegSiteAllRegistrationsExpired LISP-MIB::lispEidRegistrationSiteName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegSiteAllRegistrationsExpired",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Site name used by a Map-Server to distinguish different",
+							"LISP sites that are registering with it."
+						],
+						"name" : "LISP-MIB::lispEidRegistrationSiteName",
+						"oid" : "1.3.6.1.2.1.220.1.9.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtEidRegFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the map-server fails",
+				"to accept a map registration. The lispEidRegistrationEidLength",
+				"and lispEidRegistrationEid values are attached to the notification",
+				"object ID.",
+				"If clispExtEidRegFailureCause value is noEidPrefixConfiguration(1) the",
+				"lispEidRegistrationSiteName object in the notification will be empty."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtEidRegFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Map-server failed to accept map registration due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtEidRegFailure LISP-MIB::lispEidRegistrationSiteName s EXAMPLE CISCO-LISP-EXT-MIB::clispExtEidRegFailureCause i 1",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegFailure",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Site name used by a Map-Server to distinguish different",
+							"LISP sites that are registering with it."
+						],
+						"name" : "LISP-MIB::lispEidRegistrationSiteName",
+						"oid" : "1.3.6.1.2.1.220.1.9.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the cause of the map registration failure",
+							"on the map-server.",
+							"",
+							"'noEidPrefixConfiguration' ",
+							"No site configuration to accept registration for ",
+							"EID prefix.",
+							"",
+							"'authenticationFailure' ",
+							"Failed to authenticate map-register for EID prefix.",
+							"",
+							"'allowedLocatorMismatch' ",
+							"map-register contains RLOC that is not in the site's",
+							"allowed locator list."
+						],
+						"enums" : {
+							"1" : "noEidPrefixConfiguration",
+							"2" : "authenticationFailure",
+							"3" : "allowedLocatorMismatch"
+						},
+						"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegFailureCause",
+						"oid" : "1.3.6.1.4.1.9.9.825.1.6.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the map-server has",
+				"reached the limit of the number of map registrations it can accept",
+				"as a result of the accept-more-specific configuration. This",
+				"notification is instance specific. The lispFeaturesInstanceID and",
+				"lispFeaturesAddressFamily values are attached to the notification",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtFeaturesEidRegMoreSpecificLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Map-server reached the registration limit $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificLimitReached CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificLimit u 9999",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificLimitReached",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the accept-more-specific registration limit",
+							"on the map-server."
+						],
+						"name" : "CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificLimit",
+						"oid" : "1.3.6.1.4.1.9.9.825.1.5.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificWarningThresholdReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the map-server has",
+				"reached the threshold of the number of map registrations it can",
+				"accept as a result of accept-more-specific configuration. This",
+				"notification is instance specific. The lispFeaturesInstanceID and",
+				"lispFeaturesAddressFamily values are attached to the notification",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtFeaturesEidRegMoreSpecificLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Map-server reached the registration limit $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificWarningThresholdReached CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificWarningThreshold u 9999",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificWarningThresholdReached",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the warning threshold for the",
+							"accept-more-specific registration count on the map-server."
+						],
+						"name" : "CISCO-LISP-EXT-MIB::clispExtFeaturesEidRegMoreSpecificWarningThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.825.1.5.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtEidRegMapRequestDropped",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the map-resolver",
+				"drops a map-request because the map-request does not conform to",
+				"configured policy. The lispEidRegistrationEidLength and ",
+				"lispEidRegistrationEid values are attached to the notification",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtEidRegMapRequestDropped",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Map-resolver dropped the map-request due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtEidRegMapRequestDropped LISP-MIB::lispEidRegistrationSiteName s EXAMPLE CISCO-LISP-EXT-MIB::clispExtEidRegMapRequestDroppedCause i 1",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegMapRequestDropped",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Site name used by a Map-Server to distinguish different",
+							"LISP sites that are registering with it."
+						],
+						"name" : "LISP-MIB::lispEidRegistrationSiteName",
+						"oid" : "1.3.6.1.2.1.220.1.9.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the cause of the map-request drop on the",
+							"map-resolver.",
+							"",
+							"'malformedRequest' ",
+							"map-request is not valid.",
+							"",
+							"'noMatchingEidRegistration' ",
+							"could not find matching EID registration for ",
+							"the map-request.",
+							"",
+							"'allowedLocatorPolicyViolation' ",
+							"map request does not conform to the configured ",
+							"allowed-locator policy."
+						],
+						"enums" : {
+							"1" : "malformedRequest",
+							"2" : "noMatchingEidRegistration",
+							"3" : "allowedLocatorPolicyViolation"
+						},
+						"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegMapRequestDroppedCause",
+						"oid" : "1.3.6.1.4.1.9.9.825.1.6.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the map-server has",
+				"reached the limit of the number of map registrations it can accept",
+				"as a result of the accept-more-specific configuration. This",
+				"notification is router LISP instance specific."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtEidRegMoreSpecificLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Map-server reached the registration limit $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificLimitReached CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificLimit u 9999",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificLimitReached",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the accept-more-specific registration limit",
+							"on the map-server. This is applicable to all EID instances."
+						],
+						"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificLimit",
+						"oid" : "1.3.6.1.4.1.9.9.825.1.7.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificWarningThresholdReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the map-server has",
+				"reached the threshold of the number of map registrations it can",
+				"accept as a result of accept-more-specific configuration. This",
+				"notification is router LISP instance specific."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtEidRegMoreSpecificLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Map-server reached registration threshold $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificWarningThresholdReached CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificWarningThreshold u 9999",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificWarningThresholdReached",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the warning threshold for the",
+							"accept-more-specific registration count on the map-server.",
+							"This warning threshold is applicable to all EID instances."
+						],
+						"name" : "CISCO-LISP-EXT-MIB::clispExtEidRegMoreSpecificWarningThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.825.1.7.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtFeaturesMapCacheLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the xTR has reached",
+				"the limit of the number of map-cache it can create. This",
+				"notification is instance specific. The lispFeaturesInstanceID and",
+				"lispFeaturesAddressFamily values are attached to the notification",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtFeaturesMapCacheLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "XTR reached map-cache limit $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtFeaturesMapCacheLimitReached LISP-MIB::lispFeaturesMapCacheLimit u 9999",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtFeaturesMapCacheLimitReached",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"Maximum permissible entries in EID-to-RLOC map-cache on",
+							"this device."
+						],
+						"name" : "LISP-MIB::lispFeaturesMapCacheLimit",
+						"oid" : "1.3.6.1.2.1.220.1.1.1.10",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LISP-EXT-MIB::clispExtFeaturesMapCacheWarningThresholdReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the xTR has reached",
+				"the threshold of the number of map-cache it can create. This",
+				"notification is instance specific. The lispFeaturesInstanceID and",
+				"lispFeaturesAddressFamily values are attached to the notification",
+				"object ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clispExtFeaturesMapCacheLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "XTR reached map-cache threshold $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LISP-EXT-MIB::clispExtFeaturesMapCacheWarningThresholdReached CISCO-LISP-EXT-MIB::clispExtFeaturesMapCacheWarningThreshold u 9999",
+			"trap" : {
+				"name" : "CISCO-LISP-EXT-MIB::clispExtFeaturesMapCacheWarningThresholdReached",
+				"oid" : "1.3.6.1.4.1.9.9.825.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the map-cache warning threshold on the xTR."
+						],
+						"name" : "CISCO-LISP-EXT-MIB::clispExtFeaturesMapCacheWarningThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.825.1.5.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

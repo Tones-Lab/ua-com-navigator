@@ -1,0 +1,1837 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CT-ELS10-MIB::lxWriteStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent when a bank of Flash EPROM has been erased. If ",
+				"lxswdisWriteStatus indicates success, then the unit is ready ",
+				"to be downloaded with the new software. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v2==1) ? 3 : 2"
+				},
+				"EventType" : "lxWriteStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : ($v2==1) ? 2 : ($v2==5) ? 5 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'EPROM write status is success. Software downloaded is $v3' : 'EPROM write status is $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxWriteStatusTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxswdisWriteStatus i 1 CT-ELS10-MIB::lxswdisDesc s EXAMPLE",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxWriteStatusTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of the erase/write operation."
+						],
+						"enums" : {
+							"1" : "in-progress",
+							"2" : "success",
+							"3" : "config-error",
+							"4" : "flash-error",
+							"5" : "config-and-flash-errors"
+						},
+						"name" : "CT-ELS10-MIB::lxswdisWriteStatus",
+						"oid" : "1.3.6.1.4.1.97.7.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The description (0-32 bytes) of the software set currently",
+							"being downloaded, or a description of the software set last",
+							"downloaded since the FN10-26 booted."
+						],
+						"name" : "CT-ELS10-MIB::lxswdisDesc",
+						"oid" : "1.3.6.1.4.1.97.7.4.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxPortFunctionsTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the current functional state (active ",
+				"protocols) of the port has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxPortFunctionsTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : (($v1==4) ? 4 : (($v1==5) ? 5 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port functional state changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxPortFunctionsTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxifFunction i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxPortFunctionsTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current functional state (protocols which ",
+							"have been activated and are operational) of the port. The ",
+							"following values or combinations are supported:",
+							"0x0001 NMS, 0x0002 TBRIDGE, 0x0004 SBRIDGE",
+							"0x0006 SRTBRIDGE, 0x0008 MESH, 0x0010 IPROUTE",
+							"0x0020 NO_BPDU, 0x0040 RIP, 0x0080 SRSPAN",
+							"0x0100 PROXY, 0x0200 OSPF.",
+							"",
+							"These values can be configured through the protoTable.",
+							"Combining TBRIDGE and SBRIDGE always produces SRTBRIDGE."
+						],
+						"name" : "CT-ELS10-MIB::lxifFunction",
+						"oid" : "1.3.6.1.4.1.97.7.6.1.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxRxQueuesTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the number of times that the port's receiver ",
+				"has stopped receiving packets due to buffer space shortages ",
+				"has exceeded the port's limit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxRxQueuesTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port receiver stopped receiving packets due to buffer space shortage"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxRxQueuesTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxifRxQueues c 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxRxQueuesTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Number of received packets lost because of ",
+							"insufficient receive buffers. (For certain interfaces ",
+							"with multi-packet FIFO hardware, this count might be ",
+							"approximate.)"
+						],
+						"name" : "CT-ELS10-MIB::lxifRxQueues",
+						"oid" : "1.3.6.1.4.1.97.7.6.1.1.19",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTxStormFlagTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever multicast storm protection has been invoked ",
+				"for the port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTxStormFlagTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port storm protection invoked"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTxStormFlagTrap CT-ELS10-MIB::lxtrapSeverity i 1",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTxStormFlagTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTxCongestsTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever packets destined for the unit itself were ",
+				"discarded due to lack of buffer space."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTxCongestsTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Packets congestion detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTxCongestsTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxadminNAMReceiveCongests c 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTxCongestsTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CT-ELS10-MIB::lxadminNAMReceiveCongests",
+						"oid" : "1.3.6.1.4.1.97.7.3.10",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxDebugStringIdTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send whenever the unit has a debug text string to be ",
+				"displayed. The text strings are sent in a stream-like ",
+				"fashion. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxDebugStringIdTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : (($v1==4) ? 4 : (($v1==5) ? 5 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Debug text string $v3 is displayed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxDebugStringIdTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxdebugStringID i 9999 CT-ELS10-MIB::lxdebugString s EXAMPLE",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxDebugStringIdTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of debug text strings sent by the ",
+							"ES-10. This parameter is used by the ES-10's enterprise ",
+							"specific trap mechanism."
+						],
+						"name" : "CT-ELS10-MIB::lxdebugStringID",
+						"oid" : "1.3.6.1.4.1.97.7.10.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The last debug text string (0-80 bytes) sent ",
+							"by the ES-10."
+						],
+						"name" : "CT-ELS10-MIB::lxdebugString",
+						"oid" : "1.3.6.1.4.1.97.7.10.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxLpbkOperationTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send whenever the unit has finished a loop back test, or ",
+				"a loop back error has been detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxLpbkOperationTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : (($v1==4) ? 4 : (($v1==5) ? 5 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Loop back operation ($v2) is detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxLpbkOperationTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxlpbkOperation i 1 CT-ELS10-MIB::lxlpbkErrorNoReceives c 9999 CT-ELS10-MIB::lxlpbkErrorBadReceives c 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxLpbkOperationTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of loopback being performed. Setting ",
+							"lxlpbkOperation to loopback-off causes loop back operation to ",
+							"terminate. Setting lxlpbkOperation to loopback-local or ",
+							"loopback-remote causes loopback operation to commence, and ",
+							"the ES-10 automatically resets lpbkOperation to loopback-off ",
+							"when the loopback operation has completed."
+						],
+						"enums" : {
+							"1" : "loopback-off",
+							"2" : "loopback-local",
+							"3" : "loopback-remote"
+						},
+						"name" : "CT-ELS10-MIB::lxlpbkOperation",
+						"oid" : "1.3.6.1.4.1.97.7.11.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of packets which were transmitted, ",
+							"but not received. This number is automatically reset to ",
+							"zero, whenever loopback operation is initiated."
+						],
+						"name" : "CT-ELS10-MIB::lxlpbkErrorNoReceives",
+						"oid" : "1.3.6.1.4.1.97.7.11.1.1.9",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The number of transmitted packets which were ",
+							"received with different data patterns. This number is ",
+							"automatically reset to zero, whenever loopback operation ",
+							"is initiated."
+						],
+						"name" : "CT-ELS10-MIB::lxlpbkErrorBadReceives",
+						"oid" : "1.3.6.1.4.1.97.7.11.1.1.10",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTrunkStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A trunking state change transition has occurred. The possible ",
+				"transitions are:",
+				"CLOSED-ONEWAY",
+				"ONEWAY-PERTURBED",
+				"PERTURBED-JOINED",
+				"JOINED-HELDDOWN",
+				"CLOSED-HELDDOWN",
+				"ONEWAY-HELDDOWN",
+				"PERTURBED-HELDDOWN"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==4) ? 1 : ($v1==1) ? 3 : 2"
+				},
+				"EventType" : "lxTrunkStateTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==4) ? 3600 : ($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==4) ? 0 : (($v1==1) ? 2 : (($v1==4) ? 4 : (($v1==5) ? 5 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Trunk state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTrunkStateTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxtrunkState i 1",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTrunkStateTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"If off(1) then this link has not been enabled for trunking.",
+							"If closed(2) then this link has not yet received any Trunking",
+							"PDUs. If oneway(3) then incoming Trunking PDUs do not indicate",
+							"that our PDUs are being successfully received by the far end.",
+							"If joined(4) then this link is actively participating in the",
+							"trunk group. If perturbed(5) then this link is actively",
+							"participating in the trunk group; however, the transmission",
+							"of data packets has been temporarily stopped due to a change",
+							"in membership of the group. If helddown(6) then an error has ",
+							"been detected and the link is being held out-of-service until ",
+							"the error clears. If broken(7) then this link has been ",
+							"configured for trunking, but the port is physically ",
+							"non-operational."
+						],
+						"enums" : {
+							"1" : "off",
+							"2" : "closed",
+							"3" : "oneway",
+							"4" : "joined",
+							"5" : "perturbed",
+							"6" : "helddown",
+							"7" : "broken"
+						},
+						"name" : "CT-ELS10-MIB::lxtrunkState",
+						"oid" : "1.3.6.1.4.1.97.7.13.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTrunkBridgeAddrTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The associated trunking MAC address of the bridge ID of the remote ",
+				"bridge has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTrunkBridgeAddrTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Bridge MAC address changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTrunkBridgeAddrTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxtrunkRemoteBridgeAddr s EXAMPLE",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTrunkBridgeAddrTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The MAC address portion of the bridge ID of the remote ",
+							"bridge."
+						],
+						"name" : "CT-ELS10-MIB::lxtrunkRemoteBridgeAddr",
+						"oid" : "1.3.6.1.4.1.97.7.13.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTrunkIPAddrTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The associated trunking IP address of the remote bridge has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTrunkIPAddrTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "BridgeIpAddress:$v2",
+				"Summary" : "Bridge IP address changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTrunkIPAddrTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxtrunkRemoteIp a 192.0.2.1",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTrunkIPAddrTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IP address of the remote bridge, as reported by that",
+							"bridge for administrative purposes."
+						],
+						"name" : "CT-ELS10-MIB::lxtrunkRemoteIp",
+						"oid" : "1.3.6.1.4.1.97.7.13.1.1.4",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTrunkErrorTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An error has occurred in trunking."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTrunkErrorTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Trunk error occurred due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTrunkErrorTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxtrunkLastError i 1",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTrunkErrorTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The last reason for failure when the link is in closed, ",
+							"oneway, or helddown state."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "in-bpdu",
+							"3" : "multiple-bridges",
+							"4" : "ack-lost",
+							"5" : "standby",
+							"6" : "too-many-groups",
+							"7" : "no-ack",
+							"8" : "perturbed-threshold",
+							"9" : "self-connect",
+							"10" : "port-moved",
+							"11" : "multiple-lan-types"
+						},
+						"name" : "CT-ELS10-MIB::lxtrunkLastError",
+						"oid" : "1.3.6.1.4.1.97.7.13.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTrunkLinkOrdinalTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The port's index in the trunking group has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTrunkLinkOrdinalTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port index in the trunking group changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTrunkLinkOrdinalTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxtrunkLinkOrdinal i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTrunkLinkOrdinalTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The position of this link within the trunk group."
+						],
+						"name" : "CT-ELS10-MIB::lxtrunkLinkOrdinal",
+						"oid" : "1.3.6.1.4.1.97.7.13.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTrunkLinkCountTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of ports in the trunking group has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTrunkLinkCountTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : (($v1==4) ? 4 : (($v1==5) ? 5 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Number of ports in the trunking group changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTrunkLinkCountTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxtrunkLinkCount i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTrunkLinkCountTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of links within the trunk group."
+						],
+						"name" : "CT-ELS10-MIB::lxtrunkLinkCount",
+						"oid" : "1.3.6.1.4.1.97.7.13.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxDiagUnitBootedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The unit has booted. lxadminFatalErr contains information about ",
+				"why the unit rebooted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxDiagUnitBootedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Unit booted, Fatal error: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxDiagUnitBootedTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxadminFatalErr s EXAMPLE",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxDiagUnitBootedTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a 32 byte array which contains information ",
+							"about the cause of the previous system reset. This will",
+							"describe the circumstances which forced the system",
+							"software to perform a reboot. The values in the first",
+							"byte have the following meanings (0) Power failure, (1)",
+							"Watchdog Timeout, (2) NMS Requested Shutdown, (3-255)",
+							"Fatal Error (next byte contains the hwIndex of the module",
+							"which encountered the error; remaining 30 bytes contain",
+							"additional information)."
+						],
+						"name" : "CT-ELS10-MIB::lxadminFatalErr",
+						"oid" : "1.3.6.1.4.1.97.7.3.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStorageFailureTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent if the unit's Configuration EEPROM has failed. The unit",
+				"will not be able to reboot, and must be returned to the ",
+				"factory."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStorageFailureTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Unit configuration EEPROM failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStorageFailureTrap CT-ELS10-MIB::lxtrapSeverity i 1",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStorageFailureTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxPortCongestedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever outbound congestion control has been invoked ",
+				"for the port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxPortCongestedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port outbound congestion control invoked"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxPortCongestedTrap CT-ELS10-MIB::lxtrapSeverity i 1 RFC1213-MIB::ifOutDiscards c 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxPortCongestedTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of outbound packets which were chosen",
+							"",
+							"to be discarded even though no errors had been",
+							"detected to prevent their being transmitted. One",
+							"possible reason for discarding such a packet could",
+							"be to free up buffer space."
+						],
+						"name" : "RFC1213-MIB::ifOutDiscards",
+						"oid" : "1.3.6.1.2.1.2.2.1.19",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTopChangeBegunTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The spanning tree topology has begun to change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTopChangeBegunTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : (($v1==4) ? 4 : (($v1==5) ? 5 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree topology change began"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTopChangeBegunTrap CT-ELS10-MIB::lxtrapSeverity i 1",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTopChangeBegunTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxTopChangeEndTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The spanning tree topology has stopped changing."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxTopChangeEndTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : (($v1==4) ? 4 : (($v1==5) ? 5 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree topology change stopped"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxTopChangeEndTrap CT-ELS10-MIB::lxtrapSeverity i 1",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxTopChangeEndTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxIfErrorsTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the number of hardware errors in received and ",
+				"transmitted packets has exceeded the port's limit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxIfErrorsTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Received and transmitted packets hardware error limit exeeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxIfErrorsTrap CT-ELS10-MIB::lxtrapSeverity i 1 RFC1213-MIB::ifInErrors c 9999 RFC1213-MIB::ifOutErrors c 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxIfErrorsTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of inbound packets that contained",
+							"errors preventing them from being deliverable to a",
+							"higher-layer protocol."
+						],
+						"name" : "RFC1213-MIB::ifInErrors",
+						"oid" : "1.3.6.1.2.1.2.2.1.14",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The number of outbound packets that could not be",
+							"transmitted because of errors."
+						],
+						"name" : "RFC1213-MIB::ifOutErrors",
+						"oid" : "1.3.6.1.2.1.2.2.1.20",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStRootIDTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The spanning tree root bridge ID for the unit has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStRootIDTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree root bridge ID changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStRootIDTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpDesignatedRoot s EXAMPLEE",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStRootIDTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bridge identifier of the root of the spanning",
+							"tree, as determined by the Spanning Tree Protocol",
+							"as executed by this node. This value is used as",
+							"the Root Identifier parameter in all Configuration",
+							"Bridge PDUs originated by this node."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpDesignatedRoot",
+						"oid" : "1.3.6.1.2.1.17.2.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStRootCostTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The unit's spanning tree cost to the root bridge has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStRootCostTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree cost to root bridge changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStRootCostTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpRootCost i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStRootCostTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cost of the path to the root as seen from",
+							"this bridge."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpRootCost",
+						"oid" : "1.3.6.1.2.1.17.2.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStRootPortTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The unit's spanning tree root port has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStRootPortTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "RootPort:$v2",
+				"Summary" : "Spanning tree root port changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStRootPortTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpRootPort i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStRootPortTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number of the port that offers the lowest",
+							"cost path from this bridge to the root bridge."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpRootPort",
+						"oid" : "1.3.6.1.2.1.17.2.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStMaxAgeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The unit's spanning tree maximum age has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStMaxAgeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree maximum age changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStMaxAgeTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpMaxAge i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStMaxAgeTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The maximum age of Spanning Tree Protocol information",
+							"learned from the network on any port before it is",
+							"discarded, in units of hundredths of a second. This is",
+							"the actual value that this bridge is currently using."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpMaxAge",
+						"oid" : "1.3.6.1.2.1.17.2.8",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStHelloTimeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The unit's spanning tree hello time has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStHelloTimeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree hello timer changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStHelloTimeTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpHelloTime i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStHelloTimeTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The amount of time between the transmission of",
+							"Configuration bridge PDUs by this node on any port when",
+							"it is the root of the spanning tree, or trying to become",
+							"so, in units of hundredths of a second. This is the",
+							"actual value that this bridge is currently using."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpHelloTime",
+						"oid" : "1.3.6.1.2.1.17.2.9",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStForwardDelayTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The unit's spanning tree forward delay time has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStForwardDelayTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree forward delay timer changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStForwardDelayTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpForwardDelay i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStForwardDelayTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This time value, measured in units of hundredths of a",
+							"second, controls how fast a port changes its spanning",
+							"state when moving towards the Forwarding state. The",
+							"value determines how long the port stays in each of the",
+							"Listening and Learning states, which precede the",
+							"Forwarding state. This value is also used when a",
+							"topology change has been detected and is underway, to",
+							"age all dynamic entries in the Forwarding Database.",
+							"[Note that this value is the one that this bridge is",
+							"currently using, in contrast to",
+							"dot1dStpBridgeForwardDelay, which is the value that this",
+							"bridge and all others would start using if/when this",
+							"bridge were to become the root.]"
+						],
+						"name" : "BRIDGE-MIB::dot1dStpForwardDelay",
+						"oid" : "1.3.6.1.2.1.17.2.11",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStDesigRootTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Root Bridge ID in received Spanning Tree Configuration BPDUs",
+				"from the port has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStDesigRootTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Root bridge ID changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStDesigRootTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpPortDesignatedRoot s EXAMPLEE",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStDesigRootTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The unique Bridge Identifier of the Bridge",
+							"recorded as the Root in the Configuration BPDUs",
+							"transmitted by the Designated Bridge for the",
+							"segment to which the port is attached."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpPortDesignatedRoot",
+						"oid" : "1.3.6.1.2.1.17.2.15.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStPortDesigBridgeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The bridge ID of the spanning tree designated bridge of the LAN/WAN",
+				"to which the port is attached has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStPortDesigBridgeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Designated bridge ID changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStPortDesigBridgeTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpPortDesignatedBridge s EXAMPLEE",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStPortDesigBridgeTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Bridge Identifier of the bridge that this",
+							"port considers to be the Designated Bridge for",
+							"this port's segment."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpPortDesignatedBridge",
+						"oid" : "1.3.6.1.2.1.17.2.15.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStPortDesigCostTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cost to the spanning tree root bridge from the designated port of ",
+				"the LAN/WAN to which the port is attached has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStPortDesigCostTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Cost from the designated port to spanning tree root bridge changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStPortDesigCostTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpPortDesignatedCost i 9999",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStPortDesigCostTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The path cost of the Designated Port of the segment",
+							"connected to this port. This value is compared to the",
+							"Root Path Cost field in received bridge PDUs."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpPortDesignatedCost",
+						"oid" : "1.3.6.1.2.1.17.2.15.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStPortDesigPortTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The port ID of the spanning tree designated port of the LAN/WAN",
+				"to which the port is attached has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxStPortDesigPortTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==4) ? 4 : ($v1==5) ? 5 : 3"
+				},
+				"SubNode" : "DesignatedPort:$v2",
+				"Summary" : "Designated bridge port ID changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStPortDesigPortTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpPortDesignatedPort s EX",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStPortDesigPortTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Port Identifier of the port on the Designated",
+							"Bridge for this port's segment."
+						],
+						"name" : "BRIDGE-MIB::dot1dStpPortDesignatedPort",
+						"oid" : "1.3.6.1.2.1.17.2.15.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxStPortStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The spanning tree state of the port has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==5) ? 1 : (($v1==1) ? 3 : 2)"
+				},
+				"EventType" : "lxStPortStateTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==5) ? 3600 : (($v1==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v2==5) ? 0 : (($v1==1) ? 2 : (($v1==4) ? 4 : (($v1==5) ? 5 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree port state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxStPortStateTrap CT-ELS10-MIB::lxtrapSeverity i 1 BRIDGE-MIB::dot1dStpPortState i 1",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxStPortStateTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port's current state, as defined by application of",
+							"the Spanning Tree Protocol. This state controls what",
+							"action a port takes on reception of a frame. If the",
+							"bridge has detected a port that is malfunctioning, it",
+							"will place that port into the broken(6) state. For",
+							"ports that are disabled (see dot1dStpPortEnable), this",
+							"object will have a value of disabled(1)."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "blocking",
+							"3" : "listening",
+							"4" : "learning",
+							"5" : "forwarding",
+							"6" : "broken"
+						},
+						"name" : "BRIDGE-MIB::dot1dStpPortState",
+						"oid" : "1.3.6.1.2.1.17.2.15.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CT-ELS10-MIB::lxhwDiagTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the unit's diagnostics have indicated an error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lxhwDiagTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==5) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "User diagnostic error code: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CT-ELS10-MIB::lxhwDiagTrap CT-ELS10-MIB::lxtrapSeverity i 1 CT-ELS10-MIB::lxhwDiagCode s EXAMPLE",
+			"trap" : {
+				"name" : "CT-ELS10-MIB::lxhwDiagTrap",
+				"oid" : "1.3.6.1.2.1.1.2.0.100",
+				"variables" : [
+					{
+						"description" : [
+							"A user-definable severity, indicating the importance of the",
+							"trap."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CT-ELS10-MIB::lxtrapSeverity",
+						"oid" : "1.3.6.1.4.1.97.7.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Additoinal diagnostics information concerning",
+							"the slot's module."
+						],
+						"name" : "CT-ELS10-MIB::lxhwDiagCode",
+						"oid" : "1.3.6.1.4.1.97.7.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

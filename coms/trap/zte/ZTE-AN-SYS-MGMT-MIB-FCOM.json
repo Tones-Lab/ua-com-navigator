@@ -1,0 +1,221 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201406040000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigSaveFinished",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notifications when save configuration data operation finish."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : ($v1 == 2) ? 2 : 3"
+				},
+				"EventType" : "zxAnSysConfigSaveFinished",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : ($v1 == 2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : ($v1 == 2) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 2) ? 'Save configuration data operation failed due to $v2' : 'Save data configuration operation status : $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigSaveFinished ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigSaveStatus i 1 ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigSaveFailedReason i 1",
+			"trap" : {
+				"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigSaveFinished",
+				"oid" : "1.3.6.1.4.1.3902.1082.20.1.3.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The status of save flash operation. ",
+							"- success(1): The save flash operation is completed.",
+							"- failed(2): The save flash operation is failed.",
+							"- saving(3): The save flash is still in progress.",
+							"- noOperation(4): No operation is executed."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failed",
+							"3" : "saving",
+							"4" : "noOperation"
+						},
+						"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigSaveStatus",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.1.2.10.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The reason of saving flash operation failed. ",
+							"Possible values are:",
+							"- noError(1): No error, saving flash successfully ",
+							"or no saving flash operation is excuted.",
+							"- flashMediaFull(2): The save flash operation is failed",
+							"because flash media is full. ",
+							"- createConfigFilesFailed(3): The save flash operation is ",
+							"failed because configuration file is created ",
+							"unsuccessfully. ",
+							"- openConfigFilesFailed(4): The save flash operation is ",
+							"failed because configuration file can't be ",
+							"opened successfully. ",
+							"- standbyCardCopyConfigFilesFailed(5) : The save flash operation ",
+							"is failed because configuration file can't be ",
+							"copied to the standby board. ",
+							"- unknown(99): The save flash operation is failed for some ",
+							"unknown error."
+						],
+						"enums" : {
+							"1" : "noError",
+							"2" : "flashMediaFull",
+							"3" : "createConfigFilesFailed",
+							"4" : "openConfigFilesFailed",
+							"5" : "standbyCardCopyConfigFilesFailed",
+							"99" : "unknown"
+						},
+						"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigSaveFailedReason",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.1.2.10.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysDelAppliedPrfFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification will be sent to management system when a profile",
+				"that has been applied is deleted.",
+				"If profile supports name, zxAnSysProfileName must be filled first.",
+				"If profile supports ID, zxAnSysProfileId should be filled ",
+				"with profile ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zxAnSysDelAppliedPrfFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Profile $v3 is deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-AN-SYS-MGMT-MIB::zxAnSysDelAppliedPrfFailed ZTE-AN-SYS-MGMT-MIB::zxAnSysProfileCategory s EXAMPLE ZTE-AN-SYS-MGMT-MIB::zxAnSysProfileName s EXAMPLE ZTE-AN-SYS-MGMT-MIB::zxAnSysProfileId i 9999 ZTE-AN-SYS-MGMT-MIB::zxAnSysProfileInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysDelAppliedPrfFailed",
+				"oid" : "1.3.6.1.4.1.3902.1082.20.1.3.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the category of profile."
+						],
+						"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysProfileCategory",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.1.2.40.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is used to indicate the profile name.",
+							"Empty string means that the profile does not support profile name.",
+							""
+						],
+						"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysProfileName",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.1.2.40.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is used to indicate the profile ID.",
+							"Value 0 means that the profile does not support ID.",
+							""
+						],
+						"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysProfileId",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.1.2.40.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object is used to indicate the profile information, such as",
+							"showing the port list that the profile has been applied.",
+							""
+						],
+						"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysProfileInfo",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.1.2.40.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification will be sent to management system",
+				"when the configuration is changed. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zxAnSysConfigChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Configuration is changed for manager of type:$v1 and location:$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigChanged ZTE-AN-SYS-MGMT-MIB::zxAnSysLastConfManagerType i 1 ZTE-AN-SYS-MGMT-MIB::zxAnSysLastConfManagerLocation s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysConfigChanged",
+				"oid" : "1.3.6.1.4.1.3902.1082.20.1.3.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"Current configuration owner of the system. ",
+							"- snmp(1): The configuration changed by ",
+							"snmp manager.",
+							"- console(2): The configuration changed by",
+							"console user.",
+							"- telnet(3): The configuration changed by ",
+							"virtual teletype terminal user. "
+						],
+						"enums" : {
+							"1" : "snmp",
+							"2" : "console",
+							"3" : "telnet"
+						},
+						"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysLastConfManagerType",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.1.2.50.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"If the zxAnSysLastConfManagerType is snmp(1)",
+							"the zxAnSysLastConfManagerLocation is the user's IP address.",
+							"If the zxAnSysLastConfManagerType is console(2), ",
+							"the zxAnSysLastConfManagerLocation is empty string.",
+							"If the zxAnSysLastConfManagerType is telnet(3)",
+							"the zxAnSysLastConfManagerLocation is the user's IP address."
+						],
+						"name" : "ZTE-AN-SYS-MGMT-MIB::zxAnSysLastConfManagerLocation",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.1.2.50.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

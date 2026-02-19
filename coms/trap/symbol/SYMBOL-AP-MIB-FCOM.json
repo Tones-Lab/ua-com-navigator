@@ -1,0 +1,270 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200912301336Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SYMBOL-AP-MIB::apMuVlan",
+			"certification" : "STANDARD",
+			"description" : [
+				"A MU has been associated with this Radio Address."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apMuVlan",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "VlanId:$v3",
+				"Summary" : "MU associated with radio address $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYMBOL-AP-MIB::apMuVlan SYMBOL-AP-MIB::apTrapMuMac s EXAMPLE SYMBOL-AP-MIB::apTrapRadioMac s EXAMPLE SYMBOL-AP-MIB::apTrapVlanId i 9999",
+			"trap" : {
+				"name" : "SYMBOL-AP-MIB::apMuVlan",
+				"oid" : "1.3.6.1.4.1.388.11.3.6.1",
+				"variables" : [
+					{
+						"description" : [
+							"MU that has been associated."
+						],
+						"name" : "SYMBOL-AP-MIB::apTrapMuMac",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.4.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Radio to be which MU has been associated."
+						],
+						"name" : "SYMBOL-AP-MIB::apTrapRadioMac",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.4.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Dynamic VLAN ID assigned to the MU."
+						],
+						"name" : "SYMBOL-AP-MIB::apTrapVlanId",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.4.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYMBOL-AP-MIB::apLanMonitor",
+			"certification" : "STANDARD",
+			"description" : [
+				"Radios are either been SHUTTING DOWN or RESTORING",
+				"because of a certain activity at LAN Port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : 1"
+				},
+				"EventType" : "apLanMonitor",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 4 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Radio is shutdown due to $v2' : 'Radio is restored'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYMBOL-AP-MIB::apLanMonitor SYMBOL-AP-MIB::apTrapLanMonitorMode i 1 SYMBOL-AP-MIB::apTrapLanMonitorReason i 1",
+			"trap" : {
+				"name" : "SYMBOL-AP-MIB::apLanMonitor",
+				"oid" : "1.3.6.1.4.1.388.11.3.6.2",
+				"variables" : [
+					{
+						"description" : [
+							"Action taken by the Radios either Shutting Down",
+							"or Restoring Up."
+						],
+						"enums" : {
+							"1" : "radioShutdown",
+							"2" : "radioRestore"
+						},
+						"name" : "SYMBOL-AP-MIB::apTrapLanMonitorMode",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.5.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Activity at the LAN port which caused this",
+							"event to happen."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "hardwareDetect",
+							"3" : "timeout"
+						},
+						"name" : "SYMBOL-AP-MIB::apTrapLanMonitorReason",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYMBOL-AP-MIB::apWpaCounterMeasure",
+			"certification" : "STANDARD",
+			"description" : [
+				"When a subsequent MIC failure occurs within 60 seconds",
+				"of the preceding failure, the AP will disassociate all",
+				"associated STAs. The AP will not deliver any class 3 TKIP",
+				"encrypted data frames to or from any peer as well as ",
+				"disallow new associations for a period of 60 seconds."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apWpaCounterMeasure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Essid:$v1",
+				"Summary" : "Successive MIC failure occurs within 60 secs"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYMBOL-AP-MIB::apWpaCounterMeasure SYMBOL-AP-MIB::apTrapWpaCounterMeasureEssid s EXAMPLE",
+			"trap" : {
+				"name" : "SYMBOL-AP-MIB::apWpaCounterMeasure",
+				"oid" : "1.3.6.1.4.1.388.11.3.6.3",
+				"variables" : [
+					{
+						"description" : [
+							"ESSID for which MIC failure happened."
+						],
+						"name" : "SYMBOL-AP-MIB::apTrapWpaCounterMeasureEssid",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.6.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYMBOL-AP-MIB::apMuHotspotState",
+			"certification" : "STANDARD",
+			"description" : [
+				"An MU is either Authenticated or Deauthenticated ",
+				"on a Hotspot enabled WLAN. Upon authenticating with a",
+				"Radius Server the state of the MU is changed from HOTSPOT",
+				"to DATA_READY and the vice versa upon Time out or ",
+				"Logging out of that particular MU."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "$v2"
+				},
+				"EventType" : "apMuHotspotState",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "MU hotspot state changed $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYMBOL-AP-MIB::apMuHotspotState SYMBOL-AP-MIB::apTrapCtrlMuMac s EXAMPLE SYMBOL-AP-MIB::apTrapCtrlMuHotspotStateChange i 1",
+			"trap" : {
+				"name" : "SYMBOL-AP-MIB::apMuHotspotState",
+				"oid" : "1.3.6.1.4.1.388.11.3.6.4",
+				"variables" : [
+					{
+						"description" : [
+							"The MAC Address of the MU which undergoes a state",
+							"changed on a Hotspot enabled WLAN."
+						],
+						"name" : "SYMBOL-AP-MIB::apTrapCtrlMuMac",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.7.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The change in the state of an MU associated on",
+							"a Hotspot enabled WLAN."
+						],
+						"enums" : {
+							"1" : "fromHotspotToDataReady",
+							"2" : "fromDataReadyToHotspot"
+						},
+						"name" : "SYMBOL-AP-MIB::apTrapCtrlMuHotspotStateChange",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.7.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYMBOL-AP-MIB::apDynDNSUpdate",
+			"certification" : "STANDARD",
+			"description" : [
+				"A DynDNS Update has been sent to DynDns.org"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apDynDNSUpdate",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "DynDNSIp:$v1",
+				"Summary" : "DynDNS update status : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYMBOL-AP-MIB::apDynDNSUpdate SYMBOL-AP-MIB::apTrapCtrlDynDNSUpdateIp s EXAMPLE SYMBOL-AP-MIB::apTrapCtrlDynDNSUpdateHostname s EXAMPLE SYMBOL-AP-MIB::apTrapCtrlDynDNSUpdateStatus s EXAMPLE",
+			"trap" : {
+				"name" : "SYMBOL-AP-MIB::apDynDNSUpdate",
+				"oid" : "1.3.6.1.4.1.388.11.3.6.5",
+				"variables" : [
+					{
+						"description" : [
+							"Description."
+						],
+						"name" : "SYMBOL-AP-MIB::apTrapCtrlDynDNSUpdateIp",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.8.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description."
+						],
+						"name" : "SYMBOL-AP-MIB::apTrapCtrlDynDNSUpdateHostname",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.8.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description."
+						],
+						"name" : "SYMBOL-AP-MIB::apTrapCtrlDynDNSUpdateStatus",
+						"oid" : "1.3.6.1.4.1.388.11.3.6.1000.8.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

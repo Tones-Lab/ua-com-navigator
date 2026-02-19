@@ -1,0 +1,142 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201603290000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ADTRAN-SIAMCP-MIB::adtranSiamcpAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The alarmtrap with the following attributes:",
+				"siamcpAlmTimeAndDate, e.g. 2016-04-12T23:20:50.52Z, time in UTC",
+				"siamcpAlmIPAddr, e.g. 192.168.153.58 (optional field) ",
+				"siamcpAlmNEType, e.g. hiX5635/R4.7MS (Type/Release)",
+				"siamcpAlmNEName, e.g. Adtran/domain/my58 (Hierarchically to accomodate domains inside the EMS)",
+				"siamcpAlmSeverity, e.g. 4 for minor",
+				"siamcpAlmState, e.g. on, off or other for acknowledged",
+				"siamcpAlmIdentity, e.g. ShelfExternalAlarm01 (a string)",
+				"siamcpAlmText, e.g. AC Failure, gives also correction procedure",
+				"siamcpAlmResource, e.g. gfast 0/1",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==3) ? 1 : (($v6==1) ? 3 : 2)"
+				},
+				"EventType" : "adtranSiamcpAlarm:$v7",
+				"ExpireTime" : {
+					"eval" : "($v6==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v5==7) ? 0 : (($v5==1) ? 1 : (($v5==6) ? 2 : (($v5==3) ? 4 : (($v5==2) ? 5 : 3))))"
+				},
+				"SubNode" : "IPAddr:$v2;AlmResource:$v9",
+				"Summary" : {
+					"eval" : "($v8 ne '') ? '$v8' : (($v6==3) ? 'Alarm ($v7) cleared in $v9' : 'Alarm ($v7) occurred in $v9')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD ADTRAN-SIAMCP-MIB::adtranSiamcpAlarm ADTRAN-SIAMCP-MIB::siamcpAlmTimeAndDate s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmIPAddr s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmNEType s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmNEName s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmSeverity i 7 ADTRAN-SIAMCP-MIB::siamcpAlmState i 3 ADTRAN-SIAMCP-MIB::siamcpAlmIdentity s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmText s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmResource s EXAMPLE",
+				"$SNMPTRAPCMD ADTRAN-SIAMCP-MIB::adtranSiamcpAlarm ADTRAN-SIAMCP-MIB::siamcpAlmTimeAndDate s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmIPAddr s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmNEType s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmNEName s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmSeverity i 6 ADTRAN-SIAMCP-MIB::siamcpAlmState i 3 ADTRAN-SIAMCP-MIB::siamcpAlmIdentity s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmText s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmResource s EXAMPLE",
+				"$SNMPTRAPCMD ADTRAN-SIAMCP-MIB::adtranSiamcpAlarm ADTRAN-SIAMCP-MIB::siamcpAlmTimeAndDate s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmIPAddr s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmNEType s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmNEName s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmSeverity i 2 ADTRAN-SIAMCP-MIB::siamcpAlmState i 2 ADTRAN-SIAMCP-MIB::siamcpAlmIdentity s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmText s EXAMPLE ADTRAN-SIAMCP-MIB::siamcpAlmResource s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "ADTRAN-SIAMCP-MIB::adtranSiamcpAlarm",
+				"oid" : "1.3.6.1.4.1.664.2.1420.1.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"This trapvariable contains the time and date the alarm appeared in format 2016-04-12T23:20:50.52Z, time in UTC "
+						],
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This trapvariable contains the IP address of the NE, e.g. 192.168.153.58 "
+						],
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmIPAddr",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This trapvariable contains the type of the NE that issued the alarm "
+						],
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmNEType",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This trapvariable contains the name of the NE that issued the alarm "
+						],
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmNEName",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This trapvariable contains the alarm severity (critical, major, minor, warning, informational) "
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "informational",
+							"7" : "clear"
+						},
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmSeverity",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This trapvariable contains the alarmstate (on or off) "
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "on",
+							"3" : "off"
+						},
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmState",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This trapvariable contains the alarm identity "
+						],
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmIdentity",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This trapvariable contains a textual description of the alarm, gives also correction procedure "
+						],
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmText",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This trapvariable contains the location of the alarming unit "
+						],
+						"name" : "ADTRAN-SIAMCP-MIB::siamcpAlmResource",
+						"oid" : "1.3.6.1.4.1.664.2.1420.2.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

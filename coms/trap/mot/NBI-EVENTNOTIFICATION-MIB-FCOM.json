@@ -1,0 +1,472 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0611021909Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NBI-EVENTNOTIFICATION-MIB::nbiEventRecord",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent from",
+				"EMS to the registered NMS. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 6) ? 1 : (($v9 == 7 || $v9 == 8) ? 3 : 2)"
+				},
+				"EventType" : "$v5",
+				"ExpireTime" : {
+					"eval" : "($v9 == 6 || $v9 == 7 || $v9 == 8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 1 || $v9 == 2) ? 5 : (($v9 == 3) ? 4 : (($v9 == 4 || $v9 == 5) ? 3 : (($v9 == 6) ? 0 : (($v9 == 7) ? 2 : 1))))"
+				},
+				"SubNode" : "Source:$v10",
+				"Summary" : {
+					"eval" : "($v13 eq '') ? 'EMS sent notification to the registered NMS. $v14' : '$v13'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NBI-EVENTNOTIFICATION-MIB::nbiEventRecord NBI-EVENTNOTIFICATION-MIB::nbiSequenceTag u 9999 NBI-EVENTNOTIFICATION-MIB::nbiCorrelationTag u 9999 NBI-EVENTNOTIFICATION-MIB::nbiNotiSequenceNum u 9999 NBI-EVENTNOTIFICATION-MIB::nbiEventId s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiEventType i 1 NBI-EVENTNOTIFICATION-MIB::nbiEntityId s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiEntityName s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiManagedObjectUserName s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiSeverity i 1 NBI-EVENTNOTIFICATION-MIB::nbiSourceDevice s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiDetectionEventTime s EXAMPLEE NBI-EVENTNOTIFICATION-MIB::nbiSourceEventTime s EXAMPLEE NBI-EVENTNOTIFICATION-MIB::nbiText s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiAdditionalInformation s EXAMPLE",
+			"trap" : {
+				"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEventRecord",
+				"oid" : "1.3.6.1.4.1.161.3.10.104.1",
+				"variables" : [
+					{
+						"description" : [
+							"This attribute specifies sequence",
+							"number of the notification. The sequence ",
+							"number is maintained for every receiver of",
+							"the notification. This attribute is",
+							"persisted and hence the sequence",
+							"is mainitained across",
+							"restarts/reboots"
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiSequenceTag",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This unsigned integer is used to bind",
+							"all activity associated with a 'cause' or",
+							"'root'(either a manager request or an ",
+							"NMS-initiated event).Correlation tag values are unique, but tag sequence is not guaranteed",
+							"(i.e., they may not",
+							"be received in the order sent). No history ",
+							"is kept of recently used tags - only ",
+							"active tags are traked. The following",
+							"non-overlapping ranges of tags are ",
+							"reserved for assignment by the NMS and",
+							"the FM: 00000000 - 7FFFFFFF allocated",
+							"for FM-initiated transactions",
+							"80000000 - FFFFFFFF allocated for NMS-initiated transactions"
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiCorrelationTag",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This attribute specifies sequence number",
+							"of the notification. The sequence number is ",
+							"maintained for every receiver of the",
+							"notification. This attribute is persisted",
+							"and hence the sequence is mainitained across",
+							"restarts/reboots."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiNotiSequenceNum",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This attribute specifies the identifier",
+							"of the event."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEventId",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute specifies the type of event ."
+						],
+						"enums" : {
+							"1" : "Attribute-Value-Change-Event",
+							"2" : "Communication-Alarm",
+							"4" : "Equipment-Alarm",
+							"6" : "Object-Creation-Event",
+							"7" : "Object-Deletion-Event",
+							"11" : "Quality-of-Service-Alarm",
+							"13" : "Security-Violation",
+							"255" : "NBI-Management-Event",
+							"256" : "Informational-Event",
+							"257" : "Management-Event"
+						},
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEventType",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This attribute specifies the Identifier",
+							"of the managed entity, ",
+							"having the problem or the condition",
+							"that intiated the event/alarm."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEntityId",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute specifies the User",
+							"defined name of the managed entity, ",
+							"having the problem or the condition",
+							"that intiated the event/alarm. "
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEntityName",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute specifies the User ",
+							"defined name of the source managed",
+							"resource, that is managing the Entity",
+							"reporting the event/alarm. ",
+							"This attribute is set to NULL",
+							"if not used."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiManagedObjectUserName",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute indicates the",
+							"severity level of this event/alarm."
+						],
+						"enums" : {
+							"1" : "CommFailure",
+							"2" : "Critical",
+							"3" : "Major",
+							"4" : "Minor",
+							"5" : "Warning",
+							"6" : "Clear",
+							"7" : "Info",
+							"8" : "Unknown"
+						},
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiSeverity",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This attribute specifies the",
+							"IP Address of the agent (device)",
+							"reporting the event/alarm."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiSourceDevice",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute contains the time",
+							"when the event was detected on ",
+							"the manager."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiDetectionEventTime",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute contains the time",
+							"when the event was sourced at the NE.",
+							"This attribute is set to NULL if not used."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiSourceEventTime",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This parameter, if present, ",
+							"specifies a specific event message. ",
+							"This attribute is set to NULL if not used."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiText",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This parameter, when present",
+							"allows the inclusion of a set of",
+							"additional information in the event",
+							"report. This attribute is set",
+							"to NULL if not used."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiAdditionalInformation",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.14",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NBI-EVENTNOTIFICATION-MIB::nbiManagementEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent for the following NBI management",
+				"eventsNBI management eventstransfer-Complete (2) data-Committed (3),job-Aborted (4)",
+				"job-Complete (7),file-Transfer-Failed (11)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 8) ? 1 : (($v8 == 7 || $v8 == 8) ? 3 : 2)"
+				},
+				"EventType" : "$v14",
+				"ExpireTime" : {
+					"eval" : "($v8 == 6 || $v8 == 7 || $v8 == 8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v8 == 1 || $v8 == 2) ? 5 : (($v8 == 3) ? 4 : (($v8 == 4 || $v8 == 5) ? 3 : (($v8 == 6) ? 0 : (($v8 == 7) ? 2 : 1))))"
+				},
+				"SubNode" : "Source:$v9",
+				"Summary" : {
+					"eval" : "($v12 eq '') ? 'NBI management event $v14 occurred due to $v15 ' : '$v12'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NBI-EVENTNOTIFICATION-MIB::nbiManagementEvent NBI-EVENTNOTIFICATION-MIB::nbiSequenceTag u 9999 NBI-EVENTNOTIFICATION-MIB::nbiCorrelationTag u 9999 NBI-EVENTNOTIFICATION-MIB::nbiEventId s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiEventType i 1 NBI-EVENTNOTIFICATION-MIB::nbiEntityId s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiEntityName s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiManagedObjectUserName s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiSeverity i 1 NBI-EVENTNOTIFICATION-MIB::nbiSourceDevice s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiDetectionEventTime s EXAMPLEE NBI-EVENTNOTIFICATION-MIB::nbiSourceEventTime s EXAMPLEE NBI-EVENTNOTIFICATION-MIB::nbiText s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiAdditionalInformation s EXAMPLE NBI-EVENTNOTIFICATION-MIB::nbiMgmtEventType i 2 NBI-EVENTNOTIFICATION-MIB::nbiMgmtReasonCode i 0",
+			"trap" : {
+				"name" : "NBI-EVENTNOTIFICATION-MIB::nbiManagementEvent",
+				"oid" : "1.3.6.1.4.1.161.3.10.104.2",
+				"variables" : [
+					{
+						"description" : [
+							"This attribute specifies sequence",
+							"number of the notification. The sequence ",
+							"number is maintained for every receiver of",
+							"the notification. This attribute is",
+							"persisted and hence the sequence",
+							"is mainitained across",
+							"restarts/reboots"
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiSequenceTag",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This unsigned integer is used to bind",
+							"all activity associated with a 'cause' or",
+							"'root'(either a manager request or an ",
+							"NMS-initiated event).Correlation tag values are unique, but tag sequence is not guaranteed",
+							"(i.e., they may not",
+							"be received in the order sent). No history ",
+							"is kept of recently used tags - only ",
+							"active tags are traked. The following",
+							"non-overlapping ranges of tags are ",
+							"reserved for assignment by the NMS and",
+							"the FM: 00000000 - 7FFFFFFF allocated",
+							"for FM-initiated transactions",
+							"80000000 - FFFFFFFF allocated for NMS-initiated transactions"
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiCorrelationTag",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This attribute specifies the identifier",
+							"of the event."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEventId",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute specifies the type of event ."
+						],
+						"enums" : {
+							"1" : "Attribute-Value-Change-Event",
+							"2" : "Communication-Alarm",
+							"4" : "Equipment-Alarm",
+							"6" : "Object-Creation-Event",
+							"7" : "Object-Deletion-Event",
+							"11" : "Quality-of-Service-Alarm",
+							"13" : "Security-Violation",
+							"255" : "NBI-Management-Event",
+							"256" : "Informational-Event",
+							"257" : "Management-Event"
+						},
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEventType",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This attribute specifies the Identifier",
+							"of the managed entity, ",
+							"having the problem or the condition",
+							"that intiated the event/alarm."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEntityId",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute specifies the User",
+							"defined name of the managed entity, ",
+							"having the problem or the condition",
+							"that intiated the event/alarm. "
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiEntityName",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute specifies the User ",
+							"defined name of the source managed",
+							"resource, that is managing the Entity",
+							"reporting the event/alarm. ",
+							"This attribute is set to NULL",
+							"if not used."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiManagedObjectUserName",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute indicates the",
+							"severity level of this event/alarm."
+						],
+						"enums" : {
+							"1" : "CommFailure",
+							"2" : "Critical",
+							"3" : "Major",
+							"4" : "Minor",
+							"5" : "Warning",
+							"6" : "Clear",
+							"7" : "Info",
+							"8" : "Unknown"
+						},
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiSeverity",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This attribute specifies the",
+							"IP Address of the agent (device)",
+							"reporting the event/alarm."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiSourceDevice",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute contains the time",
+							"when the event was detected on ",
+							"the manager."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiDetectionEventTime",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute contains the time",
+							"when the event was sourced at the NE.",
+							"This attribute is set to NULL if not used."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiSourceEventTime",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This parameter, if present, ",
+							"specifies a specific event message. ",
+							"This attribute is set to NULL if not used."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiText",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This parameter, when present",
+							"allows the inclusion of a set of",
+							"additional information in the event",
+							"report. This attribute is set",
+							"to NULL if not used."
+						],
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiAdditionalInformation",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This parameter indicates the type of management",
+							"event being communicated. Following are the management ",
+							"information types and corresponding",
+							"values:transfer-Complete (2)",
+							"data-Committed (3),job-Aborted (4)",
+							"job-Complete (7)",
+							"file-Transfer-Failed (11)"
+						],
+						"enums" : {
+							"2" : "transfer-Complete",
+							"3" : "data-Committed",
+							"4" : "job-Aborted",
+							"7" : "job-Complete",
+							"11" : "file-Transfer-Failed"
+						},
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiMgmtEventType",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It gives the status of the operation for example whether",
+							"the operation is sucessful , failure,waiting ,invalid, ",
+							"or failure due to some other reason "
+						],
+						"enums" : {
+							"0" : "NotUsed",
+							"1" : "UnKnown",
+							"2" : "dataNotAvailable",
+							"3" : "dataExtractionError",
+							"4" : "checksumError",
+							"5" : "fileCreationError",
+							"6" : "requestError",
+							"7" : "operationConcurrencyError"
+						},
+						"name" : "NBI-EVENTNOTIFICATION-MIB::nbiMgmtReasonCode",
+						"oid" : "1.3.6.1.4.1.161.3.10.105.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,314 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201701010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-LDP-MIB::vRtrLdpStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrLdpStateChange notification is generated when the LDP",
+				"protocol is created or deleted in the router."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrLdpStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==2) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==2) ? 'LDP protocol is deleted from router' : 'LDP protocol is created in router'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-MIB::vRtrLdpStateChange TIMETRA-VRTR-MIB::vRtrLdpStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-LDP-MIB::vRtrLdpStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.8.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The desired state for LDP on this virtual router. An attempt",
+							"to set vRtrLdpStatus to 'delete' will fail if the LDP",
+							"protocol is not in the administrative outOfService state",
+							"i.e. TIMETRA-LDP-MIB::vRtrLdpGenAdminState must be set",
+							"to 'outOfService'."
+						],
+						"enums" : {
+							"1" : "create",
+							"2" : "delete"
+						},
+						"name" : "TIMETRA-VRTR-MIB::vRtrLdpStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-MIB::vRtrLdpInstanceStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrLdpInstanceStateChange notification is generated when the LDP",
+				"module changes state either administratively or operationally."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2 && $v1==2) ? 1 : ($v2==3 || $v1==3) ? 2 : 3"
+				},
+				"EventType" : "vRtrLdpInstanceStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2 && $v1==2) ? 3600 : ($v2==3 || $v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2 && $v1==2) ? 0 : ($v2==1) ? 1 : ($v2==3 || $v1==3) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "LDP instance operational state : $v2, admin state : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-MIB::vRtrLdpInstanceStateChange TIMETRA-LDP-MIB::vRtrLdpGenAdminState i 1 TIMETRA-LDP-MIB::vRtrLdpGenOperState i 1 TIMETRA-LDP-MIB::vRtrLdpInstanceNotifyReasonCode i 1",
+			"trap" : {
+				"name" : "TIMETRA-LDP-MIB::vRtrLdpInstanceStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.8.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpGenAdminState specifies the desired ",
+							"administrative state for this LDP instance."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpGenAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpGenOperState specifies the current ",
+							"operational state of this LDP instance."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpGenOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used by vRtrLdpInstanceStateChange, the value indicates the reason ",
+							"for the LDP instance state change."
+						],
+						"enums" : {
+							"1" : "adminUp",
+							"2" : "adminDown",
+							"3" : "operUp",
+							"4" : "operDown"
+						},
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpInstanceNotifyReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.17.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-MIB::vRtrLdpIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrLdpIfStateChange notification is generated when the LDP",
+				"interface changes state either administratively or operationally."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2 && $v1==2) ? 1 : ($v2==3 || $v1==3) ? 2 : 3"
+				},
+				"EventType" : "vRtrLdpIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2 && $v1==2) ? 3600 : ($v2==3 || $v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2 && $v1==2) ? 0 : ($v2==1) ? 1 : ($v2==3 || $v1==3) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "LDP interface operational state : $v2, admin state : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-MIB::vRtrLdpIfStateChange TIMETRA-LDP-MIB::vRtrLdpIfAdminState i 1 TIMETRA-LDP-MIB::vRtrLdpIfOperState i 1 TIMETRA-LDP-MIB::vRtrLdpIfOperDownReason i 0",
+			"trap" : {
+				"name" : "TIMETRA-LDP-MIB::vRtrLdpIfStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.8.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpIfAdminState indicates the desired administrative",
+							"state for LDP on this interface or targeted peer."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpIfAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.5.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpIfOperState specifies the current operational",
+							"state of LDP on this interface or targeted peer."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpIfOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.5.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpIfOperDownReason specifies the reason ",
+							"that the LDP interface or targeted peer is operationally",
+							"down."
+						],
+						"enums" : {
+							"0" : "operUp",
+							"1" : "adminDown",
+							"2" : "noListenSocket",
+							"3" : "noDiscoverySocket",
+							"4" : "noResources",
+							"5" : "addrFecDeprogram",
+							"6" : "svcFecDeprogram",
+							"7" : "clearDown",
+							"8" : "instanceDown",
+							"9" : "interfaceDown",
+							"10" : "targetIpInvalid",
+							"11" : "interfaceInvalid",
+							"12" : "lsrInterfaceDown",
+							"13" : "lsrInterfaceInvalid"
+						},
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpIfOperDownReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.5.1.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-MIB::vRtrLdpSvcIdMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrLdpSvcIdMismatch notification is generated when there is",
+				"a mismatch of local and remote service IDs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrLdpSvcIdMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "LDP service ID (local: $v1, remote: $v2) mismatch occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-MIB::vRtrLdpSvcIdMismatch TIMETRA-LDP-MIB::vRtrLdpNotifyLocalServiceID u 9999 TIMETRA-LDP-MIB::vRtrLdpNotifyRemoteServiceID u 9999",
+			"trap" : {
+				"name" : "TIMETRA-LDP-MIB::vRtrLdpSvcIdMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.8.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Used by vRtrLdpSvcIdMismatch, the value indicates the local",
+							"Service ID."
+						],
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpNotifyLocalServiceID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.17.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used by vRtrLdpSvcIdMismatch, the value indicates the remote",
+							"Service ID."
+						],
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpNotifyRemoteServiceID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.17.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-MIB::vRtrLdpGroupIdMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrLdpGroupIdMismatch notification is generated when there is",
+				"a mismatch of local and remote group IDs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrLdpGroupIdMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "LDP group ID (local: $v1, remote: $v2) mismatch occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-MIB::vRtrLdpGroupIdMismatch TIMETRA-LDP-MIB::vRtrLdpNotifyLocalGroupID u 1 TIMETRA-LDP-MIB::vRtrLdpNotifyRemoteGroupID u 1",
+			"trap" : {
+				"name" : "TIMETRA-LDP-MIB::vRtrLdpGroupIdMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.8.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Used by vRtrLdpGroupIdMismatch, the value indicates the local",
+							"Group ID."
+						],
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpNotifyLocalGroupID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.17.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used by vRtrLdpGroupIdMismatch, the value indicates the remote",
+							"Group ID."
+						],
+						"name" : "TIMETRA-LDP-MIB::vRtrLdpNotifyRemoteGroupID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.8.17.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

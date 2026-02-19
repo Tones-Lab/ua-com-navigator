@@ -1,0 +1,83 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9802052155Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "IPV6-MIB::ipv6IfStateChange",
+			"certification" : "BASIC",
+			"description" : [
+				"An ipv6IfStateChange notification signifies",
+				"that there has been a change in the state of",
+				"an ipv6 interface. This notification should",
+				"be generated when the interface's operational",
+				"status transitions to or from the up(1) state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : (($v2 == 2) ? 2 : 3)"
+				},
+				"EventType" : "ipv6IfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : (($v2 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : (($v2 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "IPv6 interface $v1 changed state to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IPV6-MIB::ipv6IfStateChange IPV6-MIB::ipv6IfDescr s EXAMPLE IPV6-MIB::ipv6IfOperStatus i 1",
+			"trap" : {
+				"name" : "IPV6-MIB::ipv6IfStateChange",
+				"oid" : "1.3.6.1.2.1.55.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A textual string containing information about the",
+							"interface.  This string may be set by the network",
+							"management system."
+						],
+						"name" : "IPV6-MIB::ipv6IfDescr",
+						"oid" : "1.3.6.1.2.1.55.1.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current operational state of the interface.",
+							"The noIfIdentifier(3) state indicates that no valid",
+							"Interface Identifier is assigned to the interface.",
+							"This state usually indicates that the link-local",
+							"interface address failed Duplicate Address Detection.",
+							"If ipv6IfAdminStatus is down(2) then ipv6IfOperStatus",
+							"should be down(2).  If ipv6IfAdminStatus is changed",
+							"to up(1) then ipv6IfOperStatus should change to up(1)",
+							"if the interface is ready to transmit and receive",
+							"network traffic; it should remain in the down(2) or",
+							"noIfIdentifier(3) state if and only if there is a",
+							"fault that prevents it from going to the up(1) state;",
+							"it should remain in the notPresent(5) state if",
+							"the interface has missing (typically, lower layer)",
+							"components."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "noIfIdentifier",
+							"4" : "unknown",
+							"5" : "notPresent"
+						},
+						"name" : "IPV6-MIB::ipv6IfOperStatus",
+						"oid" : "1.3.6.1.2.1.55.1.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

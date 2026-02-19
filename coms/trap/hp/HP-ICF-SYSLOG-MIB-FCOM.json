@@ -1,0 +1,334 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201201300000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HP-ICF-SYSLOG-MIB::hpicfSyslogStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when any of the objects",
+				"listed are accessed. For example, when the first server",
+				"address is entered, the application",
+				"starts [hpicfSyslogOperationsStatus is ''started'' ]. When",
+				"the last server address is removed, the syslog application ",
+				"stops [hpicfSyslogOperationsStatus is ''stopped''].",
+				"The value of hpicfSyslogOperationsStatus will be the",
+				"new status of the syslog application after the change.",
+				"Another example, when a server address is added, a",
+				"notification is sent indicating the index used to store",
+				"the row information, as well as the address type",
+				"the address itself, the description if given , and the",
+				"row status.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==3) ? 2 : 3"
+				},
+				"EventType" : "hpicfSyslogStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v10==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v10==1) ? 1 : ($v10==3) ? 4 : 2"
+				},
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "Syslog status: $v10"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF-SYSLOG-MIB::hpicfSyslogStatusChanged HP-ICF-SYSLOG-MIB::hpicfSyslogControlIndex i 9999 HP-ICF-SYSLOG-MIB::hpicfSyslogControlDescr s EXAMPLE HP-ICF-SYSLOG-MIB::hpicfSyslogControlBindAddrType i 0 HP-ICF-SYSLOG-MIB::hpicfSyslogControlBindAddr s EXAMPLE HP-ICF-SYSLOG-MIB::hpicfSyslogControlRowStatus i 1 HP-ICF-SYSLOG-MIB::hpicfSyslogPriorityDescr s EXAMPLE HP-ICF-SYSLOG-MIB::hpicfSyslogPrioritySeverity i 0 HP-ICF-SYSLOG-MIB::hpicfSyslogPriorityFacility i 0 HP-ICF-SYSLOG-MIB::hpicfSyslogSystemModule i 0 HP-ICF-SYSLOG-MIB::hpicfSyslogOperationsStatus i 1",
+			"trap" : {
+				"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogStatusChanged",
+				"oid" : "1.3.6.1.4.1.11.2.14.14.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The Index that uniquely identifies the syslog",
+							"application in the hpicfSyslogControlTable. ",
+							"The value of the index for a syslog application",
+							"may not be the same across system reboots.",
+							"Users and applications will need to determine ",
+							"the index of a syslog application after system ",
+							"reboots.",
+							"Initial implementation allows integers (1..6).",
+							""
+						],
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogControlIndex",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A user definable description of the syslog application.",
+							"This description could be used by syslog management",
+							"applications e.g. in reports or in user interfaces.",
+							"For the description to be persistent across reboots, the",
+							"conceptual row must be in the 'active' state.",
+							"Also, refer to note in hpicfSyslogControlRowStatus, for",
+							"additional limitations.",
+							""
+						],
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogControlDescr",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of Internet address which follows",
+							"in hpicfSyslogControlBindAddr.",
+							"Currently only IPv4 is supported.",
+							""
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogControlBindAddrType",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The specific address the syslog sender will bind to.",
+							"The format of the address is specified by the",
+							"corresponding hpicfSyslogControlBindAddrType object.",
+							""
+						],
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogControlBindAddr",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is used to create, modify and delete rows in",
+							"the hpicfSyslogControlTable.",
+							"The value of hpicfSyslogControlDescr can be changed",
+							"when this object is in state ''active'' or in",
+							"''notInService''.",
+							"The other objects in a row can be modified only when the",
+							"value of this object in the corresponding conceptual row",
+							"is not ''active''. Thus to modify one or more of the",
+							"objects in this conceptual row",
+							"a. change the row status to ''notInService''",
+							"b. change the values of the row",
+							"c. change the row status to ''active''",
+							"The hpicfSyslogControlRowStatus may be changed to",
+							"''active'' if all the managed objects in the conceptual",
+							"row with MAX-ACCESS read-create have been assigned valid",
+							"values.",
+							"The information in each conceptual row is only persist",
+							"across reboots if the row status is 'active'. ",
+							""
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogControlRowStatus",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A textual description of this priority entry.",
+							""
+						],
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogPriorityDescr",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity value of this entry. Used to filter",
+							"'event' messages.",
+							""
+						],
+						"enums" : {
+							"0" : "major",
+							"1" : "alert",
+							"2" : "critical",
+							"3" : "error",
+							"4" : "warning",
+							"5" : "notice",
+							"6" : "info",
+							"7" : "debug"
+						},
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogPrioritySeverity",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The facility value of this entry. This value will",
+							"be returned in all syslog message, regardless of",
+							"the process/daemon that originates the message.",
+							""
+						],
+						"enums" : {
+							"0" : "kern",
+							"1" : "user",
+							"2" : "mail",
+							"3" : "daemon",
+							"4" : "auth",
+							"5" : "syslog",
+							"6" : "lpr",
+							"7" : "news",
+							"8" : "uucp",
+							"9" : "sys9",
+							"10" : "sys10",
+							"11" : "sys11",
+							"12" : "sys12",
+							"13" : "sys13",
+							"14" : "sys14",
+							"15" : "cron",
+							"16" : "local0",
+							"17" : "local1",
+							"18" : "local2",
+							"19" : "local3",
+							"20" : "local4",
+							"21" : "local5",
+							"22" : "local6",
+							"23" : "local7"
+						},
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogPriorityFacility",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A system module value of this entry. Used to filter",
+							"'event' messages.",
+							""
+						],
+						"enums" : {
+							"0" : "all-pass",
+							"1" : "vlan",
+							"2" : "ip",
+							"3" : "igmp",
+							"4" : "ipx",
+							"5" : "stp",
+							"6" : "system",
+							"7" : "chassis",
+							"8" : "console",
+							"9" : "ports",
+							"10" : "dhcp",
+							"11" : "download",
+							"12" : "tcp",
+							"13" : "telnet",
+							"14" : "timep",
+							"15" : "tftp",
+							"16" : "xmodem",
+							"17" : "update",
+							"18" : "mgr",
+							"19" : "bridge",
+							"20" : "snmp",
+							"21" : "addrmgr",
+							"22" : "agp",
+							"23" : "fault",
+							"24" : "ldbal",
+							"25" : "garp",
+							"26" : "gvrp",
+							"27" : "cos",
+							"28" : "lacp",
+							"29" : "dhcpr",
+							"30" : "stack",
+							"31" : "dma",
+							"32" : "sntp",
+							"33" : "ieee8021x",
+							"34" : "cdp",
+							"35" : "auth",
+							"36" : "tacacs",
+							"37" : "radius",
+							"38" : "ssh",
+							"39" : "netinet",
+							"40" : "ospf",
+							"41" : "xrrp",
+							"42" : "ssl",
+							"43" : "ipaddrmgr",
+							"44" : "macauth",
+							"45" : "kms",
+							"46" : "pim",
+							"47" : "maclock",
+							"48" : "acl",
+							"49" : "udpf",
+							"50" : "inst-mon",
+							"51" : "udld",
+							"52" : "hpesp",
+							"53" : "lldp",
+							"54" : "connfilt",
+							"55" : "ratelim",
+							"56" : "idm",
+							"57" : "iplock",
+							"58" : "dhcp-snoop",
+							"59" : "vrrp",
+							"60" : "usb",
+							"61" : "licensing",
+							"62" : "loop-protect",
+							"63" : "sflow",
+							"64" : "arp-protect",
+							"65" : "dhcpv6c",
+							"66" : "mtm",
+							"67" : "mld",
+							"68" : "dca",
+							"69" : "qinq",
+							"70" : "autorun",
+							"71" : "ffi",
+							"72" : "wsm",
+							"73" : "dipld",
+							"74" : "hpsm",
+							"75" : "srcip",
+							"76" : "policy",
+							"77" : "oobm",
+							"78" : "trmode",
+							"79" : "ospf3",
+							"80" : "dhcpv6r",
+							"81" : "bgp",
+							"82" : "ufd",
+							"83" : "fips",
+							"84" : "dt",
+							"85" : "dcbx",
+							"86" : "sftp",
+							"87" : "stacking",
+							"88" : "rfs",
+							"89" : "testmode",
+							"90" : "crypto",
+							"92" : "ra-guard",
+							"96" : "securemode"
+						},
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogSystemModule",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.3.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of the syslog application.",
+							""
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "started",
+							"3" : "suspended",
+							"4" : "stopped"
+						},
+						"name" : "HP-ICF-SYSLOG-MIB::hpicfSyslogOperationsStatus",
+						"oid" : "1.3.6.1.4.1.11.2.14.14.1.1.2.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

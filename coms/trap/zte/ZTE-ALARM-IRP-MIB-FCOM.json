@@ -1,0 +1,4547 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmNew",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when a new Alarm is ",
+				"generated and stored in the Active Alarm Table. ",
+				"Note that the notification does not include all",
+				"objects for the corresponding entry in the Alarm ",
+				"Table. The reason is that some environments may have ",
+				"problems with large PDUs. Thus, the notification ",
+				"receiver must get the missing objects from the",
+				"Active Alarm Table.",
+				"The value 'cleared' for the PerceivedSeverity",
+				"is not allowed for an alarm notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "alarm:$v7",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v9 == 2) ? 5 : ($v9 == 3) ? 4 : 3"
+				},
+				"SubNode" : "alarmNeIP:$v18",
+				"Summary" : {
+					"eval" : "($v10 ne '') ? '$v10' : '$v7 alarm occured due to $v8'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmNew ZTE-ALARM-IRP-MIB::alarmEventTime s EXAMPLEE ZTE-ALARM-IRP-MIB::sendNotificationId i 9999 ZTE-ALARM-IRP-MIB::lastSendNotificationId i 9999 ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCode s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmEventType i 1 ZTE-ALARM-IRP-MIB::alarmProbableCause i 0 ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity i 1 ZTE-ALARM-IRP-MIB::alarmSpecificProblem s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAdditionalText s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNetype s EXAMPLE ZTE-ALARM-IRP-MIB::alarmIndex i 9999 ZTE-ALARM-IRP-MIB::alarmId s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCodeName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmSystemType s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNeIP s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAck i 1 ZTE-ALARM-IRP-MIB::cleiCode s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneID s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneOffset i 9999 ZTE-ALARM-IRP-MIB::dSTSaving i 9999 ZTE-ALARM-IRP-MIB::aid s EXAMPLE ZTE-ALARM-IRP-MIB::id s EXAMPLE ZTE-ALARM-IRP-MIB::alarmMocObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmComment s EXAMPLE ZTE-ALARM-IRP-MIB::alarmOtherInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmNew",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the event time of the subject alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventTime",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of current send notification ( AlarmNew,AlarmCleared,AlarmAckChange,AlarmCommentChange,AlarmSync)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::sendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of last send notification ( AlarmNew, AlarmCleared,AlarmAckChange,AlarmCommentChange)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::lastSendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the type of event."
+						],
+						"enums" : {
+							"1" : "communicationsAlarm",
+							"2" : "processingErrorAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "qualityOfServiceAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "integrityViolation",
+							"7" : "operationalViolation",
+							"8" : "physicalViolation",
+							"9" : "securityServiceViolation",
+							"10" : "timeDomainViolation",
+							"11" : "omcAlarm"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the probable cause ",
+							"of the current."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "alarmIndicationSignal",
+							"2" : "callSetupFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "m3100TransmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBitErrorRate",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "communicationsReceiveFailure",
+							"18" : "communicationsTransmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"51" : "backPlaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIfDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "neIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronisationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"81" : "ProtectionMechanismFailure",
+							"82" : "ProtectionResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowVoltage",
+							"117" : "ventilationSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "IntrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperature",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"136" : "ExternalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "softwareEnvironmentProblem",
+							"156" : "softwareDownloadFailure",
+							"157" : "lossOfRealTime",
+							"158" : "Reinitialized",
+							"203" : "ExcessiveErrorRate",
+							"301" : "adapterError",
+							"302" : "applicationSubsystemFailure",
+							"303" : "bandwidthReduced",
+							"305" : "communicationsProtocolError",
+							"306" : "communicationsSubsystemFailure",
+							"307" : "configurationOrCustomizationError",
+							"308" : "congestion",
+							"310" : "cpuCyclesLimitExceeded",
+							"311" : "dataSetOrModemError",
+							"313" : "dtedceInterfaceError",
+							"315" : "equipmentMalfunction",
+							"316" : "excessiveVibration",
+							"317" : "fileError",
+							"321" : "heatingOrVentilationOrCoolingSystemProblem",
+							"322" : "humidityUnacceptable",
+							"323" : "inputOutputDeviceError",
+							"324" : "inputDeviceError",
+							"325" : "lanError",
+							"326" : "leakDetected",
+							"327" : "localNodeTransmissionError",
+							"330" : "materialSupplyExhausted",
+							"332" : "outOfMemory",
+							"333" : "ouputDeviceError",
+							"334" : "performanceDegraded",
+							"336" : "pressureUnacceptable",
+							"339" : "queueSizeExceeded",
+							"340" : "receiveFailure",
+							"342" : "remoteNodeTransmissionError",
+							"343" : "resourceAtOrNearingCapacity",
+							"344" : "responseTimeExcessive",
+							"345" : "retransmissionRateExcessive",
+							"346" : "softwareError",
+							"347" : "softwareProgramAbnormallyTerminated",
+							"348" : "softwareProgramError",
+							"350" : "temperatureUnacceptable",
+							"351" : "thresholdCrossed",
+							"353" : "toxicLeakDetected",
+							"354" : "transmitFailure",
+							"356" : "underlyingResourceUnavailable",
+							"357" : "versionMismatch",
+							"501" : "abisToBTSInterfaceFailure",
+							"502" : "abisToTRXInterfaceFailure",
+							"503" : "antennaProblem",
+							"504" : "batteryBreakdown",
+							"505" : "batteryChargingFault",
+							"506" : "clockSynchronisationProblem",
+							"507" : "combinerProblem",
+							"508" : "diskProblem",
+							"510" : "excessiveReceiverTemperature",
+							"511" : "excessiveTransmitterOutputPower",
+							"512" : "excessiveTransmitterTemperature",
+							"513" : "frequencyHoppingDegraded",
+							"514" : "frequencyHoppingFailure",
+							"515" : "frequencyRedefinitionFailed",
+							"516" : "lineInterfaceFailure",
+							"517" : "linkFailure",
+							"518" : "lossOfSynchronisation",
+							"519" : "lostRedundancy",
+							"520" : "mainsBreakdownWithBatteryBackUp",
+							"521" : "mainsBreakdownWithoutBatteryBackUp",
+							"522" : "powerSupplyFailure",
+							"523" : "receiverAntennaFault",
+							"525" : "receiverMulticouplerFailure",
+							"526" : "reducedTransmitterOutputPower",
+							"527" : "signalQualityEvaluationFault",
+							"528" : "timeslotHardwareFailure",
+							"529" : "transceiverProblem",
+							"530" : "transcoderProblem",
+							"531" : "transcoderOrRateAdapterProblem",
+							"532" : "transmitterAntennaFailure",
+							"533" : "transmitterAntennaNotAdjusted",
+							"535" : "transmitterLowVoltageOrCurrent",
+							"536" : "transmitterOffFrequency",
+							"537" : "databaseInconsistency",
+							"538" : "fileSystemCallUnsuccessful",
+							"539" : "inputParameterOutOfRange",
+							"540" : "invalidParameter",
+							"541" : "invalidPointer",
+							"542" : "messageNotExpected",
+							"543" : "messageNotInitialised",
+							"544" : "messageOutOfSequence",
+							"545" : "systemCallUnsuccessful",
+							"546" : "timeoutExpired",
+							"547" : "variableOutOfRange",
+							"548" : "watchDogTimerExpired",
+							"549" : "coolingSystemFailure",
+							"550" : "externalEquipmentFailure",
+							"551" : "externalPowerSupplyFailure",
+							"552" : "externalTransmissionDeviceFailure",
+							"561" : "reducedAlarmReporting",
+							"562" : "reducedEventReporting",
+							"563" : "reducedLoggingCapability",
+							"564" : "systemResourcesOverload",
+							"565" : "broadcastChannelFailure",
+							"566" : "connectionEstablishmentError",
+							"567" : "invalidMessageReceived",
+							"568" : "invalidMSUReceived",
+							"569" : "lapdLinkProtocolFailure",
+							"570" : "localAlarmIndication",
+							"571" : "remoteAlarmIndication",
+							"572" : "routingFailure",
+							"573" : "ss7ProtocolFailure",
+							"574" : "gsm1211TransmissionError",
+							"701" : "authenticationFailure",
+							"702" : "breachOfConfidentiality",
+							"703" : "cableTamper",
+							"704" : "delayedInformation",
+							"705" : "denialOfService",
+							"706" : "duplicateInformation",
+							"707" : "informationMissing",
+							"708" : "informationModificationDetected",
+							"709" : "informationOutOfSequence",
+							"710" : "intrusionDetection",
+							"711" : "keyExpired",
+							"712" : "nonRepudiationFailure",
+							"713" : "outOfHoursActivity",
+							"714" : "outOfService",
+							"715" : "proceduralError",
+							"716" : "unauthorizedAccessAttempt",
+							"717" : "unexpectedInformation",
+							"718" : "unspecifiedReason",
+							"999" : "EquipmentOutOfService"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmProbableCause",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the perceived severity of ",
+							"the alarm."
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the vendor specific problem ",
+							"."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSpecificProblem",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents some arbitrary additional ",
+							"information of the alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm netype"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNetype",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object uniquely identifies an entry in the ",
+							"Active Alarm Table. It increases every time a new alarm ",
+							"occurs. Due to cleared alarms the index will not be ",
+							"contiguous. When the maximum is reached of ",
+							"Integer32, the value of this object rolls over to 1. ",
+							"The actor must use 'alarmEventTime' to sort on ",
+							"chronological order.",
+							"",
+							"The alarmIndex object is read-only ,and it",
+							"is used as index in the Active Alarm Table. ",
+							"The alarmIndex facilities the way to extract ",
+							"the corresponding value from a notification where ",
+							"the object is included."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmIndex",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm in EMS using ",
+							"the private format of vendor"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code name"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCodeName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance name of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents systemtype."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSystemType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the IP of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNeIP",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Ack AlarmData or UnAckAlarmData"
+						],
+						"enums" : {
+							"1" : "acknowledged",
+							"2" : "unAcKnowledged"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAck",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the CLEI Code of the MO instance of ",
+							"network resource. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::cleiCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneID. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneID",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneOffset. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneOffset",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the NE's DSTSaving. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::dSTSaving",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.22",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm AID"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::aid",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number id of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::id",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the SUB MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmMocObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents alarm comment."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmComment",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the custom properity of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmOtherInfo",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when an alarm is ",
+				"cleared. A cleared alarm is removed from the ",
+				"Active Alarm Table and is no longer accessible.",
+				"It's impossible to retrieve an cleared alarm from",
+				"Active Alarm Table any more."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "alarm:$v7",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "alarmNeIP:$v18",
+				"Summary" : {
+					"eval" : "($v10 ne '') ? '$v10' : '$v7 alarm cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmCleared ZTE-ALARM-IRP-MIB::alarmEventTime s EXAMPLEE ZTE-ALARM-IRP-MIB::sendNotificationId i 9999 ZTE-ALARM-IRP-MIB::lastSendNotificationId i 9999 ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCode s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmEventType i 1 ZTE-ALARM-IRP-MIB::alarmProbableCause i 0 ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity i 1 ZTE-ALARM-IRP-MIB::alarmSpecificProblem s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAdditionalText s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNetype s EXAMPLE ZTE-ALARM-IRP-MIB::alarmIndex i 9999 ZTE-ALARM-IRP-MIB::alarmId s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCodeName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmSystemType s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNeIP s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAck i 1 ZTE-ALARM-IRP-MIB::cleiCode s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneID s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneOffset i 9999 ZTE-ALARM-IRP-MIB::dSTSaving i 9999 ZTE-ALARM-IRP-MIB::aid s EXAMPLE ZTE-ALARM-IRP-MIB::id s EXAMPLE ZTE-ALARM-IRP-MIB::alarmMocObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmComment s EXAMPLE ZTE-ALARM-IRP-MIB::alarmOtherInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmCleared",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the event time of the subject alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventTime",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of current send notification ( AlarmNew,AlarmCleared,AlarmAckChange,AlarmCommentChange,AlarmSync)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::sendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of last send notification ( AlarmNew, AlarmCleared,AlarmAckChange,AlarmCommentChange)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::lastSendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the type of event."
+						],
+						"enums" : {
+							"1" : "communicationsAlarm",
+							"2" : "processingErrorAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "qualityOfServiceAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "integrityViolation",
+							"7" : "operationalViolation",
+							"8" : "physicalViolation",
+							"9" : "securityServiceViolation",
+							"10" : "timeDomainViolation",
+							"11" : "omcAlarm"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the probable cause ",
+							"of the current."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "alarmIndicationSignal",
+							"2" : "callSetupFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "m3100TransmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBitErrorRate",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "communicationsReceiveFailure",
+							"18" : "communicationsTransmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"51" : "backPlaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIfDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "neIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronisationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"81" : "ProtectionMechanismFailure",
+							"82" : "ProtectionResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowVoltage",
+							"117" : "ventilationSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "IntrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperature",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"136" : "ExternalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "softwareEnvironmentProblem",
+							"156" : "softwareDownloadFailure",
+							"157" : "lossOfRealTime",
+							"158" : "Reinitialized",
+							"203" : "ExcessiveErrorRate",
+							"301" : "adapterError",
+							"302" : "applicationSubsystemFailure",
+							"303" : "bandwidthReduced",
+							"305" : "communicationsProtocolError",
+							"306" : "communicationsSubsystemFailure",
+							"307" : "configurationOrCustomizationError",
+							"308" : "congestion",
+							"310" : "cpuCyclesLimitExceeded",
+							"311" : "dataSetOrModemError",
+							"313" : "dtedceInterfaceError",
+							"315" : "equipmentMalfunction",
+							"316" : "excessiveVibration",
+							"317" : "fileError",
+							"321" : "heatingOrVentilationOrCoolingSystemProblem",
+							"322" : "humidityUnacceptable",
+							"323" : "inputOutputDeviceError",
+							"324" : "inputDeviceError",
+							"325" : "lanError",
+							"326" : "leakDetected",
+							"327" : "localNodeTransmissionError",
+							"330" : "materialSupplyExhausted",
+							"332" : "outOfMemory",
+							"333" : "ouputDeviceError",
+							"334" : "performanceDegraded",
+							"336" : "pressureUnacceptable",
+							"339" : "queueSizeExceeded",
+							"340" : "receiveFailure",
+							"342" : "remoteNodeTransmissionError",
+							"343" : "resourceAtOrNearingCapacity",
+							"344" : "responseTimeExcessive",
+							"345" : "retransmissionRateExcessive",
+							"346" : "softwareError",
+							"347" : "softwareProgramAbnormallyTerminated",
+							"348" : "softwareProgramError",
+							"350" : "temperatureUnacceptable",
+							"351" : "thresholdCrossed",
+							"353" : "toxicLeakDetected",
+							"354" : "transmitFailure",
+							"356" : "underlyingResourceUnavailable",
+							"357" : "versionMismatch",
+							"501" : "abisToBTSInterfaceFailure",
+							"502" : "abisToTRXInterfaceFailure",
+							"503" : "antennaProblem",
+							"504" : "batteryBreakdown",
+							"505" : "batteryChargingFault",
+							"506" : "clockSynchronisationProblem",
+							"507" : "combinerProblem",
+							"508" : "diskProblem",
+							"510" : "excessiveReceiverTemperature",
+							"511" : "excessiveTransmitterOutputPower",
+							"512" : "excessiveTransmitterTemperature",
+							"513" : "frequencyHoppingDegraded",
+							"514" : "frequencyHoppingFailure",
+							"515" : "frequencyRedefinitionFailed",
+							"516" : "lineInterfaceFailure",
+							"517" : "linkFailure",
+							"518" : "lossOfSynchronisation",
+							"519" : "lostRedundancy",
+							"520" : "mainsBreakdownWithBatteryBackUp",
+							"521" : "mainsBreakdownWithoutBatteryBackUp",
+							"522" : "powerSupplyFailure",
+							"523" : "receiverAntennaFault",
+							"525" : "receiverMulticouplerFailure",
+							"526" : "reducedTransmitterOutputPower",
+							"527" : "signalQualityEvaluationFault",
+							"528" : "timeslotHardwareFailure",
+							"529" : "transceiverProblem",
+							"530" : "transcoderProblem",
+							"531" : "transcoderOrRateAdapterProblem",
+							"532" : "transmitterAntennaFailure",
+							"533" : "transmitterAntennaNotAdjusted",
+							"535" : "transmitterLowVoltageOrCurrent",
+							"536" : "transmitterOffFrequency",
+							"537" : "databaseInconsistency",
+							"538" : "fileSystemCallUnsuccessful",
+							"539" : "inputParameterOutOfRange",
+							"540" : "invalidParameter",
+							"541" : "invalidPointer",
+							"542" : "messageNotExpected",
+							"543" : "messageNotInitialised",
+							"544" : "messageOutOfSequence",
+							"545" : "systemCallUnsuccessful",
+							"546" : "timeoutExpired",
+							"547" : "variableOutOfRange",
+							"548" : "watchDogTimerExpired",
+							"549" : "coolingSystemFailure",
+							"550" : "externalEquipmentFailure",
+							"551" : "externalPowerSupplyFailure",
+							"552" : "externalTransmissionDeviceFailure",
+							"561" : "reducedAlarmReporting",
+							"562" : "reducedEventReporting",
+							"563" : "reducedLoggingCapability",
+							"564" : "systemResourcesOverload",
+							"565" : "broadcastChannelFailure",
+							"566" : "connectionEstablishmentError",
+							"567" : "invalidMessageReceived",
+							"568" : "invalidMSUReceived",
+							"569" : "lapdLinkProtocolFailure",
+							"570" : "localAlarmIndication",
+							"571" : "remoteAlarmIndication",
+							"572" : "routingFailure",
+							"573" : "ss7ProtocolFailure",
+							"574" : "gsm1211TransmissionError",
+							"701" : "authenticationFailure",
+							"702" : "breachOfConfidentiality",
+							"703" : "cableTamper",
+							"704" : "delayedInformation",
+							"705" : "denialOfService",
+							"706" : "duplicateInformation",
+							"707" : "informationMissing",
+							"708" : "informationModificationDetected",
+							"709" : "informationOutOfSequence",
+							"710" : "intrusionDetection",
+							"711" : "keyExpired",
+							"712" : "nonRepudiationFailure",
+							"713" : "outOfHoursActivity",
+							"714" : "outOfService",
+							"715" : "proceduralError",
+							"716" : "unauthorizedAccessAttempt",
+							"717" : "unexpectedInformation",
+							"718" : "unspecifiedReason",
+							"999" : "EquipmentOutOfService"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmProbableCause",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the perceived severity of ",
+							"the alarm."
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the vendor specific problem ",
+							"."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSpecificProblem",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents some arbitrary additional ",
+							"information of the alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm netype"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNetype",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object uniquely identifies an entry in the ",
+							"Active Alarm Table. It increases every time a new alarm ",
+							"occurs. Due to cleared alarms the index will not be ",
+							"contiguous. When the maximum is reached of ",
+							"Integer32, the value of this object rolls over to 1. ",
+							"The actor must use 'alarmEventTime' to sort on ",
+							"chronological order.",
+							"",
+							"The alarmIndex object is read-only ,and it",
+							"is used as index in the Active Alarm Table. ",
+							"The alarmIndex facilities the way to extract ",
+							"the corresponding value from a notification where ",
+							"the object is included."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmIndex",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm in EMS using ",
+							"the private format of vendor"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code name"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCodeName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance name of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents systemtype."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSystemType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the IP of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNeIP",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Ack AlarmData or UnAckAlarmData"
+						],
+						"enums" : {
+							"1" : "acknowledged",
+							"2" : "unAcKnowledged"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAck",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the CLEI Code of the MO instance of ",
+							"network resource. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::cleiCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneID. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneID",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneOffset. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneOffset",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the NE's DSTSaving. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::dSTSaving",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.22",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm AID"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::aid",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number id of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::id",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the SUB MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmMocObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents alarm comment."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmComment",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the custom properity of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmOtherInfo",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmAckChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when alarm's status was changed,acknowledged or unacknowledged."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 1) ? 3 : ($v9 == 6) ? 1 : 2"
+				},
+				"EventType" : "alarmAckChange",
+				"ExpireTime" : {
+					"eval" : "($v9 == 1) ? 3600 : ($v9 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 1) ? 1 : ($v9 == 2) ? 5 : ($v9 == 3) ? 4 : ($v9 == 4 || $v9 == 5) ? 3 : 0"
+				},
+				"SubNode" : "alarmNeIP:$v18",
+				"Summary" : {
+					"eval" : "($v10 ne '') ? '$v10' : 'Alarm acknowledgement status changed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmAckChange ZTE-ALARM-IRP-MIB::alarmEventTime s EXAMPLEE ZTE-ALARM-IRP-MIB::sendNotificationId i 9999 ZTE-ALARM-IRP-MIB::lastSendNotificationId i 9999 ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCode s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmEventType i 1 ZTE-ALARM-IRP-MIB::alarmProbableCause i 0 ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity i 1 ZTE-ALARM-IRP-MIB::alarmSpecificProblem s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAdditionalText s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNetype s EXAMPLE ZTE-ALARM-IRP-MIB::alarmIndex i 9999 ZTE-ALARM-IRP-MIB::alarmId s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCodeName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmSystemType s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNeIP s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAck i 1 ZTE-ALARM-IRP-MIB::cleiCode s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneID s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneOffset i 9999 ZTE-ALARM-IRP-MIB::dSTSaving i 9999 ZTE-ALARM-IRP-MIB::aid s EXAMPLE ZTE-ALARM-IRP-MIB::id s EXAMPLE ZTE-ALARM-IRP-MIB::alarmMocObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmComment s EXAMPLE ZTE-ALARM-IRP-MIB::alarmOtherInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmAckChange",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the event time of the subject alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventTime",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of current send notification ( AlarmNew,AlarmCleared,AlarmAckChange,AlarmCommentChange,AlarmSync)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::sendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of last send notification ( AlarmNew, AlarmCleared,AlarmAckChange,AlarmCommentChange)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::lastSendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the type of event."
+						],
+						"enums" : {
+							"1" : "communicationsAlarm",
+							"2" : "processingErrorAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "qualityOfServiceAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "integrityViolation",
+							"7" : "operationalViolation",
+							"8" : "physicalViolation",
+							"9" : "securityServiceViolation",
+							"10" : "timeDomainViolation",
+							"11" : "omcAlarm"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the probable cause ",
+							"of the current."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "alarmIndicationSignal",
+							"2" : "callSetupFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "m3100TransmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBitErrorRate",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "communicationsReceiveFailure",
+							"18" : "communicationsTransmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"51" : "backPlaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIfDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "neIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronisationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"81" : "ProtectionMechanismFailure",
+							"82" : "ProtectionResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowVoltage",
+							"117" : "ventilationSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "IntrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperature",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"136" : "ExternalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "softwareEnvironmentProblem",
+							"156" : "softwareDownloadFailure",
+							"157" : "lossOfRealTime",
+							"158" : "Reinitialized",
+							"203" : "ExcessiveErrorRate",
+							"301" : "adapterError",
+							"302" : "applicationSubsystemFailure",
+							"303" : "bandwidthReduced",
+							"305" : "communicationsProtocolError",
+							"306" : "communicationsSubsystemFailure",
+							"307" : "configurationOrCustomizationError",
+							"308" : "congestion",
+							"310" : "cpuCyclesLimitExceeded",
+							"311" : "dataSetOrModemError",
+							"313" : "dtedceInterfaceError",
+							"315" : "equipmentMalfunction",
+							"316" : "excessiveVibration",
+							"317" : "fileError",
+							"321" : "heatingOrVentilationOrCoolingSystemProblem",
+							"322" : "humidityUnacceptable",
+							"323" : "inputOutputDeviceError",
+							"324" : "inputDeviceError",
+							"325" : "lanError",
+							"326" : "leakDetected",
+							"327" : "localNodeTransmissionError",
+							"330" : "materialSupplyExhausted",
+							"332" : "outOfMemory",
+							"333" : "ouputDeviceError",
+							"334" : "performanceDegraded",
+							"336" : "pressureUnacceptable",
+							"339" : "queueSizeExceeded",
+							"340" : "receiveFailure",
+							"342" : "remoteNodeTransmissionError",
+							"343" : "resourceAtOrNearingCapacity",
+							"344" : "responseTimeExcessive",
+							"345" : "retransmissionRateExcessive",
+							"346" : "softwareError",
+							"347" : "softwareProgramAbnormallyTerminated",
+							"348" : "softwareProgramError",
+							"350" : "temperatureUnacceptable",
+							"351" : "thresholdCrossed",
+							"353" : "toxicLeakDetected",
+							"354" : "transmitFailure",
+							"356" : "underlyingResourceUnavailable",
+							"357" : "versionMismatch",
+							"501" : "abisToBTSInterfaceFailure",
+							"502" : "abisToTRXInterfaceFailure",
+							"503" : "antennaProblem",
+							"504" : "batteryBreakdown",
+							"505" : "batteryChargingFault",
+							"506" : "clockSynchronisationProblem",
+							"507" : "combinerProblem",
+							"508" : "diskProblem",
+							"510" : "excessiveReceiverTemperature",
+							"511" : "excessiveTransmitterOutputPower",
+							"512" : "excessiveTransmitterTemperature",
+							"513" : "frequencyHoppingDegraded",
+							"514" : "frequencyHoppingFailure",
+							"515" : "frequencyRedefinitionFailed",
+							"516" : "lineInterfaceFailure",
+							"517" : "linkFailure",
+							"518" : "lossOfSynchronisation",
+							"519" : "lostRedundancy",
+							"520" : "mainsBreakdownWithBatteryBackUp",
+							"521" : "mainsBreakdownWithoutBatteryBackUp",
+							"522" : "powerSupplyFailure",
+							"523" : "receiverAntennaFault",
+							"525" : "receiverMulticouplerFailure",
+							"526" : "reducedTransmitterOutputPower",
+							"527" : "signalQualityEvaluationFault",
+							"528" : "timeslotHardwareFailure",
+							"529" : "transceiverProblem",
+							"530" : "transcoderProblem",
+							"531" : "transcoderOrRateAdapterProblem",
+							"532" : "transmitterAntennaFailure",
+							"533" : "transmitterAntennaNotAdjusted",
+							"535" : "transmitterLowVoltageOrCurrent",
+							"536" : "transmitterOffFrequency",
+							"537" : "databaseInconsistency",
+							"538" : "fileSystemCallUnsuccessful",
+							"539" : "inputParameterOutOfRange",
+							"540" : "invalidParameter",
+							"541" : "invalidPointer",
+							"542" : "messageNotExpected",
+							"543" : "messageNotInitialised",
+							"544" : "messageOutOfSequence",
+							"545" : "systemCallUnsuccessful",
+							"546" : "timeoutExpired",
+							"547" : "variableOutOfRange",
+							"548" : "watchDogTimerExpired",
+							"549" : "coolingSystemFailure",
+							"550" : "externalEquipmentFailure",
+							"551" : "externalPowerSupplyFailure",
+							"552" : "externalTransmissionDeviceFailure",
+							"561" : "reducedAlarmReporting",
+							"562" : "reducedEventReporting",
+							"563" : "reducedLoggingCapability",
+							"564" : "systemResourcesOverload",
+							"565" : "broadcastChannelFailure",
+							"566" : "connectionEstablishmentError",
+							"567" : "invalidMessageReceived",
+							"568" : "invalidMSUReceived",
+							"569" : "lapdLinkProtocolFailure",
+							"570" : "localAlarmIndication",
+							"571" : "remoteAlarmIndication",
+							"572" : "routingFailure",
+							"573" : "ss7ProtocolFailure",
+							"574" : "gsm1211TransmissionError",
+							"701" : "authenticationFailure",
+							"702" : "breachOfConfidentiality",
+							"703" : "cableTamper",
+							"704" : "delayedInformation",
+							"705" : "denialOfService",
+							"706" : "duplicateInformation",
+							"707" : "informationMissing",
+							"708" : "informationModificationDetected",
+							"709" : "informationOutOfSequence",
+							"710" : "intrusionDetection",
+							"711" : "keyExpired",
+							"712" : "nonRepudiationFailure",
+							"713" : "outOfHoursActivity",
+							"714" : "outOfService",
+							"715" : "proceduralError",
+							"716" : "unauthorizedAccessAttempt",
+							"717" : "unexpectedInformation",
+							"718" : "unspecifiedReason",
+							"999" : "EquipmentOutOfService"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmProbableCause",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the perceived severity of ",
+							"the alarm."
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the vendor specific problem ",
+							"."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSpecificProblem",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents some arbitrary additional ",
+							"information of the alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm netype"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNetype",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object uniquely identifies an entry in the ",
+							"Active Alarm Table. It increases every time a new alarm ",
+							"occurs. Due to cleared alarms the index will not be ",
+							"contiguous. When the maximum is reached of ",
+							"Integer32, the value of this object rolls over to 1. ",
+							"The actor must use 'alarmEventTime' to sort on ",
+							"chronological order.",
+							"",
+							"The alarmIndex object is read-only ,and it",
+							"is used as index in the Active Alarm Table. ",
+							"The alarmIndex facilities the way to extract ",
+							"the corresponding value from a notification where ",
+							"the object is included."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmIndex",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm in EMS using ",
+							"the private format of vendor"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code name"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCodeName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance name of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents systemtype."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSystemType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the IP of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNeIP",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Ack AlarmData or UnAckAlarmData"
+						],
+						"enums" : {
+							"1" : "acknowledged",
+							"2" : "unAcKnowledged"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAck",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the CLEI Code of the MO instance of ",
+							"network resource. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::cleiCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneID. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneID",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneOffset. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneOffset",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the NE's DSTSaving. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::dSTSaving",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.22",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm AID"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::aid",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number id of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::id",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the SUB MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmMocObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents alarm comment."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmComment",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the custom properity of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmOtherInfo",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmCommentChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when alarm's content of comment was changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 1) ? 3 : ($v9 == 6) ? 1 : 2"
+				},
+				"EventType" : "alarmCommentChange",
+				"ExpireTime" : {
+					"eval" : "($v9 == 1) ? 3600 : ($v9 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 1) ? 1 : ($v9 == 2) ? 5 : ($v9 == 3) ? 4 : ($v9 == 4 || $v9 == 5) ? 3 : 0"
+				},
+				"SubNode" : "alarmNeIP:$v18",
+				"Summary" : {
+					"eval" : "($v10 ne '') ? '$v10' : 'Alarm comment changed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmCommentChange ZTE-ALARM-IRP-MIB::alarmEventTime s EXAMPLEE ZTE-ALARM-IRP-MIB::sendNotificationId i 9999 ZTE-ALARM-IRP-MIB::lastSendNotificationId i 9999 ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCode s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmEventType i 1 ZTE-ALARM-IRP-MIB::alarmProbableCause i 0 ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity i 1 ZTE-ALARM-IRP-MIB::alarmSpecificProblem s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAdditionalText s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNetype s EXAMPLE ZTE-ALARM-IRP-MIB::alarmIndex i 9999 ZTE-ALARM-IRP-MIB::alarmId s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCodeName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmSystemType s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNeIP s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAck i 1 ZTE-ALARM-IRP-MIB::cleiCode s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneID s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneOffset i 9999 ZTE-ALARM-IRP-MIB::dSTSaving i 9999 ZTE-ALARM-IRP-MIB::aid s EXAMPLE ZTE-ALARM-IRP-MIB::id s EXAMPLE ZTE-ALARM-IRP-MIB::alarmMocObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmComment s EXAMPLE ZTE-ALARM-IRP-MIB::alarmOtherInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmCommentChange",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the event time of the subject alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventTime",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of current send notification ( AlarmNew,AlarmCleared,AlarmAckChange,AlarmCommentChange,AlarmSync)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::sendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of last send notification ( AlarmNew, AlarmCleared,AlarmAckChange,AlarmCommentChange)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::lastSendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the type of event."
+						],
+						"enums" : {
+							"1" : "communicationsAlarm",
+							"2" : "processingErrorAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "qualityOfServiceAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "integrityViolation",
+							"7" : "operationalViolation",
+							"8" : "physicalViolation",
+							"9" : "securityServiceViolation",
+							"10" : "timeDomainViolation",
+							"11" : "omcAlarm"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the probable cause ",
+							"of the current."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "alarmIndicationSignal",
+							"2" : "callSetupFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "m3100TransmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBitErrorRate",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "communicationsReceiveFailure",
+							"18" : "communicationsTransmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"51" : "backPlaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIfDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "neIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronisationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"81" : "ProtectionMechanismFailure",
+							"82" : "ProtectionResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowVoltage",
+							"117" : "ventilationSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "IntrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperature",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"136" : "ExternalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "softwareEnvironmentProblem",
+							"156" : "softwareDownloadFailure",
+							"157" : "lossOfRealTime",
+							"158" : "Reinitialized",
+							"203" : "ExcessiveErrorRate",
+							"301" : "adapterError",
+							"302" : "applicationSubsystemFailure",
+							"303" : "bandwidthReduced",
+							"305" : "communicationsProtocolError",
+							"306" : "communicationsSubsystemFailure",
+							"307" : "configurationOrCustomizationError",
+							"308" : "congestion",
+							"310" : "cpuCyclesLimitExceeded",
+							"311" : "dataSetOrModemError",
+							"313" : "dtedceInterfaceError",
+							"315" : "equipmentMalfunction",
+							"316" : "excessiveVibration",
+							"317" : "fileError",
+							"321" : "heatingOrVentilationOrCoolingSystemProblem",
+							"322" : "humidityUnacceptable",
+							"323" : "inputOutputDeviceError",
+							"324" : "inputDeviceError",
+							"325" : "lanError",
+							"326" : "leakDetected",
+							"327" : "localNodeTransmissionError",
+							"330" : "materialSupplyExhausted",
+							"332" : "outOfMemory",
+							"333" : "ouputDeviceError",
+							"334" : "performanceDegraded",
+							"336" : "pressureUnacceptable",
+							"339" : "queueSizeExceeded",
+							"340" : "receiveFailure",
+							"342" : "remoteNodeTransmissionError",
+							"343" : "resourceAtOrNearingCapacity",
+							"344" : "responseTimeExcessive",
+							"345" : "retransmissionRateExcessive",
+							"346" : "softwareError",
+							"347" : "softwareProgramAbnormallyTerminated",
+							"348" : "softwareProgramError",
+							"350" : "temperatureUnacceptable",
+							"351" : "thresholdCrossed",
+							"353" : "toxicLeakDetected",
+							"354" : "transmitFailure",
+							"356" : "underlyingResourceUnavailable",
+							"357" : "versionMismatch",
+							"501" : "abisToBTSInterfaceFailure",
+							"502" : "abisToTRXInterfaceFailure",
+							"503" : "antennaProblem",
+							"504" : "batteryBreakdown",
+							"505" : "batteryChargingFault",
+							"506" : "clockSynchronisationProblem",
+							"507" : "combinerProblem",
+							"508" : "diskProblem",
+							"510" : "excessiveReceiverTemperature",
+							"511" : "excessiveTransmitterOutputPower",
+							"512" : "excessiveTransmitterTemperature",
+							"513" : "frequencyHoppingDegraded",
+							"514" : "frequencyHoppingFailure",
+							"515" : "frequencyRedefinitionFailed",
+							"516" : "lineInterfaceFailure",
+							"517" : "linkFailure",
+							"518" : "lossOfSynchronisation",
+							"519" : "lostRedundancy",
+							"520" : "mainsBreakdownWithBatteryBackUp",
+							"521" : "mainsBreakdownWithoutBatteryBackUp",
+							"522" : "powerSupplyFailure",
+							"523" : "receiverAntennaFault",
+							"525" : "receiverMulticouplerFailure",
+							"526" : "reducedTransmitterOutputPower",
+							"527" : "signalQualityEvaluationFault",
+							"528" : "timeslotHardwareFailure",
+							"529" : "transceiverProblem",
+							"530" : "transcoderProblem",
+							"531" : "transcoderOrRateAdapterProblem",
+							"532" : "transmitterAntennaFailure",
+							"533" : "transmitterAntennaNotAdjusted",
+							"535" : "transmitterLowVoltageOrCurrent",
+							"536" : "transmitterOffFrequency",
+							"537" : "databaseInconsistency",
+							"538" : "fileSystemCallUnsuccessful",
+							"539" : "inputParameterOutOfRange",
+							"540" : "invalidParameter",
+							"541" : "invalidPointer",
+							"542" : "messageNotExpected",
+							"543" : "messageNotInitialised",
+							"544" : "messageOutOfSequence",
+							"545" : "systemCallUnsuccessful",
+							"546" : "timeoutExpired",
+							"547" : "variableOutOfRange",
+							"548" : "watchDogTimerExpired",
+							"549" : "coolingSystemFailure",
+							"550" : "externalEquipmentFailure",
+							"551" : "externalPowerSupplyFailure",
+							"552" : "externalTransmissionDeviceFailure",
+							"561" : "reducedAlarmReporting",
+							"562" : "reducedEventReporting",
+							"563" : "reducedLoggingCapability",
+							"564" : "systemResourcesOverload",
+							"565" : "broadcastChannelFailure",
+							"566" : "connectionEstablishmentError",
+							"567" : "invalidMessageReceived",
+							"568" : "invalidMSUReceived",
+							"569" : "lapdLinkProtocolFailure",
+							"570" : "localAlarmIndication",
+							"571" : "remoteAlarmIndication",
+							"572" : "routingFailure",
+							"573" : "ss7ProtocolFailure",
+							"574" : "gsm1211TransmissionError",
+							"701" : "authenticationFailure",
+							"702" : "breachOfConfidentiality",
+							"703" : "cableTamper",
+							"704" : "delayedInformation",
+							"705" : "denialOfService",
+							"706" : "duplicateInformation",
+							"707" : "informationMissing",
+							"708" : "informationModificationDetected",
+							"709" : "informationOutOfSequence",
+							"710" : "intrusionDetection",
+							"711" : "keyExpired",
+							"712" : "nonRepudiationFailure",
+							"713" : "outOfHoursActivity",
+							"714" : "outOfService",
+							"715" : "proceduralError",
+							"716" : "unauthorizedAccessAttempt",
+							"717" : "unexpectedInformation",
+							"718" : "unspecifiedReason",
+							"999" : "EquipmentOutOfService"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmProbableCause",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the perceived severity of ",
+							"the alarm."
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the vendor specific problem ",
+							"."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSpecificProblem",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents some arbitrary additional ",
+							"information of the alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm netype"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNetype",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object uniquely identifies an entry in the ",
+							"Active Alarm Table. It increases every time a new alarm ",
+							"occurs. Due to cleared alarms the index will not be ",
+							"contiguous. When the maximum is reached of ",
+							"Integer32, the value of this object rolls over to 1. ",
+							"The actor must use 'alarmEventTime' to sort on ",
+							"chronological order.",
+							"",
+							"The alarmIndex object is read-only ,and it",
+							"is used as index in the Active Alarm Table. ",
+							"The alarmIndex facilities the way to extract ",
+							"the corresponding value from a notification where ",
+							"the object is included."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmIndex",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm in EMS using ",
+							"the private format of vendor"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code name"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCodeName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance name of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents systemtype."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSystemType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the IP of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNeIP",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Ack AlarmData or UnAckAlarmData"
+						],
+						"enums" : {
+							"1" : "acknowledged",
+							"2" : "unAcKnowledged"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAck",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the CLEI Code of the MO instance of ",
+							"network resource. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::cleiCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneID. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneID",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneOffset. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneOffset",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the NE's DSTSaving. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::dSTSaving",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.22",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm AID"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::aid",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number id of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::id",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the SUB MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmMocObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents alarm comment."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmComment",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the custom properity of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmOtherInfo",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmListRebuild",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when ems re-establish the connection to nms."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "alarmListRebuild",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "EMS has re-established the connection to NMS"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmListRebuild ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmListRebuild",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmSync",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when set syncAlarm successfully. ",
+				"The alarmManagedObjectInstance of all alarms are in line with user setting."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 1) ? 3 : ($v9 == 6) ? 1 : 2"
+				},
+				"EventType" : "alarmSync",
+				"ExpireTime" : {
+					"eval" : "($v9 == 1) ? 3600 : ($v9 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 1) ? 1 : ($v9 == 2) ? 5 : ($v9 == 3) ? 4 : ($v9 == 4 || $v9 == 5) ? 3 : 0"
+				},
+				"SubNode" : "alarmNeIP:$v18",
+				"Summary" : {
+					"eval" : "($v10 ne '') ? '$v10' : 'Alarm sync is set'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmSync ZTE-ALARM-IRP-MIB::alarmEventTime s EXAMPLEE ZTE-ALARM-IRP-MIB::sendNotificationId i 9999 ZTE-ALARM-IRP-MIB::lastSendNotificationId i 9999 ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCode s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmEventType i 1 ZTE-ALARM-IRP-MIB::alarmProbableCause i 0 ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity i 1 ZTE-ALARM-IRP-MIB::alarmSpecificProblem s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAdditionalText s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNetype s EXAMPLE ZTE-ALARM-IRP-MIB::alarmIndex i 9999 ZTE-ALARM-IRP-MIB::alarmId s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCodeName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmSystemType s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNeIP s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAck i 1 ZTE-ALARM-IRP-MIB::cleiCode s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneID s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneOffset i 9999 ZTE-ALARM-IRP-MIB::dSTSaving i 9999 ZTE-ALARM-IRP-MIB::aid s EXAMPLE ZTE-ALARM-IRP-MIB::id s EXAMPLE ZTE-ALARM-IRP-MIB::alarmMocObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmComment s EXAMPLE ZTE-ALARM-IRP-MIB::alarmOtherInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmSync",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the event time of the subject alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventTime",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of current send notification ( AlarmNew,AlarmCleared,AlarmAckChange,AlarmCommentChange,AlarmSync)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::sendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of last send notification ( AlarmNew, AlarmCleared,AlarmAckChange,AlarmCommentChange)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::lastSendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the type of event."
+						],
+						"enums" : {
+							"1" : "communicationsAlarm",
+							"2" : "processingErrorAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "qualityOfServiceAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "integrityViolation",
+							"7" : "operationalViolation",
+							"8" : "physicalViolation",
+							"9" : "securityServiceViolation",
+							"10" : "timeDomainViolation",
+							"11" : "omcAlarm"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the probable cause ",
+							"of the current."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "alarmIndicationSignal",
+							"2" : "callSetupFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "m3100TransmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBitErrorRate",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "communicationsReceiveFailure",
+							"18" : "communicationsTransmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"51" : "backPlaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIfDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "neIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronisationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"81" : "ProtectionMechanismFailure",
+							"82" : "ProtectionResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowVoltage",
+							"117" : "ventilationSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "IntrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperature",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"136" : "ExternalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "softwareEnvironmentProblem",
+							"156" : "softwareDownloadFailure",
+							"157" : "lossOfRealTime",
+							"158" : "Reinitialized",
+							"203" : "ExcessiveErrorRate",
+							"301" : "adapterError",
+							"302" : "applicationSubsystemFailure",
+							"303" : "bandwidthReduced",
+							"305" : "communicationsProtocolError",
+							"306" : "communicationsSubsystemFailure",
+							"307" : "configurationOrCustomizationError",
+							"308" : "congestion",
+							"310" : "cpuCyclesLimitExceeded",
+							"311" : "dataSetOrModemError",
+							"313" : "dtedceInterfaceError",
+							"315" : "equipmentMalfunction",
+							"316" : "excessiveVibration",
+							"317" : "fileError",
+							"321" : "heatingOrVentilationOrCoolingSystemProblem",
+							"322" : "humidityUnacceptable",
+							"323" : "inputOutputDeviceError",
+							"324" : "inputDeviceError",
+							"325" : "lanError",
+							"326" : "leakDetected",
+							"327" : "localNodeTransmissionError",
+							"330" : "materialSupplyExhausted",
+							"332" : "outOfMemory",
+							"333" : "ouputDeviceError",
+							"334" : "performanceDegraded",
+							"336" : "pressureUnacceptable",
+							"339" : "queueSizeExceeded",
+							"340" : "receiveFailure",
+							"342" : "remoteNodeTransmissionError",
+							"343" : "resourceAtOrNearingCapacity",
+							"344" : "responseTimeExcessive",
+							"345" : "retransmissionRateExcessive",
+							"346" : "softwareError",
+							"347" : "softwareProgramAbnormallyTerminated",
+							"348" : "softwareProgramError",
+							"350" : "temperatureUnacceptable",
+							"351" : "thresholdCrossed",
+							"353" : "toxicLeakDetected",
+							"354" : "transmitFailure",
+							"356" : "underlyingResourceUnavailable",
+							"357" : "versionMismatch",
+							"501" : "abisToBTSInterfaceFailure",
+							"502" : "abisToTRXInterfaceFailure",
+							"503" : "antennaProblem",
+							"504" : "batteryBreakdown",
+							"505" : "batteryChargingFault",
+							"506" : "clockSynchronisationProblem",
+							"507" : "combinerProblem",
+							"508" : "diskProblem",
+							"510" : "excessiveReceiverTemperature",
+							"511" : "excessiveTransmitterOutputPower",
+							"512" : "excessiveTransmitterTemperature",
+							"513" : "frequencyHoppingDegraded",
+							"514" : "frequencyHoppingFailure",
+							"515" : "frequencyRedefinitionFailed",
+							"516" : "lineInterfaceFailure",
+							"517" : "linkFailure",
+							"518" : "lossOfSynchronisation",
+							"519" : "lostRedundancy",
+							"520" : "mainsBreakdownWithBatteryBackUp",
+							"521" : "mainsBreakdownWithoutBatteryBackUp",
+							"522" : "powerSupplyFailure",
+							"523" : "receiverAntennaFault",
+							"525" : "receiverMulticouplerFailure",
+							"526" : "reducedTransmitterOutputPower",
+							"527" : "signalQualityEvaluationFault",
+							"528" : "timeslotHardwareFailure",
+							"529" : "transceiverProblem",
+							"530" : "transcoderProblem",
+							"531" : "transcoderOrRateAdapterProblem",
+							"532" : "transmitterAntennaFailure",
+							"533" : "transmitterAntennaNotAdjusted",
+							"535" : "transmitterLowVoltageOrCurrent",
+							"536" : "transmitterOffFrequency",
+							"537" : "databaseInconsistency",
+							"538" : "fileSystemCallUnsuccessful",
+							"539" : "inputParameterOutOfRange",
+							"540" : "invalidParameter",
+							"541" : "invalidPointer",
+							"542" : "messageNotExpected",
+							"543" : "messageNotInitialised",
+							"544" : "messageOutOfSequence",
+							"545" : "systemCallUnsuccessful",
+							"546" : "timeoutExpired",
+							"547" : "variableOutOfRange",
+							"548" : "watchDogTimerExpired",
+							"549" : "coolingSystemFailure",
+							"550" : "externalEquipmentFailure",
+							"551" : "externalPowerSupplyFailure",
+							"552" : "externalTransmissionDeviceFailure",
+							"561" : "reducedAlarmReporting",
+							"562" : "reducedEventReporting",
+							"563" : "reducedLoggingCapability",
+							"564" : "systemResourcesOverload",
+							"565" : "broadcastChannelFailure",
+							"566" : "connectionEstablishmentError",
+							"567" : "invalidMessageReceived",
+							"568" : "invalidMSUReceived",
+							"569" : "lapdLinkProtocolFailure",
+							"570" : "localAlarmIndication",
+							"571" : "remoteAlarmIndication",
+							"572" : "routingFailure",
+							"573" : "ss7ProtocolFailure",
+							"574" : "gsm1211TransmissionError",
+							"701" : "authenticationFailure",
+							"702" : "breachOfConfidentiality",
+							"703" : "cableTamper",
+							"704" : "delayedInformation",
+							"705" : "denialOfService",
+							"706" : "duplicateInformation",
+							"707" : "informationMissing",
+							"708" : "informationModificationDetected",
+							"709" : "informationOutOfSequence",
+							"710" : "intrusionDetection",
+							"711" : "keyExpired",
+							"712" : "nonRepudiationFailure",
+							"713" : "outOfHoursActivity",
+							"714" : "outOfService",
+							"715" : "proceduralError",
+							"716" : "unauthorizedAccessAttempt",
+							"717" : "unexpectedInformation",
+							"718" : "unspecifiedReason",
+							"999" : "EquipmentOutOfService"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmProbableCause",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the perceived severity of ",
+							"the alarm."
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the vendor specific problem ",
+							"."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSpecificProblem",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents some arbitrary additional ",
+							"information of the alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm netype"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNetype",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object uniquely identifies an entry in the ",
+							"Active Alarm Table. It increases every time a new alarm ",
+							"occurs. Due to cleared alarms the index will not be ",
+							"contiguous. When the maximum is reached of ",
+							"Integer32, the value of this object rolls over to 1. ",
+							"The actor must use 'alarmEventTime' to sort on ",
+							"chronological order.",
+							"",
+							"The alarmIndex object is read-only ,and it",
+							"is used as index in the Active Alarm Table. ",
+							"The alarmIndex facilities the way to extract ",
+							"the corresponding value from a notification where ",
+							"the object is included."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmIndex",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm in EMS using ",
+							"the private format of vendor"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code name"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCodeName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance name of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents systemtype."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSystemType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the IP of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNeIP",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Ack AlarmData or UnAckAlarmData"
+						],
+						"enums" : {
+							"1" : "acknowledged",
+							"2" : "unAcKnowledged"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAck",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the CLEI Code of the MO instance of ",
+							"network resource. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::cleiCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneID. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneID",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneOffset. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneOffset",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the NE's DSTSaving. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::dSTSaving",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.22",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm AID"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::aid",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number id of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::id",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the SUB MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmMocObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents alarm comment."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmComment",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the custom properity of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmOtherInfo",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::messageInfo",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when ems on an abnormal situation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "messageInfo",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "EMS is on abnormal situation (error code: $v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::messageInfo ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::messageCode i 9999",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::messageInfo",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"the ems error code."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::messageCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.5",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmSeverityChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when alarm's severity was changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 1) ? 3 : ($v9 == 6) ? 1 : 2"
+				},
+				"EventType" : "alarmSeverityChange",
+				"ExpireTime" : {
+					"eval" : "($v9 == 1) ? 3600 : ($v9 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 1) ? 1 : ($v9 == 2) ? 5 : ($v9 == 3) ? 4 : ($v9 == 4 || $v9 == 5) ? 3 : 0"
+				},
+				"SubNode" : "alarmNeIP:$v18",
+				"Summary" : {
+					"eval" : "($v10 ne '') ? '$v10' : 'Alarm severity changed due to $v8'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmSeverityChange ZTE-ALARM-IRP-MIB::alarmEventTime s EXAMPLEE ZTE-ALARM-IRP-MIB::sendNotificationId i 9999 ZTE-ALARM-IRP-MIB::lastSendNotificationId i 9999 ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCode s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmEventType i 1 ZTE-ALARM-IRP-MIB::alarmProbableCause i 0 ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity i 1 ZTE-ALARM-IRP-MIB::alarmSpecificProblem s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAdditionalText s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNetype s EXAMPLE ZTE-ALARM-IRP-MIB::alarmIndex i 9999 ZTE-ALARM-IRP-MIB::alarmId s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCodeName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmSystemType s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNeIP s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAck i 1 ZTE-ALARM-IRP-MIB::cleiCode s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneID s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneOffset i 9999 ZTE-ALARM-IRP-MIB::dSTSaving i 9999 ZTE-ALARM-IRP-MIB::aid s EXAMPLE ZTE-ALARM-IRP-MIB::id s EXAMPLE ZTE-ALARM-IRP-MIB::alarmMocObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmComment s EXAMPLE ZTE-ALARM-IRP-MIB::alarmOtherInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmSeverityChange",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the event time of the subject alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventTime",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of current send notification ( AlarmNew,AlarmCleared,AlarmAckChange,AlarmCommentChange,AlarmSync)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::sendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of last send notification ( AlarmNew, AlarmCleared,AlarmAckChange,AlarmCommentChange)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::lastSendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the type of event."
+						],
+						"enums" : {
+							"1" : "communicationsAlarm",
+							"2" : "processingErrorAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "qualityOfServiceAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "integrityViolation",
+							"7" : "operationalViolation",
+							"8" : "physicalViolation",
+							"9" : "securityServiceViolation",
+							"10" : "timeDomainViolation",
+							"11" : "omcAlarm"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the probable cause ",
+							"of the current."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "alarmIndicationSignal",
+							"2" : "callSetupFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "m3100TransmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBitErrorRate",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "communicationsReceiveFailure",
+							"18" : "communicationsTransmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"51" : "backPlaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIfDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "neIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronisationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"81" : "ProtectionMechanismFailure",
+							"82" : "ProtectionResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowVoltage",
+							"117" : "ventilationSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "IntrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperature",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"136" : "ExternalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "softwareEnvironmentProblem",
+							"156" : "softwareDownloadFailure",
+							"157" : "lossOfRealTime",
+							"158" : "Reinitialized",
+							"203" : "ExcessiveErrorRate",
+							"301" : "adapterError",
+							"302" : "applicationSubsystemFailure",
+							"303" : "bandwidthReduced",
+							"305" : "communicationsProtocolError",
+							"306" : "communicationsSubsystemFailure",
+							"307" : "configurationOrCustomizationError",
+							"308" : "congestion",
+							"310" : "cpuCyclesLimitExceeded",
+							"311" : "dataSetOrModemError",
+							"313" : "dtedceInterfaceError",
+							"315" : "equipmentMalfunction",
+							"316" : "excessiveVibration",
+							"317" : "fileError",
+							"321" : "heatingOrVentilationOrCoolingSystemProblem",
+							"322" : "humidityUnacceptable",
+							"323" : "inputOutputDeviceError",
+							"324" : "inputDeviceError",
+							"325" : "lanError",
+							"326" : "leakDetected",
+							"327" : "localNodeTransmissionError",
+							"330" : "materialSupplyExhausted",
+							"332" : "outOfMemory",
+							"333" : "ouputDeviceError",
+							"334" : "performanceDegraded",
+							"336" : "pressureUnacceptable",
+							"339" : "queueSizeExceeded",
+							"340" : "receiveFailure",
+							"342" : "remoteNodeTransmissionError",
+							"343" : "resourceAtOrNearingCapacity",
+							"344" : "responseTimeExcessive",
+							"345" : "retransmissionRateExcessive",
+							"346" : "softwareError",
+							"347" : "softwareProgramAbnormallyTerminated",
+							"348" : "softwareProgramError",
+							"350" : "temperatureUnacceptable",
+							"351" : "thresholdCrossed",
+							"353" : "toxicLeakDetected",
+							"354" : "transmitFailure",
+							"356" : "underlyingResourceUnavailable",
+							"357" : "versionMismatch",
+							"501" : "abisToBTSInterfaceFailure",
+							"502" : "abisToTRXInterfaceFailure",
+							"503" : "antennaProblem",
+							"504" : "batteryBreakdown",
+							"505" : "batteryChargingFault",
+							"506" : "clockSynchronisationProblem",
+							"507" : "combinerProblem",
+							"508" : "diskProblem",
+							"510" : "excessiveReceiverTemperature",
+							"511" : "excessiveTransmitterOutputPower",
+							"512" : "excessiveTransmitterTemperature",
+							"513" : "frequencyHoppingDegraded",
+							"514" : "frequencyHoppingFailure",
+							"515" : "frequencyRedefinitionFailed",
+							"516" : "lineInterfaceFailure",
+							"517" : "linkFailure",
+							"518" : "lossOfSynchronisation",
+							"519" : "lostRedundancy",
+							"520" : "mainsBreakdownWithBatteryBackUp",
+							"521" : "mainsBreakdownWithoutBatteryBackUp",
+							"522" : "powerSupplyFailure",
+							"523" : "receiverAntennaFault",
+							"525" : "receiverMulticouplerFailure",
+							"526" : "reducedTransmitterOutputPower",
+							"527" : "signalQualityEvaluationFault",
+							"528" : "timeslotHardwareFailure",
+							"529" : "transceiverProblem",
+							"530" : "transcoderProblem",
+							"531" : "transcoderOrRateAdapterProblem",
+							"532" : "transmitterAntennaFailure",
+							"533" : "transmitterAntennaNotAdjusted",
+							"535" : "transmitterLowVoltageOrCurrent",
+							"536" : "transmitterOffFrequency",
+							"537" : "databaseInconsistency",
+							"538" : "fileSystemCallUnsuccessful",
+							"539" : "inputParameterOutOfRange",
+							"540" : "invalidParameter",
+							"541" : "invalidPointer",
+							"542" : "messageNotExpected",
+							"543" : "messageNotInitialised",
+							"544" : "messageOutOfSequence",
+							"545" : "systemCallUnsuccessful",
+							"546" : "timeoutExpired",
+							"547" : "variableOutOfRange",
+							"548" : "watchDogTimerExpired",
+							"549" : "coolingSystemFailure",
+							"550" : "externalEquipmentFailure",
+							"551" : "externalPowerSupplyFailure",
+							"552" : "externalTransmissionDeviceFailure",
+							"561" : "reducedAlarmReporting",
+							"562" : "reducedEventReporting",
+							"563" : "reducedLoggingCapability",
+							"564" : "systemResourcesOverload",
+							"565" : "broadcastChannelFailure",
+							"566" : "connectionEstablishmentError",
+							"567" : "invalidMessageReceived",
+							"568" : "invalidMSUReceived",
+							"569" : "lapdLinkProtocolFailure",
+							"570" : "localAlarmIndication",
+							"571" : "remoteAlarmIndication",
+							"572" : "routingFailure",
+							"573" : "ss7ProtocolFailure",
+							"574" : "gsm1211TransmissionError",
+							"701" : "authenticationFailure",
+							"702" : "breachOfConfidentiality",
+							"703" : "cableTamper",
+							"704" : "delayedInformation",
+							"705" : "denialOfService",
+							"706" : "duplicateInformation",
+							"707" : "informationMissing",
+							"708" : "informationModificationDetected",
+							"709" : "informationOutOfSequence",
+							"710" : "intrusionDetection",
+							"711" : "keyExpired",
+							"712" : "nonRepudiationFailure",
+							"713" : "outOfHoursActivity",
+							"714" : "outOfService",
+							"715" : "proceduralError",
+							"716" : "unauthorizedAccessAttempt",
+							"717" : "unexpectedInformation",
+							"718" : "unspecifiedReason",
+							"999" : "EquipmentOutOfService"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmProbableCause",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the perceived severity of ",
+							"the alarm."
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the vendor specific problem ",
+							"."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSpecificProblem",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents some arbitrary additional ",
+							"information of the alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm netype"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNetype",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object uniquely identifies an entry in the ",
+							"Active Alarm Table. It increases every time a new alarm ",
+							"occurs. Due to cleared alarms the index will not be ",
+							"contiguous. When the maximum is reached of ",
+							"Integer32, the value of this object rolls over to 1. ",
+							"The actor must use 'alarmEventTime' to sort on ",
+							"chronological order.",
+							"",
+							"The alarmIndex object is read-only ,and it",
+							"is used as index in the Active Alarm Table. ",
+							"The alarmIndex facilities the way to extract ",
+							"the corresponding value from a notification where ",
+							"the object is included."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmIndex",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm in EMS using ",
+							"the private format of vendor"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code name"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCodeName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance name of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents systemtype."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSystemType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the IP of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNeIP",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Ack AlarmData or UnAckAlarmData"
+						],
+						"enums" : {
+							"1" : "acknowledged",
+							"2" : "unAcKnowledged"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAck",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the CLEI Code of the MO instance of ",
+							"network resource. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::cleiCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneID. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneID",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneOffset. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneOffset",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the NE's DSTSaving. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::dSTSaving",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.22",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm AID"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::aid",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number id of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::id",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the SUB MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmMocObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents alarm comment."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmComment",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the custom properity of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmOtherInfo",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceNameChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when alarm's subname1 was changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 1) ? 3 : ($v9 == 6) ? 1 : 2"
+				},
+				"EventType" : "alarmManagedObjectInstanceNameChange",
+				"ExpireTime" : {
+					"eval" : "($v9 == 1) ? 3600 : ($v9 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 1) ? 1 : ($v9 == 2) ? 5 : ($v9 == 3) ? 4 : ($v9 == 4 || $v9 == 5) ? 3 : 0"
+				},
+				"SubNode" : "alarmNeIP:$v18",
+				"Summary" : {
+					"eval" : "($v10 ne '') ? '$v10' : 'Alarm subname1 changed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceNameChange ZTE-ALARM-IRP-MIB::alarmEventTime s EXAMPLEE ZTE-ALARM-IRP-MIB::sendNotificationId i 9999 ZTE-ALARM-IRP-MIB::lastSendNotificationId i 9999 ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCode s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmEventType i 1 ZTE-ALARM-IRP-MIB::alarmProbableCause i 0 ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity i 1 ZTE-ALARM-IRP-MIB::alarmSpecificProblem s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAdditionalText s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNetype s EXAMPLE ZTE-ALARM-IRP-MIB::alarmIndex i 9999 ZTE-ALARM-IRP-MIB::alarmId s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCodeName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmSystemType s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNeIP s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAck i 1 ZTE-ALARM-IRP-MIB::cleiCode s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneID s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneOffset i 9999 ZTE-ALARM-IRP-MIB::dSTSaving i 9999 ZTE-ALARM-IRP-MIB::aid s EXAMPLE ZTE-ALARM-IRP-MIB::id s EXAMPLE ZTE-ALARM-IRP-MIB::alarmMocObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmComment s EXAMPLE ZTE-ALARM-IRP-MIB::alarmOtherInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceNameChange",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.9",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the event time of the subject alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventTime",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of current send notification ( AlarmNew,AlarmCleared,AlarmAckChange,AlarmCommentChange,AlarmSync)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::sendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of last send notification ( AlarmNew, AlarmCleared,AlarmAckChange,AlarmCommentChange)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::lastSendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the type of event."
+						],
+						"enums" : {
+							"1" : "communicationsAlarm",
+							"2" : "processingErrorAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "qualityOfServiceAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "integrityViolation",
+							"7" : "operationalViolation",
+							"8" : "physicalViolation",
+							"9" : "securityServiceViolation",
+							"10" : "timeDomainViolation",
+							"11" : "omcAlarm"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the probable cause ",
+							"of the current."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "alarmIndicationSignal",
+							"2" : "callSetupFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "m3100TransmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBitErrorRate",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "communicationsReceiveFailure",
+							"18" : "communicationsTransmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"51" : "backPlaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIfDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "neIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronisationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"81" : "ProtectionMechanismFailure",
+							"82" : "ProtectionResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowVoltage",
+							"117" : "ventilationSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "IntrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperature",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"136" : "ExternalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "softwareEnvironmentProblem",
+							"156" : "softwareDownloadFailure",
+							"157" : "lossOfRealTime",
+							"158" : "Reinitialized",
+							"203" : "ExcessiveErrorRate",
+							"301" : "adapterError",
+							"302" : "applicationSubsystemFailure",
+							"303" : "bandwidthReduced",
+							"305" : "communicationsProtocolError",
+							"306" : "communicationsSubsystemFailure",
+							"307" : "configurationOrCustomizationError",
+							"308" : "congestion",
+							"310" : "cpuCyclesLimitExceeded",
+							"311" : "dataSetOrModemError",
+							"313" : "dtedceInterfaceError",
+							"315" : "equipmentMalfunction",
+							"316" : "excessiveVibration",
+							"317" : "fileError",
+							"321" : "heatingOrVentilationOrCoolingSystemProblem",
+							"322" : "humidityUnacceptable",
+							"323" : "inputOutputDeviceError",
+							"324" : "inputDeviceError",
+							"325" : "lanError",
+							"326" : "leakDetected",
+							"327" : "localNodeTransmissionError",
+							"330" : "materialSupplyExhausted",
+							"332" : "outOfMemory",
+							"333" : "ouputDeviceError",
+							"334" : "performanceDegraded",
+							"336" : "pressureUnacceptable",
+							"339" : "queueSizeExceeded",
+							"340" : "receiveFailure",
+							"342" : "remoteNodeTransmissionError",
+							"343" : "resourceAtOrNearingCapacity",
+							"344" : "responseTimeExcessive",
+							"345" : "retransmissionRateExcessive",
+							"346" : "softwareError",
+							"347" : "softwareProgramAbnormallyTerminated",
+							"348" : "softwareProgramError",
+							"350" : "temperatureUnacceptable",
+							"351" : "thresholdCrossed",
+							"353" : "toxicLeakDetected",
+							"354" : "transmitFailure",
+							"356" : "underlyingResourceUnavailable",
+							"357" : "versionMismatch",
+							"501" : "abisToBTSInterfaceFailure",
+							"502" : "abisToTRXInterfaceFailure",
+							"503" : "antennaProblem",
+							"504" : "batteryBreakdown",
+							"505" : "batteryChargingFault",
+							"506" : "clockSynchronisationProblem",
+							"507" : "combinerProblem",
+							"508" : "diskProblem",
+							"510" : "excessiveReceiverTemperature",
+							"511" : "excessiveTransmitterOutputPower",
+							"512" : "excessiveTransmitterTemperature",
+							"513" : "frequencyHoppingDegraded",
+							"514" : "frequencyHoppingFailure",
+							"515" : "frequencyRedefinitionFailed",
+							"516" : "lineInterfaceFailure",
+							"517" : "linkFailure",
+							"518" : "lossOfSynchronisation",
+							"519" : "lostRedundancy",
+							"520" : "mainsBreakdownWithBatteryBackUp",
+							"521" : "mainsBreakdownWithoutBatteryBackUp",
+							"522" : "powerSupplyFailure",
+							"523" : "receiverAntennaFault",
+							"525" : "receiverMulticouplerFailure",
+							"526" : "reducedTransmitterOutputPower",
+							"527" : "signalQualityEvaluationFault",
+							"528" : "timeslotHardwareFailure",
+							"529" : "transceiverProblem",
+							"530" : "transcoderProblem",
+							"531" : "transcoderOrRateAdapterProblem",
+							"532" : "transmitterAntennaFailure",
+							"533" : "transmitterAntennaNotAdjusted",
+							"535" : "transmitterLowVoltageOrCurrent",
+							"536" : "transmitterOffFrequency",
+							"537" : "databaseInconsistency",
+							"538" : "fileSystemCallUnsuccessful",
+							"539" : "inputParameterOutOfRange",
+							"540" : "invalidParameter",
+							"541" : "invalidPointer",
+							"542" : "messageNotExpected",
+							"543" : "messageNotInitialised",
+							"544" : "messageOutOfSequence",
+							"545" : "systemCallUnsuccessful",
+							"546" : "timeoutExpired",
+							"547" : "variableOutOfRange",
+							"548" : "watchDogTimerExpired",
+							"549" : "coolingSystemFailure",
+							"550" : "externalEquipmentFailure",
+							"551" : "externalPowerSupplyFailure",
+							"552" : "externalTransmissionDeviceFailure",
+							"561" : "reducedAlarmReporting",
+							"562" : "reducedEventReporting",
+							"563" : "reducedLoggingCapability",
+							"564" : "systemResourcesOverload",
+							"565" : "broadcastChannelFailure",
+							"566" : "connectionEstablishmentError",
+							"567" : "invalidMessageReceived",
+							"568" : "invalidMSUReceived",
+							"569" : "lapdLinkProtocolFailure",
+							"570" : "localAlarmIndication",
+							"571" : "remoteAlarmIndication",
+							"572" : "routingFailure",
+							"573" : "ss7ProtocolFailure",
+							"574" : "gsm1211TransmissionError",
+							"701" : "authenticationFailure",
+							"702" : "breachOfConfidentiality",
+							"703" : "cableTamper",
+							"704" : "delayedInformation",
+							"705" : "denialOfService",
+							"706" : "duplicateInformation",
+							"707" : "informationMissing",
+							"708" : "informationModificationDetected",
+							"709" : "informationOutOfSequence",
+							"710" : "intrusionDetection",
+							"711" : "keyExpired",
+							"712" : "nonRepudiationFailure",
+							"713" : "outOfHoursActivity",
+							"714" : "outOfService",
+							"715" : "proceduralError",
+							"716" : "unauthorizedAccessAttempt",
+							"717" : "unexpectedInformation",
+							"718" : "unspecifiedReason",
+							"999" : "EquipmentOutOfService"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmProbableCause",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the perceived severity of ",
+							"the alarm."
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the vendor specific problem ",
+							"."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSpecificProblem",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents some arbitrary additional ",
+							"information of the alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm netype"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNetype",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object uniquely identifies an entry in the ",
+							"Active Alarm Table. It increases every time a new alarm ",
+							"occurs. Due to cleared alarms the index will not be ",
+							"contiguous. When the maximum is reached of ",
+							"Integer32, the value of this object rolls over to 1. ",
+							"The actor must use 'alarmEventTime' to sort on ",
+							"chronological order.",
+							"",
+							"The alarmIndex object is read-only ,and it",
+							"is used as index in the Active Alarm Table. ",
+							"The alarmIndex facilities the way to extract ",
+							"the corresponding value from a notification where ",
+							"the object is included."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmIndex",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm in EMS using ",
+							"the private format of vendor"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code name"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCodeName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance name of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents systemtype."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSystemType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the IP of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNeIP",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Ack AlarmData or UnAckAlarmData"
+						],
+						"enums" : {
+							"1" : "acknowledged",
+							"2" : "unAcKnowledged"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAck",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the CLEI Code of the MO instance of ",
+							"network resource. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::cleiCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneID. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneID",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneOffset. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneOffset",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the NE's DSTSaving. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::dSTSaving",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.22",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm AID"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::aid",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number id of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::id",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the SUB MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmMocObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents alarm comment."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmComment",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the custom properity of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmOtherInfo",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmServiceChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when alarm's path was changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 1) ? 3 : ($v9 == 6) ? 1 : 2"
+				},
+				"EventType" : "alarmServiceChange",
+				"ExpireTime" : {
+					"eval" : "($v9 == 1) ? 3600 : ($v9 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 1) ? 1 : ($v9 == 2) ? 5 : ($v9 == 3) ? 4 : ($v9 == 4 || $v9 == 5) ? 3 : 0"
+				},
+				"SubNode" : "alarmNeIP:$v18",
+				"Summary" : {
+					"eval" : "($v10 ne '') ? '$v10' : 'Alarm path changed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmServiceChange ZTE-ALARM-IRP-MIB::alarmEventTime s EXAMPLEE ZTE-ALARM-IRP-MIB::sendNotificationId i 9999 ZTE-ALARM-IRP-MIB::lastSendNotificationId i 9999 ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCode s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmEventType i 1 ZTE-ALARM-IRP-MIB::alarmProbableCause i 0 ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity i 1 ZTE-ALARM-IRP-MIB::alarmSpecificProblem s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAdditionalText s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNetype s EXAMPLE ZTE-ALARM-IRP-MIB::alarmIndex i 9999 ZTE-ALARM-IRP-MIB::alarmId s EXAMPLE ZTE-ALARM-IRP-MIB::alarmCodeName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName s EXAMPLE ZTE-ALARM-IRP-MIB::alarmSystemType s EXAMPLE ZTE-ALARM-IRP-MIB::alarmNeIP s EXAMPLE ZTE-ALARM-IRP-MIB::alarmAck i 1 ZTE-ALARM-IRP-MIB::cleiCode s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneID s EXAMPLE ZTE-ALARM-IRP-MIB::timeZoneOffset i 9999 ZTE-ALARM-IRP-MIB::dSTSaving i 9999 ZTE-ALARM-IRP-MIB::aid s EXAMPLE ZTE-ALARM-IRP-MIB::id s EXAMPLE ZTE-ALARM-IRP-MIB::alarmMocObjectInstance s EXAMPLE ZTE-ALARM-IRP-MIB::alarmComment s EXAMPLE ZTE-ALARM-IRP-MIB::alarmOtherInfo s EXAMPLE",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmServiceChange",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.10",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the event time of the subject alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventTime",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of current send notification ( AlarmNew,AlarmCleared,AlarmAckChange,AlarmCommentChange,AlarmSync)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::sendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represent the notification identifier",
+							"of last send notification ( AlarmNew, AlarmCleared,AlarmAckChange,AlarmCommentChange)",
+							"",
+							"The agent shall store the notification identifier",
+							"of the last send FM notification in this object",
+							"immediately after sending the notification.",
+							"",
+							"The manager can retrieve the current value of this",
+							"object to detect lost notifications. This mechanism",
+							"can be used by the manager when no notification",
+							"is received for a certain time (e.g. 10 minutes)",
+							"to evaluate whether a synchronization should be performed. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::lastSendNotificationId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the type of event."
+						],
+						"enums" : {
+							"1" : "communicationsAlarm",
+							"2" : "processingErrorAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "qualityOfServiceAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "integrityViolation",
+							"7" : "operationalViolation",
+							"8" : "physicalViolation",
+							"9" : "securityServiceViolation",
+							"10" : "timeDomainViolation",
+							"11" : "omcAlarm"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmEventType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the probable cause ",
+							"of the current."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "alarmIndicationSignal",
+							"2" : "callSetupFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "m3100TransmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBitErrorRate",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "communicationsReceiveFailure",
+							"18" : "communicationsTransmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"51" : "backPlaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIfDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "neIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronisationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"81" : "ProtectionMechanismFailure",
+							"82" : "ProtectionResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowVoltage",
+							"117" : "ventilationSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "IntrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperature",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"136" : "ExternalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "softwareEnvironmentProblem",
+							"156" : "softwareDownloadFailure",
+							"157" : "lossOfRealTime",
+							"158" : "Reinitialized",
+							"203" : "ExcessiveErrorRate",
+							"301" : "adapterError",
+							"302" : "applicationSubsystemFailure",
+							"303" : "bandwidthReduced",
+							"305" : "communicationsProtocolError",
+							"306" : "communicationsSubsystemFailure",
+							"307" : "configurationOrCustomizationError",
+							"308" : "congestion",
+							"310" : "cpuCyclesLimitExceeded",
+							"311" : "dataSetOrModemError",
+							"313" : "dtedceInterfaceError",
+							"315" : "equipmentMalfunction",
+							"316" : "excessiveVibration",
+							"317" : "fileError",
+							"321" : "heatingOrVentilationOrCoolingSystemProblem",
+							"322" : "humidityUnacceptable",
+							"323" : "inputOutputDeviceError",
+							"324" : "inputDeviceError",
+							"325" : "lanError",
+							"326" : "leakDetected",
+							"327" : "localNodeTransmissionError",
+							"330" : "materialSupplyExhausted",
+							"332" : "outOfMemory",
+							"333" : "ouputDeviceError",
+							"334" : "performanceDegraded",
+							"336" : "pressureUnacceptable",
+							"339" : "queueSizeExceeded",
+							"340" : "receiveFailure",
+							"342" : "remoteNodeTransmissionError",
+							"343" : "resourceAtOrNearingCapacity",
+							"344" : "responseTimeExcessive",
+							"345" : "retransmissionRateExcessive",
+							"346" : "softwareError",
+							"347" : "softwareProgramAbnormallyTerminated",
+							"348" : "softwareProgramError",
+							"350" : "temperatureUnacceptable",
+							"351" : "thresholdCrossed",
+							"353" : "toxicLeakDetected",
+							"354" : "transmitFailure",
+							"356" : "underlyingResourceUnavailable",
+							"357" : "versionMismatch",
+							"501" : "abisToBTSInterfaceFailure",
+							"502" : "abisToTRXInterfaceFailure",
+							"503" : "antennaProblem",
+							"504" : "batteryBreakdown",
+							"505" : "batteryChargingFault",
+							"506" : "clockSynchronisationProblem",
+							"507" : "combinerProblem",
+							"508" : "diskProblem",
+							"510" : "excessiveReceiverTemperature",
+							"511" : "excessiveTransmitterOutputPower",
+							"512" : "excessiveTransmitterTemperature",
+							"513" : "frequencyHoppingDegraded",
+							"514" : "frequencyHoppingFailure",
+							"515" : "frequencyRedefinitionFailed",
+							"516" : "lineInterfaceFailure",
+							"517" : "linkFailure",
+							"518" : "lossOfSynchronisation",
+							"519" : "lostRedundancy",
+							"520" : "mainsBreakdownWithBatteryBackUp",
+							"521" : "mainsBreakdownWithoutBatteryBackUp",
+							"522" : "powerSupplyFailure",
+							"523" : "receiverAntennaFault",
+							"525" : "receiverMulticouplerFailure",
+							"526" : "reducedTransmitterOutputPower",
+							"527" : "signalQualityEvaluationFault",
+							"528" : "timeslotHardwareFailure",
+							"529" : "transceiverProblem",
+							"530" : "transcoderProblem",
+							"531" : "transcoderOrRateAdapterProblem",
+							"532" : "transmitterAntennaFailure",
+							"533" : "transmitterAntennaNotAdjusted",
+							"535" : "transmitterLowVoltageOrCurrent",
+							"536" : "transmitterOffFrequency",
+							"537" : "databaseInconsistency",
+							"538" : "fileSystemCallUnsuccessful",
+							"539" : "inputParameterOutOfRange",
+							"540" : "invalidParameter",
+							"541" : "invalidPointer",
+							"542" : "messageNotExpected",
+							"543" : "messageNotInitialised",
+							"544" : "messageOutOfSequence",
+							"545" : "systemCallUnsuccessful",
+							"546" : "timeoutExpired",
+							"547" : "variableOutOfRange",
+							"548" : "watchDogTimerExpired",
+							"549" : "coolingSystemFailure",
+							"550" : "externalEquipmentFailure",
+							"551" : "externalPowerSupplyFailure",
+							"552" : "externalTransmissionDeviceFailure",
+							"561" : "reducedAlarmReporting",
+							"562" : "reducedEventReporting",
+							"563" : "reducedLoggingCapability",
+							"564" : "systemResourcesOverload",
+							"565" : "broadcastChannelFailure",
+							"566" : "connectionEstablishmentError",
+							"567" : "invalidMessageReceived",
+							"568" : "invalidMSUReceived",
+							"569" : "lapdLinkProtocolFailure",
+							"570" : "localAlarmIndication",
+							"571" : "remoteAlarmIndication",
+							"572" : "routingFailure",
+							"573" : "ss7ProtocolFailure",
+							"574" : "gsm1211TransmissionError",
+							"701" : "authenticationFailure",
+							"702" : "breachOfConfidentiality",
+							"703" : "cableTamper",
+							"704" : "delayedInformation",
+							"705" : "denialOfService",
+							"706" : "duplicateInformation",
+							"707" : "informationMissing",
+							"708" : "informationModificationDetected",
+							"709" : "informationOutOfSequence",
+							"710" : "intrusionDetection",
+							"711" : "keyExpired",
+							"712" : "nonRepudiationFailure",
+							"713" : "outOfHoursActivity",
+							"714" : "outOfService",
+							"715" : "proceduralError",
+							"716" : "unauthorizedAccessAttempt",
+							"717" : "unexpectedInformation",
+							"718" : "unspecifiedReason",
+							"999" : "EquipmentOutOfService"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmProbableCause",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the perceived severity of ",
+							"the alarm."
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the vendor specific problem ",
+							"."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSpecificProblem",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents some arbitrary additional ",
+							"information of the alarm."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm netype"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNetype",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object uniquely identifies an entry in the ",
+							"Active Alarm Table. It increases every time a new alarm ",
+							"occurs. Due to cleared alarms the index will not be ",
+							"contiguous. When the maximum is reached of ",
+							"Integer32, the value of this object rolls over to 1. ",
+							"The actor must use 'alarmEventTime' to sort on ",
+							"chronological order.",
+							"",
+							"The alarmIndex object is read-only ,and it",
+							"is used as index in the Active Alarm Table. ",
+							"The alarmIndex facilities the way to extract ",
+							"the corresponding value from a notification where ",
+							"the object is included."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmIndex",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm in EMS using ",
+							"the private format of vendor"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents an alarm code name"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmCodeName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the MO instance name of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmManagedObjectInstanceName",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents systemtype."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmSystemType",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the IP of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmNeIP",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Ack AlarmData or UnAckAlarmData"
+						],
+						"enums" : {
+							"1" : "acknowledged",
+							"2" : "unAcKnowledged"
+						},
+						"name" : "ZTE-ALARM-IRP-MIB::alarmAck",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the CLEI Code of the MO instance of ",
+							"network resource. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::cleiCode",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneID. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneID",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the NE's TimeZoneOffset. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::timeZoneOffset",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the NE's DSTSaving. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::dSTSaving",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.22",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents an alarm AID"
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::aid",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number id of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::id",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the SUB MO instance of ",
+							"network resource to which the alarm is ",
+							"related."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmMocObjectInstance",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents alarm comment."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmComment",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the custom properity of the alarm. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::alarmOtherInfo",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.3.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmSyncStart",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent before send alarmSync trap to nms."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "alarmSyncStart",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "AlarmSync (syncId: $v2) trap sending to NMS"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmSyncStart ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::syncUniqueId i 9999",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmSyncStart",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.11",
+				"variables" : [
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the sync identifier of the same alarm sync operation. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::syncUniqueId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZTE-ALARM-IRP-MIB::alarmSyncEnd",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent after send all alarmSync trap to nms."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "alarmSyncEnd",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All alarmSync (syncId: $v2) trap sent to NMS"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-ALARM-IRP-MIB::alarmSyncEnd ZTE-ALARM-IRP-MIB::systemDN s EXAMPLE ZTE-ALARM-IRP-MIB::syncUniqueId i 9999",
+			"trap" : {
+				"name" : "ZTE-ALARM-IRP-MIB::alarmSyncEnd",
+				"oid" : "1.3.6.1.4.1.3902.4101.1.4.1.12",
+				"variables" : [
+					{
+						"description" : [
+							"This object carries the Distinguished Name (DN) of the system ",
+							"which generates the Notification.",
+							"The combination of notificationId and systemDN uniquely ",
+							"identifies each notification."
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::systemDN",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represent the sync identifier of the same alarm sync operation. "
+						],
+						"name" : "ZTE-ALARM-IRP-MIB::syncUniqueId",
+						"oid" : "1.3.6.1.4.1.3902.4101.1.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,75 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200904080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-FLOW-MONITOR-MIB::cfmNotifyAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when an alarm condition",
+				"has changed state and the value of cfmNOtifyEnable is 'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cfmNotifyAlarm",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "$v2",
+				"Summary" : "Flow alarm has $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FLOW-MONITOR-MIB::cfmNotifyAlarm CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryType i 1 CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryEntity o 1.3.6.1.4.1.8072.2.1.1 CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryConditionsProfile u 9999 CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryConditionId u 9999 CISCO-FLOW-MONITOR-MIB::cfmAlarmHistorySeverity i 9999 CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryTime t 9999",
+			"trap" : {
+				"name" : "CISCO-FLOW-MONITOR-MIB::cfmNotifyAlarm",
+				"oid" : "1.3.6.1.4.1.9.9.692.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "cleared",
+							"2" : "raised"
+						},
+						"name" : "CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryType",
+						"oid" : "1.3.6.1.4.1.9.9.692.1.6.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryEntity",
+						"oid" : "1.3.6.1.4.1.9.9.692.1.6.3.1.3",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"name" : "CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryConditionsProfile",
+						"oid" : "1.3.6.1.4.1.9.9.692.1.6.3.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryConditionId",
+						"oid" : "1.3.6.1.4.1.9.9.692.1.6.3.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-FLOW-MONITOR-MIB::cfmAlarmHistorySeverity",
+						"oid" : "1.3.6.1.4.1.9.9.692.1.6.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FLOW-MONITOR-MIB::cfmAlarmHistoryTime",
+						"oid" : "1.3.6.1.4.1.9.9.692.1.6.3.1.7",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		}
+	]
+}

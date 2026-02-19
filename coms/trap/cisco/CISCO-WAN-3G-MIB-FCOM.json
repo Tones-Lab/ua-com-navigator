@@ -1,0 +1,556 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201308120000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gModemUpNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This is the notification that the modem has been detected by",
+				"host interface. Users can enable or disable the generation of",
+				"this notification by using object c3gModemUpNotifEnabled."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "c3gModemStatusNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PhysicalName:$v1",
+				"Summary" : "Modem has been detected on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gModemUpNotif ENTITY-MIB::entPhysicalName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gModemUpNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.1",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gModemDownNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This is the notification that the modem has not been detected",
+				"by host interface, or has been disconnected from host interface.",
+				"Users can enable or disable the generation of this notification",
+				"by using object c3gModemDownNotifEnabled."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "c3gModemStatusNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "PhysicalName:$v1",
+				"Summary" : "Modem has not been detected or has been disconnected on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gModemDownNotif ENTITY-MIB::entPhysicalName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gModemDownNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.2",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gServiceChangedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification for service change event. Objects",
+				"c3gPreviousServiceType and c3gCurrentServiceType will be",
+				"included in the notification. Users can enable or disable the",
+				"generation of this notification by using object",
+				"c3gServiceChangedNotifEnabled."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "c3gServiceChangedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Service type has changed from $v1 to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gServiceChangedNotif CISCO-WAN-3G-MIB::c3gPreviousServiceType b 1 CISCO-WAN-3G-MIB::c3gCurrentServiceType b 10010",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gServiceChangedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gPreviousServiceType",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.4",
+						"valueType" : "BITS"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gCurrentServiceType",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.5",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gNetworkChangedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification for network change event. Objects c3gCurrentSid",
+				"c3gCurrentNid, c3gGsmMcc, c3gGsmMnc and c3gRoamingStatus will",
+				"be included in the notification. Users can enable or disable",
+				"the generation of this notification by using object",
+				"c3gNetworkChangedNotifEnabled."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "c3gNetworkChangedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "CurrentSid:$v1",
+				"Summary" : "Network change has occurred with current Sid $v1 Nid $v2 and Roaming status $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gNetworkChangedNotif CISCO-WAN-3G-MIB::c3gCurrentSid i 9999 CISCO-WAN-3G-MIB::c3gCurrentNid i 9999 CISCO-WAN-3G-MIB::c3gGsmMcc i 9999 CISCO-WAN-3G-MIB::c3gGsmMnc i 9999 CISCO-WAN-3G-MIB::c3gRoamingStatus i 1",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gNetworkChangedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gCurrentSid",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.2.4.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gCurrentNid",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.2.4.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gGsmMcc",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.3.2.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gGsmMnc",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.3.2.1.11",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "roaming",
+							"3" : "home"
+						},
+						"name" : "CISCO-WAN-3G-MIB::c3gRoamingStatus",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gConnectionStatusChangedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification for connection status change event. Objects",
+				"c3gConnectionStatus and c3gCurrentServiceType will be included",
+				"in the notification. Users can use object",
+				"c3gConnectionStatusChangedNotifFlag to control what connection",
+				"status changes will cause the generation of this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "c3gConnectionStatusChangedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Connection status has changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gConnectionStatusChangedNotif CISCO-WAN-3G-MIB::c3gConnectionStatus i 1 CISCO-WAN-3G-MIB::c3gCurrentServiceType b 1",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gConnectionStatusChangedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.5",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "error",
+							"3" : "connecting",
+							"4" : "dormant",
+							"5" : "connected",
+							"6" : "disconnected",
+							"7" : "idle",
+							"8" : "active",
+							"9" : "inactive"
+						},
+						"name" : "CISCO-WAN-3G-MIB::c3gConnectionStatus",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gCurrentServiceType",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.5",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gRssiOnsetNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"If RSSI goes below c3gRssiOnsetNotifThreshold and the service",
+				"bit in c3gRssiOnsetNotifFlag is set, this notification will be",
+				"generated. Object c3gNotifRadioService will indicate which ",
+				"service generates this notification and the associated RSSI ",
+				"will be reported in c3gNotifRssi. Please note that c3gNotifRssi",
+				"is used to indicate the RSSI value that triggers the",
+				"notification, user should go to the corresponding radio table to",
+				"get the current RSSI value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "c3gRssiStatusNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "RSSI ( $v2 ) has gone below threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gRssiOnsetNotif CISCO-WAN-3G-MIB::c3gNotifRadioService b 1 CISCO-WAN-3G-MIB::c3gNotifRssi i 0",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gRssiOnsetNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gNotifRadioService",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.9",
+						"valueType" : "BITS"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gNotifRssi",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.10",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gRssiAbateNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"If RSSI goes above c3gRssiAbateNotifThreshold and the service",
+				"bit in c3gRssiAbateNotifFlag is set, this notification will be",
+				"generated. Object c3gNotifRadioService will indicate which ",
+				"service generates this notification and the associated RSSI ",
+				"will be reported in c3gNotifRssi. Please note that c3gNotifRssi",
+				"is used to indicate the RSSI value that triggers the",
+				"notification, user should go to the corresponding radio table to",
+				"get the current RSSI value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "c3gRssiStatusNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "RSSI ( $v2 ) has gone above threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gRssiAbateNotif CISCO-WAN-3G-MIB::c3gNotifRadioService b 1 CISCO-WAN-3G-MIB::c3gNotifRssi i 0",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gRssiAbateNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.7",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gNotifRadioService",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.9",
+						"valueType" : "BITS"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gNotifRssi",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.10",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gEcIoOnsetNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"If Ec/Io goes below c3gEcIoOnsetNotifThreshold and the service",
+				"bit in c3gEcIoOnsetNotifFlag is set, this notification will be",
+				"generated. Object c3gNotifRadioService will indicate which ",
+				"service generates this notification and the associated Ec/Io",
+				"will be reported in c3gNotifEcIo. Please note that c3gNotifEcIo",
+				"is used to indicate the Ec/Io value that triggers the",
+				"notification, user should go to the corresponding radio table to",
+				"get the current Ec/Io value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "c3gEcIoStatusNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Ec/Io ( $v2 ) has gone below threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gEcIoOnsetNotif CISCO-WAN-3G-MIB::c3gNotifRadioService b 1 CISCO-WAN-3G-MIB::c3gNotifEcIo i 0",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gEcIoOnsetNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.8",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gNotifRadioService",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.9",
+						"valueType" : "BITS"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gNotifEcIo",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.11",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gEcIoAbateNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"If Ec/Io goes above c3gEcIoAbateNotifThreshold and the service",
+				"bit in c3gEcIoAbateNotifFlag is set, this notification will be",
+				"generated. Object c3gNotifRadioService will indicate which ",
+				"service generates this notification and the associated Ec/Io",
+				"will be reported in c3gNotifEcIo. Please note that c3gNotifEcIo",
+				"is used to indicate the Ec/Io value that triggers the",
+				"notification, user should go to the corresponding radio table to",
+				"get the current Ec/Io value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "c3gEcIoStatusNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Ec/Io ( $v2) has gone above threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gEcIoAbateNotif CISCO-WAN-3G-MIB::c3gNotifRadioService b 1 CISCO-WAN-3G-MIB::c3gNotifEcIo i 0",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gEcIoAbateNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.9",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gNotifRadioService",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.9",
+						"valueType" : "BITS"
+					},
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gNotifEcIo",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.11",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gModemTemperOnsetNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"If modem temperature goes above",
+				"c3gModemTemperOnsetNotifThreshold and the value of",
+				"c3gModemTemperOnsetNotifEnabled is 'true', this notification",
+				"will be generated and the current value of c3gModemTemperature",
+				"will be included in this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "c3gModemTemperStatusNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Modem temperature has gone above threshold and is at $v1 degrees"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gModemTemperOnsetNotif CISCO-WAN-3G-MIB::c3gModemTemperature i 99",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gModemTemperOnsetNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.10",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gModemTemperature",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.12",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gModemTemperAbateNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"If modem temperature goes below",
+				"c3gModemTemperAbateNotifThreshold and the value of",
+				"c3gModemTemperAbateNotifEnabled is 'true', this notification",
+				"will be generated and the current value of c3gModemTemperature",
+				"will be included in this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "c3gModemTemperStatusNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Modem temperature has gone below threshold and is at $v1 degrees"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gModemTemperAbateNotif CISCO-WAN-3G-MIB::c3gModemTemperature i 99",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gModemTemperAbateNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.11",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gModemTemperature",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.12",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gModemTemperOnsetRecoveryNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated as a recovery notification for",
+				"c3gModemTemperOnsetNotif.This trap is generated when the current",
+				"value of c3gModemTemperature goes below",
+				"c3gModemTemperOnsetNotifThreshold once it has generated the",
+				"c3gModemTemperOnsetNotif and the value of",
+				"c3gModemTemperOnsetNotifEnabled is 'true'.",
+				"c3gModemTemperature contains the current value of modem",
+				"temperature."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "c3gModemTemperRecoveryStatusNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Modem temperature has recovered from high threshold and is at $v1 degrees"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gModemTemperOnsetRecoveryNotif CISCO-WAN-3G-MIB::c3gModemTemperature i 99",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gModemTemperOnsetRecoveryNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.12",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gModemTemperature",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.12",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WAN-3G-MIB::c3gModemTemperAbateRecoveryNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated as a recovery notification for",
+				"c3gModemTemperAbateNotif.This trap is generated when the current",
+				"value of c3gModemTemperature goes above",
+				"c3gModemTemperAbateNotifThreshold once it has generated the",
+				"c3gModemTemperAbateNotif and the value of",
+				"c3gModemTemperAbateNotifEnabled is 'true'",
+				"c3gModemTemperature contains the current value of modem",
+				"temperature"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "c3gModemTemperRecoveryStatusNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Modem temperature has recovered from low threshold and is at $v1 degrees"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WAN-3G-MIB::c3gModemTemperAbateRecoveryNotif CISCO-WAN-3G-MIB::c3gModemTemperature i 99",
+			"trap" : {
+				"name" : "CISCO-WAN-3G-MIB::c3gModemTemperAbateRecoveryNotif",
+				"oid" : "1.3.6.1.4.1.9.9.661.0.13",
+				"variables" : [
+					{
+						"name" : "CISCO-WAN-3G-MIB::c3gModemTemperature",
+						"oid" : "1.3.6.1.4.1.9.9.661.1.1.1.12",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

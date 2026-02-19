@@ -1,0 +1,460 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201102010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-RSVP-MIB::vRtrRsvpStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when the",
+				"RSVP module changes state"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : ($v3==1 && $v3==4) ? 3 : 2"
+				},
+				"EventType" : "vRtrRsvpStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : ($v3==1 && $v3==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : ($v3==1) ? 1 : ($v3==3) ? 4 : 2"
+				},
+				"SubNode" : "vRouterID:$v1",
+				"Summary" : "RSVP module state changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RSVP-MIB::vRtrRsvpStateChange TIMETRA-VRTR-MIB::vRtrID i 9 TIMETRA-RSVP-MIB::vRtrRsvpGeneralAdminState i 2 TIMETRA-RSVP-MIB::vRtrRsvpGeneralOperState i 2",
+			"trap" : {
+				"name" : "TIMETRA-RSVP-MIB::vRtrRsvpStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.7.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"When vRtrRsvpGeneralAdminState is set to 'inService', the agent",
+							"attempts to enable the RSVP protocol instance on this router.",
+							"",
+							"When vRtrRsvpGeneralAdminState is set to 'outOfService', the",
+							"agent attempts to disable the RSVP protocol instance on this",
+							"router."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-RSVP-MIB::vRtrRsvpGeneralAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"vRtrRsvpGeneralOperState indicates the current operating state",
+							"of this RSVP protocol instance on this router."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-RSVP-MIB::vRtrRsvpGeneralOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.7.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RSVP-MIB::vRtrRsvpIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a RSVP",
+				"interface changes state"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : ($v3==1 && $v3==4) ? 3 : 2"
+				},
+				"EventType" : "vRtrRsvpIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : ($v3==1 && $v3==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : ($v3==1) ? 1 : ($v3==3) ? 4 : 2"
+				},
+				"SubNode" : "IfIndex:$v1",
+				"Summary" : "RSVP interface state changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RSVP-MIB::vRtrRsvpIfStateChange IF-MIB::ifIndex i 9 RSVP-MIB::rsvpIfEnabled i 1 TIMETRA-RSVP-MIB::vRtrRsvpIfOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-RSVP-MIB::vRtrRsvpIfStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.7.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"If TRUE, RSVP is enabled on this Interface.",
+							"If FALSE, RSVP is not enabled on this",
+							"interface."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "RSVP-MIB::rsvpIfEnabled",
+						"oid" : "1.3.6.1.2.1.51.1.6.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"vRtrRsvpIfOperState indicates the current operating state",
+							"of the RSVP protocol on this interface. When the ",
+							"TIMETRA-VRTR-MIB::vRtrIfPortID object of this interface is set ",
+							"to a loopback port identifier, the operational state is not relevant ",
+							"and an SNMP GET request on this object will return 'unknown'."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-RSVP-MIB::vRtrRsvpIfOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.7.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RSVP-MIB::vRtrRsvpIfNbrStateUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrRsvpIfNbrStateUp notification is ",
+				"generated when a RSVP interface neighbor ",
+				"changes to active state"
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<ifIndex>\\d+)\\.(?P<rsvpNbrAddress>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrRsvpIfNbrState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IfIndex:$ifIndex;RSVPNeighborAddress:$rsvpNbrAddress",
+				"Summary" : "RSVP interface neighbor changed to active state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RSVP-MIB::vRtrRsvpIfNbrStateUp RSVP-MIB::rsvpNbrProtocol.1.10.168.154.11 i 1",
+			"trap" : {
+				"name" : "TIMETRA-RSVP-MIB::vRtrRsvpIfNbrStateUp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.7.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The encapsulation being used by this",
+							"neighbor."
+						],
+						"enums" : {
+							"1" : "ip",
+							"2" : "udp",
+							"3" : "both"
+						},
+						"name" : "RSVP-MIB::rsvpNbrProtocol",
+						"oid" : "1.3.6.1.2.1.51.1.7.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RSVP-MIB::vRtrRsvpIfNbrStateDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrRsvpIfNbrStateDown notification is ",
+				"generated when a RSVP interface neighbor ",
+				"changes to inactive state"
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<ifIndex>\\d+)\\.(?P<rsvpNbrAddress>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrRsvpIfNbrState",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "IfIndex{$ifIndex}:RSVPNeighborAddress{$rsvpNbrAddress}",
+				"Summary" : "RSVP interface neighbor changed to inactive state due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RSVP-MIB::vRtrRsvpIfNbrStateDown RSVP-MIB::rsvpNbrProtocol.1.10.168.154.1 i 1 TIMETRA-RSVP-MIB::vRtrRsvpIfNbrDownReasonCode i 4",
+			"trap" : {
+				"name" : "TIMETRA-RSVP-MIB::vRtrRsvpIfNbrStateDown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.7.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The encapsulation being used by this",
+							"neighbor."
+						],
+						"enums" : {
+							"1" : "ip",
+							"2" : "udp",
+							"3" : "both"
+						},
+						"name" : "RSVP-MIB::rsvpNbrProtocol",
+						"oid" : "1.3.6.1.2.1.51.1.7.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used by vRtrRsvpIfNbrStateDown notification, ",
+							"vRtrRsvpIfNbrDownReasonCode specifies the reason ",
+							"for a RSVP interface neighbor becoming inactive."
+						],
+						"enums" : {
+							"1" : "linkDown",
+							"2" : "helloTimedOut",
+							"3" : "instanceMismatch",
+							"4" : "bfdDown"
+						},
+						"name" : "TIMETRA-RSVP-MIB::vRtrRsvpIfNbrDownReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.7.7.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RSVP-MIB::vRtrRsvpPEFailOverPriToStdBy",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrRsvpPEFailOverPriToStdBy notification is ",
+				"raised when primary Provider Edge (PE) has switched over ",
+				"to standby PE. The IP address of the primary PE can be ",
+				"extracted from the vRtrPimNgMvpnUMHPEAddrType and ",
+				"vRtrPimNgMvpnUMHPEAddr indexes of the varbinds in this ",
+				"notification.",
+				"[EFFECT] The tunnel traffic may be affected.",
+				"[RECOVERY] None required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrPimNgMvpnUMHPEAddrType>\\d+)\\.(?P<vRtrPimNgMvpnUMHPEAddr>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrRsvpPEFailOver",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "IPAddress:$vRtrPimNgMvpnUMHPEAddr",
+				"Summary" : "Primary provider edge (PE) switched over to standby PE"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RSVP-MIB::vRtrRsvpPEFailOverPriToStdBy TIMETRA-PIM-NG-MIB::vRtrPimNgMvpnUMHPEStandbyAdrTyp.2.1.10.168.155.203 i 1 TIMETRA-PIM-NG-MIB::vRtrPimNgMvpnUMHPEStandbyAddr x 0x7f000001 TIMETRA-RSVP-MIB::vRtrRsvpPEFailOverReasonCode i 1",
+			"trap" : {
+				"name" : "TIMETRA-RSVP-MIB::vRtrRsvpPEFailOverPriToStdBy",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.7.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrPimNgMvpnUMHPEStandbyAdrTyp specifies the type of ",
+							"the address assigned to the standby PE indicated by ",
+							"vRtrPimNgMvpnUMHPEStandbyAddr. This object MUST be specified at row ",
+							"creation time."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-PIM-NG-MIB::vRtrPimNgMvpnUMHPEStandbyAdrTyp",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.50.1.40.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrPimNgMvpnUMHPEStandbyAddr specifies the ",
+							"value of the address assigned to a standby PE to be used in UMH ",
+							"selection for MVPN source redundancy. This value cannot be modified ",
+							"without shutting down the MVPN instance. ",
+							"",
+							"An address instance of 'vRtrPimNgMvpnUMHPEStandbyAddr' can be ",
+							"associated with only a single address instance of ",
+							"'vRtrPimNgMvpnUMHPEAddr' or in other words the pairing must be ",
+							"unique.",
+							"",
+							"This object MUST be specified at row creation time."
+						],
+						"name" : "TIMETRA-PIM-NG-MIB::vRtrPimNgMvpnUMHPEStandbyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.50.1.40.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Used by vRtrRsvpPEFailOverPriToStdBy notification. ",
+							"vRtrRsvpPEFailOverReasonCode specifies the reason ",
+							"for Provider Edge (PE) switch over."
+						],
+						"enums" : {
+							"1" : "tunnelDown",
+							"2" : "ufdSessionDown"
+						},
+						"name" : "TIMETRA-RSVP-MIB::vRtrRsvpPEFailOverReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.7.7.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RSVP-MIB::vRtrRsvpPEFailOverStdByToPri",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrRsvpPEFailOverPriToStdBy notification is ",
+				"raised when standby Provider Edge (PE) has switched over ",
+				"to primary PE. The IP address of the primary PE can be ",
+				"extracted from the vRtrPimNgMvpnUMHPEAddrType and ",
+				"vRtrPimNgMvpnUMHPEAddr indexes of the varbinds in this ",
+				"notification.",
+				"[EFFECT] The tunnel traffic may be affected.",
+				"[RECOVERY] None required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrPimNgMvpnUMHPEAddrType>\\d+)\\.(?P<vRtrPimNgMvpnUMHPEAddr>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrRsvpPEFailOver",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IPAddress:$vRtrPimNgMvpnUMHPEAddr",
+				"Summary" : "Standby provider edge (PE) switched over to primary PE"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RSVP-MIB::vRtrRsvpPEFailOverStdByToPri TIMETRA-PIM-NG-MIB::vRtrPimNgMvpnUMHPEStandbyAdrTyp.2.1.10.168.155.202 i 1 TIMETRA-PIM-NG-MIB::vRtrPimNgMvpnUMHPEStandbyAddr x 0x7f000001",
+			"trap" : {
+				"name" : "TIMETRA-RSVP-MIB::vRtrRsvpPEFailOverStdByToPri",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.7.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrPimNgMvpnUMHPEStandbyAdrTyp specifies the type of ",
+							"the address assigned to the standby PE indicated by ",
+							"vRtrPimNgMvpnUMHPEStandbyAddr. This object MUST be specified at row ",
+							"creation time."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-PIM-NG-MIB::vRtrPimNgMvpnUMHPEStandbyAdrTyp",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.50.1.40.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrPimNgMvpnUMHPEStandbyAddr specifies the ",
+							"value of the address assigned to a standby PE to be used in UMH ",
+							"selection for MVPN source redundancy. This value cannot be modified ",
+							"without shutting down the MVPN instance. ",
+							"",
+							"An address instance of 'vRtrPimNgMvpnUMHPEStandbyAddr' can be ",
+							"associated with only a single address instance of ",
+							"'vRtrPimNgMvpnUMHPEAddr' or in other words the pairing must be ",
+							"unique.",
+							"",
+							"This object MUST be specified at row creation time."
+						],
+						"name" : "TIMETRA-PIM-NG-MIB::vRtrPimNgMvpnUMHPEStandbyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.50.1.40.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

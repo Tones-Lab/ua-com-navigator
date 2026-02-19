@@ -1,0 +1,894 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200502211114Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scDateAndTimeChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap should be sent each time the device real-time ",
+				"clock change its value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scDateAndTimeChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Device real-time clock value changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scDateAndTimeChange SCOPUS-COMMON-MIB::scAgentDateAndTime s EXAMPLEE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scDateAndTimeChange",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The date and time by the system built-in real ",
+							"time clock. For the devices that does not have ",
+							"a real-time clock the parameter should be ",
+							"read-only and have zero value (0)."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAgentDateAndTime",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scGoingToReboot",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap should be sent by the device before it ",
+				"restarts itself."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scGoingToReboot",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Device rebooted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scGoingToReboot ",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scGoingToReboot",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.2"
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scLicenseKeyChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap should be sent on changes in the next ",
+				"restart license key."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scLicenseKeyChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? 'License ($v1) key changed' : 'License key changed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scLicenseKeyChanged SCOPUS-COMMON-MIB::scLicenseNextRestartKey s EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEX",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scLicenseKeyChanged",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"The license key that will be activated at the next ",
+							"restart of the device."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scLicenseNextRestartKey",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scAlarmOn",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap should be sent at new alarm registration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "AlarmType:$v4",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v5==1) ? 5 : ($v5==2) ? 4 : 3"
+				},
+				"SubNode" : "IfIndex:$v3",
+				"Summary" : {
+					"eval" : "($v6 ne '') ? '$v6' : 'Alarm ($v4) occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scAlarmOn SCOPUS-COMMON-MIB::scAlarmCurrentTimestamp s EXAMPLEE SCOPUS-COMMON-MIB::scAlarmEntPhysicalIndex i 9999 SCOPUS-COMMON-MIB::scAlarmIfIndexOrZero i 9999 SCOPUS-COMMON-MIB::scAlarmsConfAlarmType i 1 SCOPUS-COMMON-MIB::scAlarmsConfSeverity i 1 SCOPUS-COMMON-MIB::scAlarmsConfDescription s EXAMPLE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scAlarmOn",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the alarm registration. If the ",
+							"real-time clock of the device is changed ",
+							"by an external device (NMS or other) the ",
+							"scAlarmCurrentTimestamp may have irrelevant value."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAlarmCurrentTimestamp",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of corresponding entPhysicalIndex from ",
+							"entPhysicalTable."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAlarmEntPhysicalIndex",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.1.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of corresponding ifIndex from ifTable. ",
+							"Alarms on physical entities should ",
+							"be reported with scAlarmIfIndexOrZero = 0."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAlarmIfIndexOrZero",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Alarm type."
+						],
+						"enums" : {
+							"1" : "inputLoss",
+							"2" : "mpeg2SyncLoss",
+							"3" : "hardwareFailure",
+							"4" : "agentInvalidDateAndTime",
+							"5" : "mpeg2InvalidPsi",
+							"6" : "testTsBufferOverflow",
+							"7" : "testTsIndicator",
+							"8" : "testContinuityCounter",
+							"9" : "testCRC",
+							"10" : "testPcrDiscontinuity",
+							"11" : "testDecoderBufferOverflow",
+							"12" : "testDecoderBufferUnderflow",
+							"13" : "testDecoderStreamError",
+							"14" : "djTsNotDetected",
+							"15" : "djPcrNotDetected",
+							"16" : "djInvalidPcr",
+							"17" : "djBitrateUnderLb",
+							"18" : "djBitrateOverUb",
+							"19" : "djNoResources",
+							"20" : "npNotResponding",
+							"21" : "dspNotResponding",
+							"22" : "initError",
+							"23" : "xconnectRuntimeError",
+							"24" : "moduleOverheat",
+							"25" : "overflow",
+							"26" : "unresolvedMac",
+							"27" : "djInconsistentBitrate",
+							"28" : "sntpServerUnreachable",
+							"29" : "djPrimStreamFailure",
+							"30" : "djSecStreamFailure",
+							"31" : "decoderNotResponding",
+							"32" : "filteringCbrBitrateTooLow",
+							"33" : "gbeRxLoss",
+							"34" : "fanFailure",
+							"35" : "savedConfigError",
+							"36" : "gbeNotOperational",
+							"37" : "fastEthernetLinkDown",
+							"38" : "gbeNoRedundancy",
+							"39" : "autoSwitchToIgmpV2",
+							"40" : "satelliteBERTooHigh",
+							"41" : "satelliteEbN0TooLow",
+							"42" : "gmAutoRecoveryFailure",
+							"43" : "decodingStopped",
+							"44" : "qamHwProblem",
+							"45" : "qamRfExceedsThreshold",
+							"46" : "qamQamRfBelowThreshold",
+							"47" : "qamTemperatureAbove75",
+							"48" : "qamTemperatureBelow0",
+							"49" : "qam3-3VDCAboveConfigThreshold",
+							"50" : "qam3-3VDCBelowConfigThreshold",
+							"51" : "qam5VDCAboveConfigThreshold",
+							"52" : "qam5VDCBelowConfigThreshold"
+						},
+						"name" : "SCOPUS-COMMON-MIB::scAlarmsConfAlarmType",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity that the device will report with the ",
+							"relevant alarm type."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SCOPUS-COMMON-MIB::scAlarmsConfSeverity",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The textual description of the specific alarm type."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAlarmsConfDescription",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scAlarmOff",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap should be sent on alarm cancellation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "AlarmType:$v4",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IfIndex:$v3",
+				"Summary" : {
+					"eval" : "($v6 ne '') ? '$v6' : 'Alarm ($v4) cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scAlarmOff SCOPUS-COMMON-MIB::scAlarmCurrentTimestamp s EXAMPLEE SCOPUS-COMMON-MIB::scAlarmEntPhysicalIndex i 9999 SCOPUS-COMMON-MIB::scAlarmIfIndexOrZero i 9999 SCOPUS-COMMON-MIB::scAlarmsConfAlarmType i 1 SCOPUS-COMMON-MIB::scAlarmsConfSeverity i 1 SCOPUS-COMMON-MIB::scAlarmsConfDescription s EXAMPLE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scAlarmOff",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the alarm registration. If the ",
+							"real-time clock of the device is changed ",
+							"by an external device (NMS or other) the ",
+							"scAlarmCurrentTimestamp may have irrelevant value."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAlarmCurrentTimestamp",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of corresponding entPhysicalIndex from ",
+							"entPhysicalTable."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAlarmEntPhysicalIndex",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.1.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of corresponding ifIndex from ifTable. ",
+							"Alarms on physical entities should ",
+							"be reported with scAlarmIfIndexOrZero = 0."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAlarmIfIndexOrZero",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Alarm type."
+						],
+						"enums" : {
+							"1" : "inputLoss",
+							"2" : "mpeg2SyncLoss",
+							"3" : "hardwareFailure",
+							"4" : "agentInvalidDateAndTime",
+							"5" : "mpeg2InvalidPsi",
+							"6" : "testTsBufferOverflow",
+							"7" : "testTsIndicator",
+							"8" : "testContinuityCounter",
+							"9" : "testCRC",
+							"10" : "testPcrDiscontinuity",
+							"11" : "testDecoderBufferOverflow",
+							"12" : "testDecoderBufferUnderflow",
+							"13" : "testDecoderStreamError",
+							"14" : "djTsNotDetected",
+							"15" : "djPcrNotDetected",
+							"16" : "djInvalidPcr",
+							"17" : "djBitrateUnderLb",
+							"18" : "djBitrateOverUb",
+							"19" : "djNoResources",
+							"20" : "npNotResponding",
+							"21" : "dspNotResponding",
+							"22" : "initError",
+							"23" : "xconnectRuntimeError",
+							"24" : "moduleOverheat",
+							"25" : "overflow",
+							"26" : "unresolvedMac",
+							"27" : "djInconsistentBitrate",
+							"28" : "sntpServerUnreachable",
+							"29" : "djPrimStreamFailure",
+							"30" : "djSecStreamFailure",
+							"31" : "decoderNotResponding",
+							"32" : "filteringCbrBitrateTooLow",
+							"33" : "gbeRxLoss",
+							"34" : "fanFailure",
+							"35" : "savedConfigError",
+							"36" : "gbeNotOperational",
+							"37" : "fastEthernetLinkDown",
+							"38" : "gbeNoRedundancy",
+							"39" : "autoSwitchToIgmpV2",
+							"40" : "satelliteBERTooHigh",
+							"41" : "satelliteEbN0TooLow",
+							"42" : "gmAutoRecoveryFailure",
+							"43" : "decodingStopped",
+							"44" : "qamHwProblem",
+							"45" : "qamRfExceedsThreshold",
+							"46" : "qamQamRfBelowThreshold",
+							"47" : "qamTemperatureAbove75",
+							"48" : "qamTemperatureBelow0",
+							"49" : "qam3-3VDCAboveConfigThreshold",
+							"50" : "qam3-3VDCBelowConfigThreshold",
+							"51" : "qam5VDCAboveConfigThreshold",
+							"52" : "qam5VDCBelowConfigThreshold"
+						},
+						"name" : "SCOPUS-COMMON-MIB::scAlarmsConfAlarmType",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity that the device will report with the ",
+							"relevant alarm type."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SCOPUS-COMMON-MIB::scAlarmsConfSeverity",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The textual description of the specific alarm type."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scAlarmsConfDescription",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.4.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scInterfaceAdded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap should be sent when a new interface",
+				"is created dynamically (by user ar automatically",
+				"by the device)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scInterfaceAdded",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($v1 ne '') ? 'ifName:$v1' : 'Device'"
+				},
+				"Summary" : {
+					"eval" : "($v1 ne '') ? 'New interface ($v1) is created' : 'New interface is created'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scInterfaceAdded IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scInterfaceAdded",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scInterfaceDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap should be sent when an existing interface",
+				"is deleted (by user ar automatically",
+				"by the device)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scInterfaceDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($v1 ne '') ? 'ifName:$v1' : 'Device'"
+				},
+				"Summary" : {
+					"eval" : "($v1 ne '') ? 'Existing interface ($v1) is deleted' : 'Existing interface is deleted'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scInterfaceDeleted IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scInterfaceDeleted",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.7",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scSysInfoChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap will be sent on the change of one of the",
+				"writable system parameters: sysContact, sysLocation or",
+				"sysName."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scSysInfoChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 ne '') ? 'System ($v2) information changed' : 'System information changed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scSysInfoChanged SNMPv2-MIB::sysContact s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE SNMPv2-MIB::sysLocation s EXAMPLE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scSysInfoChanged",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.8",
+				"variables" : [
+					{
+						"description" : [
+							"The textual identification of the contact person for",
+							"this managed node, together with information on how",
+							"to contact this person. If no contact information is",
+							"known, the value is the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysContact",
+						"oid" : "1.3.6.1.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The physical location of this node (e.g., 'telephone",
+							"closet, 3rd floor'). If the location is unknown, the",
+							"value is the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scSntpEnabledDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap will be sent when the user enables/disables",
+				"the SNTP update mechanism."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "scSntpEnabledDisabled",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'User enabled the SNTP update mechanism' : 'User disabled the SNTP update mechanism'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scSntpEnabledDisabled SCOPUS-COMMON-MIB::scSntpEnabled i 1",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scSntpEnabledDisabled",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.9",
+				"variables" : [
+					{
+						"description" : [
+							"The current status of SNTP service and a command to ",
+							"change the status."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SCOPUS-COMMON-MIB::scSntpEnabled",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.7.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scSettingsChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap will be sent when the user-defined configuration",
+				"of the device is changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scSettingsChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "User-defined configuration of the device is changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scSettingsChanged ",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scSettingsChanged",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.10"
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"A generic trap for event notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==1) ? 5 : ($v3==2) ? 4 : ($v3==3) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 ne '') ? '$v2' : 'Event ($v1) notification occured'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scEvent SCOPUS-COMMON-MIB::scEventsCurrentEventId u 1 SCOPUS-COMMON-MIB::scEventsCurrenFreeText s EXAMPLE SCOPUS-COMMON-MIB::scEventsConfSeverity i 1 SCOPUS-COMMON-MIB::scEventsCurrentTimestamp s EXAMPLEE SCOPUS-COMMON-MIB::scEventsCurrentEventType i 9999",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scEvent",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.11",
+				"variables" : [
+					{
+						"description" : [
+							"This is a unique no. identifying the specific instance of this event.",
+							"This value can be correlated with other console printouts.",
+							"The value is incremented per event issued and 'rolled over' when it reaches the maximum value."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scEventsCurrentEventId",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.14.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This text is formatted by the target.",
+							"It contains the Event Description from the scEventsConfTable; with added information about the specific event as well."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scEventsCurrenFreeText",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.14.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity of a specific Event type may be changed ",
+							"by user at any time."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SCOPUS-COMMON-MIB::scEventsConfSeverity",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.14.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time that this event was issued."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scEventsCurrentTimestamp",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.14.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This value is taken from the scEventsConfTable."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scEventsCurrentEventType",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.14.1.1.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scFileOperationCompleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent by the target when a file operation is completed.",
+				"File operations are defined in scFileOperationTable (2.1.8.2)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3) ? 1 : ($v2==4) ? 2 : 3"
+				},
+				"EventType" : "scFileOperationCompleted",
+				"ExpireTime" : {
+					"eval" : "($v2==3) ? 3600 : ($v2==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==3) ? 0 : ($v2==1 || $v2==2) ? 2 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'File ($v3) operational status: $v2' : 'File operational ($v1) status: $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scFileOperationCompleted SCOPUS-COMMON-MIB::scFileOperationType i 1 SCOPUS-COMMON-MIB::scFileOperationStatus i 1 SCOPUS-COMMON-MIB::scFileOperationFileName s EXAMPLE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scFileOperationCompleted",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.12",
+				"variables" : [
+					{
+						"description" : [
+							"Type of the asynchronous operation on files."
+						],
+						"enums" : {
+							"1" : "exportConfigurationToFile",
+							"2" : "importConfigurationFromFile",
+							"3" : "activateSwFile",
+							"4" : "runCliScript",
+							"5" : "validateConfiguration",
+							"6" : "exportBasicConfigToFile",
+							"7" : "exportExtendedConfigToFile",
+							"8" : "importFileForRedundancy",
+							"9" : "exportServiceConfigToFile",
+							"10" : "removeFile",
+							"11" : "storeConfiguration",
+							"12" : "dropChanges"
+						},
+						"name" : "SCOPUS-COMMON-MIB::scFileOperationType",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.8.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current status of the operation."
+						],
+						"enums" : {
+							"1" : "notStarted",
+							"2" : "inProgress",
+							"3" : "finished",
+							"4" : "failed"
+						},
+						"name" : "SCOPUS-COMMON-MIB::scFileOperationStatus",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.8.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A relevant file name."
+						],
+						"name" : "SCOPUS-COMMON-MIB::scFileOperationFileName",
+						"oid" : "1.3.6.1.4.1.4466.1.13.1.8.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scModuleInserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent by the target when entPhysicalEntry with entPhysicalIndex",
+				"is inserted in entPhysicalTable ."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scModuleInserted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($v1 ne '') ? 'PhysicalDescr:$v1' : 'Device'"
+				},
+				"Summary" : "Module inserted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scModuleInserted ENTITY-MIB::entPhysicalDescr s EXAMPLE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scModuleInserted",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.13",
+				"variables" : [
+					{
+						"description" : [
+							"A textual description of physical entity. This object",
+							"should contain a string that identifies the manufacturer's",
+							"name for the physical entity, and should be set to a",
+							"distinct value for each version or model of the physical",
+							"entity."
+						],
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scModuleRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent by the target when entPhysicalEntry with entPhysicalIndex",
+				"is removed from entPhysicalTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "scModuleRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($v1 ne '') ? 'PhysicalDescr:$v1' : 'Device'"
+				},
+				"Summary" : "Module removed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SCOPUS-COMMON-NOTIFICATIONS-MIB::scModuleRemoved ENTITY-MIB::entPhysicalDescr s EXAMPLE",
+			"trap" : {
+				"name" : "SCOPUS-COMMON-NOTIFICATIONS-MIB::scModuleRemoved",
+				"oid" : "1.3.6.1.4.1.4466.1.13.2.14",
+				"variables" : [
+					{
+						"description" : [
+							"A textual description of physical entity. This object",
+							"should contain a string that identifies the manufacturer's",
+							"name for the physical entity, and should be set to a",
+							"distinct value for each version or model of the physical",
+							"entity."
+						],
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

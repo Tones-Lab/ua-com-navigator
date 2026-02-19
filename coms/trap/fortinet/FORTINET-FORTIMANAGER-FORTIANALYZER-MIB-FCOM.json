@@ -1,0 +1,758 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201710130000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapHASwitch",
+			"certification" : "STANDARD",
+			"description" : [
+				"FortiManager HA cluster has been re-arranged. A new master has been selected and asserted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapHASwitch",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "FortiManager HA cluster master switch-over on node $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapHASwitch FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapHASwitch",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.401",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapRAIDStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap is sent when there is a change in the status of the RAID array, if present."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1 || $v3==10 || $v3==102 || $v3==201) ? 1 : (($v3==2 || $v3==3 || $v3==11 || $v3==12 || $v3==100 || $v3==104 || $v3==200 || $v3==202 || $v3==203) ? 2 : 3)"
+				},
+				"EventType" : "fmTrapRAIDStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1 || $v3==10 || $v3==102 || $v3==201) ? 3600 : (($v3==2 || $v3==3 || $v3==11 || $v3==12 || $v3==100 || $v3==104 || $v3==200 || $v3==202 || $v3==203) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1 || $v3==10 || $v3==102 || $v3==201) ? 0 : (($v3==2 || $v3==11 || $v3==100 || $v3==200 || $v3==202) ? 3 : (($v3==3 || $v3==12 || $v3==104 || $v3==203) ? 4 : 2))"
+				},
+				"SubNode" : "SysSerialNo:$v1;DeviceIndex:$v3",
+				"Summary" : "Current RAID status : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapRAIDStatusChange FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmRAIDStatus i 1 FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmRAIDDevIndex s EXAMPLE",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapRAIDStatusChange",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.402",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"New RAID state associated with a RAID status change event."
+						],
+						"enums" : {
+							"1" : "arrayOK",
+							"2" : "arrayDegraded",
+							"3" : "arrayFailed",
+							"4" : "arrayRebuilding",
+							"5" : "arrayRebuildingStarted",
+							"6" : "arrayRebuildingFinished",
+							"7" : "arrayInitializing",
+							"8" : "arrayInitializingStarted",
+							"9" : "arrayInitializingFinished",
+							"10" : "diskOk",
+							"11" : "diskDegraded",
+							"12" : "diskFailEvent",
+							"100" : "diskUnavailable",
+							"101" : "diskUnused",
+							"102" : "diskOK",
+							"103" : "diskRebuilding",
+							"104" : "diskFailed",
+							"105" : "diskSpare",
+							"200" : "raidUnavailable",
+							"201" : "raidOK",
+							"202" : "raidDegraded",
+							"203" : "raidFailed",
+							"204" : "raidBackground-Initializing",
+							"205" : "raidBackground-Verifying",
+							"206" : "raidBackground-Rebuilding"
+						},
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmRAIDStatus",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Name/index of a RAID device relating to the event."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmRAIDDevIndex",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap is sent when a log based alert has been triggered.",
+				"Alert description included in trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapLogAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogAlert FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-CORE-MIB::fnGenTrapMsg s EXAMPLE",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogAlert",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.403",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Generic message associated with an event. The content will",
+							"depend on the nature of the trap."
+						],
+						"name" : "FORTINET-CORE-MIB::fnGenTrapMsg",
+						"oid" : "1.3.6.1.4.1.12356.100.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogRateThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the incoming log rate has exceeded the threshold"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapLogRateThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "Incoming log rate ($v3) exceeded the threshold ($v4)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogRateThreshold FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogRate u 9999 FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogRateThreshold u 9999",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogRateThreshold",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.404",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Log receiving rate in number of logs per second."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogRate",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Threshold for log rate in number of logs per second."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogRateThreshold",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogDataRateThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the incoming log data rate has exceeded the threshold"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapLogDataRateThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "Incoming log date rate ($v3 kbps) exceeded the threshold ($v4 kbps)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogDataRateThreshold FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogDataRate u 9999 FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogDataRateThreshold u 9999",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLogDataRateThreshold",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.405",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Log receiving data rate in number of KB per second."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogDataRate",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.5",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Threshold for log data rate in number of KB per second."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLogDataRateThreshold",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.6",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLicGbDayThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the used log has exceeded the licensed GB/Day"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapLicGbDayThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "Log data usage ($v3 GB/day) exceeded the licensed threshold ($v4 GB/day)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLicGbDayThreshold FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLicGbDay u 9999 FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLicGbDayThreshold u 9999",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLicGbDayThreshold",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.407",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Log data used in number of GB per day."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLicGbDay",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.7",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Licensed threshold for log data in number of GB per day."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLicGbDayThreshold",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.8",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLicDevQuotaThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the used device quota has exceeded the licensed device quota"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapLicDevQuotaThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "Device quota ($v3 GB) exceeded the licensed threshold ($v4 GB)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLicDevQuotaThreshold FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLicDevQuota u 9999 FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLicDevQuotaThreshold u 9999",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapLicDevQuotaThreshold",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.408",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device quota used in number of GB."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLicDevQuota",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.9",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Licensed threshold for device quota in number of GB."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmLicDevQuotaThreshold",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.10",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapCpuThresholdExcludeNice",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the CPU usage excluding nice processes has exceeded the threshold"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapCpuThresholdExcludeNice",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "CPU usage excluding nice processes exceeded the threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapCpuThresholdExcludeNice FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapCpuThresholdExcludeNice",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.409",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapPowerStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap is sent when there is a change in the status of the power supply, if present."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapPowerStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "Power supply sensor $v4 state changed to $v3 on node $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapPowerStateChange FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorState s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorName s EXAMPLE",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapPowerStateChange",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.410",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Sensor status."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorState",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Sensor name."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorName",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapFanStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap is sent when there is a change in the status of the fan, if present."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapFanStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "Fan sensor $v4 status changed to $v3 on node $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapFanStateChange FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorState s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorName s EXAMPLE",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapFanStateChange",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.411",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Sensor status."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorState",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Sensor name."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorName",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapTemperatureStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap is sent when there is a change in the status of the temperature sensor, if present."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapTemperatureStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "Temperature sensor $v4 status changed to $v3 on node $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapTemperatureStateChange FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorState s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorName s EXAMPLE",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapTemperatureStateChange",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.412",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Sensor status."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorState",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Sensor name."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorName",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapVoltageStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap is sent when there is a change in the status of the voltage sensor, if present."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fmTrapVoltageStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SysSerialNo:$v1",
+				"Summary" : "Voltage sensor $v4 status changed to $v3 on node $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapVoltageStateChange FORTINET-CORE-MIB::fnSysSerial s EXAMPLE SNMPv2-MIB::sysName s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorState s EXAMPLE FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorName s EXAMPLE",
+			"trap" : {
+				"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmTrapVoltageStateChange",
+				"oid" : "1.3.6.1.4.1.12356.103.0.0.413",
+				"variables" : [
+					{
+						"description" : [
+							"Device serial number. This is the same serial number as given",
+							"in the ENTITY-MIB tables for the base entity."
+						],
+						"name" : "FORTINET-CORE-MIB::fnSysSerial",
+						"oid" : "1.3.6.1.4.1.12356.100.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Sensor status."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorState",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Sensor name."
+						],
+						"name" : "FORTINET-FORTIMANAGER-FORTIANALYZER-MIB::fmSensorName",
+						"oid" : "1.3.6.1.4.1.12356.103.0.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

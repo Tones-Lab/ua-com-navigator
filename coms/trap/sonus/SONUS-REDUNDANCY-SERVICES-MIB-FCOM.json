@@ -1,0 +1,504 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200104180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupSwitchOverNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a server module redundancy switchover has occurred.",
+				"The standby server module in the specified shelf and slot has become",
+				"active. The previous active slot, switchover reason, and group",
+				"information are included."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusRedundGroupSwitchOver:$v4",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v9==1) ? 5 : (($v9==2) ? 4 : (($v9==3) ? 3 : 2))"
+				},
+				"SubNode" : "ShelfIndex:$v1;SlotIndex:$v2",
+				"Summary" : "$v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupSwitchOverNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundPrevActiveSlotIndex i 1 SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupLastSwitchoverReason i 1 SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupName s EXAMPLE SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupAdmnIndex i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupSwitchOverNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.8.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot index of the failed server module whose switchover generated",
+							"this trap."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundPrevActiveSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Reason for the last switchover in this redundancy group."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "adminSwitchover",
+							"3" : "autoReversion",
+							"4" : "reset",
+							"5" : "removal",
+							"6" : "softwareFailure",
+							"7" : "hardwareFailure",
+							"8" : "healthCheckTimeout",
+							"9" : "other",
+							"10" : "softwareUpgrade",
+							"11" : "excessiveLinkFailure",
+							"12" : "reserved2",
+							"13" : "unknown"
+						},
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupLastSwitchoverReason",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.3.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name of this redundancy group instance."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupName",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the target redundancy group entry."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupAdmnIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupNoRedundancyNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the specified redundancy group has",
+				"no redundancy protection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==1 || $v5==2 || $v5==3) ? 2 : 3"
+				},
+				"EventType" : "sonusRedundGroupRedundancyNotification",
+				"ExpireTime" : {
+					"eval" : "($v5==1 || $v5==2 || $v5==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v5==1) ? 5 : (($v5==2) ? 4 : (($v5==3) ? 3 : 2))"
+				},
+				"SubNode" : "RedundGroupAdmnIndex:$v2",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupNoRedundancyNotification SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupName s EXAMPLE SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupAdmnIndex i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupNoRedundancyNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.8.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The name of this redundancy group instance."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupName",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the target redundancy group entry."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupAdmnIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupFullRedundancyNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the specified redundancy group has",
+				"full redundancy protection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sonusRedundGroupRedundancyNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RedundGroupAdmnIndex:$v2",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupFullRedundancyNotification SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupName s EXAMPLE SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupAdmnIndex i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupFullRedundancyNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.8.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The name of this redundancy group instance."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupName",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the target redundancy group entry."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupAdmnIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupProtectedClientRestored",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the specified redundancy group's protected",
+				"client slot has been restored and is synchronized to the currently",
+				"active redundant module. For Nx1 redundancy groups, a revertive",
+				"switchover is recommended to restore full redundancy protection to",
+				"the group."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusRedundGroupProtectedClientRestored",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ShelfIndex:$v1;SlotIndex:$v2",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupProtectedClientRestored SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupName s EXAMPLE SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupAdmnIndex i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupProtectedClientRestored",
+				"oid" : "1.3.6.1.4.1.2879.2.5.8.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The name of this redundancy group instance."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupName",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the target redundancy group entry."
+						],
+						"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupAdmnIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.5.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupMnsActiveNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Management Node Server in the specified shelf and",
+				"slot has become active following a MNS Switchover."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusRedundGroupMnsActiveNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ShelfIndex:$v1;SlotIndex:$v2",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupMnsActiveNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-REDUNDANCY-SERVICES-MIB::sonusRedundGroupMnsActiveNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.8.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

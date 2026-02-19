@@ -1,0 +1,153 @@
+{
+    "objects": [
+        {
+            "@objectName": "VMWARE::DEFAULT",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default vmware FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "EventCategory": 3,
+                "ExpireTime": 3600,
+                "Severity": 1,
+                "EscalationFlag": 0,
+                "Summary": "${.vmware.eventData.FullFormattedMessage}",
+                "OrigSeverity": 1,
+                "SubNode": "None",
+                "EventType": "${.vmware.eventType}",
+                "Method": "VMWare-Collector",
+                "SubMethod": "VMWare-Collector - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}+${.event.Summary}"
+            },
+            "method": "vmware",
+            "subMethod": "event",
+            "postProcessors": [
+                {
+                    "foreach": {
+                        "source": [
+                            "$.vmware.eventData.Vm.Name",
+                            "$.vmware.eventData.Vm.Vm.Value",
+                            "$.vmware.eventData.Host.Name",
+                            "$.vmware.eventData.Host.Host.Value",
+                            "$.vmware.eventData.ComputeResource.ComputeResource.Name",
+                            "$.vmware.eventData.ComputeResource.ComputeResource.Value",
+                            "$.vmware.eventData.Datacenter.Name",
+                            "$.vmware.eventData.Datacenter.Datacenter.value",
+                            "$.source.dns",
+                            "$.source.ip"
+                        ],
+                        "keyField": "key",
+                        "valField": "value",
+                        "then": [
+                            {
+                                "interpolate": {
+                                    "source": "$.foreach.value",
+                                    "targetField": "$.foreach.value"
+                                }
+                            },
+                            {
+                                "if": {
+                                    "conditions": {
+                                        "and": [
+                                            {
+                                                "property": "$.foreach.value",
+                                                "operator": "!=",
+                                                "value": ""
+                                            }
+                                        ]
+                                    },
+                                    "then": [
+                                        {
+                                            "set": {
+                                                "source": "$.foreach.value",
+                                                "targetField": "$.Event.Node"
+                                            }
+                                        },
+                                        {
+                                            "break": {}
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "switch": {
+                        "source": "$.vmware.severity",
+                        "operator": "==",
+                        "case": [
+                            {
+                                "match": "info",
+                                "then": [
+                                    {
+                                        "set": {
+                                            "source": 2,
+                                            "targetField": "$.event.Severity"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "match": "notice",
+                                "then": [
+                                    {
+                                        "set": {
+                                            "source": 0,
+                                            "targetField": "$.event.Severity"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "match": "warning",
+                                "then": [
+                                    {
+                                        "set": {
+                                            "source": 3,
+                                            "targetField": "$.event.Severity"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "match": "error",
+                                "then": [
+                                    {
+                                        "set": {
+                                            "source": 4,
+                                            "targetField": "$.event.Severity"
+                                        }
+                                    }
+                                ]
+                            },
+                            {
+                                "match": "critcal",
+                                "then": [
+                                    {
+                                        "set": {
+                                            "source": 5,
+                                            "targetField": "$.event.Severity"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "default": [
+                            {
+                                "set": {
+                                    "source": 1,
+                                    "targetField": "$.event.Severity"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

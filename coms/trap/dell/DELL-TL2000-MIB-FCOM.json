@@ -1,0 +1,427 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DELL-TL2000-MIB::eventStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The library status has changed. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==3) ? 1 : (($v4==1) || ($v4==2)) ? 3 : 2"
+				},
+				"EventType" : "eventStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v4==3) ? 3600 : (($v4==1) || ($v4==2)) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==3) ? 0 : (($v4==1) || ($v4==2)) ? 1 : ($v4==4) ? 3 : ($v4==5) ? 4 : 5"
+				},
+				"SubNode" : "librarySerNum:$v2",
+				"Summary" : "Library status changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DELL-TL2000-MIB::eventStatusChange DELL-TL2000-MIB::libraryProductId s EXAMPLE DELL-TL2000-MIB::librarySerNum s EXAMPLE DELL-TL2000-MIB::tl2000StatusLastGlobalStatus i 1 DELL-TL2000-MIB::tl2000StatusGlobalStatus i 1",
+			"trap" : {
+				"name" : "DELL-TL2000-MIB::eventStatusChange",
+				"oid" : "1.3.6.1.4.1.674.10893.2.102.4.1",
+				"variables" : [
+					{
+						"description" : [
+							"Library Product Id string as reported in a SCSI Inquiry command."
+						],
+						"name" : "DELL-TL2000-MIB::libraryProductId",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Library serial number as reported in SCSI Inquiry command, page 0x80."
+						],
+						"name" : "DELL-TL2000-MIB::librarySerNum",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status before the current status which induced an initiative ",
+							"to issue a global status change trap."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "ok",
+							"4" : "non-critical",
+							"5" : "critical",
+							"6" : "non-recoverable"
+						},
+						"name" : "DELL-TL2000-MIB::tl2000StatusLastGlobalStatus",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Current status of the product. ",
+							"This is a rollup for the entire agent including any ",
+							"monitored devices. The status is intended to give ",
+							"initiative to a snmp monitor to get further data when ",
+							"this status is abnormal."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "ok",
+							"4" : "non-critical",
+							"5" : "critical",
+							"6" : "non-Recoverable"
+						},
+						"name" : "DELL-TL2000-MIB::tl2000StatusGlobalStatus",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.2.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DELL-TL2000-MIB::eventDoorOpen",
+			"certification" : "STANDARD",
+			"description" : [
+				"The library door has been opened. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "eventDoorOpen",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "librarySerNum:$v2",
+				"Summary" : "Library door opened"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DELL-TL2000-MIB::eventDoorOpen DELL-TL2000-MIB::libraryProductId s EXAMPLE DELL-TL2000-MIB::librarySerNum s EXAMPLE",
+			"trap" : {
+				"name" : "DELL-TL2000-MIB::eventDoorOpen",
+				"oid" : "1.3.6.1.4.1.674.10893.2.102.4.2",
+				"variables" : [
+					{
+						"description" : [
+							"Library Product Id string as reported in a SCSI Inquiry command."
+						],
+						"name" : "DELL-TL2000-MIB::libraryProductId",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Library serial number as reported in SCSI Inquiry command, page 0x80."
+						],
+						"name" : "DELL-TL2000-MIB::librarySerNum",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DELL-TL2000-MIB::eventMailSlotAccessed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The library mail slot has been accessed. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "eventMailSlotAccessed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "librarySerNum:$v2",
+				"Summary" : "Library mail slot accessed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DELL-TL2000-MIB::eventMailSlotAccessed DELL-TL2000-MIB::libraryProductId s EXAMPLE DELL-TL2000-MIB::librarySerNum s EXAMPLE",
+			"trap" : {
+				"name" : "DELL-TL2000-MIB::eventMailSlotAccessed",
+				"oid" : "1.3.6.1.4.1.674.10893.2.102.4.3",
+				"variables" : [
+					{
+						"description" : [
+							"Library Product Id string as reported in a SCSI Inquiry command."
+						],
+						"name" : "DELL-TL2000-MIB::libraryProductId",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Library serial number as reported in SCSI Inquiry command, page 0x80."
+						],
+						"name" : "DELL-TL2000-MIB::librarySerNum",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DELL-TL2000-MIB::eventFaultPosted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The library has posted a hard fault. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "eventFaultPosted",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==1) ? 2 : ($v3==2) ? 3 : ($v3==3) ? 4 : 5"
+				},
+				"SubNode" : "librarySerNum:$v2",
+				"Summary" : "Library fault : $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DELL-TL2000-MIB::eventFaultPosted DELL-TL2000-MIB::libraryProductId s EXAMPLE DELL-TL2000-MIB::librarySerNum s EXAMPLE DELL-TL2000-MIB::libraryFaultSev i 1 DELL-TL2000-MIB::libraryFaultFSC i 9999 DELL-TL2000-MIB::libraryFaultDescr s EXAMPLE",
+			"trap" : {
+				"name" : "DELL-TL2000-MIB::eventFaultPosted",
+				"oid" : "1.3.6.1.4.1.674.10893.2.102.4.4",
+				"variables" : [
+					{
+						"description" : [
+							"Library Product Id string as reported in a SCSI Inquiry command."
+						],
+						"name" : "DELL-TL2000-MIB::libraryProductId",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Library serial number as reported in SCSI Inquiry command, page 0x80."
+						],
+						"name" : "DELL-TL2000-MIB::librarySerNum",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The library Fault severity."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "DELL-TL2000-MIB::libraryFaultSev",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The library Fault error code."
+						],
+						"name" : "DELL-TL2000-MIB::libraryFaultFSC",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The library Fault description."
+						],
+						"name" : "DELL-TL2000-MIB::libraryFaultDescr",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.24",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DELL-TL2000-MIB::eventRequestDriveClean",
+			"certification" : "STANDARD",
+			"description" : [
+				"One of the library tape drives has requested a cleaning cycle to ensure continued",
+				"data reliability. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "eventRequestDriveClean",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "librarySerNum:$v2",
+				"Summary" : "One of library drives requested a cleaning cycle"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DELL-TL2000-MIB::eventRequestDriveClean DELL-TL2000-MIB::libraryProductId s EXAMPLE DELL-TL2000-MIB::librarySerNum s EXAMPLE",
+			"trap" : {
+				"name" : "DELL-TL2000-MIB::eventRequestDriveClean",
+				"oid" : "1.3.6.1.4.1.674.10893.2.102.4.5",
+				"variables" : [
+					{
+						"description" : [
+							"Library Product Id string as reported in a SCSI Inquiry command."
+						],
+						"name" : "DELL-TL2000-MIB::libraryProductId",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Library serial number as reported in SCSI Inquiry command, page 0x80."
+						],
+						"name" : "DELL-TL2000-MIB::librarySerNum",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DELL-TL2000-MIB::eventDriveError",
+			"certification" : "STANDARD",
+			"description" : [
+				"One of the library tape drives has reported an error condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "eventDriveError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "librarySerNum:$v2",
+				"Summary" : "One of library drives reported an error"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DELL-TL2000-MIB::eventDriveError DELL-TL2000-MIB::libraryProductId s EXAMPLE DELL-TL2000-MIB::librarySerNum s EXAMPLE",
+			"trap" : {
+				"name" : "DELL-TL2000-MIB::eventDriveError",
+				"oid" : "1.3.6.1.4.1.674.10893.2.102.4.6",
+				"variables" : [
+					{
+						"description" : [
+							"Library Product Id string as reported in a SCSI Inquiry command."
+						],
+						"name" : "DELL-TL2000-MIB::libraryProductId",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Library serial number as reported in SCSI Inquiry command, page 0x80."
+						],
+						"name" : "DELL-TL2000-MIB::librarySerNum",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DELL-TL2000-MIB::eventLoaderRetriesExcessive",
+			"certification" : "STANDARD",
+			"description" : [
+				"The library has detected excessive loader retries."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "eventLoaderStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "librarySerNum:$v2",
+				"Summary" : "Library $v2 detected excessive loader retries"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DELL-TL2000-MIB::eventLoaderRetriesExcessive DELL-TL2000-MIB::libraryProductId s EXAMPLE DELL-TL2000-MIB::librarySerNum s EXAMPLE",
+			"trap" : {
+				"name" : "DELL-TL2000-MIB::eventLoaderRetriesExcessive",
+				"oid" : "1.3.6.1.4.1.674.10893.2.102.4.7",
+				"variables" : [
+					{
+						"description" : [
+							"Library Product Id string as reported in a SCSI Inquiry command."
+						],
+						"name" : "DELL-TL2000-MIB::libraryProductId",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Library serial number as reported in SCSI Inquiry command, page 0x80."
+						],
+						"name" : "DELL-TL2000-MIB::librarySerNum",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DELL-TL2000-MIB::eventLoaderOK",
+			"certification" : "STANDARD",
+			"description" : [
+				"The library has reverted to normal operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "eventLoaderNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "librarySerNum:$v2",
+				"Summary" : "Library $v2 reverted to normal operation"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DELL-TL2000-MIB::eventLoaderOK DELL-TL2000-MIB::libraryProductId s EXAMPLE DELL-TL2000-MIB::librarySerNum s EXAMPLE",
+			"trap" : {
+				"name" : "DELL-TL2000-MIB::eventLoaderOK",
+				"oid" : "1.3.6.1.4.1.674.10893.2.102.4.8",
+				"variables" : [
+					{
+						"description" : [
+							"Library Product Id string as reported in a SCSI Inquiry command."
+						],
+						"name" : "DELL-TL2000-MIB::libraryProductId",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Library serial number as reported in SCSI Inquiry command, page 0x80."
+						],
+						"name" : "DELL-TL2000-MIB::librarySerNum",
+						"oid" : "1.3.6.1.4.1.674.10893.2.102.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

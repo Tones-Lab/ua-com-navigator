@@ -1,0 +1,215 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PDN-DIAGNOSTICS-MIB::diagApplTestStart",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap signifies that an application test has been initiated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "diagApplTestStart",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Application test started (type $v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-DIAGNOSTICS-MIB::diagApplTestStart RFC1213-MIB::ifIndex i 9999 PDN-DIAGNOSTICS-MIB::applTestId i 9999 PDN-DIAGNOSTICS-MIB::applTestType o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "PDN-DIAGNOSTICS-MIB::diagApplTestStart",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.16.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A unique ID to identify each application test."
+						],
+						"name" : "PDN-DIAGNOSTICS-MIB::applTestId",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.16.1.2.5.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object defines the application test type."
+						],
+						"name" : "PDN-DIAGNOSTICS-MIB::applTestType",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.16.1.2.5.1.2",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PDN-DIAGNOSTICS-MIB::diagIfTestStart",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap signifies that a diagnostic test has been initiated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "diagIfTestStart",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Diagnostic test started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-DIAGNOSTICS-MIB::diagIfTestStart IF-MIB::ifTestId i 9999",
+			"trap" : {
+				"name" : "PDN-DIAGNOSTICS-MIB::diagIfTestStart",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.16.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object identifies the current invocation of the",
+							"interface's test."
+						],
+						"name" : "IF-MIB::ifTestId",
+						"oid" : "1.3.6.1.2.1.31.1.3.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PDN-DIAGNOSTICS-MIB::diagApplTestStop",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap signifies that an application test has completed.",
+				"This trap compliments the diagApplTestStart trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "diagApplTestStop",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==4) ? 3 : (($v4==3) ? 0 : 2)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Application test (type $v3), status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-DIAGNOSTICS-MIB::diagApplTestStop RFC1213-MIB::ifIndex i 9999 PDN-DIAGNOSTICS-MIB::applTestId i 9999 PDN-DIAGNOSTICS-MIB::applTestType o 1.3.6.1.4.1.8072.2.1.1 PDN-DIAGNOSTICS-MIB::applTestStatus i 1",
+			"trap" : {
+				"name" : "PDN-DIAGNOSTICS-MIB::diagApplTestStop",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.16.2.0.101",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A unique ID to identify each application test."
+						],
+						"name" : "PDN-DIAGNOSTICS-MIB::applTestId",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.16.1.2.5.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object defines the application test type."
+						],
+						"name" : "PDN-DIAGNOSTICS-MIB::applTestType",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.16.1.2.5.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"This object shows the current status of an application test.",
+							"none - indicates waiting for test parameters.",
+							"inProgress - indicates the test is in process.",
+							"success - indicates the test is completed.",
+							"failed - indicates the test is failed.",
+							"abort - indicates the test was aborted"
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "inProgress",
+							"3" : "success",
+							"4" : "failed",
+							"5" : "abort"
+						},
+						"name" : "PDN-DIAGNOSTICS-MIB::applTestStatus",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.16.1.2.5.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PDN-DIAGNOSTICS-MIB::diagIfTestOver",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap signifies that a diagnostic test has completed.",
+				"This trap compliments the diagIfTestStart trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "diagIfTestOver",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Diagnostic test has completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-DIAGNOSTICS-MIB::diagIfTestOver IF-MIB::ifTestId i 9999",
+			"trap" : {
+				"name" : "PDN-DIAGNOSTICS-MIB::diagIfTestOver",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.16.2.0.102",
+				"variables" : [
+					{
+						"description" : [
+							"This object identifies the current invocation of the",
+							"interface's test."
+						],
+						"name" : "IF-MIB::ifTestId",
+						"oid" : "1.3.6.1.2.1.31.1.3.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

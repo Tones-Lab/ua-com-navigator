@@ -1,0 +1,541 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0008180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envTemperatureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envTemeratureNotification is sent if the ",
+				"environmental monitoring detects that the temperature ",
+				"is at a critical state. This may cause the system to ",
+				"shut down. This notification is sent only if ",
+				"envEnableTemperatureNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : 2"
+				},
+				"EventType" : "envTemperatureNotification",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : ($v3==2) ? 3 : 4"
+				},
+				"SubNode" : "Index:$v1",
+				"Summary" : "Temperature sensor state: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIARA-NETWORKS-ENVIRONMENT-MIB::envTemperatureNotification TIARA-NETWORKS-ENVIRONMENT-MIB::envTempSensorUnitIndex i 0 TIARA-NETWORKS-ENVIRONMENT-MIB::envTempSensorValue u 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envTempSensorState i 1",
+			"trap" : {
+				"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envTemperatureNotification",
+				"oid" : "1.3.6.1.4.1.3174.2.3.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The index to access an entry in the table."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envTempSensorUnitIndex",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current value of the temperature sensor.",
+							""
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envTempSensorValue",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.1.1.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The current state of the temperature sensor.",
+							""
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "fail",
+							"5" : "turned-off"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envTempSensorState",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envFanNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envFanNotification is sent if the environmental",
+				"monitoring detects that a fan is in a critical state. ",
+				"This may cause the system to shut down. This ",
+				"notification is sent only if envEnableFanNotification ",
+				"is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "envFanNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==2) ? 3 : 4"
+				},
+				"SubNode" : "Index:$v1",
+				"Summary" : "Fan state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIARA-NETWORKS-ENVIRONMENT-MIB::envFanNotification TIARA-NETWORKS-ENVIRONMENT-MIB::envFanUnitIndex i 0 TIARA-NETWORKS-ENVIRONMENT-MIB::envFanState i 1",
+			"trap" : {
+				"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envFanNotification",
+				"oid" : "1.3.6.1.4.1.3174.2.3.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The index to access an entry in the table.",
+							""
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envFanUnitIndex",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current state of fan 0, normal/fail.",
+							""
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "fail",
+							"5" : "turned-off"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envFanState",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply1DownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envPowerNotification is sent if the environmental",
+				"monitoring detects that a power supply has changed status. ",
+				"This notification is sent only if ",
+				"envEnablePowerNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "envPowerSupply1Notification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "PowerSupplyIndex:$v2",
+				"Summary" : "Power supply 1 is down. Fail count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply1DownNotification TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupPowerFailCount i 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupIndex i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupInstalled i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupStatus i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupType i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupUptime i 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupDowntime i 9999",
+			"trap" : {
+				"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply1DownNotification",
+				"oid" : "1.3.6.1.4.1.3174.2.3.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Number of failures of either power supply ",
+							"since boot-up."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupPowerFailCount",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Index to access entry."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupIndex",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply installed flag."
+						],
+						"enums" : {
+							"1" : "not-installed",
+							"2" : "installed"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupInstalled",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply up/down status."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupStatus",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply type."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "minus48VDC"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupType",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply came up."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupUptime",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply went down."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupDowntime",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply1UpNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envPowerNotification is sent if the environmental",
+				"monitoring detects that a power supply has changed status. ",
+				"This notification is sent only if ",
+				"envEnablePowerNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "envPowerSupply1Notification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PowerSupplyIndex:$v2",
+				"Summary" : "Power supply 1 is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply1UpNotification TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupPowerFailCount i 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupIndex i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupInstalled i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupStatus i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupType i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupUptime i 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupDowntime i 9999",
+			"trap" : {
+				"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply1UpNotification",
+				"oid" : "1.3.6.1.4.1.3174.2.3.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Number of failures of either power supply ",
+							"since boot-up."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupPowerFailCount",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Index to access entry."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupIndex",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply installed flag."
+						],
+						"enums" : {
+							"1" : "not-installed",
+							"2" : "installed"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupInstalled",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply up/down status."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupStatus",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply type."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "minus48VDC"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupType",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply came up."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupUptime",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply went down."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupDowntime",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply2DownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envPowerNotification is sent if the environmental",
+				"monitoring detects that a power supply has changed status. ",
+				"This notification is sent only if ",
+				"envEnablePowerNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "envPowerSupply2Notification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "PowerSupplyIndex:$v2",
+				"Summary" : "Power supply 2 is down. Fail count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply2DownNotification TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupPowerFailCount i 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupIndex i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupInstalled i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupStatus i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupType i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupUptime i 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupDowntime i 9999",
+			"trap" : {
+				"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply2DownNotification",
+				"oid" : "1.3.6.1.4.1.3174.2.3.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Number of failures of either power supply ",
+							"since boot-up."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupPowerFailCount",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Index to access entry."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupIndex",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply installed flag."
+						],
+						"enums" : {
+							"1" : "not-installed",
+							"2" : "installed"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupInstalled",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply up/down status."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupStatus",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply type."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "minus48VDC"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupType",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply came up."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupUptime",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply went down."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupDowntime",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply2UpNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envPowerNotification is sent if the environmental",
+				"monitoring detects that a power supply has changed status. ",
+				"This notification is sent only if ",
+				"envEnablePowerNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "envPowerSupply2Notification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PowerSupplyIndex:$v2",
+				"Summary" : "Power supply 2 is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply2UpNotification TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupPowerFailCount i 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupIndex i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupInstalled i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupStatus i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupType i 1 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupUptime i 9999 TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupDowntime i 9999",
+			"trap" : {
+				"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPowerSupply2UpNotification",
+				"oid" : "1.3.6.1.4.1.3174.2.3.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Number of failures of either power supply ",
+							"since boot-up."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupPowerFailCount",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Index to access entry."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupIndex",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply installed flag."
+						],
+						"enums" : {
+							"1" : "not-installed",
+							"2" : "installed"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupInstalled",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply up/down status."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupStatus",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply type."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "minus48VDC"
+						},
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupType",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply came up."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupUptime",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply went down."
+						],
+						"name" : "TIARA-NETWORKS-ENVIRONMENT-MIB::envPwrsupDowntime",
+						"oid" : "1.3.6.1.4.1.3174.2.3.1.4.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

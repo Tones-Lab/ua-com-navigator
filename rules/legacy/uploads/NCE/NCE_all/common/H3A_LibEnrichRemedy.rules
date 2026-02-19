@@ -1,0 +1,103 @@
+######################################################################################################
+#       _Name_  collection/event/H3A/common/H3A_LibEnrichRemedy.rules
+######################################################################################################
+# 
+# Remedy functions
+#
+# Source Control:
+#       1.0		2023-12-14	aignerma	<STORY>		initial version
+#
+######################################################################################################
+
+sub LibEnrichRemedy_ActiveChanges {
+	my $eventRef = shift;
+	my $myDBH = shift;
+	my $trace = 'LibEnrichRemedy_ActiveChanges';
+	$Log->Message('DEBUG', $trace . " started...");
+    
+	my @result=();
+	my $table = "OBJ_REMEDY_ACTIVE_CHANGES_V2";
+	my $filter = 	"LOWER_CI_ID is not null AND LOWER_CI_ID = '" . lc($eventRef->{'CMDBCIID'}) . "' and 
+			" . $eventRef->{'FirstReported'} . " >= SCHED_START_DATE and 
+			" . $eventRef->{'FirstReported'} . " < SCHED_END_DATE  ";
+	my @columns = qw(CHANGE_ID CHANGE_COORDINATOR_GROUP CHANGE_COORDINATOR STATUS);
+    
+	$Log->Message('DEBUG', $trace . "Used Query: select ".join(',',@columns)." from ".$table." where ".$filter);
+    
+	my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+	if (defined $cnt) {
+		if ($cnt == 0) {
+			# nothing to do. no active change found for this CMDBCIID
+		} else {
+			if ( $cnt > 1) {
+				# multiple changes found
+				my @ChangeList=();
+				foreach my $row (@result) {
+					push(@ChangeList,$row->{CHANGE_ID});
+				}
+				my $errTxt = $trace . " multiple active changes (".join( ',', @ChangeList ).") for CMDBCIID: ".$eventRef->{'CMDBCIID'}." found. First Change is taken.";
+				LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+			}
+
+			if ($eventRef->{TicketID} eq '') {
+				$eventRef->{TicketID} = '"' . $result[0]->{CHANGE_ID} . '"';
+				$eventRef->{TicketSubmitter} = $result[0]->{CHANGE_COORDINATOR};
+				$eventRef->{TicketStatus} = $result[0]->{STATUS};
+				$eventRef->{LastComment} = $result[0]->{CHANGE_ID} . " is '" . $result[0]->{STATUS} . "'";
+			}
+		}
+	} else {
+		my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+		LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+
+	$Log->Message('DEBUG', $trace . " ...done");
+
+}
+
+sub LibEnrichRemedy_CMDBCIID {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichRemedy_CMDBCIID';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    my @result=();
+    my $table = "OBJ_REMEDY_CI_STATUS";
+    my $filter = "LOWER_CI_ID is not null AND LOWER_CI_ID = '" . lc($eventRef->{'CMDBCIID'}) . "'";
+    my @columns = qw(CI_ID CI_STATUS CI_SYSTEM_ENVIRONMENT);
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	#$Log->Message('DEBUG', $trace . " Received Rows: " . Dumper(\@result));
+		if ($cnt == 1) {
+        	if ( $eventRef->{'CMDBCIID'} ne $result[0]->{CI_ID} ) {
+            	# CMDBCIID and Remedy CI different
+				LibUtil_AddDetails($eventRef,'EnrichmentLog',"Info: case sensitivity mixed. CMDBCIID: " . $eventRef->{'CMDBCIID'} . " Remedy CIID: " .  $result[0]->{CI_ID});
+                $eventRef->{'CMDBCIID'} = $result[0]->{CI_ID};
+            }
+            $eventRef->{CMDBCIEnvironment} = $result[0]->{CI_SYSTEM_ENVIRONMENT};
+            $eventRef->{CMDBCIStatus} = $result[0]->{CI_STATUS};
+
+		} elsif ($cnt == 0) {
+        	my $errTxt = $trace . " Info: CMDBCIID (".$eventRef->{'CMDBCIID'}.") not found in '".$table."'";
+            $Log->Message('INFO', $errTxt);
+            LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+            
+        } else {
+        	my $errTxt = $trace . " CMDBCIID '".$eventRef->{'CMDBCIID'}."' found ". $cnt . "times in " . $table . ". No CI enrichment performed.";
+            $Log->Message('INFO', $errTxt);
+            LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+1;

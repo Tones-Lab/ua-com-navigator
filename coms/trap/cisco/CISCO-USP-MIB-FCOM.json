@@ -1,0 +1,546 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201507200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspSystemStateAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the CUSP system goes",
+				"up/down. This notification can be enabled/disabled by setting",
+				"cuspSystemStateAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : 2"
+				},
+				"EventType" : "cuspSystemStateAlert",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CUSP system is $v3: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspSystemStateAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspNotifDetail s EXAMPLE CISCO-USP-MIB::cuspSystemState i 1",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspSystemStateAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspNotifDetail",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-USP-MIB::cuspSystemState",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspServerGroupElementAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when server group element status",
+				"changes. This notification can be enabled/disabled by setting",
+				"cuspServerGroupElementAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : 2"
+				},
+				"EventType" : "cuspServerGroupElementAlert",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "$v2",
+				"Summary" : "Server group element $v2 status is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspServerGroupElementAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspElementName s EXAMPLE CISCO-USP-MIB::cuspElementStatus i 1",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspServerGroupElementAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspElementName",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-USP-MIB::cuspElementStatus",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.2.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspServerGroupAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when all the elements in the",
+				"server group goes down or when any one element in the server",
+				"group comes up after all the elements in the group were down.",
+				"This notification can be enabled/disabled by setting",
+				"cuspServerGroupAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : 2"
+				},
+				"EventType" : "cuspServerGroupAlert",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 0 : (($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2))"
+				},
+				"SubNode" : "$v2",
+				"Summary" : {
+					"eval" : "($v3 == 2) ? 'At least one element in the server group $v2 are down' : 'All the elements in the server group $v2 are $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspServerGroupAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspServerGroupName s EXAMPLE CISCO-USP-MIB::cuspServerGroupStatus i 1",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspServerGroupAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspServerGroupName",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "partialdown",
+							"3" : "down"
+						},
+						"name" : "CISCO-USP-MIB::cuspServerGroupStatus",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.2.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspMemoryThresholdAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when CUSP memory usage",
+				"exceeds the cuspMemoryThresholdValue. This notification can be",
+				"enabled/disabled by setting cuspMemoryThresholdAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cuspMemoryThresholdAlert",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CUSP memory usage exceeded $v2 and is using $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspMemoryThresholdAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspMemoryThresholdValue i 99 CISCO-USP-MIB::cuspConfiguredMemory u 9999 CISCO-USP-MIB::cuspMemoryUsed u 9999",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspMemoryThresholdAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspMemoryThresholdValue",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.12.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspConfiguredMemory",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspMemoryUsed",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspLicenseExceededAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when average CPS exceeds",
+				"cuspLicenseLimit. This notification can be enabled/disabled by",
+				"setting cuspLicenseExceededAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cuspLicenseExceededAlert",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CPS exceeds license limit of $v3 by having $v2 CPS"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspLicenseExceededAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspCPS u 9999 CISCO-USP-MIB::cuspLicenseLimit u 9999",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspLicenseExceededAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.5",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspCPS",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.10.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspLicenseLimit",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspLicenseStateAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when CUSP license state changes.",
+				"This notification can be enabled/disabled by setting",
+				"cuspLicenseStateAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cuspLicenseStateAlert",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CUSP license state changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspLicenseStateAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspLicenseState i 1",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspLicenseStateAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "waiting",
+							"2" : "overage",
+							"3" : "outofcompliance",
+							"4" : "notapplicable",
+							"5" : "invalidtag",
+							"6" : "invalid",
+							"7" : "init",
+							"8" : "incompliance",
+							"9" : "evalexpired",
+							"10" : "eval",
+							"11" : "disabled",
+							"12" : "authorizedperiodexpired"
+						},
+						"name" : "CISCO-USP-MIB::cuspLicenseState",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspExtensiveLoggingAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when extensive debug level",
+				"logging is enabled in CUSP. Extensive logging might impact the",
+				"performance and system stability. This notification can be",
+				"enabled/disabled by setting cuspExtensiveLoggingAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cuspExtensiveLoggingAlert",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Extensive debug logging is enabled in CUSP: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspExtensiveLoggingAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspNotifDetail s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspExtensiveLoggingAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.7",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspNotifDetail",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspDiskSpaceThresholdAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the CUSP Disk usage exceeds",
+				"the cuspDiskSpaceThresholdValue. This notification can be",
+				"enabled/disabled by setting cuspDiskSpaceThresholdAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cuspDiskSpaceThresholdAlert",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CUSP Disk usage exceeds $v2 with $v3 used space"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspDiskSpaceThresholdAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspDiskSpaceThresholdValue i 99 CISCO-USP-MIB::cuspDiskSpaceUsed i 9999",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspDiskSpaceThresholdAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.8",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspDiskSpaceThresholdValue",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.12.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspDiskSpaceUsed",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.1.9",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspBackupProcessFailAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when back up process fails. This",
+				"notification can be enabled/disabled by setting",
+				"cuspBackupProcessFailAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cuspBackupProcessFailAlert",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Back up process failed: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspBackupProcessFailAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspNotifDetail s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspBackupProcessFailAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.9",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspNotifDetail",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-USP-MIB::cuspConnectionExceptionAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a connection exception",
+				"occurs. This notification can be enabled/disabled by setting",
+				"cuspConnectionExceptionAlertEnable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cuspConnectionExceptionAlert",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Connection exception occurred: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-USP-MIB::cuspConnectionExceptionAlert CISCO-USP-MIB::cuspNotifSeverity i 1 CISCO-USP-MIB::cuspNotifDetail s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-USP-MIB::cuspConnectionExceptionAlert",
+				"oid" : "1.3.6.1.4.1.9.9.827.0.10",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "informational"
+						},
+						"name" : "CISCO-USP-MIB::cuspNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-USP-MIB::cuspNotifDetail",
+						"oid" : "1.3.6.1.4.1.9.9.827.1.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

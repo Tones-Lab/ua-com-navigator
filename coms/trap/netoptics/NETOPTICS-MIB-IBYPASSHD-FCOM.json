@@ -1,0 +1,215 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201603161320Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NETOPTICS-MIB-IBYPASSHD::statusChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when link status changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : 2"
+				},
+				"EventType" : "statusChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : 4"
+				},
+				"SubNode" : "portIndex:$v1",
+				"Summary" : {
+					"eval" : "($v3==1) ? 'Link up' : 'Link down'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NETOPTICS-MIB-IBYPASSHD::statusChangeNotif NETOPTICS-MIB-IBYPASSHD::portIndex i 0 NETOPTICS-MIB-IBYPASSHD::powerSupplyIndex i 1 NETOPTICS-MIB-IBYPASSHD::linkUpDown i 0 NETOPTICS-MIB-IBYPASSHD::systemUpDown i 0 NETOPTICS-MIB-IBYPASSHD::userActivity i 0 NETOPTICS-MIB-IBYPASSHD::powerUpDown i 0 NETOPTICS-MIB-IBYPASSHD::snmpStart i 0 NETOPTICS-MIB-IBYPASSHD::snmpDown i 0",
+			"trap" : {
+				"name" : "NETOPTICS-MIB-IBYPASSHD::statusChangeNotif",
+				"oid" : "1.3.6.1.4.1.23022.2.6.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"This is the index of the neworkPortTable which may be used ",
+							"access to the table for debug purposes."
+						],
+						"name" : "NETOPTICS-MIB-IBYPASSHD::portIndex",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.6.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The index of the power table."
+						],
+						"name" : "NETOPTICS-MIB-IBYPASSHD::powerSupplyIndex",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.12.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents link up and down."
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::linkUpDown",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"System start and down"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::systemUpDown",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"System start and down"
+						],
+						"enums" : {
+							"0" : "unclear",
+							"1" : "clear"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::userActivity",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power up and down"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::powerUpDown",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SNMP daemon start"
+						],
+						"enums" : {
+							"0" : "coldStart",
+							"1" : "warmStart"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::snmpStart",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SNMP daemon stop"
+						],
+						"enums" : {
+							"0" : "daemonDown"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::snmpDown",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NETOPTICS-MIB-IBYPASSHD::configurationChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"The configuration change on ports and filter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "configurationChangeNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "portName:$v1",
+				"Summary" : "Port configuration: speed=$v2; autoNeg=$v3; duplex=$v4; adminState=$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NETOPTICS-MIB-IBYPASSHD::configurationChangeNotif NETOPTICS-MIB-IBYPASSHD::portName s EXAMPLE NETOPTICS-MIB-IBYPASSHD::speed i 1 NETOPTICS-MIB-IBYPASSHD::autoNeg i 0 NETOPTICS-MIB-IBYPASSHD::duplex i 1 NETOPTICS-MIB-IBYPASSHD::adminState i 0",
+			"trap" : {
+				"name" : "NETOPTICS-MIB-IBYPASSHD::configurationChangeNotif",
+				"oid" : "1.3.6.1.4.1.23022.2.6.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"This is the display name of the networkPortTable."
+						],
+						"name" : "NETOPTICS-MIB-IBYPASSHD::portName",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.6.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The speed of the port."
+						],
+						"enums" : {
+							"1" : "s10M",
+							"2" : "s100M",
+							"3" : "s1000M"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::speed",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.6.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The auto negotiate value: on/off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::autoNeg",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The duplex type for the port."
+						],
+						"enums" : {
+							"1" : "full",
+							"2" : "half",
+							"3" : "unknown"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::duplex",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.6.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The adminstrate state of the port."
+						],
+						"enums" : {
+							"0" : "disable",
+							"1" : "enable"
+						},
+						"name" : "NETOPTICS-MIB-IBYPASSHD::adminState",
+						"oid" : "1.3.6.1.4.1.23022.2.6.1.1.6.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

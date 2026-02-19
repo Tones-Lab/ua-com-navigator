@@ -1,0 +1,450 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "File-Transfer-MIB::ftStopTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sending a TRAP, if FT has exited/aborted (FT-SINIX and FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftStopTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "File transfer exited or aborted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftStopTrap ",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftStopTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.1"
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftMaxRequestTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sending a TRAP, if the maximum number of FT requests",
+				"is reached (only FT-SINIX)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftMaxRequestTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Maximum number of FT requests reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftMaxRequestTrap ",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftMaxRequestTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.2"
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftErrorLimitTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sending a TRAP, if the error limit is reached",
+				"(concerning restarts - only FT-SINIX)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftErrorLimitTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Error limit reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftErrorLimitTrap ",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftErrorLimitTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.3"
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftPartnerStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sending a TRAP, if the Partner changed state (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftPartnerStateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Partner ($v1) state changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftPartnerStateTrap File-Transfer-MIB::ftPartnerName s EXAMPLE File-Transfer-MIB::ftPartnerState i 1",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftPartnerStateTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Object is supported in FT-BS2000:",
+							"Name of FT-Partner"
+						],
+						"name" : "File-Transfer-MIB::ftPartnerName",
+						"oid" : "1.3.6.1.4.1.231.2.18.8.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Object is supported in FT-BS2000:",
+							"Status of FT-Partner",
+							"READ: Status ACT - AINACT, WRITE: Status ACT, DEACT, ADEAC"
+						],
+						"enums" : {
+							"1" : "act",
+							"2" : "inact",
+							"3" : "nocon",
+							"4" : "lunk",
+							"5" : "runk",
+							"6" : "adeact",
+							"7" : "ainact"
+						},
+						"name" : "File-Transfer-MIB::ftPartnerState",
+						"oid" : "1.3.6.1.4.1.231.2.18.8.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftPartnerUnreachableTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Maybe Partner ist unreachable (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftPartnerUnreachableTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Partner ($v1) unreachable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftPartnerUnreachableTrap File-Transfer-MIB::ftPartnerName s EXAMPLE",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftPartnerUnreachableTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Object is supported in FT-BS2000:",
+							"Name of FT-Partner"
+						],
+						"name" : "File-Transfer-MIB::ftPartnerName",
+						"oid" : "1.3.6.1.4.1.231.2.18.8.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftStartTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sending a TRAP, if FT has been started (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftStartTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "File transfer started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftStartTrap ",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftStartTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.6"
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftRequestQueueUpperLimitTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"at least 85 percent of Request file full (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftRequestQueueUpperLimitTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "File transfer request queue is over 85&#37; full"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftRequestQueueUpperLimitTrap ",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftRequestQueueUpperLimitTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.7"
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftRequestQueueLowerLimitTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"at least 20 percent of Request queue unoccupied (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftRequestQueueLowerLimitTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "File transfer request queue has under 20&#37; occupancy"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftRequestQueueLowerLimitTrap ",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftRequestQueueLowerLimitTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.8"
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftRequestSuccessfulTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Ft-Request was finished successfully (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftRequestSuccessfulTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "FT-Request finished successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftRequestSuccessfulTrap File-Transfer-MIB::ftRequestInitiator i 1 File-Transfer-MIB::ftRequestID i 9999 File-Transfer-MIB::ftRequestPartnerName s EXAMPLE File-Transfer-MIB::ftRequestUserID s EXAMPLE File-Transfer-MIB::ftRequestFileName s EXAMPLE",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftRequestSuccessfulTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Initiator of FT-Request (only FT-BS2000)"
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "File-Transfer-MIB::ftRequestInitiator",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Transfer ID of FT-Request (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestID",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Partner of FT-Request (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestPartnerName",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"UserID of FT-Request (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestUserID",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"name of transferred File (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestFileName",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftRequestErrorTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"FT-Request finished with error (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftRequestErrorTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "FT-Request error ($v6) occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftRequestErrorTrap File-Transfer-MIB::ftRequestInitiator i 1 File-Transfer-MIB::ftRequestID i 9999 File-Transfer-MIB::ftRequestPartnerName s EXAMPLE File-Transfer-MIB::ftRequestUserID s EXAMPLE File-Transfer-MIB::ftRequestFileName s EXAMPLE File-Transfer-MIB::ftRequestError s EXAMPLE",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftRequestErrorTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Initiator of FT-Request (only FT-BS2000)"
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "File-Transfer-MIB::ftRequestInitiator",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Transfer ID of FT-Request (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestID",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Partner of FT-Request (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestPartnerName",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"UserID of FT-Request (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestUserID",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"name of transferred File (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestFileName",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Error in Request (only FT-BS2000)"
+						],
+						"name" : "File-Transfer-MIB::ftRequestError",
+						"oid" : "1.3.6.1.4.1.231.2.18.9.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftSubsystemStartTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sending a TRAP, if Subsystem FT is started (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftSubsystemStartTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "FT subsystem started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftSubsystemStartTrap ",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftSubsystemStartTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.11"
+			}
+		},
+		{
+			"@objectName" : "File-Transfer-MIB::ftSubsystemStopTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sending a TRAP, if Subsystem FT is stopped (only FT-BS2000)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ftSubsystemStopTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "FT subsystem stopped"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD File-Transfer-MIB::ftSubsystemStopTrap ",
+			"trap" : {
+				"name" : "File-Transfer-MIB::ftSubsystemStopTrap",
+				"oid" : "1.3.6.1.4.1.231.2.18.6.0.12"
+			}
+		}
+	]
+}

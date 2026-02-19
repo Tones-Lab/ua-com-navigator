@@ -1,0 +1,175 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201605240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-OPTICAL-MIB::coiOpticsStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever the defect status of",
+				"Optics on an interface changes.",
+				"Varbind 'ifIndex' indicates the interface whose defect status",
+				"of the Optics layer has just changed.",
+				"Varbind 'ifName' indicates the interface Name whose defect",
+				"status of the Optics layer has just changed.",
+				"Varbind 'coiOpticalControllerPortType' indicates the port type",
+				"of the interface whose defect status of the Optics layer has",
+				"just changed.",
+				"Varbind 'coiOpticalControllerStatus' indicates the current",
+				"defect status of the Optics layer on the interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "coiOpticsStatusChange",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v2",
+				"Summary" : "The optics layer defect status of $v3 $v2 has changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-OPTICAL-MIB::coiOpticsStatusChange IF-MIB::ifIndex i 9999 IF-MIB::ifName s EXAMPLE CISCO-OPTICAL-MIB::coiOpticalControllerPortType i 1 CISCO-OPTICAL-MIB::coiOpticalControllerStatus b 1",
+			"trap" : {
+				"name" : "CISCO-OPTICAL-MIB::coiOpticsStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.828.0.1",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "clientPort",
+							"2" : "trunkPort"
+						},
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalControllerPortType",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.1.2.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalControllerStatus",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.1.2.1.12",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-OPTICAL-MIB::coiOpticalEquipmentAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever the optical equipment",
+				"alarm is generated.",
+				"Varbind 'coiOpticalAlarmLocation' indicates the location on",
+				"which equipment failed alarm has generated.",
+				"Varbind 'coiOpticalAlarmType' indicates the type of alarm.",
+				"Varbind 'coiOpticalAlarmTimeStamp' indicates the timestamp when",
+				"alarm is generated.",
+				"Varbind 'coiOpticalAlarmName' indicates the alarm object.",
+				"Varbind 'coiOpticalAlarmAdditionalInfo' indicates additional",
+				"info related to the alarm.",
+				"Varbind 'coiOpticalAlarmSeverity' indicates the severity of the",
+				"alarm.",
+				"Varbind 'coiOpticalAlarmStatus' indicates status of the alarm.",
+				"Varbind 'coiOpticalAlarmServiceAffecting' indicates the service",
+				"affected state when alarm is generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 2 : (($v7 == 2) ? 1 : 3)"
+				},
+				"EventType" : "coiOpticalEquipmentAlarm",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 86400 : (($v7 == 2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 2) ? 0 : (($v6 == 5) ? 5 : (($v6 == 4) ? 4 : (($v6 == 3) ? 3 : 2)))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "$v8 Optical equipment alarm $v4 has occurred on $v1: $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-OPTICAL-MIB::coiOpticalEquipmentAlarm CISCO-OPTICAL-MIB::coiOpticalAlarmLocation s EXAMPLE CISCO-OPTICAL-MIB::coiOpticalAlarmType i 1 CISCO-OPTICAL-MIB::coiOpticalAlarmTimeStamp t 9999 CISCO-OPTICAL-MIB::coiOpticalAlarmName s EXAMPLE CISCO-OPTICAL-MIB::coiOpticalAlarmAdditionalInfo s EXAMPLE CISCO-OPTICAL-MIB::coiOpticalAlarmSeverity i 1 CISCO-OPTICAL-MIB::coiOpticalAlarmStatus i 1 CISCO-OPTICAL-MIB::coiOpticalAlarmServiceAffecting i 1",
+			"trap" : {
+				"name" : "CISCO-OPTICAL-MIB::coiOpticalEquipmentAlarm",
+				"oid" : "1.3.6.1.4.1.9.9.828.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalAlarmLocation",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.4.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "alarmUnknown",
+							"2" : "equipmentFailure"
+						},
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalAlarmType",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalAlarmTimeStamp",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.4.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalAlarmName",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.4.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalAlarmAdditionalInfo",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.4.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "notReported",
+							"2" : "notAlarmed",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.4.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "raised",
+							"2" : "cleared",
+							"3" : "transient"
+						},
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalAlarmStatus",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.4.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "serviceAffecting",
+							"2" : "nonServiceAffecting"
+						},
+						"name" : "CISCO-OPTICAL-MIB::coiOpticalAlarmServiceAffecting",
+						"oid" : "1.3.6.1.4.1.9.9.828.1.4.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

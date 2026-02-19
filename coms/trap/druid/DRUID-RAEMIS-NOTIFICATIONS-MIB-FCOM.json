@@ -1,0 +1,2854 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201807190000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHeartBeat",
+			"certification" : "STANDARD",
+			"description" : [
+				"Heartbeat trap sent to manager to communicate liveliness of Raemis.",
+				"TYPE: Fault",
+				"SEVERITY: Minor",
+				"MANAGED OBJECTS: Druid",
+				"CORRECTIVE ACTION: None",
+				"The Raemis system is able to connect to NMS"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisHeartBeat",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Heartbeat alarm cleared' : 'Sent heartbeat to the manager to communicate liveliness of raemis. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHeartBeat DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHeartBeat",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.100",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbLinkFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Connectivity to HNB has been lost.",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: Hnb",
+				"CORRECTIVE ACTION: Check HNB operational state. Check physical connection, routes, etc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisHnbLinkFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'HNB connectivity link failure alarm cleared' : 'HNB connectivity link failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbLinkFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbLinkFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.101",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbGwLinkFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Connectivity to HNB-GW has been lost.",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: CnHnbGw",
+				"CORRECTIVE ACTION: Check secure link to HNB-GW. Check HNB-GW logs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisHnbGwLinkFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'HNB-GW connectivity link failure alarm cleared' : 'HNB-GW connectivity link failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbGwLinkFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbGwLinkFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.102",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSeGwLinkFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Secure association to SeGW is down.",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: None",
+				"CORRECTIVE ACTION: Check physical/logical connection to SeGW"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisSeGwLinkFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'SeGW security association failure alarm cleared' : 'SeGW security association failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSeGwLinkFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSeGwLinkFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.103",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbIpSecFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Secure association to HNB is down.",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: None",
+				"CORRECTIVE ACTION: Check physical/logical connection to HNB"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisHnbIpSecFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'HNB security association failure alarm cleared' : 'HNB security association failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbIpSecFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisHnbIpSecFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.104",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSipLinkFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"VoIP provider or link to SIP provider appears to be down.",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: SipProvider",
+				"CORRECTIVE ACTION: Check physical/logical connection to VoIP provider"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisSipLinkFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'VoIP provider or SIP provider link failure alarm cleared' : 'VoIP provider or SIP provider link is down. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSipLinkFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSipLinkFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.105",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSipAuthFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Subscriber authentication with a SIP provider has failed.",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: Subscriber",
+				"CORRECTIVE ACTION: Check subscriber credentials"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisSipAuthFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'SIP provider subscriber authentication failure alarm cleared' : 'SIP provider subscriber authentication failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSipAuthFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisSipAuthFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.106",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMessagingAppLinkFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Failed to send request/response to messaging application server. This includes loss of ESPA2Raemis server communication.",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: MessagingApp",
+				"CORRECTIVE ACTION: Check physical/logical connection to messaging app server. Check connection with ESPA2Raemis server."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisMessagingAppLinkFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Messaging application server request or response failure alarm cleared' : 'Failed to send request or response to the messaging application server. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMessagingAppLinkFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMessagingAppLinkFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.107",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMessagingAppAuthFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Authentication with messaging application server failed.",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: MessagingApp",
+				"CORRECTIVE ACTION: Check messaging application server credentials."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisMessagingAppAuthFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Messaging application server authentication failure alarm cleared' : 'Authentication with messaging application server failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMessagingAppAuthFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMessagingAppAuthFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.108",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisShutdown",
+			"certification" : "STANDARD",
+			"description" : [
+				"Raemis system has shut down",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: Raemis",
+				"CORRECTIVE ACTION: Check if Raemis was shutted down due to OAM intervention"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisShutdown",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Raemis system shut down alarm cleared' : 'Raemis system has shut down. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisShutdown DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisShutdown",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.109",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Raemis system has restarted",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: Raemis",
+				"CORRECTIVE ACTION: Check if Raemis was restarted due to OAM intervention"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisStarted",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Raemis system restart alarm cleared' : 'Raemis system has restarted. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisStarted DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisStarted",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.110",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEventUploadFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Raemis failed to upload events file.",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: EventServer",
+				"CORRECTIVE ACTION: Check event server is up and running. Check connectivity."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisEventUploadFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Raemis event upload failure alarm cleared' : 'Raemis failed to upload events file. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEventUploadFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEventUploadFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.111",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEspaConverterFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"ESPA2Raemis server detected that an ESPA Converter is no longer operating.",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: EventServer",
+				"CORRECTIVE ACTION: Check ESPA Converter is up and running. Check connectivity."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisEspaConverterFailure",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'ESPA converter failure alarm cleared' : 'ESPA converter is no longer operating. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEspaConverterFailure DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEspaConverterFailure",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.112",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEnbLinkFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Connectivity to enodeb has been lost.",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: enodeb",
+				"CORRECTIVE ACTION: Check enodeb operational state. Check physical connection, routes, etc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisEnbLinkFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Enodeb connectivity link failure alarm cleared' : 'Enodeb connectivity link failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEnbLinkFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEnbLinkFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.113",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEnbIpSecFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Secure association to enodeb is down.",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: None",
+				"CORRECTIVE ACTION: Check physical/logical connection to enodeb"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisEnbIpSecFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Enodeb security association failure alarm cleared' : 'Enodeb security association failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEnbIpSecFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEnbIpSecFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.114",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDiameterFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"SCTP connection failed",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: None",
+				"CORRECTIVE ACTION: Check connection to HSS"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisDiameterFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'SCTP connection failure alarm cleared' : 'SCTP connection failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDiameterFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDiameterFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.115",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisGTPV2Failed",
+			"certification" : "STANDARD",
+			"description" : [
+				"GTPV2 Link Failed",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: None",
+				"CORRECTIVE ACTION: Check connection that is specified in Trap Cause"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisGTPV2Failed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'GTPV2 link failure alarm cleared' : 'GTPV2 link failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisGTPV2Failed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisGTPV2Failed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.116",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisImsiNotAttached",
+			"certification" : "STANDARD",
+			"description" : [
+				"bad MME->VLR config",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: subscriber",
+				"CORRECTIVE ACTION: Check TAI/LAI mappings and fake_imsi_attach config "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisImsiNotAttached",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'IMSI not attached alarm cleared' : 'IMSI is not attached. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisImsiNotAttached DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisImsiNotAttached",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.117",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEndpointFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Endpoint configuration issue",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: mme, sgw ",
+				"CORRECTIVE ACTION: Please check your MME S11 endpoint config or S58 endpoint "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisEndpointFailure",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Endpoint configuration failure alarm cleared' : 'Endpoint configuration failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEndpointFailure DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisEndpointFailure",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.118",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDNSFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Hostname resolution Failed",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: arecord, naptr record ",
+				"CORRECTIVE ACTION: Check DNS setting of A record or naptr resolution "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisDNSFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Hostname resolution failure alarm cleared' : 'Hostname resolution failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDNSFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDNSFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.119",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisLicense",
+			"certification" : "STANDARD",
+			"description" : [
+				"Invalid License",
+				"TYPE: Event",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: features",
+				"CORRECTIVE ACTION: Check Raemis License "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisLicense",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Invalid license alarm cleared' : 'Invalid license provided. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisLicense DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisLicense",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.120",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisInitFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Raemis has failed to start",
+				"TYPE: Event",
+				"SEVERITY: Critical ",
+				"MANAGED OBJECTS: raemis ",
+				"CORRECTIVE ACTION: Check Raemis License and configuration "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisInitFailure",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Raemis initialization failure alarm cleared' : 'Raemis initialization failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisInitFailure DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisInitFailure",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.121",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisPeerUnreachable",
+			"certification" : "STANDARD",
+			"description" : [
+				"Peer communications failed",
+				"TYPE: Event",
+				"SEVERITY: Critical ",
+				"MANAGED OBJECTS: mgw ",
+				"CORRECTIVE ACTION: Check configuration and logs "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisPeerUnreachable",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Peer unreachable alarm cleared' : 'Peer communications failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisPeerUnreachable DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisPeerUnreachable",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.122",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMisConfiguredObject",
+			"certification" : "STANDARD",
+			"description" : [
+				"Missing or bad object configuration",
+				"TYPE: Event",
+				"SEVERITY: Major ",
+				"MANAGED OBJECTS: all ",
+				"CORRECTIVE ACTION: Check configuration and logs "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisMisConfiguredObject",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Misconfigured object alarm cleared' : 'Missing or bad object configuration provided. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMisConfiguredObject DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisMisConfiguredObject",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.123",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisIpSecFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Secure association to Node is down.",
+				"TYPE: Event",
+				"SEVERITY: Critical",
+				"MANAGED OBJECTS: None",
+				"CORRECTIVE ACTION: Check physical/logical connection to Node"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisIpSecFailed",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'Node security association failure alarm cleared' : 'Node security association failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisIpSecFailed DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisIpSecFailed",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.124",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisCHSSDHSSLossOfSync",
+			"certification" : "STANDARD",
+			"description" : [
+				"A CHSS or DHSS is NOT in sync with the Central Subscriber Database",
+				"TYPE: Fault",
+				"SEVERITY: Major",
+				"MANAGED OBJECT: CHSS or DHSS",
+				"CORRECTIVE ACTION: Resync the DHSS ",
+				"A distributed HSS is not in sync with the central Server"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisCHSSDHSSLossOfSync",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'CHSS or DHSS sync failure alarm cleared' : 'CHSS or DHSS is not in sync with the central subscriber database. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisCHSSDHSSLossOfSync DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisCHSSDHSSLossOfSync",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.200",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisCHSSDHSSLossOfConnection",
+			"certification" : "STANDARD",
+			"description" : [
+				"The CHSS or DHSS has no connection to its peer",
+				"TYPE: Fault",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: CHSS or DHSS",
+				"CORRECTIVE ACTION: Restore network connectivity between DHSS and CHSS ",
+				"A distributed HSS is not in sync with the central Server"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisCHSSDHSSLossOfConnection",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'CHSS or DHSS connection failure alarm cleared' : 'CHSS or DHSS lost connection to its peer. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisCHSSDHSSLossOfConnection DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisCHSSDHSSLossOfConnection",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.201",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDHSSResyncFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DHSS failed to resync with the CHSS",
+				"TYPE: Fault",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: CHSS or DHSS",
+				"CORRECTIVE ACTION: Restore network connectivity between DHSS and CHSS ",
+				"A distributed HSS is not in sync with the central Server"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisDHSSResyncFailure",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'DHSS resync failure alarm cleared' : 'DHSS failed to resync with the CHSS. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDHSSResyncFailure DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDHSSResyncFailure",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.202",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDHSSOutOfSync",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DHSS is CANNOT get in sync with the Central Subscriber Database",
+				"TYPE: Fault",
+				"SEVERITY: Major",
+				"MANAGED OBJECTS: CHSS or DHSS",
+				"CORRECTIVE ACTION: Manually cause a resync between the DHSS and the CHSS ",
+				"A distributed HSS is not in sync with the central Server"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 5) ? 3 : (($v3 == 6) ? 1 : 2)"
+				},
+				"EventType" : "raemisDHSSOutOfSync",
+				"ExpireTime" : {
+					"eval" : "($v3 == 5 || $v3 == 6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3 || $v3 == 4) ? 3 : ($v3 == 5) ? 2 : (($v3 == 6) ? 0 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 6) ? 'DHSS out of sync failure alarm cleared' : 'DHSS is out of sync with the central subscriber database. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDHSSOutOfSync DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity i 1 DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation s EXAMPLE DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId s EXAMPLE",
+			"trap" : {
+				"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::raemisDHSSOutOfSync",
+				"oid" : "1.3.6.1.4.1.36708.1.1.1.1.0.203",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies one Alarm Entry in the Alarm List.",
+							"This value MUST be uniquely allocated to the alarm instance during the lifetime of the individual alarm."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmIdentifier",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.101",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the instance of the object in which the alarm occurred."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::managedObjectInstance",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The trap severity.",
+							"Enumeration of DruidTrapSeverity."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "informational",
+							"6" : "cleared"
+						},
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.103",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the date and time when the alarm was first raised by the system.",
+							"Sample formats (ISO 8601 compliant): 2015-09-08T15:32:15.950789-07:00 or 2015-09-08T15:32:15.950789Z"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::alarmRaisedTime",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.104",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This contains additional information about the notification."
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::additionalInformation",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.105",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If the raemis::customer_site_id is set then this is contained here"
+						],
+						"name" : "DRUID-RAEMIS-NOTIFICATIONS-MIB::customerSiteId",
+						"oid" : "1.3.6.1.4.1.36708.1.1.1.1.1.107",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

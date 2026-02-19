@@ -1,0 +1,209 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201209180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SSL-PROXY-MIB::cspServOperStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"The proxy service operation status change notification.",
+				"When the Operation Status of a proxy service changes, ",
+				"and cspGcNotifyProxyServOperStatus is 'true'",
+				"a notification will be issued. The notification",
+				"contains the current operation status and the down ",
+				"reason of the proxy service."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cspServOperStatus",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'The proxy service operation status is now $v1' : 'The proxy service operation status is now $v1 due to $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SSL-PROXY-MIB::cspServOperStatus CISCO-SSL-PROXY-MIB::cspPsOperStatus i 1 CISCO-SSL-PROXY-MIB::cspPsOperDownReason i 1",
+			"trap" : {
+				"name" : "CISCO-SSL-PROXY-MIB::cspServOperStatus",
+				"oid" : "1.3.6.1.4.1.9.9.370.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-SSL-PROXY-MIB::cspPsOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.2.1.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "notApplicable",
+							"3" : "noConnectivity",
+							"4" : "noVirtualAddr",
+							"5" : "noServerAddr",
+							"6" : "noCert",
+							"7" : "certNotConfigured"
+						},
+						"name" : "CISCO-SSL-PROXY-MIB::cspPsOperDownReason",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.2.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SSL-PROXY-MIB::cspServCertExpiring",
+			"certification" : "STANDARD",
+			"description" : [
+				"The proxy service certificate expiring notification.",
+				"If the time interval cspGcPSCertExpireInterval is ",
+				"positive, and cspGcNotifyPSCertExpiring is 'true', a ",
+				"notification will be issued for every proxy service ",
+				"certificate that will be expiring within this time ",
+				"interval. ",
+				"This notification is issued only once for each of ",
+				"these certificates. If the interval is changed from a ",
+				"positive value to 0, the proxy device will clear its ",
+				"memory of notification issued in the past, and stop ",
+				"issuing new notification.",
+				"The notification contains the subject name, the",
+				"serial number and the issuer name of the certificate",
+				"the serial number of the issuer's certificate, ",
+				"and the end date on the certificate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cspServCertExpiring",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "The proxy service certificate $v1 will expire soon"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SSL-PROXY-MIB::cspServCertExpiring CISCO-SSL-PROXY-MIB::cspPskcCertSubjName s EXAMPLE CISCO-SSL-PROXY-MIB::cspPskcCertSerialNum s EXAMPLE CISCO-SSL-PROXY-MIB::cspPskcIssuerName s EXAMPLE CISCO-SSL-PROXY-MIB::cspPskcIssuerCertSerialNum s EXAMPLE CISCO-SSL-PROXY-MIB::cspPskcCertEndDate s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-SSL-PROXY-MIB::cspServCertExpiring",
+				"oid" : "1.3.6.1.4.1.9.9.370.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspPskcCertSubjName",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.4.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspPskcCertSerialNum",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.4.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspPskcIssuerName",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.4.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspPskcIssuerCertSerialNum",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.4.1.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspPskcCertEndDate",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.4.1.1.14",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SSL-PROXY-MIB::cspSSLResourceLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is issued on the following scenarios:",
+				"1) When the value of cpsSslActiveConnPcnt exceeds the value of ",
+				"cspSslConfigHighConnPcnt",
+				"2) When the value of cpsSslActiveConn falls below the ",
+				"watermark value represented by cspSslConfigWatermarkPcnt."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 2 : 1"
+				},
+				"EventType" : "cspSSLResourceLimitReached",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 3 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'SSL resource limit exceeded $v5% with $v4% of the connections used' : 'SSL resource limit fallen below $v6% with $v5%'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SSL-PROXY-MIB::cspSSLResourceLimitReached CISCO-SSL-PROXY-MIB::cspSslTrapType i 1 CISCO-SSL-PROXY-MIB::cspSslMaxConn u 9999 CISCO-SSL-PROXY-MIB::cspSslActiveConn u 9999 CISCO-SSL-PROXY-MIB::cspSslConfigHighConnPcnt u 9999 CISCO-SSL-PROXY-MIB::cspSslActiveConnPcnt u 9999 CISCO-SSL-PROXY-MIB::cspSslConfigWatermarkConnPcnt u 9999",
+			"trap" : {
+				"name" : "CISCO-SSL-PROXY-MIB::cspSSLResourceLimitReached",
+				"oid" : "1.3.6.1.4.1.9.9.370.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "risingHighThresh",
+							"3" : "fallingHighThresh"
+						},
+						"name" : "CISCO-SSL-PROXY-MIB::cspSslTrapType",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.21.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspSslMaxConn",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.21.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspSslActiveConn",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.21.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspSslConfigHighConnPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.21.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspSslActiveConnPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.21.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-SSL-PROXY-MIB::cspSslConfigWatermarkConnPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.370.1.21.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

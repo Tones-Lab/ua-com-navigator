@@ -1,0 +1,399 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201007261100Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocGpsSyncChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap is sent each time when the synchronisation signal from GPS is lost or recovered.",
+				"Associated object is sent to indicate what is the status of the synchronisation after the change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 0) ? 2 : 1"
+				},
+				"EventType" : "asMaxBsSocGpsSyncChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'GPS synchronisation signal is lost' : 'GPS synchronisation signal is recovered'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIRSPAN-BS-SOC-MIB::asMaxBsSocGpsSyncChangeTrap AIRSPAN-BS-SOC-MIB::asMaxBsSocTrapStatusGpsSyncPresent i 0",
+			"trap" : {
+				"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocGpsSyncChangeTrap",
+				"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Reports the status of synchronisation. True value indicates that synchronistation is present.",
+							"False value indicated lost synchronisation."
+						],
+						"enums" : {
+							"0" : "booleanFalse",
+							"1" : "booleanTrue"
+						},
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocTrapStatusGpsSyncPresent",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"BS shall send this trap each time any of the critical to NMS operation",
+				"status parameters changes: SW version, IP and MAC addresses of SS itself",
+				"WiFi AP and EasyVoice."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "asMaxBsSocSsStatusChangedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "NMS operation status current parameters: [SW version: $v3, IP address: $v5, MAC address: $v1, WiFi IP address: $v7, WiFi MAC address: $v8, EasyVoice IP address: $v10, EasyVoice MAC address: $v11]"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIRSPAN-BS-SOC-MIB::asMaxBsSocSsStatusChangedTrap AIRSPAN-BS-SOC-MIB::asMaxBsSocSsTrapSsMacAddress s EXAMPL AIRSPAN-BS-SOC-MIB::asMaxBsSocSsHwRevision i 9999 AIRSPAN-BS-SOC-MIB::asMaxBsSocSsSwVersion s EXAMPLE AIRSPAN-BS-SOC-MIB::asMaxBsSocSsIpAddrType i 0 AIRSPAN-BS-SOC-MIB::asMaxBsSocSsIpAddress s EXAMPLE AIRSPAN-BS-SOC-MIB::asMaxBsSocSsWiFiApIpAddrType i 0 AIRSPAN-BS-SOC-MIB::asMaxBsSocSsWiFiApIpAddress s EXAMPLE AIRSPAN-BS-SOC-MIB::asMaxBsSocSsWiFiApMacAddress s EXAMPL AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEasyVoiceIpAddrType i 0 AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEasyVoiceIpAddress s EXAMPLE AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEasyVoiceMacAddress s EXAMPL",
+			"trap" : {
+				"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"SS MAC address defintion used as atrap object."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsTrapSsMacAddress",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SS Hardware revision reported using custom TLV type 2 of REG-RSP.",
+							""
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsHwRevision",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SW version SS is currently running, reported using custom TLV type 3 of REG-RSP.",
+							"BS shall send a trap asMaxBsSocReportedSsStatusChanged on each change ",
+							"in the value of this object."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsSwVersion",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of InetAddress used by asMaxBsSocSsIpAddress. Typically it refers to IPv4",
+							"but is defined in fully flexible way to satisfy SNMP MIB guidelines."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsIpAddrType",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of SS management stack, ",
+							"reported using custom TLV type 2.4 of CNFG-RSP.",
+							"When address hasn't been reported yet the object shall read 0xFFFFFFFF.",
+							"BS shall send a trap asMaxBsSocReportedSsStatusChanged on each change ",
+							"in the value of this object."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsIpAddress",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of InetAddress used by asMaxBsSocSsWiFiApIpAddress. Typically it refers to IPv4",
+							"but is defined in fully flexible way to satisfy SNMP MIB guidelines."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsWiFiApIpAddrType",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of SS integrated WiFi AP, ",
+							"reported using custom TLV type 2.5 of CNFG-RSP.",
+							"When address hasn't been reported yet the object shall read 0xFFFFFFFF.",
+							"BS shall send a trap asMaxBsSocReportedSsStatusChanged on each change ",
+							"in the value of this object."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsWiFiApIpAddress",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC Address of SS integrated WiFi AP, ",
+							"reported using custom TLV type 2.7 of CNFG-RSP.",
+							"When address hasn't been reported yet the object shall read FF:FF:FF:FF:FF:FF.",
+							"BS shall send a trap asMaxBsSocReportedSsStatusChanged on each change ",
+							"in the value of this object."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsWiFiApMacAddress",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of InetAddress used by asMaxBsSocSsEasyVoiceIpAddress. Typically it refers to IPv4",
+							"but is defined in fully flexible way to satisfy SNMP MIB guidelines."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEasyVoiceIpAddrType",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of SS integrated EasyVoice product (residential VoIP gateway), ",
+							"reported using custom TLV type 2.6 of CNFG-RSP.",
+							"When address hasn't been reported yet the object shall read 0xFFFFFFFF.",
+							"BS shall send a trap asMaxBsSocReportedSsStatusChanged on each change ",
+							"in the value of this object."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEasyVoiceIpAddress",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC Address of SS integrated EasyVoice product (residential VoIP gateway), ",
+							"reported using custom TLV type 2.8 of CNFG-RSP.",
+							"When address hasn't been reported yet the object shall read FF:FF:FF:FF:FF:FF.",
+							"BS shall send a trap asMaxBsSocReportedSsStatusChanged on each change ",
+							"in the value of this object."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEasyVoiceMacAddress",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.4.2.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Description."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "asMaxBsSocSsEventTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "BS Soc SS event: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEventTrap AIRSPAN-BS-SOC-MIB::asMaxBsSocSsTrapSsMacAddress s EXAMPL AIRSPAN-BS-SOC-MIB::asMaxBsSocSsTrapSsEvent i 0",
+			"trap" : {
+				"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsEventTrap",
+				"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"SS MAC address defintion used as atrap object."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsTrapSsMacAddress",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An event sent by SS to BS. BS should send trap asMaxBsSocSsEventTrap",
+							"containing the definition of SS event."
+						],
+						"enums" : {
+							"0" : "ssEventWiFiReset"
+						},
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocSsTrapSsEvent",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocDfsEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Defines the event trap for DFS system.",
+				"Some values of the event type may raise an alarm and some may clear (NMS specific).",
+				"For example dfsEventTypeUnableToTransmit value of asMaxBsSocTrapStatusDfsEventType",
+				"will raise an alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2 || $v2 == 3) ? 2 : (($v2 == 2) ? 1 : 3)"
+				},
+				"EventType" : "asMaxBsSocDfs:$v2",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1 || $v2 == 3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1 || $v2 == 3) ? 4 : (($v2 == 2) ? 0 : 2)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : {
+					"eval" : "($v2 == 2) ? 'Alarm ($v2) cleared' : 'Alarm ($v2) raised'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIRSPAN-BS-SOC-MIB::asMaxBsSocDfsEventTrap IF-MIB::ifIndex i 9999 AIRSPAN-BS-SOC-MIB::asMaxBsSocTrapStatusDfsEventType i 1 AIRSPAN-BS-SOC-MIB::asMaxBsSocTrapStatusDfsChannelNumber i 0",
+			"trap" : {
+				"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocDfsEventTrap",
+				"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Object defines the type of change reported by DFS system.",
+							"Values dfsEventRadarDetected and dfsEventUnableToTransmit ",
+							"can be used to raise an alarm.",
+							"Value dfsEventNewChannelSelected can be used to clear alarm.",
+							"Values dfsEventUnableToOperate2Channels, dfsEventUnableToOperate3Channels",
+							"are info."
+						],
+						"enums" : {
+							"1" : "dfsEventRadarDetected",
+							"2" : "dfsEventNewChannelSelected",
+							"3" : "dfsEventUnableToTransmit",
+							"4" : "dfsEventUnableToOperate2Channels",
+							"5" : "dfsEventUnableToOperate3Channels"
+						},
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocTrapStatusDfsEventType",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Object defines the channel number associated with asMaxBsSocTrapStatusDfsEventType.",
+							"In case where the channel is not selected the channelNumber=0."
+						],
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocTrapStatusDfsChannelNumber",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.2.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocLicenceCertInvalidTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap sent to indicate a change in the validity of the encryption licence certificate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 2 : 1"
+				},
+				"EventType" : "asMaxBsSocLicenceCertInvalidTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'Licence certificate is invalid' : 'Licence certificate is valid'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIRSPAN-BS-SOC-MIB::asMaxBsSocLicenceCertInvalidTrap AIRSPAN-BS-SOC-MIB::asMaxBsSocTrapStatusLicenceCertInvalid i 0",
+			"trap" : {
+				"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocLicenceCertInvalidTrap",
+				"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Reports the invalidity or otherwise of the currently configured encryption licence.",
+							"Note: a value of TRUE indicates that the licence is INVALID; a value of FALSE that the licence is VALID.",
+							"In the absence of any configured encryption licence, this property shall report FALSE."
+						],
+						"enums" : {
+							"0" : "booleanFalse",
+							"1" : "booleanTrue"
+						},
+						"name" : "AIRSPAN-BS-SOC-MIB::asMaxBsSocTrapStatusLicenceCertInvalid",
+						"oid" : "1.3.6.1.4.1.989.1.16.2.5.2.2.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

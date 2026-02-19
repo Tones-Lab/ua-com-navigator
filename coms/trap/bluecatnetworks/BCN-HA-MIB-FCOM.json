@@ -1,0 +1,104 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201012150000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "BCN-HA-MIB::bcnHaAlarmNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A bcnHaAlarmNotif signifies that the HA service has transitioned",
+				"state or a particular event has been detected on the service."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : ($v2==10 || $v2==20) ? 3 : 2"
+				},
+				"EventType" : "bcnHaAlarmNotif",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : ($v2==10 || $v2==20) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==60) ? 5 : (($v2==50) ? 4 : (($v2==40 || $v2==30) ? 3 : (($v2==20) ? 2 : (($v2==10) ? 1 : 0 ))))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "HA service $v1 : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BCN-HA-MIB::bcnHaAlarmNotif BCN-HA-MIB::bcnHaSerOperState i 1 BCN-HA-MIB::bcnHaAlarmSeverity i 1 BCN-HA-MIB::bcnHaAlarmInfo s EXAMPLE",
+			"trap" : {
+				"name" : "BCN-HA-MIB::bcnHaAlarmNotif",
+				"oid" : "1.3.6.1.4.1.13315.3.1.5.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Operational state of the Service. The possible states are:",
+							"standalone(1) The node is not configured to provide clustering",
+							"services.",
+							"active(2) The system is operational and the node is providing",
+							"clustering services.",
+							"passive(3) The system is operational and the node is active as",
+							"a passive standby for the cluster.",
+							"stopped(4) The service is stopped either intentionally (i.e.:",
+							"the service is not supposed to run on this node) or",
+							"unintentionally (a problem has occurred).",
+							"This state might apply to both standalong and",
+							"clustered nodes.",
+							"stopping(5) The service is in the process of stopping. Stopping",
+							"a service might be necessary after a configuration",
+							"change.",
+							"becomingActive (6) The node is becoming active, either as a result",
+							"of a switchover or by initial start.",
+							"becomingPassive (7) The node is failing over. Another node is taking",
+							"charge of the services.",
+							"fault(8) An error has been detected and the state is undefined.",
+							""
+						],
+						"enums" : {
+							"1" : "standalone",
+							"2" : "active",
+							"3" : "passive",
+							"4" : "stopped",
+							"5" : "stopping",
+							"6" : "becomingActive",
+							"7" : "becomingPassive",
+							"8" : "fault"
+						},
+						"name" : "BCN-HA-MIB::bcnHaSerOperState",
+						"oid" : "1.3.6.1.4.1.13315.3.1.5.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Severity classification for the alarm."
+						],
+						"enums" : {
+							"1" : "ok",
+							"10" : "other",
+							"20" : "inform",
+							"30" : "minor",
+							"40" : "warning",
+							"50" : "major",
+							"60" : "critical"
+						},
+						"name" : "BCN-HA-MIB::bcnHaAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.13315.3.1.5.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Descriptive information about the alarm event."
+						],
+						"name" : "BCN-HA-MIB::bcnHaAlarmInfo",
+						"oid" : "1.3.6.1.4.1.13315.3.1.5.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

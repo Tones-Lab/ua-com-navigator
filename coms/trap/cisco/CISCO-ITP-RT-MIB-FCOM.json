@@ -1,0 +1,71 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200307100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ITP-RT-MIB::cItpRouteStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever one or more",
+				"route destination status changes states and includes",
+				"the count of all route state changes. This ",
+				"notification contains a list of route state changes",
+				"in the cItpRtNotifInfoStateChanges object. State",
+				"changes are accumulated until the ",
+				"cItpRtNotifInfoStateChanges is full or the maximum",
+				"delay time is reached. The delay time is specified",
+				"by the cItpRtChangeNotifDelayTime object.",
+				"It may be necessary to suppress the sending of ",
+				"notification when a large number route change ",
+				"state, due the failure of some common resource.",
+				"The number of notifications can be controlled by ",
+				"specifying values for cItpRtChangeNotifWindowTime ",
+				"and cItpRtChangeNotifMaxPerWindow objects. When the ",
+				"number of route state changes exceed the specified",
+				"value the last notification will indicate that",
+				"notifications are suppressed for the remainder",
+				"of the window."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cItpRouteStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "One or more route destionations have changed status"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ITP-RT-MIB::cItpRouteStateChange CISCO-ITP-RT-MIB::cItpRtStateChangeCount c 9999 CISCO-ITP-RT-MIB::cItpRtNotifInfoSuppressedFlag i 1 CISCO-ITP-RT-MIB::cItpRtNotifInfoStateChanges s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ITP-RT-MIB::cItpRouteStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.228.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ITP-RT-MIB::cItpRtStateChangeCount",
+						"oid" : "1.3.6.1.4.1.9.9.228.1.1.4",
+						"valueType" : "COUNTER"
+					},
+					{
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-ITP-RT-MIB::cItpRtNotifInfoSuppressedFlag",
+						"oid" : "1.3.6.1.4.1.9.9.228.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ITP-RT-MIB::cItpRtNotifInfoStateChanges",
+						"oid" : "1.3.6.1.4.1.9.9.228.1.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

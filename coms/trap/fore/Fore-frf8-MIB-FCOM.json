@@ -1,0 +1,115 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9705011044Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "Fore-frf8-MIB::frf8PVCStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates when an interworking ",
+				"PVC has experienced an alarmed condition, ",
+				"either on the ATM network side or Frame Relay side.",
+				"Also it is generated when the PVC alarmed",
+				"condition is cleared. It carries the opera",
+				"tional status of the PVC by the frf8ConnOperStatus",
+				"as well as the reason why exiting,entering or",
+				"changing the alarmed state frf8ConnPVCAlarmReason.",
+				"If the interworking PVC changes its status by a",
+				"AdminStatus command (active/inactive/testing), ",
+				"causing the frf8ConnOperStatus to change (up/down)",
+				"this trap will be generated with frf8ConnPVCAlarmReason ",
+				"set to 'nodefect'. This TRAP will give the support",
+				"to manage defects that might occur in either Frame",
+				"Relay network or ATM network, even if the PVC Operational ",
+				"Status is already down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 3 : (($v4 == 3 || $v4 == 5 || $v4 == 7) ? 1 : 2)"
+				},
+				"EventType" : "frf8PVCStatus",
+				"ExpireTime" : {
+					"eval" : "($v4 == 1) ? 3600 : (($v4 == 3 || $v4 == 5 || $v4 == 7) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 3 || $v4 == 5 || $v4 == 7) ? 3 : (($v4 == 1) ? 2 :0)"
+				},
+				"SubNode" : "ifrf8ConnFrServiceIfIndex:$v1",
+				"Summary" : {
+					"eval" : "($v4 == 1) ? 'PVC admin status changed to $v3' : (($v4 == 2) ? 'Frame Relay alarm occurred' : (($v4 == 3) ? 'Frame Relay alarm cleared' : (($v4 == 4 || $v4 == 6) ? 'ATM network alarm occurred' : 'ATM network alarm cleared')))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD Fore-frf8-MIB::frf8PVCStatus Fore-frf8-MIB::frf8ConnFrServiceIfIndex i 9999 Fore-frf8-MIB::frf8ConnDlci i 9999 Fore-frf8-MIB::frf8ConnOperStatus i 1 Fore-frf8-MIB::frf8ConnPVCAlarmReason i 1",
+				"$SNMPTRAPCMD Fore-frf8-MIB::frf8PVCStatus Fore-frf8-MIB::frf8ConnFrServiceIfIndex i 9998 Fore-frf8-MIB::frf8ConnDlci i 9998 Fore-frf8-MIB::frf8ConnOperStatus i 2 Fore-frf8-MIB::frf8ConnPVCAlarmReason i 2",
+				"$SNMPTRAPCMD Fore-frf8-MIB::frf8PVCStatus Fore-frf8-MIB::frf8ConnFrServiceIfIndex i 9998 Fore-frf8-MIB::frf8ConnDlci i 9998 Fore-frf8-MIB::frf8ConnOperStatus i 1 Fore-frf8-MIB::frf8ConnPVCAlarmReason i 3",
+				"$SNMPTRAPCMD Fore-frf8-MIB::frf8PVCStatus Fore-frf8-MIB::frf8ConnFrServiceIfIndex i 9997 Fore-frf8-MIB::frf8ConnDlci i 9997 Fore-frf8-MIB::frf8ConnOperStatus i 2 Fore-frf8-MIB::frf8ConnPVCAlarmReason i 4",
+				"$SNMPTRAPCMD Fore-frf8-MIB::frf8PVCStatus Fore-frf8-MIB::frf8ConnFrServiceIfIndex i 9997 Fore-frf8-MIB::frf8ConnDlci i 9997 Fore-frf8-MIB::frf8ConnOperStatus i 1 Fore-frf8-MIB::frf8ConnPVCAlarmReason i 5"
+			],
+			"trap" : {
+				"name" : "Fore-frf8-MIB::frf8PVCStatus",
+				"oid" : "1.3.6.1.4.1.326.2.2.0.2000",
+				"variables" : [
+					{
+						"description" : [
+							"Interface index of the Frame Relay service this ",
+							"connection exists on"
+						],
+						"name" : "Fore-frf8-MIB::frf8ConnFrServiceIfIndex",
+						"oid" : "1.3.6.1.4.1.326.1.16.2.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"DLCI of this connection on the frame relay service"
+						],
+						"name" : "Fore-frf8-MIB::frf8ConnDlci",
+						"oid" : "1.3.6.1.4.1.326.1.16.2.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The current operational status of the interworking ",
+							"connection"
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "Fore-frf8-MIB::frf8ConnOperStatus",
+						"oid" : "1.3.6.1.4.1.326.1.16.2.1.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Defines the reason why the PVC entered/exited the alarmed",
+							"condition.Defines if the SAC (service affect Condition) is ",
+							"caused/cleared by the Frame Relay network(frAlarmed/frClear)",
+							"or by the ATM network (aisAlarmed/aisClear,rdiAlarmed/aisClear).",
+							"The nodefect means no current SAC in either network. This",
+							"object will be part of the frf8PVCAlarmTRAP."
+						],
+						"enums" : {
+							"1" : "nodefect",
+							"2" : "frAlarmed",
+							"3" : "frClear",
+							"4" : "aisAlarmed",
+							"5" : "aisClear",
+							"6" : "rdiAlarmed",
+							"7" : "rdiClear"
+						},
+						"name" : "Fore-frf8-MIB::frf8ConnPVCAlarmReason",
+						"oid" : "1.3.6.1.4.1.326.1.16.2.1.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

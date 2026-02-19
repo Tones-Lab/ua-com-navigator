@@ -1,0 +1,51 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200906240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SEU-MITIGATION-MIB::csmSeuScrubAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notifies NMS when the scrub rate or SEU-mitigation rate",
+				"is elevated, decreased or returns to normal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 3) ? 1 : 2"
+				},
+				"EventType" : "csmSeuScrubAlert",
+				"ExpireTime" : {
+					"eval" : "($v1 == 3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 3) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Scrub rate is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SEU-MITIGATION-MIB::csmSeuScrubAlert CISCO-SEU-MITIGATION-MIB::csmScrubStatus i 1",
+			"trap" : {
+				"name" : "CISCO-SEU-MITIGATION-MIB::csmSeuScrubAlert",
+				"oid" : "1.3.6.1.4.1.9.9.701.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "elevated",
+							"2" : "decreased",
+							"3" : "normal"
+						},
+						"name" : "CISCO-SEU-MITIGATION-MIB::csmScrubStatus",
+						"oid" : "1.3.6.1.4.1.9.9.701.1.1.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

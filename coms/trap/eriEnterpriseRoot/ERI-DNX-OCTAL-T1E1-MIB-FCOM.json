@@ -1,0 +1,187 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200203080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ERI-DNX-OCTAL-T1E1-MIB::oT1E1ConfigTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has updated ",
+				"the configuration for specific T1/E1 Port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==101) ? 1 : (($v3>=400 && $v3<=428) || $v3==450 || ($v3>=500 && $v3<=502)) ? 2 : 3"
+				},
+				"EventType" : "oT1E1ConfigTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==101 || ($v3>=400 && $v3<=428) || $v3==450 || ($v3>=500 && $v3<=502)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==101) ? 0 : (($v3>=400 && $v3<=404) || ($v3>=406 && $v3<=409) || $v3==415 || $v3==416 || $v3==418 || $v3==427) ? 4 : ($v3==405 || ($v3>=410 && $v3<=414) || $v3==417 || ($v3>=419 && $v3<=426) || $v3==428 || $v3==450 || ($v3>=500 && $v3<=502)) ? 3 : 2"
+				},
+				"SubNode" : "OctalT1E1ConfigLinkAddr:$v2",
+				"Summary" : "Configuration update on T1/E1 port $v2 . Command status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-OCTAL-T1E1-MIB::oT1E1ConfigTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-OCTAL-T1E1-MIB::oT1E1CfgLinkAddr a 192.0.2.1 ERI-DNX-OCTAL-T1E1-MIB::oT1E1CfgCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-OCTAL-T1E1-MIB::oT1E1ConfigTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.2.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies an Octal T1/E1 link resource. ",
+							"This number will be used throughout the system to identify ",
+							"a unique link. The format is represented using an IP address ",
+							"syntax (4 byte string). Note that the maximum valid port ",
+							"number will vary depending on the specified carrier and framing ",
+							"options. For example, an octal T1/E1 device has 8 ports but the ",
+							"DS3 has 28 ports.",
+							"",
+							"The 1st byte is reserved for future Nest Number use",
+							"The 2nd byte represents the Slot Number (1-11) ",
+							"The 3rd byte represents the Port Number (1-32)",
+							"The 4th byte is reserved for future use ",
+							""
+						],
+						"name" : "ERI-DNX-OCTAL-T1E1-MIB::oT1E1CfgLinkAddr",
+						"oid" : "1.3.6.1.4.1.644.2.4.2.4.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The command status for this link configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"T1/E1 Link Commands used in SET Command (1..99) ",
+							"update-link-config(1)",
+							"Change existing Link Configuration",
+							"inServiceAll (7)",
+							"Change Link Status to in-service for all 8 links.",
+							"copyToAll (9)",
+							"Copy T1 Link configuration to all other links ",
+							"within the same device",
+							"outOfServiceAll (12)",
+							"Change Link Status to out-of-service for all 8 links.",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"Link data has been successfully changed",
+							"insvc-successful (107)",
+							"All Links have been successfully placed In Service",
+							"copy-successful (109)",
+							"T1 Link data has been successfully copied to other links",
+							"oos-successful (112)",
+							"All Links have been successfully placed Out of Service",
+							"",
+							"T1/E1 Link Config Error Codes used in GET RESPONSE Command (200..699)",
+							"err-general-link-config-error (400)",
+							"Unknown link configuration error occurred ",
+							"err-invalid-link-status (401)",
+							"Unrecognized link status setting",
+							"err-invalid-link-framing (402) ",
+							"Line framing type not valid for link type",
+							"err-invalid-link-command (403)",
+							"Unrecognized link command-action",
+							"err-invalid-link-lbo (404)",
+							"Line Build Out option not valid for link type ",
+							"err-invalid-esf-format (405)",
+							"ESF type not applicable to link type",
+							"err-invalid-network-loop (410)",
+							"Unrecognized network loop setting",
+							"err-invalid-yellow-alrm (411)",
+							"Unrecognized yellow alarm setting",
+							"err-invalid-red-timeout (412)",
+							"Unrecognized red alarm timeout",
+							"err-invalid-idle-code (413)",
+							"Unrecognized idle code",
+							"err-device-in-standby (414)",
+							"Can't change config for designated Standby device",
+							"err-invalid-link-bits (427)",
+							"Reserved E1 National bits must be left at zero.",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update",
+							"7" : "inServiceAll",
+							"9" : "copyToAll",
+							"12" : "outOfServiceAll",
+							"101" : "update-successful",
+							"107" : "insvc-successful",
+							"109" : "copy-successful",
+							"112" : "oos-successful",
+							"400" : "err-general-link-config-error",
+							"401" : "err-invalid-link-status",
+							"402" : "err-invalid-link-framing",
+							"403" : "err-invalid-link-command",
+							"404" : "err-invalid-link-lbo",
+							"405" : "err-invalid-esf-format",
+							"406" : "err-invalid-link-density",
+							"407" : "err-invalid-link-op-mode",
+							"408" : "err-invalid-link-rem-loop",
+							"409" : "err-invalid-link-ais",
+							"410" : "err-invalid-network-loop",
+							"411" : "err-invalid-yellow-alarm",
+							"412" : "err-invalid-red-timeout",
+							"413" : "err-invalid-idle-code",
+							"414" : "err-device-in-standby",
+							"415" : "err-invalid-link-mapping",
+							"416" : "err-invalid-link-vt-group",
+							"417" : "err-invalid-rcv-clocksrc",
+							"418" : "err-invalid-link-name",
+							"419" : "err-invalid-interface",
+							"420" : "err-invalid-polarity",
+							"421" : "err-invalid-clock-timing",
+							"422" : "err-invalid-control-signal",
+							"423" : "err-dcd-dsr-not-applicable",
+							"424" : "err-requires-special-mode",
+							"425" : "err-cts-not-applicable",
+							"426" : "err-gr303-not-applicable",
+							"427" : "err-invalid-link-bits",
+							"428" : "err-device-is-protection-module",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-OCTAL-T1E1-MIB::oT1E1CfgCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.2.4.1.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

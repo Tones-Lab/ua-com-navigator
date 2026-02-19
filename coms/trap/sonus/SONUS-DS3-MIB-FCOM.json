@@ -1,0 +1,513 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200102030000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-DS3-MIB::sonusDsx3AdminChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusDsx3AdminChangeNotification trap indicates the DS3 administration ",
+				"changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==2 || $v5==4) ? 1 : (($v8==1 || $v8==2 || $v8==3) ? 2 : 3)"
+				},
+				"EventType" : "sonusDsx3AdminChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v5==2 || $v5==4) ? 3600 : (($v8==1 || $v8==2 || $v8==3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v5==2 || $v5==4) ? 0 : (($v8==1) ? 5 : (($v8==2) ? 4 : (($v8==3) ? 3 : 2)))"
+				},
+				"SubNode" : "ShelfIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SONUS-DS3-MIB::sonusDsx3AdminChangeNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-COMMON-MIB::sonusPortIndex i 9999 SONUS-COMMON-MIB::sonusDs3Index i 9999 SONUS-DS3-MIB::sonusDs3AdmnState i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+				"$SNMPTRAPCMD SONUS-DS3-MIB::sonusDsx3AdminChangeNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-COMMON-MIB::sonusPortIndex i 9999 SONUS-COMMON-MIB::sonusDs3Index i 9999 SONUS-DS3-MIB::sonusDs3AdmnState i 2 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4"
+			],
+			"trap" : {
+				"name" : "SONUS-DS3-MIB::sonusDsx3AdminChangeNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.4.2.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusPortIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The DS3 index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusDs3Index",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The administrative state of the DS3."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "enabled",
+							"3" : "deleted",
+							"4" : "inservice",
+							"5" : "dryingUp"
+						},
+						"name" : "SONUS-DS3-MIB::sonusDs3AdmnState",
+						"oid" : "1.3.6.1.4.1.2879.2.4.2.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-DS3-MIB::sonusDsx3OutOfServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusDsx3OutOfServiceNotification trap indicates that a DS3",
+				"went out of service. The reason indicates the reason why and",
+				"type indicates the type of failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusDsx3OutOfService:$v6",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v9==1) ? 5 : (($v9==2) ? 4 : (($v9==3) ? 3 : 2))"
+				},
+				"SubNode" : "ShelfIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "$v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-DS3-MIB::sonusDsx3OutOfServiceNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-COMMON-MIB::sonusPortIndex i 9999 SONUS-COMMON-MIB::sonusDs3Index i 9999 SONUS-DS3-MIB::sonusDs3OutOfServiceReason i 1 SONUS-DS3-MIB::sonusDs3OutOfServiceType i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-DS3-MIB::sonusDsx3OutOfServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.4.2.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusPortIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The DS3 index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusDs3Index",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The reason for DS3 going out of service"
+						],
+						"enums" : {
+							"1" : "maintenance"
+						},
+						"name" : "SONUS-DS3-MIB::sonusDs3OutOfServiceReason",
+						"oid" : "1.3.6.1.4.1.2879.2.4.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of operation which caused DS3 to go out of service"
+						],
+						"enums" : {
+							"1" : "admin",
+							"2" : "hwFailure"
+						},
+						"name" : "SONUS-DS3-MIB::sonusDs3OutOfServiceType",
+						"oid" : "1.3.6.1.4.1.2879.2.4.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-DS3-MIB::sonusDsx3ThresholdCrossingNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusDsx3ThresholdCrossingNotification trap indicates that a DS3",
+				"threshold has been crossed. The type indicates the type of threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusDsx3ThresholdCrossing:$v5",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v8==1) ? 5 : (($v8==2) ? 4 : (($v8==3) ? 3 : 2))"
+				},
+				"SubNode" : "ShelfIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-DS3-MIB::sonusDsx3ThresholdCrossingNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-COMMON-MIB::sonusPortIndex i 9999 SONUS-COMMON-MIB::sonusDs3Index i 9999 SONUS-DS3-MIB::sonusDs3ThresholdType i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-DS3-MIB::sonusDsx3ThresholdCrossingNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.4.2.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusPortIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The DS3 index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusDs3Index",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Type of threshold that was crossed which caused a threshold crossing trap"
+						],
+						"enums" : {
+							"1" : "currentLineCodeViolation",
+							"2" : "currentPbitParity",
+							"3" : "currentCbitParity",
+							"4" : "currentSeverelyErroredFramingSecs",
+							"5" : "currentLineErrorSeconds",
+							"6" : "currentPbitParityErroredSeconds",
+							"7" : "currentCbitParityErroredSeconds",
+							"8" : "currentPbitSeverelyErroredSeconds",
+							"9" : "currentLineSeverelyErroredSeconds",
+							"10" : "currentUnavailableSeconds",
+							"11" : "totalLineCodeViolation",
+							"12" : "totalPbitParity",
+							"13" : "totalCbitParity",
+							"14" : "totalSeverelyErroredFramingSecs",
+							"15" : "totalLineErrorSeconds",
+							"16" : "totalPbitParityErroredSeconds",
+							"17" : "totalCbitParityErroredSeconds",
+							"18" : "totalPbitSeverelyErroredSeconds",
+							"19" : "totalLineSeverelyErroredSeconds",
+							"20" : "totalUnavailableSeconds"
+						},
+						"name" : "SONUS-DS3-MIB::sonusDs3ThresholdType",
+						"oid" : "1.3.6.1.4.1.2879.2.4.2.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-DS3-MIB::sonusDsx3LineStatusChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusDsx3LineStatusChangeNotification trap indicates the DS3 state changes. ",
+				"It is used to notify DS3 Alarms states"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==1) ? 1 : (($v8==1 || $v8==2 || $v8==3) ? 2 : 3)"
+				},
+				"EventType" : "sonusDsx1LineStatusChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v5==1) ? 3600 : (($v8==1 || $v8==2 || $v8==3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v5==1) ? 0 : (($v8==1) ? 5 : (($v8==2) ? 4 : (($v8==3) ? 3 : 2)))"
+				},
+				"SubNode" : "ShelfIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SONUS-DS3-MIB::sonusDsx3LineStatusChangeNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-COMMON-MIB::sonusPortIndex i 9999 SONUS-COMMON-MIB::sonusDs3Index i 9999 SONUS-DS3-MIB::sonusDs3LineState i 2 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+				"$SNMPTRAPCMD SONUS-DS3-MIB::sonusDsx3LineStatusChangeNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-COMMON-MIB::sonusSlotIndex i 1 SONUS-COMMON-MIB::sonusPortIndex i 9999 SONUS-COMMON-MIB::sonusDs3Index i 9999 SONUS-DS3-MIB::sonusDs3LineState i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4"
+			],
+			"trap" : {
+				"name" : "SONUS-DS3-MIB::sonusDsx3LineStatusChangeNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.4.2.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusPortIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The DS3 index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusDs3Index",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The type of Alarm or failure which caused DS3 to go out of service"
+						],
+						"enums" : {
+							"1" : "green",
+							"2" : "red",
+							"3" : "rai",
+							"4" : "ais",
+							"5" : "hwfailure"
+						},
+						"name" : "SONUS-DS3-MIB::sonusDs3LineState",
+						"oid" : "1.3.6.1.4.1.2879.2.4.2.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

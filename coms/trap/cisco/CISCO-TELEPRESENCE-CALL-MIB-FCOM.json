@@ -1,0 +1,176 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201407240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysConnFailNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when a call management system",
+				"connection failure occurs.",
+				"This notification is deprecated in favor of ",
+				"ctpcMgmtSysConnEventNotification.",
+				"ctpcMgmtSysConnFailNotification object is superseded by",
+				"ctpcMgmtSysConnEventNotification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ctpcMgmtSysConnFailNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v2",
+				"Summary" : "Call management system $v2 connection failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysConnFailNotification CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysAddrType i 0 CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysAddr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysConnFailNotification",
+				"oid" : "1.3.6.1.4.1.9.9.644.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.2.6.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysAddr",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.2.6.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcStatNotificaion",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when a call monitoring threshold is",
+				"crossed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 2) ? 1 : 2"
+				},
+				"EventType" : "ctpcStatNotificaion",
+				"ExpireTime" : {
+					"eval" : "($v3 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 2) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 1) ? 'Call monitoring threshold violated with current value $v2' : 'Call monitoring threshold violated has cleared with current value $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TELEPRESENCE-CALL-MIB::ctpcStatNotificaion CISCO-TELEPRESENCE-CALL-MIB::ctpcStatEventMonObjectInst o 1.3.6.1.4.1.8072.2.1.1 CISCO-TELEPRESENCE-CALL-MIB::ctpcStatEventCrossedValue C 9999 CISCO-TELEPRESENCE-CALL-MIB::ctpcStatEventCrossedType i 1",
+			"trap" : {
+				"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcStatNotificaion",
+				"oid" : "1.3.6.1.4.1.9.9.644.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcStatEventMonObjectInst",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.5.3.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcStatEventCrossedValue",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.5.3.1.3",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"enums" : {
+							"1" : "risingThreshold",
+							"2" : "fallingThreshold"
+						},
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcStatEventCrossedType",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.5.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysConnEventNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when a call management system",
+				"connection state change occurs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ctpcMgmtSysConnEventNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v2",
+				"Summary" : "Call management system $v2 connection state is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysConnEventNotification CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysAddrType i 0 CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysAddr s EXAMPLE CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysConnStatus i 1 CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysSIPRespCode u 9999",
+			"trap" : {
+				"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysConnEventNotification",
+				"oid" : "1.3.6.1.4.1.9.9.644.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.2.6.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysAddr",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.2.6.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "internalError",
+							"4" : "notRegister",
+							"5" : "registered",
+							"6" : "registraionFailure"
+						},
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysConnStatus",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.2.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-TELEPRESENCE-CALL-MIB::ctpcMgmtSysSIPRespCode",
+						"oid" : "1.3.6.1.4.1.9.9.644.1.2.6.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

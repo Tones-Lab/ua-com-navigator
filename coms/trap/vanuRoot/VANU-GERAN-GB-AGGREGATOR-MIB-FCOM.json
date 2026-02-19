@@ -1,0 +1,284 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201006080001Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbLinkStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of the change in state of the connection to the SGSN."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1 && $v3==1) ? 1 : 2"
+				},
+				"EventType" : "geranGbAggGbLinkStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==1 && $v3==1) ? 0 : 4"
+				},
+				"SubNode" : "GbAggNseiValue:$v1",
+				"Summary" : {
+					"eval" : "($v2==1 && $v3==1) ? 'NS and BSSGP connections both unblocked' : (($v2==2 && $v3==2) ? 'NS and BSSGP connections both blocked' : (($v2==2) ? 'NS connection blocked' : 'BSSGP connection blocked'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbLinkStatusNotification VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNseiValue i 9999 VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNetworkStatusGbNsConnectionStatus i 1 VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNetworkStatusGbBssgpConnectionStatus i 1",
+			"trap" : {
+				"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbLinkStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.6.0.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Unique NSEI. 3GPP TS 08.16."
+						],
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNseiValue",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current status of the NS connection on the Gb interface."
+						],
+						"enums" : {
+							"1" : "unblocked",
+							"2" : "blocked"
+						},
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNetworkStatusGbNsConnectionStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Current status of the BSSGP connection on the Gb interface."
+						],
+						"enums" : {
+							"1" : "unblocked",
+							"2" : "blocked"
+						},
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNetworkStatusGbBssgpConnectionStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterLinkStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of the change in state of the Gb-ter connection with",
+				"Gb-Nameserver."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "geranGbAggGbterLinkStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "GbAggNseiValue:$v1",
+				"Summary" : "Current state of Gb-ter connection is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterLinkStatusNotification VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNseiValue i 9999 VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterLinkStatus i 1",
+			"trap" : {
+				"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterLinkStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.6.0.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Unique NSEI. 3GPP TS 08.16."
+						],
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNseiValue",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Operational status of Gb-ter interface between Gb-Aggregator and",
+							"the Gb-Nameserver. LinkUp(1)/LinkDown(0)."
+						],
+						"enums" : {
+							"1" : "linkUp",
+							"2" : "linkDown"
+						},
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterLinkStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterRegistrationStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of the change in registration state of the Gb-ter",
+				"connection with Gb-Nameserver."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "geranGbAggGbterRegistrationStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "GbAggNseiValue:$v1",
+				"Summary" : "Registration of Gb-ter status is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterRegistrationStatusNotification VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNseiValue i 9999 VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterRegistrationStatus i 1",
+			"trap" : {
+				"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterRegistrationStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.6.0.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Unique NSEI. 3GPP TS 08.16."
+						],
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNseiValue",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Registration status of Gb-ter interface between Gb-Aggregator and",
+							"the Gb-Nameserver."
+						],
+						"enums" : {
+							"1" : "registered",
+							"2" : "unregistered"
+						},
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbterRegistrationStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbquatLinkStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of the change in state of the Gb-quat connection with",
+				"iPCU identified by BVCI."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : 2"
+				},
+				"EventType" : "geranGbAggGbquatLinkStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : 4"
+				},
+				"SubNode" : "GbAggNseiValue:$v1;GbAggPcuCellId:$v4",
+				"Summary" : "Current state of Gb-quat connection is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbquatLinkStatusNotification VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNseiValue i 9999 VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggPcuBvci i 9999 VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbquatLinkStatus i 1 VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggPcuCellId i 9999",
+			"trap" : {
+				"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbquatLinkStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.6.0.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Unique NSEI. 3GPP TS 08.16."
+						],
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggNseiValue",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"BVCI of iPCU. This shall be used in the NOTIFICATIONs to indicate the",
+							"state change of Gb-quat link with iPCU."
+						],
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggPcuBvci",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.0.1.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Gb-quat interface status shall be used in the NOTIFICATIONs to indicate",
+							"the state change of Gb-quat link with iPCU."
+						],
+						"enums" : {
+							"1" : "linkUp",
+							"2" : "linkDown"
+						},
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggGbquatLinkStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.0.1.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Cell-Id of iPCU. This shall be used in the NOTIFICATIONs to indicate",
+							"the state change of Gb-quat link with iPCU."
+						],
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggPcuCellId",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.0.1.1.1.1.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggStartupNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of Gb-Aggregator startup."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "geranGbAggStartupNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Gb-Aggregator $v1 starts up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggStartupNotification VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggName s EXAMPLE",
+			"trap" : {
+				"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggStartupNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.6.0.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Configured name of Gb-Aggregator."
+						],
+						"name" : "VANU-GERAN-GB-AGGREGATOR-MIB::geranGbAggName",
+						"oid" : "1.3.6.1.4.1.17718.3.2.6.1.3.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

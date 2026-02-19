@@ -1,0 +1,376 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200711020000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PIM-STD-MIB::pimNeighborLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pimNeighborLoss notification signifies the loss of an",
+				"adjacency with a neighbor. This notification should be",
+				"generated when the neighbor timer expires, and the router",
+				"has no other neighbors on the same interface with the same",
+				"IP version and a lower IP address than itself.",
+				"This notification is generated whenever the counter",
+				"pimNeighborLossCount is incremented, subject",
+				"to the rate limit specified by",
+				"pimNeighborLossNotificationPeriod.",
+				"REFERENCE RFC 4601 section 4.3.2"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pimNeighborLoss",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Router lost adjacency with neighbour"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PIM-STD-MIB::pimNeighborLoss PIM-STD-MIB::pimNeighborUpTime t 31536000",
+			"trap" : {
+				"name" : "PIM-STD-MIB::pimNeighborLoss",
+				"oid" : "1.3.6.1.2.1.157.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time since this PIM neighbor (last) became a neighbor",
+							"of the local router."
+						],
+						"name" : "PIM-STD-MIB::pimNeighborUpTime",
+						"oid" : "1.3.6.1.2.1.157.1.2.1.6",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PIM-STD-MIB::pimInvalidRegister",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pimInvalidRegister notification signifies that an invalid",
+				"PIM Register message was received by this device.",
+				"This notification is generated whenever the counter",
+				"pimInvalidRegisterMsgsRcvd is incremented, subject to the",
+				"rate limit specified by",
+				"pimInvalidRegisterNotificationPeriod.",
+				"REFERENCE RFC 4601 section 4.4.2"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pimInvalidRegister",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Invalid PIM register message received"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PIM-STD-MIB::pimInvalidRegister PIM-STD-MIB::pimGroupMappingPimMode i 1 PIM-STD-MIB::pimInvalidRegisterAddressType i 0 PIM-STD-MIB::pimInvalidRegisterOrigin s EXAM PIM-STD-MIB::pimInvalidRegisterGroup s EXAM PIM-STD-MIB::pimInvalidRegisterRp s EXAM",
+			"trap" : {
+				"name" : "PIM-STD-MIB::pimInvalidRegister",
+				"oid" : "1.3.6.1.2.1.157.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The PIM mode to be used for groups in this group prefix."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "ssm",
+							"3" : "asm",
+							"4" : "bidir",
+							"5" : "dm",
+							"6" : "other"
+						},
+						"name" : "PIM-STD-MIB::pimGroupMappingPimMode",
+						"oid" : "1.3.6.1.2.1.157.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The address type stored in pimInvalidRegisterOrigin",
+							"pimInvalidRegisterGroup, and pimInvalidRegisterRp.",
+							"",
+							"If no invalid Register messages have been received, then",
+							"this object is set to unknown(0)."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "PIM-STD-MIB::pimInvalidRegisterAddressType",
+						"oid" : "1.3.6.1.2.1.157.1.33",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The source address of the last invalid Register message",
+							"received by this device."
+						],
+						"name" : "PIM-STD-MIB::pimInvalidRegisterOrigin",
+						"oid" : "1.3.6.1.2.1.157.1.34",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The IP multicast group address to which the last invalid",
+							"Register message received by this device was addressed."
+						],
+						"name" : "PIM-STD-MIB::pimInvalidRegisterGroup",
+						"oid" : "1.3.6.1.2.1.157.1.35",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The RP address to which the last invalid Register message",
+							"received by this device was delivered."
+						],
+						"name" : "PIM-STD-MIB::pimInvalidRegisterRp",
+						"oid" : "1.3.6.1.2.1.157.1.36",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PIM-STD-MIB::pimInvalidJoinPrune",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pimInvalidJoinPrune notification signifies that an",
+				"invalid PIM Join/Prune message was received by this device.",
+				"This notification is generated whenever the counter",
+				"pimInvalidJoinPruneMsgsRcvd is incremented, subject to the",
+				"rate limit specified by",
+				"pimInvalidJoinPruneNotificationPeriod.",
+				"REFERENCE RFC 4601 section 4.5.2"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pimInvalidJoinPrune",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Invalid PIM join/prune message received"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PIM-STD-MIB::pimInvalidJoinPrune PIM-STD-MIB::pimGroupMappingPimMode i 1 PIM-STD-MIB::pimInvalidJoinPruneAddressType i 0 PIM-STD-MIB::pimInvalidJoinPruneOrigin s EXAM PIM-STD-MIB::pimInvalidJoinPruneGroup s EXAM PIM-STD-MIB::pimInvalidJoinPruneRp s EXAM PIM-STD-MIB::pimNeighborUpTime t 31536000",
+			"trap" : {
+				"name" : "PIM-STD-MIB::pimInvalidJoinPrune",
+				"oid" : "1.3.6.1.2.1.157.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The PIM mode to be used for groups in this group prefix."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "ssm",
+							"3" : "asm",
+							"4" : "bidir",
+							"5" : "dm",
+							"6" : "other"
+						},
+						"name" : "PIM-STD-MIB::pimGroupMappingPimMode",
+						"oid" : "1.3.6.1.2.1.157.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The address type stored in pimInvalidJoinPruneOrigin",
+							"pimInvalidJoinPruneGroup, and pimInvalidJoinPruneRp.",
+							"",
+							"If no invalid Join/Prune messages have been received, this",
+							"object is set to unknown(0)."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "PIM-STD-MIB::pimInvalidJoinPruneAddressType",
+						"oid" : "1.3.6.1.2.1.157.1.39",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The source address of the last invalid Join/Prune message",
+							"received by this device."
+						],
+						"name" : "PIM-STD-MIB::pimInvalidJoinPruneOrigin",
+						"oid" : "1.3.6.1.2.1.157.1.40",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The IP multicast group address carried in the last",
+							"invalid Join/Prune message received by this device."
+						],
+						"name" : "PIM-STD-MIB::pimInvalidJoinPruneGroup",
+						"oid" : "1.3.6.1.2.1.157.1.41",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The RP address carried in the last invalid Join/Prune",
+							"message received by this device."
+						],
+						"name" : "PIM-STD-MIB::pimInvalidJoinPruneRp",
+						"oid" : "1.3.6.1.2.1.157.1.42",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The time since this PIM neighbor (last) became a neighbor",
+							"of the local router."
+						],
+						"name" : "PIM-STD-MIB::pimNeighborUpTime",
+						"oid" : "1.3.6.1.2.1.157.1.2.1.6",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PIM-STD-MIB::pimRPMappingChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pimRPMappingChange notification signifies a change to the",
+				"active RP mapping on this device.",
+				"This notification is generated whenever the counter",
+				"pimRPMappingChangeCount is incremented, subject to the",
+				"rate limit specified by",
+				"pimRPMappingChangeNotificationPeriod."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pimRPMappingChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Active RP mapping changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PIM-STD-MIB::pimRPMappingChange PIM-STD-MIB::pimGroupMappingPimMode i 1 PIM-STD-MIB::pimGroupMappingPrecedence u 9999",
+			"trap" : {
+				"name" : "PIM-STD-MIB::pimRPMappingChange",
+				"oid" : "1.3.6.1.2.1.157.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The PIM mode to be used for groups in this group prefix."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "ssm",
+							"3" : "asm",
+							"4" : "bidir",
+							"5" : "dm",
+							"6" : "other"
+						},
+						"name" : "PIM-STD-MIB::pimGroupMappingPimMode",
+						"oid" : "1.3.6.1.2.1.157.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The precedence of this row, used in the algorithm that",
+							"determines which row applies to a given group address",
+							"(described above). Numerically higher values for this",
+							"object indicate lower precedences, with the value zero",
+							"denoting the highest precedence.",
+							"",
+							"The absolute values of this object have a significance only",
+							"on the local router and do not need to be coordinated with",
+							"other routers."
+						],
+						"name" : "PIM-STD-MIB::pimGroupMappingPrecedence",
+						"oid" : "1.3.6.1.2.1.157.1.13.1.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PIM-STD-MIB::pimInterfaceElection",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pimInterfaceElection notification signifies that a new DR",
+				"or DF has been elected on a network.",
+				"This notification is generated whenever the counter",
+				"pimInterfaceElectionWinCount is incremented, subject to the",
+				"rate limit specified by",
+				"pimInterfaceElectionNotificationPeriod.",
+				"REFERENCE RFC 4601 section 4.3.2 and RFC 5015 section 3.5.2"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pimInterfaceElection",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "interfaceAddress:$v2",
+				"Summary" : "New DR or DF elected on the network"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PIM-STD-MIB::pimInterfaceElection PIM-STD-MIB::pimInterfaceAddressType i 0 PIM-STD-MIB::pimInterfaceAddress s EXAM",
+			"trap" : {
+				"name" : "PIM-STD-MIB::pimInterfaceElection",
+				"oid" : "1.3.6.1.2.1.157.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The address type of this PIM interface."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "PIM-STD-MIB::pimInterfaceAddressType",
+						"oid" : "1.3.6.1.2.1.157.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The primary IP address of this router on this PIM",
+							"interface. The InetAddressType is given by the",
+							"pimInterfaceAddressType object."
+						],
+						"name" : "PIM-STD-MIB::pimInterfaceAddress",
+						"oid" : "1.3.6.1.2.1.157.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

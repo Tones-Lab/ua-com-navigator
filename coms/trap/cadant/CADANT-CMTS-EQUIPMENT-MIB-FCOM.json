@@ -1,0 +1,2692 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202005190000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cmResetClearNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent when a CM is on-line from previous flap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cmResetNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cerCardNumber:$v6",
+				"Summary" : "CM (MAC: $v4) reset notification cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cmResetClearNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::systemClock s EXAMPLEE CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cmMacAddress s EXAMPL CADANT-CMTS-EQUIPMENT-MIB::cmUChannelID i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0",
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmResetClearNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"CMTS local date and time displayed as ",
+							"yyyy-mm-dd,hh:mm:ss.d,+/-hh:mm, where the date is yyyy-mmmm-dd and ",
+							"time in deci-seconds is hh:mm:ss.d, adn teh current offset from ",
+							"GMT is +/-hh:mm. This object is adjusted by teh TZ and DST rules.",
+							"E.g. 2002-5-26,13;30:15.0,-4:0"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::systemClock",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The MAC address for the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmMacAddress",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The CMTS upstream channel ID which is connected to the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmUChannelID",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cmResetNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent when a CM is reset."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cmResetNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v3==4) ? 4 : (($v3==5) || ($v3==6) ? 5 : 3)"
+				},
+				"SubNode" : "cerCardNumber:$v11",
+				"Summary" : "CM (MAC: $v4) reset due to $v6. $v12"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cmResetNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::systemClock s EXAMPLEE CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cmMacAddress s EXAMPL CADANT-CMTS-EQUIPMENT-MIB::cmVendor s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cmResetReason s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cmUChannelID i 0 CADANT-CMTS-EQUIPMENT-MIB::cmPrimarySID u 9999 CADANT-CMTS-EQUIPMENT-MIB::cmResetStatus s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cmResetUpTime t 31536000 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cmResetInfo s EXAMPLE",
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmResetNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"CMTS local date and time displayed as ",
+							"yyyy-mm-dd,hh:mm:ss.d,+/-hh:mm, where the date is yyyy-mmmm-dd and ",
+							"time in deci-seconds is hh:mm:ss.d, adn teh current offset from ",
+							"GMT is +/-hh:mm. This object is adjusted by teh TZ and DST rules.",
+							"E.g. 2002-5-26,13;30:15.0,-4:0"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::systemClock",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The MAC address for the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmMacAddress",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor name of the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmVendor",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The reason for the cable modem to reset"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmResetReason",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The CMTS upstream channel ID which is connected to the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmUChannelID",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The primary Service Identifier (SID) assigned by the CMTS associated with the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmPrimarySID",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The cable modem status before it resets"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmResetStatus",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This value indicates how long in hundreds of seconds the cable modem",
+							"is up since it is initial ranged"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmResetUpTime",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.7",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The additional information for the cable modem to reset"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmResetInfo",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cardTempOutOfRangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the card temperature is out of range."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cardTempOutOfRangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cardNumber:$v3",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Temperature of card $v3 within the range' : 'Temperature of card $v3 is out of range'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cardTempOutOfRangeNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cardTempOutOfRangeNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardTempOutOfRangeNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 99 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.98",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cardTempNoReportNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when there is no reporting on card temperature."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cardTempNoReportNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cardNumber:$v3",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Temperature reporting is active on card $v3' : 'Temperature reporting is inactive on card $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cardTempNoReportNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cardTempNoReportNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardTempNoReportNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 99 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.98",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cardTempOverHeatNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the card is overheat, card is being shut down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cardTempOverHeatNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cardNumber:$v3",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Overheat resolved on card $v3' : 'Overheat detected on card $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cardTempOverHeatNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cardTempOverHeatNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardTempOverHeatNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 99 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.98",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::downstreamPowerLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent when c4 detects the loss of downstream power."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "downstreamPowerLoss",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cardNumber:$v3;portNumber:$v4",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Downstream power loss cleared' : 'Downstream power loss detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::downstreamPowerLoss CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::portNumber i 0",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::downstreamPowerLoss CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::portNumber i 0"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::downstreamPowerLoss",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 99 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.98",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port Id used in traps. A value of 99 indicates an invalid portNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::portNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.99",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cmRegistrationNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent when a CM is registered."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2 || $v3==7) ? 3 : 2)"
+				},
+				"EventType" : "cmRegistrationNotification",
+				"ExpireTime" : {
+					"eval" : "($v3==1 || $v3==2 || $v3==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : (($v3==2) ? 1 : (($v3==7) ? 2 : (($v3==5) ? 4 : (($v3==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cardNumber:$v7",
+				"Summary" : {
+					"eval" : "($v3==1) ? 'CM (IP address: $v8) registration notification cleared' : 'CM (IP address: $v8) registration notification occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cmRegistrationNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::systemClock s EXAMPLEE CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cmMacAddress s EXAMPL CADANT-CMTS-EQUIPMENT-MIB::cmVendor s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cmUChannelID i 0 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cmIpAddress s EXAM",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cmRegistrationNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::systemClock s EXAMPLEE CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cmMacAddress s EXAMPL CADANT-CMTS-EQUIPMENT-MIB::cmVendor s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cmUChannelID i 0 CADANT-CMTS-EQUIPMENT-MIB::cardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cmIpAddress s EXAM"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmRegistrationNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"CMTS local date and time displayed as ",
+							"yyyy-mm-dd,hh:mm:ss.d,+/-hh:mm, where the date is yyyy-mmmm-dd and ",
+							"time in deci-seconds is hh:mm:ss.d, adn teh current offset from ",
+							"GMT is +/-hh:mm. This object is adjusted by teh TZ and DST rules.",
+							"E.g. 2002-5-26,13;30:15.0,-4:0"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::systemClock",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The MAC address for the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmMacAddress",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor name of the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmVendor",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The CMTS upstream channel ID which is connected to the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmUChannelID",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 99 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.98",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The IP Address of the cable modem"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cmIpAddress",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.8.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::noLicenseNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent when a channel cannot be activated due to insufficient license level."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "noLicenseNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "IfIndex:$v7",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Channel activated with sufficient license' : 'Channel not activated due to insufficient $v8 licenses'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::noLicenseNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex i 9999 CADANT-CMTS-EQUIPMENT-MIB::cerLicenseTypeStr s EXAMPLE",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::noLicenseNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex i 9999 CADANT-CMTS-EQUIPMENT-MIB::cerLicenseTypeStr s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::noLicenseNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port Id used in traps. A value of 0 indicates an invalid portNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.201",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Type of this cerPort. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "ureceiver",
+							"2" : "uchannel",
+							"3" : "eport10BaseT",
+							"4" : "eport100BaseT",
+							"5" : "eport1000BaseT",
+							"6" : "eport10000BaseT",
+							"8" : "macport",
+							"9" : "dchannelDocsis",
+							"10" : "dchannelVideo",
+							"11" : "linkAgg",
+							"12" : "dchannelVideoreplica",
+							"13" : "dchannelOfdm",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The CardSubType of the card this cerPort belongs to."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm10g",
+							"7" : "ucam96m24c",
+							"8" : "dcam192m8cAnnexA",
+							"9" : "dcam256m8cAnnexB",
+							"10" : "ucam288m24c",
+							"15" : "dcamDocsisBVideoMixed8c",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the location of an interface in the",
+							"cerPort table that represents this port. A value of 0 indicates that ",
+							"this cerPort does not have an association in the Iftable. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The license type that caused the notification."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerLicenseTypeStr",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.12.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardPrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent whenever the card's Primary state changes. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerCardPrStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerCardNumber:$v3",
+				"Summary" : {
+					"eval" : "($v6==1) ? 'Card $v3 primary state is in service' : 'Card $v3 primary state is out of service'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCardPrStateChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardPrState i 2",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCardPrStateChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardPrState i 1"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardPrStateChange",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The type of card, if any. For example Ecard, Fcard, Dcard or Ucard",
+							"If the slot is empty, the value would be 'empty'. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm",
+							"7" : "ucam",
+							"8" : "dcam",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cardType alone may not be specific enough to fully describe the",
+							"type of card that is in this slot. For example, a card type of Dcard",
+							"might have a more specific type of 1D8U with integrated upconverter.",
+							"If the card needs no further specificication that the cardType, then",
+							"the value of cardSubType is 'none'. Not yet implemented. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm10g",
+							"7" : "ucam96m24c",
+							"8" : "dcam192m8cAnnexA",
+							"9" : "dcam256m8cAnnexB",
+							"10" : "ucam288m24c",
+							"15" : "dcamDocsisBVideoMixed8c",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the primary state of this card. "
+						],
+						"enums" : {
+							"1" : "is",
+							"2" : "oos"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardPrState",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardSecStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent whenever the card's Secondary state changes. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerCardSecStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerCardNumber:$v3",
+				"Summary" : "Card $v3 secondary state changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCardSecStateChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSecState i 4",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCardSecStateChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSecState i 5"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardSecStateChange",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The type of card, if any. For example Ecard, Fcard, Dcard or Ucard",
+							"If the slot is empty, the value would be 'empty'. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm",
+							"7" : "ucam",
+							"8" : "dcam",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cardType alone may not be specific enough to fully describe the",
+							"type of card that is in this slot. For example, a card type of Dcard",
+							"might have a more specific type of 1D8U with integrated upconverter.",
+							"If the card needs no further specificication that the cardType, then",
+							"the value of cardSubType is 'none'. Not yet implemented. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm10g",
+							"7" : "ucam96m24c",
+							"8" : "dcam192m8cAnnexA",
+							"9" : "dcam256m8cAnnexB",
+							"10" : "ucam288m24c",
+							"15" : "dcamDocsisBVideoMixed8c",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the secondary state of this card. "
+						],
+						"enums" : {
+							"0" : "notapplicable",
+							"1" : "manual",
+							"2" : "fault",
+							"3" : "diagnostic",
+							"4" : "overload",
+							"5" : "normal",
+							"6" : "degrade",
+							"7" : "initializing",
+							"8" : "swdownload",
+							"9" : "firmwarepump",
+							"10" : "powerup",
+							"11" : "bootdkm"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardSecState",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardDetectedChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent whenever a new card is detected. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerCardDetectedChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerCardNumber:$v3",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Card $v3 detected and operational' : 'Card $v3 change detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCardDetectedChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardDetected i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubDetected i 0",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCardDetectedChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardDetected i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubDetected i 0"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardDetectedChange",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"CardType dectected automatically by the CMTS. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm",
+							"7" : "ucam",
+							"8" : "dcam",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardDetected",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"CardSubType dectected automatically by the CMTS. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm10g",
+							"7" : "ucam96m24c",
+							"8" : "dcam192m8cAnnexA",
+							"9" : "dcam256m8cAnnexB",
+							"10" : "ucam288m24c",
+							"15" : "dcamDocsisBVideoMixed8c",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardSubDetected",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.21",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardDplxStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent whenever the card's Duplex",
+				"status changes. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerCardDplxStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerCardNumber:$v3",
+				"Summary" : "Card $v3 duplex status changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCardDplxStatusChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 4 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardDplxStatus i 3",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCardDplxStatusChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardDplxStatus i 1"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardDplxStatusChange",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The type of card, if any. For example Ecard, Fcard, Dcard or Ucard",
+							"If the slot is empty, the value would be 'empty'. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm",
+							"7" : "ucam",
+							"8" : "dcam",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cardType alone may not be specific enough to fully describe the",
+							"type of card that is in this slot. For example, a card type of Dcard",
+							"might have a more specific type of 1D8U with integrated upconverter.",
+							"If the card needs no further specificication that the cardType, then",
+							"the value of cardSubType is 'none'. Not yet implemented. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm10g",
+							"7" : "ucam96m24c",
+							"8" : "dcam192m8cAnnexA",
+							"9" : "dcam256m8cAnnexB",
+							"10" : "ucam288m24c",
+							"15" : "dcamDocsisBVideoMixed8c",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the duplexing status of this card. "
+						],
+						"enums" : {
+							"0" : "notapplicable",
+							"1" : "active",
+							"2" : "standby",
+							"3" : "simplex",
+							"4" : "protected"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardDplxStatus",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortPrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent whenever the port's Primary state changes. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerPortPrStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "PortNumber:$v4;IfIndex:$v8",
+				"Summary" : {
+					"eval" : "($v6==1) ? 'Port $v4 primary state on card $v3 is in service' : 'Port $v4 primary state on card $v3 is out of service'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPortPrStateChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortPrState i 2 CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex i 9999",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPortPrStateChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortPrState i 1 CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex i 9999"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortPrStateChange",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port Id used in traps. A value of 0 indicates an invalid portNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.201",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Type of this cerPort. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "ureceiver",
+							"2" : "uchannel",
+							"3" : "eport10BaseT",
+							"4" : "eport100BaseT",
+							"5" : "eport1000BaseT",
+							"6" : "eport10000BaseT",
+							"8" : "macport",
+							"9" : "dchannelDocsis",
+							"10" : "dchannelVideo",
+							"11" : "linkAgg",
+							"12" : "dchannelVideoreplica",
+							"13" : "dchannelOfdm",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The primary state of this cerPort"
+						],
+						"enums" : {
+							"1" : "is",
+							"2" : "oos"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortPrState",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The CardSubType of the card this cerPort belongs to."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm10g",
+							"7" : "ucam96m24c",
+							"8" : "dcam192m8cAnnexA",
+							"9" : "dcam256m8cAnnexB",
+							"10" : "ucam288m24c",
+							"15" : "dcamDocsisBVideoMixed8c",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the location of an interface in the",
+							"cerPort table that represents this port. A value of 0 indicates that ",
+							"this cerPort does not have an association in the Iftable. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.14",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortSecStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent whenever the port's Secondary state changes. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerPortSecStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "PortNumber:$v4;IfIndex:$v8",
+				"Summary" : "Port $v4 secondary state changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPortSecStateChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortSecState i 2 CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex i 9999",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPortSecStateChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortSecState i 5 CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex i 9999"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortSecStateChange",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port Id used in traps. A value of 0 indicates an invalid portNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.201",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Type of this cerPort. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "ureceiver",
+							"2" : "uchannel",
+							"3" : "eport10BaseT",
+							"4" : "eport100BaseT",
+							"5" : "eport1000BaseT",
+							"6" : "eport10000BaseT",
+							"8" : "macport",
+							"9" : "dchannelDocsis",
+							"10" : "dchannelVideo",
+							"11" : "linkAgg",
+							"12" : "dchannelVideoreplica",
+							"13" : "dchannelOfdm",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The secondary state of this cerPort"
+						],
+						"enums" : {
+							"0" : "notapplicable",
+							"1" : "manual",
+							"2" : "fault",
+							"3" : "diagnostic",
+							"4" : "overload",
+							"5" : "normal",
+							"6" : "degrade",
+							"7" : "initializing",
+							"8" : "swdownload",
+							"9" : "firmwarepump",
+							"10" : "powerup",
+							"11" : "bootdkm"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortSecState",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The CardSubType of the card this cerPort belongs to."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm10g",
+							"7" : "ucam96m24c",
+							"8" : "dcam192m8cAnnexA",
+							"9" : "dcam256m8cAnnexB",
+							"10" : "ucam288m24c",
+							"15" : "dcamDocsisBVideoMixed8c",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortCardSubType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the location of an interface in the",
+							"cerPort table that represents this port. A value of 0 indicates that ",
+							"this cerPort does not have an association in the Iftable. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortDocsIfIndex",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.14",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortDplxStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent whenever the port's Duplex status changes. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerPortDplxStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerCardNumber:$v3;cerPortNumber:$v4",
+				"Summary" : "Port $v4 duplex status changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPortDplxStatusChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 4 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortDplxStatus i 3",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPortDplxStatusChange CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerPortDplxStatus i 1"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortDplxStatusChange",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port Id used in traps. A value of 0 indicates an invalid portNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.201",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Type of this cerPort. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "ureceiver",
+							"2" : "uchannel",
+							"3" : "eport10BaseT",
+							"4" : "eport100BaseT",
+							"5" : "eport1000BaseT",
+							"6" : "eport10000BaseT",
+							"8" : "macport",
+							"9" : "dchannelDocsis",
+							"10" : "dchannelVideo",
+							"11" : "linkAgg",
+							"12" : "dchannelVideoreplica",
+							"13" : "dchannelOfdm",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port Duplexing status."
+						],
+						"enums" : {
+							"0" : "notapplicable",
+							"1" : "active",
+							"2" : "standby",
+							"3" : "simplex",
+							"4" : "protected"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPortDplxStatus",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.13.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cardTestResultNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap is sent when a test or diagnostic completed on a card. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cardTestResultNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerCardNumber:$v3",
+				"Summary" : {
+					"eval" : "($v6==3) ? '$v5 test completed successfully on card $v3' : '$v5 test status changed to $v6'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cardTestResultNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::diagTestId i 1 CADANT-CMTS-EQUIPMENT-MIB::cardTestName s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cardTestResult i 4 CADANT-CMTS-EQUIPMENT-MIB::cardTestResultDesc s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cardTestTransId i 9999",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cardTestResultNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::diagTestId i 1 CADANT-CMTS-EQUIPMENT-MIB::cardTestName s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cardTestResult i 3 CADANT-CMTS-EQUIPMENT-MIB::cardTestResultDesc s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cardTestTransId i 9999"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardTestResultNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Test Identification Number. Used in cardTestResultNotification variable-binding"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::diagTestId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.5.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique name for this test."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardTestName",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.5.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Result of the test. "
+						],
+						"enums" : {
+							"1" : "notRun",
+							"2" : "inProgress",
+							"3" : "pass",
+							"4" : "fail",
+							"5" : "inconclusive",
+							"6" : "timeOut",
+							"7" : "abort"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardTestResult",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.5.3.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Additional information of the test result. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardTestResultDesc",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.5.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Test transaction Id. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cardTestTransId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.5.3.1.13",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeUsageNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a disk volume usage level ",
+				"exceed a disk usage threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerDiskVolumeUsageNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "DiskDriveNumber:$v4;DiskVolumeNumber:$v5",
+				"Summary" : {
+					"eval" : "($v6==1) ? 'Disk volume usage normal' : 'Disk volume usage exceeded on $v7'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeUsageNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskDriveNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeUsageLevel i 3 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeName s EXAMPLE",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeUsageNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskDriveNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeUsageLevel i 1 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeName s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeUsageNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Disk drive ID use in a Cadant trap. A value of 0 indicates an invalid diskDriveNumber"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskDriveNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.202",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Disk volume ID use in a Cadant trap. A value of 0 indicates an invalid diskVolumeNumber"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.203",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The disk volume usage level."
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeUsageLevel",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.14.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name of the disk volume."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeName",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.14.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeAutoDeleteFileNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a file is automatically",
+				"deleted by the system in respond to disk volume",
+				"usage exceed critical thresholh."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerDiskVolumeAutoDeleteFileNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "DiskDriveNumber:$v4;DiskVolumeNumber:$v5",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Disk auto-delete notification cleared' : 'File $v7 deleted due to high disk usage on volume $v6'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeAutoDeleteFileNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskDriveNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeName s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeFileName s EXAMPLE",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeAutoDeleteFileNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskDriveNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeName s EXAMPLE CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeFileName s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeAutoDeleteFileNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Disk drive ID use in a Cadant trap. A value of 0 indicates an invalid diskDriveNumber"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskDriveNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.202",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Disk volume ID use in a Cadant trap. A value of 0 indicates an invalid diskVolumeNumber"
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.203",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The name of the disk volume."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeName",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.14.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of a file on the disk volume use for trap notification."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerDiskVolumeFileName",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a CAM has a fault of the specified type",
+				"even if fault recovery is inhibited for that fault type."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==3 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerCamFaultNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerCardNumber:$v6",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'CAM fault cleared' : 'CAM fault detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultId i 12 CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultRecovery i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultAutoFailback i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultErrorStr s EXAMPLE",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultId i 12 CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultRecovery i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultAutoFailback i 1 CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType i 0 CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultErrorStr s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.41",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of CAM fault trigging the trap."
+						],
+						"enums" : {
+							"12" : "fpgaFatalError"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.40.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"True if recovery for this event is enabled."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultRecovery",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.40.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"True if autofailback is enabled and the maximum failbacks have",
+							"not occurred."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultAutoFailback",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.40.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Card Id used in traps. A value 0 indicates an invalid cardNumber. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardNumber",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.200",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The cardType alone may not be specific enough to fully describe the",
+							"type of card that is in this slot. For example, a card type of Dcard",
+							"might have a more specific type of 1D8U with integrated upconverter.",
+							"If the card needs no further specificication that the cardType, then",
+							"the value of cardSubType is 'none'. Not yet implemented. "
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "fan",
+							"2" : "pem",
+							"3" : "ccm",
+							"4" : "cdm",
+							"5" : "sam",
+							"6" : "rsm10g",
+							"7" : "ucam96m24c",
+							"8" : "dcam192m8cAnnexA",
+							"9" : "dcam256m8cAnnexB",
+							"10" : "ucam288m24c",
+							"15" : "dcamDocsisBVideoMixed8c",
+							"98" : "unknown"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCardSubType",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.4.12.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Extra information about this error. Null string if no extra info."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerCamFaultErrorStr",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.40.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerExcessivePower",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the chassis power is at or above the",
+				"configured threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerExcessivePower",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Chassis power normal' : 'Chassis power high: $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerExcessivePower CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerTotalChassisPower u 9999",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerExcessivePower CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerTotalChassisPower u 9999"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerExcessivePower",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.42",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sum of the sum of cerPemPower for both rows in the cerPemStatusTable."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerTotalChassisPower",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.13.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleMissingNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a PEM module is not detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerPemModuleMissingNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerPemModuleId:$v3",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'PEM module $v3 restored' : 'PEM module $v3 missing'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleMissingNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleMissingNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleMissingNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"PEM module ('A' or 'B') triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedMissingNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a PEM feed is not detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerPemFeedMissingNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerPemFeedId:$v4",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'PEM feed restored' : 'PEM feed missing'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedMissingNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId i 1",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedMissingNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId i 1"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedMissingNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.45",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"PEM module ('A' or 'B') triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"PEM feed (1 or 2) triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemCircuitBreakerMissingNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a PEM circuit breaker is not detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerPemCircuitBreakerMissingNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "PemModuleId:$v3",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'PEM circuit breaker restored' : 'PEM circuit breaker missing'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemCircuitBreakerMissingNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId i 1",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemCircuitBreakerMissingNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId i 1"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemCircuitBreakerMissingNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.46",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"PEM module ('A' or 'B') triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"PEM feed (1 or 2) triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedLowVoltageNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a PEM feed has low voltage detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerPemFeedLowVoltageNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerPemFeedId:$v4",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'PEM feed low voltage resolved' : 'PEM feed low voltage detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedLowVoltageNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId i 1 CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedVoltage i 9999",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedLowVoltageNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId i 1 CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedVoltage i 9999"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedLowVoltageNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.47",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"PEM module ('A' or 'B') triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"PEM feed (1 or 2) triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"PEM feed voltage used in PEM traps."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemFeedVoltage",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemBranchFuseFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a PEM branch has a fuse failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2 || $v2==7) ? 3 : 2)"
+				},
+				"EventType" : "cerPemBranchFuseFailureNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2 || $v2==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 1 : (($v2==7) ? 2 : (($v2==5) ? 4 : (($v2==6) ? 5 : 3))))"
+				},
+				"SubNode" : "cerPemBranchId:$v4",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'PEM branch ($v4) fuse failure resolved' : 'PEM branch ($v4) fuse failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemBranchFuseFailureNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 5 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E CADANT-CMTS-EQUIPMENT-MIB::cerPemBranchId s E",
+				"$SNMPTRAPCMD CADANT-CMTS-EQUIPMENT-MIB::cerPemBranchFuseFailureNotification CADANT-CMTS-EQUIPMENT-MIB::trapCounter c 9999 CADANT-CMTS-EQUIPMENT-MIB::trapSeverity i 1 CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId s E CADANT-CMTS-EQUIPMENT-MIB::cerPemBranchId s E"
+			],
+			"trap" : {
+				"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemBranchFuseFailureNotification",
+				"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.48",
+				"variables" : [
+					{
+						"description" : [
+							"This is the trap sequence number that increments each",
+							"time a trap is sent. It is persistent across resets. "
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapCounter",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Severity level of a Cadant trap. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical",
+							"7" : "informational"
+						},
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"PEM module ('A' or 'B') triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemModuleId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"PEM branch ('A'through 'I') triggering the trap."
+						],
+						"name" : "CADANT-CMTS-EQUIPMENT-MIB::cerPemBranchId",
+						"oid" : "1.3.6.1.4.1.4998.1.1.10.1.0.43.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

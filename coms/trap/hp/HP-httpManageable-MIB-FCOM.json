@@ -1,0 +1,81 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9706260000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HP-httpManageable-MIB::hpHttpMgHealthTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever hpHttpMgHealth changes state. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : ($v1==1 || $v1==2) ? 3 : 2"
+				},
+				"EventType" : "hpHttpMgHealthTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : ($v1==1 || $v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2) ? 2 : ($v1==3) ? 0 : ($v1==6) ? 5 : ($v1==4) ? 3 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operating status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-httpManageable-MIB::hpHttpMgHealthTrap HP-httpManageable-MIB::hpHttpMgHealth i 1",
+			"trap" : {
+				"name" : "HP-httpManageable-MIB::hpHttpMgHealthTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Operating status of this entity."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "information",
+							"3" : "ok",
+							"4" : "warning",
+							"5" : "critical",
+							"6" : "nonrecoverable"
+						},
+						"name" : "HP-httpManageable-MIB::hpHttpMgHealth",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.2.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-httpManageable-MIB::hpHttpMgShutdown",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent when the agent is about to shut down. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpHttpMgShutdown",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Agent is about to shut down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-httpManageable-MIB::hpHttpMgShutdown ",
+			"trap" : {
+				"name" : "HP-httpManageable-MIB::hpHttpMgShutdown",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.2"
+			}
+		}
+	]
+}

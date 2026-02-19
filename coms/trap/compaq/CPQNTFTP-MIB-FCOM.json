@@ -1,0 +1,217 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CPQNTFTP-MIB::cpqnTftpTransferInitiated",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever a SNMP-requested TFTP transaction is",
+				"initiated, depending on the value of cpqnTftpTrapEnableStatus. For",
+				"those cases where multiple files are downloaded, multiple traps",
+				"are sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqnTftpTransferInitiated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "TFTP transaction initiated by SNMP"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQNTFTP-MIB::cpqnTftpTransferInitiated CPQNTFTP-MIB::cpqnTftpFileType i 1 CPQNTFTP-MIB::cpqnTftpPathname s EXAMPLE CPQNTFTP-MIB::cpqnTftpTransferState i 1",
+			"trap" : {
+				"name" : "CPQNTFTP-MIB::cpqnTftpTransferInitiated",
+				"oid" : "1.3.6.1.4.1.232.121.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The type of download/upload file that this table entry",
+							"configures. This object is used as an index into cpqnTftpTable.",
+							"There is only one entry for each type of file. The agent for a",
+							"specific product may not support all file types; consult the",
+							"product-specific documentation for information on using this object."
+						],
+						"enums" : {
+							"1" : "entire-file",
+							"2" : "boot",
+							"3" : "run-time",
+							"4" : "sblock-ext",
+							"5" : "config",
+							"6" : "agent",
+							"7" : "fddi-ulfw",
+							"8" : "atm-ulfw"
+						},
+						"name" : "CPQNTFTP-MIB::cpqnTftpFileType",
+						"oid" : "1.3.6.1.4.1.232.121.9.5.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"DURABLE: The fully-qualified path and filename (as recognized",
+							"by the TFTP server) of the file to download or upload."
+						],
+						"name" : "CPQNTFTP-MIB::cpqnTftpPathname",
+						"oid" : "1.3.6.1.4.1.232.121.9.5.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"DURABLE: This object configures this entry's type of TFTP transfer",
+							"(download/upload) and when it occurs after cpqnTftpInitiate is set",
+							"appropriately (immediately or after the next restart). Note that",
+							"multiple cpqnTftpTable entries may enable TFTP transfers; the order",
+							"in which the entries are processed is left to the agent.",
+							"",
+							"After the TFTP transfer has been completed (successfully or not)",
+							"the agent sets this object back to no-download-ipr(1). If the",
+							"agent is restarted before the transfer occurs, then this object's",
+							"value is retained.",
+							"",
+							"Support for download-afterboot(3) and upload-to-nms(4) is optional.",
+							"Attempts to set this object to an unsupported value are rejected",
+							"with a Bad Value error. The cpqnTftpCanDldAfterBoot object",
+							"indicates whether or not the agent supports download-afterboot(3).",
+							"Refer to product-specific documentation for information on",
+							"upload-to-nms(4)."
+						],
+						"enums" : {
+							"1" : "no-download-ipr",
+							"2" : "download",
+							"3" : "download-afterboot",
+							"4" : "upload-to-nms"
+						},
+						"name" : "CPQNTFTP-MIB::cpqnTftpTransferState",
+						"oid" : "1.3.6.1.4.1.232.121.9.5.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQNTFTP-MIB::cpqnTftpTransferCompleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever a SNMP-requested TFTP transaction is",
+				"completed, depending on the value of cpqnTftpTrapEnableStatus. For",
+				"those cases where multiple files are downloaded, multiple traps",
+				"are sent.",
+				"NOTE: It may not be possible for an agent to send this trap.",
+				"Support of this trap is optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqnTftpTransferCompleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "SNMP-requested TFTP transaction completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQNTFTP-MIB::cpqnTftpTransferCompleted CPQNTFTP-MIB::cpqnTftpFileType i 1 CPQNTFTP-MIB::cpqnTftpPathname s EXAMPLE CPQNTFTP-MIB::cpqnTftpTransferState i 1 CPQNTFTP-MIB::cpqnTftpTransferLastErr i 1",
+			"trap" : {
+				"name" : "CPQNTFTP-MIB::cpqnTftpTransferCompleted",
+				"oid" : "1.3.6.1.4.1.232.121.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The type of download/upload file that this table entry",
+							"configures. This object is used as an index into cpqnTftpTable.",
+							"There is only one entry for each type of file. The agent for a",
+							"specific product may not support all file types; consult the",
+							"product-specific documentation for information on using this object."
+						],
+						"enums" : {
+							"1" : "entire-file",
+							"2" : "boot",
+							"3" : "run-time",
+							"4" : "sblock-ext",
+							"5" : "config",
+							"6" : "agent",
+							"7" : "fddi-ulfw",
+							"8" : "atm-ulfw"
+						},
+						"name" : "CPQNTFTP-MIB::cpqnTftpFileType",
+						"oid" : "1.3.6.1.4.1.232.121.9.5.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"DURABLE: The fully-qualified path and filename (as recognized",
+							"by the TFTP server) of the file to download or upload."
+						],
+						"name" : "CPQNTFTP-MIB::cpqnTftpPathname",
+						"oid" : "1.3.6.1.4.1.232.121.9.5.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"DURABLE: This object configures this entry's type of TFTP transfer",
+							"(download/upload) and when it occurs after cpqnTftpInitiate is set",
+							"appropriately (immediately or after the next restart). Note that",
+							"multiple cpqnTftpTable entries may enable TFTP transfers; the order",
+							"in which the entries are processed is left to the agent.",
+							"",
+							"After the TFTP transfer has been completed (successfully or not)",
+							"the agent sets this object back to no-download-ipr(1). If the",
+							"agent is restarted before the transfer occurs, then this object's",
+							"value is retained.",
+							"",
+							"Support for download-afterboot(3) and upload-to-nms(4) is optional.",
+							"Attempts to set this object to an unsupported value are rejected",
+							"with a Bad Value error. The cpqnTftpCanDldAfterBoot object",
+							"indicates whether or not the agent supports download-afterboot(3).",
+							"Refer to product-specific documentation for information on",
+							"upload-to-nms(4)."
+						],
+						"enums" : {
+							"1" : "no-download-ipr",
+							"2" : "download",
+							"3" : "download-afterboot",
+							"4" : "upload-to-nms"
+						},
+						"name" : "CPQNTFTP-MIB::cpqnTftpTransferState",
+						"oid" : "1.3.6.1.4.1.232.121.9.5.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"DURABLE: This is the error status (if any) of the last upload",
+							"or download that occurred for this entry."
+						],
+						"enums" : {
+							"1" : "no-error",
+							"2" : "transfer-in-progress",
+							"3" : "download-failed",
+							"4" : "upload-failed",
+							"5" : "tftp-timeout",
+							"6" : "route-not-found",
+							"7" : "file-not-found",
+							"8" : "invalid-access",
+							"9" : "disk-full",
+							"10" : "illegal-tftp-op",
+							"11" : "unk-xfer-id",
+							"12" : "file-exists",
+							"13" : "no-such-user",
+							"14" : "invalid-version",
+							"15" : "hardware-error"
+						},
+						"name" : "CPQNTFTP-MIB::cpqnTftpTransferLastErr",
+						"oid" : "1.3.6.1.4.1.232.121.9.5.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,1284 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200107310000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpInServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the ISUP Service Group was put in service by maintenance staff."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sonusIsupSvcGrpStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IsupSvcGrpName:$v1",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpInServiceNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpInServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpOutOfServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the ISUP Service Group was taken out of service by maintenance staff."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1 || $v4==2 || $v4==3) ? 2 : 3"
+				},
+				"EventType" : "sonusIsupSvcGrpStatus",
+				"ExpireTime" : {
+					"eval" : "($v4==1 || $v4==2 || $v4==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 5 : (($v4==2) ? 4 : (($v4==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupSvcGrpName:$v1",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpOutOfServiceNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpOutOfServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitBlockedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the ISUP Circuit(s) were blocked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v8==1 || $v8==2 || $v8==3) ? 2 : 3"
+				},
+				"EventType" : "sonusIsupCircuitNotification",
+				"ExpireTime" : {
+					"eval" : "($v8==1 || $v8==2 || $v8==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v8==1) ? 5 : (($v8==2) ? 4 : (($v8==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v4",
+				"Summary" : "$v6. Reason: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitBlockedNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupMaintReason i 1 SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupTrunkGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitOffsets b 0 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitBlockedNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Maintenance reason for blocking/unblocking of the circuit."
+						],
+						"enums" : {
+							"1" : "ss7GwRegistration",
+							"2" : "remoteSs7PointCodeAccess",
+							"3" : "trunkGroupMode",
+							"4" : "serviceGroupMode",
+							"5" : "circuitMode",
+							"6" : "ds1Mode",
+							"7" : "serverMode",
+							"8" : "localHardware",
+							"9" : "remoteMaintenance",
+							"10" : "remoteHardware",
+							"11" : "remoteUnequipped",
+							"12" : "ss7GwResynchronization"
+						},
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupMaintReason",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Name of the trunk group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupTrunkGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Circuit maintenance status bitmap for CIC range starting with base CIC."
+						],
+						"enums" : {
+							"0" : "cicOffset0",
+							"1" : "cicOffset1",
+							"2" : "cicOffset2",
+							"3" : "cicOffset3",
+							"4" : "cicOffset4",
+							"5" : "cicOffset5",
+							"6" : "cicOffset6",
+							"7" : "cicOffset7",
+							"8" : "cicOffset8",
+							"9" : "cicOffset9",
+							"10" : "cicOffset10",
+							"11" : "cicOffset11",
+							"12" : "cicOffset12",
+							"13" : "cicOffset13",
+							"14" : "cicOffset14",
+							"15" : "cicOffset15",
+							"16" : "cicOffset16",
+							"17" : "cicOffset17",
+							"18" : "cicOffset18",
+							"19" : "cicOffset19",
+							"20" : "cicOffset20",
+							"21" : "cicOffset21",
+							"22" : "cicOffset22",
+							"23" : "cicOffset23"
+						},
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitOffsets",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.5",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitUnblockedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the ISUP Circuit(s) were unblocked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sonusIsupCircuitNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IsupCircuit:$v4",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitUnblockedNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupMaintReason i 1 SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupTrunkGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitOffsets b 0 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitUnblockedNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Maintenance reason for blocking/unblocking of the circuit."
+						],
+						"enums" : {
+							"1" : "ss7GwRegistration",
+							"2" : "remoteSs7PointCodeAccess",
+							"3" : "trunkGroupMode",
+							"4" : "serviceGroupMode",
+							"5" : "circuitMode",
+							"6" : "ds1Mode",
+							"7" : "serverMode",
+							"8" : "localHardware",
+							"9" : "remoteMaintenance",
+							"10" : "remoteHardware",
+							"11" : "remoteUnequipped",
+							"12" : "ss7GwResynchronization"
+						},
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupMaintReason",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Name of the trunk group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupTrunkGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Circuit maintenance status bitmap for CIC range starting with base CIC."
+						],
+						"enums" : {
+							"0" : "cicOffset0",
+							"1" : "cicOffset1",
+							"2" : "cicOffset2",
+							"3" : "cicOffset3",
+							"4" : "cicOffset4",
+							"5" : "cicOffset5",
+							"6" : "cicOffset6",
+							"7" : "cicOffset7",
+							"8" : "cicOffset8",
+							"9" : "cicOffset9",
+							"10" : "cicOffset10",
+							"11" : "cicOffset11",
+							"12" : "cicOffset12",
+							"13" : "cicOffset13",
+							"14" : "cicOffset14",
+							"15" : "cicOffset15",
+							"16" : "cicOffset16",
+							"17" : "cicOffset17",
+							"18" : "cicOffset18",
+							"19" : "cicOffset19",
+							"20" : "cicOffset20",
+							"21" : "cicOffset21",
+							"22" : "cicOffset22",
+							"23" : "cicOffset23"
+						},
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitOffsets",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.5",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitResetNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the ISUP Circuit(s) were reset."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupCircuitResetNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "IsupCircuit:$v3",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitResetNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupTrunkGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitOffsets b 0 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitResetNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the trunk group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupTrunkGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Circuit maintenance status bitmap for CIC range starting with base CIC."
+						],
+						"enums" : {
+							"0" : "cicOffset0",
+							"1" : "cicOffset1",
+							"2" : "cicOffset2",
+							"3" : "cicOffset3",
+							"4" : "cicOffset4",
+							"5" : "cicOffset5",
+							"6" : "cicOffset6",
+							"7" : "cicOffset7",
+							"8" : "cicOffset8",
+							"9" : "cicOffset9",
+							"10" : "cicOffset10",
+							"11" : "cicOffset11",
+							"12" : "cicOffset12",
+							"13" : "cicOffset13",
+							"14" : "cicOffset14",
+							"15" : "cicOffset15",
+							"16" : "cicOffset16",
+							"17" : "cicOffset17",
+							"18" : "cicOffset18",
+							"19" : "cicOffset19",
+							"20" : "cicOffset20",
+							"21" : "cicOffset21",
+							"22" : "cicOffset22",
+							"23" : "cicOffset23"
+						},
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitOffsets",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.5",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupContinuityRecheckFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the Continuity Recheck on the ISUP circuit failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupContinuityRecheckFailureNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v5==1) ? 5 : (($v5==2) ? 4 : (($v5==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v2",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupContinuityRecheckFailureNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupContinuityRecheckFailureNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCicRegistrationFailedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the CIC Registration failed after multiple retries."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupCicRegistrationFailedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==1) ? 5 : (($v4==2) ? 4 : (($v4==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v1",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCicRegistrationFailedNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCicRegistrationFailedNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupHopCounterExhaustedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the Hop Counter value received in IAM is zero."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupHopCounterExhaustedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v7==1) ? 5 : (($v7==2) ? 4 : (($v7==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v2",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupHopCounterExhaustedNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCalledPartyNumber s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCallingPartyNumber s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupHopCounterExhaustedNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Called Party Number."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCalledPartyNumber",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Calling Party Number."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCallingPartyNumber",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupRelWithExchangeRoutingErrorNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a REL message is received with Exchange Routing Error cause value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupRelWithExchangeRoutingErrorNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v7==1) ? 5 : (($v7==2) ? 4 : (($v7==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v2",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupRelWithExchangeRoutingErrorNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCalledPartyNumber s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCallingPartyNumber s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupRelWithExchangeRoutingErrorNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Called Party Number."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCalledPartyNumber",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Calling Party Number."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCallingPartyNumber",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCqmTimeoutNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the timed out has occured waiting for CQM response"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupCqmTimeoutNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==1) ? 5 : (($v4==2) ? 4 : (($v4==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v1",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCqmTimeoutNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCqmTimeoutNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCvtTimeoutNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the timed out has occured waiting for CVT response"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupCvtTimeoutNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==1) ? 5 : (($v4==2) ? 4 : (($v4==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v1",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCvtTimeoutNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCvtTimeoutNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupFarendCircuitStateMismatchedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the circuit/block state is mismatched as report by CQR"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupFarendCircuitStateMismatchedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==1) ? 5 : (($v4==2) ? 4 : (($v4==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v1",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupFarendCircuitStateMismatchedNotification SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupFarendCircuitStateMismatchedNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitTimerExpired",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the ISUP Circuit had a timer expire."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusIsupCircuitTimerExpired",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v7==1) ? 5 : (($v7==2) ? 4 : (($v7==3) ? 3 : 2))"
+				},
+				"SubNode" : "IsupCircuit:$v3",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitTimerExpired SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupTrunkGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName s EXAMPLE SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit i 9999 SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupMaintCode s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuitTimerExpired",
+				"oid" : "1.3.6.1.4.1.2879.2.6.1.2.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the trunk group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupTrunkGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the ISUP service group."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Base circuit identity code (CIC) for the circuit."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupCircuit",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Maintainence code."
+						],
+						"name" : "SONUS-ISUP-SERVICE-GROUP-MIB::sonusIsupMaintCode",
+						"oid" : "1.3.6.1.4.1.2879.2.6.1.2.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

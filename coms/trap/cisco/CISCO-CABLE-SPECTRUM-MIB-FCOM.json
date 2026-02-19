@@ -1,0 +1,147 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201104080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CABLE-SPECTRUM-MIB::ccsHoppingNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification is sent when there's a change in",
+				"frequency (hopping), modulation, or profile.",
+				"In the case of frequency hopping",
+				"ccsUpSpecMgmtHopCondition would indicate whether",
+				"SNR or modemOffline that caused the hopping."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccsHoppingNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'SNR does not meet the ccsUpSpecMgmtSnrThres1 or ccsUpSpecMgmtSnrThres2' : (($v1 == 1) ? 'The percentage of offline CMs has been reached' : 'A Hopping notification has occured')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CABLE-SPECTRUM-MIB::ccsHoppingNotification CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtHopCondition i 0 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromCenterFreq u 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToCenterFreq u 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromBandWidth u 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToBandWidth u 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromModProfile i 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToModProfile i 9999",
+			"trap" : {
+				"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsHoppingNotification",
+				"oid" : "1.3.6.1.4.1.9.9.114.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "snr",
+							"1" : "stationMaintainenceMiss",
+							"2" : "others"
+						},
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtHopCondition",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromCenterFreq",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToCenterFreq",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromBandWidth",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToBandWidth",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromModProfile",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToModProfile",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CABLE-SPECTRUM-MIB::ccsSpecMgmtNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification is sent when there's a change in",
+				"frequency hopping, modulation, or profile.",
+				"ccsUpSpecMgmtCriteria is used to indicate the ",
+				"cause(s)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccsSpecMgmtNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 != $v3) ? 'Change in Spectrum Frequency from $v2 to $v3' : (($v4 != $v5) ? 'Change in Spectrum BandWidth from $v4 to $v5' : (($v6 != $v7) ? 'Change in Spectrum Profile from $v6 to $v7' : 'A Specturm notification has occured'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CABLE-SPECTRUM-MIB::ccsSpecMgmtNotification CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtCriteria b 1 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromCenterFreq u 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToCenterFreq u 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromBandWidth u 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToBandWidth u 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromModProfile i 9999 CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToModProfile i 9999",
+			"trap" : {
+				"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsSpecMgmtNotification",
+				"oid" : "1.3.6.1.4.1.9.9.114.2.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtCriteria",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.23",
+						"valueType" : "BITS"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromCenterFreq",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToCenterFreq",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromBandWidth",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToBandWidth",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtFromModProfile",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-CABLE-SPECTRUM-MIB::ccsUpSpecMgmtToModProfile",
+						"oid" : "1.3.6.1.4.1.9.9.114.1.3.1.1.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

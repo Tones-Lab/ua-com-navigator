@@ -1,0 +1,505 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200312010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonShutdownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonShutdownNotification is sent if the environmental",
+				"monitor detects a testpoint reaching a critical state",
+				"and is about to initiate a shutdown.  This notification",
+				"contains no objects so that it may be encoded and sent in the",
+				"shortest amount of time possible.  Even so, management",
+				"applications should not rely on receiving such a notification",
+				"as it may not be sent before the shutdown completes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoEnvMonShutdownNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Critical state detected - shutdown initiating"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonShutdownNotification",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonShutdownNotification",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.1",
+				"variables" : []
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltageNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonVoltageNotification is sent if the voltage ",
+				"measured at a given testpoint is outside the normal range ",
+				"for the testpoint (i.e. is at the warning, critical, or",
+				"shutdown stage). Since such a notification is usually ",
+				"generated before the shutdown state is reached, it can ",
+				"convey more data and has a better chance of being sent ",
+				"than does the ciscoEnvMonShutdownNotification.",
+				"This notification is deprecated in favour of",
+				"ciscoEnvMonVoltStatusChangeNotif."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : (($v3 <= 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoEnvMonVoltageNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : (($v3 <= 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 4) ? 5 : (($v3 == 3) ? 4 : (($v3 == 2) ? 3 : (($v3 == 1) ? 0 : 2)))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Voltage state for testpoint $v1 is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonVoltageNotification CISCO-ENVMON-MIB::ciscoEnvMonVoltageStatusDescr s EXAMPLE CISCO-ENVMON-MIB::ciscoEnvMonVoltageStatusValue i 9999 CISCO-ENVMON-MIB::ciscoEnvMonVoltageState i 1",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltageNotification",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltageStatusDescr",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltageStatusValue",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.2.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "shutdown",
+							"5" : "notPresent",
+							"6" : "notFunctioning"
+						},
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltageState",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.2.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonTemperatureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonTemperatureNotification is sent if the ",
+				"temperature measured at a given testpoint is outside ",
+				"the normal range for the testpoint (i.e. is at the warning, ",
+				"critical, or shutdown stage). Since such a Notification ",
+				"is usually generated before the shutdown state is reached",
+				"it can convey more data and has a better chance of being",
+				"sent than does the ciscoEnvMonShutdownNotification.",
+				"This notification is deprecated in favour of ",
+				"ciscoEnvMonTempStatusChangeNotif."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : (($v3 <= 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoEnvMonTemperatureNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : (($v3 <= 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 4) ? 5 : (($v3 == 3) ? 4 : (($v3 == 2) ? 3 : (($v3 == 1) ? 0 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Temperature state for testpoint $v1 is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonTemperatureNotification CISCO-ENVMON-MIB::ciscoEnvMonTemperatureStatusDescr s EXAMPLE CISCO-ENVMON-MIB::ciscoEnvMonTemperatureStatusValue u 9999 CISCO-ENVMON-MIB::ciscoEnvMonTemperatureState i 1",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonTemperatureNotification",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonTemperatureStatusDescr",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonTemperatureStatusValue",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.3.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "shutdown",
+							"5" : "notPresent",
+							"6" : "notFunctioning"
+						},
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonTemperatureState",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.3.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonFanNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonFanNotification is sent if any one of",
+				"the fans in the fan array (where extant) fails. ",
+				"Since such a notification is usually generated before ",
+				"the shutdown state is reached, it can convey more ",
+				"data and has a better chance of being sent",
+				"than does the ciscoEnvMonShutdownNotification.",
+				"This notification is deprecated in favour of",
+				"ciscoEnvMonFanStatusChangeNotif."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : (($v2 <= 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoEnvMonFanNotification",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : (($v2 <= 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 4) ? 5 : (($v2 == 3) ? 4 : (($v2 == 2) ? 3 : (($v2 == 1) ? 0 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of fan $v1 is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonFanNotification CISCO-ENVMON-MIB::ciscoEnvMonFanStatusDescr s EXAMPLE CISCO-ENVMON-MIB::ciscoEnvMonFanState i 1",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonFanNotification",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonFanStatusDescr",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.4.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "shutdown",
+							"5" : "notPresent",
+							"6" : "notFunctioning"
+						},
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonFanState",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.4.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonRedundantSupplyNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonRedundantSupplyNotification is sent if",
+				"the redundant power supply (where extant) fails. ",
+				"Since such a notification is usually generated before ",
+				"the shutdown state is reached, it can convey more ",
+				"data and has a better chance of being sent",
+				"than does the ciscoEnvMonShutdownNotification.",
+				"This notification is deprecated in favour of ",
+				"ciscoEnvMonSuppStatusChangeNotif."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : (($v2 <= 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoEnvMonRedundantSupplyNotification",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : (($v2 <= 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 4) ? 5 : (($v2 == 3) ? 4 : (($v2 == 2) ? 3 : (($v2 == 1) ? 0 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of redundant power supply $v1 is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonRedundantSupplyNotification CISCO-ENVMON-MIB::ciscoEnvMonSupplyStatusDescr s EXAMPLE CISCO-ENVMON-MIB::ciscoEnvMonSupplyState i 1",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonRedundantSupplyNotification",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonSupplyStatusDescr",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "shutdown",
+							"5" : "notPresent",
+							"6" : "notFunctioning"
+						},
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonSupplyState",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.5.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltStatusChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonVoltStatusChangeNotif is sent if there is ",
+				"change in the state of a device being monitored",
+				"by ciscoEnvMonVoltageState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : (($v3 <= 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoEnvMonVoltStatusChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : (($v3 <= 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 4) ? 5 : (($v3 == 3) ? 4 : (($v3 == 2) ? 3 : (($v3 == 1) ? 0 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Voltage state for testpoint $v1 is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonVoltStatusChangeNotif CISCO-ENVMON-MIB::ciscoEnvMonVoltageStatusDescr s EXAMPLE CISCO-ENVMON-MIB::ciscoEnvMonVoltageStatusValue i 9999 CISCO-ENVMON-MIB::ciscoEnvMonVoltageState i 1",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltStatusChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltageStatusDescr",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltageStatusValue",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.2.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "shutdown",
+							"5" : "notPresent",
+							"6" : "notFunctioning"
+						},
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonVoltageState",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.2.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonTempStatusChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonTempStatusChangeNotif is sent if there ",
+				"is change in the state of a device being monitored",
+				"by ciscoEnvMonTemperatureState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : (($v3 <= 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoEnvMonTempStatusChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : (($v3 <= 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 4) ? 5 : (($v3 == 3) ? 4 : (($v3 == 2) ? 3 : (($v3 == 1) ? 0 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Temperature state for testpoint $v1 is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonTempStatusChangeNotif CISCO-ENVMON-MIB::ciscoEnvMonTemperatureStatusDescr s EXAMPLE CISCO-ENVMON-MIB::ciscoEnvMonTemperatureStatusValue u 9999 CISCO-ENVMON-MIB::ciscoEnvMonTemperatureState i 1",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonTempStatusChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.7",
+				"variables" : [
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonTemperatureStatusDescr",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonTemperatureStatusValue",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.3.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "shutdown",
+							"5" : "notPresent",
+							"6" : "notFunctioning"
+						},
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonTemperatureState",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.3.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonFanStatusChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonFanStatusChangeNotif is sent if there ",
+				"is change in the state of a device being monitored",
+				"by ciscoEnvMonFanState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : (($v2 <= 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoEnvMonFanStatusChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : (($v2 <= 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 4) ? 5 : (($v2 == 3) ? 4 : (($v2 == 2) ? 3 : (($v2 == 1) ? 0 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of fan $v1 is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonFanStatusChangeNotif CISCO-ENVMON-MIB::ciscoEnvMonFanStatusDescr s EXAMPLE CISCO-ENVMON-MIB::ciscoEnvMonFanState i 1",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonFanStatusChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.8",
+				"variables" : [
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonFanStatusDescr",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.4.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "shutdown",
+							"5" : "notPresent",
+							"6" : "notFunctioning"
+						},
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonFanState",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.4.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENVMON-MIB::ciscoEnvMonSuppStatusChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoEnvMonSupplyStatChangeNotif is sent if there ",
+				"is change in the state of a device being monitored",
+				"by ciscoEnvMonSupplyState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : (($v2 <= 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoEnvMonSuppStatusChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : (($v2 <= 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 4) ? 5 : (($v2 == 3) ? 4 : (($v2 == 2) ? 3 : (($v2 == 1) ? 0 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of redundant power supply $v1 is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENVMON-MIB::ciscoEnvMonSuppStatusChangeNotif CISCO-ENVMON-MIB::ciscoEnvMonSupplyStatusDescr s EXAMPLE CISCO-ENVMON-MIB::ciscoEnvMonSupplyState i 1",
+			"trap" : {
+				"name" : "CISCO-ENVMON-MIB::ciscoEnvMonSuppStatusChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.13.3.0.9",
+				"variables" : [
+					{
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonSupplyStatusDescr",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "shutdown",
+							"5" : "notPresent",
+							"6" : "notFunctioning"
+						},
+						"name" : "CISCO-ENVMON-MIB::ciscoEnvMonSupplyState",
+						"oid" : "1.3.6.1.4.1.9.9.13.1.5.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

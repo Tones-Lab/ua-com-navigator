@@ -1,0 +1,463 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200107310000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionEstablishedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a connection has been established to the",
+				"specified SS7 gateway. Information provided by this trap includes",
+				"the name of the connected SS7 node, the name of the SS7 gateway ",
+				"on which the node resides, and the type of SS7 service that has been",
+				"established (ISUP or TCAP)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sonusSs7NodeConnectionStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "NodeName:$v1",
+				"Summary" : "$v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionEstablishedNotification SONUS-SS7-SERVICES-MIB::sonusSs7NodeName s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType s EXAMPL SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionEstablishedNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.3.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The name of this SS7 Node instance."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeName",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the SS7 Gateway to which this SS7 Node is assigned."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of service supported by this SS7 node connection (ISUP or TCAP)."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionFailedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that an established connection to an SS7 gateway",
+				"has failed. Information provided by this trap includes the name of the",
+				"failed SS7 node, the name of the SS7 gateway on which the node resides",
+				"the type of SS7 service affected by this failure, and the reason why",
+				"the connection has failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1 || $v7==2 || $v7==3) ? 2 : 3"
+				},
+				"EventType" : "sonusSs7NodeConnectionStatus",
+				"ExpireTime" : {
+					"eval" : "($v7==1 || $v7==2 || $v7==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 5 : (($v7==2) ? 4 : (($v7==3) ? 3 : 2))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : "$v5. Reason: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionFailedNotification SONUS-SS7-SERVICES-MIB::sonusSs7NodeName s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType s EXAMPL SONUS-SS7-SERVICES-MIB::sonusSs7NodeStateChangeReason s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionFailedNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.3.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The name of this SS7 Node instance."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeName",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the SS7 Gateway to which this SS7 Node is assigned."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of service supported by this SS7 node connection (ISUP or TCAP)."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The reason why this SS7 node connection has changed state."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeStateChangeReason",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that an established connection to an SS7 gateway",
+				"has changed state. Information provided by this trap includes the name ",
+				"of the affected SS7 node, the name of the SS7 gateway on which the node ",
+				"resides, the type of SS7 service affected by this failure, the new state",
+				"of the node, and the reason for the state change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : (($v8==1 || $v8==2 || $v8==3) ? 2 : 3)"
+				},
+				"EventType" : "sonusSs7NodeConnectionStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v4==2) ? 3600 : (($v8==1 || $v8==2 || $v8==3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : (($v8==1) ? 5 : (($v8==2) ? 4 : (($v8==3) ? 3 : 2)))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : "$v6. Reason: $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionStateChangeNotification SONUS-SS7-SERVICES-MIB::sonusSs7NodeName s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType s EXAMPL SONUS-SS7-SERVICES-MIB::sonusSs7NodeCurrentState i 1 SONUS-SS7-SERVICES-MIB::sonusSs7NodeStateChangeReason s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+				"$SNMPTRAPCMD SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionStateChangeNotification SONUS-SS7-SERVICES-MIB::sonusSs7NodeName s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType s EXAMPL SONUS-SS7-SERVICES-MIB::sonusSs7NodeCurrentState i 2 SONUS-SS7-SERVICES-MIB::sonusSs7NodeStateChangeReason s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4"
+			],
+			"trap" : {
+				"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeConnectionStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.3.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The name of this SS7 Node instance."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeName",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the SS7 Gateway to which this SS7 Node is assigned."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of service supported by this SS7 node connection (ISUP or TCAP)."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state of this SS7 node connection."
+						],
+						"enums" : {
+							"1" : "offline",
+							"2" : "active",
+							"3" : "initializing",
+							"4" : "failed",
+							"5" : "disabled",
+							"6" : "congested"
+						},
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeCurrentState",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The reason why this SS7 node connection has changed state."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeStateChangeReason",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeMtpStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a MTP state change event has been received from the",
+				"SS7 gateway, affecting the specified destination (or remote) point ",
+				"code (DPC). Information provided by this trap includes the name ",
+				"of the affected SS7 node, the name of the SS7 gateway on which the node ",
+				"resides, the updated MTP state, and the DPC affected by this event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : (($v8==1 || $v8==2 || $v8==3) ? 2 : 3)"
+				},
+				"EventType" : "sonusSs7NodeMtpStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v4==2) ? 3600 : (($v8==1 || $v8==2 || $v8==3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : (($v8==1) ? 5 : (($v8==2) ? 4 : (($v8==3) ? 3 : 2)))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SONUS-SS7-SERVICES-MIB::sonusSs7NodeMtpStateChangeNotification SONUS-SS7-SERVICES-MIB::sonusSs7NodeName s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType s EXAMPL SONUS-SS7-SERVICES-MIB::sonusSs7NodeMtpStatus i 1 SONUS-SS7-SERVICES-MIB::sonusSs7NodeAffectedPointCode i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+				"$SNMPTRAPCMD SONUS-SS7-SERVICES-MIB::sonusSs7NodeMtpStateChangeNotification SONUS-SS7-SERVICES-MIB::sonusSs7NodeName s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment s EXAMPLE SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType s EXAMPL SONUS-SS7-SERVICES-MIB::sonusSs7NodeMtpStatus i 2 SONUS-SS7-SERVICES-MIB::sonusSs7NodeAffectedPointCode i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4"
+			],
+			"trap" : {
+				"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeMtpStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.3.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The name of this SS7 Node instance."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeName",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the SS7 Gateway to which this SS7 Node is assigned."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeGatewayAssignment",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of service supported by this SS7 node connection (ISUP or TCAP)."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeServiceType",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This status value has been replaced by sonusSs7NodeStatMtp"
+						],
+						"enums" : {
+							"1" : "paused",
+							"2" : "resumed"
+						},
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeMtpStatus",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.1.2.2.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The SS7 point code affected by this MTP state change."
+						],
+						"name" : "SONUS-SS7-SERVICES-MIB::sonusSs7NodeAffectedPointCode",
+						"oid" : "1.3.6.1.4.1.2879.2.5.3.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

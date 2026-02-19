@@ -1,0 +1,430 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201201010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "IUM-MGMT-MIB::serverStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification indicates a change in the operational state of the IUM server."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 2) ? 2 : (($v4 == 4) ? 1 : 3)"
+				},
+				"EventType" : "serverStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v4 == 2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 1 : (($v4 == 2) ? 4 : (($v4 == 3 || $v4 == 6) ? 3 : (($v4 == 4) ? 0 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "IUM server $v2 state changed from $v3 to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IUM-MGMT-MIB::serverStateChangeNotification IUM-MGMT-MIB::hostName s EXAMPLE IUM-MGMT-MIB::srvName s EXAMPLE IUM-MGMT-MIB::oldSrvState i 1 IUM-MGMT-MIB::newSrvState i 1",
+			"trap" : {
+				"name" : "IUM-MGMT-MIB::serverStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.11.2.27.1.18",
+				"variables" : [
+					{
+						"description" : [
+							"The IUM host name."
+						],
+						"name" : "IUM-MGMT-MIB::hostName",
+						"oid" : "1.3.6.1.4.1.11.2.27.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The IUM server name."
+						],
+						"name" : "IUM-MGMT-MIB::srvName",
+						"oid" : "1.3.6.1.4.1.11.2.27.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The previous state of IUM server."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "failed",
+							"3" : "stopped",
+							"4" : "running",
+							"5" : "starting",
+							"6" : "stopping"
+						},
+						"name" : "IUM-MGMT-MIB::oldSrvState",
+						"oid" : "1.3.6.1.4.1.11.2.27.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The new state of IUM server."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "failed",
+							"3" : "stopped",
+							"4" : "running",
+							"5" : "starting",
+							"6" : "stopping"
+						},
+						"name" : "IUM-MGMT-MIB::newSrvState",
+						"oid" : "1.3.6.1.4.1.11.2.27.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IUM-MGMT-MIB::alarmNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP notification that is generated when some IUM component emits an alarm notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 2 || $v2 == 3) ? 2 : (($v2 == 1) ? 1 : 3)"
+				},
+				"EventType" : {
+					"eval" : "($v3 ne '') ? '$v3' : 'alarmNotification'"
+				},
+				"ExpireTime" : {
+					"eval" : "($v2 == 2 || $v2 == 3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : (($v2 == 2) ? 5 : (($v2 == 3) ? 4 : (($v2 == 4 || $v2 == 5) ? 3 : 1)))"
+				},
+				"SubNode" : "Source:$v6",
+				"Summary" : {
+					"eval" : "($v7 ne '') ? '$v7' : 'IUM component raised an alarm'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IUM-MGMT-MIB::alarmNotification IUM-MGMT-MIB::alarmSeqNumber i 9999 IUM-MGMT-MIB::alarmSeverity i 1 IUM-MGMT-MIB::alarmType s EXAMPLE IUM-MGMT-MIB::alarmTimestamp s EXAMPLEE IUM-MGMT-MIB::alarmNotificationId s EXAMPLE IUM-MGMT-MIB::alarmManagedObject s EXAMPLE IUM-MGMT-MIB::alarmMessage s EXAMPLE",
+			"trap" : {
+				"name" : "IUM-MGMT-MIB::alarmNotification",
+				"oid" : "1.3.6.1.4.1.11.2.27.3.13",
+				"variables" : [
+					{
+						"description" : [
+							"The notification sequence number within the source object."
+						],
+						"name" : "IUM-MGMT-MIB::alarmSeqNumber",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The severity of active alarm."
+						],
+						"enums" : {
+							"1" : "clear",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "indeterminate"
+						},
+						"name" : "IUM-MGMT-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The string value of alarm type."
+						],
+						"name" : "IUM-MGMT-MIB::alarmType",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The local date and time when the alarm has occurred."
+						],
+						"name" : "IUM-MGMT-MIB::alarmTimestamp",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The notification ID to correlate active and clearing alarms."
+						],
+						"name" : "IUM-MGMT-MIB::alarmNotificationId",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the source of alarm."
+						],
+						"name" : "IUM-MGMT-MIB::alarmManagedObject",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The message string of this alarm. It contains in a string, which could be the explanation of the alarm for displaying to a user."
+						],
+						"name" : "IUM-MGMT-MIB::alarmMessage",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IUM-MGMT-MIB::pmAlarmNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP notification that is generated by the threshold management subsystem when observed",
+				"attribute is reaching or crossing predefined threshold level and direction."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 2 || $v2 == 3) ? 2 : (($v2 == 1) ? 1 : 3)"
+				},
+				"EventType" : "pmAlarmNotification",
+				"ExpireTime" : {
+					"eval" : "($v2 == 2 || $v2 == 3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : (($v2 == 2) ? 5 : (($v2 == 3) ? 4 : (($v2 == 4 || $v2 == 5) ? 3 : 1)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v6 reached predefined $v7 threshold level ($v8)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IUM-MGMT-MIB::pmAlarmNotification IUM-MGMT-MIB::alarmSeqNumber i 9999 IUM-MGMT-MIB::alarmSeverity i 1 IUM-MGMT-MIB::alarmTimestamp s EXAMPLEE IUM-MGMT-MIB::alarmNotificationId s EXAMPLE IUM-MGMT-MIB::alarmObservedObject s EXAMPLE IUM-MGMT-MIB::alarmObservedAttribute s EXAMPLE IUM-MGMT-MIB::alarmThresholdDirection i 1 IUM-MGMT-MIB::alarmThresholdValue C 9999 IUM-MGMT-MIB::alarmCurrentValue C 9999",
+			"trap" : {
+				"name" : "IUM-MGMT-MIB::pmAlarmNotification",
+				"oid" : "1.3.6.1.4.1.11.2.27.3.14",
+				"variables" : [
+					{
+						"description" : [
+							"The notification sequence number within the source object."
+						],
+						"name" : "IUM-MGMT-MIB::alarmSeqNumber",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The severity of active alarm."
+						],
+						"enums" : {
+							"1" : "clear",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "indeterminate"
+						},
+						"name" : "IUM-MGMT-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The local date and time when the alarm has occurred."
+						],
+						"name" : "IUM-MGMT-MIB::alarmTimestamp",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The notification ID to correlate active and clearing alarms."
+						],
+						"name" : "IUM-MGMT-MIB::alarmNotificationId",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of observed object."
+						],
+						"name" : "IUM-MGMT-MIB::alarmObservedObject",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of observed attribute."
+						],
+						"name" : "IUM-MGMT-MIB::alarmObservedAttribute",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Describes direction in which threshold is triggered."
+						],
+						"enums" : {
+							"1" : "increasing",
+							"2" : "decreasing"
+						},
+						"name" : "IUM-MGMT-MIB::alarmThresholdDirection",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of triggered threshold."
+						],
+						"name" : "IUM-MGMT-MIB::alarmThresholdValue",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.13",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The value of observer attribute."
+						],
+						"name" : "IUM-MGMT-MIB::alarmCurrentValue",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.14",
+						"valueType" : "COUNTER64"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IUM-MGMT-MIB::alarmCustomNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The custom SNMP notification triggered by user IUM configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 2 || $v2 == 3) ? 2 : (($v2 == 1) ? 1 : 3)"
+				},
+				"EventType" : "alarmCustomNotification",
+				"ExpireTime" : {
+					"eval" : "($v2 == 2 || $v2 == 3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : (($v2 == 2) ? 5 : (($v2 == 3) ? 4 : (($v2 == 4 || $v2 == 5) ? 3 : 1)))"
+				},
+				"SubNode" : "Source:$v4",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'Custom SNMP notification triggered'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IUM-MGMT-MIB::alarmCustomNotification IUM-MGMT-MIB::alarmCustomCi s EXAMPLE IUM-MGMT-MIB::alarmSeverity i 1 IUM-MGMT-MIB::alarmCustomMsgGroup s EXAMPLE IUM-MGMT-MIB::alarmManagedObject s EXAMPLE IUM-MGMT-MIB::alarmMessage s EXAMPLE IUM-MGMT-MIB::alarmCustom1 s EXAMPLE IUM-MGMT-MIB::alarmCustom2 s EXAMPLE IUM-MGMT-MIB::alarmCustom3 s EXAMPLE IUM-MGMT-MIB::alarmCustom4 s EXAMPLE IUM-MGMT-MIB::alarmCustom5 s EXAMPLE",
+			"trap" : {
+				"name" : "IUM-MGMT-MIB::alarmCustomNotification",
+				"oid" : "1.3.6.1.4.1.11.2.27.3.15",
+				"variables" : [
+					{
+						"description" : [
+							"Custom server CI object."
+						],
+						"name" : "IUM-MGMT-MIB::alarmCustomCi",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity of active alarm."
+						],
+						"enums" : {
+							"1" : "clear",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "indeterminate"
+						},
+						"name" : "IUM-MGMT-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Custom value of a message group."
+						],
+						"name" : "IUM-MGMT-MIB::alarmCustomMsgGroup",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the source of alarm."
+						],
+						"name" : "IUM-MGMT-MIB::alarmManagedObject",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The message string of this alarm. It contains in a string, which could be the explanation of the alarm for displaying to a user."
+						],
+						"name" : "IUM-MGMT-MIB::alarmMessage",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.12.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Custom value for additional info."
+						],
+						"name" : "IUM-MGMT-MIB::alarmCustom1",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Custom value for additional info."
+						],
+						"name" : "IUM-MGMT-MIB::alarmCustom2",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Custom value for additional info."
+						],
+						"name" : "IUM-MGMT-MIB::alarmCustom3",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Custom value for additional info."
+						],
+						"name" : "IUM-MGMT-MIB::alarmCustom4",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Custom value for additional info."
+						],
+						"name" : "IUM-MGMT-MIB::alarmCustom5",
+						"oid" : "1.3.6.1.4.1.11.2.27.3.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

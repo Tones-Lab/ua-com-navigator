@@ -1,0 +1,540 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200805150000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SLB-MIB::ciscoSlbVirtualStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when a virtual",
+				"server changes to a new state. The value of",
+				"slbVirtualServerState indicates the new state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : (($v1 == 1) ? 2 : 3)"
+				},
+				"EventType" : "ciscoSlbVirtualStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2) ? 3600 : (($v1 == 1) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : (($v1 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Virtual server has changed state to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SLB-MIB::ciscoSlbVirtualStateChange CISCO-SLB-MIB::slbVirtualServerState i 1",
+			"trap" : {
+				"name" : "CISCO-SLB-MIB::ciscoSlbVirtualStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.161.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "outOfService",
+							"2" : "inService",
+							"3" : "standby",
+							"4" : "inOperReal",
+							"5" : "stbInOperReal",
+							"6" : "testReal",
+							"7" : "outOfMemory"
+						},
+						"name" : "CISCO-SLB-MIB::slbVirtualServerState",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SLB-MIB::ciscoSlbRealStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when a real server",
+				"changes to a new state. The value of",
+				"slbRealServerState indicates the new state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : (($v1 == 1) ? 2 : 3)"
+				},
+				"EventType" : "ciscoSlbRealStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2) ? 3600 : (($v1 == 1) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : (($v1 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Real server has changed to $v1 state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SLB-MIB::ciscoSlbRealStateChange CISCO-SLB-MIB::slbRealState i 1",
+			"trap" : {
+				"name" : "CISCO-SLB-MIB::ciscoSlbRealStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.161.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "outOfService",
+							"2" : "inService",
+							"3" : "failed",
+							"4" : "readyToTest",
+							"5" : "testing",
+							"6" : "maxConnsThrottle",
+							"7" : "maxClientsThrottle",
+							"8" : "dfpThrottle",
+							"9" : "probeFailed",
+							"10" : "probeTesting",
+							"11" : "operWait",
+							"12" : "testWait",
+							"13" : "inbandProbeFailed",
+							"14" : "returnCodeFailed",
+							"15" : "arpFailed",
+							"16" : "standby",
+							"17" : "inactive",
+							"18" : "maxLoad"
+						},
+						"name" : "CISCO-SLB-MIB::slbRealState",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.3.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SLB-MIB::ciscoSlbSaspStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when the SASP functionality",
+				"has been enabled or disabled on the Load Balancer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoSlbSaspStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'SAP functionality has been enabled for Load Balancer' : 'SAP functionality has been disabled for Load Balancer'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SLB-MIB::ciscoSlbSaspStateChange CISCO-SLB-MIB::slbSaspEnabled i 1",
+			"trap" : {
+				"name" : "CISCO-SLB-MIB::ciscoSlbSaspStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.161.2.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-SLB-MIB::slbSaspEnabled",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.12.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SLB-MIB::ciscoSlbSaspAgentStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when a SASP Agent changes",
+				"to a new state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 6) ? 1 : (($v1 == 9) ? 2 : 3)"
+				},
+				"EventType" : "ciscoSlbSaspAgentStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 6) ? 3600 : (($v1 == 9) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 6) ? 0 : (($v1 == 9) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SAP agent has changed state to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SLB-MIB::ciscoSlbSaspAgentStateChange CISCO-SLB-MIB::slbSaspAgentState i 1",
+			"trap" : {
+				"name" : "CISCO-SLB-MIB::ciscoSlbSaspAgentStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.161.2.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "initialized",
+							"3" : "closed",
+							"4" : "trying",
+							"5" : "connecting",
+							"6" : "established",
+							"7" : "downTrying",
+							"8" : "downDuplicate",
+							"9" : "down"
+						},
+						"name" : "CISCO-SLB-MIB::slbSaspAgentState",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.13.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SLB-MIB::ciscoSlbVServerStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when a virtual",
+				"server state is changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : (($v1 == 1) ? 2 : 3)"
+				},
+				"EventType" : "ciscoSlbVServerStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2) ? 3600 : (($v1 == 1) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : (($v1 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Virtual server has changed to $v1 state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SLB-MIB::ciscoSlbVServerStateChange CISCO-SLB-MIB::slbVServerState i 1 CISCO-SLB-MIB::slbVServerStateChangeDescr s EXAMPLE CISCO-SLB-MIB::slbVServerClassMap s EXAMPLE CISCO-SLB-MIB::slbVServerPolicyMap s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-SLB-MIB::ciscoSlbVServerStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.161.2.0.5",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "outOfService",
+							"2" : "inService",
+							"3" : "standby",
+							"4" : "inOperReal",
+							"5" : "stbInOperReal",
+							"6" : "testReal",
+							"7" : "outOfMemory"
+						},
+						"name" : "CISCO-SLB-MIB::slbVServerState",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVServerStateChangeDescr",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVServerClassMap",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVServerPolicyMap",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SLB-MIB::ciscoSlbVServerVIPStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when configuration",
+				"or association of virtual server IP address(VIP)",
+				"changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoSlbVServerVIPStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "VIP configuration changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SLB-MIB::ciscoSlbVServerVIPStateChange CISCO-SLB-MIB::slbVServerState i 1 CISCO-SLB-MIB::slbVServerStateChangeDescr s EXAMPLE CISCO-SLB-MIB::slbVServerClassMap s EXAMPLE CISCO-SLB-MIB::slbVServerPolicyMap s EXAMPLE CISCO-SLB-MIB::slbVServerIpAddressType i 0 CISCO-SLB-MIB::slbVServerIpAddress s EXAMPLE CISCO-SLB-MIB::slbVServerProtocol i 99",
+			"trap" : {
+				"name" : "CISCO-SLB-MIB::ciscoSlbVServerVIPStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.161.2.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "outOfService",
+							"2" : "inService",
+							"3" : "standby",
+							"4" : "inOperReal",
+							"5" : "stbInOperReal",
+							"6" : "testReal",
+							"7" : "outOfMemory"
+						},
+						"name" : "CISCO-SLB-MIB::slbVServerState",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVServerStateChangeDescr",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVServerClassMap",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVServerPolicyMap",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-SLB-MIB::slbVServerIpAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVServerIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVServerProtocol",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.3.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SLB-MIB::ciscoSlbVirtualServerStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a virtual",
+				"server changes to a new state.",
+				"- entPhysicalParentRelPos contains the slot",
+				"number of the module.",
+				"- slbVirtualServerState contains the new state of the ",
+				"virtual server identified by slbVirtualServerName.",
+				"- slbVirtualIpAddress contains the ip address of the ",
+				"virtual server identified by slbVirtualServerName.",
+				"- slbVirtualProtocol contains the protocol of the ",
+				"virtual server identified by slbVirtualServerName.",
+				"- slbVirtualPort contains the port number of the ",
+				"virtual server identified by slbVirtualServerName.",
+				"- slbName contains the name of the virtual server",
+				"identified by slbVirtualServerName."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 2) ? 1 : (($v2 == 1) ? 2 : 3)"
+				},
+				"EventType" : "ciscoSlbVirtualServerStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2 == 2) ? 3600 : (($v2 == 1) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 2) ? 0 : (($v2 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "$v6",
+				"Summary" : "Virtual server has changed to $v2 state."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SLB-MIB::ciscoSlbVirtualServerStateChange ENTITY-MIB::entPhysicalParentRelPos i 9999 CISCO-SLB-MIB::slbVirtualServerState i 1 CISCO-SLB-MIB::slbVirtualIpAddress a 192.168.0.1 CISCO-SLB-MIB::slbVirtualProtocol i 99 CISCO-SLB-MIB::slbVirtualPort i 9999 CISCO-SLB-MIB::slbName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-SLB-MIB::ciscoSlbVirtualServerStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.161.2.0.7",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalParentRelPos",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "outOfService",
+							"2" : "inService",
+							"3" : "standby",
+							"4" : "inOperReal",
+							"5" : "stbInOperReal",
+							"6" : "testReal",
+							"7" : "outOfMemory"
+						},
+						"name" : "CISCO-SLB-MIB::slbVirtualServerState",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVirtualIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVirtualProtocol",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbVirtualPort",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbName",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.8.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SLB-MIB::ciscoSlbRealServerStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a real",
+				"server changes to a new state.",
+				"- entPhysicalParentRelPos contains the slot",
+				"number of the module.",
+				"- slbRealState contains the new state of real",
+				"server identified by slbRealIpAddress.",
+				"- slbInetAddressType contains the type of IP ",
+				"address configured in slbInetAddress.",
+				"- slbInetAddress contains the ip address of the",
+				"real server identified by the INDEX object ",
+				"slbRealIpAddress.",
+				"- slbPort contains the TCP/UDP port of the real ",
+				"server identified by the INDEX object slbRealPort.",
+				"- slbName contains the serverfarm name atached to",
+				"to the real server identified by the INDEX object",
+				"slbRealServerFarmName."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 2) ? 1 : (($v2 == 1) ? 2 : 3)"
+				},
+				"EventType" : "ciscoSlbRealServerStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2 == 2) ? 3600 : (($v2 == 1) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 2) ? 0 : (($v2 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "$v6",
+				"Summary" : "Real server has changed to $v1 state."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SLB-MIB::ciscoSlbRealServerStateChange ENTITY-MIB::entPhysicalParentRelPos i 9999 CISCO-SLB-MIB::slbRealState i 1 CISCO-SLB-MIB::slbInetAddressType i 0 CISCO-SLB-MIB::slbInetAddress s EXAMPLE CISCO-SLB-MIB::slbPort i 9999 CISCO-SLB-MIB::slbName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-SLB-MIB::ciscoSlbRealServerStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.161.2.0.8",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalParentRelPos",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "outOfService",
+							"2" : "inService",
+							"3" : "failed",
+							"4" : "readyToTest",
+							"5" : "testing",
+							"6" : "maxConnsThrottle",
+							"7" : "maxClientsThrottle",
+							"8" : "dfpThrottle",
+							"9" : "probeFailed",
+							"10" : "probeTesting",
+							"11" : "operWait",
+							"12" : "testWait",
+							"13" : "inbandProbeFailed",
+							"14" : "returnCodeFailed",
+							"15" : "arpFailed",
+							"16" : "standby",
+							"17" : "inactive",
+							"18" : "maxLoad"
+						},
+						"name" : "CISCO-SLB-MIB::slbRealState",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-SLB-MIB::slbInetAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.8.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbInetAddress",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.8.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbPort",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.8.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SLB-MIB::slbName",
+						"oid" : "1.3.6.1.4.1.9.9.161.1.8.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

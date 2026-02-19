@@ -1,0 +1,116 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200107310000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-DSP-RESOURCES-MIB::sonusPadThresholdNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when a PAD resource usage has gone above the threshold value.",
+				"The type indicates the type reseource."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : (($v6==1 || $v6==2 || $v6==3) ? 2 : 3)"
+				},
+				"EventType" : "sonusPadThreshold:$v2",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : (($v6==1 || $v6==2 || $v6==3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : (($v6==1) ? 5 : (($v6==2) ? 4 : (($v6==3) ? 3 : 2)))"
+				},
+				"SubNode" : "ShelfIndex:$v1",
+				"Summary" : "$v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SONUS-DSP-RESOURCES-MIB::sonusPadThresholdNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-DSP-RESOURCES-MIB::sonusPadThresholdType i 1 SONUS-DSP-RESOURCES-MIB::sonusPadThresholdState i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+				"$SNMPTRAPCMD SONUS-DSP-RESOURCES-MIB::sonusPadThresholdNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-DSP-RESOURCES-MIB::sonusPadThresholdType i 1 SONUS-DSP-RESOURCES-MIB::sonusPadThresholdState i 2 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1"
+			],
+			"trap" : {
+				"name" : "SONUS-DSP-RESOURCES-MIB::sonusPadThresholdNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.2.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Type of resource usage that caused a threshold crossing trap"
+						],
+						"enums" : {
+							"1" : "g729AB",
+							"2" : "tone"
+						},
+						"name" : "SONUS-DSP-RESOURCES-MIB::sonusPadThresholdType",
+						"oid" : "1.3.6.1.4.1.2879.2.2.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"State of threshold, indicates whether threshold is on or off"
+						],
+						"enums" : {
+							"1" : "off",
+							"2" : "on"
+						},
+						"name" : "SONUS-DSP-RESOURCES-MIB::sonusPadThresholdState",
+						"oid" : "1.3.6.1.4.1.2879.2.2.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

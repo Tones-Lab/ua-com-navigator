@@ -1,0 +1,301 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200305050000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ERI-DNX-STM1-OC3-MIB::optDevConfigTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has updated ",
+				"the configuration for a given Stm1Oc3 Device entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==0 || $v3==1) ? 3 : ($v3==101) ? 1 : 2"
+				},
+				"EventType" : "optDevConfigTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==0 || $v3==1)  ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0 || $v3==1) ? 2 : ($v3==101) ? 0 : 3"
+				},
+				"SubNode" : "DevConfigAddr:$v2",
+				"Summary" : "Configuration update on Stm1Oc3 $v2 . Command status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-STM1-OC3-MIB::optDevConfigTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-STM1-OC3-MIB::optDevCfgAddr a 192.0.2.1 ERI-DNX-STM1-OC3-MIB::optDevCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-STM1-OC3-MIB::optDevConfigTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.2.7.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a STM1/OC3 Device resource. ",
+							"This number will be used throughout the system to identify ",
+							"a unique resource."
+						],
+						"name" : "ERI-DNX-STM1-OC3-MIB::optDevCfgAddr",
+						"oid" : "1.3.6.1.4.1.644.2.4.2.7.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The command status for this link configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"Stm1Oc3 Device Cfg Commands used in SET Command (1..99) ",
+							"update-config(1)",
+							"Change existing Stm1Oc3 Device Configuration",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"Device data has been successfully changed",
+							"",
+							"Stm1Oc3 Device Config Error Codes used in GET RESPONSE Command (400..799)",
+							"err-general-opt-config-error (400)",
+							"Unknown Device configuration error occurred ",
+							"err-au4Seq-cannot-be-mixed-framing (402)",
+							"Au4 sequential mode supports only all-E1 or all-T1 Payloads",
+							"err-invalid-opt-dev-command (403)",
+							"Unrecognized device command-action ",
+							"err-device-is-protection-module (414)",
+							"Can't configure Device designated as Protection (odd # slot)",
+							"err-invalid-multiplex-map (415)",
+							"Configured multiplexing structure not valid for device type ",
+							"err-invalid-payload-framing (416)",
+							"Unrecognized payload group type",
+							"err-invalid-xlink-nest-num (419)",
+							"X-Link cannot be assigned to selected Nest",
+							"err-invalid-line-timing (421)",
+							"Unrecognized clock setting",
+							"err-ts-alloc-not-applicable (424)",
+							"Timeslot Alloc can only be configured for STM1 or OC3",
+							"cards in Standalone DNX systems",
+							"err-xlink-pair-not-applicable (427)",
+							"X-Link assignement can only be changed for STM1X or",
+							"OC3X cards in DNX88 systems.",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name.",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update-config",
+							"101" : "update-successful",
+							"400" : "err-general-opt-config-error",
+							"402" : "err-au4Seq-cannot-be-mixed-framing",
+							"403" : "err-invalid-opt-dev-command",
+							"414" : "err-device-is-protection-module",
+							"415" : "err-invalid-multiplex-map",
+							"416" : "err-invalid-payload-framing",
+							"419" : "err-invalid-xlink-nest-num",
+							"421" : "err-invalid-line-timing",
+							"424" : "err-ts-alloc-not-applicable",
+							"427" : "err-xlink-pair-not-applicable",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-STM1-OC3-MIB::optDevCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.2.7.1.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-STM1-OC3-MIB::optT1E1ConfigTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has updated ",
+				"the configuration for a given Stm1Oc3 T1/E1 Link entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==101) ? 1 : (($v3>=400 && $v3<=428) || $v3==450 || ($v3>=500 && $v3<=502)) ? 2 : 3"
+				},
+				"EventType" : "optT1E1ConfigTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==101 || ($v3>=400 && $v3<=428) || $v3==450 || ($v3>=500 && $v3<=502)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==101) ? 0 : (($v3>=400 && $v3<=404) || ($v3>=406 && $v3<=409) || $v3==415 || $v3==416 || $v3==418 || $v3==427) ? 4 : ($v3==405 || ($v3>=410 && $v3<=414) || $v3==417 || ($v3>=419 && $v3<=426) || $v3==428 || $v3==450 || ($v3>=500 && $v3<=502)) ? 3 : 2"
+				},
+				"SubNode" : "T1E1ConfigLinkAddr:$v2",
+				"Summary" : "Configuration update on Stm1Oc3 link $v2 . Command status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-STM1-OC3-MIB::optT1E1ConfigTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-STM1-OC3-MIB::optT1E1CfgLinkAddr a 192.0.2.1 ERI-DNX-STM1-OC3-MIB::optT1E1CfgCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-STM1-OC3-MIB::optT1E1ConfigTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.2.7.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a Stm1Oc3 T1/E1 Link resource. ",
+							"This number will be used throughout the system to identify ",
+							"a unique resource."
+						],
+						"name" : "ERI-DNX-STM1-OC3-MIB::optT1E1CfgLinkAddr",
+						"oid" : "1.3.6.1.4.1.644.2.4.2.7.1.2.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The command status for this link configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"optical T1E1 Link Commands used in SET Command (1..199) ",
+							"update(1)",
+							"Change existing Link Configuration",
+							"inServiceAll (7)",
+							"Change Link Status to in-service for all links ",
+							"within the same payload.",
+							"copyToAll (9)",
+							"Copy T1/E1 Link configuration to all other links ",
+							"within the same payload",
+							"outOfServiceAll (12)",
+							"Change Link Status to out-of-service for all links",
+							"within the same payload.",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"Link data has been successfully changed",
+							"insvc-successful (107)",
+							"All Payload Links have been successfully placed In Service",
+							"copy-successful (109)",
+							"Link data has been successfully copied to other links",
+							"oos-successful (112)",
+							"All Payload Links have been successfully placed Out of Service",
+							"",
+							"optical T1E1 Link Config Error Codes used in GET RESPONSE Command (400..699)",
+							"err-general-link-config-error (400)",
+							"Unknown link configuration error occurred ",
+							"err-invalid-link-status (401)",
+							"Unrecognized link status setting",
+							"err-invalid-link-framing (402) ",
+							"Line framing type not valid for link type",
+							"err-invalid-link-command (403)",
+							"Unrecognized link command-action",
+							"err-invalid-esf-format (405)",
+							"ESF type not applicable to link type",
+							"err-invalid-red-timeout (412)",
+							"Unrecognized red alarm timeout",
+							"err-invalid-idle-code (413)",
+							"Unrecognized unused TSs code",
+							"err-device-in-standby (414)",
+							"Can't change config for designated Standby device",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name ",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update",
+							"7" : "inServiceAll",
+							"9" : "copyToAll",
+							"12" : "outOfServiceAll",
+							"101" : "update-successful",
+							"107" : "insvc-successful",
+							"109" : "copy-successful",
+							"112" : "oos-successful",
+							"400" : "err-general-link-config-error",
+							"401" : "err-invalid-link-status",
+							"402" : "err-invalid-link-framing",
+							"403" : "err-invalid-link-command",
+							"404" : "err-invalid-link-lbo",
+							"405" : "err-invalid-esf-format",
+							"406" : "err-invalid-link-density",
+							"407" : "err-invalid-link-op-mode",
+							"408" : "err-invalid-link-rem-loop",
+							"409" : "err-invalid-link-ais",
+							"410" : "err-invalid-network-loop",
+							"411" : "err-invalid-yellow-alarm",
+							"412" : "err-invalid-red-timeout",
+							"413" : "err-invalid-idle-code",
+							"414" : "err-device-in-standby",
+							"415" : "err-invalid-link-mapping",
+							"416" : "err-invalid-link-vt-group",
+							"417" : "err-invalid-rcv-clocksrc",
+							"418" : "err-invalid-link-name",
+							"419" : "err-invalid-interface",
+							"420" : "err-invalid-polarity",
+							"421" : "err-invalid-clock-timing",
+							"422" : "err-invalid-control-signal",
+							"423" : "err-dcd-dsr-not-applicable",
+							"424" : "err-requires-special-mode",
+							"425" : "err-cts-not-applicable",
+							"426" : "err-gr303-not-applicable",
+							"427" : "err-invalid-link-bits",
+							"428" : "err-device-is-protection-module",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-STM1-OC3-MIB::optT1E1CfgCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.2.7.1.2.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

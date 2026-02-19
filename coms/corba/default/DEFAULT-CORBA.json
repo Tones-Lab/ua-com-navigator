@@ -1,0 +1,600 @@
+{
+	"objects" : [
+		{
+			"@objectName" : "CORBA::DEFAULT",
+			"version" : "v2",
+			"certification" : "STANDARD",
+			"description" : [
+				"Default FCOM rules for Corba Event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"ExpireTime" : 86400,
+				"Severity" : 1,
+				"ServiceImpact" : "0",
+				"Summary" : "$.corba.nativeProbableCause",
+				"EventType" : "$.corba.probableCause",
+				"DeviceType" : "${.corba.objectType}",
+				"Customer" : "${.corba.objectName.EMS}",
+				"IPAddress" : "${.corba.additionalInfo.IPAddress}",
+				"SubMethod" : "${.corba.eventTypeName}",
+				"OwnerName" : "${.corba.nativeEMSName}"
+			},
+			"method" : "corba",
+			"postProcessors" : [
+				{
+					"foreach": {
+						"source": "$.corba.objectName",
+						"keyField": "key",
+						"valField": "value",
+						"then": [
+							{
+								"if": {
+									"conditions": {
+										"and": [
+											{
+												"property": "$.foreach.key",
+												"operator": "!=",
+												"value": "EMS"
+											}
+										]
+									},
+									"then": [
+										{
+											"set": {
+												"source": "%s+%s",
+												"args": [ "$.event.EventKey","$.foreach.value"],
+												"targetField": "$.event.EventKey"
+											}
+										}
+									],
+									"else": []
+								}
+							}
+						]
+					}
+				},
+				{
+					"foreach": {
+						"source": [
+							"$.corba.probableCause",
+							"$.corba.probableCauseQualifier",
+							"$.corba.layerRate",
+							"$.corba.pmParameterName",
+							"$.corba.pmLocation",
+							"$.corba.granularity",
+							"$.corba.thresholdType"
+						],
+						"keyField": "key",
+						"valField": "value",
+						"then": [
+							{
+								"interpolate": {
+									"source": "$.foreach.value",
+									"targetField": "$.foreach.value"
+								}
+							},
+							{
+								"trim": {
+									"source": "$.foreach.value",
+									"cutset": " ",
+									"targetField": "$.foreach.value"
+								}
+							},
+							{
+								"if": {
+									"conditions": {
+										"and": [
+											{
+												"property": "$.foreach.value",
+												"operator": "!=",
+												"value": ""
+											}
+										]
+									},
+									"then": [
+										{
+											"set": {
+												"source": "%s+%s",
+												"args": [ "$.event.EventKey","$.foreach.value"],
+												"targetField": "$.event.EventKey"
+											}
+										}
+									],
+									"else": []
+								}
+							}
+						]
+					}
+				},
+				{
+					"substr": {
+						"source": "$.event.EventKey",
+						"start": 1,
+						"targetField": "$.event.EventKey"
+					}
+				},
+				{
+					"switch" : {
+						"source" : "$.corba.perceivedSeverity",
+						"operator" : "==",
+						"case" : [
+							{
+								"match" : "PS_CLEARED",
+								"then" : [
+									{
+										"set" : {
+											"source" : 0,
+											"targetField" : "$.event.Severity"
+										}
+									},
+									{
+										"set" : {
+											"source" : 1,
+											"targetField" : "$.event.EventCategory"
+										}
+									},
+									{
+										"set" : {
+											"source" : 3600,
+											"targetField" : "$.event.ExpireTime"
+										}
+									}
+								]
+							},
+							{
+								"match" : "PS_INDETERMINATE",
+								"then" : [
+									{
+										"set" : {
+											"source" : 1,
+											"targetField" : "$.event.Severity"
+										}
+									},
+									{
+										"set" : {
+											"source" : 3,
+											"targetField" : "$.event.EventCategory"
+										}
+									}
+								]
+							},
+							{
+								"match" : "PS_WARNING",
+								"then" : [
+									{
+										"set" : {
+											"source" : 2,
+											"targetField" : "$.event.Severity"
+										}
+									},
+									{
+										"set" : {
+											"source" : 3,
+											"targetField" : "$.event.EventCategory"
+										}
+									}
+								]
+							},
+							{
+								"match" : "PS_MINOR",
+								"then" : [
+									{
+										"set" : {
+											"source" : 3,
+											"targetField" : "$.event.Severity"
+										}
+									},
+									{
+										"set" : {
+											"source" : 2,
+											"targetField" : "$.event.EventCategory"
+										}
+									}
+								]
+							},
+							{
+								"match" : "PS_MAJOR",
+								"then" : [
+									{
+										"set" : {
+											"source" : 4,
+											"targetField" : "$.event.Severity"
+										}
+									},
+									{
+										"set" : {
+											"source" : 2,
+											"targetField" : "$.event.EventCategory"
+										}
+									}
+								]
+							},
+							{
+								"match" : "PS_CRITICAL",
+								"then" : [
+									{
+										"set" : {
+											"source" : 5,
+											"targetField" : "$.event.Severity"
+										}
+									},
+									{
+										"set" : {
+											"source" : 2,
+											"targetField" : "$.event.EventCategory"
+										}
+									}
+								]
+							}
+						],
+						"default" : [
+							{
+								"set" : {
+									"source" : 1,
+									"targetField" : "$.event.Severity"
+								}
+							},
+							{
+								"set" : {
+									"source" : 3,
+									"targetField" : "$.event.EventCategory"
+								}
+							}
+						]
+					}
+				},
+				{
+					"switch" : {
+						"source" : "$.corba.serviceAffecting",
+						"operator" : "==",
+						"case" : [
+							{
+								"match" : "SA_SERVICE_AFFECTING",
+								"then" : [
+									{
+										"set" : {
+											"source" : 1,
+											"targetField" : "$.event.ServiceImpact"
+										}
+									}
+								]
+							},
+							{
+								"match" : "SA_NON_SERVICE_AFFECTING",
+								"then" : [
+									{
+										"set" : {
+											"source" : 2,
+											"targetField" : "$.event.ServiceImpact"
+										}
+									}
+								]
+							},
+							{
+								"match" : "SA_UNKNOWN",
+								"then" : [
+									{
+										"set" : {
+											"source" : 0,
+											"targetField" : "$.event.ServiceImpact"
+										}
+									}
+								]
+							}
+						]
+					}
+				},
+				{
+					"copy" : {
+						"source" : "$.event.Severity",
+						"targetField" : "$.event.OrigSeverity"
+					}
+				},
+				{
+					"interpolate" : {
+						"source" : "EMS::$.event.Customer",
+						"targetField" : "$.event.Customer"
+					}
+				},
+				{
+					"interpolate" : {
+						"source" : "Corba Event received $.event.Summary ",
+						"targetField" : "$.event.Summary"
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.corba.nativeProbableCause",
+									"operator": "!=",
+									"value": ""
+								}
+							]
+						},
+						"then": [
+							{
+								"interpolate" : {
+									"source" : " $.event.EventType : $.corba.nativeProbableCause",
+									"targetField" : "$.event.EventType"
+								}
+							}
+						]
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.event.Summary",
+									"operator": "==",
+									"value": ""
+								}
+							]
+						},
+						"then": [
+							{
+								"set": {
+									"source": "Corba event received",
+									"targetField": "$.event.Summary"
+								}
+							}
+						]
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.corba.objectName.ManagedElement",
+									"operator": "!=",
+									"value": ""
+								}
+							]
+						},
+						"then": [
+							{
+								"set": {
+									"source": "$.corba.objectName.ManagedElement",
+									"targetField": "$.event.Node"
+								}
+							},
+							{
+								"set": {
+									"source": [
+										"$.corba.objectName.PTP",
+										"$.corba.objectName.FTP",
+										"$.corba.objectName.CTP",
+										"$.corba.objectName.GTP",
+										"$.corba.objectName.PMP",
+										"$.corba.objectName.EquipmentHolder",
+										"$.corba.objectName.Equipment",
+										"$.corba.objectName.PGP",
+										"$.corba.objectName.EPGP",
+										"$.corba.objectName.TCAParameterProfile",
+										"$.corba.objectName.MatrixFlowDomain"
+									],
+									"targetField": "$.event.SubNodeFields"
+								}
+							},
+							{
+								"foreach": {
+									"source": "$.event.SubNodeFields",
+									"keyField": "key",
+									"valField": "value",
+									"then": [
+										{
+											"interpolate": {
+												"source": "$.foreach.value",
+												"targetField": "$.event.NodeFieldsValue"
+											}
+										},
+										{
+											"if": {
+												"conditions": {
+													"and": [
+														{
+															"property": "$.event.NodeFieldsValue",
+															"operator": "!=",
+															"value": ""
+														}
+													]
+												},
+												"then": [
+													{
+														"if": {
+															"conditions": {
+																"and": [
+																	{
+																		"property": "$.event.SubNode",
+																		"operator": "!=",
+																		"value": ""
+																	}
+																]
+															},
+															"then": [
+																{
+																	"interpolate": {
+																		"source": "$.event.SubNode ; $.event.NodeFieldsValue",
+																		"targetField": "$.event.SubNode"
+																	}
+																}
+															],
+															"else": [
+																{
+																	"set": {
+																		"source": "$.event.NodeFieldsValue",
+																		"targetField": "$.event.SubNode"
+																	}
+																}
+															]
+														}
+													}
+												],
+												"else": [
+												]
+											}
+										}
+									]
+								}
+							},
+							{
+								"replace": {
+									"source": "$.event.SubNode",
+									"pattern": " ; ",
+									"replacement": "/",
+									"targetField": "$.event.SubNode"
+								}
+							},
+							{
+								"remove": {
+									"source": "$.event.SubNodeFields"
+								}
+							},
+							{
+								"remove": {
+									"source": "$.event.NodeFieldsValue"
+								}
+							}
+						]
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.corba.objectName.MultiLayerSubnetwork",
+									"operator": "!=",
+									"value": ""
+								}
+							]
+						},
+						"then": [
+							{
+								"set": {
+									"source": "$.corba.objectName.MultiLayerSubnetwork",
+									"targetField": "$.event.Node"
+								}
+							},
+							{
+								"set": {
+									"source": [
+										"$.corba.objectName.SubnetworkConnection",
+										"$.corba.objectName.TPPool"
+									],
+									"targetField": "$.event.SubNodeFields"
+								}
+							},
+							{
+								"foreach": {
+									"source": "$.event.SubNodeFields",
+									"keyField": "key",
+									"valField": "value",
+									"then": [
+										{
+											"interpolate": {
+												"source": "$.foreach.value",
+												"targetField": "$.event.NodeFieldsValue"
+											}
+										},
+										{
+											"if": {
+												"conditions": {
+													"and": [
+														{
+															"property": "$.event.NodeFieldsValue",
+															"operator": "!=",
+															"value": ""
+														}
+													]
+												},
+												"then": [
+													{
+														"if": {
+															"conditions": {
+																"and": [
+																	{
+																		"property": "$.event.SubNode",
+																		"operator": "!=",
+																		"value": ""
+																	}
+																]
+															},
+															"then": [
+																{
+																	"interpolate": {
+																		"source": "$.event.SubNode ; $.event.NodeFieldsValue",
+																		"targetField": "$.event.SubNode"
+																	}
+																}
+															],
+															"else": [
+																{
+																	"set": {
+																		"source": "$.event.NodeFieldsValue",
+																		"targetField": "$.event.SubNode"
+																	}
+																}
+															]
+														}
+													}
+												],
+												"else": [
+												]
+											}
+										}
+									]
+								}
+							},
+							{
+								"replace": {
+									"source": "$.event.SubNode",
+									"pattern": " ; ",
+									"replacement": "/",
+									"targetField": "$.event.SubNode"
+								}
+							},
+							{
+								"remove": {
+									"source": "$.event.SubNodeFields"
+								}
+							},
+							{
+								"remove": {
+									"source": "$.event.NodeFieldsValue"
+								}
+							}
+						]
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.corba.objectName.TopologicalLink",
+									"operator": "!=",
+									"value": ""
+								}
+							]
+						},
+						"then": [
+							{
+								"set": {
+									"source": "$.corba.objectName.TopologicalLink",
+									"targetField": "$.event.Node"
+								}
+							}
+						]
+					}
+				}
+			]
+		}
+	]
+}

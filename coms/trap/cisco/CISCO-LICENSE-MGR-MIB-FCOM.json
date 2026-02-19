@@ -1,0 +1,159 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200407200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-LICENSE-MGR-MIB::clmLicenseExpiryNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"A clmLicenseCountExpiryNotify is sent, when a ",
+				"feature license expires."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clmLicenseExpiryNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Feature license expires on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LICENSE-MGR-MIB::clmLicenseExpiryNotify CISCO-LICENSE-MGR-MIB::clmLicenseExpiryDate s EXAMPLES",
+			"trap" : {
+				"name" : "CISCO-LICENSE-MGR-MIB::clmLicenseExpiryNotify",
+				"oid" : "1.3.6.1.4.1.9.9.369.3.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-LICENSE-MGR-MIB::clmLicenseExpiryDate",
+						"oid" : "1.3.6.1.4.1.9.9.369.1.3.4.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LICENSE-MGR-MIB::clmNoLicenseForFeatureNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"A 'clmNoLicenseForFeatureNotify' is sent, when an ",
+				"license is issued for a feature which does ",
+				"not have license. The license will expire after",
+				"a grace period, which is mentioned in the ",
+				"'clmLicenseGracePeriod' object of this",
+				"notification. This notification is also sent once",
+				"every 24 hours from the start of the grace period.",
+				"In the last 7 days before grace period expiry this",
+				"notification is sent once every hour. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clmNoLicenseForFeatureNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Feature license has expired but $v1 seconds left in grace period"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LICENSE-MGR-MIB::clmNoLicenseForFeatureNotify CISCO-LICENSE-MGR-MIB::clmLicenseGracePeriod i 9999",
+			"trap" : {
+				"name" : "CISCO-LICENSE-MGR-MIB::clmNoLicenseForFeatureNotify",
+				"oid" : "1.3.6.1.4.1.9.9.369.3.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-LICENSE-MGR-MIB::clmLicenseGracePeriod",
+						"oid" : "1.3.6.1.4.1.9.9.369.1.3.4.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LICENSE-MGR-MIB::clmLicenseFileMissingNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"A clmLicenseFileMissingNotify is generated when the",
+				"system detects that one or more installed license",
+				"files are missing. To correct this fault, any",
+				"files which might be missing should be reinstalled",
+				"e.g., if it's unknown which ones are missing, then ",
+				"all files can be re-installed, ignoring any 'duplicate",
+				"license' messages."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clmLicenseFileMissingNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "$v1 installed license files are missing"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LICENSE-MGR-MIB::clmLicenseFileMissingNotify CISCO-LICENSE-MGR-MIB::clmNoOfMissingUsageLicenses i 9999",
+			"trap" : {
+				"name" : "CISCO-LICENSE-MGR-MIB::clmLicenseFileMissingNotify",
+				"oid" : "1.3.6.1.4.1.9.9.369.3.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-LICENSE-MGR-MIB::clmNoOfMissingUsageLicenses",
+						"oid" : "1.3.6.1.4.1.9.9.369.1.3.4.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LICENSE-MGR-MIB::clmLicenseExpiryWarningNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"A 'clmLicenseExpiryWarningNotify' is sent, ",
+				"when an license issued for a feature is ",
+				"going to expire, and the feature is use. This",
+				"notification is sent once in a day starting 30",
+				"days before license expiry. In the last 7 days",
+				"before expiry this notification is sent once ",
+				"every hour.",
+				"The license will expire on the date and time, ",
+				"mentioned in the 'clmLicenseExpiryDate' object of ",
+				"this notification. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clmLicenseExpiryWarningNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Feature license is going to expire $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LICENSE-MGR-MIB::clmLicenseExpiryWarningNotify CISCO-LICENSE-MGR-MIB::clmLicenseExpiryDate s EXAMPLES",
+			"trap" : {
+				"name" : "CISCO-LICENSE-MGR-MIB::clmLicenseExpiryWarningNotify",
+				"oid" : "1.3.6.1.4.1.9.9.369.3.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-LICENSE-MGR-MIB::clmLicenseExpiryDate",
+						"oid" : "1.3.6.1.4.1.9.9.369.1.3.4.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

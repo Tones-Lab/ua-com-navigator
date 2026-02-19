@@ -1,0 +1,53 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗ 
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝ 
+#  
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+# Load Time Module: neede for NEFirst/LastReported
+use Data::Dumper;
+use Time::Local;
+use Time::Piece;   # used by custom_datetotime() function defined below
+use Time::HiRes;
+use Digest::MD5 qw(md5_hex); # used by md5_hex
+
+my $trace = "base.load";
+$Log->Message('DEBUG', $trace . " started...");
+$Log->Message('DEBUG', 'Config: ' . Dumper($Config));
+
+
+# Load Lookups
+ems_lookup_defaults();
+huawei_iMaster_nce_lookup_hwNmNorthboundEventTrap_severities();
+huawei_iMaster_nce_lookup_iMAPNorthboundAlarmProductID();
+huawei_iMaster_nce_lookup_iMAPNorthboundAlarmType();
+huawei_iMaster_nce_lookup_iMAPNorthboundFaultAlarmNotification_severities();
+
+# Load global Functions
+H3A_LibMySQL();
+H3A_LibOracle();
+H3A_LibUtils();
+H3A_LibEnrichDCI();
+H3A_LibEnrichOsiris();
+H3A_LibEnrichRemedy();
+H3A_LibEnrichAPI();
+H3A_EventDefault();
+H3A_LibBroker();
+
+# Global Variables
+our $EMSKey;												# set by LibEventDefault_setDefaultEventFields based on EMSName defined in EMS/EMS_lookup_Defaults.pl
+our $envRef = LibUtil_GetEnvironmentalNVPs(['umsdb']) ; 	# based on name ^(<pattern>|...).* defined in DCI.t_environmental
+
+$Log->Message('DEBUG', $trace . " ...done");

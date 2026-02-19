@@ -1,0 +1,69 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝
+#
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+# 2025-11-27: Martin Aigner, Initial deployment
+#
+# ------------------------------------------------------------------------------------------------------------- #
+##################################################################################################################
+#       Desciption:     iMAPNorthboundHeartbeatNotificationType
+#       OID:            1.3.6.1.4.1.2011.2.15.2.1.2.1.1.1.0.5
+#       Name:           iMAPNorthboundHeartbeatNotificationType
+#		Reference:		Netcool: Huawei_NCE_iMAPNorthboundHeartbeatNotificationType.rules
+##################################################################################################################
+my $rulesfile = "NCE_iMAPNorthboundHeartbeatNotificationType.rules";
+$Log->Message('DEBUG', "Executing: " . $rulesfile);
+$Event->{SubMethod} = $rulesfile;
+
+if ($specific == 5) {
+    # iMAPNorthboundHeartbeatNotificationType
+    # SNMPv2
+    # The iMAP sends the heartbeat notification trap to the NMS
+    # regularly each period. If the NMS receives the trap, the
+    # connection between the NMS and the iMAP works. If not,
+    # the connection fails
+    $iMAPNorthboundHeartbeatSystemLabel = $v1;
+    $iMAPNorthboundHeartbeatPeriod = $v2;
+    $iMAPNorthboundHeartbeatTimeStamp = $v3;
+    $Event->{'Node'}					= $iMAPNorthboundHeartbeatSystemLabel;
+    if($ip eq "172.31.7.74")
+    {
+    	$Event->{'NodeAlias'}			= "nce-b52-primary-prod";
+    }
+    elsif($ip eq "172.31.7.90")
+    {
+    	$Event->{'NodeAlias'}			= "nce-mgc-secondary-prod";
+    }
+    else
+    {
+    	$Event->{'NodeAlias'}			= $Event->{'Node'};
+    }
+
+    $Event->{'EventType'}				= "EMS Heartbeat";
+    $Event->{'SubNode'}					= "Heartbeat";
+    $Event->{'AlarmCategorization1'}	= "Huawei NCE";
+    $Event->{'AlarmCategorization2'}	= "Heartbeat";
+    $Event->{'Summary'}       			= $Event->{'EMSName'} . " EMS Heartbeat";
+    $Event->{'AlarmCode'} 				= "Heartbeat";
+    $Event->{MsgGroup}                  = "OSS-EMS";
+    LibUtil_AddSuppression($Event,"Hidden from NOC","Rules", 0,"Huawei _NCE iMAPNorthboundHeartbeatNotification suppressed", $rulesfile);  #@SuppressEscl = 20
+
+    $Event->{'Severity'}      			= 2;
+    $Event->{'EventCategory'} 			= 10; ## @Type=13 present in Netcool rules ## 
+}
+
+$Log->Message('DEBUG', $rulesfile . " ...done");

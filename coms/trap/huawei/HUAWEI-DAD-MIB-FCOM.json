@@ -1,0 +1,127 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201607111230Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-DAD-MIB::hwDadConflictDetect",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notify the NMS that dual-active scenario is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwDadConflict",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Dual-active scenario detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-DAD-MIB::hwDadConflictDetect ",
+			"trap" : {
+				"name" : "HUAWEI-DAD-MIB::hwDadConflictDetect",
+				"oid" : "1.3.6.1.4.1.2011.5.25.246.1.1"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-DAD-MIB::hwDadConflictResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notify the NMS that dual-active scenario is merged."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwDadConflict",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Dual-active condition resolved"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-DAD-MIB::hwDadConflictResume ",
+			"trap" : {
+				"name" : "HUAWEI-DAD-MIB::hwDadConflictResume",
+				"oid" : "1.3.6.1.4.1.2011.5.25.246.1.2"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-DAD-MIB::hwDadPortProtocolAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notify the NMS that the protocol status of the dual-active port change to down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwDadPortProtocolAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Port:$v1",
+				"Summary" : "Dual-active detection port protocol status is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-DAD-MIB::hwDadPortProtocolAlarm HUAWEI-DAD-MIB::hwDadDetectPort s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-DAD-MIB::hwDadPortProtocolAlarm",
+				"oid" : "1.3.6.1.4.1.2011.5.25.246.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"The interface name of dual-active port."
+						],
+						"name" : "HUAWEI-DAD-MIB::hwDadDetectPort",
+						"oid" : "1.3.6.1.4.1.2011.5.25.246.3.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-DAD-MIB::hwDadPortProtocolAlarmResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notify the NMS that the protocol status of the dual-active port change to up, or the dual-active port does not exist."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwDadPortProtocolAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Port:$v1",
+				"Summary" : "Dual-active detection port protocol status is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-DAD-MIB::hwDadPortProtocolAlarmResume HUAWEI-DAD-MIB::hwDadDetectPort s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-DAD-MIB::hwDadPortProtocolAlarmResume",
+				"oid" : "1.3.6.1.4.1.2011.5.25.246.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"The interface name of dual-active port."
+						],
+						"name" : "HUAWEI-DAD-MIB::hwDadDetectPort",
+						"oid" : "1.3.6.1.4.1.2011.5.25.246.3.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

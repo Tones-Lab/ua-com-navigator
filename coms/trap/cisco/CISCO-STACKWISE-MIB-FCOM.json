@@ -1,0 +1,933 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201604160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPortChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the state",
+				"of a stack port has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : 2"
+				},
+				"EventType" : "cswStackPortChange",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : 4"
+				},
+				"SubNode" : "ifIndex: $v1",
+				"Summary" : "Stack port has changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPortChange IF-MIB::ifIndex i 9999 CISCO-STACKWISE-MIB::cswStackPortOperStatus i 1 CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPortChange",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.1",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "forcedDown"
+						},
+						"name" : "CISCO-STACKWISE-MIB::cswStackPortOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackNewMaster",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a new master has been",
+				"elected. The notification will contain the cswSwitchNumCurrent",
+				"object to indicate the new master ID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackNewMaster",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SwitchNum: $v1",
+				"Summary" : "The new stack master is now running on port $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackNewMaster CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackNewMaster",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a new member attempt",
+				"to join the stack but was denied due to a mismatch. The",
+				"cswSwitchState object will indicate the type of mismatch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SwitchNum: $v2",
+				"Summary" : "Member failed to join the stack due to mismatch $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackMismatch CISCO-STACKWISE-MIB::cswSwitchState i 1 CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackMismatch",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "waiting",
+							"2" : "progressing",
+							"3" : "added",
+							"4" : "ready",
+							"5" : "sdmMismatch",
+							"6" : "verMismatch",
+							"7" : "featureMismatch",
+							"8" : "newMasterInit",
+							"9" : "provisioned",
+							"10" : "invalid",
+							"11" : "removed"
+						},
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchState",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackRingRedundant",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the redundancy of the",
+				"ring has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackRingRedundant",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'Stackports are connected to form redundant ring' : 'Stackports are not connected to form a redundant ring'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackRingRedundant CISCO-STACKWISE-MIB::cswRingRedundant i 1",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackRingRedundant",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-STACKWISE-MIB::cswRingRedundant",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackNewMember",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a new member joins the",
+				"stack."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackNewMember",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "New member interface $v1 has joined the stack."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackNewMember CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackNewMember",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackMemberRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a member is removed",
+				"from the stack."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackMemberRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Member interface $v1 was removed from the stack."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackMemberRemoved CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackMemberRemoved",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerPortLinkStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the link status of a stack",
+				"power port is changed from up to down or down to up. This",
+				"notification is for informational purposes only and no action",
+				"is required. cswStackPowerPortLinkStatus indicates link status",
+				"of the stack power ports. cswSwitchNumCurrent indicates the",
+				"switch number of the system. cswStackPowerPortName specifies a",
+				"unique name of the stack power port as shown on the face plate",
+				"of the system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cswStackPowerPortLinkStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 2"
+				},
+				"SubNode" : "SwitchNum: $v2",
+				"Summary" : "Stack power $v3 port $v2 has changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerPortLinkStatusChanged CISCO-STACKWISE-MIB::cswStackPowerPortLinkStatus i 1 CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999 CISCO-STACKWISE-MIB::cswStackPowerPortName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortLinkStatusChanged",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.7",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortLinkStatus",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortName",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerPortOperStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the operational status of a",
+				"stack power port is changed from enabled to disabled or from",
+				"disabled to enabled. This notification is for informational",
+				"purposes only and no action is required. cswSwitchNumCurrent",
+				"indicates the switch number of the system.",
+				"cswStackPowerPortOperStatus indicates operational status",
+				"of the stack power ports. cswStackPowerPortName specifies",
+				"a unique name of the stack power port as shown on the face",
+				"plate of the system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : 2"
+				},
+				"EventType" : "cswStackPowerPortOperStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : 2"
+				},
+				"SubNode" : "#v1",
+				"Summary" : "Status of stack power $v3 port $v1 is now $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerPortOperStatusChanged CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999 CISCO-STACKWISE-MIB::cswStackPowerPortOperStatus i 1 CISCO-STACKWISE-MIB::cswStackPowerPortName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortOperStatusChanged",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.8",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortName",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerVersionMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the major version of the",
+				"stack power protocol is different from the other members of the",
+				"power stack. Upon receiving this notification, the user should",
+				"make sure that he/she is using the same software version on all",
+				"the members of the same power stack. cswSwitchNumCurrent",
+				"indicates the switch number of the system seeing the power",
+				"stack version mismatch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerVersionMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Version mismatch between $v1 and the rest of the power stack ports"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerVersionMismatch CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerVersionMismatch",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.9",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerInvalidTopology",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when an invalid stack power",
+				"topology is discovered by a switch. cswSwitchNumCurrent",
+				"indicates the switch number of the system where the invalid",
+				"topology is discovered."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerInvalidTopology",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Invalid stack power topology is discovered by switch $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerInvalidTopology CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerInvalidTopology",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.10",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cscwStackPowerBudgetWarrning",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch power budget is",
+				"more than 1000W above its power supplies rated power output.",
+				"cswSwitchNumCurrent indicates the switch number of the system",
+				"where the invalid power budget has been detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cscwStackPowerBudgetWarrning",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 power budget is more than 1000W above it's rated output"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cscwStackPowerBudgetWarrning CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cscwStackPowerBudgetWarrning",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.11",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerInvalidInputCurrent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the input current in the",
+				"stack power cable is over the limit of the threshold retrieved",
+				"by the agent through cswStackPowerPortOverCurrentThreshold",
+				"object. Upon receiving this notification, the user should add a",
+				"power supply to the system whose switch number is generated",
+				"with this notification. cswSwitchNumCurrent",
+				"indicates the switch number of the system.",
+				"cswStackPowerPortOverCurrentThreshold indicates the over current",
+				"threshold of power stack cables. cswStackPowerPortName specifies",
+				"a unique name of the stack power port as shown on the face",
+				"plate of the system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerInvalidInputCurrent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Input current in the stack power $v3 cable is higher than $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerInvalidInputCurrent CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999 CISCO-STACKWISE-MIB::cswStackPowerPortOverCurrentThreshold u 9999 CISCO-STACKWISE-MIB::cswStackPowerPortName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerInvalidInputCurrent",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.12",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortOverCurrentThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortName",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerInvalidOutputCurrent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the output current in the",
+				"stack power cable is over the limit of the threshold retrieved",
+				"by the agent through cswStackPowerPortOverCurrentThreshold",
+				"object. Upon receiving this notification, the user should",
+				"remove a power supply from the system whose switch number is",
+				"generated with this notification. cswSwitchNumCurrent",
+				"indicates the switch number of the system.",
+				"cswStackPowerPortOverCurrentThreshold indicates the over current",
+				"threshold of power stack cables. cswStackPowerPortName specifies",
+				"a unique name of the stack power port as shown on the face",
+				"plate of the system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerInvalidOutputCurrent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v2",
+				"Summary" : "Output current in the stack power $v3 cable is higher than $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerInvalidOutputCurrent CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999 CISCO-STACKWISE-MIB::cswStackPowerPortOverCurrentThreshold u 9999 CISCO-STACKWISE-MIB::cswStackPowerPortName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerInvalidOutputCurrent",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.13",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortOverCurrentThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerPortName",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerUnderBudget",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch's budget is less",
+				"than maximum possible switch power consumption.",
+				"cswSwitchNumCurrent indicates the switch number of the system",
+				"that is running with the power budget less than the power",
+				"consumption."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerUnderBudget",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 power budget is less than maximum possible power consumption"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerUnderBudget CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerUnderBudget",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.14",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerUnbalancedPowerSupplies",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch has no power",
+				"supply but another switch in the same stack has more than one",
+				"power supplies. cswStackPowerName specifies a unique name of the",
+				"power stack where the unbalanced power supplies are detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerUnbalancedPowerSupplies",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "$v1 has no power but another switch in the stack has more than one power supply"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerUnbalancedPowerSupplies CISCO-STACKWISE-MIB::cswStackPowerName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerUnbalancedPowerSupplies",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.15",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerName",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerInsufficientPower",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch's power stack",
+				"does not have enough power to bring up all the switches in the",
+				"power stack. cswStackPowerName specifies a unique name of the",
+				"power stack where insufficient power condition is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerInsufficientPower",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "$v1 does not have enough power to bring up all switches in the power stack"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerInsufficientPower CISCO-STACKWISE-MIB::cswStackPowerName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerInsufficientPower",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.16",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerName",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerPriorityConflict",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch's power",
+				"priorities are conflicting with power priorities of another",
+				"switch in the same power stack. cswStackPowerPortName specifies",
+				"the unique name of the power stack where the conflicting power",
+				"priorities are detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerPriorityConflict",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "$v1 has conflicting power priorities with another switch in the same power stack"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerPriorityConflict CISCO-STACKWISE-MIB::cswStackPowerName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerPriorityConflict",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.17",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswStackPowerName",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerUnderVoltage",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch had an under",
+				"voltage condition on last boot up. cswSwitchNumCurrent",
+				"indicates the switch number of the system that was forced",
+				"down with the under voltage condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerUnderVoltage",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 had an under voltage condition on last boot up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerUnderVoltage CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerUnderVoltage",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.18",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerGLS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch had to shed",
+				"loads based on a sustained over load (SOC) condition.",
+				"cswSwitchNumCurrent indicates the switch number of the system",
+				"that goes through graceful load shedding."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerGLS",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 had to shed loads based on a sustained over load condition"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerGLS CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerGLS",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.19",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerILS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch had to shed",
+				"loads based on power supply fail condition. cswSwitchNumCurrent",
+				"indicates the switch number of the system that goes through",
+				"immediate load shedding."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerILS",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 had to shed loads based on power supply fail condition"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerILS CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerILS",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.20",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerSRLS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch had to shed",
+				"loads based on loss of a system in ring topology.",
+				"cswSwitchNumCurrent indicates the switch number of the system",
+				"that detects the loss of system in ring topology."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerSRLS",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 had to shed loads based on loss of a system in ring topology"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerSRLS CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerSRLS",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.21",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackPowerSSLS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the switch had to shed",
+				"loads based on loss of a system in star topology.",
+				"cswSwitchNumCurrent indicates the switch number of the system",
+				"that detects the loss of system in star topology."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackPowerSSLS",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 had to shd loads based on loss of a system in star topology"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackPowerSSLS CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackPowerSSLS",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.22",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-STACKWISE-MIB::cswStackMemberToBeReloadedForUpgrade",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a member is to be reloaded",
+				"for upgrade."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cswStackMemberToBeReloadedForUpgrade",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Member related to switch $v1 is to be reloaded for upgrade"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-STACKWISE-MIB::cswStackMemberToBeReloadedForUpgrade CISCO-STACKWISE-MIB::cswSwitchNumCurrent u 9999",
+			"trap" : {
+				"name" : "CISCO-STACKWISE-MIB::cswStackMemberToBeReloadedForUpgrade",
+				"oid" : "1.3.6.1.4.1.9.9.500.0.0.23",
+				"variables" : [
+					{
+						"name" : "CISCO-STACKWISE-MIB::cswSwitchNumCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.500.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

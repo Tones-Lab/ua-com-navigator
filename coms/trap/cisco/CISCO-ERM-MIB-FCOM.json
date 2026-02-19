@@ -1,0 +1,247 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200602110000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ERM-MIB::ciscoErmGlobalPolicyViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification event will be generated whenever system",
+				"global resource policy is violated i.e. total resource",
+				"utilization exceeds the applied global threshold limit for",
+				"any resource owner sub-type. Also, this notificatioin will be",
+				"generated when resource utilization of the affected resource",
+				"owner sub-type falls below the corresponding falling threshold",
+				"value.",
+				"The cermResOwnerName and cermResOwnerSubTypeName objects",
+				"indicates the resource owner name and resource owner sub-type",
+				"name for which an applied global threshold value got violated.",
+				"The cermNotifsThresholdSeverity object indicates the configured",
+				"threshold severity which got violated. This object contains",
+				"value of the cermResOwnerSubTypeThreshSeverity corresponding",
+				"to the global threshold configuration which got violated.",
+				"The cermNotifsThresholdValue object indicates the configured",
+				"threshold limit which got violated. This object contains value",
+				"of either cermResOwnerSubTypeRisingThresh or",
+				"cermResOwnerSubTypeFallingThresh based on the ERM notification",
+				"direction indicated by the object cermNotifsDirection.",
+				"If the cermNotifsDirection object value is 'up', the",
+				"cermNotifsThresholdValue object would contain the value of",
+				"the object cermResOwnerSubTypeRisingThresh. If the",
+				"cermNotifsDirection object value is 'down', the",
+				"cermNotifsThresholdValue object would contain the value of",
+				"the object cermResOwnerSubTypeFallingThresh.",
+				"The cermNotifsDirection object indicates whether it is",
+				"an 'up' notification or a 'down' notification.",
+				"The cermNotifsPolicyName object indicates name of the global",
+				"resource policy which got violated. This object contains",
+				"value of the cermPolicyName for the violated resource policy",
+				"in the cermConfigPolicyTable. If there is no associated",
+				"resource policy name for the notification, then this object",
+				"will contain zero-length string."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 1) ? 2 : 1"
+				},
+				"EventType" : "ciscoErmGlobalPolicyViolation",
+				"ExpireTime" : {
+					"eval" : "($v5 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 3) ? 5 : (($v3 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "$v6",
+				"Summary" : "Global resource policy $v6 has been violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ERM-MIB::ciscoErmGlobalPolicyViolation CISCO-ERM-MIB::cermResOwnerName s EXAMPLE CISCO-ERM-MIB::cermResOwnerSubTypeName s EXAMPLE CISCO-ERM-MIB::cermNotifsThresholdSeverity i 1 CISCO-ERM-MIB::cermNotifsThresholdValue u 9999 CISCO-ERM-MIB::cermNotifsDirection i 1 CISCO-ERM-MIB::cermNotifsPolicyName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ERM-MIB::ciscoErmGlobalPolicyViolation",
+				"oid" : "1.3.6.1.4.1.9.9.510.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ERM-MIB::cermResOwnerName",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ERM-MIB::cermResOwnerSubTypeName",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "minor",
+							"2" : "major",
+							"3" : "critical"
+						},
+						"name" : "CISCO-ERM-MIB::cermNotifsThresholdSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ERM-MIB::cermNotifsThresholdValue",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-ERM-MIB::cermNotifsDirection",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ERM-MIB::cermNotifsPolicyName",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ERM-MIB::ciscoErmLocalPolicyViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification event will be generated whenever a local",
+				"resource policy is violated i.e. resource utilization exceeds",
+				"the applied user local or per user global threshold limit",
+				"for any resource owner sub-type <-> resource user relationship.",
+				"The cermResOwnerName and cermResOwnerSubTypeName objects",
+				"indicates the resource owner name and resource owner sub-type",
+				"name for which an applied per user global or user local",
+				"threshold value got violated.",
+				"The cermResUserOrGroupThreshFlag object indicates whether",
+				"the ERM notification is because of *resource user* threshold",
+				"violation or *resource group* threshold violation.",
+				"The cermNotifsThresholdIsUserGlob object indicates whether",
+				"the notification belongs to Per User Global threshold",
+				"violation or User Local threshold violation. This object",
+				"contains the value of cermResUserOrGroupThreshIsUserGlob ",
+				"corresponding to the threshold configuration which got",
+				"violated.",
+				"The cermNotifsThresholdValue object indicates the configured",
+				"threshold limit which got violated. This object contains",
+				"value of either cermResUserOrGroupRisingThresh or",
+				"cermResUserOrGroupFallingThresh based on the ERM notification",
+				"direction indicated by the object cermNotifsDirection. For",
+				"the 'up' notification, this object would contain value of",
+				"the object cermResUserOrGroupRisingThresh. For the 'down'",
+				"notification, it would contain value of the object",
+				"cermResUserOrGroupFallingThresh.",
+				"The cermNotifsThresholdSeverity object indicates the",
+				"configured threshold severity which got violated. This object",
+				"contains value of the object cermResUserOrGroupThreshSeverity",
+				"corresponding to the resource owner sub-type and resource user",
+				"relationship.",
+				"The cermNotifsDirection object indicates whether it is an",
+				"'up' notification or a 'down' notification.",
+				"The cermNotifsPolicyName object indicates name of the local",
+				"resource policy which got violated. If there is no associated",
+				"policy name for the notification, then this object will",
+				"contain zero-length string."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 1) ? 2 : 1"
+				},
+				"EventType" : "ciscoErmLocalPolicyViolation",
+				"ExpireTime" : {
+					"eval" : "($v5 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 3) ? 5 : (($v9 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "$v10",
+				"Summary" : "Local resource policy $v10 has been violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ERM-MIB::ciscoErmLocalPolicyViolation CISCO-ERM-MIB::cermResOwnerName s EXAMPLE CISCO-ERM-MIB::cermResOwnerSubTypeName s EXAMPLE CISCO-ERM-MIB::cermResUserTypeName s EXAMPLE CISCO-ERM-MIB::cermResUserName s EXAMPLE CISCO-ERM-MIB::cermResUserOrGroupThreshFlag i 1 CISCO-ERM-MIB::cermNotifsThresholdIsUserGlob i 1 CISCO-ERM-MIB::cermNotifsThresholdSeverity i 1 CISCO-ERM-MIB::cermNotifsThresholdValue u 9999 CISCO-ERM-MIB::cermNotifsDirection i 1 CISCO-ERM-MIB::cermNotifsPolicyName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ERM-MIB::ciscoErmLocalPolicyViolation",
+				"oid" : "1.3.6.1.4.1.9.9.510.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-ERM-MIB::cermResOwnerName",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ERM-MIB::cermResOwnerSubTypeName",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ERM-MIB::cermResUserTypeName",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.2.4.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ERM-MIB::cermResUserName",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.2.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "group",
+							"2" : "user"
+						},
+						"name" : "CISCO-ERM-MIB::cermResUserOrGroupThreshFlag",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.2.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-ERM-MIB::cermNotifsThresholdIsUserGlob",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "minor",
+							"2" : "major",
+							"3" : "critical"
+						},
+						"name" : "CISCO-ERM-MIB::cermNotifsThresholdSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ERM-MIB::cermNotifsThresholdValue",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-ERM-MIB::cermNotifsDirection",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ERM-MIB::cermNotifsPolicyName",
+						"oid" : "1.3.6.1.4.1.9.9.510.1.4.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

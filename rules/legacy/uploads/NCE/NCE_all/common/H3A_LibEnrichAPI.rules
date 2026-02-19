@@ -1,0 +1,109 @@
+use Data::Dumper;
+use Time::HiRes;
+use REST::Client;
+use JSON;
+######################################################################################################
+#       _Name_  collection/event/H3A/common/H3A_LibEnrichAPI.pm
+######################################################################################################
+# 
+# UUMS API functions
+#
+# Source Control:
+#       1.0		2025-01-24	aignerma	<STORY>		initial version
+#
+######################################################################################################
+
+# Initialization
+# 		PreRequists in base.load: 
+# 				H3A_LibMySQL();
+# 				H3A_LibUtils();
+
+
+if ( not defined $UUMS_API_Client) {
+	my $envAPI = LibUtil_GetEnvironmentalNVPs(['uums-api-.*']);
+	our @UUMS_API_BASE_URLS = ();
+	push(@UUMS_API_BASE_URLS, $envAPI->{'uums-api-base-url-1'}) if exists $envAPI->{'uums-api-base-url-1'};
+	push(@UUMS_API_BASE_URLS, $envAPI->{'uums-api-base-url-2'}) if exists $envAPI->{'uums-api-base-url-2'};
+	push(@UUMS_API_BASE_URLS, $envAPI->{'uums-api-base-url-3'}) if exists $envAPI->{'uums-api-base-url-3'};
+	push(@UUMS_API_BASE_URLS, $envAPI->{'uums-api-base-url-4'}) if exists $envAPI->{'uums-api-base-url-4'};
+	push(@UUMS_API_BASE_URLS, $envAPI->{'uums-api-base-url-5'}) if exists $envAPI->{'uums-api-base-url-5'};
+	push(@UUMS_API_BASE_URLS, $envAPI->{'uums-api-base-url-6'}) if exists $envAPI->{'uums-api-base-url-6'};
+	push(@UUMS_API_BASE_URLS, $envAPI->{'uums-api-base-url-7'}) if exists $envAPI->{'uums-api-base-url-7'};
+    push(@UUMS_API_BASE_URLS, $envAPI->{'uums-api-base-url-8'}) if exists $envAPI->{'uums-api-base-url-8'};
+	my $api_timeout = 3; # default if not specified in environmental table
+	$api_timeout = $envAPI->{'uums-api-timeout'} if exists $envAPI->{'uums-api-timeout'};
+	our $UUMS_API_Client = REST::Client->new({timeout=>$envAPI->{'uums-api-timeout'}});
+}
+
+
+sub LibEnrichAPI_ATI {
+	my $eventRef = shift;
+    
+	my $trace = 'LibEnrichAPI_ATI';
+    $Log->Message('DEBUG', $trace . " started...");
+    
+	my %payload = (
+		'AlarmCategorization1' 	=> $eventRef->{'AlarmCategorization1'},
+		'AlarmCategorization2' 	=> $eventRef->{'AlarmCategorization2'},
+		'AlarmCode' 			=> $eventRef->{'AlarmCode'},
+		'CMDBCIEnvironment' 	=> $eventRef->{'CMDBCIEnvironment'},
+		'CMDBCIID' 				=> $eventRef->{'CMDBCIID'},
+		'Company' 				=> $eventRef->{'Company'},
+		'EMSName' 				=> $eventRef->{'EMSName'},
+		'EventType' 			=> $eventRef->{'EventType'},
+		'FirstReported' 		=> $eventRef->{'FirstReported'},
+		'HelpKey' 				=> $eventRef->{'HelpKey'},
+		'Location' 				=> $eventRef->{'Location'},
+		'MsgGroup' 				=> $eventRef->{'MsgGroup'},
+		'Node' 					=> $eventRef->{'Node'},
+		'Severity' 				=> $eventRef->{'Severity'},
+		'SubNode' 				=> $eventRef->{'SubNode'},
+		'Summary' 				=> $eventRef->{'Summary'}
+	);
+
+	my $json_payload=to_json(\%payload);
+
+	$Log->Message('DEBUG', $trace . " API-DBG-001: ReqestBody: " . $json_payload);
+
+
+	my $success = 0;
+	my $err_messages = "";
+    
+    # try one uums-api endpoint after the other until one could be queried successfully.
+	foreach my $base_url (@UUMS_API_BASE_URLS) {
+    
+		my $endpoint_url = $base_url . "/v1/ati/rules/is_matching";
+		$UUMS_API_Client->POST($endpoint_url, $json_payload, { 'Content-Type' => 'application/json;charset=UTF-8' });
+	
+    	if ($UUMS_API_Client->responseCode() == 200) {
+        
+        	$Log->Message('DEBUG', $trace . " API-DBG-002: ResponseBody: " . $UUMS_API_Client->responseContent());
+        
+			$result = decode_json($UUMS_API_Client->responseContent());
+			
+            # loop through each matched ATI rule and add the suppression
+            foreach my $rule (@{$result->{data}}){
+				LibUtil_AddSuppression($eventRef, $rule->{suppression_name}, $rule->{id}, $rule->{valid_to}, $rule->{rule_comment}, $trace);
+			}
+
+			$success = 1;
+			last;  #stop further iterations/requests.
+            
+		} else {
+			my $errTxt = $trace . "API-INF-001: Url: " . $endpoint_url . " RC: " . $UUMS_API_Client->responseCode() . "Msg: " . $UUMS_API_Client->responseContent();
+            $errTxt=~s/\r|\n//g;
+			$Log->Message('INFO', $errTxt);
+        	LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+		}
+	}
+
+	if(!$success) {
+    	my $errTxt = $trace . "API-ERR-001: No ATI enrichment performed. See details in EnrichmentLog";
+        $Log->Message('ERROR', $errTxt);
+		LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+	$Log->Message('DEBUG', $trace . " ...done");
+}
+
+1;

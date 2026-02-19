@@ -1,0 +1,52 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200511180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CLUSTER-MIB::ccStatusMemberStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" A cluster member status change notification",
+				"is generated whenever the value of any instance",
+				"of ccClusterMemberOperStatus changes after the",
+				"member is completely added to the cluster."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "ccStatusMemberStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Cluster member has changed status to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CLUSTER-MIB::ccStatusMemberStatusChange CISCO-CLUSTER-MIB::ccMemberOperStatus i 1",
+			"trap" : {
+				"name" : "CISCO-CLUSTER-MIB::ccStatusMemberStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.134.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive"
+						},
+						"name" : "CISCO-CLUSTER-MIB::ccMemberOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.134.1.2.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,169 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201212171200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "EXTREME-IETF-BFD-MIB::extremeBfdSessUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the",
+				"extremeBfdSessState object for one or more contiguous",
+				"entries in extremeBfdSessTable are about to enter the up(4)",
+				"state from some other state. The included values of",
+				"extremeBfdSessDiag MUST both be set equal to this",
+				"new state (i.e: up(4)). The two instances of",
+				"extremeBfdSessDiag in this notification indicate the range",
+				"of indexes that are affected. Note that all the indexes",
+				"of the two ends of the range can be derived from the",
+				"instance identifiers of these two objects. For the",
+				"cases where a contiguous range of sessions",
+				"have transitioned into the up(4) state at roughly",
+				"the same time, the device SHOULD issue a single",
+				"notification for each range of contiguous indexes in",
+				"an effort to minimize the emission of a large number",
+				"of notifications. If a notification has to be",
+				"issued for just a single extremeBfdSessEntry, then",
+				"the instance identifier (and values) of the two",
+				"extremeBfdSessDiag objects MUST be the identical."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "extremeBfdSessStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "BFD session transitioned to up state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-IETF-BFD-MIB::extremeBfdSessUp EXTREME-IETF-BFD-MIB::extremeBfdSessDiag i 0 EXTREME-IETF-BFD-MIB::extremeBfdSessOperMode i 1",
+			"trap" : {
+				"name" : "EXTREME-IETF-BFD-MIB::extremeBfdSessUp",
+				"oid" : "1.3.6.1.4.1.1916.1.43.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A diagnostic code specifying the local system's reason",
+							"for the last transition of the session from up(4)",
+							"to some other state."
+						],
+						"enums" : {
+							"0" : "noDiagnostic",
+							"1" : "controlDetectionTimeExpired",
+							"2" : "echoFunctionFailed",
+							"3" : "neighborSignaledSessionDown",
+							"4" : "forwardingPlaneReset",
+							"5" : "pathDown",
+							"6" : "concatenatedPathDown",
+							"7" : "administrativelyDown",
+							"8" : "reverseConcatenatedPathDown"
+						},
+						"name" : "EXTREME-IETF-BFD-MIB::extremeBfdSessDiag",
+						"oid" : "1.3.6.1.4.1.1916.1.43.2.1.2.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies current operating mode that BFD",
+							"session is operating in."
+						],
+						"enums" : {
+							"1" : "asyncModeWEchoFunction",
+							"2" : "asynchModeWOEchoFunction",
+							"3" : "demandModeWEchoFunction",
+							"4" : "demandModeWOEchoFunction"
+						},
+						"name" : "EXTREME-IETF-BFD-MIB::extremeBfdSessOperMode",
+						"oid" : "1.3.6.1.4.1.1916.1.43.2.1.2.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EXTREME-IETF-BFD-MIB::extremeBfdSessDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the",
+				"extremeBfdSessState object for one or more contiguous",
+				"entries in extremeBfdSessTable are about to enter the down(2)",
+				"or adminDown(1) states from some other state. The included",
+				"values of extremeBfdSessDiag MUST both be set equal to this new",
+				"state (i.e: down(2) or adminDown(1)). The two instances",
+				"of extremeBfdSessDiag in this notification indicate the range",
+				"of indexes that are affected. Note that all the indexes",
+				"of the two ends of the range can be derived from the",
+				"instance identifiers of these two objects. For",
+				"cases where a contiguous range of sessions",
+				"have transitioned into the down(2) or adminDown(1) states",
+				"at roughly the same time, the device SHOULD issue a single",
+				"notification for each range of contiguous indexes in",
+				"an effort to minimize the emission of a large number",
+				"of notifications. If a notification has to be",
+				"issued for just a single extremeBfdSessEntry, then",
+				"the instance identifier (and values) of the two",
+				"extremeBfdSessDiag objects MUST be the identical."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "extremeBfdSessStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "BFD session transitioned to down or adminDown state due to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-IETF-BFD-MIB::extremeBfdSessDown EXTREME-IETF-BFD-MIB::extremeBfdSessDiag i 5 EXTREME-IETF-BFD-MIB::extremeBfdSessOperMode i 1",
+			"trap" : {
+				"name" : "EXTREME-IETF-BFD-MIB::extremeBfdSessDown",
+				"oid" : "1.3.6.1.4.1.1916.1.43.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A diagnostic code specifying the local system's reason",
+							"for the last transition of the session from up(4)",
+							"to some other state."
+						],
+						"enums" : {
+							"0" : "noDiagnostic",
+							"1" : "controlDetectionTimeExpired",
+							"2" : "echoFunctionFailed",
+							"3" : "neighborSignaledSessionDown",
+							"4" : "forwardingPlaneReset",
+							"5" : "pathDown",
+							"6" : "concatenatedPathDown",
+							"7" : "administrativelyDown",
+							"8" : "reverseConcatenatedPathDown"
+						},
+						"name" : "EXTREME-IETF-BFD-MIB::extremeBfdSessDiag",
+						"oid" : "1.3.6.1.4.1.1916.1.43.2.1.2.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies current operating mode that BFD",
+							"session is operating in."
+						],
+						"enums" : {
+							"1" : "asyncModeWEchoFunction",
+							"2" : "asynchModeWOEchoFunction",
+							"3" : "demandModeWEchoFunction",
+							"4" : "demandModeWOEchoFunction"
+						},
+						"name" : "EXTREME-IETF-BFD-MIB::extremeBfdSessOperMode",
+						"oid" : "1.3.6.1.4.1.1916.1.43.2.1.2.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

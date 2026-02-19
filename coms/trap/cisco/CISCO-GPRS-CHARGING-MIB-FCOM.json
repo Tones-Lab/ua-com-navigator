@@ -1,0 +1,440 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201103040000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cgprsCgAlarmNotif signifies that a GPRS related",
+				"alarm is detected in the managed system.",
+				"This alarm is sent after an entry has been added to ",
+				"cgprsCgAlarmHistTable or cgprsCgGatewayGroupAlarmHistTable.",
+				"This notification is deprecated by ",
+				"cgprsCgGatewayGroupAlarmNotif"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2 || $v1 == 4 || $v1 == 8) ? 1 : (($v1 == 1 || $v1 == 3 || $v1 == 7) ? 2 : 3)"
+				},
+				"EventType" : "cgprsCgAlarmNotif",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2 || $v1 == 4 || $v1 == 8) ? 3600 : (($v1 == 1 || $v1 == 3 || $v1 == 7) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2 || $v1 == 4 || $v1 == 8) ? 0 : (($v1 == 1 || $v1 == 3 || $v1 == 7) ? 4 : 2)"
+				},
+				"SubNode" : "$v3",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? 'GPRS alarm $v1 : $v5' : 'GPRS alarm $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmNotif CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistType i 1 CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistAddrType i 0 CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistAddress s EXAMPLE CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistSeverity i 1 CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistInfo s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmNotif",
+				"oid" : "1.3.6.1.4.1.9.9.192.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "cgprsCgAlarmCgDown",
+							"2" : "cgprsCgAlarmCgUp",
+							"3" : "cgprsCgAlarmTransFailure",
+							"4" : "cgprsCgAlarmTransSuccess",
+							"5" : "cgprsCgAlarmCapacityFull",
+							"6" : "cgprsCgAlarmCapacityFree",
+							"7" : "cgprsCgAlarmEchoFailure",
+							"8" : "cgprsCgAlarmEchoRestored",
+							"9" : "cgprsCgAlarmCdrDiscard",
+							"10" : "cgprsCgAlarmCdrBuffered",
+							"11" : "cgprsCgAlarmChargingDisabled",
+							"12" : "cgprsCgAlarmChargingEnabled"
+						},
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistType",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistAddress",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgAlarmHistInfo",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.3.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewaySwitchoverNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when the",
+				"charging gateway is switched, the new charging",
+				"gateway is identified by cgprsCgActiveChgGatewayAddress",
+				"and the old charging gateway is identified by",
+				"cgprsCgOldChgGatewayAddress.",
+				"The switchover will happen according to the value set",
+				"in cgprsCgGroupSwitchOverTime and the selection of the",
+				"new CG will be according to the value set in",
+				"cgprsCgSwitchOverPriority.",
+				"Note: Selection of new CG based on the value set in ",
+				"cgprsCgSwitchOverPriority is only true for default ",
+				"charging gateway group, for other charging gateway groups",
+				"including defualt charging gateway group it can be determined ",
+				"by the value set in cgprsCgGroupSwitchOverPriority.",
+				"This notification is deprecated by ",
+				"cgprsCgGatewayGroupSwitchoverNotif"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cgprsCgGatewaySwitchoverNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Charging gateway has switched from $v3 to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GPRS-CHARGING-MIB::cgprsCgGatewaySwitchoverNotif CISCO-GPRS-CHARGING-MIB::cgprsCgActiveChgGatewayAddrType i 0 CISCO-GPRS-CHARGING-MIB::cgprsCgActiveChgGatewayAddress s EXAMPLE CISCO-GPRS-CHARGING-MIB::cgprsCgOldChgGatewayAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewaySwitchoverNotif",
+				"oid" : "1.3.6.1.4.1.9.9.192.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgActiveChgGatewayAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.5.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgActiveChgGatewayAddress",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.5.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgOldChgGatewayAddress",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.5.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GPRS-CHARGING-MIB::cgprsCgInServiceModeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when the",
+				"GGSN charging function is in normal mode. This can",
+				"be identified by cgprsCgServiceMode object for default",
+				"charging gateway group whereas for other charging groups, ",
+				"including default charging gateway group it can be identfied ",
+				"by cgprsCgGroupServiceMode.",
+				"This notification is deprecated by ",
+				"cgprsCgGatewayGroupInServiceModeNotif"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cgprsCgInServiceModeNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "GGSN charging function is in normal mode"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GPRS-CHARGING-MIB::cgprsCgInServiceModeNotif",
+			"trap" : {
+				"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgInServiceModeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.192.2.0.3"
+			}
+		},
+		{
+			"@objectName" : "CISCO-GPRS-CHARGING-MIB::cgprsCgMaintenanceModeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when the",
+				"GGSN charging function is in maintenance mode. This",
+				"can be identified by cgprsCgServiceMode object for default",
+				"charging gateway group whereas for other charging groups, ",
+				"including default charging gateway group it can be identfied ",
+				"by cgprsCgGroupServiceMode.",
+				"This notification is deprecated by ",
+				"cgprsCgGatewayGroupMaintenanceModeNotif"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cgprsCgMaintenanceModeNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "GGSN charging function is in maintenance mode"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GPRS-CHARGING-MIB::cgprsCgMaintenanceModeNotif",
+			"trap" : {
+				"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgMaintenanceModeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.192.2.0.4"
+			}
+		},
+		{
+			"@objectName" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cgprsCgGroupAlarmNotif signifies that a GPRS related",
+				"alarm is detected in the managed system.",
+				"This alarm is sent after an entry has been added to ",
+				"cgprsCgGatewayGroupAlarmHistTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2 || $v1 == 4 || $v1 == 8) ? 1 : (($v1 == 1 || $v1 == 3 || $v1 == 7) ? 2 : 3)"
+				},
+				"EventType" : "cgprsCgAlarmNotif",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2 || $v1 == 4 || $v1 == 8) ? 3600 : (($v1 == 1 || $v1 == 3 || $v1 == 7) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2 || $v1 == 4 || $v1 == 8) ? 0 : (($v1 == 1 || $v1 == 3 || $v1 == 7) ? 4 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? 'GPRS alarm $v1 : $v5' : 'GPRS alarm $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmNotif CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistType i 1 CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistAddrType i 0 CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistAddress s EXAMPLE CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistSeverity i 1 CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistInfo s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmNotif",
+				"oid" : "1.3.6.1.4.1.9.9.192.2.0.5",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "cgprsCgAlarmCgDown",
+							"2" : "cgprsCgAlarmCgUp",
+							"3" : "cgprsCgAlarmTransFailure",
+							"4" : "cgprsCgAlarmTransSuccess",
+							"5" : "cgprsCgAlarmCapacityFull",
+							"6" : "cgprsCgAlarmCapacityFree",
+							"7" : "cgprsCgAlarmEchoFailure",
+							"8" : "cgprsCgAlarmEchoRestored",
+							"9" : "cgprsCgAlarmCdrDiscard",
+							"10" : "cgprsCgAlarmCdrBuffered",
+							"11" : "cgprsCgAlarmChargingDisabled",
+							"12" : "cgprsCgAlarmChargingEnabled"
+						},
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistType",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.5.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistAddress",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.5.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.5.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupAlarmHistInfo",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.4.5.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupSwitchoverNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when the",
+				"charging gateway is switched, the new charging",
+				"gateway is identified by cgprsCgGatewayGroupStatusActiveCgAddr",
+				"and the old charging gateway is identified by",
+				"cgprsCgGatewayGroupStatusOldCgAddr."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cgprsCgGatewayGroupSwitchoverNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Charging gateway is switched from $v3 to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupSwitchoverNotif CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupStatusAddrType i 0 CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupStatusActiveCgAddr s EXAMPLE CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupStatusOldCgAddr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupSwitchoverNotif",
+				"oid" : "1.3.6.1.4.1.9.9.192.2.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupStatusAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.5.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupStatusActiveCgAddr",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.5.4.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupStatusOldCgAddr",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.5.4.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupInServiceModeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cgprsCgGatewayGroupInServiceModeNotif notification is",
+				"generated when the charging group state transitions to ",
+				"in-service mode, identified by the object ",
+				"cgprsCgGroupServiceMode"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cgprsCgGatewayGroupInServiceModeNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Charging group state transitions to $v1 mode"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupInServiceModeNotif CISCO-GPRS-CHARGING-MIB::cgprsCgGroupServiceMode i 1",
+			"trap" : {
+				"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupInServiceModeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.192.2.0.7",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "operational",
+							"2" : "maintenance"
+						},
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGroupServiceMode",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.1.60.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupMaintenanceModeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cgprsCgGatewayGroupMaintenanceModeNotif notification is",
+				"generated when the charging group state transitions to ",
+				"maintenance mode, identified by the object ",
+				"cgprsCgGroupServiceMode"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cgprsCgGatewayGroupMaintenanceModeNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Charging group state transitions to $v1 mode"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupMaintenanceModeNotif CISCO-GPRS-CHARGING-MIB::cgprsCgGroupServiceMode i 1",
+			"trap" : {
+				"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGatewayGroupMaintenanceModeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.192.2.0.8",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "operational",
+							"2" : "maintenance"
+						},
+						"name" : "CISCO-GPRS-CHARGING-MIB::cgprsCgGroupServiceMode",
+						"oid" : "1.3.6.1.4.1.9.9.192.1.1.60.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

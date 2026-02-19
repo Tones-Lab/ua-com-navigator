@@ -1,0 +1,341 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201601010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbisLinkStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of the change in state of the connection to the BTS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "geranPcuV2GbisLinkStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "PcuV2BtsCellId:$v1",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Gbis link status is up' : 'Gbis link status is down'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-PCU-V2-MIB::geranPcuV2GbisLinkStatusNotification VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId i 9999 VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusGbisLinkStatus i 1",
+			"trap" : {
+				"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbisLinkStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.7.0.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Unique BTS cell identity, 16 bits. GSM.03.03 4.3.1."
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current status of the Gbis link: LinkUp(True)/LinkDown(False)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusGbisLinkStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.3.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2BssgpConnectionStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of the change in state of the BSSGP connection to the SGSN."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 2 : 1"
+				},
+				"EventType" : "geranPcuV2BssgpConnectionStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==1) ? 4 : 0"
+				},
+				"SubNode" : "PcuV2BtsCellId:$v1",
+				"Summary" : "Current state of BSSGP to SGSN connection is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-PCU-V2-MIB::geranPcuV2BssgpConnectionStatusNotification VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId i 9999 VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusBssgpConnectionStatus i 1",
+			"trap" : {
+				"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2BssgpConnectionStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.7.0.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Unique BTS cell identity, 16 bits. GSM.03.03 4.3.1."
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current status of the BSSGP connection."
+						],
+						"enums" : {
+							"1" : "blocked",
+							"2" : "unblocked"
+						},
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusBssgpConnectionStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.3.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2StartupNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of PCU startup."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "geranPcuV2StartupNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "PCU $v1 starts up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-PCU-V2-MIB::geranPcuV2StartupNotification VANU-GERAN-PCU-V2-MIB::geranPcuV2Name s EXAMPLE",
+			"trap" : {
+				"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2StartupNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.7.0.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Configured name of PCU."
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2Name",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.7.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbQuatLinkStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of changes in the status of GbQuat"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "geranPcuV2GbQuatLinkStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "PcuV2BtsCellId:$v1",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Status of GbQuat link is up' : 'Status of GbQuat link is down'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-PCU-V2-MIB::geranPcuV2GbQuatLinkStatusNotification VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId i 9999 VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusGbquatLinkStatus i 1",
+			"trap" : {
+				"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbQuatLinkStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.7.0.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Unique BTS cell identity, 16 bits. GSM.03.03 4.3.1."
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current status of the Gb-quat link: LinkUp(True)/LinkDown(False)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusGbquatLinkStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.3.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbbisRegistrationStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of changes in the registration status of iPCU with",
+				"Gb-Nameserver over Gb-bis interface"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "geranPcuV2GbbisRegistrationStatusNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PcuV2BtsCellId:$v1;PcuV2GbAggregatorPort:$v4",
+				"Summary" : "iPCU is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-PCU-V2-MIB::geranPcuV2GbbisRegistrationStatusNotification VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId i 9999 VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusGbbisRegistrationStatus i 1 VANU-GERAN-PCU-V2-MIB::geranPcuV2GbAggregatorIpAddress a 192.0.2.1 VANU-GERAN-PCU-V2-MIB::geranPcuV2GbAggregatorPort i 9999 VANU-GERAN-PCU-V2-MIB::geranPcuV2GbAggregatorNsei i 9999",
+			"trap" : {
+				"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbbisRegistrationStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.7.0.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Unique BTS cell identity, 16 bits. GSM.03.03 4.3.1."
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current iPCU registration status with Gb-Nameserver.",
+							"A registered state implies that iPCU has received its serving",
+							"Gb-Aggregator's address. An unregistered state implies that iPCU is in",
+							"the registration procedure with Gb-Nameserver to get the address of the",
+							"serving Gb-Aggregator."
+						],
+						"enums" : {
+							"1" : "registered",
+							"2" : "unregistered"
+						},
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusGbbisRegistrationStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.3.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP Address of the current serving Gb-Aggregator of the iPCU"
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbAggregatorIpAddress",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.8.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Gb-quat port of the current serving Gb-Aggregator of the iPCU"
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbAggregatorPort",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.8.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"NSEI of the current serving Gb-Aggregator of the iPCU"
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2GbAggregatorNsei",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.8.1.1.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2OverloadStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification of change in the overload status of iPCU in UL and/or DL",
+				"direction."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "geranPcuV2OverloadStatusNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PcuV2BtsCellId:$v1",
+				"Summary" : {
+					"eval" : "($v2 == 1 && $v3 == 1) ? 'iPCU overload status: both UL & DL overloaded' : (($v2 == 1) ? 'iPCU overload status: UL overloaded' : (($v3 == 1) ? 'iPCU overload status: DL overloaded' : 'iPCU overload status: not overloaded' ))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VANU-GERAN-PCU-V2-MIB::geranPcuV2OverloadStatusNotification VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId i 9999 VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusUlOverloadStatus i 1 VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusDlOverloadStatus i 1",
+			"trap" : {
+				"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2OverloadStatusNotification",
+				"oid" : "1.3.6.1.4.1.17718.3.2.7.0.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Unique BTS cell identity, 16 bits. GSM.03.03 4.3.1."
+						],
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2BtsCellId",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current overload status of iPCU in UL direction.",
+							"iPCU is considered overloaded in UL, when it runs out of radio resources",
+							"in UL, and cannot assign new radio resources in UL. Overloaded(True)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusUlOverloadStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.3.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Current overload status of iPCU in DL direction.",
+							"iPCU is considered overloaded in DL, when it runs out of radio resources",
+							"in DL, and cannot assign new radio resources in DL. Overloaded(True)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "VANU-GERAN-PCU-V2-MIB::geranPcuV2NetworkStatusDlOverloadStatus",
+						"oid" : "1.3.6.1.4.1.17718.3.2.7.1.3.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,1464 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "OPTIMUX-MIB::activeVariantTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the Active Variant of a Link is changed (that",
+				"includes the case when a user performs Save to the Variant that is Active)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "activeVariantTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "VarientId:$v1",
+				"Summary" : "Active variant of link is changed to variant $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::activeVariantTrap OPTIMUX-MIB::v51MlCurrActiveVar i 0",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::activeVariantTrap",
+				"oid" : "1.3.6.1.4.1.164.3.1.6.6.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"For V5.1: the currently Active Variant Id. on this ML.",
+							"For V5.2: the currently Active Variant Id.",
+							"128=none."
+						],
+						"name" : "OPTIMUX-MIB::v51MlCurrActiveVar",
+						"oid" : "1.3.6.1.4.1.164.3.1.6.6.3.1.1.1.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::optMxConfigChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap is sent every time there is a change in",
+				"the state of one of the PS.."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "optMxConfigChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "$v1 optimux configuration LED status is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::optMxConfigChange OPTIMUX-MIB::optIndex i 1 RAD-MIB::agnLed s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::optMxConfigChange",
+				"oid" : "1.3.6.1.4.1.164.3.5.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"optIndex = 1 is for local Optimux.",
+							"optIndex = 2 is for remote Optimux."
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "OPTIMUX-MIB::optIndex",
+						"oid" : "1.3.6.1.4.1.164.3.5.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This entry specifies the LEDs status of the agent module . Each led will be represented by 4 ",
+							"bits where the first 2 bits (left) will specify the status :",
+							"(00=NA, 01=OFF, 10=ON, 11=BLINK)",
+							"and the next two bits (right) will specify the color :",
+							"(00=GREEN, 01=RED, 10=YELLOW, 11=GRAY)"
+						],
+						"name" : "RAD-MIB::agnLed",
+						"oid" : "1.3.6.1.4.1.164.6.2.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::optMxAgentFault",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap is sent every time there is a change in",
+				"the agnIndication variable.",
+				"For Optimux XL family, from ver 4.1 and up, this trap should be sent ",
+				"upon any change in the agnNearFarConnection variable"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : ($v1==6) ? 3 : 2"
+				},
+				"EventType" : "optMxAgentFault",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : ($v1==6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==3) ? 0 : (($v1==6) ? 2 : (($v1==1 || $v1==5) ? 4 : (($v1==7) ? 5 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Optimux agent indication Status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::optMxAgentFault RAD-MIB::agnIndication i 1 RAD-MIB::agnLed s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::optMxAgentFault",
+				"oid" : "1.3.6.1.4.1.164.3.5.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Attribute describing the state of the entity the agent is responsible for.",
+							"In case of a modular entity, the value of this attribute will be according",
+							"to the component which is in the worst state.",
+							"The order of severity (from top to bottom) is:",
+							"critical-> major (or faulty)-> minor-> event-> warning-> normal (off)."
+						],
+						"enums" : {
+							"1" : "faulty",
+							"2" : "warning",
+							"3" : "normal",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "event",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::agnIndication",
+						"oid" : "1.3.6.1.4.1.164.6.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This entry specifies the LEDs status of the agent module . Each led will be represented by 4 ",
+							"bits where the first 2 bits (left) will specify the status :",
+							"(00=NA, 01=OFF, 10=ON, 11=BLINK)",
+							"and the next two bits (right) will specify the color :",
+							"(00=GREEN, 01=RED, 10=YELLOW, 11=GRAY)"
+						],
+						"name" : "RAD-MIB::agnLed",
+						"oid" : "1.3.6.1.4.1.164.6.2.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::optLineStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"optLineStatusChange trap is sent when the value of an instance ",
+				"dsx1LineStatus changes. It can be utilized by an NMS to trigger polls.",
+				"When the line status change results from a higher level line status ",
+				"change (i.e. ds3), then no traps for the ds1 are sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2048) ? 3 : 2"
+				},
+				"EventType" : "optLineStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : ($v1==2048) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==2048) ? 2 : (($v1==4096) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'No alarm present' : (($v1==2) ? 'Far end LOF' : (($v1==4) ? 'Near end sending LOF indication' : (($v1==8) ? 'Far end sending AIS' : (($v1==16) ? 'Near end sending AIS' : (($v1==32) ? 'Near end LOF' : (($v1==64) ? 'Near end Loss of Signal' : (($v1==128) ? 'Near end is looped' : (($v1==256) ? 'E1 TS16 AIS' : (($v1==512) ? 'Far end sending TS16 LOMF' : (($v1==1024) ? 'Near end sending TS16 LOMF' : (($v1==2048) ? 'Near end detects a test code' : (($v1==4096) ? 'Any line status not defined here' : (($v1==8192) ? 'Near end in unavailable signal state' : (($v1==16384) ? 'DS2 payload AIS' : 'DS2 performance threshold exceeded'))))))))))))))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::optLineStatusChange DS1-MIB::dsx1LineStatus i 9999 DS1-MIB::dsx1LineStatusLastChange t 31536000",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::optLineStatusChange",
+				"oid" : "1.3.6.1.4.1.164.3.5.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the line status of the",
+							"interface. It contains loopback, failure",
+							"received alarm and transmitted alarms",
+							"information.",
+							"",
+							"The dsx1LineStatus is a bitmap represented as a",
+							"sum; therefore, it can represent multiple failures",
+							"(alarms) and a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm must be set if and only if no other",
+							"flag is set.",
+							"",
+							"If the dsx1loopbackState bit is set, the loopback",
+							"in effect can be determined from the",
+							"dsx1loopbackConfig object. The various bit",
+							"positions are as follows:",
+							"",
+							"1 dsx1NoAlarm No alarm present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a.Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a.Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far end sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near end sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near end detects a test code",
+							"4096 dsx1OtherFailure Any line status not defined here",
+							"8192 dsx1UnavailSigState Near end in unavailable signal state",
+							"16384 dsx1NetEquipOOS Carrier equipment out of service",
+							"32768 dsx1RcvPayloadAIS DS2 payload AIS",
+							"65536 dsx1Ds2PerfThreshold DS2 performance threshold exceeded"
+						],
+						"name" : "DS1-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of MIB II's sysUpTime object at the",
+							"time this DS1 entered its current line status",
+							"state. If the current state was entered prior to",
+							"the last re-initialization of the proxy-agent",
+							"then this object contains a zero value."
+						],
+						"name" : "DS1-MIB::dsx1LineStatusLastChange",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.16",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::optSlotChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap alerts the console if there is module",
+				"enrollement/de-enrollement "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "optSlotChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotID:$v2",
+				"Summary" : "Module enrollement/de-enrollement detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::optSlotChange OPTIMUX-MIB::optMdIdx i 1 OPTIMUX-MIB::optMdSltIdx i 9999",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::optSlotChange",
+				"oid" : "1.3.6.1.4.1.164.3.5.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"optMdIdx = 1 is for local Optimux.",
+							"optMdIdx = 2 is for remote Optimux."
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "OPTIMUX-MIB::optMdIdx",
+						"oid" : "1.3.6.1.4.1.164.3.5.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For Optimux XL:",
+							"Slot A = 1, Slot B = 2, Slot C = 3, Slot D = 4",
+							"Slot Link = 5, Slot BU = 6 .",
+							"For FomiE3/R3:",
+							"Slot of Station Clock = 3, Slot of Electrical Link = 4",
+							"Slot of Optical Main Link = 5, Slot of Optical Backup Link = 6 .",
+							"For Optimux-T3:",
+							"Slot of Station Clock (internal card)= 3, Slot A = 5, Slot B = 6.",
+							"For Optimux-155/1:",
+							"E1/T1 Slot A - 1, E1/T1 Slot B- 2, LINK-A - 5, LINK-B - 6",
+							"I/O-1 - 11, I/O-2 -12 ...I/O-6 - 16",
+							"For Optimux-155 DS3:",
+							"Common Logic+E3/T3 Slot A - 1, Common Logic+E3/T3 Slot B- 2, LINK-A - 5, LINK-B - 6"
+						],
+						"name" : "OPTIMUX-MIB::optMdSltIdx",
+						"oid" : "1.3.6.1.4.1.164.3.5.2.1.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::optLoopbackStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap alerts the console if there is changes in the",
+				"loopback status of some of the line."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1 && $v3==1) ? 1 :2"
+				},
+				"EventType" : "optLoopbackStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1 && $v3==1) ? 3600 :2"
+				},
+				"Severity" : {
+					"eval" : "($v2==1 && $v3==1) ? 0 : (($v2==1 || $v3==1) ? 3 : 4)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : {
+					"eval" : "($v2==1 && $v3==1) ? 'No loopback on DS1 and DS3 interfaces' : (($v2==1) ? 'Loopback on DS3 interface' : (($v3==1) ? 'Loopback on DS1 interface' : 'Loopback on DS1 and DS3 interfaces'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::optLoopbackStatusChange RFC1213-MIB::ifIndex i 9999 DS1-MIB::dsx1LoopbackStatus i 1 DS3-MIB::dsx3LoopbackStatus i 1",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::optLoopbackStatusChange",
+				"oid" : "1.3.6.1.4.1.164.3.5.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This variable represents the current state of the",
+							"loopback on the DS1 interface. It contains",
+							"information about loopbacks established by a",
+							"manager and remotely from the far end.",
+							"",
+							"The dsx1LoopbackStatus is a bitmap represented as",
+							"a sum; therefore, it can represent multiple",
+							"loopbacks simultaneously.",
+							"",
+							"The various bit positions are as follows:",
+							"1 dsx1NoLoopback",
+							"2 dsx1NearEndPayloadLoopback",
+							"4 dsx1NearEndLineLoopback",
+							"8 dsx1NearEndOtherLoopback",
+							"16 dsx1NearEndInwardLoopback",
+							"32 dsx1FarEndPayloadLoopback",
+							"64 dsx1FarEndLineLoopback"
+						],
+						"name" : "DS1-MIB::dsx1LoopbackStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable represents the current state of the",
+							"loopback on the DS3 interface. It contains",
+							"information about loopbacks established by a",
+							"manager and remotely from the far end.",
+							"",
+							"The dsx3LoopbackStatus is a bit map represented as",
+							"a sum, therefore is can represent multiple",
+							"loopbacks simultaneously.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoLoopback",
+							"2 dsx3NearEndPayloadLoopback",
+							"4 dsx3NearEndLineLoopback",
+							"8 dsx3NearEndOtherLoopback",
+							"16 dsx3NearEndInwardLoopback",
+							"32 dsx3FarEndPayloadLoopback",
+							"64 dsx3FarEndLineLoopback"
+						],
+						"name" : "DS3-MIB::dsx3LoopbackStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::optXlLineStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"optXlLineStatusChange trap is sent when the value of an instance ",
+				"dsx1LineStatus changes. It can be utilized by an NMS to trigger polls."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : ($v3==2048) ? 3 : 2"
+				},
+				"EventType" : "optXlLineStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : ($v3==2048) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : (($v3==2048) ? 2 : (($v3==4096) ? 3 : 4))"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : {
+					"eval" : "($v3==1) ? 'No alarm present' : (($v3==2) ? 'Far end LOF' : (($v3==4) ? 'Near end sending LOF indication' : (($v3==8) ? 'Far end sending AIS' : (($v3==16) ? 'Near end sending AIS' : (($v3==32) ? 'Near end LOF' : (($v3==64) ? 'Near end Loss of Signal' : (($v3==128) ? 'Near end is looped' : (($v3==256) ? 'E1 TS16 AIS' : (($v3==512) ? 'Far end sending TS16 LOMF' : (($v3==1024) ? 'Near end sending TS16 LOMF' : (($v3==2048) ? 'Near end detects a test code' : (($v3==4096) ? 'Any line status not defined here' : (($v3==8192) ? 'Near end in unavailable signal state' : (($v3==16384) ? 'DS2 payload AIS' : 'DS2 performance threshold exceeded'))))))))))))))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::optXlLineStatusChange RFC1213-MIB::ifIndex i 9999 OPTIMUX-MIB::optMdModLed s EXAMPLE DS1-MIB::dsx1LineStatus i 9999 DS3-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::optXlLineStatusChange",
+				"oid" : "1.3.6.1.4.1.164.3.5.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The meaning of each bit depends on the module type."
+						],
+						"name" : "OPTIMUX-MIB::optMdModLed",
+						"oid" : "1.3.6.1.4.1.164.3.5.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This variable indicates the line status of the",
+							"interface. It contains loopback, failure",
+							"received alarm and transmitted alarms",
+							"information.",
+							"",
+							"The dsx1LineStatus is a bitmap represented as a",
+							"sum; therefore, it can represent multiple failures",
+							"(alarms) and a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm must be set if and only if no other",
+							"flag is set.",
+							"",
+							"If the dsx1loopbackState bit is set, the loopback",
+							"in effect can be determined from the",
+							"dsx1loopbackConfig object. The various bit",
+							"positions are as follows:",
+							"",
+							"1 dsx1NoAlarm No alarm present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a.Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a.Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far end sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near end sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near end detects a test code",
+							"4096 dsx1OtherFailure Any line status not defined here",
+							"8192 dsx1UnavailSigState Near end in unavailable signal state",
+							"16384 dsx1NetEquipOOS Carrier equipment out of service",
+							"32768 dsx1RcvPayloadAIS DS2 payload AIS",
+							"65536 dsx1Ds2PerfThreshold DS2 performance threshold exceeded"
+						],
+						"name" : "DS1-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback state information",
+							"and failure state information. The dsx3LineStatus",
+							"is a bit map represented as a sum, therefore, it",
+							"can represent multiple failures and a loopback",
+							"(see dsx3LoopbackConfig object for the type of",
+							"loopback) simultaneously. The dsx3NoAlarm must be",
+							"set if and only if no other flag is set.",
+							"",
+							"If the dsx3loopbackState bit is set, the loopback",
+							"in effect can be determined from the",
+							"dsx3loopbackConfig object.",
+							"The various bit positions are:",
+							"",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote Alarm Indication",
+							"8 dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined here",
+							"1024 dsx3UnavailSigState Near End in Unavailable Signal State",
+							"2048 dsx3NetEquipOOS Carrier Equipment Out of Service"
+						],
+						"name" : "DS3-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::alarmStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap is sent whenever there is a transition from a no alarm",
+				"state to a state with at least one active alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : 2"
+				},
+				"EventType" : "alarmStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==3) ? 'Interface alarm is on' : 'Interface alarm is off'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::alarmStatusTrap RAD-MIB::atmInterfaceAlarmStatus i 2",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::alarmStatusTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The variable is on(3) when there is any active alarm",
+							"on this interface."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::atmInterfaceAlarmStatus",
+						"oid" : "1.3.6.1.4.1.164.12.3.2.1.2.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::systemTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap alerts of major problems in the device."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "systemTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==5) ? 4 : (($v2==7) ? 5 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Major problem detected in the device"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::systemTrap RAD-MIB::agnLed s EXAMPLE RAD-MIB::alarmSeverity i 5",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::systemTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This entry specifies the LEDs status of the agent module . Each led will be represented by 4 ",
+							"bits where the first 2 bits (left) will specify the status :",
+							"(00=NA, 01=OFF, 10=ON, 11=BLINK)",
+							"and the next two bits (right) will specify the color :",
+							"(00=GREEN, 01=RED, 10=YELLOW, 11=GRAY)"
+						],
+						"name" : "RAD-MIB::agnLed",
+						"oid" : "1.3.6.1.4.1.164.6.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::alarmLOS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Loss Of Signal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "alarmLOS",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'Loss of signal detected' : 'Loss of signal resolved'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::alarmLOS RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::alarmLOS",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::alarmLOF",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Loss Of Frame."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "alarmLOF",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'Loss of frame detected' : 'Loss of frame resolved'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::alarmLOF RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::alarmLOF",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::channelOperStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon any change in one or more channels."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : 2"
+				},
+				"EventType" : "channelOperStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==3) ? 0 : (($v1==7 || $v1==8 || $v1==9 || $v1==11) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Channel operation status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::channelOperStatusTrap RAD-MIB::ip2IfOperStatus i 2",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::channelOperStatusTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The actual link status.",
+							"remoteFail - No Rx.",
+							"localFail - No Tx.",
+							"unavailable - No echo replay or replay with invalid code or when connection is in Test state.",
+							"valiodationFail - Connection is in not valid state.",
+							"standby - offline (can be in pre-sync mode).",
+							"tdmFail - oper status is down cause of failure in the tdm.",
+							"hwMismatch - the bundle exists on a card that is not installed or has a different",
+							"type than the programmed card."
+						],
+						"enums" : {
+							"2" : "down",
+							"3" : "up",
+							"4" : "disabled",
+							"5" : "remoteFail",
+							"6" : "localFail",
+							"7" : "unavailable",
+							"8" : "validationFail",
+							"9" : "standby",
+							"10" : "tdmFail",
+							"11" : "hwMismatch"
+						},
+						"name" : "RAD-MIB::ip2IfOperStatus",
+						"oid" : "1.3.6.1.4.1.164.3.1.6.7.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::alarmAIS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates AIS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "alarmAIS",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'AIS detected' : 'AIS cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::alarmAIS RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::alarmAIS",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::alarmRDI",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates RDI."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "alarmRDI",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'RDI detected' : 'RDI resolved'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::alarmRDI RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::alarmRDI",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::alarmFEBE",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates FEBE."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "alarmFEBE",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'FEBE detected' : 'FEBE resolved'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::alarmFEBE RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::alarmFEBE",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::localConnStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon a change in Local connectivity",
+				"of Bundle connection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "localConnStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4 || $v1==6) ? 3 : (($v1==5) ? 4 : 5)))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : "Local connection status changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::localConnStatusTrap RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::localConnStatusTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::remoteConnStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon a change in Remote connectivity",
+				"of Bundle connection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "remoteConnStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4 || $v1==6) ? 3 : (($v1==5) ? 4 : 5)))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : "Remote connection status changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::remoteConnStatusTrap RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::remoteConnStatusTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "OPTIMUX-MIB::bundleConnectionStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon any change in the connectivity status ",
+				"of a Bundle (ip2IfOperStatus).",
+				"The ifAlias index is the ifIndex of the bundle that its status has been changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3) ? 1 : 2"
+				},
+				"EventType" : "bundleConnectionStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==3) ? 0 : (($v2==7 || $v2==8 || $v2==9 || $v2==11) ? 3 : 4)"
+				},
+				"SubNode" : "ifAlias:$v1",
+				"Summary" : "Bundle connection status changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OPTIMUX-MIB::bundleConnectionStatusTrap IF-MIB::ifAlias s EXAMPLE RAD-MIB::ip2IfOperStatus i 2",
+			"trap" : {
+				"name" : "OPTIMUX-MIB::bundleConnectionStatusTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.3.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The actual link status.",
+							"remoteFail - No Rx.",
+							"localFail - No Tx.",
+							"unavailable - No echo replay or replay with invalid code or when connection is in Test state.",
+							"valiodationFail - Connection is in not valid state.",
+							"standby - offline (can be in pre-sync mode).",
+							"tdmFail - oper status is down cause of failure in the tdm.",
+							"hwMismatch - the bundle exists on a card that is not installed or has a different",
+							"type than the programmed card."
+						],
+						"enums" : {
+							"2" : "down",
+							"3" : "up",
+							"4" : "disabled",
+							"5" : "remoteFail",
+							"6" : "localFail",
+							"7" : "unavailable",
+							"8" : "validationFail",
+							"9" : "standby",
+							"10" : "tdmFail",
+							"11" : "hwMismatch"
+						},
+						"name" : "RAD-MIB::ip2IfOperStatus",
+						"oid" : "1.3.6.1.4.1.164.3.1.6.7.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

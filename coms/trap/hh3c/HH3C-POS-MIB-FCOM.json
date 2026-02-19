@@ -1,0 +1,528 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200410150000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposAppNotReadyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap when the application whose state is linked",
+				"isn't ready to send or receive data.",
+				"Only used for the application whose connect mode is tcp."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposAppNotReadyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Application $v1 is not ready to send or receive data"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposAppNotReadyTrap HH3C-POS-MIB::hh3cposAppId i 0",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposAppNotReadyTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.1",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of application."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposAppId",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposAppConnectFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if router can not connect to the application."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposAppConnectFailTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Router unable connect to the application $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposAppConnectFailTrap HH3C-POS-MIB::hh3cposAppId i 0",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposAppConnectFailTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.2",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of application."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposAppId",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposAppStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap when the state of the application is changed to down or kept."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 2 : (($v2==3 || $v2==4) ? 1 : 3)"
+				},
+				"EventType" : "hh3cposAppStateChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 86400 : (($v2==3 || $v2==4) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2==3 || $v2==4) ? 0 : (($v2==2) ? 4 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Application $v1 state changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposAppStateChangeTrap HH3C-POS-MIB::hh3cposAppId i 0 HH3C-POS-MIB::hh3cposAppState i 1",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposAppStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.3",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of application."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposAppId",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of application."
+						],
+						"enums" : {
+							"1" : "noset",
+							"2" : "down",
+							"3" : "up",
+							"4" : "ok",
+							"5" : "kept",
+							"6" : "linking",
+							"7" : "linked"
+						},
+						"name" : "HH3C-POS-MIB::hh3cposAppState",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposAppNotConfigedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the application isn't configured."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposAppNotConfigedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Application $v1 is not configured"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposAppNotConfigedTrap HH3C-POS-MIB::hh3cposAppId i 0",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposAppNotConfigedTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.4",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of application."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposAppId",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposAppBuffOverFlowTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the application buffer is overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposAppBuffOverFlowTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Application $v1 buffer is overflowed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposAppBuffOverFlowTrap HH3C-POS-MIB::hh3cposAppId i 0",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposAppBuffOverFlowTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.5",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of application."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposAppId",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposAppDebugOpenTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the debugging switch of application is open."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposAppDebugOpenTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Application $v1 debugging switch is open"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposAppDebugOpenTrap HH3C-POS-MIB::hh3cposAppId i 0",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposAppDebugOpenTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.6",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of application."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposAppId",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposAppDebugAllOpenTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the all debugging switches of application are open."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposAppDebugAllOpenTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Application with all debugging switches are open"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposAppDebugAllOpenTrap ",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposAppDebugAllOpenTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.7"
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposInterBuffOverFlowTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the distributing buffer is overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposInterBuffOverFlowTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Distributing buffer is overflowed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposInterBuffOverFlowTrap ",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposInterBuffOverFlowTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.8"
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposInterStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the state of POS-Interface is changed to down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 2 : (($v2==1) ? 3 : 1)"
+				},
+				"EventType" : "hh3cposInterStateChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 86400 : (($v2==1) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 4 : (($v2==3 || $v2==4) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "POS interface $v1 state changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposInterStateChangeTrap HH3C-POS-MIB::hh3cposPosId i 0 HH3C-POS-MIB::hh3cposPosConnectState i 1",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposInterStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.9",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of the POS-Interface."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposPosId",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the POS-Interface."
+						],
+						"enums" : {
+							"1" : "noset",
+							"2" : "down",
+							"3" : "up",
+							"4" : "ok"
+						},
+						"name" : "HH3C-POS-MIB::hh3cposPosConnectState",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposInterDebugOpenTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the debug of POS-Interface is open."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposInterDebugOpenTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "posID:$v1",
+				"Summary" : "POS interface $v1 debug is open"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposInterDebugOpenTrap HH3C-POS-MIB::hh3cposPosId i 0",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposInterDebugOpenTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.10",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of the POS-Interface."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposPosId",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposInterDebugAllOpenTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the all debugs of POS-Interface are open."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposInterDebugAllOpenTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "POS interface with all debugs are open"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposInterDebugAllOpenTrap ",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposInterDebugAllOpenTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.11"
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposFCMTimeoutTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the modem is hung up for timeout."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposFCMTimeoutTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "hh3cposFCMIfIndex:$v1",
+				"Summary" : "Modem is hung up for timeout"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposFCMTimeoutTrap HH3C-POS-MIB::hh3cposFCMIfIndex i 9999",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposFCMTimeoutTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.12",
+				"variables" : [
+					{
+						"description" : [
+							"The index of FCM interface."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposFCMIfIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.5.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposFCMConnectFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap if the handshaking of modems is not successful."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposFCMConnectFailTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "hh3cposFCMIfIndex:$v1",
+				"Summary" : "Modems handshaking failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposFCMConnectFailTrap HH3C-POS-MIB::hh3cposFCMIfIndex i 9999",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposFCMConnectFailTrap",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.13",
+				"variables" : [
+					{
+						"description" : [
+							"The index of FCM interface."
+						],
+						"name" : "HH3C-POS-MIB::hh3cposFCMIfIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.36.8.5.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposClearPacketCounter",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap when the packet counter of ",
+				"the POS application and interface is cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposClearPacketCounter",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Packet counter cleared for POS application and interface"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposClearPacketCounter ",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposClearPacketCounter",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.14"
+			}
+		},
+		{
+			"@objectName" : "HH3C-POS-MIB::hh3cposClearFcmCounter",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent will send a trap when the FCM counter is cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cposClearFcmCounter",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "FCM counter is cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-POS-MIB::hh3cposClearFcmCounter ",
+			"trap" : {
+				"name" : "HH3C-POS-MIB::hh3cposClearFcmCounter",
+				"oid" : "1.3.6.1.4.1.25506.8.36.8.17.15"
+			}
+		}
+	]
+}

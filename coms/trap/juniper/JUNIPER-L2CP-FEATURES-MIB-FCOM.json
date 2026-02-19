@@ -1,0 +1,253 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201609230000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "JUNIPER-L2CP-FEATURES-MIB::jnxPortRootProtectStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when the ports Root-protect state (no-error or root-prevented) ",
+				"changes."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.[0-9]+\\.(?P<dot1dStpPort>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventType" : "Root Protect State",
+				"ExpireTime" : {
+					"eval" : "($v1 == 0) ? 3600 : 86400"
+				},
+				"SubNode" : "dot1dStpPortEntry.$dot1dStpPort",
+				"EventCategory" : {
+					"eval" : "($v1 == 0) ? 1 : (($v1 == 1) ? 2 : 2)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 0 : (($v1 == 1) ? 3 : 2)"
+				},
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'Port - dot1dStpPortEntry. $dot1dStpPort can be a root port.' : (($v1 == 1) ? 'Port - dot1dStpPortEntry. $dot1dStpPort is prevented from being a root port' : 'Root State unknown for the port - dot1dStpPortEntry. $dot1dStpPort')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-L2CP-FEATURES-MIB::jnxPortRootProtectStateChangeTrap JUNIPER-L2CP-FEATURES-MIB::jnxDot1dStpPortRootProtectState.99 i 0",
+			"trap" : {
+				"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxPortRootProtectStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.53.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates whether the port was prevented from being a root port.",
+							"This parameter will always return 'no-error (0)' if ",
+							"jnxDot1dStpPortRootProtectEnabled is FALSE. "
+						],
+						"enums" : {
+							"0" : "no-error",
+							"1" : "root-prevented"
+						},
+						"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxDot1dStpPortRootProtectState",
+						"oid" : "1.3.6.1.4.1.2636.3.53.1.1.1.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-L2CP-FEATURES-MIB::jnxPortLoopProtectStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when the ports Loop-protect state (no-error or loop-prevented) ",
+				"changes."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.[0-9]+\\.(?P<dot1dStpPort>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventType" : "Loop Protect State",
+				"ExpireTime" : {
+					"eval" : "($v1 == 0) ? 3600 : (($v1 == 1) ? 86400 : 86400)"
+				},
+				"SubNode" : "dot1dStpPortEntry.$dot1dStpPort",
+				"EventCategory" : {
+					"eval" : "($v1 == 0) ? 1 : (($v1 == 1) ? 2 : 2)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 0 : (($v1 == 1) ? 3 : 2)"
+				},
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'Port - dot1dStpPortEntry. $dot1dStpPort  can have potential loop.' : (($v1 == 1) ? 'Potential loop was prevented on the Port - dot1dStpPortEntry. $dot1dStpPort' : 'Loop State unknown for the port - dot1dStpPortEntry. $dot1dStpPort')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-L2CP-FEATURES-MIB::jnxPortLoopProtectStateChangeTrap JUNIPER-L2CP-FEATURES-MIB::jnxDot1dStpPortLoopProtectState.99 i 0",
+			"trap" : {
+				"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxPortLoopProtectStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.53.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates whether a potential Loop was prevented on the port",
+							"This parameter will always return 'no-error (0)' if ",
+							"jnxDot1dStpPortLoopProtectEnabled is FALSE. "
+						],
+						"enums" : {
+							"0" : "no-error",
+							"1" : "loop-prevented"
+						},
+						"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxDot1dStpPortLoopProtectState",
+						"oid" : "1.3.6.1.4.1.2636.3.53.1.1.1.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-L2CP-FEATURES-MIB::jnxPortBpduErrorStatusChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when the ports BPDU error state (no-error or detected) ",
+				"changes."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.[0-9]+\\.(?P<ifIndex>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventType" : "BPDU Protect Functionality",
+				"ExpireTime" : {
+					"eval" : "($v1 == 0) ? 3600 : (($v1 == 1) ? 86400 : 86400)"
+				},
+				"SubNode" : "ifEntry.$ifIndex",
+				"EventCategory" : {
+					"eval" : "($v1 == 0) ? 1 : (($v1 == 1) ? 2 : 2)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 0 : (($v1 == 1) ? 3 : 2)"
+				},
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'BPDU protect Functionality is not enabled on the Port - ifEntry- $ifIndex' : (($v1 == 1) ? 'Port - ifEntry- $ifIndex will be disabled on receipt of a BPDU.' : 'BPDU protect Functionality unknown for the Port - ifEntry- $ifIndex')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-L2CP-FEATURES-MIB::jnxPortBpduErrorStatusChangeTrap JUNIPER-L2CP-FEATURES-MIB::jnxL2cpPortBpduError.9999 i 0",
+			"trap" : {
+				"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxPortBpduErrorStatusChangeTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.53.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates whether a BPDU was received on the port.",
+							"This parameter will always return 'no-error (0)' if ",
+							"jnxL2cpBpduProtectPortEnabled is FALSE. "
+						],
+						"enums" : {
+							"0" : "no-error",
+							"1" : "detected"
+						},
+						"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxL2cpPortBpduError",
+						"oid" : "1.3.6.1.4.1.2636.3.53.1.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-L2CP-FEATURES-MIB::jnxLacpTimeOut",
+			"certification" : "STANDARD",
+			"description" : [
+				"Lacp times out"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "LACP Status",
+				"ExpireTime" : {
+					"eval" : "($v1 == 0) ? 3600 : (($v1 == 1) ? 86400 : 86400)"
+				},
+				"Severity" : 2,
+				"SubNode" : "LACPInterfaceName:$v1",
+				"Summary" : "LACP Times Out ( LACP Interface Name: $v1 )"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-L2CP-FEATURES-MIB::jnxLacpTimeOut JUNIPER-L2CP-FEATURES-MIB::jnxLacpInterfaceName s EXAMPLE JUNIPER-L2CP-FEATURES-MIB::jnxLacpifIndex i 9999 JUNIPER-L2CP-FEATURES-MIB::jnxLacpAggregateInterfaceName s EXAMPLE JUNIPER-L2CP-FEATURES-MIB::jnxLacpAggregateifIndex i 9999 JUNIPER-L2CP-FEATURES-MIB::jnxLacpAggPortActorOperState s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxLacpTimeOut",
+				"oid" : "1.3.6.1.4.1.2636.3.53.1.2.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"Lacp member interface."
+						],
+						"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxLacpInterfaceName",
+						"oid" : "1.3.6.1.4.1.2636.3.53.1.1.3.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Snmp ifIndex of member interface."
+						],
+						"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxLacpifIndex",
+						"oid" : "1.3.6.1.4.1.2636.3.53.1.1.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Lacp Aggregate interface."
+						],
+						"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxLacpAggregateInterfaceName",
+						"oid" : "1.3.6.1.4.1.2636.3.53.1.1.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Snmp ifIndex of Aggregator."
+						],
+						"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxLacpAggregateifIndex",
+						"oid" : "1.3.6.1.4.1.2636.3.53.1.1.3.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port actor operational state."
+						],
+						"name" : "JUNIPER-L2CP-FEATURES-MIB::jnxLacpAggPortActorOperState",
+						"oid" : "1.3.6.1.4.1.2636.3.53.1.1.3.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

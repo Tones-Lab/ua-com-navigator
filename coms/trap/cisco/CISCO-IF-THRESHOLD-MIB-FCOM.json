@@ -1,0 +1,167 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200109140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFired",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent generates this notification when a threshold defined",
+				"in a template is asserted on an interface.",
+				"If a threshold is asserted for a given interface and template",
+				"cifthTemplateNotifyHoldDownTime is set to 'holdDownTimer' for",
+				"that template, and this notification has recently been sent for",
+				"the same threshold on the same interface, then this",
+				"notification may be suppressed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cifthIfThreshold",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Interface threshold asserted with severity $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFired CISCO-IF-THRESHOLD-MIB::cifthIfLastThresholdFired u 9999 CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFiredLstChange t 36000 CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFiredLstSeverity i 1",
+			"trap" : {
+				"name" : "CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFired",
+				"oid" : "1.3.6.1.4.1.9.9.218.2.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-IF-THRESHOLD-MIB::cifthIfLastThresholdFired",
+						"oid" : "1.3.6.1.4.1.9.9.218.1.3.3.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFiredLstChange",
+						"oid" : "1.3.6.1.4.1.9.9.218.1.3.3.1.4",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "fail",
+							"2" : "degrade",
+							"3" : "info",
+							"4" : "other"
+						},
+						"name" : "CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFiredLstSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.218.1.3.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IF-THRESHOLD-MIB::cifthIfThresholdCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent generates this notification when a threshold, that",
+				"has previously fired, is cleared on an interface.",
+				"If a threshold is cleared for a given interface and template",
+				"cifthTemplateNotifyHoldDownTime is set to 'holdDownTimer' for",
+				"that template, and this notification has recently been sent for",
+				"the same threshold on the same interface, then this",
+				"notification may be suppressed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cifthIfThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Interface threshold cleared with severity $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IF-THRESHOLD-MIB::cifthIfThresholdCleared CISCO-IF-THRESHOLD-MIB::cifthIfLastThresholdFired u 9999 CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFiredLstChange t 36000 CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFiredLstSeverity i 1",
+			"trap" : {
+				"name" : "CISCO-IF-THRESHOLD-MIB::cifthIfThresholdCleared",
+				"oid" : "1.3.6.1.4.1.9.9.218.2.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-IF-THRESHOLD-MIB::cifthIfLastThresholdFired",
+						"oid" : "1.3.6.1.4.1.9.9.218.1.3.3.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFiredLstChange",
+						"oid" : "1.3.6.1.4.1.9.9.218.1.3.3.1.4",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "fail",
+							"2" : "degrade",
+							"3" : "info",
+							"4" : "other"
+						},
+						"name" : "CISCO-IF-THRESHOLD-MIB::cifthIfThresholdFiredLstSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.218.1.3.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IF-THRESHOLD-MIB::cifthTemplateIfStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent generates this notification when a template comes up",
+				"or goes down on an interface to which it is assigned, i.e.",
+				"when the value of cifthTemplateIfAssignOperStatus changes. If",
+				"a template becomes operationally down on an interface upon",
+				"activation of a new entry in the cifthTemplateIfAssignTable",
+				"the agent generates this notification. The agent need not",
+				"generate this notification when a new entry in the",
+				"cifthTemplateIfAssignTable is activated, if the template",
+				"becomes operational on the interface. The agent need not",
+				"generate this notification when an entry in the",
+				"cifthTemplateIfAssignTable is destroyed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cifthTemplateIfStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Interface threshold template status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IF-THRESHOLD-MIB::cifthTemplateIfStatusChange CISCO-IF-THRESHOLD-MIB::cifthTemplateIfAssignOperStatus i 1",
+			"trap" : {
+				"name" : "CISCO-IF-THRESHOLD-MIB::cifthTemplateIfStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.218.2.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-IF-THRESHOLD-MIB::cifthTemplateIfAssignOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.218.1.2.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

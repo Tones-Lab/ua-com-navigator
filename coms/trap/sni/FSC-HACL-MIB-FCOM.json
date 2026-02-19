@@ -1,0 +1,525 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FSC-HACL-MIB::fscHaClClusterInfAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"Informations about a cluster have become available for the agent.",
+				"The value of the object 'fscHaClSubAgentInfoOperScope' has been",
+				"changed to 'all', 'subset' or 'local'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "fscHaClClusterStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Cluster:$v1",
+				"Summary" : "Information is available for HaCl cluster $v1 (scope: $v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FSC-HACL-MIB::fscHaClClusterInfAvailable FSC-HACL-MIB::fscHaClClusterName s EXAMPLE FSC-HACL-MIB::fscHaClSubAgentInfoOperScope i 4",
+			"trap" : {
+				"name" : "FSC-HACL-MIB::fscHaClClusterInfAvailable",
+				"oid" : "1.3.6.1.4.1.231.2.42.2.0.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Cluster"
+						],
+						"name" : "FSC-HACL-MIB::fscHaClClusterName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Scope of Information supplied by the subagent:",
+							"- unknown:",
+							"The Information cannot be supplied.",
+							"- other:",
+							"The Information does not correspond to the other enumerated",
+							"values.",
+							"- all:",
+							"The agent is capable to supply the complete information",
+							"about the cluster and the cluster entities: systems, ",
+							"applications, and resources.",
+							"- subset:",
+							"The agent has only a restricted view. It supplies complete",
+							"information only about applications which run on a subset of",
+							"nodes.",
+							"- local:",
+							"The agent supplies information only about applications which",
+							"run on the local node.",
+							"- no:",
+							"No Information about the Cluster is available."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "all",
+							"4" : "subset",
+							"5" : "local",
+							"6" : "no"
+						},
+						"name" : "FSC-HACL-MIB::fscHaClSubAgentInfoOperScope",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FSC-HACL-MIB::fscHaClClusterInfNotAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"Informations about a cluster are no longer available for the agent.",
+				"The value of the object 'fscHaClSubAgentInfoOperScope' has been",
+				"changed to 'noInformation' 'unknown', or 'other'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "fscHaClClusterStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Cluster:$v1",
+				"Summary" : "Information is not available for HaCl cluster $v1 (scope: $v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FSC-HACL-MIB::fscHaClClusterInfNotAvailable FSC-HACL-MIB::fscHaClClusterName s EXAMPLE FSC-HACL-MIB::fscHaClSubAgentInfoOperScope i 1",
+			"trap" : {
+				"name" : "FSC-HACL-MIB::fscHaClClusterInfNotAvailable",
+				"oid" : "1.3.6.1.4.1.231.2.42.2.0.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Cluster"
+						],
+						"name" : "FSC-HACL-MIB::fscHaClClusterName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Scope of Information supplied by the subagent:",
+							"- unknown:",
+							"The Information cannot be supplied.",
+							"- other:",
+							"The Information does not correspond to the other enumerated",
+							"values.",
+							"- all:",
+							"The agent is capable to supply the complete information",
+							"about the cluster and the cluster entities: systems, ",
+							"applications, and resources.",
+							"- subset:",
+							"The agent has only a restricted view. It supplies complete",
+							"information only about applications which run on a subset of",
+							"nodes.",
+							"- local:",
+							"The agent supplies information only about applications which",
+							"run on the local node.",
+							"- no:",
+							"No Information about the Cluster is available."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "all",
+							"4" : "subset",
+							"5" : "local",
+							"6" : "no"
+						},
+						"name" : "FSC-HACL-MIB::fscHaClSubAgentInfoOperScope",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FSC-HACL-MIB::fscHaClMonitorStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cluster monitoring, which is the main source of informations",
+				"for the agent has changed its state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3 || $v2==5) ? 1 : (($v2==1 || $v2==2) ? 3 : 2)"
+				},
+				"EventType" : "fscHaClMonitorStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v2==4 || $v2==6 || $v2==7) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==3 || $v2==5) ? 0 : (($v2==1) ? 1 : (($v2==2) ? 2 : (($v2==7) ? 3 : 4)))"
+				},
+				"SubNode" : "Cluster:$v1",
+				"Summary" : "HaCl cluster $v1 monitoring state is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClMonitorStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE1 FSC-HACL-MIB::fscHaClClusterMonitoringState i 4",
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClMonitorStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE1 FSC-HACL-MIB::fscHaClClusterMonitoringState i 3",
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClMonitorStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE2 FSC-HACL-MIB::fscHaClClusterMonitoringState i 1"
+			],
+			"trap" : {
+				"name" : "FSC-HACL-MIB::fscHaClMonitorStateChanged",
+				"oid" : "1.3.6.1.4.1.231.2.42.2.0.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Cluster"
+						],
+						"name" : "FSC-HACL-MIB::fscHaClClusterName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"State of Cluster Monitoring:",
+							"- unknown:",
+							"The Information cannot be supplied.",
+							"- other:",
+							"The Information does not correspond to the other enumerated values.",
+							"- up:",
+							"The cluster monitoring is active. Informations about the cluster",
+							"can be supplied.",
+							"- down:",
+							"No cluster monitoring is active. No informations about the cluster",
+							"can be supplied.",
+							"- runningUp:",
+							"The cluster monitoring has been started but is not completely",
+							"operating yet.",
+							"- runningDown:",
+							"The cluster monitoring has been stopped and is coming down. No",
+							"informations about the cluster can be supplied.",
+							"- The state of the cluster monitoring is presently pending. It is",
+							"not operating for the moment. Presently no informations about",
+							"the cluster can be supplied."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "up",
+							"4" : "down",
+							"5" : "runningUp",
+							"6" : "runningDown",
+							"7" : "pending"
+						},
+						"name" : "FSC-HACL-MIB::fscHaClClusterMonitoringState",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.2.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FSC-HACL-MIB::fscHaClSystemStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The state of a system has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==3) ? 1 : (($v3==4 || $v3==5) ? 2 : 3)"
+				},
+				"EventType" : "fscHaClSystemStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v3==4 || $v3==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==3) ? 0 : (($v3==1) ? 1 : (($v3==2) ? 2 : (($v3==4) ? 3 : 5)))"
+				},
+				"SubNode" : "Cluster:$v1;Node:$v2",
+				"Summary" : "HaCl system $v2 state is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClSystemStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE1 FSC-HACL-MIB::fscHaClSystemName s EXAMPLE FSC-HACL-MIB::fscHaClSystemState i 5",
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClSystemStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE1 FSC-HACL-MIB::fscHaClSystemName s EXAMPLE FSC-HACL-MIB::fscHaClSystemState i 3",
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClSystemStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE2 FSC-HACL-MIB::fscHaClSystemName s EXAMPLE FSC-HACL-MIB::fscHaClSystemState i 2"
+			],
+			"trap" : {
+				"name" : "FSC-HACL-MIB::fscHaClSystemStateChanged",
+				"oid" : "1.3.6.1.4.1.231.2.42.2.0.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Cluster"
+						],
+						"name" : "FSC-HACL-MIB::fscHaClClusterName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Hostname of the System. The value of this object must be",
+							"identical with the value of the object 'fscHaClSubAgentLocalNodeName'",
+							"which would be supplied by a SNMP cluster agent running on",
+							"that system."
+						],
+						"name" : "FSC-HACL-MIB::fscHaClSystemName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.3.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The system's state.",
+							"- unknown:",
+							"The Information cannot be supplied.",
+							"- other:",
+							"The Information does not correspond to the other enumerated ",
+							"values.",
+							"- up:",
+							"The system is running.",
+							"- down:",
+							"The system has been terminated normally.",
+							"- crashed:",
+							"A system failure occurred. It has been terminated abnormally."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "up",
+							"4" : "down",
+							"5" : "crashed"
+						},
+						"name" : "FSC-HACL-MIB::fscHaClSystemState",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.3.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FSC-HACL-MIB::fscHaClApplicationStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The state of an application has changed on a system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==4) ? 1 : (($v4==1 || $v4==2 || $v4==3) ? 3 : 2)"
+				},
+				"EventType" : "fscHaClApplicationStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v4==5 || $v4==6 || $v4==7) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==7) ? 5 : (($v4==6) ? 4 : (($v4==5) ? 3 : (($v4==4) ? 0 : (($v4==1) ? 1 : 2))))"
+				},
+				"SubNode" : "Cluster:$v1;Node:$v3;Application:$v2",
+				"Summary" : "HaCl application $v2 state is $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClApplicationStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE FSC-HACL-MIB::fscHaClApplicationName s EXAMPLE1 FSC-HACL-MIB::fscHaClSystemName s EXAMPLE FSC-HACL-MIB::fscHaClAppSysRelState i 7",
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClApplicationStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE FSC-HACL-MIB::fscHaClApplicationName s EXAMPLE1 FSC-HACL-MIB::fscHaClSystemName s EXAMPLE FSC-HACL-MIB::fscHaClAppSysRelState i 4",
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClApplicationStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE FSC-HACL-MIB::fscHaClApplicationName s EXAMPLE2 FSC-HACL-MIB::fscHaClSystemName s EXAMPLE FSC-HACL-MIB::fscHaClAppSysRelState i 3"
+			],
+			"trap" : {
+				"name" : "FSC-HACL-MIB::fscHaClApplicationStateChanged",
+				"oid" : "1.3.6.1.4.1.231.2.42.2.0.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Cluster"
+						],
+						"name" : "FSC-HACL-MIB::fscHaClClusterName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Name of the application."
+						],
+						"name" : "FSC-HACL-MIB::fscHaClApplicationName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.4.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Hostname of the System. The value of this object must be",
+							"identical with the value of the object 'fscHaClSubAgentLocalNodeName'",
+							"which would be supplied by a SNMP cluster agent running on",
+							"that system."
+						],
+						"name" : "FSC-HACL-MIB::fscHaClSystemName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.3.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"State of the application concerning the system.",
+							"- unknown:",
+							"The Information cannot be supplied.",
+							"- other:",
+							"The Information does not correspond to the other enumerated",
+							"values.",
+							"- undefined:",
+							"The application does not have a defined state.",
+							"- online:",
+							"The application is running on this system.",
+							"This value corresponds to the state 'work' in HiplexAF.",
+							"- offline:",
+							"The application is not running on the system",
+							"but the system is ready to take over the application.",
+							"This value corresponds to the state 'standby' in HiplexAF.",
+							"- down:",
+							"The application is stopped on the system. The system is not",
+							"ready to take over the application.",
+							"This value corresponds to the state 'terminated' in HiplexAF.",
+							"- faulted:",
+							"The last run of the application was terminated by a failure.",
+							"The system is not ready to take over the application.",
+							"This value corresponds to the state 'crashed' in HiplexAF."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "undefined",
+							"4" : "online",
+							"5" : "offline",
+							"6" : "down",
+							"7" : "faulted"
+						},
+						"name" : "FSC-HACL-MIB::fscHaClAppSysRelState",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.6.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FSC-HACL-MIB::fscHaClResourceStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The state of a resource which belongs to an online application",
+				"has changed. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==5) ? 1 : (($v3<5) ? 3 : 2)"
+				},
+				"EventType" : "fscHaClResourceStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v3==6 || $v3==7) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==7) ? 4 : (($v3==6) ? 3 : (($v3==5) ? 0 : (($v3==1) ? 1 : 2)))"
+				},
+				"SubNode" : "Cluster:$v1;Node:$v5;Application:$v4;Resource:$v2",
+				"Summary" : "HaCl resource $v2 state is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClResourceStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE FSC-HACL-MIB::fscHaClResourceName s EXAMPLE1 FSC-HACL-MIB::fscHaClResourceState i 6 FSC-HACL-MIB::fscHaClApplicationName s EXAMPLE FSC-HACL-MIB::fscHaClSystemName s EXAMPLE",
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClResourceStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE FSC-HACL-MIB::fscHaClResourceName s EXAMPLE1 FSC-HACL-MIB::fscHaClResourceState i 5 FSC-HACL-MIB::fscHaClApplicationName s EXAMPLE FSC-HACL-MIB::fscHaClSystemName s EXAMPLE",
+				"$SNMPTRAPCMD FSC-HACL-MIB::fscHaClResourceStateChanged FSC-HACL-MIB::fscHaClClusterName s EXAMPLE FSC-HACL-MIB::fscHaClResourceName s EXAMPLE2 FSC-HACL-MIB::fscHaClResourceState i 4 FSC-HACL-MIB::fscHaClApplicationName s EXAMPLE FSC-HACL-MIB::fscHaClSystemName s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "FSC-HACL-MIB::fscHaClResourceStateChanged",
+				"oid" : "1.3.6.1.4.1.231.2.42.2.0.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Cluster"
+						],
+						"name" : "FSC-HACL-MIB::fscHaClClusterName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Name of the resource"
+						],
+						"name" : "FSC-HACL-MIB::fscHaClResourceName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.5.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"State of the resource.",
+							"- unknown:",
+							"The Information cannot be supplied.",
+							"- other:",
+							"The Information does not correspond to the other enumerated",
+							"values.",
+							"- undefined:",
+							"The resource does not have a defined state.",
+							"- notMonitored:",
+							"The resource is not monitored. Its state has no impact on the",
+							"state of an application.",
+							"- online:",
+							"The resource is available.",
+							"This value corresponds to the state 'running' in HiplexAF.",
+							"- offline:",
+							"The resource is not available.",
+							"This value corresponds to the state 'terminated' in HiplexAF.",
+							"- faulted:",
+							"The resource is unavailable, because of a failure.",
+							"This value corresponds to the state 'crashed' in HiplexAF. "
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "undefined",
+							"4" : "notMonitored",
+							"5" : "online",
+							"6" : "offline",
+							"7" : "faulted"
+						},
+						"name" : "FSC-HACL-MIB::fscHaClResourceState",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.5.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Name of the application."
+						],
+						"name" : "FSC-HACL-MIB::fscHaClApplicationName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.4.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Hostname of the System. The value of this object must be",
+							"identical with the value of the object 'fscHaClSubAgentLocalNodeName'",
+							"which would be supplied by a SNMP cluster agent running on",
+							"that system."
+						],
+						"name" : "FSC-HACL-MIB::fscHaClSystemName",
+						"oid" : "1.3.6.1.4.1.231.2.42.1.3.2.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

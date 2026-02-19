@@ -1,0 +1,931 @@
+{
+	"metaData" : {
+		"sourceRevision" : "1602150000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TN-SAP-MIB::tnSapStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnSapStatusChanged notification is generated",
+				"when there is a change in the administrative or",
+				"operating status of an SAP.",
+				"Notice that this trap is not generated whenever",
+				"the SAP operating status change is caused by an",
+				"operating status change on the associated access",
+				"port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 1 : 2"
+				},
+				"EventType" : "tnSapStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v7==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 0 : (($v7==3 || $v7==4 || $v7==5) ? 3 : 4)"
+				},
+				"SubNode" : "PortId:$v4",
+				"Summary" : "SAP operational state: $v7, admin state: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD TN-SAP-MIB::tnSapStatusChanged TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SERV-MIB::tnSvcVpnId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999 TN-SAP-MIB::tnSapAdminStatus i 1 TN-SAP-MIB::tnSapOperStatus i 1 TN-SAP-MIB::tnSapOperFlags b 0",
+				"$SNMPTRAPCMD TN-SAP-MIB::tnSapStatusChanged TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SERV-MIB::tnSvcVpnId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999 TN-SAP-MIB::tnSapAdminStatus i 1 TN-SAP-MIB::tnSapOperStatus i 2 TN-SAP-MIB::tnSapOperFlags b 0"
+			],
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnSapStatusChanged",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created. If the value is",
+							"not specified, it defaults to the service ID."
+						],
+						"name" : "TN-SERV-MIB::tnSvcVpnId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The desired state of this SAP."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TN-SAP-MIB::tnSapAdminStatus",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tnSapOperStatus indicates the",
+							"operating state of this SAP."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "ingressQosMismatch",
+							"4" : "egressQosMismatch",
+							"5" : "portMtuTooSmall",
+							"6" : "svcAdminDown",
+							"7" : "iesIfAdminDown"
+						},
+						"name" : "TN-SAP-MIB::tnSapOperStatus",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies all the conditions that",
+							"affect the operating status of this SAP."
+						],
+						"enums" : {
+							"0" : "sapAdminDown",
+							"1" : "svcAdminDown",
+							"2" : "iesIfAdminDown",
+							"3" : "portOperDown",
+							"4" : "portMtuTooSmall",
+							"5" : "l2OperDown",
+							"6" : "ingressQosMismatch",
+							"7" : "egressQosMismatch",
+							"8" : "relearnLimitExceeded",
+							"9" : "recProtSrcMac",
+							"10" : "subIfAdminDown",
+							"11" : "sapIpipeNoCeIpAddr",
+							"12" : "sapTodResourceUnavail",
+							"13" : "sapTodMssResourceUnavail",
+							"14" : "sapParamMismatch",
+							"15" : "sapCemNoEcidOrMacAddr",
+							"16" : "sapStandbyForMcRing",
+							"17" : "sapSvcMtuTooSmall",
+							"18" : "ingressNamedPoolMismatch",
+							"19" : "egressNamedPoolMismatch",
+							"20" : "ipMirrorNoMacAddr",
+							"21" : "sapEpipeNoRingNode",
+							"22" : "mcStandby",
+							"23" : "mhStandby",
+							"24" : "oamDownMepFault",
+							"25" : "oamUpMepFault",
+							"26" : "ethTunTagMisconfig",
+							"27" : "ingressPolicerMismatch",
+							"28" : "egressPolicerMismatch",
+							"29" : "sapTlsNoRingNode",
+							"30" : "ethRingPathBlocked",
+							"31" : "oamTunnelMepFault",
+							"32" : "operGrpDown"
+						},
+						"name" : "TN-SAP-MIB::tnSapOperFlags",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.27",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnSapTlsMacAddrLimitAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap tnSapTlsMacAddrLimitAlarmRaised is sent whenever",
+				"the number of MAC addresses stored in the FDB for this SAP",
+				"increases to reach the watermark specified by the object",
+				"svcTlsFdbTableFullHighWatermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tnSapTlsMacAddrLimitAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "PortId:$v4",
+				"Summary" : "MAC address storage limit exceeded threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnSapTlsMacAddrLimitAlarmRaised TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SERV-MIB::tnSvcVpnId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnSapTlsMacAddrLimitAlarmRaised",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created. If the value is",
+							"not specified, it defaults to the service ID."
+						],
+						"name" : "TN-SERV-MIB::tnSvcVpnId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnSapTlsMacAddrLimitAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap tnSapTlsMacAddrLimitAlarmCleared is sent whenever",
+				"the number of MAC addresses stored in the FDB for this SAP",
+				"drops to the watermark specified by the object",
+				"svcTlsFdbTableFullLowWatermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tnSapTlsMacAddrLimitAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PortId:$v4",
+				"Summary" : "MAC address storage limit threshold alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnSapTlsMacAddrLimitAlarmCleared TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SERV-MIB::tnSvcVpnId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnSapTlsMacAddrLimitAlarmCleared",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created. If the value is",
+							"not specified, it defaults to the service ID."
+						],
+						"name" : "TN-SERV-MIB::tnSvcVpnId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnSapDHCPLseStateMobilityError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnSapDHCPLseStateMobilityError notification indicates",
+				"that the system was unable to perform a mobility check",
+				"for this lease state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tnSapDHCPLseStateMobilityError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortId:$v4",
+				"Summary" : "Lease state mobility check failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnSapDHCPLseStateMobilityError TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SERV-MIB::tnSvcVpnId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnSapDHCPLseStateMobilityError",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.3.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created. If the value is",
+							"not specified, it defaults to the service ID."
+						],
+						"name" : "TN-SERV-MIB::tnSvcVpnId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnTopologyChangeSapMajorState",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnTopologyChangeSapMajorState notification is",
+				"generated when a SAP has transitioned its state from",
+				"learning to forwarding or from forwarding to blocking",
+				"or broken. The spanning tree topology has been modified",
+				"and it may denote loss of customer access or",
+				"redundancy. Check the new topology against the",
+				"provisioned topology to determine the severity of",
+				"connectivity loss."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tnTopologyChangeSapMajorState",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortId:$v3",
+				"Summary" : "Topology SAP major state changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnTopologyChangeSapMajorState TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnTopologyChangeSapMajorState",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.5.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnNewRootSap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnNewRootSap notification is generated when the",
+				"previous root bridge has been aged out and a new root",
+				"bridge has been elected. A new root bridge creates a",
+				"new spanning tree topology and it may denote loss of",
+				"customer access or redundancy. Check the new topology",
+				"against the provisioned topology to determine the",
+				"severity of connectivity loss."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tnNewRootSap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortId:$v3",
+				"Summary" : "New root detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnNewRootSap TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnNewRootSap",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.5.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnTopologyChangeSapState",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnTopologyChangeSapState notification is generated",
+				"when a SAP has transitioned state to blocking or",
+				"broken from a state other than forwarding. This event",
+				"complements what is not covered by",
+				"tnTopologyChangeSapMajorState. The spanning tree",
+				"topology has been modified and it may denote loss of",
+				"customer access or redundancy. Check the new topology",
+				"against the provisioned topology to determine severity",
+				"of connectivity loss."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tnTopologyChangeSapState",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortId:$v3",
+				"Summary" : "Topology SAP state changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnTopologyChangeSapState TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnTopologyChangeSapState",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.5.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnReceivedTCN",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnReceivedTCN notification is generated when a SAP",
+				"has received TCN from another bridge. This bridge will",
+				"either have its configured BPDU with the topology",
+				"change flag set if it is a root bridge, or it will",
+				"pass TCN to its root bridge. Eventually the address",
+				"aging timer for the forwarding database will be made",
+				"shorter for a short period of time. No recovery is",
+				"needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tnReceivedTCN",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortId:$v3",
+				"Summary" : "SAP received TCN from another bridge"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnReceivedTCN TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnReceivedTCN",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.5.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnSapActiveProtocolChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnSapActiveProtocolChange notification is generated",
+				"when the spanning tree protocol on this SAP changes",
+				"from rstp to stp or vise versa. No recovery is",
+				"needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tnSapActiveProtocolChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortId:$v3",
+				"Summary" : "SAP active protocol changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnSapActiveProtocolChange TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999 TN-SAP-MIB::tnSapTlsStpOperProtocol i 0",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnSapActiveProtocolChange",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.5.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"tnSapTlsStpOperProtocol indicates whether stp, rstp or",
+							"mstp is running on this SAP. If the protocol is not",
+							"enabled on this SAP, the value notApplicable is",
+							"returned."
+						],
+						"enums" : {
+							"0" : "notApplicable",
+							"1" : "stp",
+							"2" : "rstp",
+							"3" : "mstp"
+						},
+						"name" : "TN-SAP-MIB::tnSapTlsStpOperProtocol",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.3.1.28",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnStpRootGuardViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnStpRootGuardViolation notification is",
+				"generated when a SAP which has root-guard configured is",
+				"trying to become root (has a better STP priority vector).",
+				"The SAP will become alternate and traffic will be blocked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tnStpRootGuardViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortId:$v2",
+				"Summary" : "STP root guard violation detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnStpRootGuardViolation TN-SERV-MIB::tnSvcId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999 TN-SAP-MIB::tnSapTlsStpRootGuardViolation i 1",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnStpRootGuardViolation",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.5.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSapTlsStpRootGuardViolation",
+							"indicates whether there is a root-guard violation at the",
+							"present time. This can only happen when tnSapTlsStpRootGuard",
+							"is set to true."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TN-SAP-MIB::tnSapTlsStpRootGuardViolation",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.3.1.52",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TN-SAP-MIB::tnSapStpExcepCondStateChng",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnSapStpExcepCondStateChng notification is",
+				"generated when the value of the object tnSapTlsStpException",
+				"has changed, i.e. when the exception condition ",
+				"changes on the indicated SAP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tnSapStpExcepCondStateChng",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PortId:$v3",
+				"Summary" : "STP exception condition state changed to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TN-SAP-MIB::tnSapStpExcepCondStateChng TN-SERV-MIB::tnCustId u 9999 TN-SERV-MIB::tnSvcId u 9999 TN-SAP-MIB::tnSapPortId i 9999 TN-SAP-MIB::tnSapEncapValue u 9999 TN-SAP-MIB::tnSapTlsStpException i 1",
+			"trap" : {
+				"name" : "TN-SAP-MIB::tnSapStpExcepCondStateChng",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.4.5.0.37",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique",
+							"within a service domain."
+						],
+						"name" : "TN-SERV-MIB::tnCustId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSvcId specifies the",
+							"Service identifier. This value should be unique within the",
+							"service domain."
+						],
+						"name" : "TN-SERV-MIB::tnSvcId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP",
+							"is defined."
+						],
+						"name" : "TN-SAP-MIB::tnSapPortId",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this",
+							"SAP on the access port specified by tnSapPortId."
+						],
+						"name" : "TN-SAP-MIB::tnSapEncapValue",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tnSapTlsStpException indicates",
+							"whether an STP exception condition is present on this",
+							"Sap.",
+							"- none : no exception condition found.",
+							"- oneWayCommuniation : The neighbor RSTP peer on this link",
+							"is not able to detect our presence.",
+							"- downstreamLoopDetected :A loop is detected on this link."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "oneWayCommuniation",
+							"3" : "downstreamLoopDetected"
+						},
+						"name" : "TN-SAP-MIB::tnSapTlsStpException",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.4.3.3.1.40",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

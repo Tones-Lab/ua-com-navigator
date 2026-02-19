@@ -1,0 +1,519 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201008041800Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTunnelSetupTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent by AC when CAPWAP tunnel becomes up.",
+				"By this way, NMS will immediately know tunnel up event.",
+				"It is unnecessary to identify whether it is control or data",
+				"tunnel."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hpnicfDot11ACMtTunnelTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "TunnelAPID:$v1",
+				"Summary" : "CAPWAP tunnel $v1 is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTunnelSetupTrap HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11CurrTunnelAPID s EXAMPLE HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTunlUpInfo i 1 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPName s EXAMPLE HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPIPAddr a 192.0.2.1 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapAPIPv6Addr s EXAMPLE HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtFirstTrapTime t 31536000 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapAPMacAddress s EXAMPL",
+			"trap" : {
+				"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTunnelSetupTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"To uniquely identify the CAPWAP tunnel set up between the AP",
+							"identified by APID and a specific AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11CurrTunnelAPID",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.2.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Represents the reason for tunnel up.",
+							"The following values are supported:",
+							"up(1) - The AP joined AC.",
+							""
+						],
+						"enums" : {
+							"1" : "up"
+						},
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTunlUpInfo",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Represents name of the AP which sets up the tunnel with the AC.",
+							""
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPName",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Represents IP address of the AP which sets up the tunnel with the AC.",
+							""
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPIPAddr",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Represents IPv6 address of the AP which sets up the tunnel with",
+							"the AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapAPIPv6Addr",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Represents the first trap time."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtFirstTrapTime",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.12",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"Represents the MAC address of an AP."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapAPMacAddress",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTunnelDownTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent by AC when CAPWAP tunnel becomes down.",
+				"By this way, NMS will immediately know tunnel down event.",
+				"It is unnecessary to identify whether it is control or data",
+				"tunnel."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpnicfDot11ACMtTunnelTrap",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==2 || $v2==4) ? 4 : 3"
+				},
+				"SubNode" : "TunnelAPID:$v1",
+				"Summary" : "CAPWAP tunnel $v1 is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTunnelDownTrap HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11CurrTunnelAPID s EXAMPLE HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTunlDwnInfo i 1 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPName s EXAMPLE HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPIPAddr a 192.0.2.1 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapAPIPv6Addr s EXAMPLE HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTunlDwnCount i 9999 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPSysName s EXAMPLE HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtFirstTrapTime t 31536000 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapAPMacAddress s EXAMPL",
+			"trap" : {
+				"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTunnelDownTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"To uniquely identify the CAPWAP tunnel set up between the AP",
+							"identified by APID and a specific AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11CurrTunnelAPID",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.2.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Represents the reason for tunnel down.",
+							"The following values are supported:",
+							"tunnelTimeout - When AC detects the tunnel is broken",
+							"- it will notify NMS.",
+							"keyUpdateFailure - rekey process is failed, tunnel will be broken.",
+							"apReset - Administrator reset AP.",
+							"apCrash - AP reboot for system crash.",
+							"apDeleted - Delete AP from AC and trigger tunnel down.",
+							"apCfgChange - The configuration for AP was changed."
+						],
+						"enums" : {
+							"1" : "tunnelTimeout",
+							"2" : "keyUpdateFailure",
+							"3" : "apReset",
+							"4" : "apCrash",
+							"5" : "apDeleted",
+							"6" : "apCfgChange"
+						},
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTunlDwnInfo",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Represents name of the AP which sets up the tunnel with the AC.",
+							""
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPName",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Represents IP address of the AP which sets up the tunnel with the AC.",
+							""
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPIPAddr",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Represents IPv6 address of the AP which sets up the tunnel with",
+							"the AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapAPIPv6Addr",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Represents how many times that the tunnel between AC and AP has down."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTunlDwnCount",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Represents system name of the AP which sets up the tunnel with the AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapTnlAPSysName",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Represents the first trap time."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtFirstTrapTime",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.12",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"Represents the MAC address of an AP."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapAPMacAddress",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtBackupSwtTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent by AC when AC switches from master to slave",
+				"or from slave to master."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfDot11ACMtBackupSwtTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'AC swiched from master to slave' : 'AC swiched from slave to master'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtBackupSwtTrap HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapBackupSwitchInfo i 1 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtFirstTrapTime t 31536000",
+			"trap" : {
+				"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtBackupSwtTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Represents status which the AC switches to.",
+							"The following values are supported:",
+							"masterToSlave - The AC switches from master to slave.",
+							"slaveToMaster - The AC switches from slave to master.",
+							""
+						],
+						"enums" : {
+							"1" : "masterToSlave",
+							"2" : "slaveToMaster"
+						},
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtTrapBackupSwitchInfo",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Represents the first trap time."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMtFirstTrapTime",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.12",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACLoadBalanceTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent by AC when load-balance is enabled on AC."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfDot11ACLoadBalanceTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Load-balance $v1 is enabled on AC"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACLoadBalanceTrap HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11LoadBalanceType i 1 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11LoadBalanceThreshold i 9999",
+			"trap" : {
+				"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACLoadBalanceTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Represents which kind load balance is enabled by AC.",
+							"The following values are supported:",
+							"traffic mode load-balancing: traffic snapshot is considered.",
+							"session mode load-balancing: the number of users associated",
+							"with the AP/radio is considered.",
+							""
+						],
+						"enums" : {
+							"1" : "traffic",
+							"2" : "session"
+						},
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11LoadBalanceType",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Represents the value of load balance threshold.",
+							""
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11LoadBalanceThreshold",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACStaFullTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification will be sent when STA is full on AC."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfDot11ACStaFullTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "STA is full ($v1) on AC"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACStaFullTrap HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMaxStaNum i 9999",
+			"trap" : {
+				"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACStaFullTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Represents the max number of STA on AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACMaxStaNum",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.10",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACStatusSwitchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification will be sent when AC switches from standby to active",
+				"or from standby to active."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : 1"
+				},
+				"EventType" : "hpnicfDot11ACStatusSwitchTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 3 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'AC swiched from active to standby' : 'AC swiched from standby to active'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACStatusSwitchTrap HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACStatusSwitchInfo i 1 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11SourceACNmsIP a 192.0.2.1",
+			"trap" : {
+				"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACStatusSwitchTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Represents status which the AC switches to.",
+							"The following values are supported:",
+							"activeToStandby - The AC switches from active to standby.",
+							"standbyToActive - The AC switches from standby to active.",
+							""
+						],
+						"enums" : {
+							"1" : "activeToStandby",
+							"2" : "standbyToActive"
+						},
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11ACStatusSwitchInfo",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Represents the NMS IP address of master AC.",
+							""
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11SourceACNmsIP",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.1.14",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11RunAPNumOverload",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be sent by AC when run AP number exceeds the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpnicfDot11RunAPNumOverload",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "AP number $v2 exceeds the threshold $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11RunAPNumOverload HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11MaxAPNumPermitted i 9999 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11APConnectCount i 9999",
+			"trap" : {
+				"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11RunAPNumOverload",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Represents the maximum number of AP connection permitted",
+							"for one AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11MaxAPNumPermitted",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Represents the total number of APs which are connecting to AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11APConnectCount",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.1.2.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11RunAPNumOverloadRecover",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be sent by AC when run AP number",
+				"recover normal from overload state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hpnicfDot11RunAPNumOverload",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "AP number $v2 recovered from overload state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11RunAPNumOverloadRecover HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11MaxAPNumPermitted i 9999 HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11APConnectCount i 9999",
+			"trap" : {
+				"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11RunAPNumOverloadRecover",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.3.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Represents the maximum number of AP connection permitted",
+							"for one AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11MaxAPNumPermitted",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Represents the total number of APs which are connecting to AC."
+						],
+						"name" : "HPN-ICF-DOT11-ACMT-MIB::hpnicfDot11APConnectCount",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.75.1.1.2.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,570 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201204160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DF10-DCB-MIB::dF10ETSModuleStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when there is a change in the ETS Module ",
+				"status. This trap is generated only if dF10ETSGlobalEnableTrap ",
+				"is enabled to send the trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 2 : 1"
+				},
+				"EventType" : "dF10ETSModuleStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 4 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : "ETS Module status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DF10-DCB-MIB::dF10ETSModuleStatusTrap DF10-DCB-MIB::dF10ETSModuleStatus i 1",
+			"trap" : {
+				"name" : "DF10-DCB-MIB::dF10ETSModuleStatusTrap",
+				"oid" : "1.3.6.1.4.1.6027.3.15.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The ETS(Enhanced Transmission Selection) Module status for the switch.",
+							"",
+							"If this object returns with 'disabled', then all the ports",
+							"have the ETS feature disabled in the system(hardware)",
+							"and the DCBX state machine has stopped on the ports.",
+							"",
+							"If this object returns with 'enabled', then all the ports ",
+							"have the ETS feature enabled in the system(hardware) ",
+							"and the DCBX state machine is running on the ports."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "DF10-DCB-MIB::dF10ETSModuleStatus",
+						"oid" : "1.3.6.1.4.1.6027.3.15.3.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DF10-DCB-MIB::dF10ETSPortAdminStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated in the following conditions.",
+				"Whenever there is a change in the ETS Admin status and the ",
+				"dF10ETSGlobalEnableTrap is enabled to send the trap ",
+				"for ETS Admin mode change. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 2 : 1"
+				},
+				"EventType" : "dF10ETSPortAdminStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 3 : 0"
+				},
+				"SubNode" : {
+					"eval" : "($v1==1) ? 'dF10DcbTrapPortNumber:1' : 'dF10DcbTrapPortNumber:2'"
+				},
+				"Summary" : {
+					"eval" : "($v1==1) ? 'ETS Admin status on port 1 is $v2' : 'ETS Admin status on port 2 is $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DF10-DCB-MIB::dF10ETSPortAdminStatusTrap DF10-DCB-MIB::dF10DcbTrapPortNumber i 1 DF10-DCB-MIB::dF10ETSAdminMode i 1",
+			"trap" : {
+				"name" : "DF10-DCB-MIB::dF10ETSPortAdminStatusTrap",
+				"oid" : "1.3.6.1.4.1.6027.3.15.4.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object refers to the Port number for which the DCBX feature",
+							"is enabled. And will be used in sending the feature port specific Traps."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DF10-DCB-MIB::dF10DcbTrapPortNumber",
+						"oid" : "1.3.6.1.4.1.6027.3.15.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is used to display the Admin mode for ETS feature on",
+							"the given port.",
+							"",
+							"If the mode is 'on(1)',ETS feature is enabled on this port.",
+							"ETS configurations, either from this system or",
+							"the remote system will take effect based on DCBX negotiations.",
+							"",
+							"If the mode is 'off(2)', ETS feature is disabled on this port. ",
+							"Operational(local) parameters is same as Admin Configuration ",
+							"Parameters. But Operational(local) parameters do not have any impact ",
+							"in the system and dF10ETSOperState is in 'Off' state.",
+							"dF10ETSDcbxOperState becomes oper up if remote is also disabled.",
+							"",
+							"The Operational(local) parameters do not have any impact in ",
+							"the system if this object value is 'on(1)' and ",
+							"dF10ETSModuleStatus is disabled. dF10ETSDcbxOperState will ",
+							"be in 'Off' State."
+						],
+						"enums" : {
+							"1" : "on",
+							"2" : "off"
+						},
+						"name" : "DF10-DCB-MIB::dF10ETSAdminMode",
+						"oid" : "1.3.6.1.4.1.6027.3.15.3.2.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DF10-DCB-MIB::dF10ETSPortPeerStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated in the following conditions.",
+				"Whenever there is a change in the DCBX Peer Status and the ",
+				"dF10ETSGlobalEnableTrap is enabled",
+				"to send the trap for Peer Up or Peer Down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 2 : 1"
+				},
+				"EventType" : "dF10ETSPortPeerStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 4 : 0"
+				},
+				"SubNode" : {
+					"eval" : "($v1==1) ? 'dF10DcbTrapPortNumber:1' : 'dF10DcbTrapPortNumber:2'"
+				},
+				"Summary" : {
+					"eval" : "($v1==1 && $v2==1) ? 'DCBX Peer status on port 1 is up' : (($v1==1 && $v2==2) ? 'DCBX Peer status on port 1 is down' : (($v1==2 && $v2==1) ? 'DCBX Peer status on port 2 is up' : 'DCBX Peer status on port 2 is down'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DF10-DCB-MIB::dF10ETSPortPeerStatusTrap DF10-DCB-MIB::dF10DcbTrapPortNumber i 1 DF10-DCB-MIB::dF10DcbPeerUpStatus i 1",
+			"trap" : {
+				"name" : "DF10-DCB-MIB::dF10ETSPortPeerStatusTrap",
+				"oid" : "1.3.6.1.4.1.6027.3.15.4.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object refers to the Port number for which the DCBX feature",
+							"is enabled. And will be used in sending the feature port specific Traps."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DF10-DCB-MIB::dF10DcbTrapPortNumber",
+						"oid" : "1.3.6.1.4.1.6027.3.15.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object refers to the DCBX Peer Up or Peer down status ",
+							"on the port.",
+							"If the value is 'true', then the DCBX Peer will be present",
+							"and UP. ",
+							"If the value is 'false', then the DCBX Peer will be absent",
+							"and DOWN."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DF10-DCB-MIB::dF10DcbPeerUpStatus",
+						"oid" : "1.3.6.1.4.1.6027.3.15.4.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DF10-DCB-MIB::dF10ETSPortDcbxOperStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated in the following conditions.",
+				"Whenever there is a change in the ETS Operational State and the ",
+				"dF10ETSGlobalEnableTrap is enabled",
+				"to send the trap for ETS state machine state change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dF10ETSPortDcbxOperStateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($v1==1) ? 'dF10DcbTrapPortNumber:1' : 'dF10DcbTrapPortNumber:2'"
+				},
+				"Summary" : {
+					"eval" : "($v1==1) ? 'ETS operational state on port 1 is $v2' : 'ETS operational state on port 2 is $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DF10-DCB-MIB::dF10ETSPortDcbxOperStateTrap DF10-DCB-MIB::dF10DcbTrapPortNumber i 1 DF10-DCB-MIB::dF10ETSDcbxOperState i 0",
+			"trap" : {
+				"name" : "DF10-DCB-MIB::dF10ETSPortDcbxOperStateTrap",
+				"oid" : "1.3.6.1.4.1.6027.3.15.4.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object refers to the Port number for which the DCBX feature",
+							"is enabled. And will be used in sending the feature port specific Traps."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DF10-DCB-MIB::dF10DcbTrapPortNumber",
+						"oid" : "1.3.6.1.4.1.6027.3.15.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is used to display the current state of the",
+							"DCBX state machine for the ETS feature on the given port.",
+							"",
+							"If state is Off '(0)', then ETS Operational(local) parameters",
+							"will be same as ETS Admin Configuration Parameters and will",
+							"not have any impact in the system(hardware).",
+							"",
+							"If state is init '(1)', then ETS Operational(local) parameters",
+							"will be same as ETS Admin Configuration Parameters.",
+							"",
+							"If state is rxrecommended '(2)', then ETS Operational(local) parameters",
+							"will be same as ETS Remote Parameters.",
+							"",
+							"internallypropagated '(3)', In this state all the Operational(local)",
+							"parameters for the feature will be same as the internal propagated ",
+							"information from the config source."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "init",
+							"2" : "rxrecommended",
+							"3" : "internallypropagated"
+						},
+						"name" : "DF10-DCB-MIB::dF10ETSDcbxOperState",
+						"oid" : "1.3.6.1.4.1.6027.3.15.3.2.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DF10-DCB-MIB::dF10PFCModuleStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when there is a change in the PFC Module ",
+				"status is enabled. This trap is generated only if ",
+				"dF10PFCGlobalEnableTrap is enabled to send the trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 2 : 1"
+				},
+				"EventType" : "dF10PFCModuleStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 4 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PFC Module status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DF10-DCB-MIB::dF10PFCModuleStatusTrap DF10-DCB-MIB::dF10PFCModuleStatus i 1",
+			"trap" : {
+				"name" : "DF10-DCB-MIB::dF10PFCModuleStatusTrap",
+				"oid" : "1.3.6.1.4.1.6027.3.15.4.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The PFC(Priority Based Flow Control) Module status for the switch.",
+							"",
+							"If this object returns with 'disabled', then all the ports",
+							"have the PFC feature disabled in the system(hardware)",
+							"and the DCBX state machine has stopped on the ports.",
+							"",
+							"If this object returns with 'enabled', then all the ports",
+							"have the PFC feature enabled in the system(hardware)",
+							"and the DCBX state machine is running on the ports."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "DF10-DCB-MIB::dF10PFCModuleStatus",
+						"oid" : "1.3.6.1.4.1.6027.3.15.3.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DF10-DCB-MIB::dF10PFCPortAdminStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated in the following conditions.",
+				"Whenever there is a change in the PFC Admin Status and the ",
+				"dF10PFCGlobalEnableTrap is enabled",
+				"to send the trap for PFC Admin Status change. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 2 : 1"
+				},
+				"EventType" : "dF10PFCPortAdminStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 4 : 0"
+				},
+				"SubNode" : {
+					"eval" : "($v1==1) ? 'dF10DcbTrapPortNumber:1' : 'dF10DcbTrapPortNumber:2'"
+				},
+				"Summary" : {
+					"eval" : "($v1==1) ? 'PFC Admin status on port 1 is $v2' : 'PFC Admin status on port 2 is $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DF10-DCB-MIB::dF10PFCPortAdminStatusTrap DF10-DCB-MIB::dF10DcbTrapPortNumber i 1 DF10-DCB-MIB::dF10PFCAdminMode i 1",
+			"trap" : {
+				"name" : "DF10-DCB-MIB::dF10PFCPortAdminStatusTrap",
+				"oid" : "1.3.6.1.4.1.6027.3.15.4.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object refers to the Port number for which the DCBX feature",
+							"is enabled. And will be used in sending the feature port specific Traps."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DF10-DCB-MIB::dF10DcbTrapPortNumber",
+						"oid" : "1.3.6.1.4.1.6027.3.15.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is used to display Admin mode for PFC feature on",
+							"the given port.",
+							"",
+							"If mode is 'on(1)',PFC feature is enabled on this port.",
+							"PFC configurations, either from this system or",
+							"the remote system will take effect based on DCBX negotiations. ",
+							"",
+							"If mode is 'off(2)',PFC feature is disabled on this port. ",
+							"Operational(local) parameters is same as Admin Configuration ",
+							"Parameters. But Operational(local) parameters do not have any impact ",
+							"in the system.dF10PFCDcbxOperState becomes up if remote is also disabled",
+							"",
+							"The Operational(local) parameters do not have any impact in ",
+							"the system if this object value is 'on(1)'",
+							"and dF10PFCModuleStatus is disabled. dF10PFCDcbxOperState ",
+							"will be in 'Off' State."
+						],
+						"enums" : {
+							"1" : "on",
+							"2" : "off"
+						},
+						"name" : "DF10-DCB-MIB::dF10PFCAdminMode",
+						"oid" : "1.3.6.1.4.1.6027.3.15.3.3.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DF10-DCB-MIB::dF10PFCPortPeerStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated in the following conditions.",
+				"Whenever there is a change in the DCBX Peer Status and the ",
+				"dF10PFCGlobalEnableTrap is enabled",
+				"to send the trap for Peer Up or Peer Down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 2 : 1"
+				},
+				"EventType" : "dF10PFCPortPeerStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 4 : 0"
+				},
+				"SubNode" : {
+					"eval" : "($v1==1) ? 'dF10DcbTrapPortNumber:1' : 'dF10DcbTrapPortNumber:2'"
+				},
+				"Summary" : {
+					"eval" : "($v1==1 && $v2==1) ? 'PFC Peer status on port 1 is up' : (($v1==1 && $v2==2) ? 'PFC Peer status on port 1 is down' : (($v1==2 && $v2==1) ? 'PFC Peer status on port 2 is up' : 'PFC Peer status on port 2 is down'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DF10-DCB-MIB::dF10PFCPortPeerStatusTrap DF10-DCB-MIB::dF10DcbTrapPortNumber i 1 DF10-DCB-MIB::dF10DcbPeerUpStatus i 1",
+			"trap" : {
+				"name" : "DF10-DCB-MIB::dF10PFCPortPeerStatusTrap",
+				"oid" : "1.3.6.1.4.1.6027.3.15.4.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object refers to the Port number for which the DCBX feature",
+							"is enabled. And will be used in sending the feature port specific Traps."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DF10-DCB-MIB::dF10DcbTrapPortNumber",
+						"oid" : "1.3.6.1.4.1.6027.3.15.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object refers to the DCBX Peer Up or Peer down status ",
+							"on the port.",
+							"If the value is 'true', then the DCBX Peer will be present",
+							"and UP. ",
+							"If the value is 'false', then the DCBX Peer will be absent",
+							"and DOWN."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DF10-DCB-MIB::dF10DcbPeerUpStatus",
+						"oid" : "1.3.6.1.4.1.6027.3.15.4.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DF10-DCB-MIB::dF10PFCPortDcbxOperStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated in the following conditions.",
+				"Whenever there is a change in the PFC Operational State and the ",
+				"dF10PFCGlobalEnableTrap is enabled",
+				"to send the trap for PFC state machine state change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dF10PFCPortDcbxOperStateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($v1==1) ? 'dF10DcbTrapPortNumber:1' : 'dF10DcbTrapPortNumber:2'"
+				},
+				"Summary" : {
+					"eval" : "($v1==1) ? 'PFC operational state on port 1 is $v2' : 'PFC operational state on port 2 is $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DF10-DCB-MIB::dF10PFCPortDcbxOperStateTrap DF10-DCB-MIB::dF10DcbTrapPortNumber i 1 DF10-DCB-MIB::dF10PFCDcbxOperState i 0",
+			"trap" : {
+				"name" : "DF10-DCB-MIB::dF10PFCPortDcbxOperStateTrap",
+				"oid" : "1.3.6.1.4.1.6027.3.15.4.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object refers to the Port number for which the DCBX feature",
+							"is enabled. And will be used in sending the feature port specific Traps."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DF10-DCB-MIB::dF10DcbTrapPortNumber",
+						"oid" : "1.3.6.1.4.1.6027.3.15.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is used to display the current state of the",
+							"DCBX state machine for the PFC feature on the given port.",
+							"",
+							"If state is Off '(0)', then PFC Operational(local) parameters",
+							"will be same as PFC Admin Configuration Parameters and will",
+							"not have any impact in the system(hardware).",
+							"",
+							"If state is init '(1)', then PFC Operational(local) parameters",
+							"will be same as PFC Admin Configuration Parameters.",
+							"",
+							"If state is rxrecommended '(2)',then PFC Operational(local) parameters",
+							"will be same as PFC Remote Parameters.",
+							"",
+							"internallypropagated '(3)', In this state all the Operational(local)",
+							"parameters for the feature will be same as the internal propagated ",
+							"information from the config source."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "init",
+							"2" : "rxrecommended",
+							"3" : "internallypropagated"
+						},
+						"name" : "DF10-DCB-MIB::dF10PFCDcbxOperState",
+						"oid" : "1.3.6.1.4.1.6027.3.15.3.3.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

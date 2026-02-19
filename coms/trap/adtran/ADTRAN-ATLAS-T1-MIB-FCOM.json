@@ -1,0 +1,3915 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RxYellowActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a yellow alarm is being received."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "adATLAST1RxYellowState",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Yellow alarm active on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1RxYellowActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RxYellowActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400900",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RxYellowInActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a yellow alarm is no longer being received."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "adATLAST1RxYellowState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Yellow alarm is no longer being received on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1RxYellowInActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RxYellowInActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400901",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RxAISActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates an alarm indication signal (AIS) is being received."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "adATLAST1RxAISState",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "AIS received on slot $v2, port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1RxAISActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RxAISActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400902",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RxAISInActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates an alarm indication signal (AIS) is no longer being received."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "adATLAST1RxAISState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "AIS no longer being received on slot $v2, port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1RxAISInActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RxAISInActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400903",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RedAlarmActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a red alarm is active."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "adATLAST1RedAlarmState",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Red alarm is active on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1RedAlarmActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RedAlarmActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400904",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RedAlarmInActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a red alarm is inactive."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "adATLAST1RedAlarmState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Red alarm is inactive on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1RedAlarmInActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1RedAlarmInActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400905",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1LOSActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a loss of signal (LOS) is active."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "adATLAST1LOSState",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Loss of signal on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1LOSActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1LOSActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400906",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1LOSInActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a loss of signal (LOS) is inactive."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "adATLAST1LOSState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Loss of signal cleared on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1LOSInActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1LOSInActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400907",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TxAISActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates an alarm indication signal (LOS) is being sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "adATLAST1TxAISState",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "AIS (LOS) transmitting on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TxAISActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TxAISActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400908",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TxAISInActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates an alarm indication signal (LOS) is no longer being sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "adATLAST1TxAISState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "AIS (LOS) no longer transmitting on slot $v2, port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TxAISInActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TxAISInActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400909",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TxYellowActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a yellow alarm is being sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "adATLAST1TxYellowStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Yellow alarm is transmitting on slot $v2, port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TxYellowActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TxYellowActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400910",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TxYellowInActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a yellow alarm is no longer being sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "adATLAST1TxYellowStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Yellow alarm is no longer transmitting on slot $v2, port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TxYellowInActive RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TxYellowInActive",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400911",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentES",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current interval errored second",
+				"threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1CurrentES",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Current interval errored second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentES RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentES",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400912",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentSES",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current interval severely errored second",
+				"threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1CurrentSES",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Current interval severely errored second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentSES RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentSES",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400913",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentSEFS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current interval severely errored",
+				"framing second threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1CurrentSEFS",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Current interval severely errored framing second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentSEFS RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentSEFS",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400914",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentUAS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current interval unavailable",
+				"second threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1CurrentUAS",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Current interval unavailable second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentUAS RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentUAS",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400915",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentCSS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current interval controlled slip",
+				"second threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1CurrentCSS",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Current interval controlled slip second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentCSS RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentCSS",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400916",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentPCV",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current interval path coding violations",
+				"threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1CurrentPCV",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Current interval path code violations threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentPCV RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentPCV",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400917",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentLES",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current interval line errored",
+				"second threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1CurrentLES",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Current interval line errored second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentLES RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentLES",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400918",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentLCV",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current interval line code",
+				"violations threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1CurrentLCV",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Current interval line code violations threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentLCV RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1CurrentLCV",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400919",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalES",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the total errored second",
+				"threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1TotalES",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Total errored second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TotalES RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalES",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400920",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalSES",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the total severely errored second",
+				"threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1TotalSES",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Total severely errored second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TotalSES RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalSES",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400921",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalSEFS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the total severely errored",
+				"framing second threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1TotalSEFS",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Total severely errored framing second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TotalSEFS RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalSEFS",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400922",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalUAS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the total unavailable",
+				"second threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1TotalUAS",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Total unavailable second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TotalUAS RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalUAS",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400923",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalCSS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the total controlled slip",
+				"second threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1TotalCSS",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Total controlled slip second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TotalCSS RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalCSS",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400924",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalPCV",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the total path coding violations",
+				"threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1TotalPCV",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Total path code violations threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TotalPCV RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalPCV",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400925",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalLES",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the total line errored",
+				"second threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1TotalLES",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Total line errored second threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TotalLES RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalLES",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400926",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalLCV",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the total line code",
+				"violations threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adATLAST1TotalLCV",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Total line code violations threshold exceeded on slot $v2, Port $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ATLAS-T1-MIB::adATLAST1TotalLCV RFC1213-MIB::ifIndex i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress i 9999 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress i 9999 ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus i 0 ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus i 0 RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "ADTRAN-ATLAS-T1-MIB::adATLAST1TotalLCV",
+				"oid" : "1.3.6.1.4.1.664.2.154.0.15400927",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each interface. Its value",
+							"ranges between 1 and the value of ifNumber. The",
+							"value for each interface must remain constant at",
+							"least from one re-initialization of the entity's",
+							"network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which this port is contained. Slot 0 is reported",
+							"for the system controller and all logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitSlotAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number within the slot. Port 0 is reported for all",
+							"logical interfaces."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitPortAddress",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that indicates the front panel",
+							"status of the module. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"module's current state."
+						],
+						"name" : "ADTRAN-ATLAS-MODULE-MIB::adATLASModuleInfoFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.6.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-encoded variable that gives the overall front panel",
+							"status of the Atlas product. It is encoded as follows:",
+							"",
+							"OFF 0x00",
+							"OK 0x01",
+							"ONLINE 0x02",
+							"TESTING 0x04",
+							"FLASH DOWNLOAD 0x08",
+							"ERROR 0x10",
+							"ALARM 0x20",
+							"STANDBY 0x40",
+							"WARN 0x80",
+							"",
+							"Note: Multiple bits may be set concurrently, based on the",
+							"current state of the modules contained within the Atlas",
+							"product."
+						],
+						"name" : "ADTRAN-ATLAS-UNIT-MIB::adATLASUnitFPStatus",
+						"oid" : "1.3.6.1.4.1.664.2.154.1.5.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,160 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201404170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DC-PIM-MIB::pimNeighborLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pimNeighborLoss trap signifies the loss of an adjacency",
+				"with a neighbor. This trap should be generated when the",
+				"neighbor timer expires, and the router has no other",
+				"neighbors on the same interface with the same IP version and",
+				"a lower IP address than itself.",
+				"This trap is not generated if pimTmEntMgmdProxy is set to",
+				"'true', or pimTmEntMode is set to 'mgmd-snooping' or",
+				"'mgmd-proxy'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcPimNeighborLoss",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Loss of adjacency with PIM neighbor"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-PIM-MIB::pimNeighborLoss DC-PIM-MIB::pimNeighborUpTime t 31536000",
+			"trap" : {
+				"name" : "DC-PIM-MIB::pimNeighborLoss",
+				"oid" : "1.2.826.0.1.1578918.5.71.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time since this PIM neighbor (last) became a neighbor",
+							"of the local router."
+						],
+						"name" : "DC-PIM-MIB::pimNeighborUpTime",
+						"oid" : "1.2.826.0.1.1578918.5.71.1.1.1.2.1.4",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-PIM-MIB::pimInterfaceStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pimInterfaceStateChange trap signifies that the OperStatus",
+				"of the interface has changed.",
+				"- If the reported OperStatus is operStatusDown, the",
+				"interface is in a normal inactive state. It is waiting",
+				"for the administrator to activate it, or for its parent",
+				"row(s) to activate or recover from failures.",
+				"- If the reported OperStatus is operStatusGoingUp, the",
+				"interface is activating.",
+				"- If the reported OperStatus is operStatusUp, the interface",
+				"is active, and hence can be used to send and receive PIM",
+				"messages.",
+				"- If the reported OperStatus is operStatusGoingDown, the",
+				"interface is deactivating asynchronously, due to either",
+				"administrative action or loss of a prerequisite, for",
+				"example, failure of a parent row.",
+				"- If the reported OperStatus is operStatusFailed, the",
+				"interface is in an inactive state due to a failure, but",
+				"the failure might clear without administrative action.",
+				"- If the reported OperStatus is operStatusFailedPerm, the",
+				"interface is in an inactive state due to a failure, and",
+				"the failure will not clear without administrative action.",
+				"- If the reported OperStatus is operStatusFailing, the",
+				"interface is deactivating asynchronously, due to a",
+				"failure.",
+				"This trap is not generated if pimTmEntMgmdProxy is set to",
+				"'false' and pimTmEntMode is set to 'mgmd-snooping' or",
+				"'mgmd-proxy'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : ($v3 == 3 || $v3 ==4) ? 3 : 2"
+				},
+				"EventType" : "dcPimInterfaceStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : ($v3 == 3 || $v3 ==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 0 : ($v3 == 3 || $v3 == 4) ? 2 : ($v3 == 2 || $v3 == 8) ? 5 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PIM interface state changed to {$v1}, PIM operational state {$v3}"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-PIM-MIB::pimInterfaceStateChange DC-PIM-MIB::pimInterfaceStatus i 1 DC-PIM-MIB::pimInterfaceAdminStatus i 1 DC-PIM-MIB::pimInterfaceOperStatus i 1",
+			"trap" : {
+				"name" : "DC-PIM-MIB::pimInterfaceStateChange",
+				"oid" : "1.2.826.0.1.1578918.5.71.1.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The status of this entry. Creating the entry enables PIM",
+							"on the interface; destroying the entry disables PIM on the",
+							"interface.",
+							"",
+							"All writeable objects in this entry can be modified when the",
+							"status of this entry is active(1)."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "DC-PIM-MIB::pimInterfaceStatus",
+						"oid" : "1.2.826.0.1.1578918.5.71.1.1.1.1.1.27",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The desired administrative state of this interface."
+						],
+						"enums" : {
+							"1" : "adminStatusUp",
+							"2" : "adminStatusDown"
+						},
+						"name" : "DC-PIM-MIB::pimInterfaceAdminStatus",
+						"oid" : "1.2.826.0.1.1578918.5.71.1.1.1.1.1.51",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this interface."
+						],
+						"enums" : {
+							"1" : "operStatusUp",
+							"2" : "operStatusDown",
+							"3" : "operStatusGoingUp",
+							"4" : "operStatusGoingDown",
+							"5" : "operStatusActFailed",
+							"8" : "operStatusFailed",
+							"10" : "operStatusFailedPerm",
+							"11" : "operStatusFailing"
+						},
+						"name" : "DC-PIM-MIB::pimInterfaceOperStatus",
+						"oid" : "1.2.826.0.1.1578918.5.71.1.1.1.1.1.52",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

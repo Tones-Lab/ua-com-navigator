@@ -1,0 +1,109 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0204290000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is to communicate a couple of things about",
+				"the completion of a file transfer.",
+				"mpeDevFileXferStatus - Did it complete successfully or not.",
+				"mpeDevFileXferErrorStatus - If not, what was the error code.",
+				"mpeDevFileXferOperation - What operation was performed?.",
+				"mpeDevFileXferFileType - Was it a firmware xfer or config?",
+				"mpeDevFileXferFileName - The name of the file transfered.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mpeDevFileXferEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==3) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==3) ? '$v4 file transfer failed with error $v2' : '$v4 file transfer status: $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferEvent PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferStatus i 1 PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferErrorStatus i 9999 PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferOperation i 1 PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferFileType i 1 PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferFileName s EXAMPLE",
+			"trap" : {
+				"name" : "PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferEvent",
+				"oid" : "1.3.6.1.4.1.1795.2.24.12.10.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the status of the file transfer."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "success",
+							"3" : "failure",
+							"4" : "inprogress"
+						},
+						"name" : "PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferStatus",
+						"oid" : "1.3.6.1.4.1.1795.2.24.12.10.1.2.1.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the reason code of the failure determined in ",
+							"mpeDevFileXferStatus.",
+							"The reason code are specific to the file transfer protocol.",
+							"",
+							"Please refer to the file transfer protocols respective RFC for ",
+							"clarification",
+							"of the error code value meanings.",
+							"",
+							"TFTP Error Codes from rfc 1350",
+							"FTP Error Codes from rfc 959"
+						],
+						"name" : "PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferErrorStatus",
+						"oid" : "1.3.6.1.4.1.1795.2.24.12.10.1.2.1.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object contains the operation the file transfer wants to ",
+							"perform."
+						],
+						"enums" : {
+							"1" : "get",
+							"2" : "put"
+						},
+						"name" : "PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferOperation",
+						"oid" : "1.3.6.1.4.1.1795.2.24.12.10.1.2.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the type of file your want to transfer."
+						],
+						"enums" : {
+							"1" : "firmware",
+							"2" : "config"
+						},
+						"name" : "PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferFileType",
+						"oid" : "1.3.6.1.4.1.1795.2.24.12.10.1.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the name of the filetransfer file."
+						],
+						"name" : "PDN-MPE-DEVICE-CONTROL-MIB::mpeDevFileXferFileName",
+						"oid" : "1.3.6.1.4.1.1795.2.24.12.10.1.2.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

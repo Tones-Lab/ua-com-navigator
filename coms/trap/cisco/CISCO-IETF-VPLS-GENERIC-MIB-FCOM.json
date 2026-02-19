@@ -1,0 +1,157 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200710221200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cvplsStatusChanged notification is generated",
+				"when there is a change in the administrative or",
+				"operating status of a VPLS service."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : (($v2 == 2) ? 2 : 3)"
+				},
+				"EventType" : "cvplsStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : (($v2 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : (($v2 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "VPLS service $v1 has changed state to admin: $v2, oper: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-VPLS-GENERIC-MIB::cvplsStatusChanged CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigVpnId s EXAMPLE CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigAdminStatus i 1 CISCO-IETF-VPLS-GENERIC-MIB::cvplsStatusOperStatus i 0",
+			"trap" : {
+				"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsStatusChanged",
+				"oid" : "1.3.6.1.4.1.9.10.138.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigVpnId",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.2.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigAdminStatus",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "other",
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsStatusOperStatus",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.3.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsFwdFullAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cvplsFwdFullAlarmRaised notification is",
+				"generated when the utilization of the Forwarding",
+				"database is above the value specified by",
+				"cvplsConfigFwdFullHighWatermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cvplsFwdFullAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "$v1 utilization of the forwarding database is above high watermark $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-VPLS-GENERIC-MIB::cvplsFwdFullAlarmRaised CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigVpnId s EXAMPLE CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigFwdFullHighWatermark u 9999 CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigFwdFullLowWatermark u 9999",
+			"trap" : {
+				"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsFwdFullAlarmRaised",
+				"oid" : "1.3.6.1.4.1.9.10.138.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigVpnId",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.2.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigFwdFullHighWatermark",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.2.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigFwdFullLowWatermark",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.2.1.11",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsFwdFullAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cvplsFwdFullAlarmCleared notification is",
+				"generated when the utilization of the Forwarding",
+				"database is below the value specified by",
+				"cvplsConfigFwdFullLowWatermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cvplsFwdFullAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v1",
+				"Summary" : "$v1 utilization of the forwarding database is below low watermark $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-VPLS-GENERIC-MIB::cvplsFwdFullAlarmCleared CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigVpnId s EXAMPLE CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigFwdFullHighWatermark u 9999 CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigFwdFullLowWatermark u 9999",
+			"trap" : {
+				"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsFwdFullAlarmCleared",
+				"oid" : "1.3.6.1.4.1.9.10.138.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigVpnId",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.2.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigFwdFullHighWatermark",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.2.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IETF-VPLS-GENERIC-MIB::cvplsConfigFwdFullLowWatermark",
+						"oid" : "1.3.6.1.4.1.9.10.138.1.2.1.11",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

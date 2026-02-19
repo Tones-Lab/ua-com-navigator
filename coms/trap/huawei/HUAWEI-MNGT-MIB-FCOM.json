@@ -1,0 +1,324 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201203080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-MNGT-MIB::hwUserLogWillFullTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is reported when the system log database will be full."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwUserLogWillFullTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "System log ($v1) database is full"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-MNGT-MIB::hwUserLogWillFullTrap HUAWEI-MNGT-MIB::hwUserLogType i 0",
+			"trap" : {
+				"name" : "HUAWEI-MNGT-MIB::hwUserLogWillFullTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.3.10.9.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Types of the user log.",
+							"Currently, the logs are classified into two types.",
+							"Options:",
+							"1. operating(0) -indicates the operating log.",
+							"2. security(1) -indicates the security log."
+						],
+						"enums" : {
+							"0" : "operating",
+							"1" : "security"
+						},
+						"name" : "HUAWEI-MNGT-MIB::hwUserLogType",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.8.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-MNGT-MIB::hwMngtUserLockedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is reported when the managing user of the equipment is locked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwMngtUserLockedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Managing user $v1 of the equipment is locked"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-MNGT-MIB::hwMngtUserLockedTrap HUAWEI-DEVICE-MIB::hwCliUserName s EXAMPLE HUAWEI-MNGT-MIB::hwUserLogMode i 0 HUAWEI-DEVICE-MIB::hwCliClientIp a 192.0.2.1 HUAWEI-MNGT-MIB::hwCliSysLockType i 0",
+			"trap" : {
+				"name" : "HUAWEI-MNGT-MIB::hwMngtUserLockedTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.3.10.9.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the CLI user."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwCliUserName",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The modes of login to the client.",
+							"Options:",
+							"1. serial(0) -serial mode.",
+							"2. clipry(1) -clipry mode. ",
+							"3. telnet(2) -telnet mode.",
+							"4. ssh(3) -ssh mode. ",
+							"5. web(4) -web mode.",
+							"6. xml(5) -xml mode.",
+							"7. nms(6) -nms mode.",
+							"8. omci(7) -omci mode.",
+							"9. lct(8) -lct mode. "
+						],
+						"enums" : {
+							"0" : "serial",
+							"1" : "clipry",
+							"2" : "telnet",
+							"3" : "ssh",
+							"4" : "web",
+							"5" : "xml",
+							"6" : "nms",
+							"7" : "omci",
+							"8" : "lct"
+						},
+						"name" : "HUAWEI-MNGT-MIB::hwUserLogMode",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.8.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IP address of client."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwCliClientIp",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.2.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Lock type. When the number of times of repeated login failure exceeds the preset value, ",
+							"the system automatically locks the user. This object is used to set the locking type. ",
+							"Options:",
+							"1. none(0) -indicates that the user need not be locked. ",
+							"2. user(1) -indicates that the user name is locked.",
+							"When the user logs in to the system with the user name again, ",
+							"'The user has been locked and you cannot log on.' message is displayed. ",
+							"3. ip(2) -indicates that the IP address with which the user logs in to the system ",
+							"is locked. When the user logs in to the system with the IP address again, ",
+							"the 'The IP address has been locked and you cannot log on.' message is displayed.",
+							"4. all(3) -indicates that both the user name and the IP address are locked.",
+							"DEFVAL { none } "
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "user",
+							"2" : "ip",
+							"3" : "all"
+						},
+						"name" : "HUAWEI-MNGT-MIB::hwCliSysLockType",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.6.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-MNGT-MIB::hwMngtUserStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is reported when the maintenance user's state changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwMngtUserStateChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Maintenance user $v1 state changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-MNGT-MIB::hwMngtUserStateChangeTrap HUAWEI-DEVICE-MIB::hwCliUserName s EXAMPLE HUAWEI-MNGT-MIB::hwUserLogMode i 0 HUAWEI-DEVICE-MIB::hwCliClientIp a 192.0.2.1 HUAWEI-MNGT-MIB::hwUserAdminStatus i 0",
+			"trap" : {
+				"name" : "HUAWEI-MNGT-MIB::hwMngtUserStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.3.10.9.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the CLI user."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwCliUserName",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The modes of login to the client.",
+							"Options:",
+							"1. serial(0) -serial mode.",
+							"2. clipry(1) -clipry mode. ",
+							"3. telnet(2) -telnet mode.",
+							"4. ssh(3) -ssh mode. ",
+							"5. web(4) -web mode.",
+							"6. xml(5) -xml mode.",
+							"7. nms(6) -nms mode.",
+							"8. omci(7) -omci mode.",
+							"9. lct(8) -lct mode. "
+						],
+						"enums" : {
+							"0" : "serial",
+							"1" : "clipry",
+							"2" : "telnet",
+							"3" : "ssh",
+							"4" : "web",
+							"5" : "xml",
+							"6" : "nms",
+							"7" : "omci",
+							"8" : "lct"
+						},
+						"name" : "HUAWEI-MNGT-MIB::hwUserLogMode",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.8.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IP address of client."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwCliClientIp",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.2.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Status of the user login.",
+							"Options: ",
+							"1. logon(0) -indicates that the user goes online.",
+							"2. logoff(1) -indicates that the user goes offline.",
+							"3. logonfail(2) -indicates that the user login fails. "
+						],
+						"enums" : {
+							"0" : "logon",
+							"1" : "logoff",
+							"2" : "logonfail"
+						},
+						"name" : "HUAWEI-MNGT-MIB::hwUserAdminStatus",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.8.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-MNGT-MIB::hwMngtUserNameWillExpireTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is reported when the user name will expire soon."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwMngtUserNameWillExpireTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Management user $v1 expire soon"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-MNGT-MIB::hwMngtUserNameWillExpireTrap HUAWEI-DEVICE-MIB::hwCliUserName s EXAMPLE HUAWEI-MNGT-MIB::hwCliUserNameLastDays i 9999",
+			"trap" : {
+				"name" : "HUAWEI-MNGT-MIB::hwMngtUserNameWillExpireTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.3.10.9.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the CLI user."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwCliUserName",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Service life of the user name.",
+							"The hwCliUserNameLastDays value of -1 indicates the username expired."
+						],
+						"name" : "HUAWEI-MNGT-MIB::hwCliUserNameLastDays",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.1.1.10",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-MNGT-MIB::hwMngtUserPasswordWillExpireTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is reported when the user password will expire soon."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwMngtUserPasswordWillExpireTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Management user $v1 password expire soon"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-MNGT-MIB::hwMngtUserPasswordWillExpireTrap HUAWEI-DEVICE-MIB::hwCliUserName s EXAMPLE HUAWEI-MNGT-MIB::hwCliUserPwdLastDays i 9999",
+			"trap" : {
+				"name" : "HUAWEI-MNGT-MIB::hwMngtUserPasswordWillExpireTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.3.10.9.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the CLI user."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwCliUserName",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Service life of the user password. ",
+							"The hwCliUserPwdLastDays value of -1 indicates the user password expired."
+						],
+						"name" : "HUAWEI-MNGT-MIB::hwCliUserPwdLastDays",
+						"oid" : "1.3.6.1.4.1.2011.6.3.10.1.1.11",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

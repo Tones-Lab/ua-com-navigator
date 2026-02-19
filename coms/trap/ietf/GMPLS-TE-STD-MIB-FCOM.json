@@ -1,0 +1,201 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200702270000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "GMPLS-TE-STD-MIB::gmplsTunnelDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when an mplsTunnelOperStatus",
+				"object for a tunnel in the gmplsTunnelTable is about to enter",
+				"the down state from some other state (but not from the",
+				"notPresent state). This other state is indicated by the",
+				"included value of mplsTunnelOperStatus.",
+				"The objects in this notification provide additional error",
+				"information that indicates the reason why the tunnel has",
+				"transitioned to down(2).",
+				"Note that an implementation MUST only issue one of",
+				"mplsTunnelDown and gmplsTunnelDown for any single event on a",
+				"single tunnel. If the tunnel has an entry in the",
+				"gmplsTunnelTable, an implementation SHOULD use gmplsTunnelDown",
+				"for all tunnel-down events and SHOULD NOT use mplsTunnelDown.",
+				"This notification is subject to the control of",
+				"mplsTunnelNotificationEnable. When that object is set",
+				"to false(2), then the notification must not be issued.",
+				"Further, this notification is also subject to",
+				"mplsTunnelNotificationMaxRate. That object indicates the",
+				"maximum number of notifications issued per second. If events",
+				"occur more rapidly, the implementation may simply fail to emit",
+				"some notifications during that period, or may queue them until",
+				"an appropriate time. The notification rate applies to the sum",
+				"of all notifications in the MPLS-TE-STD-MIB and",
+				"GMPLS-TE-STD-MIB modules applied across the whole of the",
+				"reporting device.",
+				"mplsTunnelOperStatus, mplsTunnelAdminStatus, mplsTunnelDown",
+				"mplsTunnelNotificationEnable, and mplsTunnelNotificationMaxRate",
+				"objects are found in MPLS-TE-STD-MIB.",
+				"REFERENCE",
+				"1. Multiprotocol Label Switching (MPLS) Traffic Engineering",
+				"(TE) Management Information Base (MIB), RFC 3812."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "gmplsTunnelDown",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "gmplsTunnelErrorReporter:$v4.$v5",
+				"Summary" : "GMPLS tunnel going down; last error : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GMPLS-TE-STD-MIB::gmplsTunnelDown MPLS-TE-STD-MIB::mplsTunnelAdminStatus i 1 MPLS-TE-STD-MIB::mplsTunnelOperStatus i 1 GMPLS-TE-STD-MIB::gmplsTunnelErrorLastErrorType i 0 GMPLS-TE-STD-MIB::gmplsTunnelErrorReporterType i 0 GMPLS-TE-STD-MIB::gmplsTunnelErrorReporter s EXAMPLE GMPLS-TE-STD-MIB::gmplsTunnelErrorCode u 9999 GMPLS-TE-STD-MIB::gmplsTunnelErrorSubcode u 9999",
+			"trap" : {
+				"name" : "GMPLS-TE-STD-MIB::gmplsTunnelDown",
+				"oid" : "1.3.6.1.2.1.10.166.13.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the desired operational status of this",
+							"tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelAdminStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.34",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the actual operational status of this",
+							"tunnel, which is typically but not limited to, a",
+							"function of the state of individual segments of",
+							"this tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelOperStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.35",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The nature of the last error. Provides interpretation context",
+							"for gmplsTunnelErrorProtocolCode and",
+							"gmplsTunnelErrorProtocolSubcode.",
+							"",
+							"A value of noError(0) shows that there is no error associated",
+							"with this tunnel and means that the other objects in this table",
+							"entry (conceptual row) have no meaning.",
+							"",
+							"A value of unknown(1) shows that there is an error but that no",
+							"additional information about the cause is known. The error may",
+							"have been received in a signaled message or generated locally.",
+							"",
+							"A value of protocol(2) or pathComputation(3) indicates the",
+							"cause of an error and identifies an error that has been received",
+							"through signaling or will itself be signaled.",
+							"",
+							"A value of localConfiguration(4), localResources(5) or",
+							"localOther(6) identifies an error that has been detected",
+							"by the local node but that will not be reported through",
+							"signaling."
+						],
+						"enums" : {
+							"0" : "noError",
+							"1" : "unknown",
+							"2" : "protocol",
+							"3" : "pathComputation",
+							"4" : "localConfiguration",
+							"5" : "localResources",
+							"6" : "localOther"
+						},
+						"name" : "GMPLS-TE-STD-MIB::gmplsTunnelErrorLastErrorType",
+						"oid" : "1.3.6.1.2.1.10.166.13.2.6.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The address type of the error reported.",
+							"",
+							"This object is used to aid in interpretation of",
+							"gmplsTunnelErrorReporter."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "GMPLS-TE-STD-MIB::gmplsTunnelErrorReporterType",
+						"oid" : "1.3.6.1.2.1.10.166.13.2.6.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The address of the node reporting the last error, or the address",
+							"of the resource (such as an interface) associated with the",
+							"error.",
+							"",
+							"If gmplsTunnelErrorLastErrorType has the value noError(0), then",
+							"this object is not valid and should be ignored.",
+							"",
+							"If gmplsTunnelErrorLastErrorType has the value unknown(1)",
+							"localConfiguration(4), localResources(5), or localOther(6)",
+							"this object MAY contain a zero value.",
+							"",
+							"This object should be interpreted in the context of the value of",
+							"the object gmplsTunnelErrorReporterType."
+						],
+						"name" : "GMPLS-TE-STD-MIB::gmplsTunnelErrorReporter",
+						"oid" : "1.3.6.1.2.1.10.166.13.2.6.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The primary error code associated with the last error.",
+							"",
+							"The interpretation of this error code depends on the value of",
+							"gmplsTunnelErrorLastErrorType. If the value of",
+							"gmplsTunnelErrorLastErrorType is noError(0), the value of this",
+							"object should be 0 and should be ignored. If the value of",
+							"gmplsTunnelErrorLastErrorType is protocol(2), the error should",
+							"be interpreted in the context of the signaling protocol",
+							"identified by the mplsTunnelSignallingProto object."
+						],
+						"name" : "GMPLS-TE-STD-MIB::gmplsTunnelErrorCode",
+						"oid" : "1.3.6.1.2.1.10.166.13.2.6.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The secondary error code associated with the last error and the",
+							"protocol used to signal this tunnel. This value is interpreted",
+							"in the context of the value of gmplsTunnelErrorCode.",
+							"If the value of gmplsTunnelErrorLastErrorType is noError(0), the",
+							"value of this object should be 0 and should be ignored."
+						],
+						"name" : "GMPLS-TE-STD-MIB::gmplsTunnelErrorSubcode",
+						"oid" : "1.3.6.1.2.1.10.166.13.2.6.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

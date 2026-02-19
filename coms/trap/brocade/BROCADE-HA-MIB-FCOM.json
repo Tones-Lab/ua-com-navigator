@@ -1,0 +1,296 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200208160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "BROCADE-HA-MIB::fruStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when status of any FRU object is changed"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3) ? 1 : (($v2==4 || $v2==5) ? 2 : 3)"
+				},
+				"EventType" : "fruStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v2>=1 && $v2<4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==3) ? 0 : (($v2==2) ? 1 : (($v2==1) ? 2 : 4))"
+				},
+				"SubNode" : "fruObjectNum:$v4",
+				"Summary" : "$v3 FRU object ($v4) status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BROCADE-HA-MIB::fruStatusChanged ENTITY-MIB::entPhysicalName s EXAMPLE BROCADE-HA-MIB::fruStatus i 1 BROCADE-HA-MIB::fruClass i 1 BROCADE-HA-MIB::fruObjectNum i 9999",
+			"trap" : {
+				"name" : "BROCADE-HA-MIB::fruStatusChanged",
+				"oid" : "1.3.6.1.4.1.1588.2.1.2.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the physical entity. The value of this",
+							"object should be the name of the component as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name (e.g., `console') or a simple component number (e.g.",
+							"port or module number, such as `1'), depending on the",
+							"physical component naming syntax of the device.",
+							"",
+							"If there is no local name, or if this object is otherwise",
+							"not applicable, then this object contains a zero-length",
+							"string.",
+							"",
+							"Note that the value of entPhysicalName for two physical",
+							"entities will be the same in the event that the console",
+							"interface does not distinguish between them, e.g., slot-1",
+							"and the card in slot-1."
+						],
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current status of the FRU object in the slot"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "on",
+							"4" : "off",
+							"5" : "faulty"
+						},
+						"name" : "BROCADE-HA-MIB::fruStatus",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.5.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the FRU object that these slot can hold"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "cp",
+							"5" : "other-CP",
+							"6" : "switchblade",
+							"7" : "wwn",
+							"8" : "powerSupply",
+							"9" : "fan",
+							"10" : "coreblade",
+							"11" : "applicationblade",
+							"12" : "sfm",
+							"13" : "lineCard",
+							"14" : "managementModule"
+						},
+						"name" : "BROCADE-HA-MIB::fruClass",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.5.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Gives the slot number of the blade and unit number for",
+							"everything else"
+						],
+						"name" : "BROCADE-HA-MIB::fruObjectNum",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.5.1.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "BROCADE-HA-MIB::cpStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when status of any control card object is changed"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : (($v1==5 || $v1==4) ? 2 : 3)"
+				},
+				"EventType" : "cpStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v1>=1 && $v1<4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==3) ? 0 : (($v1==2) ? 1 : (($v1==1) ? 2 : (($v1==4) ? 3 : 4)))"
+				},
+				"SubNode" : "swSsn:$v4",
+				"Summary" : "Control card status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BROCADE-HA-MIB::cpStatusChanged BROCADE-HA-MIB::cpStatus i 1 BROCADE-HA-MIB::cpLastEvent i 1 BROCADE-SYSTEM-MIB::swID i 9999 BROCADE-SYSTEM-MIB::swSsn s EXAMPLE",
+			"trap" : {
+				"name" : "BROCADE-HA-MIB::cpStatusChanged",
+				"oid" : "1.3.6.1.4.1.1588.2.1.2.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Gives the current status of the control card"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "active",
+							"4" : "standby",
+							"5" : "failed"
+						},
+						"name" : "BROCADE-HA-MIB::cpStatus",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.7.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The last event related to this control card"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "haSync",
+							"4" : "haOutSync",
+							"5" : "cpFaulty",
+							"6" : "cpHealthy",
+							"7" : "cpActive",
+							"8" : "configChange",
+							"9" : "failOverStart",
+							"10" : "failOverDone",
+							"11" : "firmwareCommit",
+							"12" : "firmwareUpgrade"
+						},
+						"name" : "BROCADE-HA-MIB::cpLastEvent",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.7.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of the logical switch (0/1)"
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swID",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.24",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "BROCADE-HA-MIB::fruHistoryTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a FRU is added or removed"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fruHistoryTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==1) ? 2 : 3"
+				},
+				"SubNode" : "ObjectNum:$v2",
+				"Summary" : "$v1 FRU status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BROCADE-HA-MIB::fruHistoryTrap BROCADE-HA-MIB::fruHistoryClass i 1 BROCADE-HA-MIB::fruHistoryObjectNum i 9999 BROCADE-HA-MIB::fruHistoryEvent i 1 BROCADE-HA-MIB::fruHistoryTime s EXAMPLE BROCADE-HA-MIB::fruHistoryFactoryPartNum s EXAMPLE BROCADE-HA-MIB::fruHistoryFactorySerialNum s EXAMPLE",
+			"trap" : {
+				"name" : "BROCADE-HA-MIB::fruHistoryTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.2.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The type of the FRU object related to the event"
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "cp",
+							"5" : "other-CP",
+							"6" : "switchblade",
+							"7" : "wwn",
+							"8" : "powerSupply",
+							"9" : "fan",
+							"10" : "coreblade",
+							"11" : "applicationblade",
+							"12" : "sfm",
+							"13" : "lineCard",
+							"14" : "managementModule"
+						},
+						"name" : "BROCADE-HA-MIB::fruHistoryClass",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.6.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Gives the slot number of the blade and unit number for",
+							"everything else"
+						],
+						"name" : "BROCADE-HA-MIB::fruHistoryObjectNum",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.6.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The type of the FRU event"
+						],
+						"enums" : {
+							"1" : "added",
+							"2" : "removed",
+							"3" : "invalid"
+						},
+						"name" : "BROCADE-HA-MIB::fruHistoryEvent",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Gives the time at which this event happened"
+						],
+						"name" : "BROCADE-HA-MIB::fruHistoryTime",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.6.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Gives the factory part num of the FRU object"
+						],
+						"name" : "BROCADE-HA-MIB::fruHistoryFactoryPartNum",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.6.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Gives the factory serial num of the FRU object"
+						],
+						"name" : "BROCADE-HA-MIB::fruHistoryFactorySerialNum",
+						"oid" : "1.3.6.1.4.1.1588.2.1.2.1.6.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

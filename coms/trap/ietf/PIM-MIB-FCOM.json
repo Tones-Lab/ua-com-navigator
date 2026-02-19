@@ -1,0 +1,59 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200009280000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PIM-MIB::pimNeighborLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pimNeighborLoss trap signifies the loss of an adjacency",
+				"with a neighbor. This trap should be generated when the",
+				"neighbor timer expires, and the router has no other",
+				"neighbors on the same interface with a lower IP address than",
+				"itself."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.3\\.6\\.1\\.3\\.61\\.1\\.1\\.3\\.1\\.2\\.(?P<pimNeighborAddress>.*)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pimNeighborLoss",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "PIM neighbor loss on interface $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD PIM-MIB::pimNeighborLoss PIM-MIB::pimNeighborIfIndex.192.168.100.112 i 9999",
+				"$SNMPTRAPCMD PIM-MIB::pimNeighborLoss PIM-MIB::pimNeighborIfIndex i 9998"
+			],
+			"trap" : {
+				"name" : "PIM-MIB::pimNeighborLoss",
+				"oid" : "1.3.6.1.3.61.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of ifIndex for the interface used to reach this",
+							"PIM neighbor."
+						],
+						"name" : "PIM-MIB::pimNeighborIfIndex",
+						"oid" : "1.3.6.1.3.61.1.1.3.1.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

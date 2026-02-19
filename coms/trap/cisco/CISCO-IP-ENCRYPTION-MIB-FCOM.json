@@ -1,0 +1,63 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9508150000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-IP-ENCRYPTION-MIB::cieTestCompletion",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cieTestCompletion trap is sent at the completion",
+				"of a crypto session establishment if such a trap was requested",
+				"when the sequence was initiated. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 3 : (($v1 == 3) ? 1 : 2)"
+				},
+				"EventType" : "cieTestCompletion",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : (($v1 == 3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 2 : (($v1 == 3) ? 0 : 3)"
+				},
+				"SubNode" : "$v2",
+				"Summary" : "Completion of crypto session establishment (protected $v2, unprotected $v3): $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IP-ENCRYPTION-MIB::cieTestCompletion CISCO-IP-ENCRYPTION-MIB::cieTestConnSessionStatus i 1 CISCO-IP-ENCRYPTION-MIB::cieTestConnProtectedAddr a 192.168.2.1 CISCO-IP-ENCRYPTION-MIB::cieTestConnUnprotectedAddr a 192.168.2.1",
+			"trap" : {
+				"name" : "CISCO-IP-ENCRYPTION-MIB::cieTestCompletion",
+				"oid" : "1.3.6.1.4.1.9.9.52.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "inProgress",
+							"2" : "fail",
+							"3" : "success",
+							"4" : "badCryptoMapName"
+						},
+						"name" : "CISCO-IP-ENCRYPTION-MIB::cieTestConnSessionStatus",
+						"oid" : "1.3.6.1.4.1.9.9.52.1.4.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IP-ENCRYPTION-MIB::cieTestConnProtectedAddr",
+						"oid" : "1.3.6.1.4.1.9.9.52.1.4.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"name" : "CISCO-IP-ENCRYPTION-MIB::cieTestConnUnprotectedAddr",
+						"oid" : "1.3.6.1.4.1.9.9.52.1.4.1.1.3",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		}
+	]
+}

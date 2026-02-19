@@ -1,0 +1,1456 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snTrapOspfIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfStateChange trap signifies that there",
+				"has been a change in the state of a non-virtual",
+				"OSPF interface. This trap should be generated",
+				"when the interface state regresses (e.g., goes",
+				"from Dr to Down) or progresses to a terminal",
+				"state (i.e., Point-to-Point, DR Other, Dr, or",
+				"Backup)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1 || $v3==2 || $v3==3) ? 2 : 1"
+				},
+				"EventType" : "snTrapOspfIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1 || $v3==2 || $v3==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 4 : ($v3==2 || $v3==3) ? 3 : 0"
+				},
+				"SubNode" : "$v1-$v2",
+				"Summary" : "OSPF router id $v1, interface $v2 state changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snTrapOspfIfStateChange FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusState i 1",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snTrapOspfIfStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The OSPF Interface State."
+						],
+						"enums" : {
+							"1" : "down",
+							"2" : "loopback",
+							"3" : "waiting",
+							"4" : "pointToPoint",
+							"5" : "designatedRouter",
+							"6" : "backupDesignatedRouter",
+							"7" : "otherDesignatedRouter"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusState",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snTrapOspfVirtIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfStateChange trap signifies that there",
+				"has been a change in the state of an OSPF vir-",
+				"tual interface.",
+				"This trap should be generated when the inter-",
+				"face state regresses (e.g., goes from Point-",
+				"to-Point to Down) or progresses to a terminal",
+				"state (i.e., Point-to-Point)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 2 : 1"
+				},
+				"EventType" : "snTrapOspfVirtIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 4 : 0"
+				},
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF router id $v1, virtual interface area id $v2 neighbor $v3 state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snTrapOspfVirtIfStateChange FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusState i 1",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snTrapOspfVirtIfStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The OSPF virtual interfaces states."
+						],
+						"enums" : {
+							"1" : "down",
+							"4" : "pointToPoint"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusState",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfNbrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfNbrStateChange trap signifies that",
+				"there has been a change in the state of a non-",
+				"virtual OSPF neighbor. This trap should be",
+				"generated when the neighbor state regresses",
+				"(e.g., goes from Attempt or Full to 1-Way or",
+				"Down) or progresses to a terminal state (e.g.",
+				"2-Way or Full). When an neighbor transitions",
+				"from or to Full on non-broadcast multi-access",
+				"and broadcast networks, the trap should be gen-",
+				"erated by the designated router. A designated",
+				"router transitioning to Down will be noted by",
+				"ospfIfStateChange."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==8) ? 1 : 2"
+				},
+				"EventType" : "snOspfNbrStateChange",
+				"ExpireTime" : {
+					"eval" : "($v4==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 4 : ($v4==8) ? 0 : 3"
+				},
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF router id $v1 neighbor area $v2, neighbor router id $v3 state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfNbrStateChange FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrIpAddr a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrRtrId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrState i 1",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfNbrStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrIpAddr",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.7.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"A 32-bit integer (represented as a type IpAddress)",
+							"uniquely identifying the neighboring router in the",
+							"Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrRtrId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.7.1.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The State of the relationship with this Neigh-",
+							"bor."
+						],
+						"enums" : {
+							"1" : "down",
+							"2" : "attempt",
+							"3" : "init",
+							"4" : "twoWay",
+							"5" : "exchangeStart",
+							"6" : "exchange",
+							"7" : "loading",
+							"8" : "full"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrState",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.7.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtNbrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfStateChange trap signifies that there",
+				"has been a change in the state of an OSPF vir-",
+				"tual neighbor. This trap should be generated",
+				"when the neighbor state regresses (e.g., goes",
+				"from Attempt or Full to 1-Way or Down) or",
+				"progresses to a terminal state (e.g., Full)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==8) ? 1 : 2"
+				},
+				"EventType" : "snOspfVirtNbrStateChange",
+				"ExpireTime" : {
+					"eval" : "($v4==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 4 : ($v4==8) ? 0 : 3"
+				},
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF router id $v1 virtual neighbor area $v2, virtual neighbor router id $v3 state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtNbrStateChange FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrArea a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrRtrId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrState i 1",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtNbrStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area Identifier."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrArea",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.8.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the neighboring",
+							"router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrRtrId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.8.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The state of the Virtual Neighbor Relationship."
+						],
+						"enums" : {
+							"1" : "down",
+							"2" : "attempt",
+							"3" : "init",
+							"4" : "twoWay",
+							"5" : "exchangeStart",
+							"6" : "exchange",
+							"7" : "loading",
+							"8" : "full"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrState",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.8.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfConfigError",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfConfigError trap signifies that a",
+				"packet has been received on a non-virtual in-",
+				"terface from a router whose configuration",
+				"parameters conflict with this router's confi-",
+				"guration parameters. Note that the event op-",
+				"tionMismatch should cause a trap only if it",
+				"prevents an adjacency from forming."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfIfConfigError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "$v1-$v2-$v3-$v4-$v5",
+				"Summary" : "configuration error type $v4 with packet type $v5 has been received on interface $v2, router id $v1 from $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfConfigError FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfConfigError",
+				"oid" : "1.3.6.1.4.1.1991.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of an inbound packet that can-",
+							"not be identified by a neighbor instance."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and ospfConfigVir-",
+							"tError traps."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfConfigError",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfConfigError trap signifies that a pack-",
+				"et has been received on a virtual interface",
+				"from a router whose configuration parameters",
+				"conflict with this router's configuration",
+				"parameters. Note that the event optionMismatch",
+				"should cause a trap only if it prevents an ad-",
+				"jacency from forming."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfVirtIfConfigError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "$v1-$v2-$v3-$v4-$v5",
+				"Summary" : "configuration error type $v4 with packet type $v5 has been received on virtual interface area id $v2, router id $v1 from neighbor $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfConfigError FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfConfigError",
+				"oid" : "1.3.6.1.4.1.1991.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and ospfConfigVir-",
+							"tError traps."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfAuthFailure trap signifies that a",
+				"packet has been received on a non-virtual in-",
+				"terface from a router whose authentication key",
+				"or authentication type conflicts with this",
+				"router's authentication key or authentication",
+				"type."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfIfAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF authentication failed. Router ID $v1,Interface $v2, packet src $v3, error type $v4 and packet type $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfAuthFailure FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfAuthFailure",
+				"oid" : "1.3.6.1.4.1.1991.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of an inbound packet that can-",
+							"not be identified by a neighbor instance."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and ospfConfigVir-",
+							"tError traps."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfVirtIfAuthFailure trap signifies that a",
+				"packet has been received on a virtual interface",
+				"from a router whose authentication key or au-",
+				"thentication type conflicts with this router's",
+				"authentication key or authentication type."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfVirtIfAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF authentication failed. Router ID $v1,virtual interface $v2, Neigbor $v3, Error type $v4 and packet type $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfAuthFailure FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfAuthFailure",
+				"oid" : "1.3.6.1.4.1.1991.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and ospfConfigVir-",
+							"tError traps."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfRxBadPacket",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfRxBadPacket trap signifies that an",
+				"OSPF packet has been received on a non-virtual",
+				"interface that cannot be parsed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfIfRxBadPacket",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF Router Id $v1, interface $v2 receive bad packet (type $v4) from $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfRxBadPacket FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfIfRxBadPacket",
+				"oid" : "1.3.6.1.4.1.1991.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of an inbound packet that can-",
+							"not be identified by a neighbor instance."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfRxBadPacket",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfRxBadPacket trap signifies that an OSPF",
+				"packet has been received on a virtual interface",
+				"that cannot be parsed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfVirtIfRxBadPacket",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF router id $v1, virtual interface $v2 received bad packet (type $v4) from neighbor $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfRxBadPacket FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfVirtIfRxBadPacket",
+				"oid" : "1.3.6.1.4.1.1991.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfTxRetransmit",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfTxRetransmit trap signifies than an",
+				"OSPF packet has been retransmitted on a non-",
+				"virtual interface. All packets that may be re-",
+				"transmitted are associated with an LSDB entry.",
+				"The LS type, LS ID, and Router ID are used to",
+				"identify the LSDB entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfTxRetransmit",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF router id $v1, interface $v2 retransmited packet type $v4,LSDB type $v5, LSDB LS ID $v6 and LSDB router id $v7 to neightbor router id $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfTxRetransmit FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrRtrId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType i 1 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId a 192.0.1.2",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfTxRetransmit",
+				"oid" : "1.3.6.1.4.1.1991.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"A 32-bit integer (represented as a type IpAddress)",
+							"uniquely identifying the neighboring router in the",
+							"Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrRtrId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.7.1.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the link state advertisement. Each link",
+							"state type has a separate advertisement format."
+						],
+						"enums" : {
+							"1" : "routerLink",
+							"2" : "networkLink",
+							"3" : "summaryLink",
+							"4" : "asSummaryLink",
+							"5" : "asExternalLink",
+							"6" : "multicastLink",
+							"7" : "nssaExternalLink",
+							"9" : "opaqueLink",
+							"10" : "opaqueAreaLink",
+							"11" : "opaqueAsLink"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Link State ID is an LS Type Specific field",
+							"containing either a Router ID or an IP Address; it",
+							"identifies the piece of the routing domain that is",
+							"being described by the advertisement."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit number that uniquely identifies the",
+							"originating router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::ospfVirtIfTxRetransmit",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfTxRetransmit trap signifies than an",
+				"OSPF packet has been retransmitted on a virtual",
+				"interface. All packets that may be retransmit-",
+				"ted are associated with an LSDB entry. The LS",
+				"type, LS ID, and Router ID are used to identify",
+				"the LSDB entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfVirtIfTxRetransmit",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1-$v2-$v3",
+				"Summary" : "OSPF router id $v1, virtual interface area id $v2 retransmited packet type $v4,LSDB type $v5, LSDB LS ID $v6 and LSDB router id $v7 to neightbor $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::ospfVirtIfTxRetransmit FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType i 1 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId a 192.0.1.2",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::ospfVirtIfTxRetransmit",
+				"oid" : "1.3.6.1.4.1.1991.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the link state advertisement. Each link",
+							"state type has a separate advertisement format."
+						],
+						"enums" : {
+							"1" : "routerLink",
+							"2" : "networkLink",
+							"3" : "summaryLink",
+							"4" : "asSummaryLink",
+							"5" : "asExternalLink",
+							"6" : "multicastLink",
+							"7" : "nssaExternalLink",
+							"9" : "opaqueLink",
+							"10" : "opaqueAreaLink",
+							"11" : "opaqueAsLink"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Link State ID is an LS Type Specific field",
+							"containing either a Router ID or an IP Address; it",
+							"identifies the piece of the routing domain that is",
+							"being described by the advertisement."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit number that uniquely identifies the",
+							"originating router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfOriginateLsa",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfOriginateLsa trap signifies that a new",
+				"LSA has been originated by this router. This",
+				"trap should not be invoked for simple refreshes",
+				"of LSAs (which happesn every 30 minutes), but",
+				"instead will only be invoked when an LSA is",
+				"(re)originated due to a topology change. Addi-",
+				"tionally, this trap does not include LSAs that",
+				"are being flushed because they have reached",
+				"MaxAge."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfOriginateLsa",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1-$v2-$v4-$v5",
+				"Summary" : "New LSA (area id $v2, type $v3, LS Id $v4 and router id $v5) has been originated by router id $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfOriginateLsa FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbAreaId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType i 1 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId a 192.0.1.2",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfOriginateLsa",
+				"oid" : "1.3.6.1.4.1.1991.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit identifier of the Area from which the LSA",
+							"was received."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbAreaId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The type of the link state advertisement. Each link",
+							"state type has a separate advertisement format."
+						],
+						"enums" : {
+							"1" : "routerLink",
+							"2" : "networkLink",
+							"3" : "summaryLink",
+							"4" : "asSummaryLink",
+							"5" : "asExternalLink",
+							"6" : "multicastLink",
+							"7" : "nssaExternalLink",
+							"9" : "opaqueLink",
+							"10" : "opaqueAreaLink",
+							"11" : "opaqueAsLink"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Link State ID is an LS Type Specific field",
+							"containing either a Router ID or an IP Address; it",
+							"identifies the piece of the routing domain that is",
+							"being described by the advertisement."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit number that uniquely identifies the",
+							"originating router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfMaxAgeLsa",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfMaxAgeLsa trap signifies that one of",
+				"the LSA in the router's link-state database has",
+				"aged to MaxAge."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfMaxAgeLsa",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1-$v2-$v4-$v5",
+				"Summary" : "The LSA (area id $v2, type $v3, LS Id $v4 and router id $v5) in router id $v1 link-state database has aged to maximum age"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfMaxAgeLsa FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbAreaId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType i 1 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId a 192.0.1.2",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfMaxAgeLsa",
+				"oid" : "1.3.6.1.4.1.1991.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit identifier of the Area from which the LSA",
+							"was received."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbAreaId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The type of the link state advertisement. Each link",
+							"state type has a separate advertisement format."
+						],
+						"enums" : {
+							"1" : "routerLink",
+							"2" : "networkLink",
+							"3" : "summaryLink",
+							"4" : "asSummaryLink",
+							"5" : "asExternalLink",
+							"6" : "multicastLink",
+							"7" : "nssaExternalLink",
+							"9" : "opaqueLink",
+							"10" : "opaqueAreaLink",
+							"11" : "opaqueAsLink"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Link State ID is an LS Type Specific field",
+							"containing either a Router ID or an IP Address; it",
+							"identifies the piece of the routing domain that is",
+							"being described by the advertisement."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit number that uniquely identifies the",
+							"originating router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfLsdbOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfLsdbOverflow trap signifies that the",
+				"number of LSAs in the router's link-state data-",
+				"base has exceeded ospfExtLsdbLimit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfLsdbOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "The number of LSAs in the OSPF router id $v1 link-state database has exceeded $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfLsdbOverflow FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfExtLsdbLimit i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfLsdbOverflow",
+				"oid" : "1.3.6.1.4.1.1991.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The maximum number of non-default AS-",
+							"external-LSAs entries that can be stored in the",
+							"link-state database. If the value is -1, then",
+							"there is no limit.",
+							"",
+							"When the number of non-default AS-external-LSAs",
+							"in a router's link-state database reaches",
+							"ospfExtLsdbLimit, the router enters Overflow-",
+							"State. The router never holds more than",
+							"ospfExtLsdbLimit non-default AS-external-LSAs",
+							"in its database. OspfExtLsdbLimit MUST be set",
+							"identically in all routers attached to the OSPF",
+							"backbone and/or any regular OSPF area. (i.e.",
+							"OSPF stub areas and NSSAs are excluded)."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfExtLsdbLimit",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfLsdbApproachingOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfLsdbApproachingOverflow trap signifies",
+				"that the number of LSAs in the router's link-",
+				"state database has exceeded ninety percent of",
+				"ospfExtLsdbLimit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfLsdbApproachingOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "The number of LSAs in the OSPF router id $v1 link-state database has exceeded ninety percent of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfLsdbApproachingOverflow FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfExtLsdbLimit i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-ROUTER-TRAP-MIB::snOspfLsdbApproachingOverflow",
+				"oid" : "1.3.6.1.4.1.1991.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The maximum number of non-default AS-",
+							"external-LSAs entries that can be stored in the",
+							"link-state database. If the value is -1, then",
+							"there is no limit.",
+							"",
+							"When the number of non-default AS-external-LSAs",
+							"in a router's link-state database reaches",
+							"ospfExtLsdbLimit, the router enters Overflow-",
+							"State. The router never holds more than",
+							"ospfExtLsdbLimit non-default AS-external-LSAs",
+							"in its database. OspfExtLsdbLimit MUST be set",
+							"identically in all routers attached to the OSPF",
+							"backbone and/or any regular OSPF area. (i.e.",
+							"OSPF stub areas and NSSAs are excluded)."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfExtLsdbLimit",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

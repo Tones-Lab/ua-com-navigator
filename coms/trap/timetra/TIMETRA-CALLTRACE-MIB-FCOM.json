@@ -1,0 +1,109 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201601010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-CALLTRACE-MIB::tmnxCallTraceMaxFilesNumReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] This notification is triggered for the following reasons:",
+				"1) Cumulative number of call trace log files present on all cflash",
+				"cards on the active CPM that are being used for local storage",
+				"has reached the limit defined by the value of the object",
+				"tmnxCallTraceMaxFilesNumber.",
+				"2) The value of the object tmnxCallTraceMaxFilesNumber has been changed",
+				"to a value that is lower than the current cumulative number",
+				"of all call trace log files present on all cflash cards",
+				"on the active CPM that are being used for local storage.",
+				"Details about cflash cards that are being used for the local storage",
+				"of call trace log files can be found in tmnxCallTraceLocationTable.",
+				"[EFFECT] New call trace log file(s) cannot be created on any",
+				"cflash card.",
+				"[RECOVERY] Operator may execute one of the following actions to restore",
+				"the functionality:",
+				"1) Remove some call trace log files from (a) cflash card(s).",
+				"2) Increase the value of the object tmnxCallTraceMaxFilesNumber."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCallTraceMaxFilesNumReached",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Call trace maximum files number ($v1) reached the limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-CALLTRACE-MIB::tmnxCallTraceMaxFilesNumReached TIMETRA-CALLTRACE-MIB::tmnxCallTraceMaxFilesNumber u 1",
+			"trap" : {
+				"name" : "TIMETRA-CALLTRACE-MIB::tmnxCallTraceMaxFilesNumReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.102.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxCallTraceMaxFilesNumber specifies",
+							"the maximum number of all call trace log files stored on all compact",
+							"flash cards together.",
+							"The value comprises both active and finished jobs."
+						],
+						"name" : "TIMETRA-CALLTRACE-MIB::tmnxCallTraceMaxFilesNumber",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.102.1.2.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-CALLTRACE-MIB::tmnxCallTraceLocSizeLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] This notification is triggered when the cumulative size of",
+				"all call trace log files on a given cflash card on the active CPM",
+				"has reached the limit specified by the value of the object",
+				"tmnxCallTraceLocationSizeLimit.",
+				"[EFFECT] New call trace log file(s) cannot be created on the impacted",
+				"cflash card.",
+				"[RECOVERY] Operator may execute one of the following actions to restore",
+				"the functionality:",
+				"1) Remove some call trace log files from the cflash card.",
+				"2) Increase the size limit (value of the object",
+				"tmnxCallTraceLocationSizeLimit) for the given cflash card."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCallTraceLocSizeLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Call trace  location log file size reached the limit $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-CALLTRACE-MIB::tmnxCallTraceLocSizeLimitReached TIMETRA-CALLTRACE-MIB::tmnxCallTraceLocationSizeLimit u 9999",
+			"trap" : {
+				"name" : "TIMETRA-CALLTRACE-MIB::tmnxCallTraceLocSizeLimitReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.102.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxCallTraceLocationSizeLimit specifies",
+							"the maximum cumulative size of all local call trace log files stored",
+							"on the given compact flash card.",
+							"The value '0' means there is no size limit defined."
+						],
+						"name" : "TIMETRA-CALLTRACE-MIB::tmnxCallTraceLocationSizeLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.102.2.2.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,59 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "Wellfleet-DSUCSU-MIB::wfDsuCsuIfTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates a change in the status of the line. The",
+				"value returned in the trap will indicate the current",
+				"state as defined in wfDsuCsuServiceStatus."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "wfDsuCsuIfTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Line state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Wellfleet-DSUCSU-MIB::wfDsuCsuIfTrap Wellfleet-DSUCSU-MIB::wfDsuCsuServiceStatus i 1",
+			"trap" : {
+				"name" : "Wellfleet-DSUCSU-MIB::wfDsuCsuIfTrap",
+				"oid" : "1.3.6.1.4.1.18.3.4.30.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The Current status of the physical interface.",
+							"Your network carrier can send Out-of-Service ",
+							"or Maintenance Mode codes."
+						],
+						"enums" : {
+							"1" : "inService",
+							"2" : "outOfService",
+							"3" : "frameError",
+							"5" : "lossOfLine",
+							"6" : "telcoLpbk"
+						},
+						"name" : "Wellfleet-DSUCSU-MIB::wfDsuCsuServiceStatus",
+						"oid" : "1.3.6.1.4.1.18.3.4.30.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

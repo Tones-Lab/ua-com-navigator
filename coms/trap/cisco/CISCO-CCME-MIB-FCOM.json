@@ -1,0 +1,398 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201010130000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeStatusChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ccmeStatusChangeNotif is generated if there is a change ",
+				"in ccmeEnabled. This notification is generated only when ",
+				"value of the 'ccmeNotificationEnable' object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "ccmeStatusChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 2) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "ccmeStatus changed to $v1: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeStatusChangeNotif CISCO-CCME-MIB::ccmeSysTrapSeverity i 1 CISCO-CCME-MIB::ccmeEnabled i 1 CISCO-CCME-MIB::ccmeSysNotificationReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeStatusChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "clear",
+							"2" : "minor",
+							"3" : "major"
+						},
+						"name" : "CISCO-CCME-MIB::ccmeSysTrapSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.49",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-CCME-MIB::ccmeEnabled",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CCME-MIB::ccmeSysNotificationReason",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.50",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeEphoneUnRegThresholdExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated every time the total ",
+				"number of Ephones registered is exceeded and then dropped ",
+				"below threshold specified by 'ccmeEphoneUnRegThreshold' ",
+				"object. This objects is generated only if ",
+				"'ccmeNotificationEnable' object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmeEphoneUnRegThresholdExceed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Number of Ephones registered has exceeded and then dropped below $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeEphoneUnRegThresholdExceed CISCO-CCME-MIB::ccmeEphoneUnRegThreshold i 99",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeEphoneUnRegThresholdExceed",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneUnRegThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.51",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeEPhoneDeceased",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated every time registered Ephone",
+				"changes state to 'Deceased', indicating that the connection",
+				"to the Cisco IP phone was closed because of a keepalive",
+				"timeout. This objects is generated only if ",
+				"'ccmeNotificationEnable' object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmeEPhoneDeceased",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "The registered Ephone $v1 has changed state to 'Deceased'"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeEPhoneDeceased CISCO-CCME-MIB::ccmeEphoneIpAddress s EXAMPLE CISCO-CCME-MIB::ccmeEphoneRegState i 1",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeEPhoneDeceased",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.43.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "registered",
+							"2" : "unregistered",
+							"3" : "deceased"
+						},
+						"name" : "CISCO-CCME-MIB::ccmeEphoneRegState",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.2.6.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeEPhoneRegFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated every time an Ephone ",
+				"attempts to register but fails. This notification is",
+				"only for those failures seen by the CCME or SRST ",
+				"gateway. This objects is generated only if ",
+				"'ccmeNotificationEnable' object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmeEPhoneRegFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "The Ephone $v1 has failed an attempt to register: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeEPhoneRegFailed CISCO-CCME-MIB::ccmeEphoneIpAddress s EXAMPLE CISCO-CCME-MIB::ccmeEphoneTrapReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeEPhoneRegFailed",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.43.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneTrapReason",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.52",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeEphoneLoginFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated every time an Ephone user",
+				"login is rejected/failed.",
+				"This objects is generated only if 'ccmeNotificationEnable' ",
+				"object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmeEphoneLoginFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "A login attempt by Ephone $v1 has failed: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeEphoneLoginFailed CISCO-CCME-MIB::ccmeEphoneIpAddress s EXAMPLE CISCO-CCME-MIB::ccmeEphoneTrapReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeEphoneLoginFailed",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.43.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneTrapReason",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.52",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeNightServiceChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ccmeNightServiceChangeNotif notification is generated ",
+				"if there is change in night service status on this ",
+				"device. This objects is generated only if ",
+				"'ccmeNotificationEnable' object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmeNightServiceChangeNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Change in night service status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeNightServiceChangeNotif CISCO-CCME-MIB::ccmeEphoneTrapReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeNightServiceChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneTrapReason",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.52",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeLivefeedMohFailedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"A ccmeLivefeedMohFailedNotif notification is generated ",
+				"when the Music-on-hold (Moh) live feed has failed. This ",
+				"objects is generated only if 'ccmeNotificationEnable' ",
+				"object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ccmeLivefeedMohFailedNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Music-on-hold (Moh) live feed has failed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeLivefeedMohFailedNotif CISCO-CCME-MIB::ccmeEphoneTrapReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeLivefeedMohFailedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.7",
+				"variables" : [
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneTrapReason",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.52",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeMaxConferenceNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"A ccmeMaxConferenceNotif notification is generated ",
+				"if the maximum number of simultaneous three-party",
+				"conferences supported by the Cisco CallManager",
+				"Express is exceeded. This objects is generated only if",
+				"'ccmeNotificationEnable' object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmeMaxConferenceNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "The maximum number of simultaneous three-party conferences supported by the Cisco CallManager Express has been exceeded."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeMaxConferenceNotif CISCO-CCME-MIB::ccmeEphoneTrapReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeMaxConferenceNotif",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.8",
+				"variables" : [
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneTrapReason",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.52",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CCME-MIB::ccmeKeyEphoneRegChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"A ccmeKeyEphoneRegChangeNotif notification is generated",
+				"if there is a change in the registration status of Key ",
+				"IP phone. This objects is generated only if",
+				"'ccmeNotificationEnable' object is 'true'.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : 2"
+				},
+				"EventType" : "ccmeKeyEphoneRegChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : 3"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "ccme Key IP Phone Registration status for $v1 has changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CCME-MIB::ccmeKeyEphoneRegChangeNotif CISCO-CCME-MIB::ccmeEphoneIpAddress s EXAMPLE CISCO-CCME-MIB::ccmeEphoneRegState i 1",
+			"trap" : {
+				"name" : "CISCO-CCME-MIB::ccmeKeyEphoneRegChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.439.0.0.9",
+				"variables" : [
+					{
+						"name" : "CISCO-CCME-MIB::ccmeEphoneIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.1.43.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "registered",
+							"2" : "unregistered",
+							"3" : "deceased"
+						},
+						"name" : "CISCO-CCME-MIB::ccmeEphoneRegState",
+						"oid" : "1.3.6.1.4.1.9.9.439.1.2.6.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

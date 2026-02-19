@@ -1,0 +1,865 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200502140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"For vlans/ports on which one or more of the IP Security ",
+				"features have been enabled, this trap will be generated when a packet ",
+				"received on that vlan/port is in violation of the configured IP ",
+				"Security protections"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "$v6",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v3",
+				"Summary" : "Packet received from $v4 violated IP security protections"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-IP-SECURITY-MIB::extremeIpSecurityViolation EXTREME-IP-SECURITY-MIB::extremeIpSecurityVlanIfIndex i 9999 EXTREME-IP-SECURITY-MIB::extremeIpSecurityVlanDescr s EXAMPLE EXTREME-IP-SECURITY-MIB::extremeIpSecurityPortIfIndex i 9999 EXTREME-IP-SECURITY-MIB::extremeIpSecurityIpAddr a 192.0.2.1 EXTREME-IP-SECURITY-MIB::extremeIpSecurityMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::extremeIpSecurityViolationType i 1",
+			"trap" : {
+				"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityViolation",
+				"oid" : "1.3.6.1.4.1.1916.1.34.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityVlanIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The description(name) of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityVlanDescr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The ifIndex of the port on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityPortIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Source IP address of the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Source MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of IP Security violation that occurred",
+							"- rogueDhcpServerPacket(1)",
+							"A rogue DHCP server packet was received.",
+							"- badIpMacBindingInArpPacket(2)",
+							"The IP-MAC binding received in the ARP packet does not exist in ",
+							"the DHCP Bindings table.",
+							"- badIpInArpPacket(3)",
+							"The Source IP address in the ARP payload is invalid.",
+							"- badMacInArpPacket(4)",
+							"One of the MAC addresses in the ARP payload does not match with",
+							"its counterpart in the ethernet header."
+						],
+						"enums" : {
+							"1" : "rogueDhcpServerPacket",
+							"2" : "badIpMacBindingInArpPacket",
+							"3" : "badIpInArpPacket",
+							"4" : "badMacInArpPacket"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityViolationType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyIpViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"For ports on which the protocol anomaly protection IP ",
+				"features has been enabled, this trap will be generated when a packet ",
+				"received on that port if the packet's source IP == destination IP "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "extremeIpSecurityAnomalyIpViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "esAnomalyPortIfIndex:$v1",
+				"Summary" : "Source IP $v8 and destination IP $v10 are same for the received packet"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyIpViolation EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyIpProto i 0",
+			"trap" : {
+				"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyIpViolation",
+				"oid" : "1.3.6.1.4.1.1916.1.34.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex of the port on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The ifIndex of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The description(name) of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"the vlan tag in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"destination IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"destination IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP protocol in the violating packet"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "icmp",
+							"6" : "tcp",
+							"17" : "udp"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyIpProto",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyL4PortViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"For ports on which the protocol anomaly protection L4port ",
+				"features has been enabled, this trap will be generated when a packet ",
+				"received on that port if ",
+				"1) the packet is a TCP or UDP packetr. AND ",
+				"2) its source L4 port == destination port "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "extremeIpSecurityAnomalyL4PortViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "esAnomalyPortIfIndex:$v1",
+				"Summary" : "Source L4 port $v12 and destination L4 port $v13 are same for TCP or UDP packet"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyL4PortViolation EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyIpProto i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcL4Port u 9999 EXTREME-IP-SECURITY-MIB::esAnomalyDestL4Port u 9999",
+			"trap" : {
+				"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyL4PortViolation",
+				"oid" : "1.3.6.1.4.1.1916.1.34.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex of the port on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The ifIndex of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The description(name) of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"the vlan tag in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"destination IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"destination IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP protocol in the violating packet"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "icmp",
+							"6" : "tcp",
+							"17" : "udp"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyIpProto",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tcp/udp source port number in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcL4Port",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"tcp/udp destination port in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestL4Port",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.12",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyTcpFlagViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"For ports on which the protocol anomaly protection TCP flags ",
+				"features has been enabled, this trap will be generated when a TCP ",
+				"packet received on that port if ",
+				"1) (TCP flag SYN is set) and (its TCP source port < 1024). OR ",
+				"2) (TCP flag == 0) and (TCP seq # == 0). OR ",
+				"3) (TCP flag FIN/URG/PSH bits sre set) and (TCP seq # == 0). OR ",
+				"4) Both TCP iflag SYN and FIN are set "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "extremeIpSecurityAnomalyTcpFlagViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "esAnomalyPortIfIndex:$v1",
+				"Summary" : "Violating packet received on the VLAN $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyTcpFlagViolation EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalySrcL4Port u 9999 EXTREME-IP-SECURITY-MIB::esAnomalyDestL4Port u 9999 EXTREME-IP-SECURITY-MIB::esAnomalyTcpFlagReason i 0 EXTREME-IP-SECURITY-MIB::esAnomalyTcpFlag s EX EXTREME-IP-SECURITY-MIB::esAnomalyTcpSeq i 9999",
+			"trap" : {
+				"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyTcpFlagViolation",
+				"oid" : "1.3.6.1.4.1.1916.1.34.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex of the port on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The ifIndex of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The description(name) of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"the vlan tag in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"destination IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"destination IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tcp/udp source port number in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcL4Port",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"tcp/udp destination port in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestL4Port",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"TCP flag anomaly reason code"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "flagSynAndSrcPort",
+							"2" : "flagAndSeq",
+							"3" : "flagFinAndUrgAandPshandSeq",
+							"4" : "flagSynAndFin"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyTcpFlagReason",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"TCP flags in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyTcpFlag",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"TCP sequence number in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyTcpSeq",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.14",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyTcpFragmentViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"For ports on which the protocol anomaly protection TCP fragment ",
+				"features has been enabled, this trap will be generated when a packet ",
+				"received on that port if ",
+				"1) the packet is a TCP, and its size of the TCP header is less than pre-configured value; or",
+				"2) the packet is a TCP and it is a IP fragmented packet (IP offset != 0) "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "extremeIpSecurityAnomalyTcpFragmentViolation",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v11 == 0) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "TCP packet status: $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyTcpFragmentViolation EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyTcpFragmentReason i 0 EXTREME-IP-SECURITY-MIB::esAnomalyTcpHdrSize i 9999",
+			"trap" : {
+				"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyTcpFragmentViolation",
+				"oid" : "1.3.6.1.4.1.1916.1.34.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex of the port on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The ifIndex of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The description(name) of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"the vlan tag in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"destination IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"destination IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"TCP fragment anomaly reason code"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tcpHdrLessSize",
+							"2" : "tcpFragmented"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyTcpFragmentReason",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.19",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"TCP Header size in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyTcpHdrSize",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyIcmpViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"For ports on which the protocol anomaly protection ICMP ",
+				"features has been enabled, this trap will be generated when an ICMP ",
+				"packet received on that port if ",
+				"1) the size of ICMP (IP payload) is large thant pre-configured value; or ",
+				"2) it is a fragmented IP/ICMP packet (IP offset != 0) "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "extremeIpSecurityAnomalyIcmpViolation",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v11 == 0) ? 1 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Received ICMP packet status: $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyIcmpViolation EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex i 9999 EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress s EXAMPL EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType i 0 EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr s EXAMPLE EXTREME-IP-SECURITY-MIB::esAnomalyIcmpReason i 0",
+			"trap" : {
+				"name" : "EXTREME-IP-SECURITY-MIB::extremeIpSecurityAnomalyIcmpViolation",
+				"oid" : "1.3.6.1.4.1.1916.1.34.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex of the port on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyPortIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The ifIndex of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The description(name) of the VLAN on which the violating packet was received."
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanDescr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination MAC address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestMacAddress",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"the vlan tag in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyVlanTag",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"source IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalySrcIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"destination IP address type: ipv4 or ipv6"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddrType",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"destination IP address in the violating packet"
+						],
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyDestIpAddr",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"ICMP anomaly reason code"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "icmpOverSize",
+							"2" : "icmpFragmented"
+						},
+						"name" : "EXTREME-IP-SECURITY-MIB::esAnomalyIcmpReason",
+						"oid" : "1.3.6.1.4.1.1916.1.34.2.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

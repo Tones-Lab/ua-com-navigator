@@ -1,0 +1,247 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200612241255Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "AVAYA-RTP-MIB::avRtpQoSTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap contains QoS statistics for a single RTP session.",
+				"The device can send this trap when an RTP session that experienced bad ",
+				"QoS terminates"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 1 : ($v6==2) ? 3 : 2"
+				},
+				"EventType" : "avRtpQoSTrap",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : ($v6==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 0 : ($v6==2) ? 1 : ($v6==3) ? 5 : ($v6==4) ? 4 : 3"
+				},
+				"SubNode" : "RtpSessionLocAddr:$v1",
+				"Summary" : "RTP $v1 session experienced bad QoS termination: $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AVAYA-RTP-MIB::avRtpQoSTrap AVAYA-RTP-MIB::avRtpSessionLocAddrV4 a 192.0.2.1 AVAYA-RTP-MIB::avRtpSessionRemAddrV4 a 192.0.2.1 AVAYA-RTP-MIB::avRtpSessionDuration i 9999 AVAYA-RTP-MIB::avRtpSessionCname s EXAMPLE AVAYA-RTP-MIB::avRtpSessionPhone s EXAMPLE AVAYA-RTP-MIB::avRtpSessionSeverity i 1 AVAYA-RTP-MIB::avRtpSessionDebugStr s EXAMPLE",
+			"trap" : {
+				"name" : "AVAYA-RTP-MIB::avRtpQoSTrap",
+				"oid" : "1.3.6.1.4.1.6889.2.7.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The RTP stream local RTP address (IPv4)."
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpSessionLocAddrV4",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.6",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The RTP stream Remote RTP address (IPv4)."
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpSessionRemAddrV4",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.10",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The duration of the stream in hundredth of seconds"
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpSessionDuration",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The RTP canonical name of the gateway"
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpSessionCname",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A string containing the phone extensions (received for CM), in the format of",
+							"<conferenceID>:<extension #1>...<extension #N>"
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpSessionPhone",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The QoS problem severity for the stream. This item equals to ",
+							"'warning' if a trap was suppose to be sent. and 'cleared' otherwise. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning"
+						},
+						"name" : "AVAYA-RTP-MIB::avRtpSessionSeverity",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.19",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This string contains the major metrics in human readable form. It is used by",
+							"the QoS trap."
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpSessionDebugStr",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.77",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AVAYA-RTP-MIB::avRtpQoSFault",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap indicates that more than XXX RTP sessions currently suffers ",
+				"from bad QoS. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : ($v3==2) ? 3 : 2"
+				},
+				"EventType" : "avRtpQoSFault",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : ($v3==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : ($v3==2) ? 1 : ($v3==3) ? 5 : ($v3==4) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "More than RTP sessions suffers from bad QoS"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AVAYA-RTP-MIB::avRtpQoSFault AVAYA-RTP-MIB::avRtpQoSFaultTh i 1 AVAYA-RTP-MIB::avRtpQoSClearTh i 0 AVAYA-RTP-MIB::avRtpSessionSeverity i 1",
+			"trap" : {
+				"name" : "AVAYA-RTP-MIB::avRtpQoSFault",
+				"oid" : "1.3.6.1.4.1.6889.2.7.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The number of concurrent active RTP sessions that suffers from bad QoS",
+							"(according to avRtpThresholds) that cause the device to enter a ",
+							"'QoS fault' state. Note, upon entering this fault state, the device sends",
+							"a avRtpQoSFault trap."
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpQoSFaultTh",
+						"oid" : "1.3.6.1.4.1.6889.2.7.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of concurrent active RTP sessions that suffers from bad QoS ",
+							"(according to avRtpThresholds) that clears the 'QoS fault' state.",
+							"Note, when the QoS fault clears, the device send a avRtpQoSClear trap."
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpQoSClearTh",
+						"oid" : "1.3.6.1.4.1.6889.2.7.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The QoS problem severity for the stream. This item equals to ",
+							"'warning' if a trap was suppose to be sent. and 'cleared' otherwise. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning"
+						},
+						"name" : "AVAYA-RTP-MIB::avRtpSessionSeverity",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AVAYA-RTP-MIB::avRtpQoSClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a QoS fault, previously indicated by an",
+				"avRtpQoSFault has cleared. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "avRtpQoSTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "RTP $v1 session bad QoS termination cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AVAYA-RTP-MIB::avRtpQoSClear AVAYA-RTP-MIB::avRtpQoSFaultTh i 1 AVAYA-RTP-MIB::avRtpQoSClearTh i 0 AVAYA-RTP-MIB::avRtpSessionSeverity i 1",
+			"trap" : {
+				"name" : "AVAYA-RTP-MIB::avRtpQoSClear",
+				"oid" : "1.3.6.1.4.1.6889.2.7.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The number of concurrent active RTP sessions that suffers from bad QoS",
+							"(according to avRtpThresholds) that cause the device to enter a ",
+							"'QoS fault' state. Note, upon entering this fault state, the device sends",
+							"a avRtpQoSFault trap."
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpQoSFaultTh",
+						"oid" : "1.3.6.1.4.1.6889.2.7.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of concurrent active RTP sessions that suffers from bad QoS ",
+							"(according to avRtpThresholds) that clears the 'QoS fault' state.",
+							"Note, when the QoS fault clears, the device send a avRtpQoSClear trap."
+						],
+						"name" : "AVAYA-RTP-MIB::avRtpQoSClearTh",
+						"oid" : "1.3.6.1.4.1.6889.2.7.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The QoS problem severity for the stream. This item equals to ",
+							"'warning' if a trap was suppose to be sent. and 'cleared' otherwise. "
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning"
+						},
+						"name" : "AVAYA-RTP-MIB::avRtpSessionSeverity",
+						"oid" : "1.3.6.1.4.1.6889.2.7.2.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

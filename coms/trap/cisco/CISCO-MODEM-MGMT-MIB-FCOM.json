@@ -1,0 +1,68 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200512060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-MODEM-MGMT-MIB::cmStateNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A modem port state change notification is generated whenever",
+				"the port transitions to a state where it is offline due to",
+				"a failure or administrative action.",
+				"The values of cmState which will trigger this notification are:",
+				"busiedOut(5) - Administratively out of service",
+				"disabled(6) - Administratively out of service",
+				"bad(7) - Internally detected failure or",
+				"administrative action",
+				"loopback(8) - Testing",
+				"downloadFirmware(9) - Administrative action",
+				"downloadFirmwareFailed(10) - Internally detected failure",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 >= 5 || $v1 <= 7) ? 2 : (($v1 == 4) ? 1 : 3)"
+				},
+				"EventType" : "cmStateNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 >= 5 || $v1 <= 7) ? 86400 : (($v1 == 4) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 >= 5 || $v1 <= 7) ? 3 : (($v1 == 4) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Modem port is now $v1."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MODEM-MGMT-MIB::cmStateNotification CISCO-MODEM-MGMT-MIB::cmState i 1",
+			"trap" : {
+				"name" : "CISCO-MODEM-MGMT-MIB::cmStateNotification",
+				"oid" : "1.3.6.1.4.1.9.9.47.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "onHook",
+							"3" : "offHook",
+							"4" : "connected",
+							"5" : "busiedOut",
+							"6" : "disabled",
+							"7" : "bad",
+							"8" : "loopback",
+							"9" : "downloadFirmware",
+							"10" : "downloadFirmwareFailed"
+						},
+						"name" : "CISCO-MODEM-MGMT-MIB::cmState",
+						"oid" : "1.3.6.1.4.1.9.9.47.1.3.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

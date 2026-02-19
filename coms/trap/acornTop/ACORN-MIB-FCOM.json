@@ -1,0 +1,848 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200806090946Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ACORN-MIB::nodeFanTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Overall CTP1000 Fan Status or CTP2000 Fan and/or Power Status (0=OK, 1=Bad)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "nodeFanTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Fan Status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD ACORN-MIB::nodeFanTrap ACORN-MIB::nodeFan s 1",
+				"$SNMPTRAPCMD ACORN-MIB::nodeFanTrap ACORN-MIB::nodeFan s 0"
+			],
+			"trap" : {
+				"name" : "ACORN-MIB::nodeFanTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Overall CTP1000 Fan Status or CTP2000 Fan and/or Power Status (0=OK, 1=Bad)"
+						],
+						"name" : "ACORN-MIB::nodeFan",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::nodePowerTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"O"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "nodePowerTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Power status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD ACORN-MIB::nodePowerTrap ACORN-MIB::nodePower s 1",
+				"$SNMPTRAPCMD ACORN-MIB::nodePowerTrap ACORN-MIB::nodePower s 0"
+			],
+			"trap" : {
+				"name" : "ACORN-MIB::nodePowerTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Overall CTP1000 Power Status (0=OK, 1=Bad)"
+						],
+						"name" : "ACORN-MIB::nodePower",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::nodeTemperatureTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap when a supply goes above Maximum Temperature Threshold"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "nodeTemperatureTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Maximum Temperature Threshold exceeded: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD ACORN-MIB::nodeTemperatureTrap ACORN-MIB::nodeTemperature s 1",
+				"$SNMPTRAPCMD ACORN-MIB::nodeTemperatureTrap ACORN-MIB::nodeTemperature s 0"
+			],
+			"trap" : {
+				"name" : "ACORN-MIB::nodeTemperatureTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Overall Temperature Status (0=OK, 1=Bad)"
+						],
+						"name" : "ACORN-MIB::nodeTemperature",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::nodeRefChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Current Node Clock reference in use"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nodeRefChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Current Node Clock reference $v1 is in use"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::nodeRefChangeTrap ACORN-MIB::nodeRefChange s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::nodeRefChangeTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Current Node Clock reference in use"
+						],
+						"name" : "ACORN-MIB::nodeRefChange",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::nodeRefValidChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Node reference validity status"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nodeRefValidChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Node reference validity status $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::nodeRefValidChangeTrap ACORN-MIB::nodeRefValidChange s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::nodeRefValidChangeTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Node reference validity status"
+						],
+						"name" : "ACORN-MIB::nodeRefValidChange",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleRunStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C) Port (of bundle) current state"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleRunStateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Bundle current state $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleRunStateTrap ACORN-MIB::bundleRunState s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleRunStateTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"(C) Port (of bundle) current state"
+						],
+						"name" : "ACORN-MIB::bundleRunState",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleOverFlowTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C) Port (of bundle) overflow event count"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleOverFlowTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Bundle overflow"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleOverFlowTrap ACORN-MIB::bundleOverFlow s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleOverFlowTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"(C) Port (of bundle) overflow event count"
+						],
+						"name" : "ACORN-MIB::bundleOverFlow",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleUnderFlowTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C) Port (of bundle) underflow event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleUnderFlowTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Bundle underflow"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleUnderFlowTrap ACORN-MIB::bundleUnderFlow s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleUnderFlowTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"(C) Port (of bundle) underflow event occurs"
+						],
+						"name" : "ACORN-MIB::bundleUnderFlow",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleStarveTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C) Port (of bundle) Starvation count"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleStarveTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Bundle reached Starvation"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleStarveTrap ACORN-MIB::bundleStarve s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleStarveTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"(C) Port (of bundle) Starvation count"
+						],
+						"name" : "ACORN-MIB::bundleStarve",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleTtBadTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C/S) Port (of bundle) Bad TT value"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleTtBadTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Bad TT value: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleTtBadTrap ACORN-MIB::bundleTtBad s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleTtBadTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"(C/S) Port (of bundle) Bad TT value"
+						],
+						"name" : "ACORN-MIB::bundleTtBad",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleT1AlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C/S) Port (of bundle) T1 Alarm"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleT1AlarmTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Bundle Alarm raised: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleT1AlarmTrap ACORN-MIB::bundleT1Alarm s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleT1AlarmTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"(C/S) Port (of bundle) T1 Alarm"
+						],
+						"name" : "ACORN-MIB::bundleT1Alarm",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundlePtMissingTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C) Port (of bundle) missing packets count"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundlePtMissingTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Missing packets count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundlePtMissingTrap ACORN-MIB::bundlePtMissing s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundlePtMissingTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"(C) Port (of bundle) missing packets count"
+						],
+						"name" : "ACORN-MIB::bundlePtMissing",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundlePtLateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C) Port (of bundle) late packets count"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundlePtLateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Late packets count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundlePtLateTrap ACORN-MIB::bundlePtLate s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundlePtLateTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"(C) Port (of bundle) late packets count"
+						],
+						"name" : "ACORN-MIB::bundlePtLate",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::nodePowerMissingTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Power supply missing status 0: presents 1: missing"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "nodePowerMissingTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Power supply status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD ACORN-MIB::nodePowerMissingTrap ACORN-MIB::nodePowerMissing s 1",
+				"$SNMPTRAPCMD ACORN-MIB::nodePowerMissingTrap ACORN-MIB::nodePowerMissing s 0"
+			],
+			"trap" : {
+				"name" : "ACORN-MIB::nodePowerMissingTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"Power supply missing status 0: presents 1: missing"
+						],
+						"name" : "ACORN-MIB::nodePowerMissing",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.14",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleSdInactiveTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(C) Port (of bundle) goes to SdInactive"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleSdInactiveTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Bundle state is SdInactive"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleSdInactiveTrap ACORN-MIB::bundleSdInactive s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleSdInactiveTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"(C) Port (of bundle) goes to SdInactive"
+						],
+						"name" : "ACORN-MIB::bundleSdInactive",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleAddTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Bundle Add event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleAddTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Bundle added"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleAddTrap ACORN-MIB::bundleAdd s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleAddTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"Bundle Add event occurs"
+						],
+						"name" : "ACORN-MIB::bundleAdd",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleDisableTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Bundle Disable event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleDisableTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Bundle disabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleDisableTrap ACORN-MIB::bundleDisable s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleDisableTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"Bundle Disable event occurs"
+						],
+						"name" : "ACORN-MIB::bundleDisable",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleCfgChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Change in Port or Bundle configuration event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleCfgChgTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Port or Bundle configuration changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleCfgChgTrap ACORN-MIB::bundleCfgChg s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleCfgChgTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"Change in Port or Bundle configuration event occurs"
+						],
+						"name" : "ACORN-MIB::bundleCfgChg",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleActivateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Bundle Activate event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleActivateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Bundle Activated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleActivateTrap ACORN-MIB::bundleActivate s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleActivateTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"Bundle Activate event occurs"
+						],
+						"name" : "ACORN-MIB::bundleActivate",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::bundleDeleteTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Bundle Delete event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bundleDeleteTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Bundle Deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::bundleDeleteTrap ACORN-MIB::bundleDelete s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::bundleDeleteTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"Bundle Delete event occurs"
+						],
+						"name" : "ACORN-MIB::bundleDelete",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.20",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::ntpCfgChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Change in NTP configuration event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ntpCfgChgTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "NTP configuration changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::ntpCfgChgTrap ACORN-MIB::ntpCfgChg s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::ntpCfgChgTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"Change in NTP configuration event occurs"
+						],
+						"name" : "ACORN-MIB::ntpCfgChg",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.21",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::ntpStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"NTP status: Sync or Not in Sync with NTP server"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ntpStatusTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "NTP status change: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::ntpStatusTrap ACORN-MIB::ntpStatus s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::ntpStatusTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"NTP status: Sync or Not in Sync with NTP server"
+						],
+						"name" : "ACORN-MIB::ntpStatus",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ACORN-MIB::nodeTimeChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Change of system date/time event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nodeTimeChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System date/time changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACORN-MIB::nodeTimeChangeTrap ACORN-MIB::nodeTimeChange s EXAMPLE",
+			"trap" : {
+				"name" : "ACORN-MIB::nodeTimeChangeTrap",
+				"oid" : "1.3.6.1.4.1.18841.1.2.1.6.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"Change of system date/time event occurs"
+						],
+						"name" : "ACORN-MIB::nodeTimeChange",
+						"oid" : "1.3.6.1.4.1.18841.1.2.1.5.23",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

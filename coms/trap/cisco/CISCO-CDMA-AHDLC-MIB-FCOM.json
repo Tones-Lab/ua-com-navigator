@@ -1,0 +1,61 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200511140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CDMA-AHDLC-MIB::cCdmaAhdlcEngineDownNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates an AHDLC engine",
+				"is 'down' due to some fault though the desired",
+				"state of the engine is 'up'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 0) ? 3 : (($v1 == 1) ? 1 : 2)"
+				},
+				"EventType" : "cCdmaAhdlcEngineDownNotif",
+				"ExpireTime" : {
+					"eval" : "($v1 == 0) ? 3600 : (($v1 == 1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 3 : (($v1 == 1) ? 0 : 5)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "AHDLC engine is OperState $v1 and AdminState $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CDMA-AHDLC-MIB::cCdmaAhdlcEngineDownNotif CISCO-CDMA-AHDLC-MIB::cCdmaAhdlcEngineOperState i 0 CISCO-CDMA-AHDLC-MIB::cCdmaAhdlcEngineAdminState i 1",
+			"trap" : {
+				"name" : "CISCO-CDMA-AHDLC-MIB::cCdmaAhdlcEngineDownNotif",
+				"oid" : "1.3.6.1.4.1.9.9.997.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-CDMA-AHDLC-MIB::cCdmaAhdlcEngineOperState",
+						"oid" : "1.3.6.1.4.1.9.9.997.1.1.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-CDMA-AHDLC-MIB::cCdmaAhdlcEngineAdminState",
+						"oid" : "1.3.6.1.4.1.9.9.997.1.1.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,329 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200810010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ADONIS-DNS-MIB::trapDNSDaemon",
+			"certification" : "STANDARD",
+			"description" : [
+				"DNS daemon has stopped running or a zone transfer failed"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "trapDNSDaemon",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==0) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'DNS daemon is not running' : '$v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADONIS-DNS-MIB::trapDNSDaemon ADONIS-DNS-MIB::dnsDaemonRunning i 1 ADONIS-DNS-MIB::dnsDaemonZoneTransferFailure s EXAMPLE",
+			"trap" : {
+				"name" : "ADONIS-DNS-MIB::trapDNSDaemon",
+				"oid" : "1.3.6.1.4.1.13315.100.101.2.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"Current running state of the DNS daemon.",
+							"0 - Not Running",
+							"1 - Running"
+						],
+						"name" : "ADONIS-DNS-MIB::dnsDaemonRunning",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The last zone transfer failure desciption which includes the time, the zone name, the master address and the explaination"
+						],
+						"name" : "ADONIS-DNS-MIB::dnsDaemonZoneTransferFailure",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADONIS-DNS-MIB::trapHAServiceFailOver",
+			"certification" : "STANDARD",
+			"description" : [
+				"High availibility service failed over"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "trapHAServiceFailOver",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==0) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'High availability service is not running' : (($v1==1) ? 'High availability service is active node' : 'High availability service is passive node')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADONIS-DNS-MIB::trapHAServiceFailOver ADONIS-DNS-MIB::haServiceNodeType i 0",
+			"trap" : {
+				"name" : "ADONIS-DNS-MIB::trapHAServiceFailOver",
+				"oid" : "1.3.6.1.4.1.13315.100.101.2.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"Type of high availability node",
+							"0 - HA not running",
+							"1 - Active Node",
+							"2 - Passive Node"
+						],
+						"name" : "ADONIS-DNS-MIB::haServiceNodeType",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.3.1.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADONIS-DNS-MIB::trapCommandServerDaemon",
+			"certification" : "STANDARD",
+			"description" : [
+				"Command server daemon has stopped running"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 2 : 1"
+				},
+				"EventType" : "trapCommandServerDaemon",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 4 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'Command server daemon is not running' : 'Command server daemon is running'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADONIS-DNS-MIB::trapCommandServerDaemon ADONIS-DNS-MIB::commandServerDaemonRunning i 0",
+			"trap" : {
+				"name" : "ADONIS-DNS-MIB::trapCommandServerDaemon",
+				"oid" : "1.3.6.1.4.1.13315.100.101.2.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"Current running state of the command server daemon.",
+							"0 - Not running",
+							"1 - Running"
+						],
+						"name" : "ADONIS-DNS-MIB::commandServerDaemonRunning",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADONIS-DNS-MIB::trapDHCPDaemon",
+			"certification" : "STANDARD",
+			"description" : [
+				"DHCP daemon has stopped running or",
+				"the number of assigned IPS in one of the subnets has reached",
+				"to the alert level or DHCP failover state changes"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "trapDHCPDaemon",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==0) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'DHCP daemon is not running' : 'Either DHCP failover state changed to $v3, or IP addresses on subnet $v2 at alert level'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADONIS-DNS-MIB::trapDHCPDaemon ADONIS-DNS-MIB::dhcpDaemonRunning i 1 ADONIS-DNS-MIB::dhcpDaemonSubnetAlert a 192.0.2.1 ADONIS-DNS-MIB::dhcpFailOverState i 1",
+			"trap" : {
+				"name" : "ADONIS-DNS-MIB::trapDHCPDaemon",
+				"oid" : "1.3.6.1.4.1.13315.100.101.2.4.1",
+				"variables" : [
+					{
+						"description" : [
+							"Current running state of the DHCP daemon.",
+							"0 - Not Running",
+							"1 - Running"
+						],
+						"name" : "ADONIS-DNS-MIB::dhcpDaemonRunning",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The IP address which has to be alerted for."
+						],
+						"name" : "ADONIS-DNS-MIB::dhcpDaemonSubnetAlert",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.2.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Current state of the DHCP failover.",
+							"1 - startup",
+							"2 - normal",
+							"3 - communications interrupted",
+							"4 - partner down",
+							"5 - potential conflict",
+							"6 - recover",
+							"7 - paused",
+							"8 - shutdown",
+							"9 - recover done",
+							"254 - recover wait"
+						],
+						"name" : "ADONIS-DNS-MIB::dhcpFailOverState",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.2.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADONIS-DNS-MIB::trapReplicationFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Replication has failed"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "trapReplicationFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Replication failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADONIS-DNS-MIB::trapReplicationFailure ",
+			"trap" : {
+				"name" : "ADONIS-DNS-MIB::trapReplicationFailure",
+				"oid" : "1.3.6.1.4.1.13315.100.101.2.5.1"
+			}
+		},
+		{
+			"@objectName" : "ADONIS-DNS-MIB::trapTFTPDaemon",
+			"certification" : "STANDARD",
+			"description" : [
+				"TFTP daemon has stopped running"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : ($v1==0) ? 2 : 3"
+				},
+				"EventType" : "trapTFTPDaemon",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : ($v1==0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : ($v1==0) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'TFTP daemon is not running' : (($v1==1) ? 'TFTP daemon is running' : 'TFTP daemon is restarting')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADONIS-DNS-MIB::trapTFTPDaemon ADONIS-DNS-MIB::tftpDaemonRunning i 0",
+			"trap" : {
+				"name" : "ADONIS-DNS-MIB::trapTFTPDaemon",
+				"oid" : "1.3.6.1.4.1.13315.100.101.2.6.1",
+				"variables" : [
+					{
+						"description" : [
+							"Current running state of the TFTP daemon.",
+							"0 - Not running",
+							"1 - Running",
+							"2 - Restarting"
+						],
+						"name" : "ADONIS-DNS-MIB::tftpDaemonRunning",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.6.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADONIS-DNS-MIB::trapSystemDaemon",
+			"certification" : "STANDARD",
+			"description" : [
+				"System has stopped running"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==0) ? 2 : 3"
+				},
+				"EventType" : "trapSystemDaemon",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==0) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'System state: shutdown' : (($v1==1) ? 'System state: restart' : 'System state: startup')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADONIS-DNS-MIB::trapSystemDaemon ADONIS-DNS-MIB::systemState i 0",
+			"trap" : {
+				"name" : "ADONIS-DNS-MIB::trapSystemDaemon",
+				"oid" : "1.3.6.1.4.1.13315.100.101.2.7.1",
+				"variables" : [
+					{
+						"description" : [
+							"Current state of system.",
+							"0 - shutdown",
+							"1 - restart",
+							"2 - startup"
+						],
+						"name" : "ADONIS-DNS-MIB::systemState",
+						"oid" : "1.3.6.1.4.1.13315.100.101.1.7.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

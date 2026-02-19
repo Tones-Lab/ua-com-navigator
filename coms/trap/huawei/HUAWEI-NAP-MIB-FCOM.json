@@ -1,0 +1,84 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200903171027Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-NAP-MIB::hwNapStatusNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"If the system configuration is changed in given time",
+				"a notification will be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : (($v2==4) ? 2 : 3)"
+				},
+				"EventType" : "hwNapStatusNotify",
+				"ExpireTime" : {
+					"eval" : "($v2==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==4) ? 4 : 2)"
+				},
+				"SubNode" : "PortName:$v1",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'NAP neighbor connection established successfully' : (($v2==4) ? 'NAP neighbor connection interrupted abnormally due to $v3' :'NAP neighbor connection status: $v2')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-NAP-MIB::hwNapStatusNotify HUAWEI-NAP-MIB::hwNapLocalPortName s EXAMPLE HUAWEI-NAP-MIB::hwNapNeighborStatus i 4 HUAWEI-NAP-MIB::hwNapNeighborAbnormalReason i 1",
+				"$SNMPTRAPCMD HUAWEI-NAP-MIB::hwNapStatusNotify HUAWEI-NAP-MIB::hwNapLocalPortName s EXAMPLE HUAWEI-NAP-MIB::hwNapNeighborStatus i 2 HUAWEI-NAP-MIB::hwNapNeighborAbnormalReason i 3",
+				"$SNMPTRAPCMD HUAWEI-NAP-MIB::hwNapStatusNotify HUAWEI-NAP-MIB::hwNapLocalPortName s EXAMPLE HUAWEI-NAP-MIB::hwNapNeighborStatus i 1 HUAWEI-NAP-MIB::hwNapNeighborAbnormalReason i 0"
+			],
+			"trap" : {
+				"name" : "HUAWEI-NAP-MIB::hwNapStatusNotify",
+				"oid" : "1.3.6.1.4.1.2011.5.25.206.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"The local port name of nap neighbor."
+						],
+						"name" : "HUAWEI-NAP-MIB::hwNapLocalPortName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.206.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status of nap neighbor."
+						],
+						"enums" : {
+							"1" : "detecting",
+							"2" : "established",
+							"3" : "ipAssigned",
+							"4" : "abnormal"
+						},
+						"name" : "HUAWEI-NAP-MIB::hwNapNeighborStatus",
+						"oid" : "1.3.6.1.4.1.2011.5.25.206.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The abnormal reason for nap neighbor."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "portNotSupport",
+							"2" : "slaveDisable",
+							"3" : "masterIpAssignError",
+							"4" : "slaveIpAssignError"
+						},
+						"name" : "HUAWEI-NAP-MIB::hwNapNeighborAbnormalReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.206.2.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

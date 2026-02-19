@@ -1,0 +1,1690 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::chassisPowerSupplyFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Concentrator power supply failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "chassisPowerSupplyFailure",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : ($v1==4) ? 5 : ($v1==2) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Chassis power supply status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::chassisPowerSupplyFailure SYNOPTICS-BASIC-ETHTOK-MIB::s3ChassisPsStatus i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::chassisPowerSupplyFailure",
+				"oid" : "1.3.6.1.4.1.45.0.0",
+				"variables" : [
+					{
+						"description" : [
+							"The chassis power supply status."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "primaryFail",
+							"3" : "secondaryFail",
+							"4" : "bothFail"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3ChassisPsStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::chassisFanFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Concentrator fan failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "chassisFanFailure",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : ($v1==3) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Chassis cooling fan status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::chassisFanFailure SYNOPTICS-BASIC-ETHTOK-MIB::s3ChassisFanStatus i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::chassisFanFailure",
+				"oid" : "1.3.6.1.4.1.45.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The status of the chassis cooling fan."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "fail",
+							"3" : "other"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3ChassisFanStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::portAutoPartition",
+			"certification" : "STANDARD",
+			"description" : [
+				"Port auto partitions (wraps)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "portAutoPartition",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Port auto partition occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::portAutoPartition SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetPortPartStatus i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetPortJabberStatus i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::portAutoPartition",
+				"oid" : "1.3.6.1.4.1.45.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This indicates the operational status of the Port.",
+							"Writing a partition(2) will partition the port",
+							"indefinitely and enabled(1) will enable the port.",
+							"",
+							"If a timed partition is desired, then writing",
+							"timedPartition(4) to this object at the same time",
+							"that a time value is supplied in s3EnetPortPartTime",
+							"is required. Timed partitions will not survive across",
+							"a reset. In this case the port will go to the",
+							"partition(2) state.",
+							"",
+							"The value latSecPartition(5) is returned when the port",
+							"has been automatically partitioned by the LattisSecure",
+							"Host Module because of a security violation. The value",
+							"autoPartition(3) is returned when the port has been",
+							"automatically partitioned by the repeater using the",
+							"802.3 repeater auto-partition function.",
+							"",
+							"The agent will not allow this object to be set to",
+							"autoPartition(3) or latSecPartition(5) using an",
+							"SNMP request."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "partition",
+							"3" : "autoPartition",
+							"4" : "timedPartition",
+							"5" : "latSecPartition"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetPortPartStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tells whether the DTE connected to the Port is",
+							"jabbering or not."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "jabbering"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetPortJabberStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::portDTEJabbering",
+			"certification" : "STANDARD",
+			"description" : [
+				"Ethernet DTE jabbering detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "portDTEJabbering",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'DTE connected to the port is not jabbering' : 'DTE connected to the port is jabbering'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::portDTEJabbering SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetPortJabberStatus i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::portDTEJabbering",
+				"oid" : "1.3.6.1.4.1.45.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Tells whether the DTE connected to the Port is",
+							"jabbering or not."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "jabbering"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetPortJabberStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::localBridgeDiagnostic",
+			"certification" : "STANDARD",
+			"description" : [
+				"NMM detects bridge failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "localBridgeDiagnostic",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "NMM detected bridge failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::localBridgeDiagnostic SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetLocBridgeDiagSts s EXAM",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::localBridgeDiagnostic",
+				"oid" : "1.3.6.1.4.1.45.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Latest Diagnostic LED Status that has been recorded."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetLocBridgeDiagSts",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgePortOperationChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Bridge changes from standby <-> operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : ($v1==4) ? 2 : 3"
+				},
+				"EventType" : "remoteBridgePortOperationChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : ($v1==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==3) ? 0 : ($v1==1) ? 1 : ($v1==4) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Remote bridge port operation status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgePortOperationChanged SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRemBridgePortOpSts i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgePortOperationChanged",
+				"oid" : "1.3.6.1.4.1.45.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Operating status of the port."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "standby",
+							"3" : "operational",
+							"4" : "noLink"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRemBridgePortOpSts",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.2.3.2.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgeDiagnostic",
+			"certification" : "STANDARD",
+			"description" : [
+				"NMM detects remote bridge failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "remoteBridgeDiagnostic",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "NMM detected remote bridge failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgeDiagnostic SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRemBridgeDiagSts s EXAM",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgeDiagnostic",
+				"oid" : "1.3.6.1.4.1.45.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Latest Diagnostic LED Status that has been recorded."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRemBridgeDiagSts",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.2.3.1.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::boardLEDFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Board is on but LED is off."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "boardLEDFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Board LED failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::boardLEDFailure SYNOPTICS-BASIC-ETHTOK-MIB::s3CommonBoardStatus i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::boardLEDFailure",
+				"oid" : "1.3.6.1.4.1.45.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"This indicates the operational status of the board."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "fail"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3CommonBoardStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.8.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::boardPowerSupplyFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Board power supply failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "boardPowerSupplyFailure",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Board power supply operational status : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::boardPowerSupplyFailure SYNOPTICS-BASIC-ETHTOK-MIB::s3CommonBoardPsStatus i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::boardPowerSupplyFailure",
+				"oid" : "1.3.6.1.4.1.45.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"This indicates the operational status of the board",
+							"power supply. A fail(2) indicates that one of the",
+							"power supplies on the board has failed."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "fail"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3CommonBoardPsStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.8.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::localBridgeOperationChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Bridge changes from standby <-> operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : ($v1==2) ? 2 : 3"
+				},
+				"EventType" : "localBridgeOperationChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : ($v1==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==3) ? 0 : ($v1==2) ? 3 : 1"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Local bridge operational status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::localBridgeOperationChanged SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetLocBridgeStandbySts i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::localBridgeOperationChanged",
+				"oid" : "1.3.6.1.4.1.45.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"This status says whether the local bridge is active",
+							"or in standby mode."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "standby",
+							"3" : "notStandby"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetLocBridgeStandbySts",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.2.2.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgeOperationChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Bridge changes from standby <-> operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : ($v1==2) ? 2 : 3"
+				},
+				"EventType" : "remoteBridgeOperationChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : ($v1==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==3) ? 0 : ($v1==2) ? 3 : 1"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Remote bridge standby status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgeOperationChanged SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRemBridgeStandbySts i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::remoteBridgeOperationChanged",
+				"oid" : "1.3.6.1.4.1.45.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"This status says whether the remote bridge is active",
+							"or in standby mode."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "standby",
+							"3" : "notStandby"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRemBridgeStandbySts",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.2.3.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::routerOperationChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Router changes from standby <-> operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : ($v1==2) ? 2 : 3"
+				},
+				"EventType" : "routerOperationChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : ($v1==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==3) ? 0 : ($v1==2) ? 3 : 1"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Router standby status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::routerOperationChanged SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRouterStandbySts i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::routerOperationChanged",
+				"oid" : "1.3.6.1.4.1.45.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"This status says whether the router is active or in",
+							"standby mode."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "standby",
+							"3" : "notStandby"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRouterStandbySts",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.2.4.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::routerDiagnostic",
+			"certification" : "STANDARD",
+			"description" : [
+				"NMM detects router failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "routerDiagnostic",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "NMM detected router failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::routerDiagnostic SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRouterDiagSts s EXAM",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::routerDiagnostic",
+				"oid" : "1.3.6.1.4.1.45.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"Latest Diagnostic LED Status that has been recorded."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRouterDiagSts",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.2.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::keyManagementFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"NMM detects that its key doesn't match the ",
+				"configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "keyManagementFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Key management failure detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::keyManagementFailure SYNOPTICS-BASIC-ETHTOK-MIB::s3AgentMibLevel i 9999 SYNOPTICS-BASIC-ETHTOK-MIB::s3AgentFeatureLevel i 9999",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::keyManagementFailure",
+				"oid" : "1.3.6.1.4.1.45.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"Used to determine current MIB release supported",
+							"by agent. The encoding of this object is of the",
+							"following form: xyy, where x is the major version",
+							"number and yy is the minor version number. Thus",
+							"version 3.0 would be represented as 300, version",
+							"3.01 would be 301 and 3.1 would be 310. Object is",
+							"in decimal. Values that correspond to each agent",
+							"type and version are specified in the other",
+							"SynOptics documentation."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3AgentMibLevel",
+						"oid" : "1.3.6.1.4.1.45.1.2.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used to determine feature level of the agent.",
+							"The encoding of this object is of the following",
+							"form: xyy, where x is the major version ",
+							"number and yy is the minor version number. Thus",
+							"feature level version 1.0 would be represented as",
+							"100, version 1.01 would be 101 and 1.1 would be 110.",
+							"Object is in decimal. The current values are the",
+							"following:",
+							"100 - 331x V3.x",
+							"- Basic Agent",
+							"100 - 351x",
+							"- Basic Agent",
+							"100 - 271x V3.x",
+							"- Basic Agent",
+							"101 - 281x V5.0 ",
+							"- Basic Agent",
+							"- Dual Stack",
+							"102 - 331x V4.2.0",
+							"- Basic Agent",
+							"- Non Segmentable Chassis",
+							"- Ethernet Common board table",
+							"- Ethernet Command port table",
+							"- redundant power supply group",
+							"103 - 331xA V4.2.0",
+							"- Basic Agent",
+							"- Segmentable chassis",
+							"- Ethernet Common board table",
+							"- Ethernet Common port table",
+							"- redundant power supply group",
+							"- Ethernet plus statistics",
+							"104 - 331xA V4.2.0",
+							"- Basic Agent",
+							"- Non-Segmentable chassis",
+							"- Ethernet Common board table",
+							"- Ethernet Common port table",
+							"- redundant power supply group",
+							"- Ethernet plus statistics",
+							"109 - 331x V4.2.0",
+							"- Basic Agent",
+							"- Segmentable Chassis",
+							"- Ethernet Common board table",
+							"- Ethernet Common port table",
+							"- redundant power supply group",
+							"112 - 281x V5.1.0",
+							"- Basic Agent",
+							"- Dual Stack",
+							"- Network to MAC address mapping",
+							"113 - 331x V5.1.0",
+							"- Basic Agent",
+							"- Segmentable chassis",
+							"- Full Truffle Support",
+							"- Dual Stack",
+							"- Network to MAC address mapping",
+							"114 - 331x V5.1.0",
+							"- Basic Agent",
+							"- Non-Segmentable chassis",
+							"- Full Truffle Support",
+							"- Dual Stack",
+							"- Network to MAC address mapping",
+							"115 - 331xA V5.1.0",
+							"- Basic Agent",
+							"- Segmentable chassis",
+							"- Dual Stack",
+							"- Full Truffle Support",
+							"- Network to MAC address mapping",
+							"116 - 331xA V5.1.0",
+							"- Basic Agent",
+							"- Non-Segmentable chassis",
+							"- Dual Stack",
+							"- Full Truffle Support",
+							"- Network to MAC address mapping",
+							"200 - 331x V4.0 & V4.0.1",
+							"- Advanced Agent",
+							"200 - 271x V4.x",
+							"- Advanced Agent",
+							"200 - 351x V4.x",
+							"- Advanced Agent",
+							"200 - all FDDI Agents",
+							"201 - 331x V4.1.0, V4.1.1",
+							"- Advanced Agent",
+							"- redundant power supply group",
+							"202 - 331xS V4.1.0, V4.1.1",
+							"- Advanced Agent",
+							"- redundant power supply group",
+							"- DS/SD traffic tables",
+							"- Ethernet plus statistics",
+							"- frame type distribution table",
+							"- frame length distribution table",
+							"203 - 281x V4.2.0",
+							"- Advanced Agent",
+							""
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3AgentFeatureLevel",
+						"oid" : "1.3.6.1.4.1.45.1.2.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::nmmSaturationA",
+			"certification" : "STANDARD",
+			"description" : [
+				"NMM is dropping packets due to overload."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nmmSaturationA",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "NMM dropped packets due to overload"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::nmmSaturationA ",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::nmmSaturationA",
+				"oid" : "1.3.6.1.4.1.45.0.44"
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::lattisSecureInitRequired",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent by a 331xS Ethernet NMM+ when a",
+				"LattisSecure Host Module needs initialization. The",
+				"location of the module is indicated by the instance",
+				"identifier part of the returned variable, and the value",
+				"of the variable tells the board identity."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lattisSecureInitRequired",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Lattis secure host module $v1 needs initialization"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::lattisSecureInitRequired SYNOPTICS-BASIC-ETHTOK-MIB::s3SlotModuleType i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::lattisSecureInitRequired",
+				"oid" : "1.3.6.1.4.1.45.0.46",
+				"variables" : [
+					{
+						"description" : [
+							"The type of module this entry represents.",
+							"Values are specified in SynOptics technical documents."
+						],
+						"enums" : {
+							"1" : "empty",
+							"2" : "other",
+							"3" : "m3302",
+							"4" : "m3304-ST",
+							"5" : "m3305",
+							"6" : "m3308",
+							"7" : "m3313",
+							"8" : "m3313M",
+							"9" : "m3314-ST",
+							"10" : "m3314M-ST",
+							"11" : "m3323",
+							"12" : "m3324-ST",
+							"13" : "m3502",
+							"14" : "m3532",
+							"15" : "m3552",
+							"16" : "m3301",
+							"17" : "m3307",
+							"18" : "m3356",
+							"19" : "m3512",
+							"20" : "m3514",
+							"21" : "m3505",
+							"22" : "m3554",
+							"23" : "m3534",
+							"24" : "m3383",
+							"25" : "m3384",
+							"26" : "m331x",
+							"27" : "m351x",
+							"28" : "m3502-A",
+							"29" : "m3902",
+							"30" : "m3904",
+							"31" : "m3910S",
+							"32" : "m3386",
+							"33" : "m3394",
+							"34" : "m3395",
+							"35" : "m3323S",
+							"36" : "m3324S-ST",
+							"37" : "m3307A",
+							"38" : "m3308A",
+							"39" : "m3505A",
+							"40" : "m3513",
+							"41" : "m3333",
+							"42" : "m3334-ST",
+							"43" : "m3040",
+							"44" : "m3100R",
+							"45" : "notUsed45",
+							"46" : "notUsed46",
+							"47" : "m2810-hm",
+							"48" : "m2810-nmm",
+							"49" : "m3313S",
+							"50" : "m3314S",
+							"51" : "m3368",
+							"52" : "m3512S",
+							"53" : "m3513S",
+							"54" : "m3514S",
+							"55" : "m3522",
+							"56" : "m2912",
+							"57" : "m2914",
+							"58" : "notUsed58",
+							"59" : "m3301-75",
+							"60" : "m3301-93",
+							"61" : "m271x-nmm",
+							"62" : "m2705-hm",
+							"63" : "m2715-hm",
+							"64" : "m2813-nmm",
+							"65" : "m2814-nmm",
+							"66" : "m2813-hm",
+							"67" : "m2814-hm",
+							"68" : "m2803-hm",
+							"69" : "m2804-hm",
+							"70" : "m3395A",
+							"71" : "m3040S",
+							"72" : "m3502B",
+							"73" : "m3505B",
+							"74" : "m2715-F-hm",
+							"75" : "m2712-hm",
+							"76" : "m2712-F-hm",
+							"77" : "m2702-hm",
+							"78" : "m2702-C-hm",
+							"79" : "m2705-F-hm",
+							"80" : "m2702-F-hm",
+							"81" : "m2705-C-hm",
+							"82" : "m3902A",
+							"83" : "m2912A",
+							"84" : "m3313A",
+							"85" : "m3314A",
+							"86" : "m3307HD",
+							"87" : "m3328",
+							"88" : "m3904-2SM",
+							"89" : "m3910S-SM",
+							"90" : "m3800",
+							"91" : "m3910S-SD",
+							"92" : "m3904-4SM",
+							"93" : "m2915",
+							"94" : "m3910SA",
+							"95" : "m3910SA-SM",
+							"96" : "m3905",
+							"97" : "m2715B-hm",
+							"98" : "m2705B-hm",
+							"99" : "m2715B-F-hm",
+							"100" : "m2712B-hm",
+							"101" : "m2712B-F-hm",
+							"102" : "m2702B-C-hm",
+							"103" : "m3304A",
+							"104" : "m3486",
+							"105" : "m3308B",
+							"106" : "m2813SA-nmm",
+							"107" : "m2814SA-nmm",
+							"108" : "m3517SA",
+							"109" : "m810M",
+							"110" : "m3313SA",
+							"111" : "m3314SA",
+							"112" : "m3522A",
+							"113" : "m3504-ST",
+							"114" : "m3513SA",
+							"115" : "mAlcatel-Eth-nmm",
+							"116" : "mAlcatel-Eth-hm1",
+							"117" : "mAlcatel-Eth-hm",
+							"118" : "m2486-nmm",
+							"119" : "m2486-hm",
+							"120" : "m3174",
+							"121" : "m271xSA-nmm",
+							"122" : "m3299C",
+							"123" : "m3299U",
+							"124" : "m3299F"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3SlotModuleType",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.7.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::redPsPlus5vCurrentExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the current level on the +5 V",
+				"supply exceeds the maximum recommended level: 1) 30 amps",
+				"if at least one of the power supplies is a 3001. 2) 50",
+				"amps if both power supplies are 3002. Note: The agent",
+				"reads the current level only when it restarts.Changes in",
+				"the current level that occur while the agent is running",
+				"will not be noticed. Thus, this trap can only be",
+				"generated at the end of the restart sequence."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "redPsPlus5vCurrentExceed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "+5V current level supply ($v3 A) exceeded the maximum threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::redPsPlus5vCurrentExceed SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsPrimaryConfig i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsSecondaryConfig i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsPlus5vCurrent u 9999",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::redPsPlus5vCurrentExceed",
+				"oid" : "1.3.6.1.4.1.45.0.47",
+				"variables" : [
+					{
+						"description" : [
+							"This indicates the primary power supply type",
+							"(PS 1). Note that value redundantCapable(5)",
+							"should not be returned for this object."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "low",
+							"3" : "medium",
+							"4" : "high",
+							"5" : "redundantCapable",
+							"6" : "empty"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsPrimaryConfig",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates the secondary power supply type",
+							"(PS 2). Note that value redundantCapable(5)",
+							"should not be returned for this object."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "low",
+							"3" : "medium",
+							"4" : "high",
+							"5" : "redundantCapable",
+							"6" : "empty"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsSecondaryConfig",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This gauge is measured in amperes."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsPlus5vCurrent",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.1",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::redPsPlus12vCurrentExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the current level on the +12 V",
+				"supply exceeds the maximum recommended level of 15 amps",
+				"for any set of power supplies. Note: The agent reads",
+				"the current level only when it restarts. Changes in the",
+				"current level that occur while the agent is running will",
+				"not be noticed. Thus, this trap can only be generated",
+				"at the end of the restart sequence."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "redPsPlus12vCurrentExceed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "+12V current level supply ($v3 A) exceeded the maximum threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::redPsPlus12vCurrentExceed SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsPrimaryConfig i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsSecondaryConfig i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsPlus12vCurrent u 9999",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::redPsPlus12vCurrentExceed",
+				"oid" : "1.3.6.1.4.1.45.0.48",
+				"variables" : [
+					{
+						"description" : [
+							"This indicates the primary power supply type",
+							"(PS 1). Note that value redundantCapable(5)",
+							"should not be returned for this object."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "low",
+							"3" : "medium",
+							"4" : "high",
+							"5" : "redundantCapable",
+							"6" : "empty"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsPrimaryConfig",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates the secondary power supply type",
+							"(PS 2). Note that value redundantCapable(5)",
+							"should not be returned for this object."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "low",
+							"3" : "medium",
+							"4" : "high",
+							"5" : "redundantCapable",
+							"6" : "empty"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsSecondaryConfig",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This gauge is measured in amperes."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsPlus12vCurrent",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.2",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::redPsAmbientTempStatChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever there is a change (in either",
+				"direction) in the psAmbientTempStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1) ? 3 : 2"
+				},
+				"EventType" : "redPsAmbientTempStatChg",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Ambient temperature ($v2 &#8451;) status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::redPsAmbientTempStatChg SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsAmbientTempStatus i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsAmbientTemperature u 9999",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::redPsAmbientTempStatChg",
+				"oid" : "1.3.6.1.4.1.45.0.49",
+				"variables" : [
+					{
+						"description" : [
+							"This status indicates whether the ambient",
+							"temperature is normal, i.e., below 40 degree C."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "normalTemperature",
+							"3" : "aboveNormalTemp"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsAmbientTempStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This gauge is measured in Celsius."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsAmbientTemperature",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::redPsSummingDiodeFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the reported status of",
+				"either 3100R summing diode changes from 'Ok' to 'Fail'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1) ? 3 : 2"
+				},
+				"EventType" : "redPsSummingDiodeFailure",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==1) ? 1 : ($v1==5) ? 5 : ($v1==3) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "3100R summing diode status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::redPsSummingDiodeFailure SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsDiodeStatus i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::redPsSummingDiodeFailure",
+				"oid" : "1.3.6.1.4.1.45.0.50",
+				"variables" : [
+					{
+						"description" : [
+							"This gives the status of the summing diode on the",
+							"3100R associated with the indicated power supply."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "bothOk",
+							"3" : "primaryFail",
+							"4" : "secondaryFail",
+							"5" : "bothFail"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3RedPsDiodeStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.10.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::boardSwap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever a board is inserted or",
+				"removed. The values returned are those before the",
+				"action was taken. Thus, the value of s3SlotModuleType",
+				"will be empty(1) when a board is inserted. The instance",
+				"value for the variables is the slot number of the board.",
+				"On receiving the trap, a manager should use a get",
+				"request to find the current values of these variables."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "boardSwap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Board is inserted' : 'Board removed from module $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::boardSwap SYNOPTICS-BASIC-ETHTOK-MIB::s3SlotModuleId i 9999 SYNOPTICS-BASIC-ETHTOK-MIB::s3SlotModuleType i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3SlotModuleMdaId i 9999",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::boardSwap",
+				"oid" : "1.3.6.1.4.1.45.0.51",
+				"variables" : [
+					{
+						"description" : [
+							"ID for the module. Values are specified in",
+							"SynOptics technical documents."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3SlotModuleId",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.7.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of module this entry represents.",
+							"Values are specified in SynOptics technical documents."
+						],
+						"enums" : {
+							"1" : "empty",
+							"2" : "other",
+							"3" : "m3302",
+							"4" : "m3304-ST",
+							"5" : "m3305",
+							"6" : "m3308",
+							"7" : "m3313",
+							"8" : "m3313M",
+							"9" : "m3314-ST",
+							"10" : "m3314M-ST",
+							"11" : "m3323",
+							"12" : "m3324-ST",
+							"13" : "m3502",
+							"14" : "m3532",
+							"15" : "m3552",
+							"16" : "m3301",
+							"17" : "m3307",
+							"18" : "m3356",
+							"19" : "m3512",
+							"20" : "m3514",
+							"21" : "m3505",
+							"22" : "m3554",
+							"23" : "m3534",
+							"24" : "m3383",
+							"25" : "m3384",
+							"26" : "m331x",
+							"27" : "m351x",
+							"28" : "m3502-A",
+							"29" : "m3902",
+							"30" : "m3904",
+							"31" : "m3910S",
+							"32" : "m3386",
+							"33" : "m3394",
+							"34" : "m3395",
+							"35" : "m3323S",
+							"36" : "m3324S-ST",
+							"37" : "m3307A",
+							"38" : "m3308A",
+							"39" : "m3505A",
+							"40" : "m3513",
+							"41" : "m3333",
+							"42" : "m3334-ST",
+							"43" : "m3040",
+							"44" : "m3100R",
+							"45" : "notUsed45",
+							"46" : "notUsed46",
+							"47" : "m2810-hm",
+							"48" : "m2810-nmm",
+							"49" : "m3313S",
+							"50" : "m3314S",
+							"51" : "m3368",
+							"52" : "m3512S",
+							"53" : "m3513S",
+							"54" : "m3514S",
+							"55" : "m3522",
+							"56" : "m2912",
+							"57" : "m2914",
+							"58" : "notUsed58",
+							"59" : "m3301-75",
+							"60" : "m3301-93",
+							"61" : "m271x-nmm",
+							"62" : "m2705-hm",
+							"63" : "m2715-hm",
+							"64" : "m2813-nmm",
+							"65" : "m2814-nmm",
+							"66" : "m2813-hm",
+							"67" : "m2814-hm",
+							"68" : "m2803-hm",
+							"69" : "m2804-hm",
+							"70" : "m3395A",
+							"71" : "m3040S",
+							"72" : "m3502B",
+							"73" : "m3505B",
+							"74" : "m2715-F-hm",
+							"75" : "m2712-hm",
+							"76" : "m2712-F-hm",
+							"77" : "m2702-hm",
+							"78" : "m2702-C-hm",
+							"79" : "m2705-F-hm",
+							"80" : "m2702-F-hm",
+							"81" : "m2705-C-hm",
+							"82" : "m3902A",
+							"83" : "m2912A",
+							"84" : "m3313A",
+							"85" : "m3314A",
+							"86" : "m3307HD",
+							"87" : "m3328",
+							"88" : "m3904-2SM",
+							"89" : "m3910S-SM",
+							"90" : "m3800",
+							"91" : "m3910S-SD",
+							"92" : "m3904-4SM",
+							"93" : "m2915",
+							"94" : "m3910SA",
+							"95" : "m3910SA-SM",
+							"96" : "m3905",
+							"97" : "m2715B-hm",
+							"98" : "m2705B-hm",
+							"99" : "m2715B-F-hm",
+							"100" : "m2712B-hm",
+							"101" : "m2712B-F-hm",
+							"102" : "m2702B-C-hm",
+							"103" : "m3304A",
+							"104" : "m3486",
+							"105" : "m3308B",
+							"106" : "m2813SA-nmm",
+							"107" : "m2814SA-nmm",
+							"108" : "m3517SA",
+							"109" : "m810M",
+							"110" : "m3313SA",
+							"111" : "m3314SA",
+							"112" : "m3522A",
+							"113" : "m3504-ST",
+							"114" : "m3513SA",
+							"115" : "mAlcatel-Eth-nmm",
+							"116" : "mAlcatel-Eth-hm1",
+							"117" : "mAlcatel-Eth-hm",
+							"118" : "m2486-nmm",
+							"119" : "m2486-hm",
+							"120" : "m3174",
+							"121" : "m271xSA-nmm",
+							"122" : "m3299C",
+							"123" : "m3299U",
+							"124" : "m3299F"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3SlotModuleType",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.7.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"ID of the medium-dependent part of the board.",
+							"The value is board dependent. Values are specified",
+							"in SynOptics technical documents."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3SlotModuleMdaId",
+						"oid" : "1.3.6.1.4.1.45.1.3.1.7.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::enetChannelChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever a board is switched",
+				"from one channel to the other. The value returned",
+				"is the one before the action was taken. Thus, the",
+				"value of s3EnetCommonBoardEnetAB will specify",
+				"channel that the board was attached to before",
+				"the channel was changed. The instance value",
+				"from s3EnetCommonBoardEnetAB identifies the",
+				"board that was affected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "enetChannelChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Board switched to $v1 channel"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::enetChannelChange SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetCommonBoardEnetAB i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::enetChannelChange",
+				"oid" : "1.3.6.1.4.1.45.0.53",
+				"variables" : [
+					{
+						"description" : [
+							"The channel to which the board is connected. The",
+							"primary use of this object is for providing realtime",
+							"switching of boards between channel A and channel B.",
+							"It is also returned in the enetChannelChange trap, in",
+							"which case it indicates a board is switched from one",
+							"channel to the other. The write capability of this",
+							"object can only apply to those modules with channel",
+							"switching function. Any attempt to write this object",
+							"for a non-switchable board, the agent will return",
+							"badValue."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "enetA",
+							"3" : "enetB",
+							"4" : "enetAandEnetB"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetCommonBoardEnetAB",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.2.5.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::flashUpdateFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the agent failed",
+				"to update the local image due to flash device",
+				"failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1) ? 3 : 2"
+				},
+				"EventType" : "flashUpdateFailure",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Flash device operational status : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::flashUpdateFailure SYNOPTICS-BASIC-ETHTOK-MIB::s3AgentFlashStatus i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::flashUpdateFailure",
+				"oid" : "1.3.6.1.4.1.45.0.54",
+				"variables" : [
+					{
+						"description" : [
+							"This indicates the operational status of the flash",
+							"device of the agent. A fail(3) indicates that either",
+							"the flash device configuration on board is not valid",
+							"or the flash EEPROMs on the board have failed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "fail"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3AgentFlashStatus",
+						"oid" : "1.3.6.1.4.1.45.1.2.4.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::redundPortSwitchover",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever NMM detects a redundant port",
+				"pair switchover. The values returned are those after",
+				"the action was taken. The instance values (slot.port)",
+				"for the variables is for the port from which the",
+				"switchover occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v2==1) ? 3 : 2"
+				},
+				"EventType" : "redundPortSwitchover",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : ($v2==1) ? 1 : 4"
+				},
+				"SubNode" : "SlotNo:$v3;PortNo:$v4",
+				"Summary" : "Port $v4 redundancy status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::redundPortSwitchover SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortRedundMode i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortOperStatus i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortCompanionSlotNo i 9999 SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortCompanionPortNo i 9999",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::redundPortSwitchover",
+				"oid" : "1.3.6.1.4.1.45.0.58",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the port's redundancy mode. A value",
+							"of standAlone(1) indicates that the port is not set for",
+							"hardware redundancy. A value of hwActive(2) indicates that",
+							"the port is the active one of a hardware redundant pair.",
+							"A value of hwStandby(3) indicates that the port is the",
+							"standby one of a hardware redundant pair"
+						],
+						"enums" : {
+							"1" : "standAlone",
+							"2" : "hwActive",
+							"3" : "hwStandby"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortRedundMode",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates port's redundancy status. This",
+							"value is valid only when the redundant mode is not",
+							"standAlone(1). The values are:",
+							"other(1).........none of the following",
+							"ok(2)............no fault",
+							"localFault(3)....the port had a Local Fault condition",
+							"remoteFault(4)...the port is receiving Remote Fault signal",
+							"",
+							"Either a localFault(3) or remoteFault(4) condition should",
+							"cause a redundant port pair to switchover."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "localFault",
+							"4" : "remoteFault"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortOperStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot number of the other port which is in the",
+							"redundant pair. In the case of a standalone port",
+							"a value of 0 will be returned."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortCompanionSlotNo",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port number of the other port which is in the",
+							"redundant pair. In the case of a standalone port",
+							"a value of 0 will be returned."
+						],
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortCompanionPortNo",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.3.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SYNOPTICS-BASIC-ETHTOK-MIB::redundBadRemCfgDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent periodically when the NMM detects",
+				"a s3EnetRedPortRemoteOperStatus of flidl(3) on a port",
+				"set for hardware redundancy. The trap is also sent",
+				"when the port's s3EnetRedPortRemoteOperStatus is",
+				"unknown(7) and the companion port has a good link.",
+				"The instance values (slot.port) for the variables",
+				"is for the receiving port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4) ? 1 : ($v1==7) ? 3 : 2"
+				},
+				"EventType" : "redundBadRemCfgDetected",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4) ? 3600 : ($v1==7) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4) ? 0 : ($v1==7) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Redund port remote operation status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SYNOPTICS-BASIC-ETHTOK-MIB::redundBadRemCfgDetected SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortRemoteOperStatus i 1 SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortRedundMode i 1",
+			"trap" : {
+				"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::redundBadRemCfgDetected",
+				"oid" : "1.3.6.1.4.1.45.0.59",
+				"variables" : [
+					{
+						"description" : [
+							"This object reflects the real time status of the",
+							"received data from the remote port.",
+							"",
+							"A value of snpxFLRemFltCpblPortUp(1) indicates that",
+							"the remote port is capable of 10BASE-FL signaling, as",
+							"well as SynOptics proprietary remote fault signaling.",
+							"A remote fault on such a port is indicated by",
+							"snpxRemFltCpblPortFault(5).",
+							"",
+							"A value of snpxFLFBRemFltCpblPortUp(2) indicates that",
+							"the remote port is capable of 10BASE-FL, 10BASE-FB and",
+							"SynOptics proprietary remote fault signaling. A remote",
+							"fault on such a port is indicated by",
+							"snpxRemFltCpblPortFault(5).",
+							"",
+							"A value of tenBaseFLPortUp(3) indicates that the remote",
+							"port uses regular idle 10BASE-FL signaling, and is",
+							"incapable of remote fault signaling.",
+							"",
+							"A value of tenBaseFBPortUp(4) indicates that the remote",
+							"port uses 10BASE-FB synchronous signaling. A remote",
+							"fault on such a port is indicated by",
+							"tenBaseFBPortFault(6).",
+							"",
+							"A value of unknown(7) indicates that the remote signal",
+							"received is none of the above."
+						],
+						"enums" : {
+							"1" : "snpxFLRemFltCpblPortUp",
+							"2" : "snpxFLFBRemFltCpblPortUp",
+							"3" : "tenBaseFLPortUp",
+							"4" : "tenBaseFBPortUp",
+							"5" : "snpxRemFltCpblPortFault",
+							"6" : "tenBaseFBPortFault",
+							"7" : "unknown"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortRemoteOperStatus",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the port's redundancy mode. A value",
+							"of standAlone(1) indicates that the port is not set for",
+							"hardware redundancy. A value of hwActive(2) indicates that",
+							"the port is the active one of a hardware redundant pair.",
+							"A value of hwStandby(3) indicates that the port is the",
+							"standby one of a hardware redundant pair"
+						],
+						"enums" : {
+							"1" : "standAlone",
+							"2" : "hwActive",
+							"3" : "hwStandby"
+						},
+						"name" : "SYNOPTICS-BASIC-ETHTOK-MIB::s3EnetRedPortRedundMode",
+						"oid" : "1.3.6.1.4.1.45.1.3.2.3.3.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

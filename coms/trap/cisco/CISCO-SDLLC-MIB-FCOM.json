@@ -1,0 +1,55 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9812170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SDLLC-MIB::convSdllcPeerStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification indicates that the state of an SDLLC connection",
+				"has transitioned to connected or disconnected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 2 : (($v1 == 7) ? 1 : 3)"
+				},
+				"EventType" : "convSdllcPeerStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 86400 : (($v1 == 7) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 3 : (($v1 == 7) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SDLLC connection has transitioned to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SDLLC-MIB::convSdllcPeerStateChangeNotification CISCO-SDLLC-MIB::convSdllcAddrState i 1",
+			"trap" : {
+				"name" : "CISCO-SDLLC-MIB::convSdllcPeerStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.9.9.28.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "disconnected",
+							"2" : "sdlcDisconnecting",
+							"3" : "sdlcPriConnecting",
+							"4" : "netDisconnecting",
+							"5" : "netConnecting",
+							"6" : "sdlcSecConnecting",
+							"7" : "connected"
+						},
+						"name" : "CISCO-SDLLC-MIB::convSdllcAddrState",
+						"oid" : "1.3.6.1.4.1.9.9.28.1.2.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

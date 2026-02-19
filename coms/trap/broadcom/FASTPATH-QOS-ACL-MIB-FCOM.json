@@ -1,0 +1,115 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FASTPATH-QOS-ACL-MIB::aclTrapRuleLogEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated on a periodic basis to indicate that an ",
+				"ACL rule configured for logging was actively used by hardware to ",
+				"take action on one or more packets. The aclTrapRuleHitCount denotes ",
+				"the number of times this rule was hit during the most recent logging",
+				"interval. ACL Trap generation requires that the aclTrapFlag object",
+				"be set to enable(1)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aclTrapRuleLogEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "ACL rule $v2 ($v1) is actively used by the hardware"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FASTPATH-QOS-ACL-MIB::aclTrapRuleLogEvent FASTPATH-QOS-ACL-MIB::aclIfAclType i 1 FASTPATH-QOS-ACL-MIB::aclIfAclId i 9999 FASTPATH-QOS-ACL-MIB::aclTrapRuleIndex i 9999 FASTPATH-QOS-ACL-MIB::aclTrapRuleAction i 1 FASTPATH-QOS-ACL-MIB::aclTrapRuleHitCount C 9999",
+			"trap" : {
+				"name" : "FASTPATH-QOS-ACL-MIB::aclTrapRuleLogEvent",
+				"oid" : "1.3.6.1.4.1.4413.1.1.3.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The type of this ACL, which is used to interpret the ",
+							"aclIfId object value. Each type of ACL uses its own",
+							"numbering scheme for identification (see aclIfAclId object",
+							"for details).",
+							"",
+							"The aclIfAclId object must be specified along with this ",
+							"object."
+						],
+						"enums" : {
+							"1" : "ip",
+							"2" : "mac",
+							"3" : "ipv6"
+						},
+						"name" : "FASTPATH-QOS-ACL-MIB::aclIfAclType",
+						"oid" : "1.3.6.1.4.1.4413.1.1.3.2.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ACL identifier value, which is interpreted based on",
+							"the aclIfType object.",
+							"",
+							"For the IP ACLs, the actual ACL number is its identifier",
+							"as follows: IP standard ranges from 1-99, while ",
+							"IP extended ranges from 100-199. Here, aclIfAclId represents ",
+							"aclIndex. ",
+							"",
+							"The MAC ACLs use an internally-generated index value",
+							"that is assigned when the ACL is created.Here, aclIfAclId ",
+							"represents aclMacIndex.",
+							"",
+							"The IPv6 ACLs use an internally-generated index value",
+							"that is assigned when the ACL is created.Here, aclVlanAclId ",
+							"represents aclIpv6Index. ",
+							"",
+							"The aclIfType object must be specified along with",
+							"this object."
+						],
+						"name" : "FASTPATH-QOS-ACL-MIB::aclIfAclId",
+						"oid" : "1.3.6.1.4.1.4413.1.1.3.2.2.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The index of an ACL rule instance.",
+							"Used by aclTrapRuleLogEvent trap."
+						],
+						"name" : "FASTPATH-QOS-ACL-MIB::aclTrapRuleIndex",
+						"oid" : "1.3.6.1.4.1.4413.1.1.3.2.9.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The type of action this rule should perform, either ",
+							"permit(1) or deny(2).",
+							"Used by aclTrapRuleLogEvent trap."
+						],
+						"enums" : {
+							"1" : "permit",
+							"2" : "deny"
+						},
+						"name" : "FASTPATH-QOS-ACL-MIB::aclTrapRuleAction",
+						"oid" : "1.3.6.1.4.1.4413.1.1.3.2.9.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Number of times the ACL rule was hit during the most",
+							"recent logging interval. Used by aclTrapRuleLogEvent trap."
+						],
+						"name" : "FASTPATH-QOS-ACL-MIB::aclTrapRuleHitCount",
+						"oid" : "1.3.6.1.4.1.4413.1.1.3.2.9.4",
+						"valueType" : "COUNTER64"
+					}
+				]
+			}
+		}
+	]
+}

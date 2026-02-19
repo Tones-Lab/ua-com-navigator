@@ -1,0 +1,64 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200402231200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-MVPN-MIB::ciscoMvpnMvrfChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciscoMvpnMvrfChange notification signifies a change about",
+				"a MVRF in the device. The change event can be creation of ",
+				"the MVRF, deletion of the MVRF or an update on the default ",
+				"or data MDT configuration of the MVRF. The change event ",
+				"is indicated by ciscoMvpnGenOperStatusChange embedded in ",
+				"the notification. The user can then query ",
+				"ciscoMvpnGenericTable, ciscoMvpnMdtDefaultTable and/or ",
+				"ciscoMvpnMdtDataTable to get the details of the change as ",
+				"necessary.",
+				"Note: Since the creation of a MVRF is often followed by ",
+				"configuration of default and data MDT groups for the MVRF, ",
+				"more than one (three at most) notifications for a MVRF may ",
+				"be generated serially, and it is really not necessary to ",
+				"generate all three of them. An agent may choose to generate a ",
+				"notification for the last event only, that is for data MDT ",
+				"configuration.",
+				"Similarly, deletion of default or data MDT configuration on a ",
+				"MVRF happens before a MVRF is deleted, it is recommended ",
+				"that the agent send the notification for MVRF deletion ",
+				"event only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoMvpnMvrfChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "$v1 change has occurred for MVRF."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MVPN-MIB::ciscoMvpnMvrfChange CISCO-MVPN-MIB::ciscoMvpnGenOperStatusChange i 1",
+			"trap" : {
+				"name" : "CISCO-MVPN-MIB::ciscoMvpnMvrfChange",
+				"oid" : "1.3.6.1.4.1.9.10.113.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "createdMvrf",
+							"2" : "deletedMvrf",
+							"3" : "modifiedMvrfDefMdtConfig",
+							"4" : "modifiedMvrfDataMdtConfig"
+						},
+						"name" : "CISCO-MVPN-MIB::ciscoMvpnGenOperStatusChange",
+						"oid" : "1.3.6.1.4.1.9.10.113.1.2.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

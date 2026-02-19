@@ -1,0 +1,81 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201006221000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "AISYSCFGCONFIG-MIB::aiSCConfigChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Trap sent to indicate that the current system configuration",
+				"changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aiSCConfigChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "aiSSConfigName:$v1",
+				"Summary" : "Configuration file $v1 changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AISYSCFGCONFIG-MIB::aiSCConfigChangeTrap AISYSCFGCONFIG-MIB::aiSCConfigName s EXAMPLE AISYSTEM-MIB::aiSystemLastTrapSequenceNum u 9999 AISYSTEM-MIB::aiSystemTrapCreationTime s EXAMPLEE",
+			"trap" : {
+				"name" : "AISYSCFGCONFIG-MIB::aiSCConfigChangeTrap",
+				"oid" : "1.3.6.1.4.1.539.32.6.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The name of this configuration file. If the system supports",
+							"multiple stored configurations, this MUST be an identifier",
+							"with which the system can manipulate and identify this",
+							"configuration.",
+							"",
+							"If the concept of multiple configuration files does not make",
+							"sense on this machine, this value MAY be a zero length",
+							"string."
+						],
+						"name" : "AISYSCFGCONFIG-MIB::aiSCConfigName",
+						"oid" : "1.3.6.1.4.1.539.32.6.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the sequence number of the last trap sent by this",
+							"agent. The sequence number starts at zero following a",
+							"hardware reset or power-up. When the sequence number reaches",
+							"0xffffffff, it rolls over to 0 on the next trap. If the agent",
+							"supports trap sequence numbers, it must include the trap",
+							"sequence number when it sends traps and it must notify the CLC",
+							"via a window transaction after each trap.",
+							"",
+							"When this varbind appears in a trap, this is the sequence",
+							"number of that trap."
+						],
+						"name" : "AISYSTEM-MIB::aiSystemLastTrapSequenceNum",
+						"oid" : "1.3.6.1.4.1.539.8.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This is the actual event time of the last trap created by this agent. ",
+							"When the agent sends traps, it must include the trap aiSystemTrapCreationTime. ",
+							"When it resends the trap message, the content of this MIB object in the trap ",
+							"is the time when a trap was last created in the system, not when one was sent out.",
+							"",
+							"The DateAndTime type is a structured OCTET STRING, defined in RFC-2579 SNMPv2-TC ",
+							"Mib Definition."
+						],
+						"name" : "AISYSTEM-MIB::aiSystemTrapCreationTime",
+						"oid" : "1.3.6.1.4.1.539.8.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

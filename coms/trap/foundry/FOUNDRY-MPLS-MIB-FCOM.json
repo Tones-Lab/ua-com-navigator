@@ -1,0 +1,185 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201006020000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FOUNDRY-MPLS-MIB::snMplsLspUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"An mplsLspUp trap signifies that the",
+				"specified LSP is up. The current active",
+				"path for the LSP is mplsLspPathName."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "1991\\.1\\.2\\.15\\.1\\.2\\.3\\.1\\.3\\.(?P<mplsLspEntry>.*)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snMplsLspStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "mplsLspEntry.$mplsLspEntry",
+				"Summary" : {
+					"eval" : "($v2=='') ? 'MPLS LSP Up ( LSP: $v1 )' : 'MPLS LSP Up ( LSP: $v1, Active Path: $v2 )'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-MPLS-MIB::snMplsLspUp FOUNDRY-MPLS-MIB::mplsLspName.22.11 s EXAMPLE FOUNDRY-MPLS-MIB::mplsLspPathName s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-MPLS-MIB::snMplsLspUp",
+				"oid" : "1.3.6.1.4.1.1991.0.1010",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Label Switched Path."
+						],
+						"name" : "FOUNDRY-MPLS-MIB::mplsLspName",
+						"oid" : "1.3.6.1.4.1.1991.1.2.15.1.2.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the active path for this LSP, if",
+							"any. If there is none, the name should be",
+							"empty; in that case, the rest of the fields",
+							"in mplsLspEntry are meaningless."
+						],
+						"name" : "FOUNDRY-MPLS-MIB::mplsLspPathName",
+						"oid" : "1.3.6.1.4.1.1991.1.2.15.1.2.3.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-MPLS-MIB::snMplsLspDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"An mplsLspDown trap signifies that the",
+				"specified LSP is down, because the current",
+				"active path mplsLspPathName went down."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "1991\\.1\\.2\\.15\\.1\\.2\\.3\\.1\\.3\\.(?P<mplsLspEntry>.*)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snMplsLspStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "mplsLspEntry.$mplsLspEntry",
+				"Summary" : {
+					"eval" : "($v2=='') ? 'MPLS LSP Down ( LSP: $v1 )' : 'MPLS LSP Down ( LSP: $v1, Active Path: $v2 )'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-MPLS-MIB::snMplsLspDown FOUNDRY-MPLS-MIB::mplsLspName.22.11 s EXAMPLE FOUNDRY-MPLS-MIB::mplsLspPathName s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-MPLS-MIB::snMplsLspDown",
+				"oid" : "1.3.6.1.4.1.1991.0.1011",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Label Switched Path."
+						],
+						"name" : "FOUNDRY-MPLS-MIB::mplsLspName",
+						"oid" : "1.3.6.1.4.1.1991.1.2.15.1.2.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the active path for this LSP, if",
+							"any. If there is none, the name should be",
+							"empty; in that case, the rest of the fields",
+							"in mplsLspEntry are meaningless."
+						],
+						"name" : "FOUNDRY-MPLS-MIB::mplsLspPathName",
+						"oid" : "1.3.6.1.4.1.1991.1.2.15.1.2.3.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-MPLS-MIB::snMplsLspChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An mplsLspChange trap signifies that the",
+				"the specified LSP has switched traffic to",
+				"the new active path 'toLspPath'. The LSP maintains",
+				"up state before and after the switch over"
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "1991\\.1\\.2\\.15\\.1\\.2\\.3\\.1\\.3\\.(?P<mplsLspEntry>.*)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snMplsLspChange",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "mplsLspEntry.$mplsLspEntry",
+				"Summary" : {
+					"eval" : "($v2=='') ? 'MPLS LSP Switched to New Active Path ( LSP: $v1 )' : 'MPLS LSP Switched to New Active Path ( LSP: $v1, Active Path: $v2 )'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-MPLS-MIB::snMplsLspChange FOUNDRY-MPLS-MIB::mplsLspName.22.11 s EXAMPLE FOUNDRY-MPLS-MIB::mplsLspPathName s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-MPLS-MIB::snMplsLspChange",
+				"oid" : "1.3.6.1.4.1.1991.0.1012",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the Label Switched Path."
+						],
+						"name" : "FOUNDRY-MPLS-MIB::mplsLspName",
+						"oid" : "1.3.6.1.4.1.1991.1.2.15.1.2.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the active path for this LSP, if",
+							"any. If there is none, the name should be",
+							"empty; in that case, the rest of the fields",
+							"in mplsLspEntry are meaningless."
+						],
+						"name" : "FOUNDRY-MPLS-MIB::mplsLspPathName",
+						"oid" : "1.3.6.1.4.1.1991.1.2.15.1.2.3.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

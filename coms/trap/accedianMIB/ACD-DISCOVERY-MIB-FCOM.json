@@ -1,0 +1,63 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201210110100Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ACD-DISCOVERY-MIB::acdDiscoveryInventoryChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP notification generated when a change is detected in the ",
+				"inventory database."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "acdDiscoveryInventoryChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "The inventory database has changed: $v1 inserts; $v2 age outs"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ACD-DISCOVERY-MIB::acdDiscoveryInventoryChange ACD-DISCOVERY-MIB::acdDiscoveryInventoryInserts u 9999 ACD-DISCOVERY-MIB::acdDiscoveryInventoryAgeouts u 9999",
+			"trap" : {
+				"name" : "ACD-DISCOVERY-MIB::acdDiscoveryInventoryChange",
+				"oid" : "1.3.6.1.4.1.22420.2.11.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The number of times the complete set of information",
+							"advertised by a particular device has been inserted into the",
+							"inventory database.",
+							"",
+							"This counter should be incremented only once after the",
+							"complete set of information is successfully recorded",
+							"in the inventory database."
+						],
+						"name" : "ACD-DISCOVERY-MIB::acdDiscoveryInventoryInserts",
+						"oid" : "1.3.6.1.4.1.22420.2.11.1.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The number of times the complete set of information",
+							"advertised by a particular device has been deleted from the",
+							"inventory database because the information timeliness interval ",
+							"has expired.",
+							"",
+							"This counter should be incremented only once when the complete",
+							"set of information is completely invalidated (aged out)."
+						],
+						"name" : "ACD-DISCOVERY-MIB::acdDiscoveryInventoryAgeouts",
+						"oid" : "1.3.6.1.4.1.22420.2.11.1.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

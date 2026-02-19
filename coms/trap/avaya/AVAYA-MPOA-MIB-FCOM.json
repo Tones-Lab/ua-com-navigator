@@ -1,0 +1,82 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0110101700Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "AVAYA-MPOA-MIB::mpoaTrapLinkChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A mpoaTrapLinkChange trap is generated when",
+				"a VSP or ATM link changes operational state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : ($v3==3) ? 3 : 2"
+				},
+				"EventType" : "mpoaTrapLinkChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : ($v3==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : ($v3==3) ? 2 : 4"
+				},
+				"SubNode" : "VspId:$v1",
+				"Summary" : "MPOA link $v2 state: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AVAYA-MPOA-MIB::mpoaTrapLinkChange AVAYA-MPOA-MIB::mpoaVspId i 1 AVAYA-MPOA-MIB::mpoaLinkId i 9999 AVAYA-MPOA-MIB::mpoaOperState i 1",
+			"trap" : {
+				"name" : "AVAYA-MPOA-MIB::mpoaTrapLinkChange",
+				"oid" : "1.3.6.1.4.1.6889.2.1.4.1.5.4",
+				"variables" : [
+					{
+						"description" : [
+							"Used in the mpoaTrapLinkChange trap. Index of the VSP ",
+							"that the trap represents. If the link Id is non-zero",
+							"than the vspId is the Id of the VSP associated with the ",
+							"link whose operational state has changed. If the link ",
+							"Id is zero, then the vspId represents the VSP whose ",
+							"operational state has changed."
+						],
+						"name" : "AVAYA-MPOA-MIB::mpoaVspId",
+						"oid" : "1.3.6.1.4.1.6889.2.1.4.1.5.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Used in the mpoaTrapLinkChange trap. Index of the link ",
+							"that the trap represents. If the link Id is non-zero",
+							"than it is the Id of the link whose operational state has changed. ",
+							"If the link Id is zero, then it should be ignored."
+						],
+						"name" : "AVAYA-MPOA-MIB::mpoaLinkId",
+						"oid" : "1.3.6.1.4.1.6889.2.1.4.1.5.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This variable gives the operational status",
+							"of the link or VSP. The value of initial is used",
+							"when the link/VSP was administratively enabled",
+							"but the configuration is incorrect, and the",
+							"link/VSP cannot be activated."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "initial"
+						},
+						"name" : "AVAYA-MPOA-MIB::mpoaOperState",
+						"oid" : "1.3.6.1.4.1.6889.2.1.4.1.5.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

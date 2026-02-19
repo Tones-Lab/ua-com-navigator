@@ -1,0 +1,251 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200803060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-AON-STATUS-MIB::caonUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"caonUp notification is sent when AON data plane is",
+				"bootstrapped successfully and AON is ready to process messages."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "caonUpDown",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "AON data plane is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-AON-STATUS-MIB::caonUp",
+			"trap" : {
+				"name" : "CISCO-AON-STATUS-MIB::caonUp",
+				"oid" : "1.3.6.1.4.1.9.9.646.0.1"
+			}
+		},
+		{
+			"@objectName" : "CISCO-AON-STATUS-MIB::caonDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"caonDown notification is sent when AON data plane goes down.",
+				"AON data plane might be down as a result of an administrative",
+				"command i.e. stopping AON via CLI command or deactivating the",
+				"node from AMC or due to abnormal termination of AON data plane.",
+				"If there is a hardware failure on the AON box then the",
+				"notification might not be triggered."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "caonUpDown",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "AON data plane is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-AON-STATUS-MIB::caonDown",
+			"trap" : {
+				"name" : "CISCO-AON-STATUS-MIB::caonDown",
+				"oid" : "1.3.6.1.4.1.9.9.646.0.2"
+			}
+		},
+		{
+			"@objectName" : "CISCO-AON-STATUS-MIB::caonNewPepDeployed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent if a new PEP is deployed after AON",
+				"has bootstrapped successfully.",
+				"caonPepName identifies the name of the new PEP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "caonNewPepDeployed",
+				"ExpireTime" : 3600,
+				"Severity" : 1,
+				"SubNode" : "Device",
+				"Summary" : "New PEP $v1 deployed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-AON-STATUS-MIB::caonNewPepDeployed CISCO-AON-STATUS-MIB::caonPepName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-AON-STATUS-MIB::caonNewPepDeployed",
+				"oid" : "1.3.6.1.4.1.9.9.646.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonPepName",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.1.8.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-AON-STATUS-MIB::caonMessageDeliveryFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent if a message cannot be delivered to",
+				"the end point.",
+				"caonMessageEndPointURL identifies the end point to which the",
+				"message was being delivered to.",
+				"The message source is either identified by caonMessageSrcUri ",
+				"or (caonMessageSrcIpAddr and caonMessageSrcPort)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "caonMessageDeliveryFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "AON message cannot be delivered to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-AON-STATUS-MIB::caonMessageDeliveryFailed CISCO-AON-STATUS-MIB::caonPepEndPointUrl s EXAMPLE CISCO-AON-STATUS-MIB::caonMessageSrcUri s EXAMPLE CISCO-AON-STATUS-MIB::caonMessageSrcIpAddressType i 0 CISCO-AON-STATUS-MIB::caonMessageSrcIpAddress s EXAMPLE CISCO-AON-STATUS-MIB::caonMessageSrcPort i 9999",
+			"trap" : {
+				"name" : "CISCO-AON-STATUS-MIB::caonMessageDeliveryFailed",
+				"oid" : "1.3.6.1.4.1.9.9.646.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonPepEndPointUrl",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonMessageSrcUri",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-AON-STATUS-MIB::caonMessageSrcIpAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonMessageSrcIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonMessageSrcPort",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.2.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-AON-STATUS-MIB::caonSendResponseThresholdExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent if the destination end point",
+				"response time exceeds the threshold value specified in the ",
+				"Send Bladelet.",
+				"caonPepEndPointUrl identifies the URI of the end point the",
+				"message was being delivered to.",
+				"caonSendResponseThreshold identifies the end point response time",
+				"threshold value configured in the Send bladelet."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "caonSendResponseThresholdExceeded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Message response from $v1 timed out"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-AON-STATUS-MIB::caonSendResponseThresholdExceeded CISCO-AON-STATUS-MIB::caonPepEndPointUrl s EXAMPLE CISCO-AON-STATUS-MIB::caonSendResponseThreshold t 31536000",
+			"trap" : {
+				"name" : "CISCO-AON-STATUS-MIB::caonSendResponseThresholdExceeded",
+				"oid" : "1.3.6.1.4.1.9.9.646.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonPepEndPointUrl",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonSendResponseThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.2.7",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-AON-STATUS-MIB::caonCustomNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification could be triggered during PEP execution.",
+				"Currently this is triggered from the Notify Bladelet if",
+				"the customer specified condition evaluates to true and the",
+				"notification type selected is SNMP. This provides a way to",
+				"extend the AON platform to generate customer defined",
+				"notifications based on customer specified conditions. ",
+				"caonNotificationName identifies the name of the customer",
+				"defined notification type.",
+				"caonNotificationText identifies the notification text for the",
+				"custom notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "caonCustomNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "AON Custom $v1 : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-AON-STATUS-MIB::caonCustomNotification CISCO-AON-STATUS-MIB::caonNotificationName s EXAMPLE CISCO-AON-STATUS-MIB::caonNotificationText s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-AON-STATUS-MIB::caonCustomNotification",
+				"oid" : "1.3.6.1.4.1.9.9.646.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonNotificationName",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-AON-STATUS-MIB::caonNotificationText",
+						"oid" : "1.3.6.1.4.1.9.9.646.1.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,559 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201209021000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectInfoTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"XDSL dynamic collect trap.",
+				"This trap message is generated when XDSL dynamic collected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "hwXdslDynamicCollectInfoTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 4"
+				},
+				"SubNode" : "FrameIndex:$v2;SlotIndex:$v3",
+				"Summary" : "Dynamic information collecting result: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectInfoTrap HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectResult i 0 HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectTime s EXAMPLEE",
+				"$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectInfoTrap HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectResult i 1 HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectTime s EXAMPLEE"
+			],
+			"trap" : {
+				"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectInfoTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.148.3.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Dynamic information collecting result.",
+							"Options:",
+							"1. noFail(0) - The dynamic info has been collected successful",
+							"2. memFull(1) - The memory used for dynamic info collecting is full",
+							"3. otherCause(2) - Other collect failure reason"
+						],
+						"enums" : {
+							"0" : "noFail",
+							"1" : "memFull",
+							"2" : "otherCause"
+						},
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectResult",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time of the Dynamic information file."
+						],
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslDynamicCollectTime",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-XDSL-COMMON-MIB::hwXdslSeltCompleteResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Selt test complete result trap.",
+				"This trap message is generated when selt test completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "hwXdslSeltCompleteResultTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Selt test is successfull' : 'Selt test failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslSeltCompleteResultTrap HUAWEI-XDSL-COMMON-MIB::hwXdslRequestID i 9999 HUAWEI-XDSL-COMMON-MIB::hwXdslSeltCompleteResult i 1",
+				"$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslSeltCompleteResultTrap HUAWEI-XDSL-COMMON-MIB::hwXdslRequestID i 9999 HUAWEI-XDSL-COMMON-MIB::hwXdslSeltCompleteResult i 2"
+			],
+			"trap" : {
+				"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslSeltCompleteResultTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.148.3.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Request ID."
+						],
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslRequestID",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Selt test complete result.",
+							"Options:",
+							"1. success(1) - Selt test is successful",
+							"2. fail(2) - Failed in selt test"
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "fail"
+						},
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslSeltCompleteResult",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-XDSL-COMMON-MIB::hwAdslProfIDChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Adsl profile ID change trap.",
+				"This trap message is generated when adsl profile ID changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwAdslProfIDChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v3",
+				"Summary" : "ADSL profile ID ($v2) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwAdslProfIDChangeTrap HUAWEI-DEVICE-MIB::hwConfigChangeIP a 192.0.2.1 HUAWEI-XDSL-COMMON-MIB::hwAdslProfIDType i 1 IF-MIB::ifIndex i 9999 HUAWEI-XDSL-COMMON-MIB::hwXdslProfName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-XDSL-COMMON-MIB::hwAdslProfIDChangeTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.148.3.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The serial IP of configuration changes.",
+							"If the configuration changes is trigger by the command line users, the IP address is 0.0.0.0.",
+							"If it is triggered by the SNMP user, the IP address is the SNMP user's IP address.",
+							"The Trap of configuration changes will not be sent to the SNMP user",
+							"who triggered the configuration changes."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwConfigChangeIP",
+						"oid" : "1.3.6.1.4.1.2011.6.3.8.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Type of the adsl template ID.",
+							"Options:",
+							"1. lineTemplate(1) - Indicates line template ID",
+							"2. alarmTemplate(2) - Indicates alarm template ID",
+							"3. extProfile(3) - Indicates ext profile ID"
+						],
+						"enums" : {
+							"1" : "lineTemplate",
+							"2" : "alarmTemplate",
+							"3" : "extProfile"
+						},
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwAdslProfIDType",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The name of the XDSL profile."
+						],
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslProfName",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-XDSL-COMMON-MIB::hwXdslProfDeleteTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Xdsl unused profile trap deleted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwXdslProfDeleteTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "XDSL unused profile trap deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslProfDeleteTrap HUAWEI-DEVICE-MIB::hwConfigChangeIP a 192.0.2.1 HUAWEI-XDSL-COMMON-MIB::hwXdslAutoDeleteProfUnusedProfType i -1 HUAWEI-XDSL-COMMON-MIB::hwXdslAutoDeleteProfUnusedOperType i -1 HUAWEI-XDSL-COMMON-MIB::hwXdslDelProfIndex u 9999 HUAWEI-XDSL-COMMON-MIB::hwXdslDelProfName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslProfDeleteTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.148.3.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The serial IP of configuration changes.",
+							"If the configuration changes is trigger by the command line users, the IP address is 0.0.0.0.",
+							"If it is triggered by the SNMP user, the IP address is the SNMP user's IP address.",
+							"The Trap of configuration changes will not be sent to the SNMP user",
+							"who triggered the configuration changes."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwConfigChangeIP",
+						"oid" : "1.3.6.1.4.1.2011.6.3.8.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The profile type of deleting unused XDSL profile.",
+							"Options:",
+							"1. vdsl2LineConfTemplate(1) - Vdsl line template",
+							"2. vdsl2LineConfProf(2) - Vdsl line profile",
+							"3. vdsl2ChConfProfile(3) - Vdsl channel profile",
+							"4. vdsl2LineAlarmConfTemplate(4) - Vdsl line alarm template",
+							"5. vdsl2LineAlarmConfProfile(5) - Vdsl line alarm profile",
+							"6. vdsl2ChAlarmConfProfile(6) - Vdsl channel alarm profile",
+							"7. vdsl2ServProf(7) - Vdsl service profile (TI mode)",
+							"8. vdsl2SpectrumProf(8) - Vdsl spectrum profile (TI mode)",
+							"9. vdsl2DpboProf(9) - Vdsl DPBO profile (TI mode)",
+							"10. vdsl2UpboProf(10) - Vdsl UPBO profile (TI mode)",
+							"11. vdsl2NoiseMarginProf(11) - Vdsl noise-margin profile (TI mode)",
+							"12. vdsl2DelayInpProf(12) - Vdsl delay-inp profile (TI mode)",
+							"13. vopDataRateConfProf(13) - Xdsl data rate profile (TR165 mode)",
+							"14. vopLineSpectrumConfProf(14) - Xdsl line spectrum profile (TR165 mode)",
+							"15. vopUPBOConfProf(15) - Xdsl UPBO profile (TR165 mode)",
+							"16. vopDPBOConfProf(16) - Xdsl DPBO profile (TR165 mode)",
+							"17. vopRFIConfProf(17) - Xdsl RFI profile (TR165 mode)",
+							"18. vopSNRMarginConfProf(18) - Xdsl SNR margin profile (TR165 mode)",
+							"19. vopINPDelayConfProf(19) - Xdsl INP delay profile (TR165 mode)",
+							"20. vopVirtualNoiseConfProf(20) - Xdsl virtual noise profile (TR165 mode)",
+							"21. vopModeSpecificPSDConfProf(21) - Xdsl mode specific PSD profile (TR165 mode)",
+							"22. adsl2LineConfTemplate(22) - Adsl line template (RFC4706 mode)",
+							"23. adsl2LineConfProf(23) - Adsl line profile (RFC4706 mode)",
+							"24. adsl2ChConfProfile(24) - Adsl channel profile (RFC4706 mode)",
+							"25. adsl2LineAlarmConfTemplate(25) - Adsl line alarm template (RFC4706 mode)",
+							"26. adsl2LineAlarmConfProfile(26) - Adsl line alarm profile (RFC4706 mode)",
+							"27. adsl2ChAlarmConfProfile(27) - Adsl channel alarm profile (RFC4706 mode)",
+							"28. adslLineConfProfile(28) - Adsl line profile (RFC2662 mode)",
+							"29. adslLineAlarmConfProfile(29) - Adsl line alarm profile (RFC2662 mode)",
+							"30. adslLineExtConfProfile(30) - Adsl line ext profile (RFC2662 mode)",
+							"31. shdslLineConfProfile(31) - Shdsl line profile",
+							"32. shdslAlarmConfProfile(32) - Shdsl alarm profile",
+							"33. vopINMConfProf(33) - Xdsl INM profile (TR165 mode)",
+							"34. invalidValue(-1) - Invalid value",
+							""
+						],
+						"enums" : {
+							"-1" : "invalidValue",
+							"1" : "vdsl2LineConfTemplate",
+							"2" : "vdsl2LineConfProf",
+							"3" : "vdsl2ChConfProfile",
+							"4" : "vdsl2LineAlarmConfTemplate",
+							"5" : "vdsl2LineAlarmConfProfile",
+							"6" : "vdsl2ChAlarmConfProfile",
+							"7" : "vdsl2ServProf",
+							"8" : "vdsl2SpectrumProf",
+							"9" : "vdsl2DpboProf",
+							"10" : "vdsl2UpboProf",
+							"11" : "vdsl2NoiseMarginProf",
+							"12" : "vdsl2DelayInpProf",
+							"13" : "vopDataRateConfProf",
+							"14" : "vopLineSpectrumConfProf",
+							"15" : "vopUPBOConfProf",
+							"16" : "vopDPBOConfProf",
+							"17" : "vopRFIConfProf",
+							"18" : "vopSNRMarginConfProf",
+							"19" : "vopINPDelayConfProf",
+							"20" : "vopVirtualNoiseConfProf",
+							"21" : "vopModeSpecificPSDConfProf",
+							"22" : "adsl2LineConfTemplate",
+							"23" : "adsl2LineConfProf",
+							"24" : "adsl2ChConfProfile",
+							"25" : "adsl2LineAlarmConfTemplate",
+							"26" : "adsl2LineAlarmConfProfile",
+							"27" : "adsl2ChAlarmConfProfile",
+							"28" : "adslLineConfProfile",
+							"29" : "adslLineAlarmConfProfile",
+							"30" : "adslLineExtConfProfile",
+							"31" : "shdslLineConfProfile",
+							"32" : "shdslAlarmConfProfile",
+							"33" : "vopINMConfProf"
+						},
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslAutoDeleteProfUnusedProfType",
+						"oid" : "1.3.6.1.4.1.2011.6.148.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The operation type of deleting unused xDSL profile.",
+							"Options:",
+							"1. first(1) - Delete the first unused xDSL profile",
+							"2. all(2) - Delete all the unused xDSL profile",
+							"3. invalidValue(-1) - Invalid value "
+						],
+						"enums" : {
+							"-1" : "invalidValue",
+							"1" : "first",
+							"2" : "all"
+						},
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslAutoDeleteProfUnusedOperType",
+						"oid" : "1.3.6.1.4.1.2011.6.148.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Index of the profile which is deleted.",
+							"If you delete all the profiles unused, this parameter will be 0xffffffff."
+						],
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslDelProfIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of the profile which is deleted.",
+							"If you delete all the profiles unused, this parameter will be a zero string."
+						],
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslDelProfName",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-XDSL-COMMON-MIB::hwXdslSeltStartResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"XDSL selt test start trap.",
+				"This notification indicates trap when xDSL selt test start."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "hwXdslSeltStartResultTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'SELT task started successfully' : 'SELT task failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslSeltStartResultTrap HUAWEI-XDSL-COMMON-MIB::hwXdslSeltTestStartResult i 1 HUAWEI-XDSL-COMMON-MIB::hwXdslRequestID i 9999",
+				"$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslSeltStartResultTrap HUAWEI-XDSL-COMMON-MIB::hwXdslSeltTestStartResult i 2 HUAWEI-XDSL-COMMON-MIB::hwXdslRequestID i 9999"
+			],
+			"trap" : {
+				"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslSeltStartResultTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.148.3.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"XDSL selt test start result. ",
+							"Options: ",
+							"1. normal(1) - This notification indicates that a SELT task has been started successfully",
+							"2. failed(2) - This notification indicates that a SELT task failed to be started"
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "failed"
+						},
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslSeltTestStartResult",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Request ID."
+						],
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslRequestID",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-XDSL-COMMON-MIB::hwXdslAutoDeactivateLackLicensesAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when some xDSL ports or all the xDSL ports ",
+				"are automatically deactivated due to lack of licenses."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwXdslAutoDeactivateLackLicensesAlarmTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2",
+				"Summary" : "XDSL ports automatically deactivated due to lack of licenses"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslAutoDeactivateLackLicensesAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslAutoDeactivateLackLicensesAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.148.3.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-XDSL-COMMON-MIB::hwXdslPortActRateLowerThresholdAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when the activation rate ",
+				"of the xDSL line is lower than the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwXdslPortActRateLowerThresholdAlarmTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Activation rate of xDSL line is lower than threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-XDSL-COMMON-MIB::hwXdslPortActRateLowerThresholdAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0 HUAWEI-XDSL-COMMON-MIB::hwXdslPortActualDownRate u 9999 HUAWEI-XDSL-COMMON-MIB::hwXdslPortActualUpRate u 9999",
+			"trap" : {
+				"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslPortActRateLowerThresholdAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.148.3.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Xdsl port actual downstream rate."
+						],
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslPortActualDownRate",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Xdsl port actual upstream rate."
+						],
+						"name" : "HUAWEI-XDSL-COMMON-MIB::hwXdslPortActualUpRate",
+						"oid" : "1.3.6.1.4.1.2011.6.148.2.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

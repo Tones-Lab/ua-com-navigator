@@ -1,0 +1,981 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0002170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CPM-MIB::cpmStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when CPM changes states."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpmStateChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "CPM operational state: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::cpmStateChangeTrap CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::sysOperationalState i 0",
+			"trap" : {
+				"name" : "CPM-MIB::cpmStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"current operating state of CPM"
+						],
+						"enums" : {
+							"0" : "initializing",
+							"1" : "discovering",
+							"2" : "ready"
+						},
+						"name" : "CPM-MIB::sysOperationalState",
+						"oid" : "1.3.6.1.4.1.562.14.3.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::nasNotRespondingTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a nas stops responding."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "nasStatusTrap",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2 == 0) ? 0 : (($v2 == 1 || $v2 == 2) ? 3 : (($v2==3) ? 4 : 5 ))"
+				},
+				"SubNode" : "NasIP:$v3",
+				"Summary" : "NAS $v3 stopped responding"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::nasNotRespondingTrap CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-nasIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "CPM-MIB::nasNotRespondingTrap",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ip address of a NAS."
+						],
+						"name" : "CPM-MIB::trap-nasIPAddress",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.2",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::nasNowRespondingTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a nas starts responding."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "nasStatusTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "NasIP:$v3",
+				"Summary" : "NAS $v3 is responding"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::nasNowRespondingTrap CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-nasIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "CPM-MIB::nasNowRespondingTrap",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ip address of a NAS."
+						],
+						"name" : "CPM-MIB::trap-nasIPAddress",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.2",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::gatewayRemovedFromService",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a gateway is removed from service."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "gatewayServiceStatus",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2 == 0) ? 0 : (($v2 == 1 || $v2 == 2) ? 3 : (($v2==3) ? 4 : 5 ))"
+				},
+				"SubNode" : "GatewayIP:$v3",
+				"Summary" : "Gateway $v3 removed from service"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::gatewayRemovedFromService CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-gatewayIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "CPM-MIB::gatewayRemovedFromService",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ip address of a gateway."
+						],
+						"name" : "CPM-MIB::trap-gatewayIPAddress",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.3",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::gatewayReturnedToService",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a gateway is returned to service."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "gatewayServiceStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "GatewayIP:$v3",
+				"Summary" : "Gateway $v3 is in service"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::gatewayReturnedToService CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-gatewayIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "CPM-MIB::gatewayReturnedToService",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ip address of a gateway."
+						],
+						"name" : "CPM-MIB::trap-gatewayIPAddress",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.3",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::gatewaysUnavailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a call is rejected because all ",
+				"gateways are at capacity or administratively locked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "gatewaysAvailabiltyStatus",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2 == 0) ? 0 : (($v2 == 1 || $v2 == 2) ? 3 : (($v2==3) ? 4 : 5 ))"
+				},
+				"SubNode" : "VPOPId:$v3",
+				"Summary" : "Gateways are unavailable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::gatewaysUnavailable CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999",
+			"trap" : {
+				"name" : "CPM-MIB::gatewaysUnavailable",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::gatewaysAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a call is accepted after the above",
+				"trap was generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "gatewaysAvailabiltyStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "VPOPId:$v3",
+				"Summary" : "Gateways are available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::gatewaysAvailable CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999",
+			"trap" : {
+				"name" : "CPM-MIB::gatewaysAvailable",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::mpGatewaysUnavailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a call is rejected because all ",
+				"multilink PPP gateways are at capacity or administratively ",
+				"locked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "mpGatewaysAvailabilityStatus",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2 == 0) ? 0 : (($v2 == 1 || $v2 == 2) ? 3 : (($v2==3) ? 4 : 5 ))"
+				},
+				"SubNode" : "VPOPId:$v3",
+				"Summary" : "Multilink PPP gateways are unavailable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::mpGatewaysUnavailable CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999",
+			"trap" : {
+				"name" : "CPM-MIB::mpGatewaysUnavailable",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::mpGatewaysAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a call is accepted after the above",
+				"trap was generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "mpGatewaysAvailabilityStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "VPOPId:$v3",
+				"Summary" : "Multilink PPP gateways are available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::mpGatewaysAvailable CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999",
+			"trap" : {
+				"name" : "CPM-MIB::mpGatewaysAvailable",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::ipAddressesExhausted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap is generated when a call is rejected because an IP",
+				"address could not be assigned from the available pools."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ipAddressesAvailablityStatus",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2 == 0) ? 0 : (($v2 == 1 || $v2 == 2) ? 3 : (($v2==3) ? 4 : 5 ))"
+				},
+				"SubNode" : "NasIP:$v4",
+				"Summary" : "IP addresses are used up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::ipAddressesExhausted CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999 CPM-MIB::trap-nasIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "CPM-MIB::ipAddressesExhausted",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The ip address of a NAS."
+						],
+						"name" : "CPM-MIB::trap-nasIPAddress",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.2",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::ipAddressesAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a call is accepted after the above",
+				"trap was generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ipAddressesAvailablityStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "NasIP:$v4",
+				"Summary" : "IP addresses are available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::ipAddressesAvailable CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999 CPM-MIB::trap-nasIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "CPM-MIB::ipAddressesAvailable",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The ip address of a NAS."
+						],
+						"name" : "CPM-MIB::trap-nasIPAddress",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.2",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::portsUnavailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a call is rejected because all ",
+				"ports, including overflow, are used up."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "portsAvailabilityStatus",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2 == 0) ? 0 : (($v2 == 1 || $v2 == 2) ? 3 : (($v2==3) ? 4 : 5 ))"
+				},
+				"SubNode" : "VPOPId:$v3",
+				"Summary" : "Ports are used up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::portsUnavailable CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999",
+			"trap" : {
+				"name" : "CPM-MIB::portsUnavailable",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::portsAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Trap generated when a call is accepted after the above",
+				"trap was generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "portsAvailabilityStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "VPOPId:$v3",
+				"Summary" : "Ports are available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::portsAvailable CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999",
+			"trap" : {
+				"name" : "CPM-MIB::portsAvailable",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::overflowPortsInUse",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap generated when a call is accepted as an overflow",
+				"port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "overflowPortsUsage",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2 == 0) ? 0 : (($v2 == 1 || $v2 == 2) ? 3 : (($v2==3) ? 4 : 5 ))"
+				},
+				"SubNode" : "VPOPId:$v3",
+				"Summary" : "Overflow port is in use"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::overflowPortsInUse CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999",
+			"trap" : {
+				"name" : "CPM-MIB::overflowPortsInUse",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::overflowPortsNotInUse",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap generated when a call is accepted not as an overflow ",
+				"after the above trap was generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "overflowPortsUsage",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "VPOPId:$v3",
+				"Summary" : "No overflow ports in use"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::overflowPortsNotInUse CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-vpopId i 9999",
+			"trap" : {
+				"name" : "CPM-MIB::overflowPortsNotInUse",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The VPOP id."
+						],
+						"name" : "CPM-MIB::trap-vpopId",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPM-MIB::disconnectRequestDiscarded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap generated when a RADIUS disconnect request is discarded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "disconnectRequestDiscarded",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "RADIUS disconnect request discarded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPM-MIB::disconnectRequestDiscarded CPM-MIB::trap-gennum i 9999 CPM-MIB::trap-severity i 0 CPM-MIB::trap-AAAServerIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "CPM-MIB::disconnectRequestDiscarded",
+				"oid" : "1.3.6.1.4.1.562.14.3.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"Unique identifier for the trap."
+						],
+						"name" : "CPM-MIB::trap-gennum",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The trap severity."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "warning",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "CPM-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ip address of a AAA server."
+						],
+						"name" : "CPM-MIB::trap-AAAServerIPAddress",
+						"oid" : "1.3.6.1.4.1.562.14.3.3.1.6",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		}
+	]
+}

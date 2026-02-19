@@ -1,0 +1,4193 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201512141800Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemFailedAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that a VectoredSystem is unavailable due to failure",
+				"(failed(2) set in availabilityStatus).",
+				"The alarm is raised, if ",
+				"sheVectoredSystemAdminState = unlocked(2)",
+				"AND ",
+				"failed(2) IN sheVectoredSystemAvailabilityStatus",
+				"The alarm is reset, if either: ",
+				"sheVectoredSystemAdminState = locked(1) ",
+				"OR ",
+				"failed(2) NOT IN sheVectoredSystemAvailabilityStatus",
+				"VALUES",
+				"sheReportingSourceType = vectoredSystem(26)",
+				"sheReportingSource = sheVectoredSystemIndex",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredSystemFailedAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Vectored system failure alarm cleared' : 'Vectored system failure'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemFailedAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemFailedAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemFailedAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemDependencyAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that a VectoredSystem is unavailable due to a dependency ",
+				"(dependency(6) set in availabilityStatus).",
+				"The alarm is raised, if ",
+				"sheVectoredSystemAdminState = unlocked(2)",
+				"AND ",
+				"dependency(6) IN sheVectoredSystemAvailabilityStatus",
+				"The alarm is reset, if either: ",
+				"sheVectoredSystemAdminState = locked(1) ",
+				"OR ",
+				"dependency(6) NOT IN sheVectoredSystemAvailabilityStatus",
+				"VALUES",
+				"sheReportingSourceType = vectoredSystem(26)",
+				"sheReportingSource = sheVectoredSystemIndex",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredSystemDependencyAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Vectored system dependency alarm cleared' : 'Vectored system dependency alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemDependencyAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemDependencyAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemDependencyAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemDegradedAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that the operation of a VectoredSystem has been degraded",
+				"(degraded(7) set in availabilityStatus).",
+				"The alarm is raised, if ",
+				"sheVectoredSystemAdminState = unlocked(2)",
+				"AND ",
+				"degraded(7) IN sheVectoredSystemAvailabilityStatus",
+				"The alarm is reset, if either: ",
+				"sheVectoredSystemAdminState = locked(1) ",
+				"OR ",
+				"degraded(7) NOT IN sheVectoredSystemAvailabilityStatus",
+				"VALUES",
+				"sheReportingSourceType = vectoredSystem(26)",
+				"sheReportingSource = sheVectoredSystemIndex",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredSystemDegradedAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Vectored system degradation alarm cleared' : 'Vectored system degradation alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemDegradedAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemDegradedAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemDegradedAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardLinesForcedFallbackAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that a VectoredCard has become degraded ",
+				"and has reacted to the degradation by forcing all lines into ",
+				"the fallback mode as per configuration in the associated ",
+				"VectoredSystemProfle.",
+				"A client VectoredCard will become degraded, if it loses the ",
+				"front-cable connection to the master VectoredCard and as a ",
+				"result cannot perform vectoring of the lines.",
+				"VALUES",
+				"sheReportingSourceType = vectoredCard(27)",
+				"sheReportingSource = entPhysicalIndex (of sheVectoredCardEntry)",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredCardLinesForcedFallbackAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Degraded vectored card forced fallback alarm cleared' : 'Degraded vectored card forced fallback alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardLinesForcedFallbackAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardLinesForcedFallbackAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardLinesForcedFallbackAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.10",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardLinesForcedDownAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that a VectoredCard has become degraded ",
+				"and has reacted to the degradation by forcing all lines into ",
+				"the operative state 'down' as per configuration in the ",
+				"associated VectoredSystemProfle.",
+				"A client VectoredCard will become degraded, if it loses the ",
+				"front-cable connection to the master VectoredCard and as a ",
+				"result cannot perform vectoring of the lines.",
+				"VALUES",
+				"sheReportingSourceType = vectoredCard(27)",
+				"sheReportingSource = entPhysicalIndex (of sheVectoredCardEntry)",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredCardLinesForcedDownAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Degraded vectored card lines forced down alarm cleared' : 'Degraded vectored card lines forced down'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardLinesForcedDownAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardLinesForcedDownAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardLinesForcedDownAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.11",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardLinesForcedNonVectoringAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that a VectoredCard has become degraded ",
+				"and has reacted to the degradation by deactivating vectoring ",
+				"of the lines.",
+				"A client VectoredCard will become degraded, if it loses the ",
+				"front-cable connection to the master VectoredCard and as a ",
+				"result cannot perform vectoring of the lines.",
+				"VALUES",
+				"sheReportingSourceType = vectoredCard(27)",
+				"sheReportingSource = entPhysicalIndex (of sheVectoredCardEntry)",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex",
+				"REVISION HISTORY",
+				"R4.7.3M: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredCardLinesForcedNonVectoringAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Degraded vectored card lines forced non vectoring alarm cleared' : 'Degraded vectored card lines forced non vectoring alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardLinesForcedNonVectoringAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardLinesForcedNonVectoringAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardLinesForcedNonVectoringAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.12",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardUnconnectedVEPortsAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that a one or more Vector Engine Ports of the given VectoredCard ",
+				"are not connected as expected by the configuration of the associated VectoredSystem.",
+				"VALUES",
+				"sheReportingSourceType = vectoredCard(27)",
+				"sheReportingSource = entPhysicalIndex (of sheVectoredCardEntry)",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredCardUnconnectedVEPortsAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'VE ports connected to vectored card' : 'VE ports not connected to vectored card'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardUnconnectedVEPortsAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardUnconnectedVEPortsAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardUnconnectedVEPortsAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.15",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardVectoringSwVersionConflict",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that there is a conflict regarding the current vectoring SW version ",
+				"present on the card with respect to the vectoring SW used in the associated VectoredSystem.",
+				"For example, a client VectoredCard within a given VectoredSystem could be running a version ",
+				"of the vectoring SW that is incompatible to that running on the server (master) VectoredCard ",
+				"within the VectoredSystem.",
+				"VALUES",
+				"sheReportingSourceType = vectoredCard(27)",
+				"sheReportingSource = entPhysicalIndex (of sheVectoredCardEntry)",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredCardVectoringSwVersionConflict",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Vectored card vectoring SW version conflict cleared' : 'Vectored card vectoring SW version conflict occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardVectoringSwVersionConflict SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardVectoringSwVersionConflict SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringSwVersionConflict",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.16",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectorEnginePeerUnreachableAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that a peer VectoredCard that is expected to be reachable via a front ",
+				"Vector Engine (VE) connection, as determined from the configuration of the ",
+				"associated VectoredSystem (VectoredSystem.memberCardList), cannot be reached.",
+				"VALUES",
+				"sheReportingSourceType = vectorEnginePeer(28)",
+				"sheReportingSource = (sheVectoredCardVEPeerIndex << 24) + entPhysicalIndex",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectorEnginePeerUnreachableAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Unreachable peer vector engine alarm cleared' : 'Peer vector engine unreachable'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectorEnginePeerUnreachableAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectorEnginePeerUnreachableAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectorEnginePeerUnreachableAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.20",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectorEnginePortConnectionAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised when an incompatible connection to a peer at a ",
+				"Vector Engine Port is detected by a card.",
+				"An incompatible connection would occur, if a vectoring client card ",
+				"is connected to an incompatible vector engine port of the vectoring master ",
+				"card or as a result of a hardware problem with the physical connector(s).",
+				"If this alarm is raised, check connection capabilities of port and peer ",
+				"and the state of the physical connector(s).",
+				"VALUES",
+				"sheReportingSourceType = vectorEnginePort(30)",
+				"sheReportingSource = (sheVectorEnginePortIndex << 24) + entPhysicalIndex",
+				"sheAlarmSeverity = sheVectoredSystemAlarmSeverityProfileIndex",
+				"REVISION HISTORY",
+				"SR5.1: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheVectorEnginePortConnectionAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Incompatible connection cleared from peer vector engine port' : 'Incompatible connection detected on peer vector engine port'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectorEnginePortConnectionAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectorEnginePortConnectionAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectorEnginePortConnectionAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.1.25",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sheVectoredCardVectoringAvailabilityStatus of an instance of ",
+				"sheVectoredCardEntry has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredCardVectoringAvailabilityStatusChanged",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==2 || $v1==4) ? 4 : (($v1==7 || $v1==8) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Vectored card vectoring availability status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatusChanged SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatus b 2",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatusChanged SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatus b 0"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatusChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The availability status of vectoring functionality on a VectoredCard:",
+							"",
+							"failed(2) One or more of the resources represented by the managed object has ",
+							"an internal fault that prevents it from operating.",
+							"(If failed(2), IU cards may continue to operate in fallback mode ",
+							"depending on the configuration of the VectoredSystem)",
+							"offline(4) The resource has been administratively locked and all resources ",
+							"represented by this managed object are not in use. ",
+							"dependency(6) One or more of the resources represented by this managed object ",
+							"cannot operate, because some other resource, which is not ",
+							"represented by this managed object and on which it depends is ",
+							"unavailable.",
+							"degraded(7) Functionality provided by one or more of the resources represented ",
+							"by the managed object is degraded, but limited operation is still ",
+							"possible.",
+							"(SU SLV VectoredCards only)",
+							"notInstalled(8) The resource or resources represented by the managed object are not",
+							"present or are incomplete."
+						],
+						"enums" : {
+							"0" : "reserved0",
+							"1" : "reserved1",
+							"2" : "failed",
+							"3" : "reserved3",
+							"4" : "offline",
+							"5" : "reserved5",
+							"6" : "dependency",
+							"7" : "degraded",
+							"8" : "notInstalled"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.6",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sheVectoredSystemAvailabilityStatus of an instance of ",
+				"sheVectoredSystemEntry has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemAvailabilityStatusChanged",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==2 || $v1==4) ? 4 : (($v1==7 || $v1==8) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Vectored card system availability status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatusChanged SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatus b 2",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatusChanged SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatus b 0"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatusChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"The availability status conditions of an instance of a VectoredSystem.",
+							"",
+							"failed(2) One or more of the resources represented by the managed object has ",
+							"an internal fault that prevents it from operating.",
+							"-> Alarm sheVectoredSystemFailedAlarm will be raised",
+							"offline(4) The resource has been administratively locked and all resources ",
+							"represented by this managed object are not in use. ",
+							"dependency(6) One or more of the resources represented by this managed object ",
+							"cannot operate, because some other resource, which is not ",
+							"represented by this managed object and on which it depends is ",
+							"unavailable.",
+							"-> Alarm sheVectoredSystemDependencyAlarm will be raised",
+							"degraded(7) Functionality provided by one or more of the resources represented ",
+							"by the managed object is degraded, but limited operation is still ",
+							"possible.",
+							"-> Alarm sheVectoredSystemDegradedAlarm will be raised",
+							"",
+							"The VectoredSystem is fully available if the operState is enabled and no availabilityStatus bit is set",
+							"(availabilityStatus == 0)."
+						],
+						"enums" : {
+							"0" : "reserved0",
+							"1" : "reserved1",
+							"2" : "failed",
+							"3" : "reserved3",
+							"4" : "offline",
+							"5" : "reserved5",
+							"6" : "dependency",
+							"7" : "degraded",
+							"8" : "notInstalled"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.5",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardVectoringOperStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sheVectoredCardVectoringOperState of an instance of ",
+				"sheVectoredCardEntry has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredCardVectoringOperStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Vectored card vectoring operational state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardVectoringOperStateChanged SHE-VECTORING-MIB::sheVectoredCardVectoringOperState i 2",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardVectoringOperStateChanged SHE-VECTORING-MIB::sheVectoredCardVectoringOperState i 1"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringOperStateChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"The operational state of Vectoring functionality on the VectoredCard.",
+							"",
+							"enabled(1) - VectoredCard is operationally enabled for FEXT ",
+							"cancellation",
+							"disabled(2) - VectoredCard is operationally disabled for FEXT ",
+							"cancellation.",
+							"degradedLinesForcedFallback(3) - VectoredCard is operationally degraded (FEXT ",
+							"cancellation cannot be performed) and all lines ",
+							"have been forced into fallback mode.",
+							"(IU only)",
+							"degradedLinesForcedDown(4) - VectoredCard is operationally degraded (FEXT ",
+							"cancellation cannot be performed) and all lines ",
+							"have been forced to 'down'.",
+							"(IU only)",
+							"degradedLinesForcedNoVectoring(5) - VectoredCard is operationally degraded (FEXT ",
+							"cancellation cannot be performed) and vectoring ",
+							"has been disabled for all lines.",
+							"(IU only)",
+							"",
+							"NOTE: ",
+							"An IU VectoredCard will be degraded, for example, if the peer SU_SLV card is not reachable via the ",
+							"Vector Engine Port.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New value degradedLinesForcedNonVectoring(5) possible."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled",
+							"3" : "degradedLinesForcedFallback",
+							"4" : "degradedLinesForcedDown",
+							"5" : "degradedLinesForcedNonVectoring"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringOperState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemOperStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sheVectoredSystemOperState of an instance of ",
+				"sheVectoredSystemEntry has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredSystemOperStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Vectored system operational state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemOperStateChanged SHE-VECTORING-MIB::sheVectoredSystemOperState i 2",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemOperStateChanged SHE-VECTORING-MIB::sheVectoredSystemOperState i 1"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemOperStateChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.4",
+				"variables" : [
+					{
+						"description" : [
+							"The operational state of the VectoredSystem."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemOperState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMasterChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sheVectoredCardIsVectoredSystemMaster of an instance of ",
+				"sheVectoredCardEntry has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredCardIsVectoredSystemMasterChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Vectored card operating as master' : 'Vectored card not operating as master'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMasterChanged SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMaster i 2",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMasterChanged SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMaster i 1"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMasterChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"A TruthValue that indicates whether the given VectoredCard is operating as the ",
+							"master (or server) VectoredCard within its VectoredSystem.",
+							"",
+							"This object is for informational purposes only and cannot be managed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMaster",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"An instance of sheVectoredCardEntry has been created in the sheVectoredCardTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredCardCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Vectored card entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardCreated SHE-VECTORING-MIB::sheVectoredCardVectoringFamilyCapabilities b 0 SHE-VECTORING-MIB::sheVectoredCardVectoringRoleCapabilities b 0 SHE-VECTORING-MIB::sheVectoredCardMaxClientCards u 9999 SHE-VECTORING-MIB::sheVectoredCardMaxClientPorts u 9999 SHE-VECTORING-MIB::sheVectoredCardVectoringOperState i 1 SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatus b 0 SHE-VECTORING-MIB::sheVectoredCardVectoredSystemIndex u 0 SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMaster i 1 SHE-VECTORING-MIB::sheVectoredCardVectoringSwVersion s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the vectoring family with which the vectored card is capable of interworking.",
+							"",
+							"This may impact the functional capabilities of the card, the interoperability between ",
+							"cards and which cards may operate together within a vectored system. Generally, only ",
+							"vectored cards with the common family capabilities may become members of a given ",
+							"vectored system.",
+							"",
+							"This object is for informational purposes only and cannot be managed."
+						],
+						"enums" : {
+							"0" : "lantiq",
+							"1" : "broadcom24",
+							"2" : "broadcom36",
+							"3" : "broadcom24Over3Lanes",
+							"4" : "broadcom36Over3Lanes"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringFamilyCapabilities",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.1",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"This indicates the capibilities of the card with regard to the roles it may take within ",
+							"a vectored system.",
+							"",
+							"This object is for informational purposes only and cannot be managed."
+						],
+						"enums" : {
+							"0" : "client",
+							"1" : "master"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringRoleCapabilities",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.2",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"Indicates the maximum number of client vectored cards that may be connected to this card, ",
+							"if the card takes the role of master vectoring card or server within a vectored system.",
+							"",
+							"Only valid, if master(1) bit of sheVectoredCardVectoringRoleCapability is set.",
+							"",
+							"This object is for informational purposes only and cannot be managed.",
+							"",
+							"NOTE:",
+							"Depending on the connected card types, the maximum number of client cards that can ",
+							"be connected to the master maybe fewer than the number reported here, if, ",
+							"for example, the MaxClientPorts would be exceeded."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardMaxClientCards",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the maximum number of client ports that can be served by the card, ",
+							"if the card is operating as master within a vectored system and if its role ",
+							"capabilities allow this.",
+							"",
+							"This object is for informational purposes only and cannot be managed."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardMaxClientPorts",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The operational state of Vectoring functionality on the VectoredCard.",
+							"",
+							"enabled(1) - VectoredCard is operationally enabled for FEXT ",
+							"cancellation",
+							"disabled(2) - VectoredCard is operationally disabled for FEXT ",
+							"cancellation.",
+							"degradedLinesForcedFallback(3) - VectoredCard is operationally degraded (FEXT ",
+							"cancellation cannot be performed) and all lines ",
+							"have been forced into fallback mode.",
+							"(IU only)",
+							"degradedLinesForcedDown(4) - VectoredCard is operationally degraded (FEXT ",
+							"cancellation cannot be performed) and all lines ",
+							"have been forced to 'down'.",
+							"(IU only)",
+							"degradedLinesForcedNoVectoring(5) - VectoredCard is operationally degraded (FEXT ",
+							"cancellation cannot be performed) and vectoring ",
+							"has been disabled for all lines.",
+							"(IU only)",
+							"",
+							"NOTE: ",
+							"An IU VectoredCard will be degraded, for example, if the peer SU_SLV card is not reachable via the ",
+							"Vector Engine Port.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New value degradedLinesForcedNonVectoring(5) possible."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled",
+							"3" : "degradedLinesForcedFallback",
+							"4" : "degradedLinesForcedDown",
+							"5" : "degradedLinesForcedNonVectoring"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringOperState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The availability status of vectoring functionality on a VectoredCard:",
+							"",
+							"failed(2) One or more of the resources represented by the managed object has ",
+							"an internal fault that prevents it from operating.",
+							"(If failed(2), IU cards may continue to operate in fallback mode ",
+							"depending on the configuration of the VectoredSystem)",
+							"offline(4) The resource has been administratively locked and all resources ",
+							"represented by this managed object are not in use. ",
+							"dependency(6) One or more of the resources represented by this managed object ",
+							"cannot operate, because some other resource, which is not ",
+							"represented by this managed object and on which it depends is ",
+							"unavailable.",
+							"degraded(7) Functionality provided by one or more of the resources represented ",
+							"by the managed object is degraded, but limited operation is still ",
+							"possible.",
+							"(SU SLV VectoredCards only)",
+							"notInstalled(8) The resource or resources represented by the managed object are not",
+							"present or are incomplete."
+						],
+						"enums" : {
+							"0" : "reserved0",
+							"1" : "reserved1",
+							"2" : "failed",
+							"3" : "reserved3",
+							"4" : "offline",
+							"5" : "reserved5",
+							"6" : "dependency",
+							"7" : "degraded",
+							"8" : "notInstalled"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringAvailabilityStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.6",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"If this instance of a VectoredCard is in a member of a VectoredSystem, this object ",
+							"references the instance of sheVectoredSystemEntry representing that VectoredSystem."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoredSystemIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A TruthValue that indicates whether the given VectoredCard is operating as the ",
+							"master (or server) VectoredCard within its VectoredSystem.",
+							"",
+							"This object is for informational purposes only and cannot be managed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardIsVectoredSystemMaster",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The version of the vectoring software on the card.",
+							"",
+							"To take part within a vectored system, software versions on all cards must be ",
+							"compatible."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVectoringSwVersion",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.1.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"An instance of sheVectoredCardEntry has been deleted from the sheVectoredCardTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredCardDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PhysicalIndex:$v1",
+				"Summary" : "Vectored card entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardDeleted ENTITY-MIB::entPhysicalIndex i 9999",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.7",
+				"variables" : [
+					{
+						"description" : [
+							"The index for this entry."
+						],
+						"name" : "ENTITY-MIB::entPhysicalIndex",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredCardVEPeerStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The status of an instance of sheVectoredCardVEPeerEntry has changed.",
+				"REVISION HISTORY",
+				"SR5.1: sheVectoredCardVEPeerConnCapability added."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredCardVEPeerStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : 3"
+				},
+				"SubNode" : "VEPortIndex:$v1",
+				"Summary" : "VE peer vectored card status changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardVEPeerStatusChanged SHE-VECTORING-MIB::sheVectoredCardVEPeerVEPortIndex u 0 SHE-VECTORING-MIB::sheVectoredCardVEPeerStatus i 1 SHE-VECTORING-MIB::sheVectoredCardVEPeerRequisiteConnModes b 0",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredCardVEPeerStatusChanged SHE-VECTORING-MIB::sheVectoredCardVEPeerVEPortIndex u 0 SHE-VECTORING-MIB::sheVectoredCardVEPeerStatus i 2 SHE-VECTORING-MIB::sheVectoredCardVEPeerRequisiteConnModes b 0"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredCardVEPeerStatusChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.12",
+				"variables" : [
+					{
+						"description" : [
+							"The sheVectorEnginePortIndex of the VEPort on the given VectoredCard identified by the ",
+							"entPhysicalIndex of this entry through which this peer is reachable.",
+							"",
+							"{entPhysicalIndex,sheVectorEnginePortIndex} uniquely identifies the instance of ",
+							"sheVectorEnginePortEntry.",
+							"",
+							"NOTES:",
+							"Some SU_SLV cards may require a fixed assignment of vectoring IU cards to their VE Ports, ",
+							"e.g., IU card with lowest slot number in VE Port 1, IU card with next lowest slot number ",
+							"in VE Port #2, etc. If this is the case, sheVectoredCardVEPeerVEPortIndex will always ",
+							"indicate the required VE Port on the given card to which peer card must to be connected, ",
+							"even when the peer card is not connected.",
+							"",
+							"Other SU_SLV cards may allow a IU card to connect to any VE Port on the SU_SLV.",
+							"In this case, sheVectoredCardVEPeerVEPortIndex will only indicate the VEPort over which ",
+							"the peer is reachable, if and only if the peer has been connected to a VE Port and is ",
+							"reachable. When the peer is not reachable, sheVectoredCardVEPeerVEPortIndex will be 0 ",
+							"(zero).",
+							"",
+							"Therefore, sheVectoredCardVEPeerVEPortIndex is to be interpreted as given below:",
+							"",
+							"sheVectoredCardVEPeerStatus | sheVectoredCardVEPeerVEPortIndex | Interpretation",
+							"-----------------------------+----------------------------------+------------------------",
+							"notReachable(0) | 0 | Peer may be connected ",
+							"| | to any VEPort on the",
+							"| | given card",
+							"+----------------------------------+------------------------",
+							"| >0 | Peer MUST be connected",
+							"| | to the given VEPort on ",
+							"| | the given card",
+							"-----------------------------+----------------------------------+------------------------",
+							"reachable(1) | >0 | Peer is reachable via ",
+							"| | given VEPort",
+							""
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVEPeerVEPortIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.3.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The status of the reachability of this peer via the VEPort(s).",
+							"",
+							"VALUES",
+							"notReachable(1) - The peer cannot be reached.",
+							"",
+							"reachable(2) - The peer can be reached via the VE Port indexed by ",
+							"sheVectoredCardVEPeerVEPortIndex."
+						],
+						"enums" : {
+							"1" : "notReachable",
+							"2" : "reachable"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVEPeerStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the requisite connection mode(s) that may be used to connect to ",
+							"this peer of this Vectored Card via a Vector Engine Port located on the ",
+							"given VectoredCard.",
+							"",
+							"In order to successfully connect to this peer, a connection must be ",
+							"made via a local Vector Enging Port for which sheVectorEnginePortConnCapability ",
+							"includes one or more of the requisite connection modes.",
+							"",
+							"BITS",
+							"over2lanes(0)",
+							"over3lanes(1)",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"enums" : {
+							"0" : "over2lanes",
+							"1" : "over3lanes"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredCardVEPeerRequisiteConnModes",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.3.1.5",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectorEnginePortOperStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The operative state of an instance of sheVectorEnginePortEntry has changed.",
+				"REVISION HISTORY",
+				"SR5.1: sheVectorEnginePortConnCapability and sheVectorEnginePortConnOperMode added."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 3 : 2)"
+				},
+				"EventType" : "sheVectorEnginePortOperStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==2) ? 2 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Vector engine port operational state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectorEnginePortOperStateChanged SHE-VECTORING-MIB::sheVectorEnginePortOperState i 0 SHE-VECTORING-MIB::sheVectorEnginePortConnCapability b 0 SHE-VECTORING-MIB::sheVectorEnginePortConnOperMode i 0",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectorEnginePortOperStateChanged SHE-VECTORING-MIB::sheVectorEnginePortOperState i 1 SHE-VECTORING-MIB::sheVectorEnginePortConnCapability b 0 SHE-VECTORING-MIB::sheVectorEnginePortConnOperMode i 1"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectorEnginePortOperStateChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.1.2.13",
+				"variables" : [
+					{
+						"description" : [
+							"The operative state of this instance of a Vector Engine Port.",
+							"",
+							"VALUES",
+							"notConnected(0) - The VE Port is not connected.",
+							"connected(1) - The VE Port is connected.",
+							"notAvailable(2) - The VE Port is not available for ",
+							"use in the current configuration.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 V1.565: notAvailable(2) added."
+						],
+						"enums" : {
+							"0" : "notConnected",
+							"1" : "connected",
+							"2" : "notAvailable"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectorEnginePortOperState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the connection modes supported by this instance of a Vector Engine Port.",
+							"",
+							"BITS ",
+							"over2lanes(0)",
+							"over3lanes(1)",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"enums" : {
+							"0" : "over2lanes",
+							"1" : "over3lanes"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectorEnginePortConnCapability",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.5.1.4",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The current operating mode of the connection at this instance of a Vector Engine Port.",
+							"",
+							"VALUES",
+							"unknown(0)",
+							"error(1)",
+							"over2lanes(2)",
+							"over3lanes(3)",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "error",
+							"2" : "over2lanes",
+							"3" : "over3lanes"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectorEnginePortConnOperMode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.2.5.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on creation of a new instance of sheVectoredSystemEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SystemProfileIndex:$v6",
+				"Summary" : "New vectored system entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemCreated SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemName s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemAdminState i 1 SHE-VECTORING-MIB::sheVectoredSystemOperState i 1 SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatus b 0 SHE-VECTORING-MIB::sheVectoredSystemVectoredSystemProfileIndex u 9999 SHE-VECTORING-MIB::sheVectoredSystemMemberCardList s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemDisturberSelectionMode i 1 SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndex i 1 SHE-VECTORING-MIB::sheVectoredSystemVceState i 0",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A name unique across all instances of this managed object to identify ",
+							"the specific instance when using CLI.",
+							"",
+							"Spaces and other special characters (: ?) are not allowed!"
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The administrative state of the VectoredSystem.",
+							"",
+							"Setting the adminState to the following values will have the following consequencies:",
+							"locked(1) If the operState = Enabled the operation of the resources will be shut ",
+							"down and the operState will go into Disabled.",
+							"unlocked(2) If the operState = Disabled the resources will attempt go into operation ",
+							"and, if successful the operState will go into Enabled."
+						],
+						"enums" : {
+							"1" : "locked",
+							"2" : "unlocked"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemAdminState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The operational state of the VectoredSystem."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemOperState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The availability status conditions of an instance of a VectoredSystem.",
+							"",
+							"failed(2) One or more of the resources represented by the managed object has ",
+							"an internal fault that prevents it from operating.",
+							"-> Alarm sheVectoredSystemFailedAlarm will be raised",
+							"offline(4) The resource has been administratively locked and all resources ",
+							"represented by this managed object are not in use. ",
+							"dependency(6) One or more of the resources represented by this managed object ",
+							"cannot operate, because some other resource, which is not ",
+							"represented by this managed object and on which it depends is ",
+							"unavailable.",
+							"-> Alarm sheVectoredSystemDependencyAlarm will be raised",
+							"degraded(7) Functionality provided by one or more of the resources represented ",
+							"by the managed object is degraded, but limited operation is still ",
+							"possible.",
+							"-> Alarm sheVectoredSystemDegradedAlarm will be raised",
+							"",
+							"The VectoredSystem is fully available if the operState is enabled and no availabilityStatus bit is set",
+							"(availabilityStatus == 0)."
+						],
+						"enums" : {
+							"0" : "reserved0",
+							"1" : "reserved1",
+							"2" : "failed",
+							"3" : "reserved3",
+							"4" : "offline",
+							"5" : "reserved5",
+							"6" : "dependency",
+							"7" : "degraded",
+							"8" : "notInstalled"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemAvailabilityStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.5",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The profile index specified here identifies a row in the sheVectoredSystemProfileTable ",
+							"that is to apply to this instance of sheVectoredSystemEntry.",
+							"",
+							"The configuration of a profile is mandatory; per default the auto-created default row ",
+							"in the sheVectoredSystemProfileTable will be referenced. ",
+							"",
+							"Default value references a default sheVectoredSystemProfileEntry appropriate to the type of ",
+							"vectoring cards used."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemVectoredSystemProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A list of references (entPhysicalIndex) to instances of sheVectoredCardEntry that ",
+							"comprise this VectoredSystem.",
+							"",
+							"Each entry in the list consists of 2 octets."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemMemberCardList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Determines how the vectored system is to select disturbers to perform crosstalk cancelation for xDSL lines ",
+							"served by the vectored systen.",
+							"",
+							"automatic(1) The vectored system automatically determines the best groupings of xDSL ",
+							"lines to determine the disturbers to perform crosstalk cancelation.",
+							"",
+							"",
+							"useVectoredGroups(2) The vectored system uses the configured vectored groups of xDSL lines of the vectored ",
+							"system to determine the disturbers to perform crosstalk cancelation.",
+							"",
+							"",
+							"In R4.7.1M not configurable. Only automatic(1) is supported."
+						],
+						"enums" : {
+							"1" : "automatic",
+							"2" : "useVectoredGroups"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemDisturberSelectionMode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Index identifying the instance of sheAlarmSeverityProfileEntry that defines the alarm ",
+							"severities for the vectored system."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The current VCE state of the VectoredSystem:",
+							"idle(0) - The VCE is idle",
+							"snrMeasurement(1) - The VCE is performing SNR measurements",
+							"oPVector1(2) - The VCE is performing phase O-P-VECTOR 1 of the ",
+							"initialization phase",
+							"rPVector1(3) - The VCE is performing phase R-P-VECTOR 1 of the ",
+							"initialization phase",
+							"oPVector11(4) - The VCE is performing phase O-P-VECTOR 1-1 of the ",
+							"initialization phase",
+							"oPVector2(5) - The VCE is performing phase O-P-VECTOR 2 of the ",
+							"initialization phase",
+							"oPVector21(6) - The VCE is performing phase O-P-VECTOR 2-1 of the ",
+							"initialization phase",
+							"rPVector2(7) - The VCE is performing phase R-P-VECTOR 2 of the ",
+							"initialization phase",
+							"joiningLinesInShowtime(8) - The VCE is in the process of joining lines in showtime",
+							"fastTrackDs(9) - The VCE is performing fast track in the downstream",
+							"fastTrackUs(10) - The VCE is performing fast track in the upstream",
+							"trackingInactive(11) - Tracking is inactive",
+							"trackingActive(12) - Tracking is active."
+						],
+						"enums" : {
+							"0" : "idle",
+							"1" : "snrMeasurement",
+							"2" : "oPVector1",
+							"3" : "rPVector1",
+							"4" : "oPVector11",
+							"5" : "oPVector2",
+							"6" : "oPVector21",
+							"7" : "rPVector2",
+							"8" : "joiningLinesInShowtime",
+							"9" : "fastTrackDs",
+							"10" : "fastTrackUs",
+							"11" : "trackingInactive",
+							"12" : "trackingActive"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemVceState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on deletion of an instance of sheVectoredSystemEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SystemControlIndex:$v2",
+				"Summary" : "Vectored system entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemDeleted SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemControlIndex u 0",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Identify the instance of sheVectoredSystemEntry to be modified."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemAdminStateModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on modification of sheVectoredSystemAdminState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredSystemAdminStateModified",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Vectored system administrative state changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemAdminStateModified SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemAdminState i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemAdminStateModified SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemAdminState i 2"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemAdminStateModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The administrative state of the VectoredSystem.",
+							"",
+							"Setting the adminState to the following values will have the following consequencies:",
+							"locked(1) If the operState = Enabled the operation of the resources will be shut ",
+							"down and the operState will go into Disabled.",
+							"unlocked(2) If the operState = Disabled the resources will attempt go into operation ",
+							"and, if successful the operState will go into Enabled."
+						],
+						"enums" : {
+							"1" : "locked",
+							"2" : "unlocked"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemAdminState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on modification of an instance of sheVectoredSystemEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SystemProfileIndex:$v2",
+				"Summary" : "Vectored system entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemModified SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemVectoredSystemProfileIndex u 9999 SHE-VECTORING-MIB::sheVectoredSystemMemberCardList s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndex i 1",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The profile index specified here identifies a row in the sheVectoredSystemProfileTable ",
+							"that is to apply to this instance of sheVectoredSystemEntry.",
+							"",
+							"The configuration of a profile is mandatory; per default the auto-created default row ",
+							"in the sheVectoredSystemProfileTable will be referenced. ",
+							"",
+							"Default value references a default sheVectoredSystemProfileEntry appropriate to the type of ",
+							"vectoring cards used."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemVectoredSystemProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A list of references (entPhysicalIndex) to instances of sheVectoredCardEntry that ",
+							"comprise this VectoredSystem.",
+							"",
+							"Each entry in the list consists of 2 octets."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemMemberCardList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Index identifying the instance of sheAlarmSeverityProfileEntry that defines the alarm ",
+							"severities for the vectored system."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.9",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndexModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on modification of ",
+				"sheVectoredSystemAlarmSeverityProfileIndex."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemAlarmSeverityProfileIndexModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Alarm severity profile index $v1 modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndexModified SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndex i 1",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndexModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.5",
+				"variables" : [
+					{
+						"description" : [
+							"Index identifying the instance of sheAlarmSeverityProfileEntry that defines the alarm ",
+							"severities for the vectored system."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemAlarmSeverityProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.9",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemRecoverVectoringReqResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification of the completion of the command recoverVectoring(6) on a ",
+				"VectoredSystem for one or more VectoredCards.",
+				"Long running command."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemRecoverVectoringReqResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==0) ? 1 : (($v4==30 || $v4==32 || $v4==37 || $v4==82 || $v4==83 || $v4==84 || $v4==88) ? 2 : 3)"
+				},
+				"SubNode" : "SystemControlIndex:$v2",
+				"Summary" : "Vectored system $v1 request result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemRecoverVectoringReqResult SHE-VECTORING-MIB::sheVectoredSystemControlRequest i 0 SHE-VECTORING-MIB::sheVectoredSystemControlIndex u 0 SHE-VECTORING-MIB::sheVectoredSystemControlStatus i 0 SHE-VECTORING-MIB::sheVectoredSystemControlReqResult i 31 SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp u 9999",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemRecoverVectoringReqResult SHE-VECTORING-MIB::sheVectoredSystemControlRequest i 0 SHE-VECTORING-MIB::sheVectoredSystemControlIndex u 0 SHE-VECTORING-MIB::sheVectoredSystemControlStatus i 0 SHE-VECTORING-MIB::sheVectoredSystemControlReqResult i 37 SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp u 9999"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemRecoverVectoringReqResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.6",
+				"variables" : [
+					{
+						"description" : [
+							"VectoredSystem commands:",
+							"",
+							"createVectoredSystem (1): ",
+							"sheVectoredSystemControlName",
+							"",
+							"",
+							"modifyVectoredSystem (2):",
+							"-> NOTE: Modifications only possible, if sheVectoredSystemAdminState == locked(1).",
+							"sheVectoredSystemControlIndex",
+							"sheVectoredSystemControlProfileIndex",
+							"sheVectoredSystemControlMemberCardList",
+							"sheVectoredSystemContorlAlarmSeverityProfileIndex",
+							"",
+							"deleteVectoredSystem (3):",
+							"-> NOTE: Deletion only possible, if sheVectoredSystemAdminState == locked(1).",
+							"sheVectoredSystemControlIndex",
+							"",
+							"setVectoredSystemAdminState (4):",
+							"sheVectoredSystemControlIndex",
+							"sheVectoredSystemControlAdminState",
+							"",
+							"setVectoredSystemAlarmSeverityProfile (5):",
+							"sheVectoredSystemControlIndex",
+							"sheVectoredSystemContorlAlarmSeverityProfileIndex",
+							"",
+							"recoverVectoring (6): [NO_CONFIG-CHANGE]",
+							"sheVectoredSystemControlIndex",
+							"sheVectoredSystemControlMemberCardList",
+							"",
+							"setVectoredSystemMemberCardList (7):",
+							"-> New in SR5.1",
+							"-> NOTE: If sheVectoredSystemAdminState == unlocked(2), a vectored ",
+							"card that is acting as master of the vectored system",
+							"(sheVectoredCardIsVectoredSystemMaster=true(1))",
+							"cannot be removed from the member list; changing the master ",
+							"of a vectored system would require a restart of the ",
+							"vectored system and can only be done when the vectored system ",
+							"is locked.",
+							"sheVectoredSystemControlIndex",
+							"sheVectoredSystemControlMemberCardList",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: setVectoredSystemMemberCardList(7) added.",
+							""
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"1" : "createVectoredSystem",
+							"2" : "modifyVectoredSystem",
+							"3" : "deleteVectoredSystem",
+							"4" : "setVectoredSystemAdminState",
+							"5" : "setVectoredSystemAlarmSeverityProfile",
+							"6" : "recoverVectoring",
+							"7" : "setVectoredSystemMemberCardList",
+							"11" : "createVectoredSystemProfile",
+							"12" : "modifyVectoredSystemProfile",
+							"13" : "deleteVectoredSystemProfile",
+							"21" : "createVectoredGroup",
+							"22" : "modifyVectoredGroup",
+							"23" : "deleteVectoredGroup",
+							"24" : "setVectoredGroupAdminState",
+							"25" : "addVectoredGroupMemberPorts",
+							"26" : "removeVectoredGroupMemberPorts"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Identify the instance of sheVectoredSystemEntry to be modified."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The status of a control request. "
+						],
+						"enums" : {
+							"0" : "requestNone",
+							"1" : "requestIdle",
+							"2" : "requestBusy",
+							"3" : "requestPassed",
+							"4" : "requestFailed"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command. "
+						],
+						"enums" : {
+							"0" : "none",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"40" : "featureNotSupported",
+							"41" : "incompatibleConfigurationDetected",
+							"50" : "vectoredSystemAlreadyExists",
+							"51" : "vectoredSystemDoesNotExist",
+							"52" : "vectoredSystemIsActive",
+							"53" : "maxNoOfVectoredSystemsAlreadyReached",
+							"54" : "invalidMemberCardIndex",
+							"55" : "maxNoOfAssignedVectoredCardsAlreadyReached",
+							"56" : "memberCardTypeError",
+							"57" : "memberCardDoesNotSupportVectoring",
+							"58" : "memberCardHasNoVectoringRoleCapabilities",
+							"59" : "memberCardIsAlreadyAMemberOfAVectoredSystem",
+							"60" : "memberCardIsOfIncompatibleVectoringFamily",
+							"61" : "maxNoOfClientCardsExceeded",
+							"62" : "memberCardListNotEmpty",
+							"63" : "maxNoOfClientPortsExceeded",
+							"64" : "memberCardListIsEmpty",
+							"65" : "vectoredSystemHasNoPorts",
+							"66" : "masterRoleCannotBeChangedInActiveVectoredSystem",
+							"70" : "noMasterVectoredCardInVectoredSystem",
+							"71" : "clientVectoredCardsWithoutClientRoleCapabilities",
+							"80" : "vectoredSystemProfileNameAlreadyExists",
+							"81" : "vectoredSystemProfileDoesNotExist",
+							"82" : "vectoredSystemProfileInUse",
+							"83" : "vectoredSystemProfileUsedByActiveVectoredSystem",
+							"84" : "vectoredSystemProfileIsReadOnly",
+							"85" : "maxNoOfVectoredSystemProfilesAlreadyReached",
+							"86" : "vectoredSystemProfileContainsIncompatibleBands",
+							"87" : "vectoredSystemProfileIndexAlreadyExists",
+							"88" : "vectoredSystemProfileIndexWithinReservedRange"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemMemberCardListModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that ",
+				"sheVectoredSystemMemberCardList has been modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemMemberCardListModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Vectored system member card list modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemMemberCardListModified SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemMemberCardList s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemMemberCardListModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.7",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A list of references (entPhysicalIndex) to instances of sheVectoredCardEntry that ",
+							"comprise this VectoredSystem.",
+							"",
+							"Each entry in the list consists of 2 octets."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemMemberCardList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemProfileCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on creation of a new instance of sheVectoredSystemProfileEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemProfileCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Vectored system profile $v2 entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemProfileCreated SHE-VECTORING-MIB::sheVectoredSystemProfileControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemProfileName s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileInterpolationFactor i 1 SHE-VECTORING-MIB::sheVectoredSystemProfileOrthogonalSeqLen i 3 SHE-VECTORING-MIB::sheVectoredSystemProfileSupersetBandDs s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileSupersetBandUs s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileNonVectoredBandDs s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileNonVectoredBandUs s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileMaxNoOfDisturbers u 0 SHE-VECTORING-MIB::sheVectoredSystemProfileOPVector1SynchTimeoutShowtime u 0 SHE-VECTORING-MIB::sheVectoredSystemProfileOPVector1SynchTimeoutNoShowtime u 0 SHE-VECTORING-MIB::sheVectoredSystemProfileMemberCardDegradedBehavior i 0 SHE-VECTORING-MIB::sheVectoredSystemProfileMemberCardRecoveryBehavior i 1",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.11",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A name unique across all instances of this managed object to identify ",
+							"the specific instance when using CLI.",
+							"",
+							"Spaces and other special characters (: ?) are not allowed!"
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interpolation factor influences the selection of which DMT tone carriers will actually ",
+							"be used to determine crosstalk coupling and for which crosstalk coefficients will be ",
+							"calculated. For all other DMT tone carriers involved in vectoring, the crosstalk coupling ",
+							"will be interpolated.",
+							"",
+							"The following interpolation factors are possible:",
+							"1, 2, 4, 8, 16, 32, 48, 64.",
+							"",
+							"IMPORTANT: ",
+							"Since the interpolation factor determines the tone spacing used to select DMT tone carriers ",
+							"for which crosstalk coupling is actually determined, decreasing the interpolation factor will ",
+							"increase the number of DMT tone carriers for which crosstalk coupling will be determined and ",
+							"increasing the number of these DMT tone carriers will increase demand on computing power ",
+							"and hardware resources. If sufficient resources are not available within the vectored ",
+							"system to meet this demand, the vectored system may reduce the set of disturbers used for ",
+							"cancellation and the effectiveness of vectoring would be reduced."
+						],
+						"enums" : {
+							"1" : "interpolFactor1",
+							"2" : "interpolFactor2",
+							"4" : "interpolFactor4",
+							"8" : "interpolFactor8",
+							"16" : "interpolFactor16",
+							"32" : "interpolFactor32",
+							"48" : "interpolFactor48",
+							"64" : "interpolFactor64"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileInterpolationFactor",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The orthogonal sequence length used by the Vectored System for alignment and synchronization ",
+							"of lines within a vectored system.",
+							"",
+							"Set as a power of 2. Only powers of 2 are permitted that result in a orthogonal sequence ",
+							"length between 8 and 512.",
+							"",
+							"Default: 6 (2 to the power of 6 = orthogonal sequence length of 64 bits)"
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileOrthogonalSeqLen",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the superset of subcarrier frequencies in the downstream that are to ",
+							"considered for crosstalk cancellation by the vectored system.",
+							"",
+							"Frequencies are identified using subcarrier indices that are always calculated ",
+							"assuming 4.3125 kHz subcarrier spacing (i.e., independent of any subcarrier spacing ",
+							"actually used). ",
+							"",
+							"Subcarrier index range: 0..8191.",
+							"",
+							"Per default all possible subcarrier frequencies are included, i.e., the default ",
+							"superset band is ",
+							"- start subcarrier = 0 = 0000'h",
+							"- stop subcarrier = 8191 = 1FFF'h",
+							""
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileSupersetBandDs",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the superset of subcarrier frequencies in the upstream that are to ",
+							"considered for crosstalk cancellation by the vectored system.",
+							"",
+							"Frequencies are identified using subcarrier indices that are always calculated ",
+							"assuming 4.3125 kHz subcarrier spacing (i.e., independent of any subcarrier spacing ",
+							"actually used). ",
+							"",
+							"Subcarrier index range: 0..8191.",
+							"",
+							"Per default all possible subcarrier frequencies are included, i.e., the default ",
+							"superset band is ",
+							"- start subcarrier = 0 = 0000'h",
+							"- stop subcarrier = 8191 = 1FFF'h"
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileSupersetBandUs",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies sets of subcarrier frequencies in the downstream ",
+							"that are to not to be considered for crosstalk cancellation by ",
+							"the vectored system.",
+							"",
+							"Frequencies are identified using subcarrier indices that are ",
+							"always calculated assuming 4.3125 kHz subcarrier spacing ",
+							"(i.e., independent of any subcarrier spacing actually used). ",
+							"",
+							"Subcarrier index range: 0..8191.",
+							"",
+							"Per default no bands are selected to be excluded from ",
+							"vectoring.",
+							"",
+							"NOTE ",
+							"This configuration has no effect. ",
+							"Non-vectored bands are configured via the Vectoring Profile ",
+							"assigned to the line within the SHE-XDSL-MIB using the ",
+							"parameters sheXdslVectoringProfileVectorBandControlDs or ",
+							"sheXdsl2VectoringConfProfVectorBandControlDs accordingly.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 V1.565: Set STATUS to 'deprecated'. "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileNonVectoredBandDs",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies sets of subcarrier frequencies in the upstream that ",
+							"are to not to be considered for crosstalk cancellation by the ",
+							"vectored system.",
+							"",
+							"Frequencies are identified using subcarrier indices that are ",
+							"always calculated assuming 4.3125 kHz subcarrier spacing ",
+							"(i.e., independent of any subcarrier spacing actually used). ",
+							"",
+							"Subcarrier index range: 0..8191.",
+							"",
+							"Per default no bands are selected to be excluded from ",
+							"vectoring.",
+							"",
+							"NOTE ",
+							"This configuration has no effect. ",
+							"Non-vectored bands are configured via the Vectoring Profile ",
+							"assigned to the line within the SHE-XDSL-MIB using the ",
+							"parameters sheXdslVectoringProfileVectorBandControlUs or ",
+							"sheXdsl2VectoringConfProfVectorBandControlUs accordingly.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 V1.565: Set STATUS to 'deprecated'."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileNonVectoredBandUs",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the maximum number of disturbers whose FEXT is to be cancelled in ",
+							"the victim lines of the vectored system.",
+							"",
+							"Values:",
+							"0 - Special value",
+							"Attempt full cancellation for all lines within the vectored system (default)",
+							">1 - The maximum number of disturber lines, whose FEXT is to be cancelled.",
+							"",
+							"PLEASE NOTE: SPECIAL CARE MUST BE TAKEN WHEN MODIFYING THIS PARAMETER AS AN INCORRECT ",
+							"CONFIGURATION MAY HAVE DETRIMENTAL EFFECT ON THE OPERATION OF THE VECTORED SYSTEM."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileMaxNoOfDisturbers",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object allows the optional configuration of the O-P-VECTOR 1 synchronization ",
+							"timeout to be used by the vectored system for initializing lines when the vectored ",
+							"system has lines already in showtime.",
+							"",
+							"In a vectored system, FEXT coupling channel coefficients must be estimated ",
+							"or updated before the potential crosstalk occurs from the lines joining the vectored ",
+							"system. Therefore, after the handshake phase, the FEXT coupling channel coefficients ",
+							"are estimated from the initializing lines into the showtime lines through transmission ",
+							"of the O-P-VECTOR 1 signal on the initializing lines.",
+							"",
+							"Usually the joining lines will have differing handshake durations and will, therefore, ",
+							"begin sending their O-P-VECTOR 1 signals at different points in time after the ",
+							"completion of the handshake phase and O-P-QUIET 1 stage. This O-P-VECTOR 1 synchronization ",
+							"timeout defines how long the vectored system waits for initializing lines to send their ",
+							"O-P-VECTOR 1 signals, before proceeding with the initialization. Once the timeout has ",
+							"occurred, other initializing lines cannot join the vectored system and must wait until ",
+							"initialization of the accepted lines reaches showtime.",
+							"",
+							"Thus, varying the length of the synchronization timeout may have an impact on the ",
+							"success rate of the number of lines being allowed to join a vectored system at any ",
+							"one time. ",
+							"",
+							"Values:",
+							"0 - Special value:",
+							"The timeout is determined by the vectored system (default)",
+							"1..60 - The timeout in seconds",
+							"",
+							"PLEASE NOTE: SPECIAL CARE MUST BE TAKEN WHEN MODIFYING THIS PARAMETER AS AN INCORRECT ",
+							"CONFIGURATION MAY HAVE DETRIMENTAL EFFECT ON THE OPERATION OF THE VECTORED SYSTEM."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileOPVector1SynchTimeoutShowtime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object allows the optional configuration of the O-P-VECTOR 1 synchronization ",
+							"timeout to be used by the vectored system for initializing lines when no other lines ",
+							"within the vectored system are in showtime, e.g., at a full system start-up.",
+							"",
+							"In a vectored system, FEXT coupling channel coefficients must be estimated ",
+							"or updated before the potential crosstalk occurs from the lines joining the vectored ",
+							"system. Therefore, after the handshake phase, the FEXT coupling channel coefficients ",
+							"are estimated from the initializing lines into the showtime lines through transmission ",
+							"of the O-P-VECTOR 1 signal on the initializing lines.",
+							"",
+							"Usually the joining lines will have differing handshake durations and will, therefore, ",
+							"begin sending their O-P-VECTOR 1 signals at different points in time after the ",
+							"completion of the handshake phase and O-P-QUIET 1 stage. This O-P-VECTOR 1 synchronization ",
+							"timeout defines how long the vectored system waits for initializing lines to send their ",
+							"O-P-VECTOR 1 signals, before proceeding with the initialization. Once the timeout has ",
+							"occurred, other initializing lines cannot join the vectored system and must wait until ",
+							"initialization of the accepted lines reaches showtime.",
+							"",
+							"Thus, varying the length of the synchronization timeout may have an impact on the ",
+							"success rate of the number of lines being allowed to join a vectored system at any ",
+							"one time. ",
+							"",
+							"Values:",
+							"0 - Special value:",
+							"The timeout is determined by the vectored system (default)",
+							"1..60 - The timeout in seconds",
+							"",
+							"PLEASE NOTE: SPECIAL CARE MUST BE TAKEN WHEN MODIFYING THIS PARAMETER AS AN INCORRECT ",
+							"CONFIGURATION MAY HAVE DETRIMENTAL EFFECT ON THE OPERATION OF THE VECTORED SYSTEM."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileOPVector1SynchTimeoutNoShowtime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object allows the configuration of the behavior for all cards that comprise the VectoredSystem ",
+							"when a card becomes degraded and cannot take full part in FEXT cancellation.",
+							"",
+							"doNothing(0) - The card takes no action",
+							"forceLinesDown(1) - The card forces all ports to be operationally 'down'",
+							"forceLinesFallback(2) - The card forces all ports into fallback mode.",
+							"",
+							"NOTE:",
+							"If forceLinesFallback(2) is selected, but fallback mode for one or more lines is not configured",
+							"(in sheXdslMib), the line(s) may not successfully initialize."
+						],
+						"enums" : {
+							"0" : "doNothing",
+							"1" : "forceLinesDown",
+							"2" : "forceLinesFallback"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileMemberCardDegradedBehavior",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object allows the configuration of the behavior of the VectoredSystem with regard to ",
+							"how it recovers degraded cards that may be able to take full part in FEXT cancellation again.",
+							"",
+							"automatic(1) - Once the VectoredSystem determines that a member card has the prerequisites to ",
+							"take part in FEXT cancellation, the VectoredSystem automatically triggers the ",
+							"member card to re-attempt participation in FEXT cancellation.",
+							"manual(2) - Degraded cards will only re-attempt to participation in FEXT cancellation, if ",
+							"explicitly triggered to do so through invocation of the command recoverVectoring(6) ",
+							"for the member card of the VectoredSystem."
+						],
+						"enums" : {
+							"1" : "automatic",
+							"2" : "manual"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileMemberCardRecoveryBehavior",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemProfileDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on deletion of an instance of sheVectoredSystemProfileEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemProfileDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ProfileControlIndex:$v2",
+				"Summary" : "Vectored system profile entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemProfileDeleted SHE-VECTORING-MIB::sheVectoredSystemProfileControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemProfileControlIndex u 9999",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.12",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Value of sheVectoredSystemProfileIndex identifying the instance of ",
+							"sheVectoredSystemProfileEntry to be created/modified/deleted.",
+							"",
+							"NOTE:",
+							"The value zero is only allowed as an option for the control request createVectoredSystemProfile, ",
+							"in which case the NE will assign the value of sheVectoredSystemProfileIndex automatically to ",
+							"the newly created instance of sheVectoredSystemProfileEntry.",
+							"",
+							""
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.2.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredSystemProfileModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on modification of an instance of sheVectoredSystemProfileEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredSystemProfileModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Vectored system profile entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredSystemProfileModified SHE-VECTORING-MIB::sheVectoredSystemProfileControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredSystemProfileInterpolationFactor i 1 SHE-VECTORING-MIB::sheVectoredSystemProfileOrthogonalSeqLen i 3 SHE-VECTORING-MIB::sheVectoredSystemProfileSupersetBandDs s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileSupersetBandUs s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileNonVectoredBandDs s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileNonVectoredBandUs s EXAMPLE SHE-VECTORING-MIB::sheVectoredSystemProfileMaxNoOfDisturbers u 0 SHE-VECTORING-MIB::sheVectoredSystemProfileOPVector1SynchTimeoutShowtime u 0 SHE-VECTORING-MIB::sheVectoredSystemProfileOPVector1SynchTimeoutNoShowtime u 0 SHE-VECTORING-MIB::sheVectoredSystemProfileMemberCardRecoveryBehavior i 1 SHE-VECTORING-MIB::sheVectoredSystemProfileMemberCardDegradedBehavior i 0",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.13",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The interpolation factor influences the selection of which DMT tone carriers will actually ",
+							"be used to determine crosstalk coupling and for which crosstalk coefficients will be ",
+							"calculated. For all other DMT tone carriers involved in vectoring, the crosstalk coupling ",
+							"will be interpolated.",
+							"",
+							"The following interpolation factors are possible:",
+							"1, 2, 4, 8, 16, 32, 48, 64.",
+							"",
+							"IMPORTANT: ",
+							"Since the interpolation factor determines the tone spacing used to select DMT tone carriers ",
+							"for which crosstalk coupling is actually determined, decreasing the interpolation factor will ",
+							"increase the number of DMT tone carriers for which crosstalk coupling will be determined and ",
+							"increasing the number of these DMT tone carriers will increase demand on computing power ",
+							"and hardware resources. If sufficient resources are not available within the vectored ",
+							"system to meet this demand, the vectored system may reduce the set of disturbers used for ",
+							"cancellation and the effectiveness of vectoring would be reduced."
+						],
+						"enums" : {
+							"1" : "interpolFactor1",
+							"2" : "interpolFactor2",
+							"4" : "interpolFactor4",
+							"8" : "interpolFactor8",
+							"16" : "interpolFactor16",
+							"32" : "interpolFactor32",
+							"48" : "interpolFactor48",
+							"64" : "interpolFactor64"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileInterpolationFactor",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The orthogonal sequence length used by the Vectored System for alignment and synchronization ",
+							"of lines within a vectored system.",
+							"",
+							"Set as a power of 2. Only powers of 2 are permitted that result in a orthogonal sequence ",
+							"length between 8 and 512.",
+							"",
+							"Default: 6 (2 to the power of 6 = orthogonal sequence length of 64 bits)"
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileOrthogonalSeqLen",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the superset of subcarrier frequencies in the downstream that are to ",
+							"considered for crosstalk cancellation by the vectored system.",
+							"",
+							"Frequencies are identified using subcarrier indices that are always calculated ",
+							"assuming 4.3125 kHz subcarrier spacing (i.e., independent of any subcarrier spacing ",
+							"actually used). ",
+							"",
+							"Subcarrier index range: 0..8191.",
+							"",
+							"Per default all possible subcarrier frequencies are included, i.e., the default ",
+							"superset band is ",
+							"- start subcarrier = 0 = 0000'h",
+							"- stop subcarrier = 8191 = 1FFF'h",
+							""
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileSupersetBandDs",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the superset of subcarrier frequencies in the upstream that are to ",
+							"considered for crosstalk cancellation by the vectored system.",
+							"",
+							"Frequencies are identified using subcarrier indices that are always calculated ",
+							"assuming 4.3125 kHz subcarrier spacing (i.e., independent of any subcarrier spacing ",
+							"actually used). ",
+							"",
+							"Subcarrier index range: 0..8191.",
+							"",
+							"Per default all possible subcarrier frequencies are included, i.e., the default ",
+							"superset band is ",
+							"- start subcarrier = 0 = 0000'h",
+							"- stop subcarrier = 8191 = 1FFF'h"
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileSupersetBandUs",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies sets of subcarrier frequencies in the downstream ",
+							"that are to not to be considered for crosstalk cancellation by ",
+							"the vectored system.",
+							"",
+							"Frequencies are identified using subcarrier indices that are ",
+							"always calculated assuming 4.3125 kHz subcarrier spacing ",
+							"(i.e., independent of any subcarrier spacing actually used). ",
+							"",
+							"Subcarrier index range: 0..8191.",
+							"",
+							"Per default no bands are selected to be excluded from ",
+							"vectoring.",
+							"",
+							"NOTE ",
+							"This configuration has no effect. ",
+							"Non-vectored bands are configured via the Vectoring Profile ",
+							"assigned to the line within the SHE-XDSL-MIB using the ",
+							"parameters sheXdslVectoringProfileVectorBandControlDs or ",
+							"sheXdsl2VectoringConfProfVectorBandControlDs accordingly.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 V1.565: Set STATUS to 'deprecated'. "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileNonVectoredBandDs",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies sets of subcarrier frequencies in the upstream that ",
+							"are to not to be considered for crosstalk cancellation by the ",
+							"vectored system.",
+							"",
+							"Frequencies are identified using subcarrier indices that are ",
+							"always calculated assuming 4.3125 kHz subcarrier spacing ",
+							"(i.e., independent of any subcarrier spacing actually used). ",
+							"",
+							"Subcarrier index range: 0..8191.",
+							"",
+							"Per default no bands are selected to be excluded from ",
+							"vectoring.",
+							"",
+							"NOTE ",
+							"This configuration has no effect. ",
+							"Non-vectored bands are configured via the Vectoring Profile ",
+							"assigned to the line within the SHE-XDSL-MIB using the ",
+							"parameters sheXdslVectoringProfileVectorBandControlUs or ",
+							"sheXdsl2VectoringConfProfVectorBandControlUs accordingly.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 V1.565: Set STATUS to 'deprecated'."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileNonVectoredBandUs",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the maximum number of disturbers whose FEXT is to be cancelled in ",
+							"the victim lines of the vectored system.",
+							"",
+							"Values:",
+							"0 - Special value",
+							"Attempt full cancellation for all lines within the vectored system (default)",
+							">1 - The maximum number of disturber lines, whose FEXT is to be cancelled.",
+							"",
+							"PLEASE NOTE: SPECIAL CARE MUST BE TAKEN WHEN MODIFYING THIS PARAMETER AS AN INCORRECT ",
+							"CONFIGURATION MAY HAVE DETRIMENTAL EFFECT ON THE OPERATION OF THE VECTORED SYSTEM."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileMaxNoOfDisturbers",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object allows the optional configuration of the O-P-VECTOR 1 synchronization ",
+							"timeout to be used by the vectored system for initializing lines when the vectored ",
+							"system has lines already in showtime.",
+							"",
+							"In a vectored system, FEXT coupling channel coefficients must be estimated ",
+							"or updated before the potential crosstalk occurs from the lines joining the vectored ",
+							"system. Therefore, after the handshake phase, the FEXT coupling channel coefficients ",
+							"are estimated from the initializing lines into the showtime lines through transmission ",
+							"of the O-P-VECTOR 1 signal on the initializing lines.",
+							"",
+							"Usually the joining lines will have differing handshake durations and will, therefore, ",
+							"begin sending their O-P-VECTOR 1 signals at different points in time after the ",
+							"completion of the handshake phase and O-P-QUIET 1 stage. This O-P-VECTOR 1 synchronization ",
+							"timeout defines how long the vectored system waits for initializing lines to send their ",
+							"O-P-VECTOR 1 signals, before proceeding with the initialization. Once the timeout has ",
+							"occurred, other initializing lines cannot join the vectored system and must wait until ",
+							"initialization of the accepted lines reaches showtime.",
+							"",
+							"Thus, varying the length of the synchronization timeout may have an impact on the ",
+							"success rate of the number of lines being allowed to join a vectored system at any ",
+							"one time. ",
+							"",
+							"Values:",
+							"0 - Special value:",
+							"The timeout is determined by the vectored system (default)",
+							"1..60 - The timeout in seconds",
+							"",
+							"PLEASE NOTE: SPECIAL CARE MUST BE TAKEN WHEN MODIFYING THIS PARAMETER AS AN INCORRECT ",
+							"CONFIGURATION MAY HAVE DETRIMENTAL EFFECT ON THE OPERATION OF THE VECTORED SYSTEM."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileOPVector1SynchTimeoutShowtime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object allows the optional configuration of the O-P-VECTOR 1 synchronization ",
+							"timeout to be used by the vectored system for initializing lines when no other lines ",
+							"within the vectored system are in showtime, e.g., at a full system start-up.",
+							"",
+							"In a vectored system, FEXT coupling channel coefficients must be estimated ",
+							"or updated before the potential crosstalk occurs from the lines joining the vectored ",
+							"system. Therefore, after the handshake phase, the FEXT coupling channel coefficients ",
+							"are estimated from the initializing lines into the showtime lines through transmission ",
+							"of the O-P-VECTOR 1 signal on the initializing lines.",
+							"",
+							"Usually the joining lines will have differing handshake durations and will, therefore, ",
+							"begin sending their O-P-VECTOR 1 signals at different points in time after the ",
+							"completion of the handshake phase and O-P-QUIET 1 stage. This O-P-VECTOR 1 synchronization ",
+							"timeout defines how long the vectored system waits for initializing lines to send their ",
+							"O-P-VECTOR 1 signals, before proceeding with the initialization. Once the timeout has ",
+							"occurred, other initializing lines cannot join the vectored system and must wait until ",
+							"initialization of the accepted lines reaches showtime.",
+							"",
+							"Thus, varying the length of the synchronization timeout may have an impact on the ",
+							"success rate of the number of lines being allowed to join a vectored system at any ",
+							"one time. ",
+							"",
+							"Values:",
+							"0 - Special value:",
+							"The timeout is determined by the vectored system (default)",
+							"1..60 - The timeout in seconds",
+							"",
+							"PLEASE NOTE: SPECIAL CARE MUST BE TAKEN WHEN MODIFYING THIS PARAMETER AS AN INCORRECT ",
+							"CONFIGURATION MAY HAVE DETRIMENTAL EFFECT ON THE OPERATION OF THE VECTORED SYSTEM."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileOPVector1SynchTimeoutNoShowtime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object allows the configuration of the behavior of the VectoredSystem with regard to ",
+							"how it recovers degraded cards that may be able to take full part in FEXT cancellation again.",
+							"",
+							"automatic(1) - Once the VectoredSystem determines that a member card has the prerequisites to ",
+							"take part in FEXT cancellation, the VectoredSystem automatically triggers the ",
+							"member card to re-attempt participation in FEXT cancellation.",
+							"manual(2) - Degraded cards will only re-attempt to participation in FEXT cancellation, if ",
+							"explicitly triggered to do so through invocation of the command recoverVectoring(6) ",
+							"for the member card of the VectoredSystem."
+						],
+						"enums" : {
+							"1" : "automatic",
+							"2" : "manual"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileMemberCardRecoveryBehavior",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object allows the configuration of the behavior for all cards that comprise the VectoredSystem ",
+							"when a card becomes degraded and cannot take full part in FEXT cancellation.",
+							"",
+							"doNothing(0) - The card takes no action",
+							"forceLinesDown(1) - The card forces all ports to be operationally 'down'",
+							"forceLinesFallback(2) - The card forces all ports into fallback mode.",
+							"",
+							"NOTE:",
+							"If forceLinesFallback(2) is selected, but fallback mode for one or more lines is not configured",
+							"(in sheXdslMib), the line(s) may not successfully initialize."
+						],
+						"enums" : {
+							"0" : "doNothing",
+							"1" : "forceLinesDown",
+							"2" : "forceLinesFallback"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredSystemProfileMemberCardDegradedBehavior",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.4.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredGroupCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on creation of a new instance of sheVectoredGroupEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredGroupCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New vectored group $v2 entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredGroupCreated SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredGroupName s EXAMPLE SHE-VECTORING-MIB::sheVectoredGroupAdminState i 1 SHE-VECTORING-MIB::sheVectoredGroupMemberPortList s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredGroupCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.14",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A name unique across all instances of this managed object to identify ",
+							"the specific instance when using CLI.",
+							"",
+							"Spaces and other special characters (: ?) are not allowed!"
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The administrative state of the VectoredGroup.",
+							"",
+							"Setting the adminState to the following values will have the following consequencies:",
+							"locked(1) - Deactivates vectoring of member xDSL lines.",
+							"When in the Locked state allows lines to be added to the VectoredGroup (provisioned)",
+							"without the individual lines initially participating in the vectoring. ",
+							"The VectoredGroup can1 then be unlocked when all members have been added.",
+							"Unlocked(2) - The group has been made available for vectoring. Whether vectoring takes place ",
+							"depends on the adminState of the VectoredSystem to which the VectoredGroup belongs."
+						],
+						"enums" : {
+							"1" : "locked",
+							"2" : "unlocked"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupAdminState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A list of ifIndex of xDSL ports that belong to this group.",
+							"Default: empty list."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupMemberPortList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredGroupDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on deletion of an instance of sheVectoredGroupEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredGroupDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ControlGroupIndex:$v3",
+				"Summary" : "Vectored group entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredGroupDeleted SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredGroupControlIndex u 1 SHE-VECTORING-MIB::sheVectoredGroupControlGroupIndex u 0",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredGroupDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.15",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Value of sheVectoredSystemIndex identifying the instance of sheVectoredSystemEntry to ",
+							"which the VectoredGroup to be created/modified/deleted belongs.",
+							"",
+							"NOTE:",
+							"A non-zero value is mandatory to identify the vectored system for which the vectored ",
+							"group is to be created/modified/deleted."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The sheVectoredGroupIndex of the instance of sheVectoredGroupEntry to be modified."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupControlGroupIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.2.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredGroupAdminStateModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on modification of sheVectoredGroupAdminState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "sheVectoredGroupAdminStateModified",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Vectored group administrative state modified to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredGroupAdminStateModified SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredGroupAdminState i 1",
+				"$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredGroupAdminStateModified SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredGroupAdminState i 2"
+			],
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredGroupAdminStateModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.16",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The administrative state of the VectoredGroup.",
+							"",
+							"Setting the adminState to the following values will have the following consequencies:",
+							"locked(1) - Deactivates vectoring of member xDSL lines.",
+							"When in the Locked state allows lines to be added to the VectoredGroup (provisioned)",
+							"without the individual lines initially participating in the vectoring. ",
+							"The VectoredGroup can1 then be unlocked when all members have been added.",
+							"Unlocked(2) - The group has been made available for vectoring. Whether vectoring takes place ",
+							"depends on the adminState of the VectoredSystem to which the VectoredGroup belongs."
+						],
+						"enums" : {
+							"1" : "locked",
+							"2" : "unlocked"
+						},
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupAdminState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-VECTORING-MIB::sheVectoredGroupModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification on modification of an instance of sheVectoredGroupEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheVectoredGroupModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Vectored group modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-VECTORING-MIB::sheVectoredGroupModified SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp u 9999 SHE-VECTORING-MIB::sheVectoredGroupMemberPortList s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-VECTORING-MIB::sheVectoredGroupModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.1.17",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A list of ifIndex of xDSL ports that belong to this group.",
+							"Default: empty list."
+						],
+						"name" : "SHE-VECTORING-MIB::sheVectoredGroupMemberPortList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.62.2.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

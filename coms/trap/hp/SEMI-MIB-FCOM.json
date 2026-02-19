@@ -1,0 +1,687 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200010160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgHealthTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever hpHttpMgHealth changes state. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2) ? 3 : ($v1==3) ? 1 : 2"
+				},
+				"EventType" : "hpHttpMgHealthTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2) ? 2 : ($v1==3) ? 0 : ($v1==5) ? 4 : ($v1==6) ? 5 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "hpHttpMgHealth changes state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgHealthTrap SEMI-MIB::hpHttpMgHealth i 1",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgHealthTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Operating status of this entity."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "information",
+							"3" : "ok",
+							"4" : "warning",
+							"5" : "critical",
+							"6" : "nonrecoverable"
+						},
+						"name" : "SEMI-MIB::hpHttpMgHealth",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.2.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgShutdown",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent when the agent is about to shut down. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpHttpMgShutdown",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Agent is about to shut down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgShutdown ",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgShutdown",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.2"
+			}
+		},
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgUnknownHealthTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device's health has changed to unknown."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpHttpMgHealth",
+				"ExpireTime" : 3600,
+				"Severity" : 1,
+				"SubNode" : "DeviceIndex:$v1",
+				"Summary" : "Device $v1 health changed to unknown"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgUnknownHealthTrap SEMI-MIB::hpHttpMgDeviceIndex i 0 SEMI-MIB::hpHttpMgDeviceSysObjID s EXAMPLE SEMI-MIB::hpHttpMgDeviceGlobalUniqueID s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURL s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURLLabel s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificEventCode s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificFRU s EXAMPLE",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgUnknownHealthTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The unique device identification within the ",
+							"instance of this Mib."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceIndex",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"System Object ID for this Device entity. This should be an",
+							"ASCII integer format. (i.e. 1.3.6.1.4.1.11.2.36.1.1) ",
+							"The value may not be null."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSysObjID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents a globally unique ID for the device. ",
+							"This MUST be the ordered combination of the Manufacturer, ",
+							"product name, AND any other text that is necessary to guarantee ",
+							"global uniqueness. This value may not be null.",
+							"e.g. HPD1234A9482882"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceGlobalUniqueID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the URL for the device's management ",
+							"software. If it does not exist the value is empty string. ",
+							"If write is not supported, then return invalid. This value is ",
+							"retained across boots."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURL",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The label that a management application should use for the ",
+							"hyperlink to the entity's URL."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURLLabel",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific event error code."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificEventCode",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific FRU identifier"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificFRU",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgOKHealthTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device's health has changed to OK."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hpHttpMgHealth",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "DeviceIndex:$v1",
+				"Summary" : "Device $v1 health changed to ok"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgOKHealthTrap SEMI-MIB::hpHttpMgDeviceIndex i 0 SEMI-MIB::hpHttpMgDeviceSysObjID s EXAMPLE SEMI-MIB::hpHttpMgDeviceGlobalUniqueID s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURL s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURLLabel s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificEventCode s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificFRU s EXAMPLE",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgOKHealthTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The unique device identification within the ",
+							"instance of this Mib."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceIndex",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"System Object ID for this Device entity. This should be an",
+							"ASCII integer format. (i.e. 1.3.6.1.4.1.11.2.36.1.1) ",
+							"The value may not be null."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSysObjID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents a globally unique ID for the device. ",
+							"This MUST be the ordered combination of the Manufacturer, ",
+							"product name, AND any other text that is necessary to guarantee ",
+							"global uniqueness. This value may not be null.",
+							"e.g. HPD1234A9482882"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceGlobalUniqueID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the URL for the device's management ",
+							"software. If it does not exist the value is empty string. ",
+							"If write is not supported, then return invalid. This value is ",
+							"retained across boots."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURL",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The label that a management application should use for the ",
+							"hyperlink to the entity's URL."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURLLabel",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific event error code."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificEventCode",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific FRU identifier"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificFRU",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgWarningHealthTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device's health has changed to warning."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpHttpMgHealth",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "DeviceIndex:$v1",
+				"Summary" : "Device $v1 health changed to warning"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgWarningHealthTrap SEMI-MIB::hpHttpMgDeviceIndex i 0 SEMI-MIB::hpHttpMgDeviceSysObjID s EXAMPLE SEMI-MIB::hpHttpMgDeviceGlobalUniqueID s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURL s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURLLabel s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificEventCode s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificFRU s EXAMPLE",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgWarningHealthTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The unique device identification within the ",
+							"instance of this Mib."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceIndex",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"System Object ID for this Device entity. This should be an",
+							"ASCII integer format. (i.e. 1.3.6.1.4.1.11.2.36.1.1) ",
+							"The value may not be null."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSysObjID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents a globally unique ID for the device. ",
+							"This MUST be the ordered combination of the Manufacturer, ",
+							"product name, AND any other text that is necessary to guarantee ",
+							"global uniqueness. This value may not be null.",
+							"e.g. HPD1234A9482882"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceGlobalUniqueID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the URL for the device's management ",
+							"software. If it does not exist the value is empty string. ",
+							"If write is not supported, then return invalid. This value is ",
+							"retained across boots."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURL",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The label that a management application should use for the ",
+							"hyperlink to the entity's URL."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURLLabel",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific event error code."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificEventCode",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific FRU identifier"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificFRU",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgCriticalHealthTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device's health has changed to critical."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpHttpMgHealth",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "DeviceIndex:$v1",
+				"Summary" : "Device $v1 health changed to critical"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgCriticalHealthTrap SEMI-MIB::hpHttpMgDeviceIndex i 0 SEMI-MIB::hpHttpMgDeviceSysObjID s EXAMPLE SEMI-MIB::hpHttpMgDeviceGlobalUniqueID s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURL s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURLLabel s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificEventCode s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificFRU s EXAMPLE",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgCriticalHealthTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The unique device identification within the ",
+							"instance of this Mib."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceIndex",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"System Object ID for this Device entity. This should be an",
+							"ASCII integer format. (i.e. 1.3.6.1.4.1.11.2.36.1.1) ",
+							"The value may not be null."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSysObjID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents a globally unique ID for the device. ",
+							"This MUST be the ordered combination of the Manufacturer, ",
+							"product name, AND any other text that is necessary to guarantee ",
+							"global uniqueness. This value may not be null.",
+							"e.g. HPD1234A9482882"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceGlobalUniqueID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the URL for the device's management ",
+							"software. If it does not exist the value is empty string. ",
+							"If write is not supported, then return invalid. This value is ",
+							"retained across boots."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURL",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The label that a management application should use for the ",
+							"hyperlink to the entity's URL."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURLLabel",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific event error code."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificEventCode",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific FRU identifier"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificFRU",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgNonRecoverableHealthTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device's health has changed to Non-Recoverable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpHttpMgHealth",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "DeviceIndex:$v1",
+				"Summary" : "Device $v1 health changed to nonrecoverable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgNonRecoverableHealthTrap SEMI-MIB::hpHttpMgDeviceIndex i 0 SEMI-MIB::hpHttpMgDeviceSysObjID s EXAMPLE SEMI-MIB::hpHttpMgDeviceGlobalUniqueID s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURL s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURLLabel s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificEventCode s EXAMPLE SEMI-MIB::hpHttpMgDeviceSpecificFRU s EXAMPLE",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgNonRecoverableHealthTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The unique device identification within the ",
+							"instance of this Mib."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceIndex",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"System Object ID for this Device entity. This should be an",
+							"ASCII integer format. (i.e. 1.3.6.1.4.1.11.2.36.1.1) ",
+							"The value may not be null."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSysObjID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents a globally unique ID for the device. ",
+							"This MUST be the ordered combination of the Manufacturer, ",
+							"product name, AND any other text that is necessary to guarantee ",
+							"global uniqueness. This value may not be null.",
+							"e.g. HPD1234A9482882"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceGlobalUniqueID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the URL for the device's management ",
+							"software. If it does not exist the value is empty string. ",
+							"If write is not supported, then return invalid. This value is ",
+							"retained across boots."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURL",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The label that a management application should use for the ",
+							"hyperlink to the entity's URL."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURLLabel",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific event error code."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificEventCode",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific FRU identifier"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSpecificFRU",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.0.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgDeviceAddedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever a device is added to the mib."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpHttpMgDeviceAddedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "DeviceIndex:$v1",
+				"Summary" : "Device $v1 is added to the mib"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgDeviceAddedTrap SEMI-MIB::hpHttpMgDeviceIndex i 0 SEMI-MIB::hpHttpMgDeviceSysObjID s EXAMPLE SEMI-MIB::hpHttpMgDeviceGlobalUniqueID s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURL s EXAMPLE SEMI-MIB::hpHttpMgDeviceManagementURLLabel s EXAMPLE",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgDeviceAddedTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The unique device identification within the ",
+							"instance of this Mib."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceIndex",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"System Object ID for this Device entity. This should be an",
+							"ASCII integer format. (i.e. 1.3.6.1.4.1.11.2.36.1.1) ",
+							"The value may not be null."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSysObjID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents a globally unique ID for the device. ",
+							"This MUST be the ordered combination of the Manufacturer, ",
+							"product name, AND any other text that is necessary to guarantee ",
+							"global uniqueness. This value may not be null.",
+							"e.g. HPD1234A9482882"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceGlobalUniqueID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the URL for the device's management ",
+							"software. If it does not exist the value is empty string. ",
+							"If write is not supported, then return invalid. This value is ",
+							"retained across boots."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURL",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The label that a management application should use for the ",
+							"hyperlink to the entity's URL."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceManagementURLLabel",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SEMI-MIB::hpHttpMgDeviceRemovedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever a device is removed from the mib."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpHttpMgDeviceRemovedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "DeviceIndex:$v1",
+				"Summary" : "Device $v1 is removed from the mib"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SEMI-MIB::hpHttpMgDeviceRemovedTrap SEMI-MIB::hpHttpMgDeviceIndex i 0 SEMI-MIB::hpHttpMgDeviceSysObjID s EXAMPLE SEMI-MIB::hpHttpMgDeviceGlobalUniqueID s EXAMPLE",
+			"trap" : {
+				"name" : "SEMI-MIB::hpHttpMgDeviceRemovedTrap",
+				"oid" : "1.3.6.1.4.1.11.2.36.1.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The unique device identification within the ",
+							"instance of this Mib."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceIndex",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"System Object ID for this Device entity. This should be an",
+							"ASCII integer format. (i.e. 1.3.6.1.4.1.11.2.36.1.1) ",
+							"The value may not be null."
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceSysObjID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents a globally unique ID for the device. ",
+							"This MUST be the ordered combination of the Manufacturer, ",
+							"product name, AND any other text that is necessary to guarantee ",
+							"global uniqueness. This value may not be null.",
+							"e.g. HPD1234A9482882"
+						],
+						"name" : "SEMI-MIB::hpHttpMgDeviceGlobalUniqueID",
+						"oid" : "1.3.6.1.4.1.11.2.36.1.1.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

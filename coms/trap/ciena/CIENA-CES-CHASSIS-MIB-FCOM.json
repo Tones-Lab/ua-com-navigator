@@ -1,0 +1,3378 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201810170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyFaultedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisPowerSupplyFaultedNotification is sent if a",
+				"power supply state changes to one of these:",
+				"- faulted (2)",
+				"- offline (3)",
+				"- unequipped(4)",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllPowerSupplyTrapState needs to be set to enabled",
+				"cienaCesChassisAllPowerSupplyTrapState is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisPowerSupplyIndx>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisPowerSupplyFaultNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1==3) ? 5 : (($v1==4) ? 4 : 3)"
+				},
+				"SubNode" : "cienaCesChassisPowerSupplyIndx:$v3",
+				"Summary" : "Power supply in slot $v6 changed state to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyFaultedNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyNotifIndx.1 i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyState i 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyType i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplySlotName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplySlotIndx u 1",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyFaultedNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the unique index of the table that is used in the",
+							"definition of power-supply traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyNotifIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Specifies the state of the power supply."
+						],
+						"enums" : {
+							"1" : "online",
+							"2" : "faulted",
+							"3" : "offline",
+							"4" : "uninstalled"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the power supply type."
+						],
+						"enums" : {
+							"1" : "ac",
+							"2" : "dc",
+							"3" : "unequipped",
+							"99" : "unknown"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the name of the chassis slot in which the power supply is",
+							"installed."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplySlotName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the power supply chassis slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplySlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyOnlineNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisPowerSupplyOnlineNotification is sent if a",
+				"power supply state changes to online(1).",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllPowerSupplyTrapState needs to be set to enabled",
+				"cienaCesChassisAllPowerSupplyTrapState is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisPowerSupplyIndx>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cienaCesChassisPowerSupplyFaultNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cienaCesChassisPowerSupplyIndx:$v3",
+				"Summary" : "Power supply in slot $v6 is online"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyOnlineNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyNotifIndx.1 i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyState i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyType i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplySlotName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplySlotIndx u 1",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyOnlineNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the unique index of the table that is used in the",
+							"definition of power-supply traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyNotifIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Specifies the state of the power supply."
+						],
+						"enums" : {
+							"1" : "online",
+							"2" : "faulted",
+							"3" : "offline",
+							"4" : "uninstalled"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the power supply type."
+						],
+						"enums" : {
+							"1" : "ac",
+							"2" : "dc",
+							"3" : "unequipped",
+							"99" : "unknown"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the name of the chassis slot in which the power supply is",
+							"installed."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplySlotName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplyShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the power supply chassis slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisPowerSupplySlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.1.1.1.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanHiTempNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisFanTempNotification is sent if the cienaCesChassisFanTemp is changed to high.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTempTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTempTrayIndx>[0-9]+)\\.(?P<cienaCesChassisFanTempId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisFanTemperatureNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1==3) ? 5 : (($v1==4) ? 4 : 3)"
+				},
+				"SubNode" : "cienaCesChassisFanTempEntry:$v3.$v4",
+				"Summary" : "Chassis fan $v8 temperature ($v5) exceeded high threshold ($v6)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanHiTempNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempTrayNotifIndx.4.2 i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempNotifId i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTemp i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempHiThreshold i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempShelfIndx u 0",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanHiTempNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the unique index used in fan temperature trap definition."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempTrayNotifIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the unique index used in fan temperature trap definition."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempNotifId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the current chassis fan temperature."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTemp",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the high threshold value for the fan temperature sensor."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempHiThreshold",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the fan temperature sensor name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanNormalTempNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisFanTempNotification is sent if the cienaCesChassisFanTemp is changed to normal.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTempTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTempTrayIndx>[0-9]+)\\.(?P<cienaCesChassisFanTempId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cienaCesChassisFanTemperatureNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cienaCesChassisFanTempEntry:$v3.$v4",
+				"Summary" : "Chassis fan $v8 temperature ($v5) is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanNormalTempNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempTrayNotifIndx.4.2 i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempNotifId i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTemp i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempLoThreshold i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempHiThreshold i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempShelfIndx u 0",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanNormalTempNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the unique index used in fan temperature trap definition."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempTrayNotifIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the unique index used in fan temperature trap definition."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempNotifId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the current chassis fan temperature."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTemp",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the low threshold value for the fan temperature sensor."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempLoThreshold",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the high threshold value for the fan temperature sensor."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempHiThreshold",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the fan temperature sensor name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanLoTempNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisFanTempNotification is sent if the cienaCesChassisFanTemp is changed to low.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTempTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTempTrayIndx>[0-9]+)\\.(?P<cienaCesChassisFanTempId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisFanTemperatureNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1==3) ? 5 : (($v1==4) ? 4 : 3)"
+				},
+				"SubNode" : "cienaCesChassisFanTempEntry:$v3.$v4",
+				"Summary" : "Chassis fan temperature ($v5) is below low threshold ($v6)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanLoTempNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 6 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempTrayNotifIndx.4.2 i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempNotifId i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTemp i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempLoThreshold i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempShelfIndx u 0",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanLoTempNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the unique index used in fan temperature trap definition."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempTrayNotifIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the unique index used in fan temperature trap definition."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempNotifId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the current chassis fan temperature."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTemp",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the low threshold value for the fan temperature sensor."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempLoThreshold",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the fan temperature sensor name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTempShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.3.2.1.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanSpeedMinThresholdNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisFanSpeedMinThresholdNotification is sent if the fan speed drops to",
+				"minimum threshold.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTrayIndx>[0-9]+)\\.(?P<cienaCesChassisFanIndx>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisFanSpeedNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1==3) ? 5 : (($v1==4) ? 4 : 3)"
+				},
+				"SubNode" : "cienaCesChassisFanEntry:$v3.$v4",
+				"Summary" : "Speed of fan $v6 is below minimum threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanSpeedMinThresholdNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 5 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex.4.2 i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanNotifIndex i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanAvgSpeed i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanShelfIndx u 0",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanSpeedMinThresholdNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray and also represents the unique index",
+							"used in the definition of fan traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies a fan in the fan tray and is a unique index",
+							"used in the definition of fan traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanNotifIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The average speed of the fan in RPM unit. The average is calculated",
+							"on a continuous basis from system startup."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanAvgSpeed",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies a fan name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.11",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanSpeedNormalRangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisFanSpeedNormalRangeNotification is sent if the fan speed returns to normal value.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTrayIndx>[0-9]+)\\.(?P<cienaCesChassisFanIndx>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cienaCesChassisFanSpeedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cienaCesChassisFanEntry:$v3.$v4",
+				"Summary" : "Speed of fan $v6 is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanSpeedNormalRangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex.4.2 i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanNotifIndex i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanAvgSpeed i 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanShelfIndx u 0",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanSpeedNormalRangeNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray and also represents the unique index",
+							"used in the definition of fan traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies a fan in the fan tray and is a unique index",
+							"used in the definition of fan traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanNotifIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The average speed of the fan in RPM unit. The average is calculated",
+							"on a continuous basis from system startup."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanAvgSpeed",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies a fan name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.11",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayRemoveNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever a fan tray is removed from the chassis.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTrayTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTrayIndx>[0-9]+)\\.(?P<cienaCesChassisFanIndx>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisFanTrayRemoveNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "cienaCesChassisFanEntry:$v3",
+				"Summary" : "Fan tray $v5 removed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayRemoveNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 8 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex.4.2 i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayType i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayRemoveNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray and also represents the unique index",
+							"used in the definition of fan traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the type of fan tray."
+						],
+						"enums" : {
+							"1" : "fixed",
+							"2" : "hotSwappable",
+							"3" : "unequipped"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the fan tray chassis slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayInsertNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever a fan tray is inserted in the chassis.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTrayTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTrayIndx>[0-9]+)\\.(?P<cienaCesChassisFanIndx>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisFanTrayInsertNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cienaCesChassisFanEntry.$v3",
+				"Summary" : "Fan tray $v5 inserted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayInsertNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex.4.2 i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayType i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayInsertNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray and also represents the unique index",
+							"used in the definition of fan traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the type of fan tray."
+						],
+						"enums" : {
+							"1" : "fixed",
+							"2" : "hotSwappable",
+							"3" : "unequipped"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the fan tray chassis slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatusFaultedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the fan tray status changes to one of the following:",
+				"- pending(2)",
+				"rpm-warning(3)",
+				"uninstalled(4)",
+				"unknown(99)",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTrayTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTrayIndx>\\d+)\\.(?P<cienaCesChassisFanIndx>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisFanTrayStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1==3) ? 5 : (($v1==4) ? 4 : 3)"
+				},
+				"SubNode" : "cienaCesChassisFanEntry:$v3",
+				"Summary" : "Status of fan tray $v5 is faulted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatusFaultedNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex.4.2 i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatus i 3 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatusFaultedNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray and also represents the unique index",
+							"used in the definition of fan traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the status of the fan tray."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "pending",
+							"3" : "rpm-warning",
+							"4" : "uninstalled",
+							"99" : "unknown"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatus",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the fan tray chassis slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatusOkNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the fan tray status changes to ok(1).",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisAllFanTrayTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesChassisFanTrayIndx>[0-9]+)\\.(?P<cienaCesChassisFanIndx>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cienaCesChassisFanTrayStatusNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cienaCesChassisFanEntry:$v3",
+				"Summary" : "Fan tray $v5 status is OK"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatusOkNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex.4.2 i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatus i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatusOkNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray and also represents the unique index",
+							"used in the definition of fan traps."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayNotifIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the status of the fan tray."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "pending",
+							"3" : "rpm-warning",
+							"4" : "uninstalled",
+							"99" : "unknown"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayStatus",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTrayShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the fan tray chassis slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the fan tray serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisFanTraySerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.2.2.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusUnknownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the health manager status changes to unknown for the specified cienaCesChassisHealthCategory and",
+				"cienaCesChassisHealthSubCategory. The cienaCesChassisHealthStatus indicates a warning status while the cienaCesChassisHealthStatusLast",
+				"indicates the previous health status. The health status can be one of unknown, normal, warning, degraded or faulted.",
+				"An unknown status indicates that the system has not yet been able to determine the initial state. This can be due to either",
+				"the system still not completed booting or a component has just been installed and has not had sufficient time to initialize",
+				"and provide its state to the health monitoring system.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisHealthTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisHealthStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 1,
+				"SubNode" : "cienaCesChassisHealthCategory:$v3.$v4",
+				"Summary" : "Health status is unknown for $v3, sub-category $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusUnknownNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory u 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast i 2",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusUnknownNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the health category that the Health Manager",
+							"monitors on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "cpu",
+							"3" : "datapath",
+							"4" : "ethernet",
+							"5" : "fabric",
+							"6" : "sm",
+							"7" : "tempSm",
+							"8" : "samplesSm",
+							"9" : "disk",
+							"10" : "tempModule",
+							"11" : "samplesModule",
+							"12" : "fanTray",
+							"13" : "fanTraySpeedMismatch",
+							"14" : "fanSpeedMismatch",
+							"15" : "tempFan",
+							"16" : "samplesFan",
+							"17" : "fanRpm",
+							"18" : "power",
+							"19" : "feedPower",
+							"20" : "systemResource",
+							"21" : "memory",
+							"22" : "mac",
+							"23" : "i2c",
+							"24" : "flash",
+							"25" : "transceiver",
+							"26" : "link",
+							"27" : "iomStatus",
+							"28" : "usbFlash",
+							"29" : "linxstats",
+							"30" : "smFabric",
+							"31" : "spi",
+							"32" : "slotResource",
+							"33" : "tempIom",
+							"34" : "powerParams",
+							"35" : "powerOutputVoltage"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the sub-category that has meaning specific to the value",
+							"of the accompanying cienaCesChassisHealthCategory object. Refer to the specific",
+							"subCategory object that corresponds to the cienaCesChassisHealthCategory",
+							"for details on the particular subCategory as referenced below:",
+							"",
+							"TceHealthCategory value, corresponding subCategory object",
+							"----------------------------------------------------------------------",
+							"unknown(1)",
+							"cpu(2) cienaCesChassisCPUHealthSubCategory",
+							"datapath(3) cienaCesChassisDatapathHealthSubCategory",
+							"ethernet(4) cienaCesChassisControlPlaneHealthSubCategory",
+							"fabric(5) cienaCesChassisFabricHealthSubCategory",
+							"sm(6) cienaCesChassisSMHealthSubCategory",
+							"tempSm(7) cienaCesChassisSMTempHealthSubCategory",
+							"samplesSm(8) cienaCesChassisSMSamplesHealthSubCategory",
+							"disk(9) cienaCesChassisDiskHealthSubCategory",
+							"tempModule(10) cienaCesChassisModuleTempHealthSubCategory",
+							"samplesModule(11) cienaCesChassisModuleSamplesHealthSubCategory",
+							"fanTray(12) cienaCesChassisFanTrayHealthSubCategory",
+							"fanTraySpeedMismatch(13) cienaCesChassisFanTraySpeedMismatchHealthSubCategory",
+							"fanSpeedMismatch(14) cienaCesChassisFanSpeedMismatchHealthSubCategory",
+							"tempFan(15) cienaCesChassisFanTempHealthSubCategory",
+							"samplesFan(16) cienaCesChassisFanSamplesHealthSubCategory",
+							"fanRpm(17) cienaCesChassisFanRPMHealthSubCategory",
+							"power(18) cienaCesChassisPowerHealthSubCategory",
+							"feedPower(19) cienaCesChassisFeedPowerHealthSubCategory",
+							"systemResource(20) cienaCesChassisResourceHealthSubCategory",
+							"memory(21) cienaCesChassisMemoryHealthSubCategory",
+							"mac(22) cienaCesChassisMACHealthSubCategory",
+							"i2c(23) cienaCesChassisI2CHealthSubCategory",
+							"flash(24) cienaCesChassisFlashDriverHealthSubCategory",
+							"transceiver(25) cienaCesChassisXcvrHealthSubCategory",
+							"link(26) cienaCesChassisPortLinkHealthSubCategory",
+							"iomStatus(27) cienaCesChassisIOMStatusHealthSubCategory",
+							"usbFlash(28) cienaCesChassisUsbFlashHealthSubCategory",
+							"linxstats(29) cienaCesChassisLinxStatHealthSubCategory",
+							"smFabric(30) cienaCesChassisSMFabricHealthSubCategory",
+							"spi(31) cienaCesChassisSPIHealthSubCategory",
+							"slotResource(32) cienaCesModuleResourceHealthSubCategory(cienaCesModuleMIB)",
+							"tempIom(33) cienaCesChassisIomTempHealthSubCategory",
+							"powerParams(34) cienaCesChassisPowerParamsHealthSubCategory",
+							"powerOutputVoltage(35) cienaCesChassisPowerOutputVoltageHealthSubCategory",
+							"tempModem(36) cienaCesChassisModemTempHealthSubCategory",
+							"watermarkModem(37) cienaCesChassisModemWatermarkHealthSubCategory",
+							"fileDescriptor(38) cienaCesChassisFileDescriptorHealthSubCategory",
+							"process(39) cienaCesChassisProcessHealthSubCategory",
+							"thread(40) cienaCesChassisThreadHealthSubCategory"
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the current health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the last known health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusWarningNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the health manager status changes to warning for the specified cienaCesChassisHealthCategory and",
+				"cienaCesChassisHealthSubCategory. The cienaCesChassisHealthStatus indicates a warning status while the cienaCesChassisHealthStatusLast",
+				"indicates the previous health status. The health status can be one of unknown, normal, warning, degraded or faulted. A warning status",
+				"indicates that the monitored item is experiencing some errors or is deviated from specified ranges, but is still functional.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisHealthTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisHealthStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "cienaCesChassisHealthCategory:$v3.$v4",
+				"Summary" : "Health status is warning for $v3, sub-category $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusWarningNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 6 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory u 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus i 3 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast i 2",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusWarningNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the health category that the Health Manager",
+							"monitors on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "cpu",
+							"3" : "datapath",
+							"4" : "ethernet",
+							"5" : "fabric",
+							"6" : "sm",
+							"7" : "tempSm",
+							"8" : "samplesSm",
+							"9" : "disk",
+							"10" : "tempModule",
+							"11" : "samplesModule",
+							"12" : "fanTray",
+							"13" : "fanTraySpeedMismatch",
+							"14" : "fanSpeedMismatch",
+							"15" : "tempFan",
+							"16" : "samplesFan",
+							"17" : "fanRpm",
+							"18" : "power",
+							"19" : "feedPower",
+							"20" : "systemResource",
+							"21" : "memory",
+							"22" : "mac",
+							"23" : "i2c",
+							"24" : "flash",
+							"25" : "transceiver",
+							"26" : "link",
+							"27" : "iomStatus",
+							"28" : "usbFlash",
+							"29" : "linxstats",
+							"30" : "smFabric",
+							"31" : "spi",
+							"32" : "slotResource",
+							"33" : "tempIom",
+							"34" : "powerParams",
+							"35" : "powerOutputVoltage"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the sub-category that has meaning specific to the value",
+							"of the accompanying cienaCesChassisHealthCategory object. Refer to the specific",
+							"subCategory object that corresponds to the cienaCesChassisHealthCategory",
+							"for details on the particular subCategory as referenced below:",
+							"",
+							"TceHealthCategory value, corresponding subCategory object",
+							"----------------------------------------------------------------------",
+							"unknown(1)",
+							"cpu(2) cienaCesChassisCPUHealthSubCategory",
+							"datapath(3) cienaCesChassisDatapathHealthSubCategory",
+							"ethernet(4) cienaCesChassisControlPlaneHealthSubCategory",
+							"fabric(5) cienaCesChassisFabricHealthSubCategory",
+							"sm(6) cienaCesChassisSMHealthSubCategory",
+							"tempSm(7) cienaCesChassisSMTempHealthSubCategory",
+							"samplesSm(8) cienaCesChassisSMSamplesHealthSubCategory",
+							"disk(9) cienaCesChassisDiskHealthSubCategory",
+							"tempModule(10) cienaCesChassisModuleTempHealthSubCategory",
+							"samplesModule(11) cienaCesChassisModuleSamplesHealthSubCategory",
+							"fanTray(12) cienaCesChassisFanTrayHealthSubCategory",
+							"fanTraySpeedMismatch(13) cienaCesChassisFanTraySpeedMismatchHealthSubCategory",
+							"fanSpeedMismatch(14) cienaCesChassisFanSpeedMismatchHealthSubCategory",
+							"tempFan(15) cienaCesChassisFanTempHealthSubCategory",
+							"samplesFan(16) cienaCesChassisFanSamplesHealthSubCategory",
+							"fanRpm(17) cienaCesChassisFanRPMHealthSubCategory",
+							"power(18) cienaCesChassisPowerHealthSubCategory",
+							"feedPower(19) cienaCesChassisFeedPowerHealthSubCategory",
+							"systemResource(20) cienaCesChassisResourceHealthSubCategory",
+							"memory(21) cienaCesChassisMemoryHealthSubCategory",
+							"mac(22) cienaCesChassisMACHealthSubCategory",
+							"i2c(23) cienaCesChassisI2CHealthSubCategory",
+							"flash(24) cienaCesChassisFlashDriverHealthSubCategory",
+							"transceiver(25) cienaCesChassisXcvrHealthSubCategory",
+							"link(26) cienaCesChassisPortLinkHealthSubCategory",
+							"iomStatus(27) cienaCesChassisIOMStatusHealthSubCategory",
+							"usbFlash(28) cienaCesChassisUsbFlashHealthSubCategory",
+							"linxstats(29) cienaCesChassisLinxStatHealthSubCategory",
+							"smFabric(30) cienaCesChassisSMFabricHealthSubCategory",
+							"spi(31) cienaCesChassisSPIHealthSubCategory",
+							"slotResource(32) cienaCesModuleResourceHealthSubCategory(cienaCesModuleMIB)",
+							"tempIom(33) cienaCesChassisIomTempHealthSubCategory",
+							"powerParams(34) cienaCesChassisPowerParamsHealthSubCategory",
+							"powerOutputVoltage(35) cienaCesChassisPowerOutputVoltageHealthSubCategory",
+							"tempModem(36) cienaCesChassisModemTempHealthSubCategory",
+							"watermarkModem(37) cienaCesChassisModemWatermarkHealthSubCategory",
+							"fileDescriptor(38) cienaCesChassisFileDescriptorHealthSubCategory",
+							"process(39) cienaCesChassisProcessHealthSubCategory",
+							"thread(40) cienaCesChassisThreadHealthSubCategory"
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the current health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the last known health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusFaultedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the health manager status changes to faulted for the specified cienaCesChassisHealthCategory and",
+				"cienaCesChassisHealthSubCategory. The cienaCesChassisHealthStatus indicates a faulted status while the cienaCesChassisHealthStatusLast",
+				"indicates the previous health status. The health status can be one of unknown, normal, warning, degraded or faulted. A faulted status",
+				"indicates that the monitored item has failed or is so far out of range that the item should be faulted.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisHealthTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisHealthStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "cienaCesChassisHealthCategory:$v3.$v4",
+				"Summary" : "Health status is faulted for $v3, sub-category $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusFaultedNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory u 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus i 5 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast i 2",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusFaultedNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the health category that the Health Manager",
+							"monitors on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "cpu",
+							"3" : "datapath",
+							"4" : "ethernet",
+							"5" : "fabric",
+							"6" : "sm",
+							"7" : "tempSm",
+							"8" : "samplesSm",
+							"9" : "disk",
+							"10" : "tempModule",
+							"11" : "samplesModule",
+							"12" : "fanTray",
+							"13" : "fanTraySpeedMismatch",
+							"14" : "fanSpeedMismatch",
+							"15" : "tempFan",
+							"16" : "samplesFan",
+							"17" : "fanRpm",
+							"18" : "power",
+							"19" : "feedPower",
+							"20" : "systemResource",
+							"21" : "memory",
+							"22" : "mac",
+							"23" : "i2c",
+							"24" : "flash",
+							"25" : "transceiver",
+							"26" : "link",
+							"27" : "iomStatus",
+							"28" : "usbFlash",
+							"29" : "linxstats",
+							"30" : "smFabric",
+							"31" : "spi",
+							"32" : "slotResource",
+							"33" : "tempIom",
+							"34" : "powerParams",
+							"35" : "powerOutputVoltage"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the sub-category that has meaning specific to the value",
+							"of the accompanying cienaCesChassisHealthCategory object. Refer to the specific",
+							"subCategory object that corresponds to the cienaCesChassisHealthCategory",
+							"for details on the particular subCategory as referenced below:",
+							"",
+							"TceHealthCategory value, corresponding subCategory object",
+							"----------------------------------------------------------------------",
+							"unknown(1)",
+							"cpu(2) cienaCesChassisCPUHealthSubCategory",
+							"datapath(3) cienaCesChassisDatapathHealthSubCategory",
+							"ethernet(4) cienaCesChassisControlPlaneHealthSubCategory",
+							"fabric(5) cienaCesChassisFabricHealthSubCategory",
+							"sm(6) cienaCesChassisSMHealthSubCategory",
+							"tempSm(7) cienaCesChassisSMTempHealthSubCategory",
+							"samplesSm(8) cienaCesChassisSMSamplesHealthSubCategory",
+							"disk(9) cienaCesChassisDiskHealthSubCategory",
+							"tempModule(10) cienaCesChassisModuleTempHealthSubCategory",
+							"samplesModule(11) cienaCesChassisModuleSamplesHealthSubCategory",
+							"fanTray(12) cienaCesChassisFanTrayHealthSubCategory",
+							"fanTraySpeedMismatch(13) cienaCesChassisFanTraySpeedMismatchHealthSubCategory",
+							"fanSpeedMismatch(14) cienaCesChassisFanSpeedMismatchHealthSubCategory",
+							"tempFan(15) cienaCesChassisFanTempHealthSubCategory",
+							"samplesFan(16) cienaCesChassisFanSamplesHealthSubCategory",
+							"fanRpm(17) cienaCesChassisFanRPMHealthSubCategory",
+							"power(18) cienaCesChassisPowerHealthSubCategory",
+							"feedPower(19) cienaCesChassisFeedPowerHealthSubCategory",
+							"systemResource(20) cienaCesChassisResourceHealthSubCategory",
+							"memory(21) cienaCesChassisMemoryHealthSubCategory",
+							"mac(22) cienaCesChassisMACHealthSubCategory",
+							"i2c(23) cienaCesChassisI2CHealthSubCategory",
+							"flash(24) cienaCesChassisFlashDriverHealthSubCategory",
+							"transceiver(25) cienaCesChassisXcvrHealthSubCategory",
+							"link(26) cienaCesChassisPortLinkHealthSubCategory",
+							"iomStatus(27) cienaCesChassisIOMStatusHealthSubCategory",
+							"usbFlash(28) cienaCesChassisUsbFlashHealthSubCategory",
+							"linxstats(29) cienaCesChassisLinxStatHealthSubCategory",
+							"smFabric(30) cienaCesChassisSMFabricHealthSubCategory",
+							"spi(31) cienaCesChassisSPIHealthSubCategory",
+							"slotResource(32) cienaCesModuleResourceHealthSubCategory(cienaCesModuleMIB)",
+							"tempIom(33) cienaCesChassisIomTempHealthSubCategory",
+							"powerParams(34) cienaCesChassisPowerParamsHealthSubCategory",
+							"powerOutputVoltage(35) cienaCesChassisPowerOutputVoltageHealthSubCategory",
+							"tempModem(36) cienaCesChassisModemTempHealthSubCategory",
+							"watermarkModem(37) cienaCesChassisModemWatermarkHealthSubCategory",
+							"fileDescriptor(38) cienaCesChassisFileDescriptorHealthSubCategory",
+							"process(39) cienaCesChassisProcessHealthSubCategory",
+							"thread(40) cienaCesChassisThreadHealthSubCategory"
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the current health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the last known health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusDegradedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the health manager status changes to degraded for the specified cienaCesChassisHealthCategory and",
+				"cienaCesChassisHealthSubCategory. The cienaCesChassisHealthStatus indicates a degraded status while the cienaCesChassisHealthStatusLast",
+				"indicates the previous health status. The health status can be one of unknown, normal, warning, degraded or faulted. A degraded status",
+				"typically indicates that the monitored item is experiencing major problems or is well out of range. Performance or system reliability is",
+				"being affected.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisHealthTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesChassisHealthStatusNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "cienaCesChassisHealthCategory:$v3.$v4",
+				"Summary" : "Health status is degraded for $v3, sub-category $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusDegradedNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 5 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory u 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast i 2",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusDegradedNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the health category that the Health Manager",
+							"monitors on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "cpu",
+							"3" : "datapath",
+							"4" : "ethernet",
+							"5" : "fabric",
+							"6" : "sm",
+							"7" : "tempSm",
+							"8" : "samplesSm",
+							"9" : "disk",
+							"10" : "tempModule",
+							"11" : "samplesModule",
+							"12" : "fanTray",
+							"13" : "fanTraySpeedMismatch",
+							"14" : "fanSpeedMismatch",
+							"15" : "tempFan",
+							"16" : "samplesFan",
+							"17" : "fanRpm",
+							"18" : "power",
+							"19" : "feedPower",
+							"20" : "systemResource",
+							"21" : "memory",
+							"22" : "mac",
+							"23" : "i2c",
+							"24" : "flash",
+							"25" : "transceiver",
+							"26" : "link",
+							"27" : "iomStatus",
+							"28" : "usbFlash",
+							"29" : "linxstats",
+							"30" : "smFabric",
+							"31" : "spi",
+							"32" : "slotResource",
+							"33" : "tempIom",
+							"34" : "powerParams",
+							"35" : "powerOutputVoltage"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the sub-category that has meaning specific to the value",
+							"of the accompanying cienaCesChassisHealthCategory object. Refer to the specific",
+							"subCategory object that corresponds to the cienaCesChassisHealthCategory",
+							"for details on the particular subCategory as referenced below:",
+							"",
+							"TceHealthCategory value, corresponding subCategory object",
+							"----------------------------------------------------------------------",
+							"unknown(1)",
+							"cpu(2) cienaCesChassisCPUHealthSubCategory",
+							"datapath(3) cienaCesChassisDatapathHealthSubCategory",
+							"ethernet(4) cienaCesChassisControlPlaneHealthSubCategory",
+							"fabric(5) cienaCesChassisFabricHealthSubCategory",
+							"sm(6) cienaCesChassisSMHealthSubCategory",
+							"tempSm(7) cienaCesChassisSMTempHealthSubCategory",
+							"samplesSm(8) cienaCesChassisSMSamplesHealthSubCategory",
+							"disk(9) cienaCesChassisDiskHealthSubCategory",
+							"tempModule(10) cienaCesChassisModuleTempHealthSubCategory",
+							"samplesModule(11) cienaCesChassisModuleSamplesHealthSubCategory",
+							"fanTray(12) cienaCesChassisFanTrayHealthSubCategory",
+							"fanTraySpeedMismatch(13) cienaCesChassisFanTraySpeedMismatchHealthSubCategory",
+							"fanSpeedMismatch(14) cienaCesChassisFanSpeedMismatchHealthSubCategory",
+							"tempFan(15) cienaCesChassisFanTempHealthSubCategory",
+							"samplesFan(16) cienaCesChassisFanSamplesHealthSubCategory",
+							"fanRpm(17) cienaCesChassisFanRPMHealthSubCategory",
+							"power(18) cienaCesChassisPowerHealthSubCategory",
+							"feedPower(19) cienaCesChassisFeedPowerHealthSubCategory",
+							"systemResource(20) cienaCesChassisResourceHealthSubCategory",
+							"memory(21) cienaCesChassisMemoryHealthSubCategory",
+							"mac(22) cienaCesChassisMACHealthSubCategory",
+							"i2c(23) cienaCesChassisI2CHealthSubCategory",
+							"flash(24) cienaCesChassisFlashDriverHealthSubCategory",
+							"transceiver(25) cienaCesChassisXcvrHealthSubCategory",
+							"link(26) cienaCesChassisPortLinkHealthSubCategory",
+							"iomStatus(27) cienaCesChassisIOMStatusHealthSubCategory",
+							"usbFlash(28) cienaCesChassisUsbFlashHealthSubCategory",
+							"linxstats(29) cienaCesChassisLinxStatHealthSubCategory",
+							"smFabric(30) cienaCesChassisSMFabricHealthSubCategory",
+							"spi(31) cienaCesChassisSPIHealthSubCategory",
+							"slotResource(32) cienaCesModuleResourceHealthSubCategory(cienaCesModuleMIB)",
+							"tempIom(33) cienaCesChassisIomTempHealthSubCategory",
+							"powerParams(34) cienaCesChassisPowerParamsHealthSubCategory",
+							"powerOutputVoltage(35) cienaCesChassisPowerOutputVoltageHealthSubCategory",
+							"tempModem(36) cienaCesChassisModemTempHealthSubCategory",
+							"watermarkModem(37) cienaCesChassisModemWatermarkHealthSubCategory",
+							"fileDescriptor(38) cienaCesChassisFileDescriptorHealthSubCategory",
+							"process(39) cienaCesChassisProcessHealthSubCategory",
+							"thread(40) cienaCesChassisThreadHealthSubCategory"
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the current health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the last known health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusGoodNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the health manager status changes to normal for the specified cienaCesChassisHealthCategory and",
+				"cienaCesChassisHealthSubCategory. The cienaCesChassisHealthStatus indicates a normal status while the cienaCesChassisHealthStatusLast",
+				"indicates the previous health status. The health status can be one of unknown, normal, warning, degraded or faulted. A normal status",
+				"indicates that the monitored item is working correctly or within tolerance.",
+				"To enable the device to send this trap:",
+				"- cienaCesChassisHealthTrapState needs to be set to enabled",
+				"The above object is set to enabled by default."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cienaCesChassisHealthStatusNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cienaCesChassisHealthCategory:$v3.$v4",
+				"Summary" : "Health status is normal for $v3, sub-category $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusGoodNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory i 9 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory u 9999 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast i 2",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusGoodNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the health category that the Health Manager",
+							"monitors on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "cpu",
+							"3" : "datapath",
+							"4" : "ethernet",
+							"5" : "fabric",
+							"6" : "sm",
+							"7" : "tempSm",
+							"8" : "samplesSm",
+							"9" : "disk",
+							"10" : "tempModule",
+							"11" : "samplesModule",
+							"12" : "fanTray",
+							"13" : "fanTraySpeedMismatch",
+							"14" : "fanSpeedMismatch",
+							"15" : "tempFan",
+							"16" : "samplesFan",
+							"17" : "fanRpm",
+							"18" : "power",
+							"19" : "feedPower",
+							"20" : "systemResource",
+							"21" : "memory",
+							"22" : "mac",
+							"23" : "i2c",
+							"24" : "flash",
+							"25" : "transceiver",
+							"26" : "link",
+							"27" : "iomStatus",
+							"28" : "usbFlash",
+							"29" : "linxstats",
+							"30" : "smFabric",
+							"31" : "spi",
+							"32" : "slotResource",
+							"33" : "tempIom",
+							"34" : "powerParams",
+							"35" : "powerOutputVoltage"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the sub-category that has meaning specific to the value",
+							"of the accompanying cienaCesChassisHealthCategory object. Refer to the specific",
+							"subCategory object that corresponds to the cienaCesChassisHealthCategory",
+							"for details on the particular subCategory as referenced below:",
+							"",
+							"TceHealthCategory value, corresponding subCategory object",
+							"----------------------------------------------------------------------",
+							"unknown(1)",
+							"cpu(2) cienaCesChassisCPUHealthSubCategory",
+							"datapath(3) cienaCesChassisDatapathHealthSubCategory",
+							"ethernet(4) cienaCesChassisControlPlaneHealthSubCategory",
+							"fabric(5) cienaCesChassisFabricHealthSubCategory",
+							"sm(6) cienaCesChassisSMHealthSubCategory",
+							"tempSm(7) cienaCesChassisSMTempHealthSubCategory",
+							"samplesSm(8) cienaCesChassisSMSamplesHealthSubCategory",
+							"disk(9) cienaCesChassisDiskHealthSubCategory",
+							"tempModule(10) cienaCesChassisModuleTempHealthSubCategory",
+							"samplesModule(11) cienaCesChassisModuleSamplesHealthSubCategory",
+							"fanTray(12) cienaCesChassisFanTrayHealthSubCategory",
+							"fanTraySpeedMismatch(13) cienaCesChassisFanTraySpeedMismatchHealthSubCategory",
+							"fanSpeedMismatch(14) cienaCesChassisFanSpeedMismatchHealthSubCategory",
+							"tempFan(15) cienaCesChassisFanTempHealthSubCategory",
+							"samplesFan(16) cienaCesChassisFanSamplesHealthSubCategory",
+							"fanRpm(17) cienaCesChassisFanRPMHealthSubCategory",
+							"power(18) cienaCesChassisPowerHealthSubCategory",
+							"feedPower(19) cienaCesChassisFeedPowerHealthSubCategory",
+							"systemResource(20) cienaCesChassisResourceHealthSubCategory",
+							"memory(21) cienaCesChassisMemoryHealthSubCategory",
+							"mac(22) cienaCesChassisMACHealthSubCategory",
+							"i2c(23) cienaCesChassisI2CHealthSubCategory",
+							"flash(24) cienaCesChassisFlashDriverHealthSubCategory",
+							"transceiver(25) cienaCesChassisXcvrHealthSubCategory",
+							"link(26) cienaCesChassisPortLinkHealthSubCategory",
+							"iomStatus(27) cienaCesChassisIOMStatusHealthSubCategory",
+							"usbFlash(28) cienaCesChassisUsbFlashHealthSubCategory",
+							"linxstats(29) cienaCesChassisLinxStatHealthSubCategory",
+							"smFabric(30) cienaCesChassisSMFabricHealthSubCategory",
+							"spi(31) cienaCesChassisSPIHealthSubCategory",
+							"slotResource(32) cienaCesModuleResourceHealthSubCategory(cienaCesModuleMIB)",
+							"tempIom(33) cienaCesChassisIomTempHealthSubCategory",
+							"powerParams(34) cienaCesChassisPowerParamsHealthSubCategory",
+							"powerOutputVoltage(35) cienaCesChassisPowerOutputVoltageHealthSubCategory",
+							"tempModem(36) cienaCesChassisModemTempHealthSubCategory",
+							"watermarkModem(37) cienaCesChassisModemWatermarkHealthSubCategory",
+							"fileDescriptor(38) cienaCesChassisFileDescriptorHealthSubCategory",
+							"process(39) cienaCesChassisProcessHealthSubCategory",
+							"thread(40) cienaCesChassisThreadHealthSubCategory"
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthSubCategory",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the current health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatus",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the last known health status of health category and",
+							"its sub-category being monitored on the chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "warning",
+							"4" : "degraded",
+							"5" : "faulted"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisHealthStatusLast",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.4.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisRebootNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisRebootNotification is sent when the device is rebooted. The cienaCesChassisRebootNotification has no guarantee to be sent upon a reboot and will likely misbehave if informs are used. If sent, the cienaCesChassisRebootReasonErrorType is set to indicate the reboot reason. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisRebootNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==3) ? 5 : (($v1==4) ? 4 : (($v1==5 || $v1==6) ? 3 : (($v1==0) ? 1 : 2))))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Device rebooted due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisRebootNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisRebootReasonErrorType i 1",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisRebootNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This variable indicates the type of reboot reasons",
+							"included in the cienaCesChassisRebootNotification trap."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "user",
+							"3" : "powerFailure",
+							"4" : "upgrade",
+							"5" : "resetButton",
+							"6" : "coldFailover",
+							"7" : "faultManager",
+							"8" : "communicationFailure",
+							"9" : "autoRevert",
+							"10" : "unprotectedFailure",
+							"11" : "bootFailure",
+							"12" : "softwareRevert",
+							"13" : "snmp",
+							"14" : "appLoad",
+							"15" : "errorHandler",
+							"16" : "watchdog"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisRebootReasonErrorType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of cienaCesChassisIOMState changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1 && $v1==1) ? 1 : (($v2==2 || $v2==3 || $v1==3 || $v1==4 || $v1==5 || $v1==6) ? 2 : 3)"
+				},
+				"EventType" : "cienaCesChassisIOMStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v2==2 || $v2==3 || $v1==3 || $v1==4 || $v1==5 || $v1==6) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 && $v2==1) ? 0 : (($v1==3) ? 5 : (($v1==4 && $v2==2) ? 4 : (($v1==5 || $v1==6 || $v2==3) ? 3 : (($v1==0) ? 1 : 2))))"
+				},
+				"SubNode" : "IOMIndx:$v4.$v5.$v6",
+				"Summary" : "IOM $v3 state is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 5 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMState i 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Current state of the IOM."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "faulted",
+							"3" : "uninstalled"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the IOM name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the IOM slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represent the IOM serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerEnableChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of cienaCesChassisIOMBuzzerEnable changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisIOMBuzzerEnableChangeNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "IOMIndx:$v4.$v5.$v6",
+				"Summary" : {
+					"eval" : "($v2 == 1) ? 'On-board buzzer is enabled on IOM $v3' : 'On-board buzzer is disabled on IOM $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerEnableChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerEnable i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerEnableChangeNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents whether the on-board buzzer will alert to fan tray removal.",
+							"When true, the on-board buzzer will alert while the fan tray is removed.",
+							"When false, the on-board buzzer will not alert to fan tray removal."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerEnable",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the IOM name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the IOM slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represent the IOM serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of cienaCesChassisIOMBuzzerState changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 2 : (($v2 == 2) ? 1 : 3)"
+				},
+				"EventType" : "cienaCesChassisIOMBuzzerStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==3) ? 2 : (($v1==3) ? 5 : (($v1==4) ? 4 : (($v1==5 || $v1==6) ? 3 : 2))))"
+				},
+				"SubNode" : "IOMIndx:$v4.$v5.$v6",
+				"Summary" : "On-board buzzer of IOM $v3 is currently $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerState i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE",
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerState i 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE",
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerState i 3 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the current state of the on-board buzzer.",
+							"When on, the on-board buzzer is presently alerting.",
+							"When off, the on-board buzzer is presently silent.",
+							"Value of notSupported is returned when the IOM is not presently installed."
+						],
+						"enums" : {
+							"1" : "on",
+							"2" : "off",
+							"3" : "notSupported"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMBuzzerState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the IOM name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the IOM slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represent the IOM serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of cienaCesChassisIOMAlarmOutputState changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 2 : (($v3 == 2) ? 1 : 3)"
+				},
+				"EventType" : "cienaCesChassisIOMAlarmOutputStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : (($v3==3) ? 2 : (($v1==3) ? 5 : (($v1==4) ? 4 : (($v1==5 || $v1==6) ? 3 : 2))))"
+				},
+				"SubNode" : "IOMIndx:$v5.$v6.$v7",
+				"Summary" : "IOM $v4 : $v2 alarm output is presently $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputDescription s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputState i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE",
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputDescription s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputState i 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE",
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputDescription s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputState i 3 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of the IOM alarm output signal."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputDescription",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.4.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Current state of the IOM alarm output signal.",
+							"When on, the system presently is asserting the IOM alarm output signal.",
+							"When off, the system is not presently asserting the IOM alarm output signal.",
+							"Value of notSupported is returned when the IOM is not presently installed."
+						],
+						"enums" : {
+							"1" : "on",
+							"2" : "off",
+							"3" : "notSupported"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmOutputState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the IOM name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the IOM slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represent the IOM serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of cienaCesChassisIOMAlarmInputState changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 2 : (($v3 == 2) ? 1 : 3)"
+				},
+				"EventType" : "cienaCesChassisIOMAlarmInputStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : (($v3==3) ? 2 : (($v1==3) ? 5 : (($v1==4) ? 4 : (($v1==5 || $v1==6) ? 3 : 2))))"
+				},
+				"SubNode" : "IOMIndx:$v5.$v6.$v7",
+				"Summary" : "IOM $v4 : $v2 alarm input is presently $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputDescription s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputState i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE",
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputDescription s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputState i 2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE",
+				"$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputStateChangeNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputDescription s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputState i 3 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName s EXAMPLE2 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx u 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx u 1 CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of the IOM alarm input signal."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputDescription",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Current input state of the IOM alarm input signal.",
+							"When on, the IOM alarm input signal is presently being asserted.",
+							"When off, the IOM alarm input signal is not presently being asserted.",
+							"Value of notSupported is returned when the IOM is not presently installed."
+						],
+						"enums" : {
+							"1" : "on",
+							"2" : "off",
+							"3" : "notSupported"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMAlarmInputState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the IOM name."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the chassis index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMChassisIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the chassis shelf index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMShelfIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the IOM slot index."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSlotIndx",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represent the IOM serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisIOMSerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.2.1.6.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisUsbFlashEnabledNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when CTX USB hubs are enabled via user config."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisUsbFlashEnabledNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "CTX USB hubs are enabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisUsbFlashEnabledNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 8",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisUsbFlashEnabledNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisUsbFlashDisabledNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when CTX USB hubs are disabled via user config."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisUsbFlashDisabledNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "CTX USB hubs are disabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisUsbFlashDisabledNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 8",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisUsbFlashDisabledNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisAirFilterServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the air filter service interval is reached."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisAirFilterServiceNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Chassis air filter service is due"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisAirFilterServiceNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisAirFilterServiceNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisAlarmCutoffNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesChassisAlarmCutoffNotification is sent if:",
+				"1) The alarm cutoff button on either CM is pushed.",
+				"2) The CLI alarm cutoff command is issued.",
+				"3) The SNMP alarm cutoff command is issued.",
+				"To enable the device to send this trap:",
+				"cienaCesChassisAlarmCutoffTrapState needs to be set to enabled."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisAlarmCutoffNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Chassis alarm cut off by $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisAlarmCutoffNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 8 CIENA-CES-CHASSIS-MIB::cienaCesChassisAlarmCutoffOrigin i 1",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisAlarmCutoffNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the origin of the alarm cutoff command",
+							"included in the cienaCesChassisAlarmCutoffNotification."
+						],
+						"enums" : {
+							"1" : "cli",
+							"2" : "snmp",
+							"3" : "primaryCm",
+							"4" : "secondaryCm"
+						},
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisAlarmCutoffOrigin",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisDyingGaspNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the system losses power"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesChassisDyingGaspNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Device $v1 (serial number: $v2) has lot power - going down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-CHASSIS-MIB::cienaCesChassisDyingGaspNotification CIENA-CES-CHASSIS-MIB::cienaCesChassisDeviceId s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisSerialNumber s EXAMPLE CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress x 000eaa12ddff CIENA-CES-CHASSIS-MIB::cienaCesChassisMfgDate s EXAMPLEE CIENA-CES-CHASSIS-MIB::cienaCesChassisParamVersion s EXAMPLE CIENA-GLOBAL-MIB::cienaGlobalSeverity i 3",
+			"trap" : {
+				"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisDyingGaspNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.4.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the chassis device ID."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisDeviceId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis serial number."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisSerialNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis manufacturing date."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisMfgDate",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis param version."
+						],
+						"name" : "CIENA-CES-CHASSIS-MIB::cienaCesChassisParamVersion",
+						"oid" : "1.3.6.1.4.1.1271.2.1.5.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

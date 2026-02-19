@@ -1,0 +1,650 @@
+{
+	"objects": [
+		{
+			"@objectName": "CISCO-SYSLOG::LINK-5-CHANGED",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				""
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "LINK-5-CHANGED",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%LINK-5-CHANGED"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%LINK-5-CHANGED: Interface %{VALUE:interface}, changed state to %{VALUE:status}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.syslog.variables.status",
+									"operator": "==",
+									"value": "down"
+								}
+							]
+						},
+						"then": [
+							{
+								"set": {
+									"source": 1,
+									"targetField": "$.event.EventCategory"
+								}
+							},
+							{
+								"set": {
+									"source": 4,
+									"targetField": "$.event.Severity"
+								}
+							}
+						],
+						"else": [
+							{
+								"set": {
+									"source": 2,
+									"targetField": "$.event.EventCategory"
+								}
+							},
+							{
+								"set": {
+									"source": 0,
+									"targetField": "$.event.Severity"
+								}
+							}
+						]
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::LINK-3-UPDOWN",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				""
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "LINK-3-UPDOWN",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%LINK-3-UPDOWN"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%LINK-3-UPDOWN: Interface %{VALUE:interface}, changed state to %{VALUE:status}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.syslog.variables.status",
+									"operator": "==",
+									"value": "down"
+								}
+							]
+						},
+						"then": [
+							{
+								"set": {
+									"source": 2,
+									"targetField": "$.event.EventCategory"
+								}
+							}
+						],
+						"else": [
+							{
+								"set": {
+									"source": 1,
+									"targetField": "$.event.EventCategory"
+								}
+							},
+							{
+								"set": {
+									"source": 0,
+									"targetField": "$.event.Severity"
+								}
+							}
+						]
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::LINEPROTO-5-UPDOWN",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"The interface line hardware is up or down"
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "LINEPROTO-5-UPDOWN",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%LINEPROTO-5-UPDOWN"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%LINEPROTO-5-UPDOWN: Line protocol on Interface %{VALUE:interface}, changed state to %{VALUE:status}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.syslog.variables.status",
+									"operator": "==",
+									"value": "down"
+								}
+							]
+						},
+						"then": [
+							{
+								"set": {
+									"source": 2,
+									"targetField": "$.event.EventCategory"
+								}
+							}
+						],
+						"else": [
+							{
+								"set": {
+									"source": 1,
+									"targetField": "$.event.EventCategory"
+								}
+							},
+							{
+								"set": {
+									"source": 0,
+									"targetField": "$.event.Severity"
+								}
+							}
+						]
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::LINK-CLUSTER_MEMBER",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"The link cluster member has gone up or down"
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "LINK-CLUSTER_MEMBER",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%LINK-CLUSTER_MEMBER"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%LINK-CLUSTER_MEMBER: Interface %{VALUE:interface}, changed state to %{VALUE:status}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				},
+				{
+					"if": {
+						"conditions": {
+							"and": [
+								{
+									"property": "$.syslog.variables.status",
+									"operator": "==",
+									"value": "down"
+								}
+							]
+						},
+						"then": [
+							{
+								"set": {
+									"source": 2,
+									"targetField": "$.event.EventCategory"
+								}
+							}
+						],
+						"else": [
+							{
+								"set": {
+									"source": 1,
+									"targetField": "$.event.EventCategory"
+								}
+							},
+							{
+								"set": {
+									"source": 0,
+									"targetField": "$.event.Severity"
+								}
+							}
+						]
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::RTD-1-ADDR_FLAP",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"The MAC address for an interface is moving between different ports"
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "RTD-1-ADDR_FLAP",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%RTD-1-ADDR_FLAP"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%RTD-1-ADDR_FLAP: %{VALUE:interface} relearning %{VALUE:addrs} addrs per min}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::SYS-2-PS",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"The systems power supply state has been changed"
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "SYS-2-PS",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%SYS-2-PS"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%SYS-2-PS: %{MESSAGE:message}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::ISDN-6-DISCONNECT",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"A soure interface and been disconnected from a target interface"
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "ISDN-6-DISCONNECT",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventCategory": 1,
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%ISDN-6-DISCONNECT"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%ISDN-6-DISCONNECT: Interface %{VALUE:interface} disconnected from %{VALUE:interface2}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::ISDN-6-CONNECT",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"A source interface has been disconnected from a target interface"
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "ISDN-6-CONNECT",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventCategory": 2,
+				"Severity": 2,
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%ISDN-6-CONNECT"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%ISDN-6-CONNECT: Interface %{VALUE:interface}, is now connected to %{VALUE:interface2}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::ISDN-6-LAYER2DOWN",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"A layer 2 interface has gone down."
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "ISDN-6-LAYER2DOWN",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventCategory": 2,
+				"Severity": 2,
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%ISDN-6-LAYER2DOWN"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%ISDN-6-LAYER2DOWN: Layer 2 for Interface %{VALUE:interface}, %{VALUE:layer} changed to %{VALUE:status}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::ISDN-6-LAYER2UP",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"A layer 2 interface has been brough up."
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "ISDN-6-LAYER2UP",
+				"ExpireTime": 86400,
+				"Summary": "${.syslog.message}",
+				"EventCategory": 1,
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%ISDN-6-LAYER2UP"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%ISDN-6-LAYER2UP: Layer 2 for Interface %{VALUE:interface}, %{VALUE:layer} changed to %{VALUE:status}",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::SEC-6-IPACCESSLOGP",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"An source ip had a certain action taken on it when attempting to connect to a destination ip on a port"
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "SEC-6-IPACCESSLOGP",
+				"ExpireTime": 300,
+				"Summary": "${.syslog.message}",
+				"EventCategory": 3,
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%SEC-6-IPACCESSLOGP"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%SEC-6-IPACCESSLOGP: list %{VALUE:listnum} %{VALUE:action} %{VALUE:protocol} %{IPV4:sourceip}(%{VALUE:sourceport) -> %{IPV4:DESTip}(%{VALUE:destport), %{IPV4:sourceip2}(%{VALUE:packet_count) packet",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				}
+			]
+		},
+		{
+			"@objectName": "CISCO-SYSLOG::DOT11-4-MAXRETRIES",
+			"version": "v2",
+			"certification": "STANDARD",
+			"description": [
+				"A packet has reached the maximum number of retries"
+			],
+			"domain": "FAULT",
+			"event": {
+				"EventType": "DOT11-4-MAXRETRIES",
+				"ExpireTime": 300,
+				"Summary": "${.syslog.message}",
+				"EventCategory": 3,
+				"EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+			},
+			"method": "syslog",
+			"syslog": {
+				"messageID": "%DOT11-4-MAXRETRIES"
+			},
+			"preProcessors": [
+				{
+					"grok": {
+						"source": "$.syslog.datagram",
+						"pattern": "%DOT11-4-MAXRETRIES: Packet to client %{IPV4:destip} reached max retries, removing the client",
+						"targetField": "$.syslog.variables"
+					}
+				}
+			],
+			"postProcessors": [
+				{
+					"remove": {
+						"source": "$.event.Details"
+					}
+				},
+				{
+					"set": {
+						"source": "$.syslog.datagram",
+						"targetField": "$.event.Details.syslog.datagram"
+					}
+				}
+			]
+		}
+	]
+}

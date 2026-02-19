@@ -1,0 +1,160 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200908251000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HPN-ICF-LI-MIB::hpnicfLIActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is sent when a type of intercepting configuration",
+				"is changed from inactive to active.",
+				"The value of the hpnicfLIStreamtype which identify the actual intercept",
+				"stream is included in this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfLIActive",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Intercepting configuration is inactive to active"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-LI-MIB::hpnicfLIActive HPN-ICF-LI-MIB::hpnicfLIStreamtype i 1",
+			"trap" : {
+				"name" : "HPN-ICF-LI-MIB::hpnicfLIActive",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.111.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the type of stream, and according to it uses filter table.",
+							"It can not be changed after a filter table is attached to it.",
+							"The following types of streams are supported:",
+							"ip: IP filter. The exact definition is a row in",
+							"hpnicfLIIPStreamTable.",
+							"mac: MAC filter. The exact definition is a row in",
+							"hpnicfLIMACStreamTable.",
+							"userConnecton: User connection filter. The exact definition",
+							"is a row in hpnicfLIUserStreamTable."
+						],
+						"enums" : {
+							"1" : "ip",
+							"2" : "mac",
+							"3" : "userConnection"
+						},
+						"name" : "HPN-ICF-LI-MIB::hpnicfLIStreamtype",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.111.1.3.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-LI-MIB::hpnicfLITimeOut",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the time specified in hpnicfLIMediationTimeout arrives",
+				"the device notifies the manager corresponding intercept is removed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfLITimeOut",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "LI mediation timed out"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-LI-MIB::hpnicfLITimeOut HPN-ICF-LI-MIB::hpnicfLIMediationRowStatus i 1",
+			"trap" : {
+				"name" : "HPN-ICF-LI-MIB::hpnicfLITimeOut",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.111.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Operation status of this table entry."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "HPN-ICF-LI-MIB::hpnicfLIMediationRowStatus",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.111.1.3.2.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-LI-MIB::hpnicfLIFailureInformation",
+			"certification" : "STANDARD",
+			"description" : [
+				"When interception is configured on distributed device",
+				"the configuration perhaps failed on some board.",
+				"If this happened, this notification will occur."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfLIFailureInformation",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "slot:$v2",
+				"Summary" : "Distributed device configuration failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-LI-MIB::hpnicfLIFailureInformation HPN-ICF-LI-MIB::hpnicfLIStreamtype i 1 HPN-ICF-LI-MIB::hpnicfLIBoardInformation u 9999",
+			"trap" : {
+				"name" : "HPN-ICF-LI-MIB::hpnicfLIFailureInformation",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.111.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the type of stream, and according to it uses filter table.",
+							"It can not be changed after a filter table is attached to it.",
+							"The following types of streams are supported:",
+							"ip: IP filter. The exact definition is a row in",
+							"hpnicfLIIPStreamTable.",
+							"mac: MAC filter. The exact definition is a row in",
+							"hpnicfLIMACStreamTable.",
+							"userConnecton: User connection filter. The exact definition",
+							"is a row in hpnicfLIUserStreamTable."
+						],
+						"enums" : {
+							"1" : "ip",
+							"2" : "mac",
+							"3" : "userConnection"
+						},
+						"name" : "HPN-ICF-LI-MIB::hpnicfLIStreamtype",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.111.1.3.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It is a slot number."
+						],
+						"name" : "HPN-ICF-LI-MIB::hpnicfLIBoardInformation",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.111.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

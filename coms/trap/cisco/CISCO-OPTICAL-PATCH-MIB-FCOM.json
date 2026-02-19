@@ -1,0 +1,78 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200203180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-OPTICAL-PATCH-MIB::cOPatchEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when ever a patch",
+				"is created, modified or deleted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cOPatchEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "A $v5 event has occurred on optical patch between $v1 and $v2 with status $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-OPTICAL-PATCH-MIB::cOPatchEvent CISCO-OPTICAL-PATCH-MIB::cOPatchLowIfIndex i 9999 CISCO-OPTICAL-PATCH-MIB::cOPatchHighIfIndex i 9999 CISCO-OPTICAL-PATCH-MIB::cOPatchType i 1 CISCO-OPTICAL-PATCH-MIB::cOPatchStatus i 1 CISCO-OPTICAL-PATCH-MIB::cOPatchEventType i 1",
+			"trap" : {
+				"name" : "CISCO-OPTICAL-PATCH-MIB::cOPatchEvent",
+				"oid" : "1.3.6.1.4.1.9.10.67.2.1",
+				"variables" : [
+					{
+						"name" : "CISCO-OPTICAL-PATCH-MIB::cOPatchLowIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.67.1.5.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-OPTICAL-PATCH-MIB::cOPatchHighIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.67.1.5.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "provisioned",
+							"2" : "automatic",
+							"3" : "other"
+						},
+						"name" : "CISCO-OPTICAL-PATCH-MIB::cOPatchType",
+						"oid" : "1.3.6.1.4.1.9.10.67.1.5.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "noError",
+							"2" : "otherError",
+							"3" : "interfaceError",
+							"4" : "interfaceChannelError"
+						},
+						"name" : "CISCO-OPTICAL-PATCH-MIB::cOPatchStatus",
+						"oid" : "1.3.6.1.4.1.9.10.67.1.5.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "create",
+							"2" : "delete",
+							"3" : "modify"
+						},
+						"name" : "CISCO-OPTICAL-PATCH-MIB::cOPatchEventType",
+						"oid" : "1.3.6.1.4.1.9.10.67.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

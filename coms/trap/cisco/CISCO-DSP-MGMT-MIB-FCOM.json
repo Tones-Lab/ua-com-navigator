@@ -1,0 +1,206 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201505120000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-DSP-MGMT-MIB::cdspMIBCardStateNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cdspMIBCardStateNotification is sent when the cdspCardState",
+				"enters into normal(1) state and enters into or exits from",
+				"fatal(4) state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : ($v1 == 5) ? 3 : 2"
+				},
+				"EventType" : "cdspMIBCardStateNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : ($v1 == 5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : ($v1 == 2) ? 3 : ($v1 == 3) ? 4 : ($v1 == 4) ? 5 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "cdspCardState has changed state to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DSP-MGMT-MIB::cdspMIBCardStateNotification CISCO-DSP-MGMT-MIB::cdspCardState i 1",
+			"trap" : {
+				"name" : "CISCO-DSP-MGMT-MIB::cdspMIBCardStateNotification",
+				"oid" : "1.3.6.1.4.1.9.9.86.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "fatal",
+							"5" : "offLine"
+						},
+						"name" : "CISCO-DSP-MGMT-MIB::cdspCardState",
+						"oid" : "1.3.6.1.4.1.9.9.86.1.1.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DSP-MGMT-MIB::cdspOperStateNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cdspOperStateNotification is sent when the cdspOperState",
+				"enters into normal(1) state or shutdown(2) state.",
+				"The value of entPhysicalName contains the name of the",
+				"DSP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cdspOperStateNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : ($v1 == 3) ? 3 : 5"
+				},
+				"SubNode" : "$v2",
+				"Summary" : "$v2 has changed operational state to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DSP-MGMT-MIB::cdspOperStateNotification CISCO-DSP-MGMT-MIB::cdspOperState i 1 ENTITY-MIB::entPhysicalName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-DSP-MGMT-MIB::cdspOperStateNotification",
+				"oid" : "1.3.6.1.4.1.9.9.86.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "shutdown",
+							"3" : "congested",
+							"4" : "failed"
+						},
+						"name" : "CISCO-DSP-MGMT-MIB::cdspOperState",
+						"oid" : "1.3.6.1.4.1.9.9.86.1.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DSP-MGMT-MIB::cdspVideoUsageNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when cdspCardVideoPoolUtilization",
+				"reaches the specified threshold ",
+				"(cdspCardVideoPoolUtilizationThreshold).",
+				"cdspCardVideoPoolUtilization indicates the DSP video pool usage",
+				"at the time this notification is sent.",
+				"cdspCardVideoPoolUtilizationThreshold indicates the threshold",
+				"configured to trigger this notification.",
+				"DSP video pool resource usage (cdspCardVideoPoolUtilization) is",
+				"updated and compared against the threshold",
+				"(cdspCardVideoPoolUtilizationThreshold) in the events below:",
+				"1. A call that requires DSP video resource connects.",
+				"2. A call that requires DSP video resource disconnects.",
+				"3. DSPFarm profile for video resource is enabled.",
+				"4. DSPFarm profile for video resource is disabled.",
+				"During comparison, if usage is larger than threshold, this ",
+				"notification is generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cdspVideoUsageNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Card video pool utilization $v1 has reached it's threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DSP-MGMT-MIB::cdspVideoUsageNotification CISCO-DSP-MGMT-MIB::cdspCardVideoPoolUtilization i 99 CISCO-DSP-MGMT-MIB::cdspCardVideoPoolUtilizationThreshold u 9999",
+			"trap" : {
+				"name" : "CISCO-DSP-MGMT-MIB::cdspVideoUsageNotification",
+				"oid" : "1.3.6.1.4.1.9.9.86.2.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-DSP-MGMT-MIB::cdspCardVideoPoolUtilization",
+						"oid" : "1.3.6.1.4.1.9.9.86.1.1.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-DSP-MGMT-MIB::cdspCardVideoPoolUtilizationThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.86.1.1.1.1.15",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DSP-MGMT-MIB::cdspVideoOutOfResourceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cdspVideoOutOfResourceNotification is sent when there is not",
+				"enough DSP resource in the video pool of the system for video",
+				"services.",
+				"cdspCardVideoPoolUtilization indicates the DSP video pool usage",
+				"at the time this notification is sent.",
+				"cdspCardVideoPoolUtilizationThreshold indicates the threshold",
+				"configured to trigger this notification.",
+				"DSP video resources required is computed for each incoming call",
+				"that requires DSP video resources. If there is not enough",
+				"video resource, this call will not have any video capabilities",
+				"and is treated as audio-only; and this notification is",
+				"generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cdspVideoOutOfResourceNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "DSP video pool utilization $v1 has reached it's threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DSP-MGMT-MIB::cdspVideoOutOfResourceNotification CISCO-DSP-MGMT-MIB::cdspCardVideoPoolUtilization i 99 CISCO-DSP-MGMT-MIB::cdspCardVideoPoolUtilizationThreshold u 9999",
+			"trap" : {
+				"name" : "CISCO-DSP-MGMT-MIB::cdspVideoOutOfResourceNotification",
+				"oid" : "1.3.6.1.4.1.9.9.86.2.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-DSP-MGMT-MIB::cdspCardVideoPoolUtilization",
+						"oid" : "1.3.6.1.4.1.9.9.86.1.1.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-DSP-MGMT-MIB::cdspCardVideoPoolUtilizationThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.86.1.1.1.1.15",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,165 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "A3COM0304-RESILIENTLINKS::resResilienceSwitch",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a change of state of one of the ",
+				"ports in a resilient pair results in a switch of active port, or when",
+				"there was no active port and a port has now become active."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : (($v1==3) ? 1 : 3)"
+				},
+				"EventType" : "resResilienceSwitch",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : (($v1==3) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 3 : (($v1==3) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Active port switched due to port state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM0304-RESILIENTLINKS::resResilienceSwitch A3COM0304-RESILIENTLINKS::resMainState i 1 A3COM0304-RESILIENTLINKS::resStandbyState i 1",
+			"trap" : {
+				"name" : "A3COM0304-RESILIENTLINKS::resResilienceSwitch",
+				"oid" : "1.3.6.1.4.1.43.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"Each port in a pair is constantly monitored for signs of ",
+							"failure. Failure information is used to automatically change the active port ",
+							"from main to standby or vice-versa. Each port may be in one of three states. ",
+							"Failed(1) indicates there is a loss of signal on this port. A port in this state ",
+							"cannot be active. Secondly ok(2). This state indicates that the port is capable ",
+							"of carrying traffic but is at the moment acting in the role of backup link. The ",
+							"other port in this pair will be in the Ok-and-active(3) state.",
+							"",
+							"Ok-and-active(3) means what it says, this port is capable of carrying traffic ",
+							"and is so doing at the time this parameter has been read."
+						],
+						"enums" : {
+							"1" : "failed",
+							"2" : "ok",
+							"3" : "ok-and-active"
+						},
+						"name" : "A3COM0304-RESILIENTLINKS::resMainState",
+						"oid" : "1.3.6.1.4.1.43.10.15.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Each port in a pair is constantly monitored for signs of ",
+							"failure. Failure information is used to automatically change the active port ",
+							"from main to standby or vice-versa. Each port may be in one of three states. ",
+							"Failed(1) indicates there is a loss of signal on this port. A port in this state ",
+							"cannot be active. Secondly ok(2). This state indicates that the port is capable ",
+							"of carrying traffic but is at the moment acting in the role of backup link. The ",
+							"other port in this pair will be in the Ok-and-active(3) state.",
+							"",
+							"Ok-and-active(3) means what it says, this port is capable of carrying traffic ",
+							"and is so doing at the time this parameter has been read."
+						],
+						"enums" : {
+							"1" : "failed",
+							"2" : "ok",
+							"3" : "ok-and-active"
+						},
+						"name" : "A3COM0304-RESILIENTLINKS::resStandbyState",
+						"oid" : "1.3.6.1.4.1.43.10.15.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM0304-RESILIENTLINKS::resStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a change of state of one of the ",
+				"ports in a resilient pair does not result in a switch of active port. If",
+				"such a switch were to occur the resResilienceSwitch would be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : (($v1==3) ? 1 : 3)"
+				},
+				"EventType" : "resStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : (($v1==3) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 4 : (($v1==3) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port state changed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM0304-RESILIENTLINKS::resStateChange A3COM0304-RESILIENTLINKS::resMainState i 1 A3COM0304-RESILIENTLINKS::resStandbyState i 1",
+			"trap" : {
+				"name" : "A3COM0304-RESILIENTLINKS::resStateChange",
+				"oid" : "1.3.6.1.4.1.43.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"Each port in a pair is constantly monitored for signs of ",
+							"failure. Failure information is used to automatically change the active port ",
+							"from main to standby or vice-versa. Each port may be in one of three states. ",
+							"Failed(1) indicates there is a loss of signal on this port. A port in this state ",
+							"cannot be active. Secondly ok(2). This state indicates that the port is capable ",
+							"of carrying traffic but is at the moment acting in the role of backup link. The ",
+							"other port in this pair will be in the Ok-and-active(3) state.",
+							"",
+							"Ok-and-active(3) means what it says, this port is capable of carrying traffic ",
+							"and is so doing at the time this parameter has been read."
+						],
+						"enums" : {
+							"1" : "failed",
+							"2" : "ok",
+							"3" : "ok-and-active"
+						},
+						"name" : "A3COM0304-RESILIENTLINKS::resMainState",
+						"oid" : "1.3.6.1.4.1.43.10.15.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Each port in a pair is constantly monitored for signs of ",
+							"failure. Failure information is used to automatically change the active port ",
+							"from main to standby or vice-versa. Each port may be in one of three states. ",
+							"Failed(1) indicates there is a loss of signal on this port. A port in this state ",
+							"cannot be active. Secondly ok(2). This state indicates that the port is capable ",
+							"of carrying traffic but is at the moment acting in the role of backup link. The ",
+							"other port in this pair will be in the Ok-and-active(3) state.",
+							"",
+							"Ok-and-active(3) means what it says, this port is capable of carrying traffic ",
+							"and is so doing at the time this parameter has been read."
+						],
+						"enums" : {
+							"1" : "failed",
+							"2" : "ok",
+							"3" : "ok-and-active"
+						},
+						"name" : "A3COM0304-RESILIENTLINKS::resStandbyState",
+						"oid" : "1.3.6.1.4.1.43.10.15.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

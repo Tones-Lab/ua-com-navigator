@@ -1,0 +1,119 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9907062150Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ENTITY-ALARM-MIB::ceAlarmAsserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The agent generates this trap when a physical entity",
+				"asserts an alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ceAlarmAsserted",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : (($v3 == 2) ? 4 : (($v3 == 3) ? 3 : 2))"
+				},
+				"SubNode" : "PhysicalIndex: $v1",
+				"Summary" : "Alarm type $v2 asserted on physical entity $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-ALARM-MIB::ceAlarmAsserted CISCO-ENTITY-ALARM-MIB::ceAlarmHistEntPhysicalIndex i 9999 CISCO-ENTITY-ALARM-MIB::ceAlarmHistAlarmType i 99 CISCO-ENTITY-ALARM-MIB::ceAlarmHistSeverity i 1 CISCO-ENTITY-ALARM-MIB::ceAlarmHistTimeStamp t 9999",
+			"trap" : {
+				"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmAsserted",
+				"oid" : "1.3.6.1.4.1.9.9.138.2.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmHistEntPhysicalIndex",
+						"oid" : "1.3.6.1.4.1.9.9.138.1.3.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmHistAlarmType",
+						"oid" : "1.3.6.1.4.1.9.9.138.1.3.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmHistSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.138.1.3.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmHistTimeStamp",
+						"oid" : "1.3.6.1.4.1.9.9.138.1.3.3.1.6",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-ALARM-MIB::ceAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The agent generates this trap when a physical entity",
+				"clears a previously asserted alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ceAlarmCleared",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PhysicalIndex: $v1",
+				"Summary" : "Alarm type $v2 cleared on physical entity $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-ALARM-MIB::ceAlarmCleared CISCO-ENTITY-ALARM-MIB::ceAlarmHistEntPhysicalIndex i 9999 CISCO-ENTITY-ALARM-MIB::ceAlarmHistAlarmType i 99 CISCO-ENTITY-ALARM-MIB::ceAlarmHistSeverity i 1 CISCO-ENTITY-ALARM-MIB::ceAlarmHistTimeStamp t 9999",
+			"trap" : {
+				"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmCleared",
+				"oid" : "1.3.6.1.4.1.9.9.138.2.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmHistEntPhysicalIndex",
+						"oid" : "1.3.6.1.4.1.9.9.138.1.3.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmHistAlarmType",
+						"oid" : "1.3.6.1.4.1.9.9.138.1.3.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmHistSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.138.1.3.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ENTITY-ALARM-MIB::ceAlarmHistTimeStamp",
+						"oid" : "1.3.6.1.4.1.9.9.138.1.3.3.1.6",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		}
+	]
+}

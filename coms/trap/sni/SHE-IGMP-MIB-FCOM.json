@@ -1,0 +1,1079 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201405211700Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpControlResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification sent at the end of long running command.",
+				"The possible values of sheIgmpControlReqResult are:",
+				"wrongIpAddress(2), -- IP address of FTP server is incorrect",
+				"wrongUserPassword(3), -- The user name or password is wrong",
+				"permissionDenied(4), -- The user name has no permission to create dir/file",
+				"encryptionNotSupportedByRemoteServer(5), -- The remote server does not support requested encryption.",
+				"commandSucceeded(37)",
+				"commandFailed(36)",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpControlResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==30 || $v3==32 || $v3==37) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "IGMP control request $v2 ended with result $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpControlResult SHE-IGMP-MIB::sheIgmpControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpControlRequest i 0 SHE-IGMP-MIB::sheIgmpControlReqResult i 37",
+				"$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpControlResult SHE-IGMP-MIB::sheIgmpControlTimeStamp u 9998 SHE-IGMP-MIB::sheIgmpControlRequest i 0 SHE-IGMP-MIB::sheIgmpControlReqResult i 36"
+			],
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpControlResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.1.13.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Command to configure global system parameters.",
+							"It must be the last member in the varBindList of the SNMP set request.",
+							"The parameters for different commands are listed below:",
+							"",
+							"setIgmpParameters (2): (optional, but at least one of them should be there)",
+							"sheIgmpControlProgramPreviewEnable (obsolete with R3.7M)",
+							"sheIgmpControlLogEnable (obsolete with R4.7M)",
+							"sheIgmpControlUploadEnable (obsolete with R4.7M)",
+							"",
+							"setFtpParameters (3):",
+							"sheIgmpControlFtpRootDir",
+							"sheIgmpControlFtpIp (optional, not needed if a transfer profile is used)",
+							"sheIgmpControlFtpUser (optional, not needed if a transfer profile is used)",
+							"sheIgmpControlFtpPassword (optional, not needed if a transfer profile is used)",
+							"sheIgmpControlFtpUploadInterval",
+							"sheIgmpControlFileTransferProfile (new with R3.8M)",
+							"",
+							"setIgmpPacketRateLimitUplink (9):",
+							"sheIgmpControlPacketRateLimitUplink",
+							"",
+							"setIgmpPacketRateLimitSubscriber (15):",
+							"sheIgmpControlPacketRateLimitSubscriber",
+							"",
+							"setIgmpLongTimeOnlineTime (16): -> obsolete with R4.7M",
+							"sheIgmpControlLongTimeOnlineTime",
+							"",
+							"setIgmpEthernetAccessEnable (17):",
+							"sheIgmpControlEthernetAccessEnable",
+							"",
+							"resetSubscriberPreviewCountAll (13): [NO_CONFIG-CHANGE]",
+							"",
+							"manuallyUploadLog (14): [NO_CONFIG-CHANGE]",
+							"",
+							"Notifications:",
+							"sheIgmpControlResult at the command ending in case of long running command.",
+							"The long running command refers to the case that sheIgmpUploadEnable",
+							"is changed from disable to enable. NE will verify the FTP connection at the",
+							"enabling moment. Besides, the RootDir is created if they do not exist yet.",
+							"EM should GET sheIgmpControlReqResult when the Response of the SET PDU",
+							"is received, and the error status is noError. If the value of",
+							"sheIgmpControlReqResult is comExecStarted(30), which means the SET operation",
+							"is a long running command, EM must issue another GET operation on",
+							"sheIgmpControlTimer. A timer should start on EM with the expire time equals",
+							"to the value of sheIgmpControlTimer. The sheIgmpControlResult trap is expected",
+							"to reach EM within the specified time.",
+							"When the trap is received by EM, EM can optionally GET",
+							"sheIgmpControlReqResult, sheIgmpControlStatus, and sheIgmpControlTimeStamp.",
+							""
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"2" : "setIgmpParameters",
+							"3" : "setFtpParameters",
+							"4" : "createPreviewPackage",
+							"5" : "deletePreviewPackage",
+							"6" : "modifyPreviewPackage",
+							"7" : "addChannel2PreviewPackage",
+							"8" : "deleteChannelFromPreviewPackage",
+							"9" : "setIgmpPacketRateLimitUplink",
+							"10" : "setSubscriberPreviewPackage",
+							"11" : "deleteSubscriberPreviewPackage",
+							"12" : "resetSubscriberPreviewRemainsCount",
+							"13" : "resetSubscriberPreviewCountAll",
+							"14" : "manuallyUploadLog",
+							"15" : "setIgmpPacketRateLimitSubscriber",
+							"16" : "setIgmpLongTimeOnlineTime",
+							"17" : "setIgmpEthernetAccessEnable",
+							"18" : "setIgmpCDRTime",
+							"19" : "setIgmpSetMulticastChannelV2Para",
+							"21" : "setIgmpPreviewAutoResetTimeEnable"
+						},
+						"name" : "SHE-IGMP-MIB::sheIgmpControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.1.13.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command."
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"2" : "wrongIpAddress",
+							"3" : "wrongUserPassword",
+							"4" : "permissionDenied",
+							"5" : "encryptionNotSupportedByRemoteServer",
+							"10" : "ftsError",
+							"11" : "ftsIpAddrFailed",
+							"12" : "ftsAccountFailed",
+							"13" : "ftsPasswdFailed",
+							"14" : "ftsDescPathFailed",
+							"15" : "ftsProfileUnkown",
+							"16" : "ftsServerConnectionTimeOut",
+							"17" : "ftsServerConnectionNoOpen",
+							"18" : "ftsServerConnectionAbort",
+							"19" : "ftsServerConnectionFileAborted",
+							"21" : "ftsServerConnectionRequestedActionNotTaken",
+							"22" : "ftsRequestPartiallyFailed",
+							"23" : "ftsAuthenticationModeNotSupportedByServer",
+							"24" : "ftsServerConnectionInvalidFileSize",
+							"30" : "comExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"38" : "commandNotSupportedbyRelease",
+							"41" : "featureNotSupportedbyRelease",
+							"42" : "commandFailedForAdminstateUnlocked",
+							"43" : "connectionProfileNotFound",
+							"51" : "noChannelHistoryDataAvailable"
+						},
+						"name" : "SHE-IGMP-MIB::sheIgmpControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.1.13.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpUploadFailedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that an FTP upload failure occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpUploadFailedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v4 ne '') ? '$v4' : 'FTP upload failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpUploadFailedTrap SHE-IGMP-MIB::sheIgmpLastUploadStatus i 0 SHE-IGMP-MIB::sheIgmpLastUploadTimeStamp t 31536000 SHE-IGMP-MIB::sheIgmpLastUploadFileName s EXAMPLE SHE-IGMP-MIB::sheIgmpLastUploadErrorString s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpUploadFailedTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"The status of last FTP upload operation.",
+							"It could be uploadSuccess(1) or uploadFail(2)."
+						],
+						"enums" : {
+							"0" : "noUploadStarted",
+							"1" : "uploadSuccess",
+							"2" : "uploadFail"
+						},
+						"name" : "SHE-IGMP-MIB::sheIgmpLastUploadStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last FTP upload operation (end of operation)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpLastUploadTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.7.2",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The file name of last FTP upload operation."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpLastUploadFileName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.7.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The text that describes the FTP upload failure. If upload succeeded, this string is empty."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpLastUploadErrorString",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.7.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpPreviewPackageControlResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification sent at the end of preview package command."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpPreviewPackageControlResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==30 || $v3==32 || $v3==37) ? 2 : 3"
+				},
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "IGMP preview package command $v4 ended with result $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpPreviewPackageControlResult SHE-IGMP-MIB::sheIgmpPreviewPackageControlIndex u 0 SHE-IGMP-MIB::sheIgmpPreviewPackageControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpPreviewPackageControlReqResult i 37 SHE-IGMP-MIB::sheIgmpPreviewPackageControlRequest i 2",
+				"$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpPreviewPackageControlResult SHE-IGMP-MIB::sheIgmpPreviewPackageControlIndex u 0 SHE-IGMP-MIB::sheIgmpPreviewPackageControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpPreviewPackageControlReqResult i 4 SHE-IGMP-MIB::sheIgmpPreviewPackageControlRequest i 2"
+			],
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpPreviewPackageControlResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the preview package."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpPreviewPackageControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.3.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpPreviewPackageControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.3.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The result of the last user command."
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"2" : "wrongIpAddress",
+							"3" : "wrongUserPassword",
+							"4" : "permissionDenied",
+							"5" : "encryptionNotSupportedByRemoteServer",
+							"10" : "ftsError",
+							"11" : "ftsIpAddrFailed",
+							"12" : "ftsAccountFailed",
+							"13" : "ftsPasswdFailed",
+							"14" : "ftsDescPathFailed",
+							"15" : "ftsProfileUnkown",
+							"16" : "ftsServerConnectionTimeOut",
+							"17" : "ftsServerConnectionNoOpen",
+							"18" : "ftsServerConnectionAbort",
+							"19" : "ftsServerConnectionFileAborted",
+							"21" : "ftsServerConnectionRequestedActionNotTaken",
+							"22" : "ftsRequestPartiallyFailed",
+							"23" : "ftsAuthenticationModeNotSupportedByServer",
+							"24" : "ftsServerConnectionInvalidFileSize",
+							"30" : "comExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"38" : "commandNotSupportedbyRelease",
+							"41" : "featureNotSupportedbyRelease",
+							"42" : "commandFailedForAdminstateUnlocked",
+							"43" : "connectionProfileNotFound",
+							"51" : "noChannelHistoryDataAvailable"
+						},
+						"name" : "SHE-IGMP-MIB::sheIgmpPreviewPackageControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.3.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Command to configure preview package.",
+							"It must be the last member in the varBindList of the SNMP set request.",
+							"The parameters for different commands are listed below:",
+							"",
+							"createPreviewPackage (4):",
+							"sheIgmpPreviewPackageControlLastingPeriod",
+							"sheIgmpPreviewPackageControlIntervalBetweenPreviews",
+							"sheIgmpPreviewPackageControlMaxPreviewsNum",
+							"(optional)",
+							"sheIgmpPreviewPackageControlDescription",
+							"",
+							"deletePreviewPackage (5):",
+							"sheIgmpPreviewPackageControlIndex",
+							"",
+							"modifyPreviewPackage (6):",
+							"(must)",
+							"sheIgmpPreviewPackageControlIndex",
+							"(optional, but at least one of them should be there)",
+							"sheIgmpPreviewPackageControlLastingPeriod",
+							"sheIgmpPreviewPackageControlIntervalBetweenPreviews",
+							"sheIgmpPreviewPackageControlMaxPreviewsNum",
+							"sheIgmpPreviewPackageControlDescription",
+							"",
+							"addChannel2PreviewPackage (7):",
+							"sheIgmpPreviewPackageControlIndex",
+							"sheIgmpPreviewPackageControlChannelIndex",
+							"",
+							"deleteChannelFromPreviewPackage (8):",
+							"sheIgmpPreviewPackageControlIndex",
+							"sheIgmpPreviewPackageControlChannelIndex"
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"2" : "setIgmpParameters",
+							"3" : "setFtpParameters",
+							"4" : "createPreviewPackage",
+							"5" : "deletePreviewPackage",
+							"6" : "modifyPreviewPackage",
+							"7" : "addChannel2PreviewPackage",
+							"8" : "deleteChannelFromPreviewPackage",
+							"9" : "setIgmpPacketRateLimitUplink",
+							"10" : "setSubscriberPreviewPackage",
+							"11" : "deleteSubscriberPreviewPackage",
+							"12" : "resetSubscriberPreviewRemainsCount",
+							"13" : "resetSubscriberPreviewCountAll",
+							"14" : "manuallyUploadLog",
+							"15" : "setIgmpPacketRateLimitSubscriber",
+							"16" : "setIgmpLongTimeOnlineTime",
+							"17" : "setIgmpEthernetAccessEnable",
+							"18" : "setIgmpCDRTime",
+							"19" : "setIgmpSetMulticastChannelV2Para",
+							"21" : "setIgmpPreviewAutoResetTimeEnable"
+						},
+						"name" : "SHE-IGMP-MIB::sheIgmpPreviewPackageControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistoryZappingTimeSet",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistoryZappingTimeSet",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "IGMP channel history zapping time modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistoryZappingTimeSet SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistoryControlZappingTime i 0",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryZappingTimeSet",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A configurable interval to control the record of messages. IGMP messages ",
+							"that come too fast(the interval is less than the zapping time) will not ",
+							"be recorded."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlZappingTime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.5",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistoryDslamIdSet",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistoryDslamIdSet",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "IGMP channel history DSLAM ID changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistoryDslamIdSet SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistControlDslamid i 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryDslamIdSet",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.5",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The DSLAM ID is used to deferenciate DSLAMs. Several DSLAMs may upload the data file into one same",
+							"FTP server. The DSLAM ID will present in the file name to differenciate them.",
+							"So user should not configure same DSLAM ID for 2 DSLAMs."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistControlDslamid",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.8",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistoryPortEnabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistoryPortEnabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortIndex:$v2",
+				"Summary" : "IGMP channel history port $v2 enabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistoryPortEnabled SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistControlBridgePortIndex u 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryPortEnabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.6",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Bridgeport index"
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistControlBridgePortIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistoryPortDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistoryPortDisabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortIndex:$v2",
+				"Summary" : "IGMP channel history port $v2 disabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistoryPortDisabled SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistControlBridgePortIndex u 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryPortDisabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.7",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Bridgeport index"
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistControlBridgePortIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistFTPUploadEnabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistFTPUploadEnabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotIndex:$v2",
+				"Summary" : "IGMP channel history FTP upload enabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistFTPUploadEnabled SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistControlSlotIndex i 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistFTPUploadEnabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.8",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"entPhysicalIndex of configured slot"
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistControlSlotIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistFTPUploadDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistFTPUploadDisabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotIndex:$v2",
+				"Summary" : "IGMP channel history FTP upload disabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistFTPUploadDisabled SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistControlSlotIndex i 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistFTPUploadDisabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.9",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"entPhysicalIndex of configured slot"
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistControlSlotIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIGMPForkingEnabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIGMPForkingEnabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "IGMP forking enabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIGMPForkingEnabled SHE-IGMP-MIB::sheIgmpForkingControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpForkingControlProviderIndex u 1",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIGMPForkingEnabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.10",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpForkingControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.16.2.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"index of sheIgmpForkingStatusTable - map to sheIgmpProviderTableIndex.",
+							""
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpForkingControlProviderIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.16.2.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIGMPForkingDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIGMPForkingDisabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "IGMP forking disabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIGMPForkingDisabled SHE-IGMP-MIB::sheIgmpForkingControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpForkingControlProviderIndex u 1",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIGMPForkingDisabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.11",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpForkingControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.16.2.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"index of sheIgmpForkingStatusTable - map to sheIgmpProviderTableIndex.",
+							""
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpForkingControlProviderIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.16.2.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpCDRTimeModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configurartion trap. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpCDRTimeModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "CDR time changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpCDRTimeModified SHE-IGMP-MIB::sheIgmpParaV2ControlTimeStamp u 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpCDRTimeModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.12",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command).",
+							"",
+							"Note:",
+							"Obsolete with R4.7M."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpParaV2ControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.10.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpMulticastChannelV2ParaModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configurartion trap. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpMulticastChannelV2ParaModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ChannelIndex:$v2",
+				"Summary" : "IGMP multicast channel V2 parameters changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpMulticastChannelV2ParaModified SHE-IGMP-MIB::sheIgmpMulticastChannelControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpMulticastChannelControlChannelIndex u 9999 SHE-IGMP-MIB::sheIgmpMulticastChannelControlDelayLeaveTime u 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpMulticastChannelV2ParaModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.13",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpMulticastChannelControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.12.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This attribute indicates the index of the multicast group being configured."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpMulticastChannelControlChannelIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.12.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Time interval for which the IGMP proxy 's host will delay to send ",
+							"a leave to the Router side when no membership is in a multicast channel."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpMulticastChannelControlDelayLeaveTime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.12.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheFtpParametersSet",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration event for settinf the FTP parameters."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheFtpParametersSet",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "FTP parameters configured"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheFtpParametersSet SHE-IGMP-MIB::sheIgmpControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpFtpRootDir s EXAMPLE SHE-IGMP-MIB::sheIgmpFtpIp a 192.0.2.1 SHE-IGMP-MIB::sheIgmpFtpUploadInterval u 1 SHE-IGMP-MIB::sheIgmpFileTransferProfile s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheFtpParametersSet",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.14",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.1.13.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The root directory name on FTP server that stores the",
+							"IGMP log data of this DSLAM. It is the relative path to",
+							"the ftproot, eg. 'xx56xx/v1.5/dslam1/igmp'",
+							"The directory structure looks like:",
+							"ftproot <-- the upmost ftp root",
+							"|- %FtpRootDir% <-- this value, specifies the DSLAM",
+							""
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpFtpRootDir",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"FTP server's IP address.",
+							"",
+							"New with R3.8M: Ignored if a transferProfile is used."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpFtpIp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The interval in minutes between uploads of IGMP log data to the FTP server.",
+							"",
+							"Valid intervals: 1 minute - 1440 minutes (24 hours)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpFtpUploadInterval",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This parameter configure the valid file transfer profile in SHE-SECURITY-MIB.",
+							"Recommended for all new configurations, including FTP and SFTP. ",
+							"",
+							"For normal FTP transfer without data encryption -> profile is not mandatory, but recommended.",
+							"For filetransfer via SSH FTP (SFTP) -> profile is mandatory. Parameter should point to a profile",
+							"in sheSecurityConnectionProfileTable or sheSecurityDistributionProfileTable.",
+							"",
+							"NOTE:",
+							"New parameter with R3.8M (only SFTP and FTP supported).",
+							""
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpFileTransferProfile",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.1.14",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistoryPortEntryUpdated",
+			"certification" : "STANDARD",
+			"description" : [
+				"event for updated channel history table",
+				"New with R3.8M"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistoryPortEntryUpdated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortIndex:$v2",
+				"Summary" : "IGMP channel history port entry updated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistoryPortEntryUpdated SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistControlBridgePortIndex u 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryPortEntryUpdated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.15",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Bridgeport index"
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistControlBridgePortIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistoryPortCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistoryPortCleared",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortIndex:$v2",
+				"Summary" : "IGMP channel history port $v2 cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistoryPortCleared SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistControlBridgePortIndex u 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryPortCleared",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.16",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Bridgeport index"
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistControlBridgePortIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistorySlotCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistorySlotCleared",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotIndex:$v2",
+				"Summary" : "IGMP channel history slot $v2 cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistorySlotCleared SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999 SHE-IGMP-MIB::sheIgmpChannelHistControlSlotIndex i 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistorySlotCleared",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.17",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"entPhysicalIndex of configured slot"
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistControlSlotIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-IGMP-MIB::sheIgmpChannelHistoryCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"configuration event"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIgmpChannelHistoryCleared",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "IGMP channel history cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-IGMP-MIB::sheIgmpChannelHistoryCleared SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp u 9999",
+			"trap" : {
+				"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryCleared",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.8.1.18",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-IGMP-MIB::sheIgmpChannelHistoryControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.35.15.5.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

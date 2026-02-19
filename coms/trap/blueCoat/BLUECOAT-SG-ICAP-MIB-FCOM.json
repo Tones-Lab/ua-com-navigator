@@ -1,0 +1,95 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201302081400Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "BLUECOAT-SG-ICAP-MIB::sgICAPTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification that represents an ICAP- ",
+				"related event on an ProxySG appliance. The attributes",
+				"of an ICAP notification include:",
+				"sgICAPNotification - defines the event type.",
+				"icapServiceStatsName - the service on which the event",
+				"has occurred",
+				"icapServiceStatsDeferredReqs - the number of deferred",
+				"connections on the service, at the time of event",
+				"icapServiceStatsQueuedReqs - the number of queued ",
+				"connections on the service, at the time of event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2 || $v1 == 4) ? 1 : 2"
+				},
+				"EventType" : {
+					"eval" : "($v1 == 1 || $v1 == 2) ? 'sgICapQueuedRequestsThreshold' : 'sgIcapDeferredRequestsThreshold'"
+				},
+				"ExpireTime" : {
+					"eval" : "($v1 == 2 || $v1 == 4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2 || $v1 == 4) ? 2 : 4"
+				},
+				"SubNode" : "icapService:$v2",
+				"Summary" : {
+					"eval" : "($v2 == 1) ? 'Queued connections above threshold on ICAP service $v2' : (($v2 == 2) ? 'Queued connections below threshold on ICAP service $v2' : (($v2 == 3) ? 'Deferred connections above threshold on ICAP service $v2' : 'Deferred connections below threshold on ICAP service $v2'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BLUECOAT-SG-ICAP-MIB::sgICAPTrap BLUECOAT-SG-ICAP-MIB::sgICAPNotification i 1 BLUECOAT-SG-ICAP-MIB::icapServiceStatsName s EXAMPLE BLUECOAT-SG-ICAP-MIB::icapServiceStatsDeferredReqs u 9999 BLUECOAT-SG-ICAP-MIB::icapServiceStatsQueuedReqs u 9999",
+			"trap" : {
+				"name" : "BLUECOAT-SG-ICAP-MIB::sgICAPTrap",
+				"oid" : "1.3.6.1.4.1.3417.2.14.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A notification type that describes an ICAP event."
+						],
+						"enums" : {
+							"1" : "queuedRequestsAboveThreshold",
+							"2" : "queuedRequestsBelowThreshold",
+							"3" : "deferredRequestsAboveThreshold",
+							"4" : "deferredRequestsBelowThreshold"
+						},
+						"name" : "BLUECOAT-SG-ICAP-MIB::sgICAPNotification",
+						"oid" : "1.3.6.1.4.1.3417.2.14.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This attribute represents the configured ",
+							"name of the service or the service group."
+						],
+						"name" : "BLUECOAT-SG-ICAP-MIB::icapServiceStatsName",
+						"oid" : "1.3.6.1.4.1.3417.2.14.1.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of ICAP scanning transactions that ",
+							"have been deferred until the full object has",
+							"been received."
+						],
+						"name" : "BLUECOAT-SG-ICAP-MIB::icapServiceStatsDeferredReqs",
+						"oid" : "1.3.6.1.4.1.3417.2.14.1.1.1.1.1.9",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"ICAP scanning transactions that are waiting",
+							"for an available connection."
+						],
+						"name" : "BLUECOAT-SG-ICAP-MIB::icapServiceStatsQueuedReqs",
+						"oid" : "1.3.6.1.4.1.3417.2.14.1.1.1.1.1.8",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

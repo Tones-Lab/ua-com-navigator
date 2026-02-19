@@ -1,0 +1,793 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsLineFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"AC Line power failure.",
+				"The UPS reports that the AC line power has failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqUpsLineAlert",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "AC line power failed, UPS has $v1 minutes power left"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsLineFailed CPQUPS-MIB::cpqUpsEstimatedBatteryLife i 9999",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsLineFailed",
+				"oid" : "1.3.6.1.4.1.232.0.12001",
+				"variables" : [
+					{
+						"description" : [
+							"The estimated time, in minutes, of battery power available.",
+							"The value will be negative one (-1) if the agent is unable to",
+							"determine this information. A UPS may not provide this",
+							"information when AC power is available."
+						],
+						"name" : "CPQUPS-MIB::cpqUpsEstimatedBatteryLife",
+						"oid" : "1.3.6.1.4.1.232.12.2.2.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsLineOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"AC line power ok.",
+				"The UPS reports that the AC line power has returned."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqUpsLineAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "AC line power returned to normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsLineOk ",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsLineOk",
+				"oid" : "1.3.6.1.4.1.232.0.12002"
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsShutdown",
+			"certification" : "STANDARD",
+			"description" : [
+				"UPS initiating graceful server shutdown.",
+				"The UPS software is initiating a graceful server shutdown.",
+				"Every attempt to preserve the state of the file system",
+				"will be made. The server shutdown will be initiated due to",
+				"a power anomaly."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqUpsAlert",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "UPS initiated server shutdown"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsShutdown ",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsShutdown",
+				"oid" : "1.3.6.1.4.1.232.0.12003"
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsConfirmation",
+			"certification" : "STANDARD",
+			"description" : [
+				"Server now operational after power down.",
+				"This server has previously been shutdown due to a power",
+				"anomaly and has just become operational again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqUpsAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Server is active"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsConfirmation ",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsConfirmation",
+				"oid" : "1.3.6.1.4.1.232.0.12004"
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsBatteryLow",
+			"certification" : "STANDARD",
+			"description" : [
+				"UPS Battery Low. The server will soon lose power."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqUpsBatteryLow",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "UPS battery low"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsBatteryLow ",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsBatteryLow",
+				"oid" : "1.3.6.1.4.1.232.0.12005"
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUps2LineFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"AC Line power failure.",
+				"The UPS reports that the AC line power has failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqUps2LineNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "AC line power failed, UPS has $v3 minutes power left"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUps2LineFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQUPS-MIB::cpqUpsEstimatedBatteryLife i 9999",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUps2LineFailed",
+				"oid" : "1.3.6.1.4.1.232.0.12006",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The estimated time, in minutes, of battery power available.",
+							"The value will be negative one (-1) if the agent is unable to",
+							"determine this information. A UPS may not provide this",
+							"information when AC power is available."
+						],
+						"name" : "CPQUPS-MIB::cpqUpsEstimatedBatteryLife",
+						"oid" : "1.3.6.1.4.1.232.12.2.2.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUps2LineOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"AC line power ok.",
+				"The UPS reports that the AC line power has returned."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqUps2LineNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "AC line power returned to normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUps2LineOk RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUps2LineOk",
+				"oid" : "1.3.6.1.4.1.232.0.12007",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUps2Shutdown",
+			"certification" : "STANDARD",
+			"description" : [
+				"UPS initiating graceful server shutdown.",
+				"The UPS software is initiating a graceful server shutdown.",
+				"Every attempt to preserve the state of the file system",
+				"will be made. The server shutdown will be initiated due to",
+				"a power anomaly."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqUps2Notification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "UPS initiated graceful server shutdown"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUps2Shutdown RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUps2Shutdown",
+				"oid" : "1.3.6.1.4.1.232.0.12008",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUps2Confirmation",
+			"certification" : "STANDARD",
+			"description" : [
+				"Server now operational after power down.",
+				"This server has previously been shutdown due to a power",
+				"anomaly and has just become operational again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqUps2Notification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Server is active"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUps2Confirmation RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUps2Confirmation",
+				"oid" : "1.3.6.1.4.1.232.0.12009",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUps2BatteryLow",
+			"certification" : "STANDARD",
+			"description" : [
+				"UPS Battery Low. The server will soon lose power."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqUps2BatteryLow",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "UPS battery low"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUps2BatteryLow RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUps2BatteryLow",
+				"oid" : "1.3.6.1.4.1.232.0.12010",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsOverload",
+			"certification" : "STANDARD",
+			"description" : [
+				"The UPS has entered an overload condition. A failure",
+				"may occur unless the overload is corrected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqUpsOverload",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "UPS overloaded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsOverload RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsOverload",
+				"oid" : "1.3.6.1.4.1.232.0.12011",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsPendingBatteryFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The UPS battery is about to fail. Replace as soon",
+				"as possible."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqUpsPendingBatteryFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "UPS battery about to fail"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsPendingBatteryFailure RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsPendingBatteryFailure",
+				"oid" : "1.3.6.1.4.1.232.0.12012",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsGenericCritical",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generic UPS critical alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqUpsGenericCritical",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsGenericCritical RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQUPS-MIB::cpqUpsAlarm s EXAMPLE",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsGenericCritical",
+				"oid" : "1.3.6.1.4.1.232.0.12013",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable contains the UPS alarm text."
+						],
+						"name" : "CPQUPS-MIB::cpqUpsAlarm",
+						"oid" : "1.3.6.1.4.1.232.12.2.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQUPS-MIB::cpqUpsGenericInfo",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generic UPS informational alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqUpsGenericInfo",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQUPS-MIB::cpqUpsGenericInfo RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQUPS-MIB::cpqUpsAlarm s EXAMPLE",
+			"trap" : {
+				"name" : "CPQUPS-MIB::cpqUpsGenericInfo",
+				"oid" : "1.3.6.1.4.1.232.0.12014",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable contains the UPS alarm text."
+						],
+						"name" : "CPQUPS-MIB::cpqUpsAlarm",
+						"oid" : "1.3.6.1.4.1.232.12.2.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

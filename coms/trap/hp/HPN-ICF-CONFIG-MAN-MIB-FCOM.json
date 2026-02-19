@@ -1,0 +1,271 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201111260000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgManEventlog",
+			"certification" : "STANDARD",
+			"description" : [
+				"The object calculates the checksum on the current config per 10 minutes and",
+				"even if it is different from the saved config but if a trap has been sent",
+				"with the same checksum then don't send again until the checksum is different."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfCfgManEventlog",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Checksum calculating on the configuration per 10 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgManEventlog HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgLogSrcCmd i 1 HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgLogSrcData i 1 HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgLogDesData i 1",
+			"trap" : {
+				"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgManEventlog",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"Specify the source command which brought the log.",
+							"Currently we provide the types of source:",
+							"1.cmdLine(1):configure log instigated by command line.",
+							"2.snmp(2):configure log instigated by snmp.",
+							"3.other(3):configure log instigated by other source unknown."
+						],
+						"enums" : {
+							"1" : "cmdLine",
+							"2" : "snmp",
+							"3" : "other"
+						},
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgLogSrcCmd",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.1.7.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The source of the configuration data event.",
+							"erase erasing destination",
+							"runningData operational data alive",
+							"commandSource the command source itself",
+							"startupData what the system will use next reboot",
+							"local local NVRAM or flash",
+							"netFtp FTP network transfer",
+							"hotPlugging board is inserted or pulled out on line",
+							""
+						],
+						"enums" : {
+							"1" : "erase",
+							"2" : "runningData",
+							"3" : "commandSource",
+							"4" : "startupData",
+							"5" : "local",
+							"6" : "netFtp",
+							"7" : "hotPlugging"
+						},
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgLogSrcData",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.1.7.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The destination for the configuration data event.",
+							"unknown unknown",
+							"runningData operational data alive",
+							"commandSource the command source itself",
+							"startupData what the system will use next reboot",
+							"local local NVRAM or flash",
+							"netFtp FTP network transfer",
+							"hotPlugging board is inserted or pulled out on line"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "runningData",
+							"3" : "commandSource",
+							"4" : "startupData",
+							"5" : "local",
+							"6" : "netFtp",
+							"7" : "hotPlugging"
+						},
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgLogDesData",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.1.7.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateCompletion",
+			"certification" : "STANDARD",
+			"description" : [
+				"When create hpnicfCfgOperateTable successfully, a",
+				"notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfCfgOperateCompletion",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "NIC configuration operation table created successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateCompletion HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateType i 1 HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateTime t 31536000 HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateState i 1 HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateEndTime t 31536000 HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperFailReason s EXAMPLE",
+			"trap" : {
+				"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateCompletion",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"Specify the type of operation on configuration."
+						],
+						"enums" : {
+							"1" : "running2Startup",
+							"2" : "startup2Running",
+							"3" : "running2Net",
+							"4" : "net2Running",
+							"5" : "net2Startup",
+							"6" : "startup2Net"
+						},
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateType",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.2.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Record the time taken for the operation. This object will",
+							"be like a stopwatch, starting when the operation",
+							"starts, and stopping when the operation completes."
+						],
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateTime",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.2.5.1.5",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The operation state type in the hpnicfCfgOperateTable."
+						],
+						"enums" : {
+							"1" : "opInProgress",
+							"2" : "opSuccess",
+							"3" : "opInvalidOperation",
+							"4" : "opInvalidProtocol",
+							"5" : "opInvalidSourceName",
+							"6" : "opInvalidDestName",
+							"7" : "opInvalidServerAddress",
+							"8" : "opDeviceBusy",
+							"9" : "opDeviceOpenError",
+							"10" : "opDeviceError",
+							"11" : "opDeviceNotProgrammable",
+							"12" : "opDeviceFull",
+							"13" : "opFileOpenError",
+							"14" : "opFileTransferError",
+							"15" : "opFileChecksumError",
+							"16" : "opNoMemory",
+							"17" : "opAuthFail",
+							"18" : "opTimeOut",
+							"19" : "opUnknownFailure",
+							"20" : "opInvalidConfigFile",
+							"21" : "opSlaveFull",
+							"22" : "opCopyToSlaveFailure"
+						},
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateState",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.2.5.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sysUpTime when the configuration operation is finished."
+						],
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateEndTime",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.2.5.1.6",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The failure reasons of configuration operation."
+						],
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperFailReason",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.2.5.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgInvalidConfigFile",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the configuration file is invalid, this",
+				"notification will be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfCfgInvalidConfigFile",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Configuration file $v2 is invalid"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgInvalidConfigFile HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateType i 1 HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateFileName s EXAMPLE HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgFirstTrapTime t 31536000",
+			"trap" : {
+				"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgInvalidConfigFile",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"Specify the type of operation on configuration."
+						],
+						"enums" : {
+							"1" : "running2Startup",
+							"2" : "startup2Running",
+							"3" : "running2Net",
+							"4" : "net2Running",
+							"5" : "net2Startup",
+							"6" : "startup2Net"
+						},
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateType",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.2.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"When the object of hpnicfCfgOperateType has the value of net2Startup, net2running or",
+							"running2Net,the value must be specified. The file name may include the path if",
+							"applicable.",
+							"If the value of hpnicfCfgOperateType is net2Startup or net2running, this node specify the",
+							"source file name of transfers.If the value of hpnicfCfgOperateType is running2Net ",
+							"this node specify the destination file name of transfers.",
+							"When hpnicfCfgOperateType has the value of startup2net,the object may not be",
+							"created instead of using the file name of startup configuration file."
+						],
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgOperateFileName",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.2.4.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Time when the first trap is sent."
+						],
+						"name" : "HPN-ICF-CONFIG-MAN-MIB::hpnicfCfgFirstTrapTime",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.4.1.1.8",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		}
+	]
+}

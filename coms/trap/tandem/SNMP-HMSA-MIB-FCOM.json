@@ -1,0 +1,253 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SNMP-HMSA-MIB::zhrmTrapDeviceStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"When zhrmDevUnTrapEnable is set to 1, this trap is",
+				"generated whenever the status of any device represented",
+				"in the hrDevice group changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : (($v3==1 || $v3==4) ? 3 : 2)"
+				},
+				"EventType" : "zhrmTrapDeviceStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : (($v3==1 || $v3==4) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : ($v3==2) ? 0 : ($v3==3) ? 3 : ($v3==5) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Current state of the device: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SNMP-HMSA-MIB::zhrmTrapDeviceStateChange SNMP-HMSA-MIB::zhrmTrapDeviceStateIndex i 9999 SNMP-HMSA-MIB::zhrmTrapDeviceDescr s EXAMPLE SNMP-HMSA-MIB::zhrmTrapDeviceStatus i 1",
+			"trap" : {
+				"name" : "SNMP-HMSA-MIB::zhrmTrapDeviceStateChange",
+				"oid" : "1.3.6.1.4.1.169.3.180.7.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Index value that points to the entry (in the",
+							"hrProcessorTable, the hrPrinterTable, the",
+							"hrDiskStorageTable, the hrNetworkTable, or the",
+							"hrPartitionTable) for the device that the trap",
+							"describes.",
+							"VALUE: Integer, numbered sequentially starting at 1.",
+							"DERIVATION: The value of zhrmDevUnIndex for the",
+							"device."
+						],
+						"name" : "SNMP-HMSA-MIB::zhrmTrapDeviceStateIndex",
+						"oid" : "1.3.6.1.4.1.169.3.180.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A description of the type of device that the trap",
+							"describes.",
+							"VALUE: For CPUs: the number and type of a processor:",
+							"CPUnn (processor-type).",
+							"For printers: the name of a printer or Spooler",
+							"collector. Printers have names of the form",
+							"printer-id. Spooler collectors, used as",
+							"pseudo printers, have names of the form",
+							"[\\node-name]collector-process-name[.#group-",
+							"name].",
+							"For disks: the name and type of the disk:",
+							"volume(disk-type).",
+							"For tapes: tape-drive-name.",
+							"For network devices: network-device.",
+							"For a loop back device: NOIOP.",
+							"DERIVATION: The value of zhrmDevUnDescr for the",
+							"device."
+						],
+						"name" : "SNMP-HMSA-MIB::zhrmTrapDeviceDescr",
+						"oid" : "1.3.6.1.4.1.169.3.180.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state the device that the trap describes",
+							"is in.",
+							"VALUE: One of the following values: unknown, warning, ",
+							"testing, down.",
+							"DERIVATION: The value of zhrmDevUnStatus for the",
+							"device."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "running",
+							"3" : "warning",
+							"4" : "testing",
+							"5" : "down"
+						},
+						"name" : "SNMP-HMSA-MIB::zhrmTrapDeviceStatus",
+						"oid" : "1.3.6.1.4.1.169.3.180.7.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SNMP-HMSA-MIB::zhrmRAMThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"When zhrmThrRAMTrapEnable is set to 1, this trap is",
+				"generated whenever the utilization of any RAM storage",
+				"area represented in the hrStorage group reaches or",
+				"exceeds a high threshold (represented by the value of",
+				"zhrmThrRAMHighValue in the zhrmThreshold group) or",
+				"reaches or falls below a low threshold (represented by",
+				"the value of zhrmThrRAMLowValue in the zhrmThreshold",
+				"group."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zhrmRAMThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "RAM utilization ($v3&#37;) exceeded high threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SNMP-HMSA-MIB::zhrmRAMThreshold SNMP-HMSA-MIB::zhrmTrapStorageThrIndex i 9999 SNMP-HMSA-MIB::zhrmTrapStorageDescr s EXAMPLE SNMP-HMSA-MIB::zhrmThrRAMPercentUse u 9999",
+			"trap" : {
+				"name" : "SNMP-HMSA-MIB::zhrmRAMThreshold",
+				"oid" : "1.3.6.1.4.1.169.3.180.7.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Index value that points to the entry in the",
+							"hrStorageTable for the device that the trap describes.",
+							"VALUE: Integer, numbered sequentially starting at 1.",
+							"DERIVATION: For RAM: the value of zhrmThrRAMIndex for",
+							"the RAM storage area.",
+							"For disks: the value of zhrmThrDiskIndex",
+							"for the device."
+						],
+						"name" : "SNMP-HMSA-MIB::zhrmTrapStorageThrIndex",
+						"oid" : "1.3.6.1.4.1.169.3.180.7.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of the type of storage represented by the",
+							"entry.",
+							"VALUE: For RAM: number and type of a processor:",
+							"CPUnn(processor-type) running Dnn.nn.",
+							"For disks: The name and type of the disk:",
+							"volume(disk-type).",
+							"DERIVATION: For RAM: the value of zhrmThrRAMDescr for",
+							"the RAM storage area.",
+							"For disks: the value of zhrmThrDiskDescr",
+							"for the device."
+						],
+						"name" : "SNMP-HMSA-MIB::zhrmTrapStorageDescr",
+						"oid" : "1.3.6.1.4.1.169.3.180.7.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The percent of zhrmThrRAMTotal that is currently being",
+							"used.",
+							"VALUE: Integer without leading 0s.",
+							"DERIVATION: Computed by Host Resources Subagent."
+						],
+						"name" : "SNMP-HMSA-MIB::zhrmThrRAMPercentUse",
+						"oid" : "1.3.6.1.4.1.169.3.180.2.1.3",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SNMP-HMSA-MIB::zhrmDiskThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"When zhrmThrDiskTrapEnable is set to 1, this trap is",
+				"generated whenever the utilization of any disk",
+				"represented in the hrStorage group reaches or exceeds a",
+				"high threshold (represented by the value of",
+				"zhrmThrDiskLowValue in the zhrmThreshold group) or",
+				"reaches or falls below a low threshold (represented by",
+				"the value of zhrmThrDiskLowValue in the zhrmThreshold",
+				"group)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zhrmDiskThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Disk utilization ($v3&#37;) exceeded high threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SNMP-HMSA-MIB::zhrmDiskThreshold SNMP-HMSA-MIB::zhrmTrapStorageThrIndex i 9999 SNMP-HMSA-MIB::zhrmTrapStorageDescr s EXAMPLE SNMP-HMSA-MIB::zhrmThrDiskPercentUse u 9999",
+			"trap" : {
+				"name" : "SNMP-HMSA-MIB::zhrmDiskThreshold",
+				"oid" : "1.3.6.1.4.1.169.3.180.7.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Index value that points to the entry in the",
+							"hrStorageTable for the device that the trap describes.",
+							"VALUE: Integer, numbered sequentially starting at 1.",
+							"DERIVATION: For RAM: the value of zhrmThrRAMIndex for",
+							"the RAM storage area.",
+							"For disks: the value of zhrmThrDiskIndex",
+							"for the device."
+						],
+						"name" : "SNMP-HMSA-MIB::zhrmTrapStorageThrIndex",
+						"oid" : "1.3.6.1.4.1.169.3.180.7.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of the type of storage represented by the",
+							"entry.",
+							"VALUE: For RAM: number and type of a processor:",
+							"CPUnn(processor-type) running Dnn.nn.",
+							"For disks: The name and type of the disk:",
+							"volume(disk-type).",
+							"DERIVATION: For RAM: the value of zhrmThrRAMDescr for",
+							"the RAM storage area.",
+							"For disks: the value of zhrmThrDiskDescr",
+							"for the device."
+						],
+						"name" : "SNMP-HMSA-MIB::zhrmTrapStorageDescr",
+						"oid" : "1.3.6.1.4.1.169.3.180.7.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The percent of zhrmThrDiskTotal that is currently",
+							"being used.",
+							"VALUE: Integer without leading 0s.",
+							"DERIVATION: Computed by Host Resources Subagent."
+						],
+						"name" : "SNMP-HMSA-MIB::zhrmThrDiskPercentUse",
+						"oid" : "1.3.6.1.4.1.169.3.180.2.2.3",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

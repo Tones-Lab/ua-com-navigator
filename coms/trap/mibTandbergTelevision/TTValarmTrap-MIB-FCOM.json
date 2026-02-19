@@ -1,0 +1,990 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TTValarmTrap-MIB::ttvAlarmNormal",
+			"certification" : "STANDARD",
+			"description" : [
+				"This TRAP is sent when an alarm is cleared (severity level 1 according to X.733).",
+				"REFERENCE alarm2TrapTable"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ttvAlarm:$v6",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "portNumber:$v4",
+				"Summary" : {
+					"eval" : "($v7 ne '') ? '$v7' : 'Alarm is cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TTValarmTrap-MIB::ttvAlarmNormal TTValarmTrap-MIB::trapSequence2 c 9999 TTValarmTrap-MIB::referenceNumberT2 i 0 TTValarmTrap-MIB::positionNumberT2 i 0 TTValarmTrap-MIB::portNumberT2 i 9999 TTValarmTrap-MIB::alarmIdT2 i 0 TTValarmTrap-MIB::alarmTypeT2 i 1 TTValarmTrap-MIB::alarmTextT2 s EXAMPLE TTValarmTrap-MIB::sourceTextT2 s EXAMPLE TTValarmTrap-MIB::severityLevelT2 i 1",
+			"trap" : {
+				"name" : "TTValarmTrap-MIB::ttvAlarmNormal",
+				"oid" : "1.3.6.1.4.1.1773.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This is the sequence number of the trap."
+						],
+						"name" : "TTValarmTrap-MIB::trapSequence2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Code for easy matching of alarms changing state."
+						],
+						"name" : "TTValarmTrap-MIB::referenceNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Identifies the alarm source position."
+						],
+						"name" : "TTValarmTrap-MIB::positionNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This identifies the port on the board sending the trap."
+						],
+						"name" : "TTValarmTrap-MIB::portNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Code which indicates an error or event in a module",
+							"as defined in the individual modules."
+						],
+						"name" : "TTValarmTrap-MIB::alarmIdT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates the type of alarm/event. Input type",
+							"indicates a alarm/event that could be caused by a faulty input signal",
+							"Internal alarms are most likely a problem in the reporting device."
+						],
+						"enums" : {
+							"1" : "input",
+							"2" : "internal",
+							"3" : "output"
+						},
+						"name" : "TTValarmTrap-MIB::alarmTypeT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The default alarm text. This will be used to describe the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::alarmTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The default source text. This will be used to describe the source causing the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::sourceTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"From X.733: This parameter defines six severity",
+							"levels, which provide an indication of how it is perceived that the",
+							"capability of the managed object has been affected.",
+							"Those severity levels which represent service affecting",
+							"conditions ordered from most severe to least severe are",
+							"Critical, Major, Minor and Warning.",
+							"The levels defined for use with this mandatory parameter are",
+							"-cleared: The Cleared severity level indicates the",
+							"clearing of one or more previously reported alarms. This",
+							"alarm clears all alarms for this managed object that have the",
+							"same Alarm type, Probable cause and Specific problems (if",
+							"given).",
+							"-indeterminate: The Indeterminate severity level",
+							"indicates that the severity level cannot be determined.",
+							"",
+							"-critical: The Critical severity level indicates that a",
+							"service affecting condition has occurred and an immediate",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when a managed object becomes totally",
+							"out of service and its capability must be restored.",
+							"",
+							"-major: The Major severity level indicates that a",
+							"service affecting condition has developed and an urgent",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when there is a severe degradation in",
+							"the capability of the managed object and its full capability",
+							"must be restored.",
+							"",
+							"-minor: The Minor severity level indicates the existence",
+							"of a non-service affecting fault condition and that",
+							"corrective action should be taken in order to prevent a more",
+							"serious (for example, service affecting) fault. Such a",
+							"severity can be reported, for example, when the detected",
+							"alarm condition is not currently degrading the capacity of",
+							"the managed object.",
+							"",
+							"-warning: The Warning severity level indicates the",
+							"detection of a potential or impending service affecting",
+							"fault, before any significant effects have been felt. Action",
+							"should be taken to further diagnose (if necessary) and",
+							"correct the problem in order to prevent it from becoming a",
+							"more serious service affecting fault."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "TTValarmTrap-MIB::severityLevelT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TTValarmTrap-MIB::ttvAlarmIndeterminate",
+			"certification" : "STANDARD",
+			"description" : [
+				"This TRAP is sent when an alarm with unknown level occur (severity level 2 according to X.733).",
+				"REFERENCE alarm2TrapTable"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ttvAlarmIndeterminate",
+				"ExpireTime" : 3600,
+				"Severity" : 1,
+				"SubNode" : "portNumber:$v4",
+				"Summary" : {
+					"eval" : "($v7 ne '') ? '$v7' : ($v8 ne '') ? 'Alarm with unknown level occurred from source $v8' : 'Alarm with unknown level occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TTValarmTrap-MIB::ttvAlarmIndeterminate TTValarmTrap-MIB::trapSequence2 c 9999 TTValarmTrap-MIB::referenceNumberT2 i 0 TTValarmTrap-MIB::positionNumberT2 i 0 TTValarmTrap-MIB::portNumberT2 i 9999 TTValarmTrap-MIB::alarmIdT2 i 0 TTValarmTrap-MIB::alarmTypeT2 i 1 TTValarmTrap-MIB::alarmTextT2 s EXAMPLE TTValarmTrap-MIB::sourceTextT2 s EXAMPLE TTValarmTrap-MIB::severityLevelT2 i 1",
+			"trap" : {
+				"name" : "TTValarmTrap-MIB::ttvAlarmIndeterminate",
+				"oid" : "1.3.6.1.4.1.1773.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This is the sequence number of the trap."
+						],
+						"name" : "TTValarmTrap-MIB::trapSequence2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Code for easy matching of alarms changing state."
+						],
+						"name" : "TTValarmTrap-MIB::referenceNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Identifies the alarm source position."
+						],
+						"name" : "TTValarmTrap-MIB::positionNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This identifies the port on the board sending the trap."
+						],
+						"name" : "TTValarmTrap-MIB::portNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Code which indicates an error or event in a module",
+							"as defined in the individual modules."
+						],
+						"name" : "TTValarmTrap-MIB::alarmIdT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates the type of alarm/event. Input type",
+							"indicates a alarm/event that could be caused by a faulty input signal",
+							"Internal alarms are most likely a problem in the reporting device."
+						],
+						"enums" : {
+							"1" : "input",
+							"2" : "internal",
+							"3" : "output"
+						},
+						"name" : "TTValarmTrap-MIB::alarmTypeT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The default alarm text. This will be used to describe the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::alarmTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The default source text. This will be used to describe the source causing the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::sourceTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"From X.733: This parameter defines six severity",
+							"levels, which provide an indication of how it is perceived that the",
+							"capability of the managed object has been affected.",
+							"Those severity levels which represent service affecting",
+							"conditions ordered from most severe to least severe are",
+							"Critical, Major, Minor and Warning.",
+							"The levels defined for use with this mandatory parameter are",
+							"-cleared: The Cleared severity level indicates the",
+							"clearing of one or more previously reported alarms. This",
+							"alarm clears all alarms for this managed object that have the",
+							"same Alarm type, Probable cause and Specific problems (if",
+							"given).",
+							"",
+							"-indeterminate: The Indeterminate severity level",
+							"indicates that the severity level cannot be determined.",
+							"",
+							"-critical: The Critical severity level indicates that a",
+							"service affecting condition has occurred and an immediate",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when a managed object becomes totally",
+							"out of service and its capability must be restored.",
+							"",
+							"-major: The Major severity level indicates that a",
+							"service affecting condition has developed and an urgent",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when there is a severe degradation in",
+							"the capability of the managed object and its full capability",
+							"must be restored.",
+							"",
+							"-minor: The Minor severity level indicates the existence",
+							"of a non-service affecting fault condition and that",
+							"corrective action should be taken in order to prevent a more",
+							"serious (for example, service affecting) fault. Such a",
+							"severity can be reported, for example, when the detected",
+							"alarm condition is not currently degrading the capacity of",
+							"the managed object.",
+							"",
+							"-warning: The Warning severity level indicates the",
+							"detection of a potential or impending service affecting",
+							"fault, before any significant effects have been felt. Action",
+							"should be taken to further diagnose (if necessary) and",
+							"correct the problem in order to prevent it from becoming a",
+							"more serious service affecting fault."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "TTValarmTrap-MIB::severityLevelT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TTValarmTrap-MIB::ttvAlarmWarning",
+			"certification" : "STANDARD",
+			"description" : [
+				"This TRAP is sent when an warning alarm occur (severity level 3 according to X.733).",
+				"REFERENCE alarm2TrapTable"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ttvAlarm:$v6",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "portNumber:$v4",
+				"Summary" : {
+					"eval" : "($v7 ne '') ? '$v7' :  ($v8 ne '') ? 'Warning alarm occurred from source $v8' : 'Warning alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TTValarmTrap-MIB::ttvAlarmWarning TTValarmTrap-MIB::trapSequence2 c 9999 TTValarmTrap-MIB::referenceNumberT2 i 0 TTValarmTrap-MIB::positionNumberT2 i 0 TTValarmTrap-MIB::portNumberT2 i 9999 TTValarmTrap-MIB::alarmIdT2 i 0 TTValarmTrap-MIB::alarmTypeT2 i 1 TTValarmTrap-MIB::alarmTextT2 s EXAMPLE TTValarmTrap-MIB::sourceTextT2 s EXAMPLE TTValarmTrap-MIB::severityLevelT2 i 1",
+			"trap" : {
+				"name" : "TTValarmTrap-MIB::ttvAlarmWarning",
+				"oid" : "1.3.6.1.4.1.1773.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This is the sequence number of the trap."
+						],
+						"name" : "TTValarmTrap-MIB::trapSequence2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Code for easy matching of alarms changing state."
+						],
+						"name" : "TTValarmTrap-MIB::referenceNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Identifies the alarm source position."
+						],
+						"name" : "TTValarmTrap-MIB::positionNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This identifies the port on the board sending the trap."
+						],
+						"name" : "TTValarmTrap-MIB::portNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Code which indicates an error or event in a module",
+							"as defined in the individual modules."
+						],
+						"name" : "TTValarmTrap-MIB::alarmIdT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates the type of alarm/event. Input type",
+							"indicates a alarm/event that could be caused by a faulty input signal",
+							"Internal alarms are most likely a problem in the reporting device."
+						],
+						"enums" : {
+							"1" : "input",
+							"2" : "internal",
+							"3" : "output"
+						},
+						"name" : "TTValarmTrap-MIB::alarmTypeT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The default alarm text. This will be used to describe the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::alarmTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The default source text. This will be used to describe the source causing the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::sourceTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"From X.733: This parameter defines six severity",
+							"levels, which provide an indication of how it is perceived that the",
+							"capability of the managed object has been affected.",
+							"Those severity levels which represent service affecting",
+							"conditions ordered from most severe to least severe are",
+							"Critical, Major, Minor and Warning.",
+							"The levels defined for use with this mandatory parameter are",
+							"-cleared: The Cleared severity level indicates the",
+							"clearing of one or more previously reported alarms. This",
+							"alarm clears all alarms for this managed object that have the",
+							"same Alarm type, Probable cause and Specific problems (if",
+							"given).",
+							"",
+							"-indeterminate: The Indeterminate severity level",
+							"indicates that the severity level cannot be determined.",
+							"",
+							"-critical: The Critical severity level indicates that a",
+							"service affecting condition has occurred and an immediate",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when a managed object becomes totally",
+							"out of service and its capability must be restored.",
+							"",
+							"-major: The Major severity level indicates that a",
+							"service affecting condition has developed and an urgent",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when there is a severe degradation in",
+							"the capability of the managed object and its full capability",
+							"must be restored.",
+							"",
+							"-minor: The Minor severity level indicates the existence",
+							"of a non-service affecting fault condition and that",
+							"corrective action should be taken in order to prevent a more",
+							"serious (for example, service affecting) fault. Such a",
+							"severity can be reported, for example, when the detected",
+							"alarm condition is not currently degrading the capacity of",
+							"the managed object.",
+							"",
+							"-warning: The Warning severity level indicates the",
+							"detection of a potential or impending service affecting",
+							"fault, before any significant effects have been felt. Action",
+							"should be taken to further diagnose (if necessary) and",
+							"correct the problem in order to prevent it from becoming a",
+							"more serious service affecting fault."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "TTValarmTrap-MIB::severityLevelT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TTValarmTrap-MIB::ttvAlarmMinor",
+			"certification" : "STANDARD",
+			"description" : [
+				"This TRAP is sent when an minor alarm occur (severity level 4 according to X.733).",
+				"REFERENCE alarm2TrapTable"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ttvAlarm:$v6",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "portNumber:$v4",
+				"Summary" : {
+					"eval" : "($v7 ne '') ? '$v7' : ($v8 ne '') ? 'Minor alarm occurred from source $v8' : 'Minor alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TTValarmTrap-MIB::ttvAlarmMinor TTValarmTrap-MIB::trapSequence2 c 9999 TTValarmTrap-MIB::referenceNumberT2 i 0 TTValarmTrap-MIB::positionNumberT2 i 0 TTValarmTrap-MIB::portNumberT2 i 9999 TTValarmTrap-MIB::alarmIdT2 i 0 TTValarmTrap-MIB::alarmTypeT2 i 1 TTValarmTrap-MIB::alarmTextT2 s EXAMPLE TTValarmTrap-MIB::sourceTextT2 s EXAMPLE TTValarmTrap-MIB::severityLevelT2 i 1",
+			"trap" : {
+				"name" : "TTValarmTrap-MIB::ttvAlarmMinor",
+				"oid" : "1.3.6.1.4.1.1773.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This is the sequence number of the trap."
+						],
+						"name" : "TTValarmTrap-MIB::trapSequence2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Code for easy matching of alarms changing state."
+						],
+						"name" : "TTValarmTrap-MIB::referenceNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Identifies the alarm source position."
+						],
+						"name" : "TTValarmTrap-MIB::positionNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This identifies the port on the board sending the trap."
+						],
+						"name" : "TTValarmTrap-MIB::portNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Code which indicates an error or event in a module",
+							"as defined in the individual modules."
+						],
+						"name" : "TTValarmTrap-MIB::alarmIdT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates the type of alarm/event. Input type",
+							"indicates a alarm/event that could be caused by a faulty input signal",
+							"Internal alarms are most likely a problem in the reporting device."
+						],
+						"enums" : {
+							"1" : "input",
+							"2" : "internal",
+							"3" : "output"
+						},
+						"name" : "TTValarmTrap-MIB::alarmTypeT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The default alarm text. This will be used to describe the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::alarmTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The default source text. This will be used to describe the source causing the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::sourceTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"From X.733: This parameter defines six severity",
+							"levels, which provide an indication of how it is perceived that the",
+							"capability of the managed object has been affected.",
+							"Those severity levels which represent service affecting",
+							"conditions ordered from most severe to least severe are",
+							"Critical, Major, Minor and Warning.",
+							"The levels defined for use with this mandatory parameter are",
+							"-cleared: The Cleared severity level indicates the",
+							"clearing of one or more previously reported alarms. This",
+							"alarm clears all alarms for this managed object that have the",
+							"same Alarm type, Probable cause and Specific problems (if",
+							"given).",
+							"",
+							"-indeterminate: The Indeterminate severity level",
+							"indicates that the severity level cannot be determined.",
+							"",
+							"-critical: The Critical severity level indicates that a",
+							"service affecting condition has occurred and an immediate",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when a managed object becomes totally",
+							"out of service and its capability must be restored.",
+							"",
+							"-major: The Major severity level indicates that a",
+							"service affecting condition has developed and an urgent",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when there is a severe degradation in",
+							"the capability of the managed object and its full capability",
+							"must be restored.",
+							"",
+							"-minor: The Minor severity level indicates the existence",
+							"of a non-service affecting fault condition and that",
+							"corrective action should be taken in order to prevent a more",
+							"serious (for example, service affecting) fault. Such a",
+							"severity can be reported, for example, when the detected",
+							"alarm condition is not currently degrading the capacity of",
+							"the managed object.",
+							"",
+							"-warning: The Warning severity level indicates the",
+							"detection of a potential or impending service affecting",
+							"fault, before any significant effects have been felt. Action",
+							"should be taken to further diagnose (if necessary) and",
+							"correct the problem in order to prevent it from becoming a",
+							"more serious service affecting fault."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "TTValarmTrap-MIB::severityLevelT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TTValarmTrap-MIB::ttvAlarmMajor",
+			"certification" : "STANDARD",
+			"description" : [
+				"This TRAP is sent when an major alarm occur (severity level 5 according to X.733).",
+				"REFERENCE alarm2TrapTable"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ttvAlarm:$v6",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "portNumber:$v4",
+				"Summary" : {
+					"eval" : "($v7 ne '') ? '$v7' : ($v8 ne '') ? 'Major alarm occurred from source $v8' : 'Major alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TTValarmTrap-MIB::ttvAlarmMajor TTValarmTrap-MIB::trapSequence2 c 9999 TTValarmTrap-MIB::referenceNumberT2 i 0 TTValarmTrap-MIB::positionNumberT2 i 0 TTValarmTrap-MIB::portNumberT2 i 9999 TTValarmTrap-MIB::alarmIdT2 i 0 TTValarmTrap-MIB::alarmTypeT2 i 1 TTValarmTrap-MIB::alarmTextT2 s EXAMPLE TTValarmTrap-MIB::sourceTextT2 s EXAMPLE TTValarmTrap-MIB::severityLevelT2 i 1",
+			"trap" : {
+				"name" : "TTValarmTrap-MIB::ttvAlarmMajor",
+				"oid" : "1.3.6.1.4.1.1773.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This is the sequence number of the trap."
+						],
+						"name" : "TTValarmTrap-MIB::trapSequence2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Code for easy matching of alarms changing state."
+						],
+						"name" : "TTValarmTrap-MIB::referenceNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Identifies the alarm source position."
+						],
+						"name" : "TTValarmTrap-MIB::positionNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This identifies the port on the board sending the trap."
+						],
+						"name" : "TTValarmTrap-MIB::portNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Code which indicates an error or event in a module",
+							"as defined in the individual modules."
+						],
+						"name" : "TTValarmTrap-MIB::alarmIdT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates the type of alarm/event. Input type",
+							"indicates a alarm/event that could be caused by a faulty input signal",
+							"Internal alarms are most likely a problem in the reporting device."
+						],
+						"enums" : {
+							"1" : "input",
+							"2" : "internal",
+							"3" : "output"
+						},
+						"name" : "TTValarmTrap-MIB::alarmTypeT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The default alarm text. This will be used to describe the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::alarmTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The default source text. This will be used to describe the source causing the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::sourceTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"From X.733: This parameter defines six severity",
+							"levels, which provide an indication of how it is perceived that the",
+							"capability of the managed object has been affected.",
+							"Those severity levels which represent service affecting",
+							"conditions ordered from most severe to least severe are",
+							"Critical, Major, Minor and Warning.",
+							"The levels defined for use with this mandatory parameter are",
+							"-cleared: The Cleared severity level indicates the",
+							"clearing of one or more previously reported alarms. This",
+							"alarm clears all alarms for this managed object that have the",
+							"same Alarm type, Probable cause and Specific problems (if",
+							"given).",
+							"",
+							"-indeterminate: The Indeterminate severity level",
+							"indicates that the severity level cannot be determined.",
+							"",
+							"-critical: The Critical severity level indicates that a",
+							"service affecting condition has occurred and an immediate",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when a managed object becomes totally",
+							"out of service and its capability must be restored.",
+							"",
+							"-major: The Major severity level indicates that a",
+							"service affecting condition has developed and an urgent",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when there is a severe degradation in",
+							"the capability of the managed object and its full capability",
+							"must be restored.",
+							"",
+							"-minor: The Minor severity level indicates the existence",
+							"of a non-service affecting fault condition and that",
+							"corrective action should be taken in order to prevent a more",
+							"serious (for example, service affecting) fault. Such a",
+							"severity can be reported, for example, when the detected",
+							"alarm condition is not currently degrading the capacity of",
+							"the managed object.",
+							"",
+							"-warning: The Warning severity level indicates the",
+							"detection of a potential or impending service affecting",
+							"fault, before any significant effects have been felt. Action",
+							"should be taken to further diagnose (if necessary) and",
+							"correct the problem in order to prevent it from becoming a",
+							"more serious service affecting fault."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "TTValarmTrap-MIB::severityLevelT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TTValarmTrap-MIB::ttvAlarmCritical",
+			"certification" : "STANDARD",
+			"description" : [
+				"This TRAP is sent when an critical alarm occur (severity level 6 according to X.733).",
+				"REFERENCE alarm2TrapTable"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ttvAlarm:$v6",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "portNumber:$v4",
+				"Summary" : {
+					"eval" : "($v7 ne '') ? '$v7' : ($v8 ne '') ? 'Critical alarm occurred from source $v8' : 'Critical alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TTValarmTrap-MIB::ttvAlarmCritical TTValarmTrap-MIB::trapSequence2 c 9999 TTValarmTrap-MIB::referenceNumberT2 i 0 TTValarmTrap-MIB::positionNumberT2 i 0 TTValarmTrap-MIB::portNumberT2 i 9999 TTValarmTrap-MIB::alarmIdT2 i 0 TTValarmTrap-MIB::alarmTypeT2 i 1 TTValarmTrap-MIB::alarmTextT2 s EXAMPLE TTValarmTrap-MIB::sourceTextT2 s EXAMPLE TTValarmTrap-MIB::severityLevelT2 i 1",
+			"trap" : {
+				"name" : "TTValarmTrap-MIB::ttvAlarmCritical",
+				"oid" : "1.3.6.1.4.1.1773.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This is the sequence number of the trap."
+						],
+						"name" : "TTValarmTrap-MIB::trapSequence2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Code for easy matching of alarms changing state."
+						],
+						"name" : "TTValarmTrap-MIB::referenceNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Identifies the alarm source position."
+						],
+						"name" : "TTValarmTrap-MIB::positionNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This identifies the port on the board sending the trap."
+						],
+						"name" : "TTValarmTrap-MIB::portNumberT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Code which indicates an error or event in a module",
+							"as defined in the individual modules."
+						],
+						"name" : "TTValarmTrap-MIB::alarmIdT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates the type of alarm/event. Input type",
+							"indicates a alarm/event that could be caused by a faulty input signal",
+							"Internal alarms are most likely a problem in the reporting device."
+						],
+						"enums" : {
+							"1" : "input",
+							"2" : "internal",
+							"3" : "output"
+						},
+						"name" : "TTValarmTrap-MIB::alarmTypeT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The default alarm text. This will be used to describe the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::alarmTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The default source text. This will be used to describe the source causing the alarm",
+							"if the receiving application is not configured to override the default text.",
+							"Understanding the semantics of this field is not required for interpretation of the notification"
+						],
+						"name" : "TTValarmTrap-MIB::sourceTextT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"From X.733: This parameter defines six severity",
+							"levels, which provide an indication of how it is perceived that the",
+							"capability of the managed object has been affected.",
+							"Those severity levels which represent service affecting",
+							"conditions ordered from most severe to least severe are",
+							"Critical, Major, Minor and Warning.",
+							"The levels defined for use with this mandatory parameter are",
+							"-cleared: The Cleared severity level indicates the",
+							"clearing of one or more previously reported alarms. This",
+							"alarm clears all alarms for this managed object that have the",
+							"same Alarm type, Probable cause and Specific problems (if",
+							"given).",
+							"",
+							"-indeterminate: The Indeterminate severity level",
+							"indicates that the severity level cannot be determined.",
+							"",
+							"-critical: The Critical severity level indicates that a",
+							"service affecting condition has occurred and an immediate",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when a managed object becomes totally",
+							"out of service and its capability must be restored.",
+							"",
+							"-major: The Major severity level indicates that a",
+							"service affecting condition has developed and an urgent",
+							"corrective action is required. Such a severity can be",
+							"reported, for example, when there is a severe degradation in",
+							"the capability of the managed object and its full capability",
+							"must be restored.",
+							"",
+							"-minor: The Minor severity level indicates the existence",
+							"of a non-service affecting fault condition and that",
+							"corrective action should be taken in order to prevent a more",
+							"serious (for example, service affecting) fault. Such a",
+							"severity can be reported, for example, when the detected",
+							"alarm condition is not currently degrading the capacity of",
+							"the managed object.",
+							"",
+							"-warning: The Warning severity level indicates the",
+							"detection of a potential or impending service affecting",
+							"fault, before any significant effects have been felt. Action",
+							"should be taken to further diagnose (if necessary) and",
+							"correct the problem in order to prevent it from becoming a",
+							"more serious service affecting fault."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "TTValarmTrap-MIB::severityLevelT2",
+						"oid" : "1.3.6.1.4.1.1773.1.1.9.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,268 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201909260001Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-FLASH-MAN-MIB::hwFlhOperNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A hwFlhOperNotification is sent only when hwFlhOperEndNotification is true."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : (($v1 == 1 || $v1 == 8) ? 3 : 2)"
+				},
+				"EventType" : "hwFlhOperNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1 || $v1 == 2 || $v1 == 8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : (($v1 == 1 || $v1 == 8) ? 2 : (($v1 == 3 || $v1 == 4 || $v1 == 5 || $v1 == 6 || $v1 == 7 || $v1 == 20 || $v1 == 21 || $v1 == 22) ? 3 : (($v1 == 19) ? 5 : 4)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "F1h operation status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-FLASH-MAN-MIB::hwFlhOperNotification HUAWEI-FLASH-MAN-MIB::hwFlhOperStatus i 18",
+				"$SNMPTRAPCMD HUAWEI-FLASH-MAN-MIB::hwFlhOperNotification HUAWEI-FLASH-MAN-MIB::hwFlhOperStatus i 2",
+				"$SNMPTRAPCMD HUAWEI-FLASH-MAN-MIB::hwFlhOperNotification HUAWEI-FLASH-MAN-MIB::hwFlhOperStatus i 8"
+			],
+			"trap" : {
+				"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhOperNotification",
+				"oid" : "1.3.6.1.4.1.2011.6.9.1.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"The status of operation. ",
+							"The status of the specified operation can be one of the follows.",
+							"opInProgress(1) : the operation is in process.",
+							"opSuccess(2) : the operation has been completed successfully.",
+							"opInvalid(3) : the command is invalid or command-protocol-device ",
+							"combination is unsupported by the system.",
+							"opInvalidProtocol(4) :invalid protocol is specified",
+							"opInvalidSourceName(5) :invalid source file name is specified. ",
+							"opInvalidDestName(6) :invalid target name is specified. ",
+							"opInvalidServerAddress(7) :invalid server address is specified",
+							"opDeviceBusy(8) :the device is in use and locked by another process",
+							"opDeviceOpenError(9) :invalid device name is specified.",
+							"opDeviceError(10) : device read, write or erase error",
+							"opDeviceNotProgrammable(11) :device is read-only but a write or erase operation was specified",
+							"opDeviceFull(12) : device is filled to capacity",
+							"opFileOpenError(13) :invalid file name; file not found in partition",
+							"opFileTransferError(14) :file transfer was unsuccessfull",
+							"opFileChecksumError(15) :file checksum in Flash si invalid",
+							"opNoMemory(16) :system is running in low on memory",
+							"opAuthFail(17) :authentication failure",
+							"opUnknownFailure(18) :failure which is unknown",
+							"opAbort(19) : transfer operation has been aborted",
+							"opInvalidSourceAddress(20) : invalid source IP is specified.",
+							"opInvalidSourceInterface(21) : invalid source interface is specified.",
+							"opCurrentVersionFileConfilt(22) : conflict between target file and system file"
+						],
+						"enums" : {
+							"1" : "opInProgress",
+							"2" : "opSuccess",
+							"3" : "opInvalid",
+							"4" : "opInvalidProtocol",
+							"5" : "opInvalidSourceName",
+							"6" : "opInvalidDestName",
+							"7" : "opInvalidServerAddress",
+							"8" : "opDeviceBusy",
+							"9" : "opDeviceOpenError",
+							"10" : "opDeviceError",
+							"11" : "opDeviceNotProgrammable",
+							"12" : "opDeviceFull",
+							"13" : "opFileOpenError",
+							"14" : "opFileTransferError",
+							"15" : "opFileChecksumError",
+							"16" : "opNoMemory",
+							"17" : "opAuthFail",
+							"18" : "opUnknownFailure",
+							"19" : "opAbort",
+							"20" : "opInvalidSourceAddress",
+							"21" : "opInvalidSourceInterface",
+							"22" : "opCurrentVersionFileConfilt"
+						},
+						"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhOperStatus",
+						"oid" : "1.3.6.1.4.1.2011.6.9.1.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-FLASH-MAN-MIB::hwFlhSyncSuccessNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A hwFlhSyncSuccessNotification is sent when the file copy operation successful."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwFlhSyncStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "File $v1 copied successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-FLASH-MAN-MIB::hwFlhSyncSuccessNotification HUAWEI-FLASH-MAN-MIB::hwFlhSyncSourceFile s EXAMPLE HUAWEI-FLASH-MAN-MIB::hwFlhSyncDestinationFile s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhSyncSuccessNotification",
+				"oid" : "1.3.6.1.4.1.2011.6.9.1.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"The source file name to be transferred . ",
+							"It is located on the flash of the mainboard of a chassis.",
+							"It is combine with the hwFlhSyncSourcePath to specify the absolute file name.",
+							"It must be specified."
+						],
+						"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhSyncSourceFile",
+						"oid" : "1.3.6.1.4.1.2011.6.9.1.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The destination file name to be transferred . ",
+							"It is combine with the hwFlhSyncDestinationPath to specify the absolute file name.",
+							"It must be specified."
+						],
+						"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhSyncDestinationFile",
+						"oid" : "1.3.6.1.4.1.2011.6.9.1.2.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-FLASH-MAN-MIB::hwFlhSyncFailNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A hwFlhSyncFailNotification is sent when the file copy operation failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwFlhSyncStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "File $v1 copy operation failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-FLASH-MAN-MIB::hwFlhSyncFailNotification HUAWEI-FLASH-MAN-MIB::hwFlhSyncSourceFile s EXAMPLE HUAWEI-FLASH-MAN-MIB::hwFlhSyncDestinationFile s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhSyncFailNotification",
+				"oid" : "1.3.6.1.4.1.2011.6.9.1.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"The source file name to be transferred . ",
+							"It is located on the flash of the mainboard of a chassis.",
+							"It is combine with the hwFlhSyncSourcePath to specify the absolute file name.",
+							"It must be specified."
+						],
+						"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhSyncSourceFile",
+						"oid" : "1.3.6.1.4.1.2011.6.9.1.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The destination file name to be transferred . ",
+							"It is combine with the hwFlhSyncDestinationPath to specify the absolute file name.",
+							"It must be specified."
+						],
+						"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhSyncDestinationFile",
+						"oid" : "1.3.6.1.4.1.2011.6.9.1.2.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-FLASH-MAN-MIB::hwFlhStorageFullTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The flash memory usage has exceeded the upper threshold 85%. The system will clear the recycle bin and delete unused software packages, patch files, and log files."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwFlhStorageFullTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PhysicalIndex:$v1",
+				"Summary" : "Flash memory usage exceeded upper threshold 85&#37;"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-FLASH-MAN-MIB::hwFlhStorageFullTrap HUAWEI-FLASH-MAN-MIB::hwFlhPhysicalIndex i 9999 ENTITY-MIB::entPhysicalName s EXAMPLE HUAWEI-FLASH-MAN-MIB::hwFlhStorageUsageRatio i 9999 HUAWEI-FLASH-MAN-MIB::hwFlhStorageUsageThreshold i 9999",
+			"trap" : {
+				"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhStorageFullTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.9.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"The index of physical."
+						],
+						"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhPhysicalIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.9.3.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The textual name of the physical entity. The value of this",
+							"object should be the name of the component as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name (e.g., `console') or a simple component number (e.g.",
+							"port or module number, such as `1'), depending on the",
+							"physical component naming syntax of the device.",
+							"If there is no local name, or if this object is otherwise",
+							"not applicable, then this object contains a zero-length",
+							"string.",
+							"Note that the value of entPhysicalName for two physical",
+							"entities will be the same in the event that the console",
+							"interface does not distinguish between them, e.g., slot-1",
+							"and the card in slot-1."
+						],
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Usage Ratio of FLASH."
+						],
+						"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhStorageUsageRatio",
+						"oid" : "1.3.6.1.4.1.2011.6.9.3.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The Threshold of FLASH Usage."
+						],
+						"name" : "HUAWEI-FLASH-MAN-MIB::hwFlhStorageUsageThreshold",
+						"oid" : "1.3.6.1.4.1.2011.6.9.3.1.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

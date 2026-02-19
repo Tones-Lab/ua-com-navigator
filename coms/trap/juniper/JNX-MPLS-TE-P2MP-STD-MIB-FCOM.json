@@ -1,0 +1,169 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200904170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a",
+				"mplsTeP2mpTunnelDestOperStatus object for one of the",
+				"destinations of one of the configured tunnels is about to",
+				"leave the down(2) state and transition into some other",
+				"state. This other state is indicated by the included value",
+				"of mplsTeP2mpTunnelDestOperStatus.",
+				"This reporting of state transitions mirrors mplsTunnelUp.",
+				"REFERENCE",
+				"RFC 3812 - Multiprotocol Label Switching (MPLS) Traffic",
+				"Engineering (TE) Management Information Base (MIB)",
+				"Srinivasan, C., Viswanathan, A., and T. Nadeau, June 2004."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : ($v2==4 || $v2==3) ? 3 : 2"
+				},
+				"EventType" : "jnxMplsTeP2mpTunnelDestStatus",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : ($v2==4 || $v2==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==4) ? 1 : ($v2==3) ? 2 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of destination of P2MP tunnel is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestUp JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestAdminStatus i 1 JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestOperStatus i 1",
+			"trap" : {
+				"name" : "JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestUp",
+				"oid" : "1.3.6.1.4.1.2636.5.7.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the desired operational status of this",
+							"destination of this P2MP tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestAdminStatus",
+						"oid" : "1.3.6.1.4.1.2636.5.7.1.2.3.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the actual operational status of this destination",
+							"of this P2MP tunnel. This object may be compared to",
+							"mplsTunnelOperStatus that includes two other values:",
+							"dormant(5) -- some component is missing",
+							"",
+							"",
+							"notPresent(6) -- down due to the state of",
+							"-- lower layer interfaces.",
+							"These states do not apply to an individual destination of a",
+							"P2MP MPLS-TE LSP and so are not included in this object."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestOperStatus",
+						"oid" : "1.3.6.1.4.1.2636.5.7.1.2.3.1.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a",
+				"mplsTeP2mpTunnelDestOperStatus object for one of the",
+				"destinations of one of the configured tunnels is about to",
+				"enter the down(2) state from some other state. This other",
+				"state is indicated by the included value of",
+				"mplsTeP2mpTunnelDestOperStatus.",
+				"This reporting of state transitions mirrors mplsTunnelDown.",
+				"REFERENCE",
+				"RFC 3812 - Multiprotocol Label Switching (MPLS) Traffic",
+				"Engineering (TE) Management Information Base (MIB)",
+				"Srinivasan, C., Viswanathan, A., and T. Nadeau, June 2004."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : ($v2==4 || $v2==3) ? 3 : 2"
+				},
+				"EventType" : "jnxMplsTeP2mpTunnelDestStatus",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : ($v2==4 || $v2==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==4) ? 1 : ($v2==3) ? 2 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Destination of P2MP tunnel is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestDown JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestAdminStatus i 1 JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestOperStatus i 1",
+			"trap" : {
+				"name" : "JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestDown",
+				"oid" : "1.3.6.1.4.1.2636.5.7.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the desired operational status of this",
+							"destination of this P2MP tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestAdminStatus",
+						"oid" : "1.3.6.1.4.1.2636.5.7.1.2.3.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the actual operational status of this destination",
+							"of this P2MP tunnel. This object may be compared to",
+							"mplsTunnelOperStatus that includes two other values:",
+							"dormant(5) -- some component is missing",
+							"",
+							"",
+							"notPresent(6) -- down due to the state of",
+							"-- lower layer interfaces.",
+							"These states do not apply to an individual destination of a",
+							"P2MP MPLS-TE LSP and so are not included in this object."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "JNX-MPLS-TE-P2MP-STD-MIB::jnxMplsTeP2mpTunnelDestOperStatus",
+						"oid" : "1.3.6.1.4.1.2636.5.7.1.2.3.1.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

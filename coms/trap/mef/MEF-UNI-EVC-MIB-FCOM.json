@@ -1,0 +1,77 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201301251200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MEF-UNI-EVC-MIB::mefServiceConfigurationAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"An mefServiceConfigurationAlarm notification is sent when the configuration",
+				"of an object or service is added, deleted, or modified.",
+				"The ME-NE that receives the notification can identify",
+				"the system from the network source address of the notification",
+				"and can identify the configuration change by the indices in the",
+				"standard snmpTrapOID object.",
+				"",
+				"REFERENCE",
+				"[MEF 7.2] 6.2.1.1, 6.2.1.2, 6.2.1.3"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mefServiceConfigurationAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "MEF service configuration alarm : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MEF-UNI-EVC-MIB::mefServiceConfigurationAlarm MEF-UNI-EVC-MIB::mefServiceNotificationObjDateAndTime s EXAMPLEE MEF-UNI-EVC-MIB::mefServiceNotificationConfigurationChangeType i 1",
+			"trap" : {
+				"name" : "MEF-UNI-EVC-MIB::mefServiceConfigurationAlarm",
+				"oid" : "1.3.6.1.4.1.15007.2.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the time and date at the time that",
+							"the notification event is detected, not the time of the notification",
+							"generation.",
+							"",
+							"This object is used only for notifications. The mechanism to set and keep",
+							"current the date and time is not specified.",
+							""
+						],
+						"name" : "MEF-UNI-EVC-MIB::mefServiceNotificationObjDateAndTime",
+						"oid" : "1.3.6.1.4.1.15007.2.2.1.8.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Notification Configuration Change Type of the object that caused the",
+							"generation.",
+							"",
+							"entryAdded(1) indicates that the specific object/service was added",
+							"entryDelete(2) indicates that the specific object/service was deleted",
+							"entryModified(3) indicates that the specific object/service was modified",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"enums" : {
+							"1" : "entryAdded",
+							"2" : "entryDeleted",
+							"3" : "entryModified"
+						},
+						"name" : "MEF-UNI-EVC-MIB::mefServiceNotificationConfigurationChangeType",
+						"oid" : "1.3.6.1.4.1.15007.2.2.1.8.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

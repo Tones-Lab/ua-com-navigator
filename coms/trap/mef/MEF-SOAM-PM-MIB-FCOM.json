@@ -1,0 +1,601 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201201131200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MEF-SOAM-PM-MIB::mefSoamAvailabilityChangeAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"An mefSoamAvailabilityChangeAlarm notification is sent when the state of",
+				"mefSoamLmMeasuredStatsAvailForwardStatus or ",
+				"mefSoamLmMeasuredStatsAvailBackwardStatus changes. ",
+				"The management entity that receives the notification can identify",
+				"the system from the network source address of the notification",
+				"and can identify the PM session reporting the change",
+				"by the indices in the OID ",
+				"mefSoamLmMeasuredStatsAvailForwardLastTransitionTime, including",
+				"dot1agCfmMdIndex, dot1agCfmMaIndex, dot1agCfmMepIdentifier, and ",
+				"mefSoamLmCfgIndex.",
+				"An agent is not to generate more than one mefSoamAvailabilityChangeAlarm",
+				"'notification-event' in a given time interval per PM session as ",
+				"specified by the mefSoamPmNotificationCfgAlarmInterval. A ",
+				"'notification-event' is the transmission of a single notification to",
+				"a list of notification destinations.",
+				"If additional availability state changes occur within the ",
+				"mefSoamPmNotificationCfgAlarmInterval period, then notification ",
+				"generation for these changes are suppressed by the agent until ",
+				"the current alarm interval expires. At the end of an alarm interval ",
+				"period, one notification-event is generated if any availability",
+				"state changes occurred since the start of the alarm interval period. ",
+				"In such a case, another alarm interval period is started right away.",
+				"",
+				"REFERENCE",
+				"[MEF SOAM-PM] R83, R84"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mefSoamAvailabilityChangeAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "MEFSOAMDestinationMep:$v10",
+				"Summary" : "State of MEF SOAM LM: Forward direction: $v2; Backward direction: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MEF-SOAM-PM-MIB::mefSoamAvailabilityChangeAlarm MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDateAndTime s EXAMPLEE MEF-SOAM-PM-MIB::mefSoamLmMeasuredStatsAvailForwardStatus i 1 MEF-SOAM-PM-MIB::mefSoamLmMeasuredStatsAvailBackwardStatus i 1 MEF-SOAM-PM-MIB::mefSoamLmMeasuredStatsAvailForwardLastTransitionTime s EXAMPLEE MEF-SOAM-PM-MIB::mefSoamLmMeasuredStatsAvailBackwardLastTransitionTime s EXAMPLEE MEF-SOAM-PM-MIB::mefSoamLmCurrentAvailStatsForwardAvailable u 9999 MEF-SOAM-PM-MIB::mefSoamLmCurrentAvailStatsForwardUnavailable u 9999 MEF-SOAM-PM-MIB::mefSoamLmCurrentAvailStatsBackwardAvailable u 9999 MEF-SOAM-PM-MIB::mefSoamLmCurrentAvailStatsBackwardUnavailable u 9999 MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDestinationMep s EXAMPL MEF-SOAM-PM-MIB::mefSoamPmNotificationObjPriority s EXAMPL",
+			"trap" : {
+				"name" : "MEF-SOAM-PM-MIB::mefSoamAvailabilityChangeAlarm",
+				"oid" : "1.3.6.1.4.1.15007.1.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the time and date at the time that ",
+							"the notification event is detected, not the time of the notification ",
+							"generation. ",
+							"",
+							"This object is used only for notifications. The mechanism to set and keep",
+							"current the date and time is not specified.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDateAndTime",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the availability status (the outcome of the",
+							"last known availability indicator) in the forward direction.",
+							"Note that the status of an availability indicator is not known until",
+							"the loss for a number of subsequent availability indicators has been",
+							"calculated (as determined by ",
+							"mefSoamLmCfgAvailabilityNumConsecutiveIntervals)",
+							""
+						],
+						"enums" : {
+							"1" : "available",
+							"2" : "unavailable",
+							"3" : "unknown"
+						},
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmMeasuredStatsAvailForwardStatus",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the availability status (the outcome of the",
+							"last availability indicator) in the backward direction.",
+							"Note that the status of an availability indicator is not known until",
+							"the loss for a number of subsequent availability indicators has been",
+							"calculated (as determined by ",
+							"mefSoamLmCfgAvailabilityNumConsecutiveIntervals)",
+							""
+						],
+						"enums" : {
+							"1" : "available",
+							"2" : "unavailable",
+							"3" : "unknown"
+						},
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmMeasuredStatsAvailBackwardStatus",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the time of the last transition",
+							"between available and unavailable in the forward direction.",
+							"",
+							"If there have been no transitions since the Loss Measurement",
+							"Session was started, this is set to 0.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmMeasuredStatsAvailForwardLastTransitionTime",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the time of the last transition",
+							"between available and unavailable in the backward direction.",
+							"",
+							"If there have been no transitions since the Loss Measurement",
+							"Session was started, this is set to 0.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmMeasuredStatsAvailBackwardLastTransitionTime",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the number of availability indicators ",
+							"evaluated as available in the forward direction by this MEP during",
+							"this Measurement Interval.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmCurrentAvailStatsForwardAvailable",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.3.1.9",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"This object contains the number of availability indicators ",
+							"evaluated as unavailable in the forward direction by this MEP during",
+							"this Measurement Interval.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmCurrentAvailStatsForwardUnavailable",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.3.1.11",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"This object contains the number of availability indicators ",
+							"evaluated as available in the backward direction by this MEP during",
+							"this Measurement Interval.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmCurrentAvailStatsBackwardAvailable",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.3.1.10",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"This object contains the number of availability indicators ",
+							"evaluated as unavailable in the backward direction by this MEP",
+							"during this Measurement Interval.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmCurrentAvailStatsBackwardUnavailable",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.3.1.12",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The MAC address of the Destination MEP associated the notification found",
+							"in either the mefSoamDmCfgTable or mefSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDestinationMep",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The CoS priority of the associated notification found",
+							"in either the mefSoamDmCfgTable or mefSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjPriority",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MEF-SOAM-PM-MIB::mefSoamLmSessionStartStopAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"An mefSoamLmSessionStartStopAlarm notification is sent when the state of",
+				"mefSoamLmCfgSessionStatus changes. ",
+				"The management entity that receives the notification can identify",
+				"the system from the network source address of the notification",
+				"and can identify the individual PM session reporting the start/stop",
+				"by the indices in the OID mefSoamLmCfgSessionStatus, including",
+				"dot1agCfmMdIndex, dot1agCfmMaIndex, dot1agCfmMepIdentifier, and ",
+				"mefSoamLmCfgIndex.",
+				"An agent is not to generate more than one mefSoamLmSessionStartStopAlarm",
+				"'notification-event' in a given time interval per LM session as specified",
+				"by the mefSoamPmNotificationCfgAlarmInterval. A 'notification-event' is",
+				"the transmission of a single notification to a list of notification ",
+				"destinations.",
+				"If additional operational state changes occur within the ",
+				"mefSoamPmNotificationCfgAlarmInterval period, then notification ",
+				"generation for these changes are be suppressed by the agent until ",
+				"the current alarm interval expires. At the end of an alarm interval ",
+				"period, one notification-event is generated if any operational ",
+				"state changes occurred since the start of the alarm interval period. In",
+				"such a case, another alarm interval period is started right away.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mefSoamLmSessionStartStopAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "MEFSOAMDestinationMep:$v3",
+				"Summary" : "MEF SOAM LM session is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MEF-SOAM-PM-MIB::mefSoamLmSessionStartStopAlarm MEF-SOAM-PM-MIB::mefSoamLmCfgSessionStatus i 1 MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDateAndTime s EXAMPLEE MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDestinationMep s EXAMPL",
+			"trap" : {
+				"name" : "MEF-SOAM-PM-MIB::mefSoamLmSessionStartStopAlarm",
+				"oid" : "1.3.6.1.4.1.15007.1.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the current status of the LM session. A value",
+							"of 'active' indicates the current LM session is active, i.e. the current",
+							"time lies between the start time and the stop time, and",
+							"mefSoamLmCfgEnabled is true. A value of 'notActive' indicates the",
+							"current LM session is not active, i.e. it has not started yet, has",
+							"stopped upon reaching the stop time, or is disabled.",
+							""
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notActive"
+						},
+						"name" : "MEF-SOAM-PM-MIB::mefSoamLmCfgSessionStatus",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.2.1.1.32",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the time and date at the time that ",
+							"the notification event is detected, not the time of the notification ",
+							"generation. ",
+							"",
+							"This object is used only for notifications. The mechanism to set and keep",
+							"current the date and time is not specified.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDateAndTime",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the Destination MEP associated the notification found",
+							"in either the mefSoamDmCfgTable or mefSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDestinationMep",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MEF-SOAM-PM-MIB::mefSoamDmSessionStartStopAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"An mefSoamDmSessionStartStopAlarm notification is sent when the state of",
+				"mefSoamDmCfgSessionStatus changes. ",
+				"The management entity that receives the notification can identify",
+				"the system from the network source address of the notification",
+				"and can identify the individual PM session reporting the start/stop",
+				"by the indices in the OID mefSoamDmCfgSessionStatus, including",
+				"dot1agCfmMdIndex, dot1agCfmMaIndex, dot1agCfmMepIdentifier, and ",
+				"mefSoamDmCfgIndex.",
+				"An agent is not to generate more than one mefSoamDmSessionStartStopAlarm",
+				"'notification-event' in a given time interval per DM session as specified",
+				"by mefSoamPmNotificationCfgAlarmInterval. A 'notification-event' is the",
+				"transmission of a single notification to a list of notification ",
+				"destinations.",
+				"If additional operational state changes occur within the ",
+				"mefSoamPmNotificationCfgAlarmInterval period, then notification generation",
+				"for these changes are suppressed by the agent until the current alarm ",
+				"interval expires. At the end of an alarm interval period, one ",
+				"notification-event is generated if any operational state changes",
+				"occurred since the start of the alarm interval period. In such a case, ",
+				"another alarm interval period is started right away.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mefSoamDmSessionStartStopAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "MEFSOAMDestinationMep:$v3",
+				"Summary" : "MEF SOAM DM Session is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MEF-SOAM-PM-MIB::mefSoamDmSessionStartStopAlarm MEF-SOAM-PM-MIB::mefSoamDmCfgSessionStatus i 1 MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDateAndTime s EXAMPLEE MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDestinationMep s EXAMPL",
+			"trap" : {
+				"name" : "MEF-SOAM-PM-MIB::mefSoamDmSessionStartStopAlarm",
+				"oid" : "1.3.6.1.4.1.15007.1.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the current status of the DM session. A value",
+							"of 'active' indicates the current DM session is active, i.e. the current",
+							"time lies between the start time and the stop time, and ",
+							"mefSoamDmCfgEnabled is true. A value of 'notActive' indicates the",
+							"current DM session is not active, i.e. it has not started yet, has ",
+							"stopped upon reaching the stop time, or is disabled.",
+							""
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notActive"
+						},
+						"name" : "MEF-SOAM-PM-MIB::mefSoamDmCfgSessionStatus",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.3.1.1.32",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the time and date at the time that ",
+							"the notification event is detected, not the time of the notification ",
+							"generation. ",
+							"",
+							"This object is used only for notifications. The mechanism to set and keep",
+							"current the date and time is not specified.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDateAndTime",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the Destination MEP associated the notification found",
+							"in either the mefSoamDmCfgTable or mefSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDestinationMep",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MEF-SOAM-PM-MIB::mefSoamPmThresholdCrossingAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"An mefSoamPmThresholdCrossingAlarm notification is sent if the ",
+				"following conditions are met for a particular type.",
+				"For an aboveAlarm five conditions need to be met:",
+				"a) measurement of the parameter is enabled via mefSoamLmCfgMeasurementEnable",
+				"for a LM crossing or mefSoamDmCfgMeasurementEnable for a DM crossing; ",
+				"and",
+				"b) the parameter threshold is configured in the mefSoamLmThresholdCfgTable",
+				"or mefSoamDmThresholdCfgTable; and ",
+				"c) the threshold crossing type of bPmThresholdAboveAlarm is enabled; ",
+				"and",
+				"d) the measured value of the parameter exceeds the value configured in",
+				"the mefSoamLmThresholdCfgTable for a LM crossing entry or",
+				"mefSoamDmThresholdCfgTable for a DM crossing entry for a type of",
+				"bPmThresholdAboveAlarm; and",
+				"e) no previous mefSoamPmThresholdCrossingAlarm notifications with type",
+				"aboveAlarm have been sent relating to the same threshold in the",
+				"mefSoamLmThresholdCfgTable or mefSoamDmThresholdCfgTable and the",
+				"same parameter, during this Measurement Interval.",
+				"For a setAlarm five conditions need to be met:",
+				"a) measurement of the parameter is enabled via mefSoamLmCfgMeasurementEnable",
+				"for a LM crossing or mefSoamDmCfgMeasurementEnable for a DM crossing; ",
+				"and",
+				"b) the parameter threshold is configured in the mefSoamLmThresholdCfgTable",
+				"or mefSoamDmThresholdCfgTable; and ",
+				"c) the threshold crossing type of bPmThresholdSetClearAlarm is enabled; ",
+				"and",
+				"d) the measured value of the parameter exceeds the value configured in",
+				"the mefSoamLmThresholdCfgTable for a LM crossing entry or",
+				"mefSoamDmThresholdCfgTable for a DM crossing entry for a type of",
+				"bPmThresholdSetClearAlarm for the Measurement Interval; and",
+				"e) the previous measured value did not ",
+				"exceed the value configured in the mefSoamLmThresholdCfgTable for",
+				"a LM crossing entry or mefSoamDmThresholdCfgTable for a DM crossing",
+				"entry for a type of bPmThresholdSetClearAlarm.",
+				"For a clearAlarm five conditions need to be met:",
+				"a) measurement of the parameter is enabled via mefSoamLmCfgMeasurementEnable",
+				"for a LM crossing or mefSoamDmCfgMeasurementEnable for a DM crossing; ",
+				"and",
+				"b) the parameter threshold is configured in the mefSoamLmThresholdCfgTable",
+				"or mefSoamDmThresholdCfgTable; and ",
+				"c) the threshold crossing type of bPmThresholdSetClearAlarm is enabled; ",
+				"and",
+				"d) the measured value of the parameter did not exceed the value configured ",
+				"in the mefSoamLmThresholdCfgTable for a LM crossing entry or",
+				"mefSoamDmThresholdCfgTable for a DM crossing entry for a type of",
+				"bPmThresholdSetClearAlarm for the Measurement Interval; and",
+				"e) the previous measured value did ",
+				"exceed the value configured in the mefSoamLmThresholdCfgTable for",
+				"a LM crossing entry or mefSoamDmThresholdCfgTable for a DM crossing",
+				"entry for a type of bPmThresholdSetClearAlarm.",
+				"In the case of thresholds applied to a maximum or average measurement",
+				"counter, the previous measured value is the value of the counter at the",
+				"end of the preceding Measurement Interval. In the case of thresholds",
+				"applied to the last measured value, it is the previous measured value.",
+				"The management entity that receives the notification can identify",
+				"the system from the network source address of the notification",
+				"and can identify the LM or DM session reporting the threshold",
+				"crossing by the indices in the mefSoamPmNotificationCfgThresholdId object",
+				"including dot1agCfmMdIndex, dot1agCfmMaIndex, dot1agCfmMepIdentifier, ",
+				"and the mefSoamLmCfgIndex or mefSoamDmCfgIndex. ",
+				"An agent is not to generate more than one mefSoamLmThresholdCrossingAlarm",
+				"'notification-event' of a given type per LM or DM session as specified",
+				"by mefSoamPmNotificationCfgAlarmInterval. A 'notification-event' is the",
+				"transmission of a single notification to a list of notification",
+				"destinations.",
+				"If additional threshold crossing events occur within the ",
+				"mefSoamPmNotificationCfgAlarmInterval period, then notification ",
+				"generation for these changes are suppressed by the agent until ",
+				"the current alarm interval expires. At the end of an alarm interval ",
+				"period, one notification-event is generated if any threshold",
+				"crossing events occurred since the start of the alarm interval period. ",
+				"In such a case, another alarm interval period is started right away.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : ($v1==3) ? 1 : 3"
+				},
+				"EventType" : "mefSoamPmThresholdCrossingAlarm",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : ($v1==3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 4 : ($v1==3) ? 0 : 2"
+				},
+				"SubNode" : "MEFSOAMDestinationMep:$v7",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'MEF SOAM PM threshold exceeded' : (($v1==2) ? 'MEF SOAM PM threshold is set to $v3' : 'MEF SOAM PM threshold is normal')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MEF-SOAM-PM-MIB::mefSoamPmThresholdCrossingAlarm MEF-SOAM-PM-MIB::mefSoamPmNotificationObjCrossingType i 1 MEF-SOAM-PM-MIB::mefSoamPmNotificationObjThresholdId o 1.3.6.1.4.1.8072.2.1.1 MEF-SOAM-PM-MIB::mefSoamPmNotificationObjThresholdConfig u 9999 MEF-SOAM-PM-MIB::mefSoamPmNotificationObjThresholdValue u 9999 MEF-SOAM-PM-MIB::mefSoamPmNotificationObjSuspect i 1 MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDateAndTime s EXAMPLEE MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDestinationMep s EXAMPL",
+			"trap" : {
+				"name" : "MEF-SOAM-PM-MIB::mefSoamPmThresholdCrossingAlarm",
+				"oid" : "1.3.6.1.4.1.15007.1.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The Notification Crossing Type of the object that caused the generation",
+							"of the notification from the mefSoamLmThresholdEntry or ",
+							"mefSoamDmThresholdEntry.",
+							"",
+							"aboveAlarm(1) indicates that the crossing type alarm was an above",
+							"threshold",
+							"",
+							"setAlarm(2) indicates that the crossing type alarm was a set",
+							"threshold",
+							"",
+							"clearAlarm(3) indicates that the crossing type alarm was a clear",
+							"threshold",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"enums" : {
+							"1" : "aboveAlarm",
+							"2" : "setAlarm",
+							"3" : "clearAlarm"
+						},
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjCrossingType",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Object Identifier of the object that caused the generation of the",
+							"notification from the mefSoamLmThresholdEntry or mefSoamDmThresholdEntry.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjThresholdId",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The configured threshold value of the object that caused the generation",
+							"of the notification.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjThresholdConfig",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The measured value of the object at the time of the generation of the",
+							"Notification, from the mefSoamLmMeasuredStatsTable, ",
+							"mefSoamLmCurrentStatsTable, mefSoamLmCurrentAvailStatsTable",
+							"mefSoamDmMeasuredStatsTable or mefSoamDmCurrentStatsTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjThresholdValue",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The suspect flag for the current Measurement Interval in which the",
+							"notification was generated from the mefSoamLmCurrentStatsTable",
+							"mefSoamLmCurrentAvailStatsTable, or mefSoamDmCurrentStatsTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjSuspect",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the time and date at the time that ",
+							"the notification event is detected, not the time of the notification ",
+							"generation. ",
+							"",
+							"This object is used only for notifications. The mechanism to set and keep",
+							"current the date and time is not specified.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDateAndTime",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the Destination MEP associated the notification found",
+							"in either the mefSoamDmCfgTable or mefSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "MEF-SOAM-PM-MIB::mefSoamPmNotificationObjDestinationMep",
+						"oid" : "1.3.6.1.4.1.15007.1.3.1.5.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,207 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201208080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SUBSCRIBER-SESSION-MIB::csubJobFinishedNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system generates this notification when the system finishes",
+				"executing a subscriber session job, provided the value of",
+				"csubJobFinishedNotifyEnable is 'true'. The notification",
+				"indicates the following additional data:",
+				"csubJobStartedTime",
+				"The value of sysUpTime when the system started executing",
+				"the subscriber session job.",
+				"csubJobFinishedTime",
+				"The value of sysUpTime when the system finished",
+				"executing the subscriber session job, for whatever",
+				"reason.",
+				"csubJobFinishedReason",
+				"The reason why the system finished executing the",
+				"subscriber session job."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "csubJobFinishedNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Subscriber session job has completed with $v3 state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SUBSCRIBER-SESSION-MIB::csubJobFinishedNotify CISCO-SUBSCRIBER-SESSION-MIB::csubJobStartedTime t 9999 CISCO-SUBSCRIBER-SESSION-MIB::csubJobFinishedTime t 9999 CISCO-SUBSCRIBER-SESSION-MIB::csubJobFinishedReason i 1",
+			"trap" : {
+				"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubJobFinishedNotify",
+				"oid" : "1.3.6.1.4.1.9.9.786.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubJobStartedTime",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.3.7.1.7",
+						"valueType" : "TICKS"
+					},
+					{
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubJobFinishedTime",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.3.7.1.8",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "invalid",
+							"2" : "other",
+							"3" : "normal",
+							"4" : "aborted",
+							"5" : "insufficientResources",
+							"6" : "error"
+						},
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubJobFinishedReason",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.3.7.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionRisingNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"csubAggStatsThreshNotifEnable is 'true' AND the value of",
+				"csubSessionRisingThresh is non-zero AND the current value",
+				"csubAggStatsUpSessions is greater than or equal to the",
+				"corresponding value of csubSessionRisingThresh and the previous",
+				"sample of csubAggStatsUpSessions was less than",
+				"csubSessionRisingThresh."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "csubSessionNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Sessions have risen above $v2 with $v1 sessions"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SUBSCRIBER-SESSION-MIB::csubSessionRisingNotif CISCO-SUBSCRIBER-SESSION-MIB::csubAggStatsUpSessions u 9999 CISCO-SUBSCRIBER-SESSION-MIB::csubSessionRisingThresh u 9999",
+			"trap" : {
+				"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionRisingNotif",
+				"oid" : "1.3.6.1.4.1.9.9.786.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubAggStatsUpSessions",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.2.1.1.5",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionRisingThresh",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.2.3.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionFallingNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"csubAggStatsThreshNotifEnable is 'true' AND the value of",
+				"csubSessionFallingThresh is non-zero AND the current value",
+				"csubAggStatsUpSessions is less than or equal to the",
+				"corresponding value of csubSessionFallingThresh and the previous",
+				"sample of csubAggStatsUpSessions was greater than",
+				"csubSessionFallingThresh."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "csubSessionNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Sessions have fallen below $v2 with $v1 sessions"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SUBSCRIBER-SESSION-MIB::csubSessionFallingNotif CISCO-SUBSCRIBER-SESSION-MIB::csubAggStatsUpSessions u 9999 CISCO-SUBSCRIBER-SESSION-MIB::csubSessionFallingThresh u 9999",
+			"trap" : {
+				"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionFallingNotif",
+				"oid" : "1.3.6.1.4.1.9.9.786.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubAggStatsUpSessions",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.2.1.1.5",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionFallingThresh",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.2.3.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionDeltaPercentFallingThreshNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"csubAggStatsThreshNotifEnable is 'true' AND the value of",
+				"csubSessionDeltaPercentFallingThresh is non-zero AND",
+				"If the delta_percent value of the current",
+				"evaluation interval is",
+				"greater than the value of",
+				"csubSessionDeltaPercentFallingThresh.",
+				"The delta as a percentage of csubAggStatsUpSessions",
+				"(delta_percent)",
+				"is calculated as follows:",
+				"current value of csubAggStatsUpSessions = value(n)",
+				"previous sampled value of csubAggStatsUpSessions =",
+				"value(n-1)",
+				"delta_percent = ((value(n-1) - value(n)) /",
+				"value(n-1)) * 100"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "csubSessionDeltaPercentFallingThreshNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Session percentage is higher than $v2% with $v1 sessions active"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SUBSCRIBER-SESSION-MIB::csubSessionDeltaPercentFallingThreshNotif CISCO-SUBSCRIBER-SESSION-MIB::csubAggStatsUpSessions u 9999 CISCO-SUBSCRIBER-SESSION-MIB::csubSessionDeltaPercentFallingThresh u 9999",
+			"trap" : {
+				"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionDeltaPercentFallingThreshNotif",
+				"oid" : "1.3.6.1.4.1.9.9.786.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubAggStatsUpSessions",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.2.1.1.5",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-SUBSCRIBER-SESSION-MIB::csubSessionDeltaPercentFallingThresh",
+						"oid" : "1.3.6.1.4.1.9.9.786.1.2.3.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

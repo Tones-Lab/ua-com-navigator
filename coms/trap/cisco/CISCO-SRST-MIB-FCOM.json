@@ -1,0 +1,241 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200702270000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SRST-MIB::csrstStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An SRST up or down state change notification",
+				"is generated. This indicates one or more phones ",
+				"is registered to the SRST router or none is",
+				"registered. ",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 2) ? 2 : 1"
+				},
+				"EventType" : "csrstStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2 == 2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 3 : (($v1 == 3) ? 4 : 0)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'SRST status is $v2 due to $v3.' : 'SRST status is $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SRST-MIB::csrstStateChange CISCO-SRST-MIB::csrstSysNotifSeverity i 1 CISCO-SRST-MIB::csrstState i 1 CISCO-SRST-MIB::csrstSysNotifReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-SRST-MIB::csrstStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.441.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "clear",
+							"2" : "minor",
+							"3" : "major"
+						},
+						"name" : "CISCO-SRST-MIB::csrstSysNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.441.2.2.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive"
+						},
+						"name" : "CISCO-SRST-MIB::csrstState",
+						"oid" : "1.3.6.1.4.1.9.9.441.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SRST-MIB::csrstSysNotifReason",
+						"oid" : "1.3.6.1.4.1.9.9.441.2.2.2.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SRST-MIB::csrstFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A failure notification is generated when the",
+				"SRST router encounters a catastrophic failure.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "csrstFailNotif",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 5"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 ne '') ? 'SRST router encountered $v2.' : 'SRST router encountered a catastrophic failure.'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SRST-MIB::csrstFailNotif CISCO-SRST-MIB::csrstSysNotifSeverity i 1 CISCO-SRST-MIB::csrstSysNotifReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-SRST-MIB::csrstFailNotif",
+				"oid" : "1.3.6.1.4.1.9.9.441.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "clear",
+							"2" : "minor",
+							"3" : "major"
+						},
+						"name" : "CISCO-SRST-MIB::csrstSysNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.441.2.2.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SRST-MIB::csrstSysNotifReason",
+						"oid" : "1.3.6.1.4.1.9.9.441.2.2.2.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SRST-MIB::csrstSipPhoneUnRegThresholdExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"A SIP phone unregistration notification is",
+				"generated when the number of SIP phone",
+				"unregistrations have exceeded the threshold.",
+				"The number of currently registered SIP ",
+				"phones is provided here by ",
+				"csrstSipPhoneCurrentRegistered object",
+				"as a reference such that if ",
+				"csrstSipPhoneCurrentRegistered falls below ",
+				"csrstSipPhoneUnRegThreshold",
+				"a notification will be generated to indicate",
+				"that the number of unregistered SIP phones",
+				"has crossed the threshold.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "csrstSipPhoneUnRegThresholdExceed",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "SIP phone unregistrations have exceeded $v1 with currently having $v2."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SRST-MIB::csrstSipPhoneUnRegThresholdExceed CISCO-SRST-MIB::csrstSipPhoneUnRegThreshold u 9999 CISCO-SRST-MIB::csrstSipPhoneCurrentRegistered u 9999",
+			"trap" : {
+				"name" : "CISCO-SRST-MIB::csrstSipPhoneUnRegThresholdExceed",
+				"oid" : "1.3.6.1.4.1.9.9.441.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-SRST-MIB::csrstSipPhoneUnRegThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.441.1.2.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-SRST-MIB::csrstSipPhoneCurrentRegistered",
+						"oid" : "1.3.6.1.4.1.9.9.441.1.3.2",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SRST-MIB::csrstSipPhoneRegFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"A SIP phone fail registration notification",
+				"is generated when the SIP phone fails to ",
+				"register.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "csrstSipPhoneRegFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "SIP phone $v1 has failed to register."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SRST-MIB::csrstSipPhoneRegFailed CISCO-SRST-MIB::csrstSipEndpointIpAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-SRST-MIB::csrstSipPhoneRegFailed",
+				"oid" : "1.3.6.1.4.1.9.9.441.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-SRST-MIB::csrstSipEndpointIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.441.1.4.7.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SRST-MIB::csrstConferenceFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"A conference failure notification is generated",
+				"when the maximum number of conferences are",
+				"exceeded.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "csrstConferenceFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Max number of conferences has exceeded $v1."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SRST-MIB::csrstConferenceFailed CISCO-SRST-MIB::csrstMaxConferences u 9999",
+			"trap" : {
+				"name" : "CISCO-SRST-MIB::csrstConferenceFailed",
+				"oid" : "1.3.6.1.4.1.9.9.441.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-SRST-MIB::csrstMaxConferences",
+						"oid" : "1.3.6.1.4.1.9.9.441.1.2.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

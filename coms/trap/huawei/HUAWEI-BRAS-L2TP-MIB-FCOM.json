@@ -1,0 +1,78 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200403030900Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelUpOrDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"1 Notice/Trap name: L2tp Tunnel is Up Or Down.",
+				"2 Notice/Trap generation cause: L2tp tunnel is up or down.",
+				"3 Repair suggestions: If the tunnel is down, please check out whether there is a error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 eq 'Up' || $v4 eq 'UP' || $v4 eq 'up') ? 1 : (($v4 eq 'Down' || $v4 eq 'DOWN' || $v4 eq 'down') ? 2 : 3)"
+				},
+				"EventType" : "hwL2tpTunnelUpOrDown",
+				"ExpireTime" : {
+					"eval" : "($v4 eq 'Down' || $v4 eq 'DOWN' || $v4 eq 'down') ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 eq 'Up' || $v4 eq 'UP' || $v4 eq 'up') ? 0 : (($v4 eq 'Down' || $v4 eq 'DOWN' || $v4 eq 'down') ? 4 : 2)"
+				},
+				"SubNode" : "TunnelID:$v1",
+				"Summary" : "L2tp tunnel status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelUpOrDown HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelID i 9999 HUAWEI-BRAS-L2TP-MIB::hwL2tpPeerName s EXAMPLE HUAWEI-BRAS-L2TP-MIB::hwL2tpPeerIp a 192.0.2.1 HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelStatus s Down",
+				"$SNMPTRAPCMD HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelUpOrDown HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelID i 9999 HUAWEI-BRAS-L2TP-MIB::hwL2tpPeerName s EXAMPLE HUAWEI-BRAS-L2TP-MIB::hwL2tpPeerIp a 192.0.2.1 HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelStatus s Up",
+				"$SNMPTRAPCMD HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelUpOrDown HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelID i 9999 HUAWEI-BRAS-L2TP-MIB::hwL2tpPeerName s EXAMPLE HUAWEI-BRAS-L2TP-MIB::hwL2tpPeerIp a 192.0.2.1 HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelStatus s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelUpOrDown",
+				"oid" : "1.3.6.1.4.1.2011.5.25.40.3.2.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Local Tunnel ID."
+						],
+						"name" : "HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelID",
+						"oid" : "1.3.6.1.4.1.2011.5.25.40.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Peer Name"
+						],
+						"name" : "HUAWEI-BRAS-L2TP-MIB::hwL2tpPeerName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.40.3.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Peer IP address"
+						],
+						"name" : "HUAWEI-BRAS-L2TP-MIB::hwL2tpPeerIp",
+						"oid" : "1.3.6.1.4.1.2011.5.25.40.3.2.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The status of L2tp tunnel : Up/Down."
+						],
+						"name" : "HUAWEI-BRAS-L2TP-MIB::hwL2tpTunnelStatus",
+						"oid" : "1.3.6.1.4.1.2011.5.25.40.3.2.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

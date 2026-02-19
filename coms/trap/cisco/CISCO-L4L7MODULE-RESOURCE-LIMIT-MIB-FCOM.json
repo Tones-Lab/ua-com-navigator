@@ -1,0 +1,564 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201302200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the configured resource",
+				"limit value specified in 'crlResourceLimitMax' is reached",
+				"for a particular resource. This resource is identified by",
+				"'crlResourceLimitType' in ciscoL4L7ResourceLimitTable.",
+				"clrResourceLimitReached object is superseded by",
+				"clrResourceLimitReachedNotif."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clrResourceLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'Resource has exceeded it\\'s limit of $v2' : 'Resource has exceeded it\\'s limit of $v2%'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReached CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitValueType i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMax u 9999",
+			"trap" : {
+				"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReached",
+				"oid" : "1.3.6.1.4.1.9.9.480.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "absolute",
+							"2" : "percentage"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitValueType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMax",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.2.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the configured rate",
+				"limit value specified in 'crlRateLimitResourceMax' is reached",
+				"for a particular resource. This resource is identified by",
+				"'crlRateLimitResourceType' in ciscoL4L7ResourceRateLimitTable.",
+				"clrResourceRateLimitReached object is superseded by",
+				"clrResourceRateLimitReachedNotif."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clrResourceRateLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Resource rate limit has reached it's max of $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReached CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMax u 9999",
+			"trap" : {
+				"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReached",
+				"oid" : "1.3.6.1.4.1.9.9.480.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMax",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.4.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReachedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when the current resource",
+				"usage identified by crlResourceLimitCurrentUsage exceeds/falls ",
+				"below the user configured thresholds identified by ",
+				"crlNotifMaxThresholdPcnt, crlNotifMinThresholdPcnt and ",
+				"crlNotifWatermarkPcnt.",
+				"Notifications will be generated on the following conditions",
+				"1. crlResourceLimitCurrentUsage exceeds crlNotifMaxThresholdPcnt",
+				"2. crlResourceLimitCurrentUsage falls below high",
+				"crlNotifWatermarkPcnt",
+				"3. crlResourceLimitCurrentUsage falls below",
+				"crlNotifMinThresholdPcnt",
+				"4. crlResourceLimitCurrentUsage exceeds low",
+				"crlNotifWatermarkPcnt.",
+				"clrResourceLimitReachedNotif object is superseded by clrResourceLimitReachedNotifRev1."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clrResourceLimitReachedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'Resource usage of $v5% has risen above threshold of $v6%' : (($v1 == 2) ? 'Resource usage of $v5% has fallen above threshold of $v8%' : (($v1 == 3) ? 'Resource usage of $v5% has fallen below watermark threshold of $v7%' : 'Resource usage of $v5% has risen above watermark threshold of $v7%'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReachedNotif CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifType i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitCurrentUsage u 9999  CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMax u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMin u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifCurrentUsagePcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMaxThresholdPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifWatermarkPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMinThresholdPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextOrSystem i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReachedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.480.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "risingHighThresh",
+							"2" : "fallingMinThresh",
+							"3" : "fallingWatermarkThresh",
+							"4" : "risingWatermarkThresh"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitCurrentUsage",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.2.1.8",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMax",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMin",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifCurrentUsagePcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMaxThresholdPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifWatermarkPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMinThresholdPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "system",
+							"2" : "context"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextOrSystem",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextName",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReachedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when the current resource",
+				"rate usage identified by crlResourceRateLimitCurrentUsage ",
+				"exceeds/falls below the user configured thresholds identified ",
+				"by crlNotifMaxThresholdPcnt, crlNotifMinThresholdPcnt and ",
+				"crlNotifWatermarkPcnt.",
+				"Notifications will be generated on the following conditions",
+				"1. crlResourceRateLimitCurrentUsage exceeds",
+				"crlNotifMaxThresholdPcnt",
+				"2. crlResourceRateLimitCurrentUsage falls below high",
+				"crlNotifWatermarkPcnt",
+				"3. crlResourceRateLimitCurrentUsage falls below",
+				"crlNotifMinThresholdPcnt",
+				"4. crlResourceRateLimitCurrentUsage exceeds low",
+				"crlNotifWatermarkPcnt",
+				"clrResourceRateLimitReachedNotif object is superseded by clrResourceRateLimitReachedNotifRev1."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clrResourceRateLimitReachedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'Resource usage rate of $v5% has risen above threshold of $v6%' : (($v1 == 2) ? 'Resource usage rate of $v5% has fallen above threshold of $v8%' : (($v1 == 3) ? 'Resource usage rate of $v5% has fallen below watermark threshold of $v7%' : 'Resource usage rate of $v5% has risen above watermark threshold of $v7%'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReachedNotif CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifType i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceCurrentUsage u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMax u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMin u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifCurrentUsagePcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMaxThresholdPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifWatermarkPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMinThresholdPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextOrSystem i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReachedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.480.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "risingHighThresh",
+							"2" : "fallingMinThresh",
+							"3" : "fallingWatermarkThresh",
+							"4" : "risingWatermarkThresh"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceCurrentUsage",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.4.1.6",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMax",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.4.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMin",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.4.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifCurrentUsagePcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMaxThresholdPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifWatermarkPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMinThresholdPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "system",
+							"2" : "context"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextOrSystem",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextName",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReachedNotifRev1",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when the current resource",
+				"usage rate identified by crlResourceRateLimitCurrentUsage ",
+				"exceeds/falls below the user configured thresholds identified ",
+				"by crlNotifMaxThresholdPcnt, crlNotifMinThresholdPcnt and ",
+				"crlNotifWatermarkPcnt.",
+				"Notifications will be generated on the following conditions",
+				"1. crlResourceRateLimitCurrentUsage exceeds",
+				"crlNotifMaxThresholdPcnt",
+				"2. crlResourceRateLimitCurrentUsage falls below high",
+				"crlNotifWatermarkPcnt",
+				"3. crlResourceRateLimitCurrentUsage falls below",
+				"crlNotifMinThresholdPcnt",
+				"4. crlResourceRateLimitCurrentUsage exceeds low",
+				"crlNotifWatermarkPcnt"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clrResourceRateLimitReachedNotifRev1",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v12",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'Resource usage rate of $v5% has risen above threshold of $v6% on $v12' : (($v1 == 2) ? 'Resource usage rate of $v5% has fallen above threshold of $v8% on $v12' : (($v1 == 3) ? 'Resource usage rate of $v5% has fallen below watermark threshold of $v7% on $v12' : 'Resource usage rate of $v5% has risen above watermark threshold of $v7% on $v12'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReachedNotifRev1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifType i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceCurrentUsage u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMax u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMin u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifCurrentUsagePcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMaxThresholdPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifWatermarkPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMinThresholdPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextOrSystem i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextName s EXAMPLE CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifSourceType i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifRealServerName s EXAMPLE CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifVirtualIPAddrType i 0 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifVirtualIPAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceRateLimitReachedNotifRev1",
+				"oid" : "1.3.6.1.4.1.9.9.480.0.5",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "risingHighThresh",
+							"2" : "fallingMinThresh",
+							"3" : "fallingWatermarkThresh",
+							"4" : "risingWatermarkThresh"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceCurrentUsage",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.4.1.6",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMax",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.4.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlRateLimitResourceMin",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.4.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifCurrentUsagePcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMaxThresholdPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifWatermarkPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMinThresholdPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "system",
+							"2" : "context"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextOrSystem",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextName",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "virtualIP",
+							"2" : "realServer"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifSourceType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifRealServerName",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifVirtualIPAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifVirtualIPAddress",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReachedNotifRev1",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when the current resource",
+				"usage identified by crlResourceLimitCurrentUsage exceeds/falls ",
+				"below the user configured thresholds identified by ",
+				"crlNotifMaxThresholdPcnt, crlNotifMinThresholdPcnt and ",
+				"crlNotifWatermarkPcnt.",
+				"Notifications will be generated on the following conditions",
+				"1. crlResourceLimitCurrentUsage exceeds crlNotifMaxThresholdPcnt",
+				"2. crlResourceLimitCurrentUsage falls below high",
+				"crlNotifWatermarkPcnt",
+				"3. crlResourceLimitCurrentUsage falls below",
+				"crlNotifMinThresholdPcnt",
+				"4. crlResourceLimitCurrentUsage exceeds low",
+				"crlNotifWatermarkPcnt."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "clrResourceLimitReachedNotifRev1",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v12",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'Resource usage of $v5% has risen above threshold of $v6% on $v12' : (($v1 == 2) ? 'Resource usage of $v5% has fallen above threshold of $v8% on $v12' : (($v1 == 3) ? 'Resource usage of $v5% has fallen below watermark threshold of $v7% on $v12' : 'Resource usage of $v5% has risen above watermark threshold of $v7% on $v12'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReachedNotifRev1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifType i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitCurrentUsage u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMax u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMin u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifCurrentUsagePcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMaxThresholdPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifWatermarkPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMinThresholdPcnt u 9999 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextOrSystem i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextName s EXAMPLE CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifSourceType i 1 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifRealServerName s EXAMPLE CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifVirtualIPAddrType i 0 CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifVirtualIPAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::clrResourceLimitReachedNotifRev1",
+				"oid" : "1.3.6.1.4.1.9.9.480.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "risingHighThresh",
+							"2" : "fallingMinThresh",
+							"3" : "fallingWatermarkThresh",
+							"4" : "risingWatermarkThresh"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitCurrentUsage",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.2.1.8",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMax",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlResourceLimitMin",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifCurrentUsagePcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMaxThresholdPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifWatermarkPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifMinThresholdPcnt",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "system",
+							"2" : "context"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextOrSystem",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifContextName",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "virtualIP",
+							"2" : "realServer"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifSourceType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifRealServerName",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifVirtualIPAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-L4L7MODULE-RESOURCE-LIMIT-MIB::crlNotifVirtualIPAddress",
+						"oid" : "1.3.6.1.4.1.9.9.480.1.3.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

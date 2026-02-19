@@ -1,0 +1,113 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200505060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "LLDP-MIB::lldpRemTablesChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A lldpRemTablesChange notification is sent when the value",
+				"of lldpStatsRemTableLastChangeTime changes. It can be",
+				"utilized by an NMS to trigger LLDP remote systems table",
+				"maintenance polls.",
+				"Note that transmission of lldpRemTablesChange",
+				"notifications are throttled by the agent, as specified by the",
+				"'lldpNotificationInterval' object."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lldpRemTablesChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "NMS detected a change in LLDP remote table"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LLDP-MIB::lldpRemTablesChange LLDP-MIB::lldpStatsRemTablesInserts u 9999 LLDP-MIB::lldpStatsRemTablesDeletes u 9999 LLDP-MIB::lldpStatsRemTablesDrops u 9999 LLDP-MIB::lldpStatsRemTablesAgeouts u 9999",
+			"trap" : {
+				"name" : "LLDP-MIB::lldpRemTablesChange",
+				"oid" : "1.0.8802.1.1.2.0.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The number of times the complete set of information",
+							"advertised by a particular MSAP has been inserted into tables",
+							"contained in lldpRemoteSystemsData and lldpExtensions objects.",
+							"",
+							"The complete set of information received from a particular",
+							"MSAP should be inserted into related tables. If partial",
+							"information cannot be inserted for a reason such as lack",
+							"of resources, all of the complete set of information should",
+							"be removed.",
+							"",
+							"This counter should be incremented only once after the",
+							"complete set of information is successfully recorded",
+							"in all related tables. Any failures during inserting",
+							"information set which result in deletion of previously",
+							"inserted information should not trigger any changes in",
+							"lldpStatsRemTablesInserts since the insert is not completed",
+							"yet or or in lldpStatsRemTablesDeletes, since the deletion",
+							"would only be a partial deletion. If the failure was the",
+							"result of lack of resources, the lldpStatsRemTablesDrops",
+							"counter should be incremented once."
+						],
+						"name" : "LLDP-MIB::lldpStatsRemTablesInserts",
+						"oid" : "1.0.8802.1.1.2.1.2.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The number of times the complete set of information",
+							"advertised by a particular MSAP has been deleted from",
+							"tables contained in lldpRemoteSystemsData and lldpExtensions",
+							"objects.",
+							"",
+							"This counter should be incremented only once when the",
+							"complete set of information is completely deleted from all",
+							"related tables. Partial deletions, such as deletion of",
+							"rows associated with a particular MSAP from some tables",
+							"but not from all tables are not allowed, thus should not",
+							"change the value of this counter."
+						],
+						"name" : "LLDP-MIB::lldpStatsRemTablesDeletes",
+						"oid" : "1.0.8802.1.1.2.1.2.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The number of times the complete set of information",
+							"advertised by a particular MSAP could not be entered into",
+							"tables contained in lldpRemoteSystemsData and lldpExtensions",
+							"objects because of insufficient resources."
+						],
+						"name" : "LLDP-MIB::lldpStatsRemTablesDrops",
+						"oid" : "1.0.8802.1.1.2.1.2.4",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The number of times the complete set of information",
+							"advertised by a particular MSAP has been deleted from tables",
+							"contained in lldpRemoteSystemsData and lldpExtensions objects",
+							"because the information timeliness interval has expired.",
+							"",
+							"This counter should be incremented only once when the complete",
+							"set of information is completely invalidated (aged out)",
+							"from all related tables. Partial aging, similar to deletion",
+							"case, is not allowed, and thus, should not change the value",
+							"of this counter."
+						],
+						"name" : "LLDP-MIB::lldpStatsRemTablesAgeouts",
+						"oid" : "1.0.8802.1.1.2.1.2.5",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

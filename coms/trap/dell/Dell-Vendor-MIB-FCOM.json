@@ -1,0 +1,85 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201205071200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "Dell-Vendor-MIB::productStatusGlobalStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the product global status changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : 2"
+				},
+				"EventType" : "productStatusGlobalStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==4) ? 3 : (($v1==5) ? 4 : 0)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Global status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Dell-Vendor-MIB::productStatusGlobalStatusChange Dell-Vendor-MIB::productStatusGlobalStatus i 3 Dell-Vendor-MIB::productStatusLastGlobalStatus i 3 Dell-Vendor-MIB::productStatusTimeStamp t 31536000",
+			"trap" : {
+				"name" : "Dell-Vendor-MIB::productStatusGlobalStatusChange",
+				"oid" : "1.3.6.1.4.1.674.10895.3000.2.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Current status of the product.This is a rollup for the entire product.",
+							"The status is intended to give initiative to a snmp monitor to get further data when this status is abnormal.",
+							"This variable can take the following values:",
+							"3: OK",
+							"If fans and power supplies are functioning and the system did not reboot because of a HW watchdog failure",
+							"or a SW fatal error condition.",
+							"4: Non-critical",
+							"If at least one power supply is not functional or the system rebooted at least once because of a HW watchdog failure",
+							"or a SW fatal error condition.",
+							"5: Critical",
+							"If at least one fan is not functional, possibly causing a dangerous warming up of the device."
+						],
+						"enums" : {
+							"3" : "ok",
+							"4" : "non-critical",
+							"5" : "critical"
+						},
+						"name" : "Dell-Vendor-MIB::productStatusGlobalStatus",
+						"oid" : "1.3.6.1.4.1.674.10895.3000.1.2.110.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status before the current status which induced an initiative to issue a global status change trap."
+						],
+						"enums" : {
+							"3" : "ok",
+							"4" : "non-critical",
+							"5" : "critical"
+						},
+						"name" : "Dell-Vendor-MIB::productStatusLastGlobalStatus",
+						"oid" : "1.3.6.1.4.1.674.10895.3000.1.2.110.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The last time that the product global status has been updated.",
+							"The time will be given in TimeTicks"
+						],
+						"name" : "Dell-Vendor-MIB::productStatusTimeStamp",
+						"oid" : "1.3.6.1.4.1.674.10895.3000.1.2.110.3",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,180 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ZYXEL-NWA-SERIES::pwWlanStaAssociation",
+			"certification" : "STANDARD",
+			"description" : [
+				"Wireless client assocication notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "pwWlanStaAssociation",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Wireless client association notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZYXEL-NWA-SERIES::pwWlanStaAssociation ",
+			"trap" : {
+				"name" : "ZYXEL-NWA-SERIES::pwWlanStaAssociation",
+				"oid" : "1.3.6.1.4.1.890.1.9.2.3.1.1"
+			}
+		},
+		{
+			"@objectName" : "ZYXEL-NWA-SERIES::pwWlanStaDisassociation",
+			"certification" : "STANDARD",
+			"description" : [
+				"Wireless client disassocication notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "pwWlanStaAssociation",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Wireless client disassociation notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZYXEL-NWA-SERIES::pwWlanStaDisassociation ",
+			"trap" : {
+				"name" : "ZYXEL-NWA-SERIES::pwWlanStaDisassociation",
+				"oid" : "1.3.6.1.4.1.890.1.9.2.3.1.2"
+			}
+		},
+		{
+			"@objectName" : "ZYXEL-NWA-SERIES::pwWlanStaAuthFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"Wireless client authentication failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pwWlanStaAuthFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Wireless client authentication failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZYXEL-NWA-SERIES::pwWlanStaAuthFail ",
+			"trap" : {
+				"name" : "ZYXEL-NWA-SERIES::pwWlanStaAuthFail",
+				"oid" : "1.3.6.1.4.1.890.1.9.2.3.2.1"
+			}
+		},
+		{
+			"@objectName" : "ZYXEL-NWA-SERIES::pwTFTPStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send when TFTP operation completed, or stopped due to some reason. ",
+				"For example, timeout or wrong configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3) ? 1 : (($v2==1) ? 3 : 2)"
+				},
+				"EventType" : "pwTFTPStatus",
+				"ExpireTime" : {
+					"eval" : "($v2==0 || $v2==2 || $v2==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==3) ? 0 : (($v2==0 || $v2==2) ? 4 : (($v2==4) ? 3 : 2))"
+				},
+				"SubNode" : "ServerIP:$v3",
+				"Summary" : "$v5 TFTP ($v4) operation status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZYXEL-NWA-SERIES::pwTFTPStatus ZYXEL-NWA-SERIES::pwTrapGenericMessage s EXAMPLE ZYXEL-NWA-SERIES::pwTftpOpStatus i 0 ZYXEL-NWA-SERIES::pwTftpServer a 192.0.2.1 ZYXEL-NWA-SERIES::pwTftpFileName s EXAMPLE ZYXEL-NWA-SERIES::pwTftpFileType i 1 ZYXEL-NWA-SERIES::pwTftpOpCommand i 1",
+			"trap" : {
+				"name" : "ZYXEL-NWA-SERIES::pwTFTPStatus",
+				"oid" : "1.3.6.1.4.1.890.1.9.2.3.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"Provide generic information on traps."
+						],
+						"name" : "ZYXEL-NWA-SERIES::pwTrapGenericMessage",
+						"oid" : "1.3.6.1.4.1.890.1.9.2.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"TFTP Operation Status."
+						],
+						"enums" : {
+							"0" : "idle",
+							"1" : "inprogress",
+							"2" : "failed",
+							"3" : "success",
+							"4" : "timeout"
+						},
+						"name" : "ZYXEL-NWA-SERIES::pwTftpOpStatus",
+						"oid" : "1.3.6.1.4.1.890.1.9.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"TFTP download server IP Address."
+						],
+						"name" : "ZYXEL-NWA-SERIES::pwTftpServer",
+						"oid" : "1.3.6.1.4.1.890.1.9.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"TFTP file name in TFTP server."
+						],
+						"name" : "ZYXEL-NWA-SERIES::pwTftpFileName",
+						"oid" : "1.3.6.1.4.1.890.1.9.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"File type in TFTP server."
+						],
+						"enums" : {
+							"1" : "software",
+							"2" : "romfile",
+							"3" : "textconfig"
+						},
+						"name" : "ZYXEL-NWA-SERIES::pwTftpFileType",
+						"oid" : "1.3.6.1.4.1.890.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"TFTP Operation Command."
+						],
+						"enums" : {
+							"1" : "upload",
+							"2" : "download"
+						},
+						"name" : "ZYXEL-NWA-SERIES::pwTftpOpCommand",
+						"oid" : "1.3.6.1.4.1.890.1.9.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,190 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200912100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-VRF-MIB::cvVrfIfUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when:",
+				"a. The ifOperStatus of an interface associated with a VRF",
+				"changes to the up(1) state.",
+				"b. When an interface with ifOperStatus = up(1) is ",
+				"associated with a VRF.",
+				"The interface is identified by ifName and the VRF is",
+				"identified by cvVrfName varbinds respectively."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cvVrfIfStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v2",
+				"Summary" : "Interface $v1 is up and associated to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-VRF-MIB::cvVrfIfUp IF-MIB::ifName s EXAMPLE CISCO-VRF-MIB::cvVrfName s EXAMPLE CISCO-VRF-MIB::cvVrfOperStatus i 1",
+			"trap" : {
+				"name" : "CISCO-VRF-MIB::cvVrfIfUp",
+				"oid" : "1.3.6.1.4.1.9.9.711.0.1",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-VRF-MIB::cvVrfName",
+						"oid" : "1.3.6.1.4.1.9.9.711.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-VRF-MIB::cvVrfOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.711.1.1.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-VRF-MIB::cvVrfIfDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when:",
+				"a. The ifOperStatus of an interface associated with a VRF ",
+				"changes to the down(2) state.",
+				"b. When an interface with ifOperStatus = up(1) state is ",
+				"disassociated with a VRF.",
+				"The interface is identified by ifName and the VRF is",
+				"identified by cvVrfName varbinds respectively.",
+				"If all the interfaces associated with the VRF are in down(2) ",
+				"state or if there are no more interfaces associated with the",
+				"VRF, then the cvVrfOperStatus will have a value of down(2)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cvVrfIfStatus",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 3 : 4"
+				},
+				"SubNode" : "$v2",
+				"Summary" : {
+					"eval" : "($v3 == 2) ? 'All interfaces associated to $v2 are down' : 'Interface $v1 is down or unassociated to $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-VRF-MIB::cvVrfIfDown IF-MIB::ifName s EXAMPLE CISCO-VRF-MIB::cvVrfName s EXAMPLE CISCO-VRF-MIB::cvVrfOperStatus i 1",
+			"trap" : {
+				"name" : "CISCO-VRF-MIB::cvVrfIfDown",
+				"oid" : "1.3.6.1.4.1.9.9.711.0.2",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-VRF-MIB::cvVrfName",
+						"oid" : "1.3.6.1.4.1.9.9.711.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-VRF-MIB::cvVrfOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.711.1.1.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-VRF-MIB::cvVnetTrunkUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the ifOperStatus of a vNET",
+				"trunk interface changes to the up(1) state. The interface is",
+				"identified by ifName varbind. The notification will be",
+				"generated for only those interfaces for which the",
+				"cvInterfaceVnetTrunkEnabled object has a value of True(1)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cvVnetTrunkStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v1",
+				"Summary" : "vNET trunk interface $v1 has changed to up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-VRF-MIB::cvVnetTrunkUp IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-VRF-MIB::cvVnetTrunkUp",
+				"oid" : "1.3.6.1.4.1.9.9.711.0.3",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-VRF-MIB::cvVnetTrunkDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the ifOperStatus of a vNET",
+				"trunk interface changes to the down(2) state. The interface is",
+				"identified by ifName varbind. The notification will be",
+				"generated for only those interfaces for which the",
+				"cvInterfaceVnetTrunkEnabled object has a value of True(1)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cvVnetTrunkStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "vNET trunk interface $v1 has changed to down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-VRF-MIB::cvVnetTrunkDown IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-VRF-MIB::cvVnetTrunkDown",
+				"oid" : "1.3.6.1.4.1.9.9.711.0.4",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

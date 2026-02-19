@@ -1,0 +1,610 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202004030000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MWRM2-NMS-MIB::netmasterAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An netmasterAlarmTrap signifies that an alarm event has arrived",
+				"from the Fault Management Module. The Alarm event can be",
+				"either due to an alarm condition in one of the network",
+				"elements being monitored by the NG-NMS or by the NG-NMS",
+				"system itself"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v25 == 2) ? 3 : ($v25 == 1) ? 2 : 1"
+				},
+				"EventType" : "netmaster:$v15",
+				"ExpireTime" : {
+					"eval" : "($v25 == 2) ? 3600 : ($v25 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v14 == 6) ? 0 : ($v14 == 2) ? 5 : ($v14 == 3) ? 4 : ($v14 == 4 || $v14 == 5) ? 3 : 2"
+				},
+				"SubNode" : "netmasterAlarmIfIndex:$v24",
+				"Summary" : {
+					"eval" : "($v14==6) ? '$v18 $v15 cleared' : '$v18 $v15'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MWRM2-NMS-MIB::netmasterAlarmTrap SNMPv2-MIB::sysUpTime t 31536000 SNMPv2-MIB::snmpTrapOID o 1.3.6.1.4.1.8072.2.1.1 MWRM2-NMS-MIB::netmasterAlarmId i 9999 MWRM2-NMS-MIB::netmasterAlarmObjectName s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmObjectType i 1 MWRM2-NMS-MIB::netmasterAlarmTimeNe s EXAMPLEE MWRM2-NMS-MIB::netmasterAlarmTimeEms s EXAMPLEE MWRM2-NMS-MIB::netmasterAlarmIsClearable i 1 MWRM2-NMS-MIB::netmasterAlarmProbableCause s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmNativeProbableCause s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmProbableCauseQualifier s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmLayer i 1 MWRM2-NMS-MIB::netmasterAlarmAdditionalText s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmPerceivedSeverity i 1 MWRM2-NMS-MIB::netmasterAlarmType i 1 MWRM2-NMS-MIB::netmasterAlarmAcknowledgeIndication i 0 MWRM2-NMS-MIB::netmasterAlarmResourceDisplayname s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmDeviceType s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmLocation s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmCLLI s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmNeIpv4Address a 192.0.2.1 MWRM2-NMS-MIB::netmasterAlarmNeIpv6Address s EXAMPLE MWRM2-NMS-MIB::netmasterAlarmOriginalAlarmId i 9999 MWRM2-NMS-MIB::netmasterAlarmIfIndex i 9999 MWRM2-NMS-MIB::netmasterAlarmAlarmState i 0 MWRM2-NMS-MIB::netmasterAlarmNMSServerId s EXAMPLE",
+			"trap" : {
+				"name" : "MWRM2-NMS-MIB::netmasterAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2378.1.2.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time (in hundredths of a second) since the",
+							"network management portion of the system was last",
+							"re-initialized."
+						],
+						"name" : "SNMPv2-MIB::sysUpTime",
+						"oid" : "1.3.6.1.2.1.1.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The authoritative identification of the notification",
+							"currently being sent. This variable occurs as",
+							"the second varbind in every SNMPv2-Trap-PDU and",
+							"InformRequest-PDU."
+						],
+						"name" : "SNMPv2-MIB::snmpTrapOID",
+						"oid" : "1.3.6.1.6.3.1.1.4.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"Unique identifier for each alarm that is generated from",
+							"the NMS. Two similar alarms from the same NE should have",
+							"different alarmIds"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmId",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The System Distinguished Name (SDN) used for identifying",
+							"the source of Alarm"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmObjectName",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the object class (type) to which the object",
+							"instance belongs to."
+						],
+						"enums" : {
+							"1" : "ems",
+							"2" : "managedElement",
+							"3" : "multilayerSubnetwork",
+							"4" : "topologicalLink",
+							"5" : "subnetworkConnection",
+							"6" : "physicalTerminationPoint",
+							"7" : "connectionTerminationPoint",
+							"8" : "terminationPointPool",
+							"9" : "equipment",
+							"10" : "equipmentHolder",
+							"11" : "protectionGroup",
+							"12" : "trafficDescriptor",
+							"13" : "aid",
+							"14" : "eprotectionGroup",
+							"15" : "tcaParameterProfile",
+							"16" : "pmp",
+							"17" : "administrativeDomain",
+							"18" : "station",
+							"19" : "stationEntity",
+							"20" : "swInfo",
+							"21" : "cpeInventory",
+							"22" : "cpeRadioStatistics",
+							"23" : "discover",
+							"24" : "floatingTerminationPoint"
+						},
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmObjectType",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time of generation of the event. This is an optional",
+							"field."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmTimeNe",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The time of realization of the event by the EMS"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmTimeEms",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"True if the alarm/event represents a condition that can be",
+							"cleared at a later time (or is itself a clear); ",
+							"false otherwise"
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmIsClearable",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Defines further qualification as to the probable cause of",
+							"the alarm"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmProbableCause",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Defines further native qualification as to the probable cause of",
+							"the alarm"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmNativeProbableCause",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This parameter, when present, may further qualify the",
+							"source of the alarm"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmProbableCauseQualifier",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The layer to which this alarm is relevant to. This",
+							"parameter, when present, may further qualify the source",
+							"of the alarm"
+						],
+						"enums" : {
+							"1" : "notApplicable",
+							"2" : "ds1",
+							"4" : "ds3",
+							"5" : "e1",
+							"6" : "e2",
+							"7" : "e3",
+							"8" : "e4",
+							"15" : "sts3Cau4",
+							"20" : "section3Rs1",
+							"25" : "line3Ms1",
+							"46" : "electrical",
+							"47" : "optical",
+							"48" : "radio",
+							"73" : "dsr1",
+							"74" : "dsr4",
+							"93" : "dsr2x1",
+							"96" : "ethernet",
+							"10000" : "ebus"
+						},
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmLayer",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Free form text description to be reported. NMS is not",
+							"required to understand the semantics of this field for",
+							"interpretation of the notification"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmAdditionalText",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of how it is perceived that the capability of",
+							"the object has been affected"
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "cleared"
+						},
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmPerceivedSeverity",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The AlarmType classifies the alarm into one of the five",
+							"basic categories as specified in ITU-T X.733"
+						],
+						"enums" : {
+							"1" : "communicationAlarm",
+							"2" : "environmentalAlarm",
+							"3" : "equipmentAlarm",
+							"4" : "processingErrorAlarm",
+							"5" : "qualityOfServiceAlarm"
+						},
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmType",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication as to whether the alarm has been acknowledged. Enumerated as TMF 3.0 AcknowledgeIndication."
+						],
+						"enums" : {
+							"0" : "notApplicable",
+							"1" : "acknowledged",
+							"2" : "unacknowledged"
+						},
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmAcknowledgeIndication",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Source of the alarm in a user friendly pattern"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmResourceDisplayname",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Originating device type"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmDeviceType",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Originating device location"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmLocation",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Originating device CLLI (Common Language Location Identifier)"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmCLLI",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the agent IP address."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmNeIpv4Address",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.20",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"This is the agent IP v6 address."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmNeIpv6Address",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm ID. List of alarm IDs is available in the MIB Ref. Guide."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmOriginalAlarmId",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Interface Index where the alarm occurred"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmIfIndex",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the alarm (cleared or rasied)."
+						],
+						"enums" : {
+							"0" : "cleared",
+							"1" : "raised",
+							"2" : "event"
+						},
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmAlarmState",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Originating NMS Server Identifier."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterAlarmNMSServerId",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.1.1.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MWRM2-NMS-MIB::netmasterHeartBeatTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A netmasterHeartBeatTrap notification is generated ",
+				"at regular intervals to make sure the conectivity with NetMaster",
+				"is OK."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "netmasterHeartBeatTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Heart beat received"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MWRM2-NMS-MIB::netmasterHeartBeatTrap SNMPv2-MIB::sysUpTime t 31536000 SNMPv2-MIB::snmpTrapOID o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "MWRM2-NMS-MIB::netmasterHeartBeatTrap",
+				"oid" : "1.3.6.1.4.1.2378.1.2.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time (in hundredths of a second) since the",
+							"network management portion of the system was last",
+							"re-initialized."
+						],
+						"name" : "SNMPv2-MIB::sysUpTime",
+						"oid" : "1.3.6.1.2.1.1.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The authoritative identification of the notification",
+							"currently being sent. This variable occurs as",
+							"the second varbind in every SNMPv2-Trap-PDU and",
+							"InformRequest-PDU."
+						],
+						"name" : "SNMPv2-MIB::snmpTrapOID",
+						"oid" : "1.3.6.1.6.3.1.1.4.1",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MWRM2-NMS-MIB::netmasterShutdownTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A netmasterShutdownTrap notification is generated ",
+				"when no conectivity with NetMaster is detected"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "netmasterShutdownTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Connectivity lost with NetMaster"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MWRM2-NMS-MIB::netmasterShutdownTrap ",
+			"trap" : {
+				"name" : "MWRM2-NMS-MIB::netmasterShutdownTrap",
+				"oid" : "1.3.6.1.4.1.2378.1.2.1.0.3"
+			}
+		},
+		{
+			"@objectName" : "MWRM2-NMS-MIB::netmasterHWinventoryChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A netmasterHWinventoryChangeTrap signifies that a change in HW inventory has occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "netmasterHWinventoryChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "netmasterHWinventorySerialNo:$v5",
+				"Summary" : "HW inventory changed at $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MWRM2-NMS-MIB::netmasterHWinventoryChangeTrap SNMPv2-MIB::sysUpTime t 31536000 SNMPv2-MIB::snmpTrapOID o 1.3.6.1.4.1.8072.2.1.1 MWRM2-NMS-MIB::netmasterHWinventoryResource s EXAMPLE MWRM2-NMS-MIB::netmasterHWinventoryArticleCode s EXAMPLE MWRM2-NMS-MIB::netmasterHWinventorySerialNo s EXAMPLE MWRM2-NMS-MIB::netmasterHWinventoryRevision s EXAMPLE",
+			"trap" : {
+				"name" : "MWRM2-NMS-MIB::netmasterHWinventoryChangeTrap",
+				"oid" : "1.3.6.1.4.1.2378.1.2.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time (in hundredths of a second) since the",
+							"network management portion of the system was last",
+							"re-initialized."
+						],
+						"name" : "SNMPv2-MIB::sysUpTime",
+						"oid" : "1.3.6.1.2.1.1.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The authoritative identification of the notification",
+							"currently being sent. This variable occurs as",
+							"the second varbind in every SNMPv2-Trap-PDU and",
+							"InformRequest-PDU."
+						],
+						"name" : "SNMPv2-MIB::snmpTrapOID",
+						"oid" : "1.3.6.1.6.3.1.1.4.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"Name/location of this hardware entry in the Network Element."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterHWinventoryResource",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Uniquely identifies the type of hardware element."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterHWinventoryArticleCode",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The serial number of the hardware element."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterHWinventorySerialNo",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The hardware revision."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterHWinventoryRevision",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MWRM2-NMS-MIB::netmasterSWinventoryChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A netmasterSWinventoryChangeTrap signifies that a change in the SW inventory has occured."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "netmasterSWinventoryChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v7",
+				"Summary" : "SW inventory ($v4) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MWRM2-NMS-MIB::netmasterSWinventoryChangeTrap SNMPv2-MIB::sysUpTime t 31536000 SNMPv2-MIB::snmpTrapOID o 1.3.6.1.4.1.8072.2.1.1 MWRM2-NMS-MIB::netmasterSWinventoryResource s EXAMPLE MWRM2-NMS-MIB::netmasterSWinventoryName s EXAMPLE MWRM2-NMS-MIB::netmasterSWinventoryVersion s EXAMPLE MWRM2-NMS-MIB::netmasterSWinventoryBuildTime s EXAMPLEE MWRM2-NMS-MIB::netmasterSWinventoryMemoryBank s EXAMPLE MWRM2-NMS-MIB::netmasterSWinventoryStatus s EXAMPLE",
+			"trap" : {
+				"name" : "MWRM2-NMS-MIB::netmasterSWinventoryChangeTrap",
+				"oid" : "1.3.6.1.4.1.2378.1.2.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The time (in hundredths of a second) since the",
+							"network management portion of the system was last",
+							"re-initialized."
+						],
+						"name" : "SNMPv2-MIB::sysUpTime",
+						"oid" : "1.3.6.1.2.1.1.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The authoritative identification of the notification",
+							"currently being sent. This variable occurs as",
+							"the second varbind in every SNMPv2-Trap-PDU and",
+							"InformRequest-PDU."
+						],
+						"name" : "SNMPv2-MIB::snmpTrapOID",
+						"oid" : "1.3.6.1.6.3.1.1.4.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The name of the NE where this software is stored"
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterSWinventoryResource",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.3.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the software in this memory bank, as read from the NE."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterSWinventoryName",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.3.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Software revision. Normally a five character code, but the field will display NA if the system has ",
+							"this unit present but is unable to retrieve the information from it."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterSWinventoryVersion",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.3.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"When this software was created."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterSWinventoryBuildTime",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.3.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Software location on the NE."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterSWinventoryMemoryBank",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Displays the status of the memory bank and can be one of the following values ",
+							"IDLE: Software is not being executed",
+							"ACTIVE: Software is being executed",
+							"ACTIVE_PENDING: Software is waiting to be executed (will be activated on next restart) ",
+							"DOWNLOADING: SW is being downloaded to this bank.",
+							"ERASING FLASH: SW is being erased (during a download process)",
+							"INVALID: corrupt software or wrong software version; SW Download has failed or SW bank has not been used.",
+							"NOT_AVAILABLE: The IDU does not have contact with the unit using this software (only relevant for ODU banks) or corrupted memory bank."
+						],
+						"name" : "MWRM2-NMS-MIB::netmasterSWinventoryStatus",
+						"oid" : "1.3.6.1.4.1.2378.1.2.1.3.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

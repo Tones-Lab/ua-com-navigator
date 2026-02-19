@@ -1,0 +1,1399 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201205240001Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::testTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A test trap to verify whether the receiving server is configured correctly.",
+				"The name of the network where the trap configuration resides will be sent as well. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "testTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Test trap"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::testTrap MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::testTrap",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.1",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::deviceGoesDownTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a device becomes unreachable",
+				"from the Meraki cloud. The device's mac address is",
+				"enclosed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "deviceStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "devMac:$v1",
+				"Summary" : "Device $v1 is unreachable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::deviceGoesDownTrap MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::deviceGoesDownTrap",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.2",
+				"variables" : [
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::deviceComesOnline",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a device reconnects to",
+				"the Meraki cloud. The device's mac address is",
+				"enclosed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "deviceStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "devMac:$v1",
+				"Summary" : "Device $v1 reconnected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::deviceComesOnline MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::deviceComesOnline",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.3",
+				"variables" : [
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::foreignAPDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when an unknown access point appears",
+				"on the network."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "foreignAPDetected",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "devMac:$v1",
+				"Summary" : "Unknown access point on network $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::foreignAPDetected MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::foreignAPDetected",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.4",
+				"variables" : [
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::cellularNetworkUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a network connects to a cellular",
+				"network."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cellularNetworkStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "InterfaceName:$v6",
+				"Summary" : "Cellular network is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::cellularNetworkUp MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceModel s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceCarrier s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::cellularNetworkUp",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.5",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The model of the interface. Useful for cellular interfaces."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceModel",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The carrier for the interface. Useful for cellular interfaces."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceCarrier",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of this interface."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::cellularNetworkDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a network disconnects from a cellular",
+				"network."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cellularNetworkStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "InterfaceName:$v6",
+				"Summary" : "Cellular network is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::cellularNetworkDown MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceModel s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceCarrier s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::cellularNetworkDown",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.6",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The model of the interface. Useful for cellular interfaces."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceModel",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The carrier for the interface. Useful for cellular interfaces."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceCarrier",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of this interface."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::newDhcpServerAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a new dhcp server appears on the",
+				"network."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "newDhcpServerAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Subnet:$v5;vlanNumber:$v6",
+				"Summary" : "New DHCP server on network $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::newDhcpServerAlert MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devLanIp a 192.0.2.1 MERAKI-CLOUD-CONTROLLER-MIB::devSubnet s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::vlanNumber i 9999",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::newDhcpServerAlert",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.7",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The LAN IP of the device. Useful for DHCP server alerts."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devLanIp",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.12",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The subnet the device is on. Useful for DHCP server alerts."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devSubnet",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"VLAN number."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::vlanNumber",
+						"oid" : "1.3.6.1.4.1.29671.1.1.6.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::noDhcpLeases",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when DHCP leases are exhausted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "noDhcpLeases",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "vlanNumber:$v5",
+				"Summary" : "DHCP leases are exhausted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::noDhcpLeases MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devLanIp a 192.0.2.1 MERAKI-CLOUD-CONTROLLER-MIB::vlanNumber i 9999",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::noDhcpLeases",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.8",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The LAN IP of the device. Useful for DHCP server alerts."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devLanIp",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.12",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"VLAN number."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::vlanNumber",
+						"oid" : "1.3.6.1.4.1.29671.1.1.6.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::uplinkStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when an uplink status changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "uplinkStatusChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "InterfaceName:$v4",
+				"Summary" : "Uplink status changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::uplinkStatusChanged MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::uplinkStatusChanged",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.9",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of this interface."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::unreachableDevicesDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"Unreachable devices have been detected on the",
+				"network. Adjust firewall settings accordingly."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "unreachableDevicesDetected",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "network:$v1",
+				"Summary" : "Unreachable devices have been detected on network $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::unreachableDevicesDetected MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::unreachableDevicesDetected",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.10",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::upcomingFirewallInformationChanges",
+			"certification" : "STANDARD",
+			"description" : [
+				"Upcoming firewall information changes. Adjust firewall",
+				"settings accordingly."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "upcomingFirewallInformationChanges",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Upcoming firewall information changes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::upcomingFirewallInformationChanges MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::upcomingFirewallInformationChanges",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.11",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::gatewayToRepeater",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a gateway becomes a repeater."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "gatewayToRepeater",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "devMac:$v3",
+				"Summary" : "Gateway has become a repeater"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::gatewayToRepeater MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::gatewayToRepeater",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.12",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::ipConflict",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert if a client IP conflict is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ipConflict",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "devLanIp:$v3",
+				"Summary" : "Client IP conflict is detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::ipConflict MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devLanIp a 192.0.2.1 MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::ipConflict",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.13",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The LAN IP of the device. Useful for DHCP server alerts."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devLanIp",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.12",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::newSplashSignup",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a new splash user registers to an SSID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "newSplashSignup",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New splash user $v4 registered to an SSID $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::newSplashSignup MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::ssidName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::userName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::userEmail s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::newSplashSignup",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.14",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SSID name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::ssidName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of user connected to SSID."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::userName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Email of user connected to SSID."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::userEmail",
+						"oid" : "1.3.6.1.4.1.29671.1.1.3.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::portCableError",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a cable error is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "portCableError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Interface:$v4",
+				"Summary" : "Port cable error on interface $v4: $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::portCableError MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceDescription s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devInterfacePortDescription s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::portCableError",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.15",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description for the interface. Useful for information",
+							"about ports"
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceDescription",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description for errors occuring on the interface.",
+							"Useful for information about ports"
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfacePortDescription",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::portConnected",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a switch port is connected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "portConnectivity",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "devMac:$v3",
+				"Summary" : "Switch port ($v4) is connected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::portConnected MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceDescription s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::portConnected",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.16",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description for the interface. Useful for information",
+							"about ports"
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceDescription",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::portDisconnected",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a switch port is disconnected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "portConnectivity",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "devMac:$v3",
+				"Summary" : "Switch port ($v4) is disconnected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::portDisconnected MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceDescription s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::portDisconnected",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.17",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description for the interface. Useful for information",
+							"about ports"
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceDescription",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::portSpeedChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a switch port link speed changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "portSpeedChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "devMac:$v3",
+				"Summary" : "Switch port ($v5) link speed changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::portSpeedChange MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceDescription s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devInterfacePortDescription s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::portSpeedChange",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.18",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description for the interface. Useful for information",
+							"about ports"
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfaceDescription",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description for errors occuring on the interface.",
+							"Useful for information about ports"
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devInterfacePortDescription",
+						"oid" : "1.3.6.1.4.1.29671.1.1.5.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::rogueDhcpServer",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a rogue DHCP server is detected. Contains the mac, IP",
+				"subnet and VLAN of the Rogue DHCP server."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "rogueDhcpServer",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "devSubnet:$v4;vlanNumber:$v6",
+				"Summary" : "Rogue DHCP server detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::rogueDhcpServer MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::devSubnet s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devLanIp a 192.0.2.1 MERAKI-CLOUD-CONTROLLER-MIB::vlanNumber i 9999",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::rogueDhcpServer",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.19",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The subnet the device is on. Useful for DHCP server alerts."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devSubnet",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The LAN IP of the device. Useful for DHCP server alerts."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devLanIp",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.12",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"VLAN number."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::vlanNumber",
+						"oid" : "1.3.6.1.4.1.29671.1.1.6.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::settingsChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when Meraki Dashboard settings are changed. Includes",
+				"information about the network admin that made the changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "settingsChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Dashboard settings changed by $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::settingsChanged MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::networkAdmin s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::settingsChanged",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.20",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name and email of a network admin."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkAdmin",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::unreachableRadiusServer",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a RADIUS authentication server becomes",
+				"unreachable. Contains the IP of the RADIUS server",
+				"the IP of the Meraki server having trouble connecting to it",
+				"and the name of the SSID that uses the RADIUS server."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "unreachableRadiusServer",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "RADIUS server $v3 is unreachable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::unreachableRadiusServer MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::radiusServerIp a 192.0.2.1 MERAKI-CLOUD-CONTROLLER-MIB::ssidName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devLanIp a 192.0.2.1",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::unreachableRadiusServer",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.21",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP address of RADIUS server used for authentication",
+							"on an SSID."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::radiusServerIp",
+						"oid" : "1.3.6.1.4.1.29671.1.1.3.1.6",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"SSID name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::ssidName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The LAN IP of the device. Useful for DHCP server alerts."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devLanIp",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.12",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::vpnConnectivityChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when VPN connectivity changed. Contains the IP and port of",
+				"VPN peer, the mac address of the device used to VPN, and the status",
+				"whether or not the VPN is on or offline"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 0) ? 2 : 1"
+				},
+				"EventType" : "vpnConnectivityChange",
+				"ExpireTime" : {
+					"eval" : "($v5 == 0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v5 == 0) ? 3 : 0"
+				},
+				"SubNode" : "vpnPeer:$v4",
+				"Summary" : "VPN peer $v4 is $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::vpnConnectivityChange MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::devMac s EXAMPL MERAKI-CLOUD-CONTROLLER-MIB::vpnPeer a 192.0.2.1 MERAKI-CLOUD-CONTROLLER-MIB::devStatus i 0",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::vpnConnectivityChange",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.22",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the device."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devMac",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP and port of a VPN peer connected to the network."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::vpnPeer",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The status of the device's connection to the Meraki Cloud Controller"
+						],
+						"enums" : {
+							"0" : "offline",
+							"1" : "online"
+						},
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::devStatus",
+						"oid" : "1.3.6.1.4.1.29671.1.1.4.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MERAKI-CLOUD-CONTROLLER-MIB::vpnFailoverDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alert when a VPN failover is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vpnFailoverDetected",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "VPN failover is detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MERAKI-CLOUD-CONTROLLER-MIB::vpnFailoverDetected MERAKI-CLOUD-CONTROLLER-MIB::networkName s EXAMPLE MERAKI-CLOUD-CONTROLLER-MIB::organizationName s EXAMPLE",
+			"trap" : {
+				"name" : "MERAKI-CLOUD-CONTROLLER-MIB::vpnFailoverDetected",
+				"oid" : "1.3.6.1.4.1.29671.1.1.7.23",
+				"variables" : [
+					{
+						"description" : [
+							"Network name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::networkName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Organization name."
+						],
+						"name" : "MERAKI-CLOUD-CONTROLLER-MIB::organizationName",
+						"oid" : "1.3.6.1.4.1.29671.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

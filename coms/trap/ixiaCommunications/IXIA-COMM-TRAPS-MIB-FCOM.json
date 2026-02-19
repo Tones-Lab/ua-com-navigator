@@ -1,0 +1,731 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201509151200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "IXIA-COMM-TRAPS-MIB::ixiaHelloTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap simply carries a single message. It can be used for",
+				"testing connectivity to an SNMP manager. By manually sending",
+				"this trap, SNMP trap configuration, networking and the manager",
+				"can be tested without triggering unwanted behavior."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ixiaHelloTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Hello trap received"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-TRAPS-MIB::ixiaHelloTrap ",
+			"trap" : {
+				"name" : "IXIA-COMM-TRAPS-MIB::ixiaHelloTrap",
+				"oid" : "1.3.6.1.4.1.3054.100.9.1.1.1.0.1"
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-TRAPS-MIB::ixiaGenericTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap has no specific application, it can be used to embed a generic message."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ixiaGenericTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==0 || $v3==1 || $v1==2 || $v3==3) ? 2 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : 5))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Generic trap: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-TRAPS-MIB::ixiaGenericTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 4 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE",
+			"trap" : {
+				"name" : "IXIA-COMM-TRAPS-MIB::ixiaGenericTrap",
+				"oid" : "1.3.6.1.4.1.3054.100.9.1.1.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-TRAPS-MIB::ixiaFileOperationStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent as a result of a file operation status change. Typically this",
+				"results from saving, loading or deleting files. Traps may be sent more than once",
+				"per operation, e.g. to signify the start and end of the action."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==1) ? 1 : (($v11==2) ? 2 : 3)"
+				},
+				"EventType" : "ixiaFileOperationStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v11==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "SrcFile:$v7",
+				"Summary" : "File $v10 operation status is $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-TRAPS-MIB::ixiaFileOperationStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-FILES-MIB::fileStatusLastFileOperSrcFileNameOrURI s EXAMPLE IXIA-COMM-FILES-MIB::fileStatusLastFileOperDestFileNameOrURI s EXAMPLE IXIA-COMM-FILES-MIB::fileStatusLastFileOperFileType i 0 IXIA-COMM-FILES-MIB::fileStatusLastFileOperCommand i 8 IXIA-COMM-FILES-MIB::fileStatusLastFileOperResult i 3 IXIA-COMM-FILES-MIB::fileStatusLastFileOperDateTime s EXAMPLE IXIA-COMM-FILES-MIB::fileStatusLastFileOperMessage s EXAMPLE",
+			"trap" : {
+				"name" : "IXIA-COMM-TRAPS-MIB::ixiaFileOperationStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.100.9.1.1.7.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "IXIA-COMM-FILES-MIB::fileStatusLastFileOperSrcFileNameOrURI",
+						"oid" : "1.3.6.1.4.1.3054.100.7.2.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "IXIA-COMM-FILES-MIB::fileStatusLastFileOperDestFileNameOrURI",
+						"oid" : "1.3.6.1.4.1.3054.100.7.2.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"0" : "na",
+							"1" : "plainText",
+							"2" : "miscFileType",
+							"3" : "configScript",
+							"4" : "configXML",
+							"5" : "configDB",
+							"6" : "binaryExecutable",
+							"7" : "systemBackup"
+						},
+						"name" : "IXIA-COMM-FILES-MIB::fileStatusLastFileOperFileType",
+						"oid" : "1.3.6.1.4.1.3054.100.7.2.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "na",
+							"1" : "file-save",
+							"2" : "file-load",
+							"3" : "file-delete",
+							"4" : "file-copy",
+							"5" : "file-move",
+							"6" : "file-swap",
+							"7" : "file-checkExists",
+							"8" : "file-validate",
+							"9" : "file-upload",
+							"10" : "file-download",
+							"11" : "file-cancel"
+						},
+						"name" : "IXIA-COMM-FILES-MIB::fileStatusLastFileOperCommand",
+						"oid" : "1.3.6.1.4.1.3054.100.7.2.1.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "na",
+							"1" : "ok",
+							"2" : "fail",
+							"3" : "processing",
+							"4" : "cancelled"
+						},
+						"name" : "IXIA-COMM-FILES-MIB::fileStatusLastFileOperResult",
+						"oid" : "1.3.6.1.4.1.3054.100.7.2.1.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "IXIA-COMM-FILES-MIB::fileStatusLastFileOperDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.7.2.1.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "IXIA-COMM-FILES-MIB::fileStatusLastFileOperMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.7.2.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-TRAPS-MIB::ixiaUserAuthenticationStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the status of a user authentication changes. Reasons include:",
+				"- user is rejected during authentication (failed login)",
+				"- user is acepted during authentication (successful login)",
+				"- user ends session (logout)",
+				"userSessionsName is the username",
+				"userSessionsSessionId is the unique session number (because the same username may be logged in several times simultaneously). Invalid if user fails to log in.",
+				"userSessionsPrivlevel is 1, 2 or 3 for admin, user or viewer priv level. Invalid if user fails to log in.",
+				"userSessionsAuthMethod is either pam (uses local user database) or external (external AAA server). Will be empty for rejected user.",
+				"userSessionsClientType is either cli, web, or netconf. SNMP sessions are not tracked like other user sessions are.",
+				"The somewhat misleading-named userSessionsType indicates the external AAA server type (if applicable); both userSessionsType and userSessionsSrvIp objects will only be valid if userSessionAuthMethod = external",
+				"The aaaServerStatusCurrStatus applies regardless of whether authentication was done internally (PAM) or externally. This object indicates the outcome or event - reject, accept, logout",
+				"For reject case, the following objects will not be valid: userSessionsSessionId, userSessionsGroup, userSessionsPrivlevel"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ixiaUserAuthenticationStatusChangedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "User $v7 authentication status changed to $v18"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-TRAPS-MIB::ixiaUserAuthenticationStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-USERS-MIB::userSessionsName s EXAMPLE IXIA-COMM-USERS-MIB::userSessionsSessionId i 9999 IXIA-COMM-USERS-MIB::userSessionsPrivlevel i 1 IXIA-COMM-USERS-MIB::userSessionsAuthMethod s EXAMPLE IXIA-COMM-USERS-MIB::userSessionsIpAddr s EXAM IXIA-COMM-USERS-MIB::userSessionsPort u 9999 IXIA-COMM-USERS-MIB::userSessionsClientType s EXAMPLE IXIA-COMM-USERS-MIB::userSessionsLoginTime s EXAMPLE IXIA-COMM-USERS-MIB::userSessionsProtocol i 0 IXIA-COMM-USERS-MIB::userSessionsType i 0 IXIA-COMM-USERS-MIB::userSessionsSrvip a 192.0.2.1 IXIA-COMM-AAA-SERVER-MIB::aaaServerStatusCurrStatus i 0",
+			"trap" : {
+				"name" : "IXIA-COMM-TRAPS-MIB::ixiaUserAuthenticationStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.100.9.1.1.11.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"User name"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsName",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"User session ID"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsSessionId",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"User privilege level"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsPrivlevel",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Authentication method"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsAuthMethod",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP address of user"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsIpAddr",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IP port of user"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsPort",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"client type (CLI, Web, etc.)"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsClientType",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Date/time of login"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsLoginTime",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Client protocol"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tcp",
+							"2" : "ssh",
+							"3" : "system",
+							"4" : "console",
+							"5" : "ssl",
+							"6" : "http",
+							"7" : "https",
+							"8" : "udp"
+						},
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsProtocol",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"AAA Server type"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "radius",
+							"2" : "tacacs"
+						},
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsType",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"AAA Server IPv4 Address"
+						],
+						"name" : "IXIA-COMM-USERS-MIB::userSessionsSrvip",
+						"oid" : "1.3.6.1.4.1.3054.100.22.1.1.2.1.13",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Current AAA authentication status"
+						],
+						"enums" : {
+							"0" : "idle",
+							"1" : "querying",
+							"2" : "accept",
+							"3" : "reject",
+							"4" : "logout"
+						},
+						"name" : "IXIA-COMM-AAA-SERVER-MIB::aaaServerStatusCurrStatus",
+						"oid" : "1.3.6.1.4.1.3054.100.11.1.1.1.52",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-TRAPS-MIB::ixiaSwImageCmdStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the status of a SW image command changes. The",
+				"command may have been initiated by a user interface (CLI or webUI) or a remote",
+				"manager via SNMP or Net Conf. See IXIA-COMM-IMAGE-MIB for SNMP",
+				"objects which may be written to initiate commands."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 1 : (($v7==2 || $v7==3) ? 2 : 3)"
+				},
+				"EventType" : "ixiaSwImageCmdStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v7==2 || $v7==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SW image command status is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-TRAPS-MIB::ixiaSwImageCmdStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 3 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-IMAGE-MIB::imageImageCmdStatus i 11 IXIA-COMM-IMAGE-MIB::imageImageCmdPercentComplete u 50",
+			"trap" : {
+				"name" : "IXIA-COMM-TRAPS-MIB::ixiaSwImageCmdStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.100.9.1.1.14.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Image command Status"
+						],
+						"enums" : {
+							"0" : "idle",
+							"1" : "ok",
+							"2" : "fail",
+							"3" : "aborted",
+							"4" : "starting",
+							"5" : "transferring",
+							"6" : "uncompressing",
+							"7" : "validating",
+							"8" : "analyzing",
+							"9" : "processing",
+							"10" : "preInstall",
+							"11" : "installing",
+							"12" : "postInstall",
+							"13" : "versionUpdate",
+							"14" : "switching",
+							"15" : "unconfiguring",
+							"16" : "migrating",
+							"99" : "rebooting"
+						},
+						"name" : "IXIA-COMM-IMAGE-MIB::imageImageCmdStatus",
+						"oid" : "1.3.6.1.4.1.3054.100.14.1.1.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Image command percent completion"
+						],
+						"name" : "IXIA-COMM-IMAGE-MIB::imageImageCmdPercentComplete",
+						"oid" : "1.3.6.1.4.1.3054.100.14.1.1.2.22",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-TRAPS-MIB::ixiaLoggingClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the system log is cleared. The loggingSyslogClearlog object",
+				"indicates which log or log files were cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ixiaLoggingClearTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System log cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-TRAPS-MIB::ixiaLoggingClearTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-LOGGING-MIB::loggingSyslogClearLog b 0",
+			"trap" : {
+				"name" : "IXIA-COMM-TRAPS-MIB::ixiaLoggingClearTrap",
+				"oid" : "1.3.6.1.4.1.3054.100.9.1.1.17.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Write to this object to effect a log clear; value dictates which log(s) get cleared."
+						],
+						"enums" : {
+							"0" : "syslog",
+							"31" : "all"
+						},
+						"name" : "IXIA-COMM-LOGGING-MIB::loggingSyslogClearLog",
+						"oid" : "1.3.6.1.4.1.3054.100.17.1.1.4.1",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		}
+	]
+}

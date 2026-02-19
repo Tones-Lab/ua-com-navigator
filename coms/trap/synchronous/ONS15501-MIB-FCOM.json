@@ -1,0 +1,121 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200208291600Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ONS15501-MIB::ons15501GenericNotificationTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever a bitmap change is",
+				"observed on any of the monitored equipment, or when a change",
+				"has to be notified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 3 : (($v3 == 2) ? 1 : 2)"
+				},
+				"EventType" : "$v2",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : (($v3 == 2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 5 : (($v4 == 2) ? 4 : (($v4 == 3) ? 3 : (($v4 == 4) ? 2 : 0)))"
+				},
+				"SubNode" : "ons15501TrapLogEntryPhyIndex:$v4",
+				"Summary" : "$v2 event on physical entity $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ONS15501-MIB::ons15501GenericNotificationTrap ONS15501-MIB::ons15501LastTrapIndex u 9999 ONS15501-MIB::ons15501TrapLogEntryTrapType i 1 ONS15501-MIB::ons15501TrapLogEntryDirection i 1 ONS15501-MIB::ons15501TrapLogEntryPhyIndex i 9999 ONS15501-MIB::ons15501TrapLogEntrySeverity i 1",
+			"trap" : {
+				"name" : "ONS15501-MIB::ons15501GenericNotificationTrap",
+				"oid" : "1.3.6.1.4.1.1869.11.11.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of ons15501TrapLogEntryIndex, used while logging",
+							"the most recent trap. Goes back to 1, after reaching",
+							"the max value.",
+							"The trap log table is a circular list with the most",
+							"recent entry at index given by this attribute.",
+							"On restart of the unit, the value is reset to 1."
+						],
+						"name" : "ONS15501-MIB::ons15501LastTrapIndex",
+						"oid" : "1.3.6.1.4.1.1869.11.11.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The type of trap. See the definition",
+							"of Ons15501TrapTypeEnumeration for possible values."
+						],
+						"enums" : {
+							"1" : "unacceptableAmbientTemperature",
+							"2" : "unacceptableElectricalPower",
+							"3" : "inputSignalPowerTooLow",
+							"4" : "unacceptableOutputSignalPower",
+							"5" : "embeddedControllerCommFailure",
+							"6" : "softwareUpgradeInitiated",
+							"7" : "softwareUpgradeFailed",
+							"8" : "softwareUpgradeCompleted",
+							"9" : "softwareRebootInitiated",
+							"10" : "softwareRolledBack",
+							"11" : "configurationChanged",
+							"12" : "unacceptableGain",
+							"13" : "laserPumpBad",
+							"14" : "eEPROMBad",
+							"32767" : "unknown"
+						},
+						"name" : "ONS15501-MIB::ons15501TrapLogEntryTrapType",
+						"oid" : "1.3.6.1.4.1.1869.11.11.3.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Whether the trap is being asserted or cleared.",
+							"Please note that some traps don't have a direction.",
+							"(e.g. configuration changed)."
+						],
+						"enums" : {
+							"1" : "dontCare",
+							"2" : "asserted",
+							"3" : "cleared"
+						},
+						"name" : "ONS15501-MIB::ons15501TrapLogEntryDirection",
+						"oid" : "1.3.6.1.4.1.1869.11.11.3.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Provides entPhysicalIndex value for the physical entity",
+							"corresponding to the trap entry."
+						],
+						"name" : "ONS15501-MIB::ons15501TrapLogEntryPhyIndex",
+						"oid" : "1.3.6.1.4.1.1869.11.11.3.2.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Provides the severity level corresponding to this",
+							"trap entry."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info",
+							"5" : "noAlarm"
+						},
+						"name" : "ONS15501-MIB::ons15501TrapLogEntrySeverity",
+						"oid" : "1.3.6.1.4.1.1869.11.11.3.2.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,1840 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0309190000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HP-EMS::hpEMSNormalEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource.",
+				"A Normal Event occurs when the value of the resource is in ",
+				"a 'normal' state and the threshold condition is not true.",
+				"Monitoring requests configured for initial or return ",
+				"notification may generate this event. Also, the initial",
+				"notification for a Change event is 'normal'. ",
+				"The data passed with the event:",
+				"1) The name of the resource being monitored.",
+				"2) The request id, a unique identifier for the ",
+				"monitoring request. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event.",
+				"3) The operator used by EMS to determine when event ",
+				"notifications should be sent. Possible values ",
+				"include: poll, change, >, >=, <, <=, = and !=.",
+				"4) The resource type, which defines the type of value ",
+				"being monitored. Possible values include: string, ",
+				"enumerated, integer, and float.",
+				"5) The resource value, which is the current value of the ",
+				"resource being monitored. It is converted based on ",
+				"the resource type.",
+				"6) The threshold type (usually the same as the resource",
+				"type) defines the type of value configured for the",
+				"threshold. Possible values include: string, ",
+				"integer, and float.",
+				"7) The threshold value configured for the resource being ",
+				"monitored.",
+				"8) The user data flag, which indicates whether or not ",
+				"user data are available. User data are comments ",
+				"provided by the user when the request was configured.",
+				"User data can be retrieved on the source node by ",
+				"running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> -u ",
+				"9) The monitor data flag, which indicates whether or not ",
+				"the monitor has additional data regarding the event.",
+				"Additional data provided by the resource monitor",
+				"can be retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m ",
+				"10) The notification trigger indicates if the resource ",
+				"condition is normal or not. For an EMSNormalEvent ",
+				"trap, the notification trigger is normal.",
+				"11) The event type indicates the type of notification ",
+				"being sent. The different types are: ",
+				"Poll - for notification at every interval",
+				"Change - for notification when the value changes",
+				"Normal - for notification when the threshold",
+				"condition for the resource is not true ",
+				"Problem - for notification when the threshold ",
+				"condition for the resource is true ",
+				"Error - for notification when the monitor ",
+				"encountered an error determining",
+				"the resource value",
+				"12) The notify id, a unique identifier for a specific",
+				"notification event. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event. Monitor data can be retrieved",
+				"on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hpEMSEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "EMS resource $v1 value is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSNormalEvent HP-EMS::hpEMSResourceName s EXAMPLE HP-EMS::hpEMSRequestID i 9999 HP-EMS::hpEMSOperator s EXAMPLE HP-EMS::hpEMSResourceType i 9999 HP-EMS::hpEMSResourceValue s EXAMPLE HP-EMS::hpEMSThresholdType i 9999 HP-EMS::hpEMSThresholdValue s EXAMPLE HP-EMS::hpEMSUserDataFlag i 9999 HP-EMS::hpEMSMonitorDataFlag i 9999 HP-EMS::hpEMSNotificationTrigger i 9999 HP-EMS::hpEMSEventType s EXAMPLE HP-EMS::hpEMSNotifyID i 9999",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSNormalEvent",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Full EMS name of the resource being monitored"
+						],
+						"name" : "HP-EMS::hpEMSResourceName",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique identifier for the monitoring request"
+						],
+						"name" : "HP-EMS::hpEMSRequestID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operator indicates poll, change or threshold condition ",
+							"operator: >, >=, <, <=, ==, !="
+						],
+						"name" : "HP-EMS::hpEMSOperator",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the resource type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error "
+						],
+						"name" : "HP-EMS::hpEMSResourceType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing resource value, ",
+							"should be converted using the Resource Type ",
+							"indicated in Variable #4 ",
+							"Not applicable if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSResourceValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the threshold type, ",
+							"this is usually the same as resource type. ",
+							"Integer representing the threshold type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error ",
+							"Not applicable if operator is poll or change; or if Resource Type is Error",
+							"Note: enumerated type is not supported as threshold type."
+						],
+						"name" : "HP-EMS::hpEMSThresholdType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing threshold value, ",
+							"should be converted using the Threshold Type ",
+							"indicated in Variable #6. ",
+							"Not applicable if operator is poll or change; ",
+							"or if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSThresholdValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates that additional user data is available from EMS",
+							"0 = no user data",
+							"1 = user (comment) data exists"
+						],
+						"name" : "HP-EMS::hpEMSUserDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates that additional monitor data is available from EMS",
+							"0 = no monitor data",
+							"1 = monitor data exists"
+						],
+						"name" : "HP-EMS::hpEMSMonitorDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether normal or problem event",
+							"0 = normal ",
+							"1 = abnormal (threshold is true)",
+							"5 = abnormal (severity is normal)",
+							"6 = abnormal (severity is warning)",
+							"7 = abnormal (severity is minor)",
+							"8 = abnormal (severity is major)",
+							"9 = abnormal (severity is critical) "
+						],
+						"name" : "HP-EMS::hpEMSNotificationTrigger",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"String representing event type:",
+							"Poll (for 'At Every Interval')",
+							"Change (for 'When value changes')",
+							"Normal (for when threshold condition is not true)",
+							"Problem (for when threshold condition is true)",
+							"Error "
+						],
+						"name" : "HP-EMS::hpEMSEventType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique identifier for this particular event"
+						],
+						"name" : "HP-EMS::hpEMSNotifyID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-EMS::hpEMSProblemEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource. ",
+				"A Problem Event occurs when the threshold condition defined",
+				"for the resource is true.",
+				"A Change Event occurs when the monitored value changes. ",
+				"Monitoring requests configured for notification when the",
+				"value changes may generate this event.",
+				"A Poll Event occurs regularly at the configured polling",
+				"interval.",
+				"An Error Event occurs when the value of a monitored resource",
+				"cannot be obtained from the monitor.",
+				"The data passed with the event:",
+				"1) The name of the resource being monitored.",
+				"2) The request id, a unique identifier for the ",
+				"monitoring request. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event.",
+				"3) The operator used by EMS to determine when event ",
+				"notifications should be sent. Possible values ",
+				"include: poll, change, >, >=, <, <=, = and !=.",
+				"4) The resource type, which defines the type of value ",
+				"being monitored. Possible values include: string, ",
+				"enumerated, integer, and float.",
+				"5) The resource value, which is the current value of the ",
+				"resource being monitored. It is converted based on ",
+				"the resource type.",
+				"6) The threshold type (usually the same as the resource",
+				"type) defines the type of value configured for the",
+				"threshold. Possible values include: string, ",
+				"integer, and float.",
+				"7) The threshold value configured for the resource being ",
+				"monitored.",
+				"8) The user data flag, which indicates whether or not ",
+				"user data are available. User data are comments ",
+				"provided by the user when the request was configured.",
+				"User data can be retrieved on the source node by ",
+				"running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> -u ",
+				"9) The monitor data flag, which indicates whether or not ",
+				"the monitor has additional data regarding the event.",
+				"Additional data provided by the resource monitor",
+				"can be retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m ",
+				"10) The notification trigger indicates if the resource ",
+				"condition is normal or not. For an EMSProblemEvent ",
+				"trap, the notification trigger is abnormal.",
+				"11) The event type indicates the type of notification ",
+				"being sent. The different types are: ",
+				"Poll - for notification at every interval",
+				"Change - for notification when the value changes",
+				"Normal - for notification when the threshold",
+				"condition for the resource is not true",
+				"Problem - for notification when the threshold",
+				"condition for the resource is true",
+				"Error - for notification when the monitor",
+				"encountered an error determining",
+				"the resource value",
+				"12) The notify id, a unique identifier for a specific",
+				"notification event. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event. Monitor data can be retrieved",
+				"on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpEMSEvent",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "EMS resource threshold value is true"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSProblemEvent HP-EMS::hpEMSResourceName s EXAMPLE HP-EMS::hpEMSRequestID i 9999 HP-EMS::hpEMSOperator s EXAMPLE HP-EMS::hpEMSResourceType i 9999 HP-EMS::hpEMSResourceValue s EXAMPLE HP-EMS::hpEMSThresholdType i 9999 HP-EMS::hpEMSThresholdValue s EXAMPLE HP-EMS::hpEMSUserDataFlag i 9999 HP-EMS::hpEMSMonitorDataFlag i 9999 HP-EMS::hpEMSNotificationTrigger i 9999 HP-EMS::hpEMSEventType s EXAMPLE HP-EMS::hpEMSNotifyID i 9999",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSProblemEvent",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Full EMS name of the resource being monitored"
+						],
+						"name" : "HP-EMS::hpEMSResourceName",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique identifier for the monitoring request"
+						],
+						"name" : "HP-EMS::hpEMSRequestID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operator indicates poll, change or threshold condition ",
+							"operator: >, >=, <, <=, ==, !="
+						],
+						"name" : "HP-EMS::hpEMSOperator",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the resource type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error "
+						],
+						"name" : "HP-EMS::hpEMSResourceType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing resource value, ",
+							"should be converted using the Resource Type ",
+							"indicated in Variable #4 ",
+							"Not applicable if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSResourceValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the threshold type, ",
+							"this is usually the same as resource type. ",
+							"Integer representing the threshold type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error ",
+							"Not applicable if operator is poll or change; or if Resource Type is Error",
+							"Note: enumerated type is not supported as threshold type."
+						],
+						"name" : "HP-EMS::hpEMSThresholdType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing threshold value, ",
+							"should be converted using the Threshold Type ",
+							"indicated in Variable #6. ",
+							"Not applicable if operator is poll or change; ",
+							"or if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSThresholdValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates that additional user data is available from EMS",
+							"0 = no user data",
+							"1 = user (comment) data exists"
+						],
+						"name" : "HP-EMS::hpEMSUserDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates that additional monitor data is available from EMS",
+							"0 = no monitor data",
+							"1 = monitor data exists"
+						],
+						"name" : "HP-EMS::hpEMSMonitorDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether normal or problem event",
+							"0 = normal ",
+							"1 = abnormal (threshold is true)",
+							"5 = abnormal (severity is normal)",
+							"6 = abnormal (severity is warning)",
+							"7 = abnormal (severity is minor)",
+							"8 = abnormal (severity is major)",
+							"9 = abnormal (severity is critical) "
+						],
+						"name" : "HP-EMS::hpEMSNotificationTrigger",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"String representing event type:",
+							"Poll (for 'At Every Interval')",
+							"Change (for 'When value changes')",
+							"Normal (for when threshold condition is not true)",
+							"Problem (for when threshold condition is true)",
+							"Error "
+						],
+						"name" : "HP-EMS::hpEMSEventType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique identifier for this particular event"
+						],
+						"name" : "HP-EMS::hpEMSNotifyID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-EMS::hpEMSMonitorReboot",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource.",
+				"A Monitor Reboot Event occurs when monitors are restarted ",
+				"due to a system reboot.",
+				"The list of resources affected by the restart can be ",
+				"retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -M <key> ",
+				"The data passed with the event:",
+				"1) The restart event type, which can be restart or ",
+				"reboot. For an EMSMonitorReboot trap, the restart",
+				"type is reboot.",
+				"2) The title of the monitor that is restarted.",
+				"3) The command used to restart the monitor.",
+				"4) The name of the vendor that provided the monitor.",
+				"5) The version of the monitor.",
+				"6) The process ID of the restarted monitor process.",
+				"7) The monitor key, which may be used with the -M option ",
+				"to the resdata command to return the list of resources ",
+				"being monitored by the restarted monitor.",
+				"The list of resources can be retrieved on the source",
+				"node by running:",
+				"/opt/resmon/bin/resdata -M <monitor key> "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpEMSMonitorReboot",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Monitors restarted due to system reboot"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSMonitorReboot HP-EMS::hpEMSRestartType s EXAMPLE HP-EMS::hpEMSMonitorTitle s EXAMPLE HP-EMS::hpEMSCommand s EXAMPLE HP-EMS::hpEMSVendor s EXAMPLE HP-EMS::hpEMSVersion s EXAMPLE HP-EMS::hpEMSPID i 9999 HP-EMS::hpEMSMonitorKey s EXAMPLE",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSMonitorReboot",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"REBOOT or RESTART"
+						],
+						"name" : "HP-EMS::hpEMSRestartType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Title of the monitor affected by the outage"
+						],
+						"name" : "HP-EMS::hpEMSMonitorTitle",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Command used to launch the monitor"
+						],
+						"name" : "HP-EMS::hpEMSCommand",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Vendor who supplied the monitor"
+						],
+						"name" : "HP-EMS::hpEMSVendor",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Version of the monitor"
+						],
+						"name" : "HP-EMS::hpEMSVersion",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Process ID of the monitor"
+						],
+						"name" : "HP-EMS::hpEMSPID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Unique identified for this monitor, ",
+							"to be used for running resdata to get list ",
+							"of resources affected by the monitor outage."
+						],
+						"name" : "HP-EMS::hpEMSMonitorKey",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-EMS::hpEMSMonitorRestart",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource.",
+				"A Monitor Restart Event occurs when EMS detects that a ",
+				"required monitor is no longer running, and restarts the ",
+				"monitor.",
+				"The list of resources affected by the restart can be ",
+				"retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -M <key> ",
+				"The data passed with the event:",
+				"1) The restart event type, which can be restart or ",
+				"reboot. For an EMSMonitorRestart trap, the restart",
+				"type is restart.",
+				"2) The title of the monitor that is restarted.",
+				"3) The command used to restart the monitor.",
+				"4) The name of the vendor that provided the monitor.",
+				"5) The version of the monitor.",
+				"6) The process ID of the restarted monitor process.",
+				"7) The monitor key, which may be used with the -M option ",
+				"to the resdata command to return the list of resources ",
+				"being monitored by the restarted monitor.",
+				"The list of resources can be retrieved on the source",
+				"node by running:",
+				"/opt/resmon/bin/resdata -M <monitor key> "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpEMSMonitorRestart",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "EMS detected required monitor is no longer running"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSMonitorRestart HP-EMS::hpEMSRestartType s EXAMPLE HP-EMS::hpEMSMonitorTitle s EXAMPLE HP-EMS::hpEMSCommand s EXAMPLE HP-EMS::hpEMSVendor s EXAMPLE HP-EMS::hpEMSVersion s EXAMPLE HP-EMS::hpEMSPID i 9999 HP-EMS::hpEMSMonitorKey s EXAMPLE",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSMonitorRestart",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"REBOOT or RESTART"
+						],
+						"name" : "HP-EMS::hpEMSRestartType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Title of the monitor affected by the outage"
+						],
+						"name" : "HP-EMS::hpEMSMonitorTitle",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Command used to launch the monitor"
+						],
+						"name" : "HP-EMS::hpEMSCommand",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Vendor who supplied the monitor"
+						],
+						"name" : "HP-EMS::hpEMSVendor",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Version of the monitor"
+						],
+						"name" : "HP-EMS::hpEMSVersion",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Process ID of the monitor"
+						],
+						"name" : "HP-EMS::hpEMSPID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Unique identified for this monitor, ",
+							"to be used for running resdata to get list ",
+							"of resources affected by the monitor outage."
+						],
+						"name" : "HP-EMS::hpEMSMonitorKey",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.2.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-EMS::hpEMSNormalSevEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource. ",
+				"A Problem Event occurs when the threshold condition defined",
+				"for the resource is true.",
+				"A Change Event occurs when the monitored value changes. ",
+				"Monitoring requests configured for notification when the",
+				"value changes may generate this event.",
+				"A Poll Event occurs regularly at the configured polling",
+				"interval.",
+				"An Error Event occurs when the value of a monitored resource",
+				"cannot be obtained from the monitor.",
+				"The data passed with the event:",
+				"1) The name of the resource being monitored.",
+				"2) The request id, a unique identifier for the ",
+				"monitoring request. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event.",
+				"3) The operator used by EMS to determine when event ",
+				"notifications should be sent. Possible values ",
+				"include: poll, change, >, >=, <, <=, = and !=.",
+				"4) The resource type, which defines the type of value ",
+				"being monitored. Possible values include: string, ",
+				"enumerated, integer, and float.",
+				"5) The resource value, which is the current value of the ",
+				"resource being monitored. It is converted based on ",
+				"the resource type.",
+				"6) The threshold type (usually the same as the resource",
+				"type) defines the type of value configured for the",
+				"threshold. Possible values include: string, ",
+				"integer, and float.",
+				"7) The threshold value configured for the resource being ",
+				"monitored.",
+				"8) The user data flag, which indicates whether or not ",
+				"user data are available. User data are comments ",
+				"provided by the user when the request was configured.",
+				"User data can be retrieved on the source node by ",
+				"running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> -u ",
+				"9) The monitor data flag, which indicates whether or not ",
+				"the monitor has additional data regarding the event.",
+				"Additional data provided by the resource monitor",
+				"can be retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m ",
+				"10) The notification trigger indicates if the resource ",
+				"condition is normal or not. For an EMSProblemEvent ",
+				"trap, the notification trigger is abnormal.",
+				"11) The event type indicates the type of notification ",
+				"being sent. The different types are: ",
+				"Poll - for notification at every interval",
+				"Change - for notification when the value changes",
+				"Normal - for notification when the threshold",
+				"condition for the resource is not true",
+				"Problem - for notification when the threshold",
+				"condition for the resource is true",
+				"Error - for notification when the monitor",
+				"encountered an error determining",
+				"the resource value",
+				"12) The notify id, a unique identifier for a specific",
+				"notification event. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event. Monitor data can be retrieved",
+				"on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hpEMSSevEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Threshold condition defined for the resoure are normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSNormalSevEvent HP-EMS::hpEMSResourceName s EXAMPLE HP-EMS::hpEMSRequestID i 9999 HP-EMS::hpEMSOperator s EXAMPLE HP-EMS::hpEMSResourceType i 9999 HP-EMS::hpEMSResourceValue s EXAMPLE HP-EMS::hpEMSThresholdType i 9999 HP-EMS::hpEMSThresholdValue s EXAMPLE HP-EMS::hpEMSUserDataFlag i 9999 HP-EMS::hpEMSMonitorDataFlag i 9999 HP-EMS::hpEMSNotificationTrigger i 9999 HP-EMS::hpEMSEventType s EXAMPLE HP-EMS::hpEMSNotifyID i 9999",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSNormalSevEvent",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Full EMS name of the resource being monitored"
+						],
+						"name" : "HP-EMS::hpEMSResourceName",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique identifier for the monitoring request"
+						],
+						"name" : "HP-EMS::hpEMSRequestID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operator indicates poll, change or threshold condition ",
+							"operator: >, >=, <, <=, ==, !="
+						],
+						"name" : "HP-EMS::hpEMSOperator",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the resource type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error "
+						],
+						"name" : "HP-EMS::hpEMSResourceType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing resource value, ",
+							"should be converted using the Resource Type ",
+							"indicated in Variable #4 ",
+							"Not applicable if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSResourceValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the threshold type, ",
+							"this is usually the same as resource type. ",
+							"Integer representing the threshold type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error ",
+							"Not applicable if operator is poll or change; or if Resource Type is Error",
+							"Note: enumerated type is not supported as threshold type."
+						],
+						"name" : "HP-EMS::hpEMSThresholdType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing threshold value, ",
+							"should be converted using the Threshold Type ",
+							"indicated in Variable #6. ",
+							"Not applicable if operator is poll or change; ",
+							"or if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSThresholdValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates that additional user data is available from EMS",
+							"0 = no user data",
+							"1 = user (comment) data exists"
+						],
+						"name" : "HP-EMS::hpEMSUserDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates that additional monitor data is available from EMS",
+							"0 = no monitor data",
+							"1 = monitor data exists"
+						],
+						"name" : "HP-EMS::hpEMSMonitorDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether normal or problem event",
+							"0 = normal ",
+							"1 = abnormal (threshold is true)",
+							"5 = abnormal (severity is normal)",
+							"6 = abnormal (severity is warning)",
+							"7 = abnormal (severity is minor)",
+							"8 = abnormal (severity is major)",
+							"9 = abnormal (severity is critical) "
+						],
+						"name" : "HP-EMS::hpEMSNotificationTrigger",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"String representing event type:",
+							"Poll (for 'At Every Interval')",
+							"Change (for 'When value changes')",
+							"Normal (for when threshold condition is not true)",
+							"Problem (for when threshold condition is true)",
+							"Error "
+						],
+						"name" : "HP-EMS::hpEMSEventType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique identifier for this particular event"
+						],
+						"name" : "HP-EMS::hpEMSNotifyID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-EMS::hpEMSWarningEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource. ",
+				"A Problem Event occurs when the threshold condition defined",
+				"for the resource is true.",
+				"A Change Event occurs when the monitored value changes. ",
+				"Monitoring requests configured for notification when the",
+				"value changes may generate this event.",
+				"A Poll Event occurs regularly at the configured polling",
+				"interval.",
+				"An Error Event occurs when the value of a monitored resource",
+				"cannot be obtained from the monitor.",
+				"The data passed with the event:",
+				"1) The name of the resource being monitored.",
+				"2) The request id, a unique identifier for the ",
+				"monitoring request. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event.",
+				"3) The operator used by EMS to determine when event ",
+				"notifications should be sent. Possible values ",
+				"include: poll, change, >, >=, <, <=, = and !=.",
+				"4) The resource type, which defines the type of value ",
+				"being monitored. Possible values include: string, ",
+				"enumerated, integer, and float.",
+				"5) The resource value, which is the current value of the ",
+				"resource being monitored. It is converted based on ",
+				"the resource type.",
+				"6) The threshold type (usually the same as the resource",
+				"type) defines the type of value configured for the",
+				"threshold. Possible values include: string, ",
+				"integer, and float.",
+				"7) The threshold value configured for the resource being ",
+				"monitored.",
+				"8) The user data flag, which indicates whether or not ",
+				"user data are available. User data are comments ",
+				"provided by the user when the request was configured.",
+				"User data can be retrieved on the source node by ",
+				"running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> -u ",
+				"9) The monitor data flag, which indicates whether or not ",
+				"the monitor has additional data regarding the event.",
+				"Additional data provided by the resource monitor",
+				"can be retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m ",
+				"10) The notification trigger indicates if the resource ",
+				"condition is normal or not. For an EMSProblemEvent ",
+				"trap, the notification trigger is abnormal.",
+				"11) The event type indicates the type of notification ",
+				"being sent. The different types are: ",
+				"Poll - for notification at every interval",
+				"Change - for notification when the value changes",
+				"Normal - for notification when the threshold",
+				"condition for the resource is not true",
+				"Problem - for notification when the threshold",
+				"condition for the resource is true",
+				"Error - for notification when the monitor",
+				"encountered an error determining",
+				"the resource value",
+				"12) The notify id, a unique identifier for a specific",
+				"notification event. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event. Monitor data can be retrieved",
+				"on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpEMSSevEvent",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Warning threshold condition defined for the resoure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSWarningEvent HP-EMS::hpEMSResourceName s EXAMPLE HP-EMS::hpEMSRequestID i 9999 HP-EMS::hpEMSOperator s EXAMPLE HP-EMS::hpEMSResourceType i 9999 HP-EMS::hpEMSResourceValue s EXAMPLE HP-EMS::hpEMSThresholdType i 9999 HP-EMS::hpEMSThresholdValue s EXAMPLE HP-EMS::hpEMSUserDataFlag i 9999 HP-EMS::hpEMSMonitorDataFlag i 9999 HP-EMS::hpEMSNotificationTrigger i 9999 HP-EMS::hpEMSEventType s EXAMPLE HP-EMS::hpEMSNotifyID i 9999",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSWarningEvent",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Full EMS name of the resource being monitored"
+						],
+						"name" : "HP-EMS::hpEMSResourceName",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique identifier for the monitoring request"
+						],
+						"name" : "HP-EMS::hpEMSRequestID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operator indicates poll, change or threshold condition ",
+							"operator: >, >=, <, <=, ==, !="
+						],
+						"name" : "HP-EMS::hpEMSOperator",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the resource type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error "
+						],
+						"name" : "HP-EMS::hpEMSResourceType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing resource value, ",
+							"should be converted using the Resource Type ",
+							"indicated in Variable #4 ",
+							"Not applicable if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSResourceValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the threshold type, ",
+							"this is usually the same as resource type. ",
+							"Integer representing the threshold type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error ",
+							"Not applicable if operator is poll or change; or if Resource Type is Error",
+							"Note: enumerated type is not supported as threshold type."
+						],
+						"name" : "HP-EMS::hpEMSThresholdType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing threshold value, ",
+							"should be converted using the Threshold Type ",
+							"indicated in Variable #6. ",
+							"Not applicable if operator is poll or change; ",
+							"or if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSThresholdValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates that additional user data is available from EMS",
+							"0 = no user data",
+							"1 = user (comment) data exists"
+						],
+						"name" : "HP-EMS::hpEMSUserDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates that additional monitor data is available from EMS",
+							"0 = no monitor data",
+							"1 = monitor data exists"
+						],
+						"name" : "HP-EMS::hpEMSMonitorDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether normal or problem event",
+							"0 = normal ",
+							"1 = abnormal (threshold is true)",
+							"5 = abnormal (severity is normal)",
+							"6 = abnormal (severity is warning)",
+							"7 = abnormal (severity is minor)",
+							"8 = abnormal (severity is major)",
+							"9 = abnormal (severity is critical) "
+						],
+						"name" : "HP-EMS::hpEMSNotificationTrigger",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"String representing event type:",
+							"Poll (for 'At Every Interval')",
+							"Change (for 'When value changes')",
+							"Normal (for when threshold condition is not true)",
+							"Problem (for when threshold condition is true)",
+							"Error "
+						],
+						"name" : "HP-EMS::hpEMSEventType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique identifier for this particular event"
+						],
+						"name" : "HP-EMS::hpEMSNotifyID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-EMS::hpEMSMinorEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource. ",
+				"A Problem Event occurs when the threshold condition defined",
+				"for the resource is true.",
+				"A Change Event occurs when the monitored value changes. ",
+				"Monitoring requests configured for notification when the",
+				"value changes may generate this event.",
+				"A Poll Event occurs regularly at the configured polling",
+				"interval.",
+				"An Error Event occurs when the value of a monitored resource",
+				"cannot be obtained from the monitor.",
+				"The data passed with the event:",
+				"1) The name of the resource being monitored.",
+				"2) The request id, a unique identifier for the ",
+				"monitoring request. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event.",
+				"3) The operator used by EMS to determine when event ",
+				"notifications should be sent. Possible values ",
+				"include: poll, change, >, >=, <, <=, = and !=.",
+				"4) The resource type, which defines the type of value ",
+				"being monitored. Possible values include: string, ",
+				"enumerated, integer, and float.",
+				"5) The resource value, which is the current value of the ",
+				"resource being monitored. It is converted based on ",
+				"the resource type.",
+				"6) The threshold type (usually the same as the resource",
+				"type) defines the type of value configured for the",
+				"threshold. Possible values include: string, ",
+				"integer, and float.",
+				"7) The threshold value configured for the resource being ",
+				"monitored.",
+				"8) The user data flag, which indicates whether or not ",
+				"user data are available. User data are comments ",
+				"provided by the user when the request was configured.",
+				"User data can be retrieved on the source node by ",
+				"running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> -u ",
+				"9) The monitor data flag, which indicates whether or not ",
+				"the monitor has additional data regarding the event.",
+				"Additional data provided by the resource monitor",
+				"can be retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m ",
+				"10) The notification trigger indicates if the resource ",
+				"condition is normal or not. For an EMSProblemEvent ",
+				"trap, the notification trigger is abnormal.",
+				"11) The event type indicates the type of notification ",
+				"being sent. The different types are: ",
+				"Poll - for notification at every interval",
+				"Change - for notification when the value changes",
+				"Normal - for notification when the threshold",
+				"condition for the resource is not true",
+				"Problem - for notification when the threshold",
+				"condition for the resource is true",
+				"Error - for notification when the monitor",
+				"encountered an error determining",
+				"the resource value",
+				"12) The notify id, a unique identifier for a specific",
+				"notification event. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event. Monitor data can be retrieved",
+				"on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpEMSSevEvent",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Minor threshold condition defined for the resoure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSMinorEvent HP-EMS::hpEMSResourceName s EXAMPLE HP-EMS::hpEMSRequestID i 9999 HP-EMS::hpEMSOperator s EXAMPLE HP-EMS::hpEMSResourceType i 9999 HP-EMS::hpEMSResourceValue s EXAMPLE HP-EMS::hpEMSThresholdType i 9999 HP-EMS::hpEMSThresholdValue s EXAMPLE HP-EMS::hpEMSUserDataFlag i 9999 HP-EMS::hpEMSMonitorDataFlag i 9999 HP-EMS::hpEMSNotificationTrigger i 9999 HP-EMS::hpEMSEventType s EXAMPLE HP-EMS::hpEMSNotifyID i 9999",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSMinorEvent",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Full EMS name of the resource being monitored"
+						],
+						"name" : "HP-EMS::hpEMSResourceName",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique identifier for the monitoring request"
+						],
+						"name" : "HP-EMS::hpEMSRequestID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operator indicates poll, change or threshold condition ",
+							"operator: >, >=, <, <=, ==, !="
+						],
+						"name" : "HP-EMS::hpEMSOperator",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the resource type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error "
+						],
+						"name" : "HP-EMS::hpEMSResourceType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing resource value, ",
+							"should be converted using the Resource Type ",
+							"indicated in Variable #4 ",
+							"Not applicable if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSResourceValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the threshold type, ",
+							"this is usually the same as resource type. ",
+							"Integer representing the threshold type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error ",
+							"Not applicable if operator is poll or change; or if Resource Type is Error",
+							"Note: enumerated type is not supported as threshold type."
+						],
+						"name" : "HP-EMS::hpEMSThresholdType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing threshold value, ",
+							"should be converted using the Threshold Type ",
+							"indicated in Variable #6. ",
+							"Not applicable if operator is poll or change; ",
+							"or if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSThresholdValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates that additional user data is available from EMS",
+							"0 = no user data",
+							"1 = user (comment) data exists"
+						],
+						"name" : "HP-EMS::hpEMSUserDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates that additional monitor data is available from EMS",
+							"0 = no monitor data",
+							"1 = monitor data exists"
+						],
+						"name" : "HP-EMS::hpEMSMonitorDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether normal or problem event",
+							"0 = normal ",
+							"1 = abnormal (threshold is true)",
+							"5 = abnormal (severity is normal)",
+							"6 = abnormal (severity is warning)",
+							"7 = abnormal (severity is minor)",
+							"8 = abnormal (severity is major)",
+							"9 = abnormal (severity is critical) "
+						],
+						"name" : "HP-EMS::hpEMSNotificationTrigger",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"String representing event type:",
+							"Poll (for 'At Every Interval')",
+							"Change (for 'When value changes')",
+							"Normal (for when threshold condition is not true)",
+							"Problem (for when threshold condition is true)",
+							"Error "
+						],
+						"name" : "HP-EMS::hpEMSEventType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique identifier for this particular event"
+						],
+						"name" : "HP-EMS::hpEMSNotifyID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-EMS::hpEMSMajorEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource. ",
+				"A Problem Event occurs when the threshold condition defined",
+				"for the resource is true.",
+				"A Change Event occurs when the monitored value changes. ",
+				"Monitoring requests configured for notification when the",
+				"value changes may generate this event.",
+				"A Poll Event occurs regularly at the configured polling",
+				"interval.",
+				"An Error Event occurs when the value of a monitored resource",
+				"cannot be obtained from the monitor.",
+				"The data passed with the event:",
+				"1) The name of the resource being monitored.",
+				"2) The request id, a unique identifier for the ",
+				"monitoring request. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event.",
+				"3) The operator used by EMS to determine when event ",
+				"notifications should be sent. Possible values ",
+				"include: poll, change, >, >=, <, <=, = and !=.",
+				"4) The resource type, which defines the type of value ",
+				"being monitored. Possible values include: string, ",
+				"enumerated, integer, and float.",
+				"5) The resource value, which is the current value of the ",
+				"resource being monitored. It is converted based on ",
+				"the resource type.",
+				"6) The threshold type (usually the same as the resource",
+				"type) defines the type of value configured for the",
+				"threshold. Possible values include: string, ",
+				"integer, and float.",
+				"7) The threshold value configured for the resource being ",
+				"monitored.",
+				"8) The user data flag, which indicates whether or not ",
+				"user data are available. User data are comments ",
+				"provided by the user when the request was configured.",
+				"User data can be retrieved on the source node by ",
+				"running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> -u ",
+				"9) The monitor data flag, which indicates whether or not ",
+				"the monitor has additional data regarding the event.",
+				"Additional data provided by the resource monitor",
+				"can be retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m ",
+				"10) The notification trigger indicates if the resource ",
+				"condition is normal or not. For an EMSProblemEvent ",
+				"trap, the notification trigger is abnormal.",
+				"11) The event type indicates the type of notification ",
+				"being sent. The different types are: ",
+				"Poll - for notification at every interval",
+				"Change - for notification when the value changes",
+				"Normal - for notification when the threshold",
+				"condition for the resource is not true",
+				"Problem - for notification when the threshold",
+				"condition for the resource is true",
+				"Error - for notification when the monitor",
+				"encountered an error determining",
+				"the resource value",
+				"12) The notify id, a unique identifier for a specific",
+				"notification event. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event. Monitor data can be retrieved",
+				"on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpEMSSevEvent",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Major threshold condition defined for the resoure are normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSMajorEvent HP-EMS::hpEMSResourceName s EXAMPLE HP-EMS::hpEMSRequestID i 9999 HP-EMS::hpEMSOperator s EXAMPLE HP-EMS::hpEMSResourceType i 9999 HP-EMS::hpEMSResourceValue s EXAMPLE HP-EMS::hpEMSThresholdType i 9999 HP-EMS::hpEMSThresholdValue s EXAMPLE HP-EMS::hpEMSUserDataFlag i 9999 HP-EMS::hpEMSMonitorDataFlag i 9999 HP-EMS::hpEMSNotificationTrigger i 9999 HP-EMS::hpEMSEventType s EXAMPLE HP-EMS::hpEMSNotifyID i 9999",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSMajorEvent",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Full EMS name of the resource being monitored"
+						],
+						"name" : "HP-EMS::hpEMSResourceName",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique identifier for the monitoring request"
+						],
+						"name" : "HP-EMS::hpEMSRequestID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operator indicates poll, change or threshold condition ",
+							"operator: >, >=, <, <=, ==, !="
+						],
+						"name" : "HP-EMS::hpEMSOperator",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the resource type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error "
+						],
+						"name" : "HP-EMS::hpEMSResourceType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing resource value, ",
+							"should be converted using the Resource Type ",
+							"indicated in Variable #4 ",
+							"Not applicable if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSResourceValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the threshold type, ",
+							"this is usually the same as resource type. ",
+							"Integer representing the threshold type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error ",
+							"Not applicable if operator is poll or change; or if Resource Type is Error",
+							"Note: enumerated type is not supported as threshold type."
+						],
+						"name" : "HP-EMS::hpEMSThresholdType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing threshold value, ",
+							"should be converted using the Threshold Type ",
+							"indicated in Variable #6. ",
+							"Not applicable if operator is poll or change; ",
+							"or if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSThresholdValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates that additional user data is available from EMS",
+							"0 = no user data",
+							"1 = user (comment) data exists"
+						],
+						"name" : "HP-EMS::hpEMSUserDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates that additional monitor data is available from EMS",
+							"0 = no monitor data",
+							"1 = monitor data exists"
+						],
+						"name" : "HP-EMS::hpEMSMonitorDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether normal or problem event",
+							"0 = normal ",
+							"1 = abnormal (threshold is true)",
+							"5 = abnormal (severity is normal)",
+							"6 = abnormal (severity is warning)",
+							"7 = abnormal (severity is minor)",
+							"8 = abnormal (severity is major)",
+							"9 = abnormal (severity is critical) "
+						],
+						"name" : "HP-EMS::hpEMSNotificationTrigger",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"String representing event type:",
+							"Poll (for 'At Every Interval')",
+							"Change (for 'When value changes')",
+							"Normal (for when threshold condition is not true)",
+							"Problem (for when threshold condition is true)",
+							"Error "
+						],
+						"name" : "HP-EMS::hpEMSEventType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique identifier for this particular event"
+						],
+						"name" : "HP-EMS::hpEMSNotifyID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-EMS::hpEMSCriticalEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Event Monitoring Service (EMS) has generated an event ",
+				"for a monitored resource. ",
+				"A Problem Event occurs when the threshold condition defined",
+				"for the resource is true.",
+				"A Change Event occurs when the monitored value changes. ",
+				"Monitoring requests configured for notification when the",
+				"value changes may generate this event.",
+				"A Poll Event occurs regularly at the configured polling",
+				"interval.",
+				"An Error Event occurs when the value of a monitored resource",
+				"cannot be obtained from the monitor.",
+				"The data passed with the event:",
+				"1) The name of the resource being monitored.",
+				"2) The request id, a unique identifier for the ",
+				"monitoring request. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event.",
+				"3) The operator used by EMS to determine when event ",
+				"notifications should be sent. Possible values ",
+				"include: poll, change, >, >=, <, <=, = and !=.",
+				"4) The resource type, which defines the type of value ",
+				"being monitored. Possible values include: string, ",
+				"enumerated, integer, and float.",
+				"5) The resource value, which is the current value of the ",
+				"resource being monitored. It is converted based on ",
+				"the resource type.",
+				"6) The threshold type (usually the same as the resource",
+				"type) defines the type of value configured for the",
+				"threshold. Possible values include: string, ",
+				"integer, and float.",
+				"7) The threshold value configured for the resource being ",
+				"monitored.",
+				"8) The user data flag, which indicates whether or not ",
+				"user data are available. User data are comments ",
+				"provided by the user when the request was configured.",
+				"User data can be retrieved on the source node by ",
+				"running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> -u ",
+				"9) The monitor data flag, which indicates whether or not ",
+				"the monitor has additional data regarding the event.",
+				"Additional data provided by the resource monitor",
+				"can be retrieved on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m ",
+				"10) The notification trigger indicates if the resource ",
+				"condition is normal or not. For an EMSProblemEvent ",
+				"trap, the notification trigger is abnormal.",
+				"11) The event type indicates the type of notification ",
+				"being sent. The different types are: ",
+				"Poll - for notification at every interval",
+				"Change - for notification when the value changes",
+				"Normal - for notification when the threshold",
+				"condition for the resource is not true",
+				"Problem - for notification when the threshold",
+				"condition for the resource is true",
+				"Error - for notification when the monitor",
+				"encountered an error determining",
+				"the resource value",
+				"12) The notify id, a unique identifier for a specific",
+				"notification event. This value should be used when ",
+				"using resdata to retrieve additional information",
+				"about the event. Monitor data can be retrieved",
+				"on the source node by running:",
+				"/opt/resmon/bin/resdata -r <resource name> \\",
+				"-R <request id> [-n <notify id>] -m "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpEMSSevEvent",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Critical threshold condition defined for the resoure are normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-EMS::hpEMSCriticalEvent HP-EMS::hpEMSResourceName s EXAMPLE HP-EMS::hpEMSRequestID i 9999 HP-EMS::hpEMSOperator s EXAMPLE HP-EMS::hpEMSResourceType i 9999 HP-EMS::hpEMSResourceValue s EXAMPLE HP-EMS::hpEMSThresholdType i 9999 HP-EMS::hpEMSThresholdValue s EXAMPLE HP-EMS::hpEMSUserDataFlag i 9999 HP-EMS::hpEMSMonitorDataFlag i 9999 HP-EMS::hpEMSNotificationTrigger i 9999 HP-EMS::hpEMSEventType s EXAMPLE HP-EMS::hpEMSNotifyID i 9999",
+			"trap" : {
+				"name" : "HP-EMS::hpEMSCriticalEvent",
+				"oid" : "1.3.6.1.4.1.11.2.3.1.7.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Full EMS name of the resource being monitored"
+						],
+						"name" : "HP-EMS::hpEMSResourceName",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique identifier for the monitoring request"
+						],
+						"name" : "HP-EMS::hpEMSRequestID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operator indicates poll, change or threshold condition ",
+							"operator: >, >=, <, <=, ==, !="
+						],
+						"name" : "HP-EMS::hpEMSOperator",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the resource type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error "
+						],
+						"name" : "HP-EMS::hpEMSResourceType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing resource value, ",
+							"should be converted using the Resource Type ",
+							"indicated in Variable #4 ",
+							"Not applicable if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSResourceValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Integer representing the threshold type, ",
+							"this is usually the same as resource type. ",
+							"Integer representing the threshold type:",
+							"3009 = String ",
+							"3010 = Sbit32 (signed 32 bit integer)",
+							"3011 = Ubit32 (unsigned 32 bit integer)",
+							"3012 = Sbit64 (future use)",
+							"3013 = Ubit64 (future use)",
+							"3014 = Float64 (64 floating point number)",
+							"3015 = Enumerated Type",
+							"3016 = Error ",
+							"Not applicable if operator is poll or change; or if Resource Type is Error",
+							"Note: enumerated type is not supported as threshold type."
+						],
+						"name" : "HP-EMS::hpEMSThresholdType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Quoted string representing threshold value, ",
+							"should be converted using the Threshold Type ",
+							"indicated in Variable #6. ",
+							"Not applicable if operator is poll or change; ",
+							"or if Resource Type is Error"
+						],
+						"name" : "HP-EMS::hpEMSThresholdValue",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates that additional user data is available from EMS",
+							"0 = no user data",
+							"1 = user (comment) data exists"
+						],
+						"name" : "HP-EMS::hpEMSUserDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates that additional monitor data is available from EMS",
+							"0 = no monitor data",
+							"1 = monitor data exists"
+						],
+						"name" : "HP-EMS::hpEMSMonitorDataFlag",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether normal or problem event",
+							"0 = normal ",
+							"1 = abnormal (threshold is true)",
+							"5 = abnormal (severity is normal)",
+							"6 = abnormal (severity is warning)",
+							"7 = abnormal (severity is minor)",
+							"8 = abnormal (severity is major)",
+							"9 = abnormal (severity is critical) "
+						],
+						"name" : "HP-EMS::hpEMSNotificationTrigger",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"String representing event type:",
+							"Poll (for 'At Every Interval')",
+							"Change (for 'When value changes')",
+							"Normal (for when threshold condition is not true)",
+							"Problem (for when threshold condition is true)",
+							"Error "
+						],
+						"name" : "HP-EMS::hpEMSEventType",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique identifier for this particular event"
+						],
+						"name" : "HP-EMS::hpEMSNotifyID",
+						"oid" : "1.3.6.1.4.1.11.2.3.1.7.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

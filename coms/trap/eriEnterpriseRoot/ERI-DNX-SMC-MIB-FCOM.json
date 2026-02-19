@@ -1,0 +1,1959 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200305190000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::alarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This the generic trap is for sending alarms to NMS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 < 100) ? 3 : ((($v6 % 100) > 40) ? 1 : 2)"
+				},
+				"EventType" : {
+					"eval" : "($v6 < 100) ? $v6 : ($v6 - ($v6 % 100)) + ((($v6 % 100) > 40) ? (($v6 % 100) - 40) : ($v6 % 100))"
+				},
+				"ExpireTime" : {
+					"eval" : "($v6 < 100) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "(($v6 % 100) > 40) ? 0 : (($v8==2) ? 3 : ($v8==3) ? 4 : ($v8==4) ? 5 : 2)"
+				},
+				"SubNode" : "EriDnxSmcResourceKey:$v2",
+				"Summary" : {
+					"eval" : "($v6 < 100) ? '$v6 event' : '$v6 event on $v5 resource $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD ERI-DNX-SMC-MIB::alarmTrap ERI-DNX-SMC-MIB::trapSequence c 1 ERI-DNX-SMC-MIB::trapResourceKey i 1 ERI-DNX-SMC-MIB::trapTime s '12:01:37\\\\03/17/21' ERI-DNX-SMC-MIB::trapResourceAddress s EXAMPLE_1 ERI-DNX-SMC-MIB::trapResourceType i 5 ERI-DNX-SMC-MIB::trapType i 2 ERI-DNX-SMC-MIB::trapState i 2 ERI-DNX-SMC-MIB::trapSeverity i 1",
+				"$SNMPTRAPCMD ERI-DNX-SMC-MIB::alarmTrap ERI-DNX-SMC-MIB::trapSequence c 2 ERI-DNX-SMC-MIB::trapResourceKey i 17 ERI-DNX-SMC-MIB::trapTime s '12:04:41\\\\03/17/21' ERI-DNX-SMC-MIB::trapResourceAddress s EXAMPLE_2 ERI-DNX-SMC-MIB::trapResourceType i 139 ERI-DNX-SMC-MIB::trapType i 2725 ERI-DNX-SMC-MIB::trapState i 25 ERI-DNX-SMC-MIB::trapSeverity i 3",
+				"$SNMPTRAPCMD ERI-DNX-SMC-MIB::alarmTrap ERI-DNX-SMC-MIB::trapSequence c 3 ERI-DNX-SMC-MIB::trapResourceKey i 17 ERI-DNX-SMC-MIB::trapTime s '12:05:53\\\\03/17/21' ERI-DNX-SMC-MIB::trapResourceAddress s EXAMPLE_2 ERI-DNX-SMC-MIB::trapResourceType i 139 ERI-DNX-SMC-MIB::trapType i 2765 ERI-DNX-SMC-MIB::trapState i 65 ERI-DNX-SMC-MIB::trapSeverity i 1"
+			],
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::alarmTrap",
+				"oid" : "1.3.6.1.4.1.644.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This is a number that uniquely identifies a system",
+							"resource. Much in the line of ifIndex. "
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapResourceKey",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time as (HH:MM:SS MM/DD/YY)"
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapTime",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the address of the ultimate source of the trap."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapResourceAddress",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This identifies what the trapAddress is the address of."
+						],
+						"enums" : {
+							"0" : "slot",
+							"1" : "deviceOctalE1T1",
+							"2" : "deviceQuadHighSpeed",
+							"3" : "deviceOctalHighSpeed",
+							"4" : "deviceQuadOcu",
+							"5" : "deviceSystemManager",
+							"6" : "deviceQuadT1",
+							"7" : "deviceT3",
+							"8" : "deviceTestAccess",
+							"9" : "deviceVoice",
+							"10" : "deviceVoiceEM",
+							"11" : "deviceVoiceFXO",
+							"12" : "deviceVoiceFXS",
+							"14" : "powerSupply",
+							"15" : "protectionSwitch",
+							"16" : "deviceRouterCard",
+							"17" : "deviceSts1",
+							"18" : "deviceHybridDS3",
+							"19" : "deviceGr303",
+							"20" : "deviceXCC",
+							"21" : "deviceXLC",
+							"22" : "deviceNodeManager",
+							"23" : "nest",
+							"24" : "node",
+							"25" : "deviceDs0DP",
+							"26" : "deviceSTM1",
+							"27" : "deviceOC3",
+							"28" : "deviceE3",
+							"29" : "deviceXLC-T1E1",
+							"30" : "deviceSTM1X",
+							"31" : "deviceOC3X",
+							"32" : "deviceContact",
+							"33" : "deviceVoltage",
+							"34" : "deviceAsync",
+							"35" : "deviceSync",
+							"36" : "deviceWan",
+							"37" : "dnx1UQuadT1E1",
+							"38" : "deviceTempSensor",
+							"39" : "dnx1UPowerSupply",
+							"40" : "dnx1USysMgr",
+							"41" : "deviceTranscoder",
+							"100" : "portOctal-T1E1",
+							"101" : "portQuadHighSpeed",
+							"102" : "portOctalHighSpeed",
+							"103" : "portQuadOcu",
+							"104" : "portQuadT1",
+							"105" : "portOctalT1",
+							"106" : "linkT3-T1",
+							"107" : "portT3",
+							"108" : "portTestAccess",
+							"109" : "portVoiceEM",
+							"110" : "portVoiceFXO",
+							"111" : "portVoiceFXS",
+							"112" : "psxNarrowband",
+							"113" : "psxBroadband",
+							"114" : "psxNarrowbandSpare",
+							"115" : "psxBroadbandSpare",
+							"116" : "portRouter",
+							"117" : "linkSts1-T1E1",
+							"118" : "portSts1",
+							"119" : "linkHds3-T1E1",
+							"120" : "portHybridDS3",
+							"121" : "portGr303",
+							"124" : "linkXlink",
+							"125" : "portDs0DP",
+							"126" : "clockDs0DP",
+							"127" : "sysMgrClock",
+							"128" : "linkSTM1-T1E1",
+							"130" : "linkOC3-T1E1",
+							"131" : "payloadSTM1",
+							"132" : "overheadSTM1",
+							"133" : "payloadOC3",
+							"134" : "overheadOC3",
+							"135" : "portE3",
+							"136" : "linkE3-E1",
+							"137" : "opticalXlink",
+							"138" : "portContact",
+							"139" : "portVoltage",
+							"140" : "portAsync",
+							"141" : "linkT1E1",
+							"142" : "portHighSpeed",
+							"143" : "portVirtualWan",
+							"144" : "portTranscoder"
+						},
+						"name" : "ERI-DNX-SMC-MIB::trapResourceType",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the specific Trap Code that represents the type ",
+							"of alarm or event that occurred. Each alarm type has a code",
+							"that sets the trap as active and a corresponding code that ",
+							"clears the trap to simulate an alarm. The event type codes",
+							"are have the prefix 'evnt' but also occur at the start of ",
+							"and end of the event. Each Type code has base number that",
+							"represents the resource type followed by the bit number from",
+							"the resource extended device state. Each event or alarm will",
+							"have a trap for the start equal to the bit number plus the base",
+							"number and then a trap at the end of the event/alarm equal to",
+							"the bit number plus the base number plus 40. ",
+							"For example, clearSlotMissing(142) represents a SLOT resource ",
+							"which has a base 100, bit 2 for slot missing, plus 40 to signify",
+							"the end of the alarm. The exception to this is General Events ",
+							"such as evntColdStart (1)."
+						],
+						"enums" : {
+							"1" : "evntDevColdStart",
+							"2" : "evntDevWarmStart",
+							"101" : "setSlotMismatch",
+							"102" : "setSlotMissing",
+							"141" : "clearSlotMismatch",
+							"142" : "clearSlotMissing",
+							"201" : "evntDevOnline",
+							"202" : "evntDevStandby",
+							"203" : "setDevFrameSyncNotPresent",
+							"204" : "setDevSystemClockNotPresent",
+							"206" : "setDevDataBaseNotInsync",
+							"207" : "setDevFreeRunError",
+							"208" : "setDevOffline",
+							"209" : "setDevDefective",
+							"210" : "setDevBusError",
+							"216" : "setDevStratum3ClkFailure",
+							"219" : "setDevCircuitCardMissing",
+							"225" : "setDevConfigError",
+							"228" : "setDevNoRearCard",
+							"231" : "evntDevOutOfService",
+							"241" : "evntDevNotOnline",
+							"242" : "evntDevNotStandby",
+							"243" : "clearDevFrameSyncNotPresent",
+							"244" : "clearDevSystemClockNotPresent",
+							"246" : "clearDevDataBaseNotInsync",
+							"247" : "clearDevFreeRunError",
+							"248" : "clearDevOffline",
+							"249" : "clearDevDefective",
+							"250" : "clearDevBusError",
+							"256" : "clearDevStratum3ClkFailure",
+							"259" : "clearDevCircuitCardMissing",
+							"265" : "clearDevConfigError",
+							"268" : "clearDevNoRearCard",
+							"271" : "evntDevInService",
+							"301" : "setT1E1RcvFarEndLOF",
+							"302" : "setT1E1NearEndSendLOF",
+							"303" : "evntT1E1RcvingAIS",
+							"304" : "setT1E1NearEndSendingAIS",
+							"305" : "setT1E1NearEndLOF",
+							"306" : "setT1E1NearEndLossOfSignal",
+							"307" : "evntT1E1NearEndLooped",
+							"308" : "setT1E1Ts16AIS",
+							"309" : "setT1E1FarEndSendingTs16LOMF",
+							"310" : "setT1E1NearEndSendingTs16LOMF",
+							"312" : "setT1E1OtherLineStatus",
+							"313" : "setT1E1NearEndUnavailableSig",
+							"314" : "evntT1E1CarrierEquipOutOfService",
+							"316" : "evntE1NationalSa4TxRxSame",
+							"321" : "setT1E1NearEndTxSlip",
+							"322" : "setT1E1NearEndRxSlip",
+							"323" : "setT1E1NearEndSeverErroredFrame",
+							"324" : "setT1E1ChangeFrameAlignment",
+							"325" : "setT1E1ConfigError",
+							"330" : "evntT1E1InTest",
+							"331" : "evntT1E1OutOfService",
+							"341" : "clearT1E1RcvFarEndLOF",
+							"342" : "clearT1E1NearEndSendLOF",
+							"343" : "evntT1E1StoppedRcvingAIS",
+							"344" : "clearT1E1NearEndSendingAIS",
+							"345" : "clearT1E1NearEndLOF",
+							"346" : "clearT1E1NearEndLossOfSignal",
+							"347" : "evntT1E1NearEndLoopOff",
+							"348" : "clearT1E1Ts16AIS",
+							"349" : "clearT1E1FarEndSendingTs16LOMF",
+							"350" : "clearT1E1NearEndSendingTs16LOMF",
+							"352" : "clearT1E1OtherLineStatus",
+							"353" : "clearT1E1NearEndUnavailableSig",
+							"354" : "evntT1E1CarrierEquipInService",
+							"356" : "evntE1NationalSa4TxRxDiff",
+							"361" : "clearT1E1NearEndTxSlip",
+							"362" : "clearT1E1NearEndRxSlip",
+							"363" : "clearT1E1NearEndSeverErroredFrame",
+							"364" : "clearT1E1ChangeFrameAlignment",
+							"365" : "clearT1E1ConfigError",
+							"370" : "evntT1E1TestOff",
+							"371" : "evntT1E1InService",
+							"401" : "setHsRcvFIFOError",
+							"402" : "setHsXmtFIFOError",
+							"403" : "setHsClockEdgeError",
+							"404" : "setHsCarrierFailure",
+							"407" : "evntHsNearEndLooped",
+							"424" : "evntHsNoBtsAssigned",
+							"425" : "setHsConfigError",
+							"430" : "evntHsInTest",
+							"431" : "evntHsOutOfService",
+							"441" : "clearHsRcvFIFOError",
+							"442" : "clearHsXmtFIFOError",
+							"443" : "clearHsClockEdgeError",
+							"444" : "clearHsCarrierFailure",
+							"447" : "evntHsNearEndLoopOff",
+							"464" : "evntHsBtsAssigned",
+							"465" : "clearHsConfigError",
+							"470" : "evntHsTestOff",
+							"471" : "evntHsInService",
+							"501" : "setT3RcvFarEndLOF",
+							"502" : "setT3NearEndSendLOF",
+							"503" : "setT3FarEndSendingAIS",
+							"504" : "setT3NearEndSendingAIS",
+							"505" : "setT3NearEndLOF",
+							"506" : "setT3NearEndLossOfSignal",
+							"507" : "evntT3NearEndLooped",
+							"512" : "setT3OtherLineStatus",
+							"513" : "setT3NearEndUnavailableSig",
+							"514" : "evntT3CarrierEquipOutOfService",
+							"515" : "setT3NearEndSeverErroredFrame",
+							"516" : "setT3TxRxClockFailure",
+							"517" : "setT3FarEndBlockError",
+							"518" : "setT3PbitCbitParityError",
+							"519" : "setT3MbitsInError",
+							"520" : "setT3LIUOtherStatus",
+							"522" : "setT3LIUExcessZeros",
+							"523" : "setT3LIUCodingViolation",
+							"524" : "setT3LIUPrbsError",
+							"525" : "setT3ConfigError",
+							"530" : "evntT3InTest",
+							"531" : "evntT3OutOfService",
+							"541" : "clearT3RcvFarEndLOF",
+							"542" : "clearT3NearEndSendLOF",
+							"543" : "clearT3FarEndSendingAIS",
+							"544" : "clearT3NearEndSendingAIS",
+							"545" : "clearT3NearEndLOF",
+							"546" : "clearT3NearEndLossOfSignal",
+							"547" : "evntT3NearEndLoopOff",
+							"552" : "clearT3OtherLineStatus",
+							"553" : "clearT3NearEndUnavailableSig",
+							"554" : "evntT3CarrierEquipInService",
+							"555" : "clearT3NearEndSeverErroredFrame",
+							"556" : "clearT3TxRxClockFailure",
+							"557" : "clearT3FarEndBlockError",
+							"558" : "clearT3PbitCbitParityError",
+							"559" : "clearT3MbitsInError",
+							"560" : "clearT3LIUOtherStatus",
+							"562" : "clearT3LIUExcessZeros",
+							"563" : "clearT3LIUCodingViolation",
+							"564" : "clearT3LIUPrbsError",
+							"565" : "clearT3ConfigError",
+							"570" : "evntT3TestOff",
+							"571" : "evntT3InService",
+							"601" : "setPowerSupplyNotPresent",
+							"602" : "setPowerSupplyProblem",
+							"641" : "clearPowerSupplyNotPresent",
+							"642" : "clearPowerSupplyProblem",
+							"706" : "setOcuNearEndLOS",
+							"712" : "setOcuOtherLineStatus",
+							"723" : "setOcuNearEndSeverErroredFrame",
+							"725" : "setOcuConfigError",
+							"731" : "evntOcuOutOfService",
+							"746" : "clearOcuNearEndLOS",
+							"752" : "clearOcuOtherLineStatus",
+							"763" : "clearOcuNearEndSeverErroredFrame",
+							"765" : "clearOcuConfigError",
+							"771" : "evntOcuInService",
+							"825" : "setTamConfigError",
+							"831" : "evntTamOutOfService",
+							"865" : "clearTamConfigError",
+							"871" : "evntTamInService",
+							"925" : "setVoiceConfigError",
+							"931" : "evntVoiceOutOfService",
+							"965" : "clearVoiceConfigError",
+							"971" : "evntVoiceInService",
+							"1001" : "evntPsxDevOnline",
+							"1003" : "setPsxPowerSupplyANotOk",
+							"1004" : "setPsxPowerSupplyBNotOk",
+							"1005" : "setPsxFan01NotOk",
+							"1006" : "setPsxFan02NotOk",
+							"1007" : "setPsxFan03NotOk",
+							"1008" : "setPsxDualBroadbandNotSupported",
+							"1009" : "evntPsxNewControllerRev",
+							"1014" : "evntPsxLineCard01Missing",
+							"1015" : "evntPsxLineCard02Missing",
+							"1016" : "evntPsxLineCard03Missing",
+							"1017" : "evntPsxLineCard04Missing",
+							"1018" : "evntPsxLineCard05Missing",
+							"1019" : "evntPsxLineCard06Missing",
+							"1020" : "evntPsxLineCard07Missing",
+							"1021" : "evntPsxLineCard08Missing",
+							"1022" : "evntPsxLineCard09Missing",
+							"1023" : "evntPsxLineCard10Missing",
+							"1024" : "evntPsxLineCard11Missing",
+							"1043" : "clearPsxPowerSupplyANotOk",
+							"1044" : "clearPsxPowerSupplyBNotOk",
+							"1045" : "clearPsxFan01NotOk",
+							"1046" : "clearPsxFan02NotOk",
+							"1047" : "clearPsxFan03NotOk",
+							"1048" : "clearPsxDualBroadbandNotSupported",
+							"1054" : "evntPsxLineCard01Present",
+							"1055" : "evntPsxLineCard02Present",
+							"1056" : "evntPsxLineCard03Present",
+							"1057" : "evntPsxLineCard04Present",
+							"1058" : "evntPsxLineCard05Present",
+							"1059" : "evntPsxLineCard06Present",
+							"1060" : "evntPsxLineCard07Present",
+							"1061" : "evntPsxLineCard08Present",
+							"1062" : "evntPsxLineCard09Present",
+							"1063" : "evntPsxLineCard10Present",
+							"1064" : "evntPsxLineCard11Present",
+							"1102" : "setPsxLineCardRelaySwitchToSpare",
+							"1103" : "setPsxLineCardCableMissing",
+							"1106" : "setPsxLineCardMissing",
+							"1107" : "setPsxLineCardMismatch",
+							"1108" : "setPsxLineCardRelayMalfunction",
+							"1142" : "clearPsxLineCardRelaySwitchToSpare",
+							"1143" : "clearPsxLineCardCableMissing",
+							"1146" : "clearPsxLineCardMissing",
+							"1147" : "clearPsxLineCardMismatch",
+							"1148" : "clearPsxLineCardRelayMalfunction",
+							"1201" : "setRtrUserAlarm1",
+							"1202" : "setRtrUserAlarm2",
+							"1203" : "setRtrUserAlarm3",
+							"1225" : "setRtrConfigError",
+							"1231" : "evntRtrOutOfService",
+							"1241" : "clearRtrUserAlarm1",
+							"1242" : "clearRtrUserAlarm2",
+							"1243" : "clearRtrUserAlarm3",
+							"1265" : "clearRtrConfigError",
+							"1271" : "evntRtrInService",
+							"1301" : "setSts1RcvFarEndLOF",
+							"1302" : "setSts1NearEndSendLOF",
+							"1303" : "evntSts1RcvingAIS",
+							"1304" : "setSts1NearEndSendingAIS",
+							"1305" : "setSts1NearEndLOF",
+							"1307" : "evntSts1NearEndLooped",
+							"1308" : "setSts1NearEndLOP",
+							"1309" : "setSts1NearEndOOF",
+							"1310" : "setSts1NearEndAIS",
+							"1312" : "setSts1OtherLineStatus",
+							"1313" : "setSts1NearEndUnavailableSig",
+							"1314" : "evntSts1CarrierEquipOutOfService",
+							"1316" : "setSts1TxRxClockFailure",
+							"1317" : "setSts1NearEndLOMF",
+							"1318" : "setSts1NearEndTraceError",
+							"1320" : "setSts1LIUDigitalLOS",
+							"1321" : "setSts1LIUAnalogLOS",
+							"1322" : "setSts1LIUExcessZeros",
+							"1323" : "setSts1LIUCodingViolation",
+							"1324" : "setSts1LIUPrbsError",
+							"1325" : "setSts1ConfigError",
+							"1330" : "evntSts1InTest",
+							"1331" : "evntSts1OutOfService",
+							"1341" : "clearSts1RcvFarEndLOF",
+							"1342" : "clearSts1NearEndSendLOF",
+							"1343" : "evntSts1StoppedRcvingAIS",
+							"1344" : "clearSts1NearEndSendingAIS",
+							"1345" : "clearSts1NearEndLOF",
+							"1347" : "evntSts1NearEndLoopOff",
+							"1348" : "clearSts1NearEndLOP",
+							"1349" : "clearSts1NearEndOOF",
+							"1350" : "clearSts1NearEndAIS",
+							"1352" : "clearSts1OtherLineStatus",
+							"1353" : "clearSts1NearEndUnavailableSig",
+							"1354" : "evntSts1CarrierEquipInService",
+							"1356" : "clearSts1TxRxClockFailure",
+							"1357" : "clearSts1NearEndLOMF",
+							"1358" : "clearSts1NearEndTraceError",
+							"1360" : "clearSts1LIUDigitalLOS",
+							"1361" : "clearSts1LIUAnalogLOS",
+							"1362" : "clearSts1LIUExcessZeros",
+							"1363" : "clearSts1LIUCodingViolation",
+							"1364" : "clearSts1LIUPrbsError",
+							"1365" : "clearSts1ConfigError",
+							"1370" : "evntSts1TestOff",
+							"1371" : "evntSts1InService",
+							"1403" : "evntHt3RcvingAIS",
+							"1404" : "setHt3NearEndSendingAIS",
+							"1405" : "setHt3NearEndOOF",
+							"1406" : "setHt3NearEndLossOfSignal",
+							"1407" : "evntHt3NearEndLooped",
+							"1408" : "setHt3NearEndLOF",
+							"1409" : "setHt3FarEndRcvFailure",
+							"1411" : "setHt3NearEndLCVError",
+							"1412" : "setHt3NearEndFERRError",
+							"1413" : "setHt3NearEndExcessZeros",
+							"1414" : "evntHt3CarrierEquipOutOfService",
+							"1417" : "setHt3FarEndBlockError",
+							"1418" : "setHt3PbitCbitParityError",
+							"1419" : "setHt3ChangeInFrameAlignment",
+							"1420" : "setHt3LIUDigitalLOS",
+							"1421" : "setHt3LIUAnalogLOS",
+							"1422" : "setHt3LIUExcessZeros",
+							"1423" : "setHt3LIUCodingViolation",
+							"1424" : "setHt3LIUPrbsError",
+							"1425" : "setHt3ConfigError",
+							"1430" : "evntHt3InTest",
+							"1431" : "evntHt3OutOfService",
+							"1443" : "evntHt3StoppedRcvingAIS",
+							"1444" : "clearHt3NearEndSendingAIS",
+							"1445" : "clearHt3NearEndOOF",
+							"1446" : "clearHt3NearEndLossOfSignal",
+							"1447" : "evntHt3NearEndLoopOff",
+							"1448" : "clearHt3NearEndLOF",
+							"1449" : "clearHt3FarEndRcvFailure",
+							"1451" : "clearHt3NearEndLCVError",
+							"1452" : "clearHt3NearEndFERRError",
+							"1453" : "clearHt3NearEndExcessZeros",
+							"1454" : "evntHt3CarrierEquipInService",
+							"1457" : "clearHt3FarEndBlockError",
+							"1458" : "clearHt3PbitCbitParityError",
+							"1459" : "clearHt3ChangeInFrameAlignment",
+							"1460" : "clearHt3LIUDigitalLOS",
+							"1461" : "clearHt3LIUAnalogLOS",
+							"1462" : "clearHt3LIUExcessZeros",
+							"1463" : "clearHt3LIUCodingViolation",
+							"1464" : "clearHt3LIUPrbsError",
+							"1465" : "clearHt3ConfigError",
+							"1470" : "evntHt3TestOff",
+							"1471" : "evntHt3InService",
+							"1531" : "evntGr303OutOfService",
+							"1571" : "evntGr303InService",
+							"1606" : "setXlinkCableMismatch",
+							"1615" : "setXlinkSerializerError",
+							"1616" : "setXlinkFramerError",
+							"1617" : "setXlinkBertError",
+							"1618" : "setXlinkClockError",
+							"1620" : "setXlinkInUseError",
+							"1621" : "setXlinkCrcError",
+							"1646" : "clearXlinkCableMismatch",
+							"1655" : "clearXlinkSerializerError",
+							"1656" : "clearXlinkFramerError",
+							"1657" : "clearXlinkBertError",
+							"1658" : "clearXlinkClockError",
+							"1660" : "clearXlinkInUseError",
+							"1661" : "clearXlinkCrcError",
+							"1701" : "setNestMismatch",
+							"1702" : "setNestMissing",
+							"1705" : "setNestOffline",
+							"1706" : "setNestCriticalAlarm",
+							"1707" : "setNestMajorAlarm",
+							"1708" : "setNestMinorAlarm",
+							"1709" : "setNestSwMismatch",
+							"1741" : "clearNestMismatch",
+							"1742" : "clearNestMissing",
+							"1745" : "clearNestOffline",
+							"1746" : "clearNestCriticalAlarm",
+							"1747" : "clearNestMajorAlarm",
+							"1748" : "clearNestMinorAlarm",
+							"1749" : "clearNestSwMismatch",
+							"1801" : "setNodeCriticalAlarm",
+							"1802" : "setNodeMajorAlarm",
+							"1803" : "setNodeMinorAlarm",
+							"1841" : "clearNodeCriticalAlarm",
+							"1842" : "clearNodeMajorAlarm",
+							"1843" : "clearNodeMinorAlarm",
+							"1901" : "setDs0DpPortLossOfSignal",
+							"1902" : "setDs0DpPortBPV",
+							"1925" : "setDs0DpPortConfigError",
+							"1930" : "evntDs0DpPortInTest",
+							"1931" : "evntDs0DpPortOutOfService",
+							"1941" : "clearDs0DpPortLossOfSignal",
+							"1942" : "clearDs0DpPortBPV",
+							"1965" : "clearDs0DpPortConfigError",
+							"1970" : "evntDs0DpPortTestOff",
+							"1971" : "evntDs0DpPortInService",
+							"2001" : "setDs0DpClockLossOfSignal",
+							"2002" : "setDs0DpClockBPV",
+							"2041" : "clearDs0DpClockLossOfSignal",
+							"2042" : "clearDs0DpClockBPV",
+							"2201" : "setOpticalT1E1RedAlarm",
+							"2202" : "setOpticalT1E1NearEndSendLOF",
+							"2203" : "evntOpticalT1E1RcvingAIS",
+							"2204" : "setOpticalT1E1NearEndSendingAIS",
+							"2205" : "setOpticalT1E1NearEndLOF",
+							"2207" : "evntOpticalT1E1NearEndLooped",
+							"2208" : "setOpticalT1E1LossOfPointer",
+							"2209" : "setOpticalT1E1OutOfFrame",
+							"2210" : "setOpticalT1E1DetectedAIS",
+							"2213" : "setOpticalT1E1NearEndLOS",
+							"2216" : "evntOpticalE1NationalSa4TxRxSame",
+							"2217" : "setOpticalT1E1RcvFarEndYellow",
+							"2218" : "setOpticalT1E1NearEndSEF",
+							"2219" : "setOpticalT1E1Tug2LOP",
+							"2220" : "setOpticalT1E1Tug2RDI",
+							"2221" : "setOpticalT1E1Tug2RFI",
+							"2222" : "setOpticalT1E1Tug2AIS",
+							"2223" : "setOpticalT1E1Tug2PSLM",
+							"2224" : "setOpticalT1E1Tug2PSLU",
+							"2225" : "setOpticalT1E1ConfigError",
+							"2230" : "evntOpticalT1E1InTest",
+							"2231" : "evntOpticalT1E1OutOfService",
+							"2241" : "clearOpticalT1E1RedAlarm",
+							"2242" : "clearOpticalT1E1NearEndSendLOF",
+							"2243" : "evntOpticalT1E1StoppedRcvingAIS",
+							"2244" : "clearOpticalT1E1NearEndSendingAIS",
+							"2245" : "clearOpticalT1E1NearEndLOF",
+							"2247" : "evntOpticalT1E1NearEndLoopOff",
+							"2248" : "clearOpticalT1E1LossOfPointer",
+							"2249" : "clearOpticalT1E1OutOfFrame",
+							"2250" : "clearOpticalT1E1DetectedAIS",
+							"2253" : "clearOpticalT1E1NearEndLOS",
+							"2256" : "evntOpticalE1NationalSa4TxRxDiff",
+							"2257" : "clearOpticalT1E1RcvFarEndYellow",
+							"2258" : "clearOpticalT1E1NearEndSEF",
+							"2259" : "clearOpticalT1E1Tug2LOP",
+							"2260" : "clearOpticalT1E1Tug2RDI",
+							"2261" : "clearOpticalT1E1Tug2RFI",
+							"2262" : "clearOpticalT1E1Tug2AIS",
+							"2263" : "clearOpticalT1E1Tug2PSLM",
+							"2264" : "clearOpticalT1E1Tug2PSLU",
+							"2265" : "clearOpticalT1E1ConfigError",
+							"2270" : "evntOpticalT1E1TestOff",
+							"2271" : "evntOpticalT1E1InService",
+							"2301" : "setVtNearEndLOP",
+							"2302" : "setVtNearEndAIS",
+							"2303" : "setPayloadPathLOP",
+							"2304" : "setPayloadPathAIS",
+							"2305" : "setPayloadPathRDI",
+							"2307" : "evntPayloadNearEndLineLooped",
+							"2308" : "evntPayloadNearEndLocalLooped",
+							"2330" : "evntPayloadInTest",
+							"2341" : "clearVtNearEndLOP",
+							"2342" : "clearVtNearEndAIS",
+							"2343" : "clearPayloadPathLOP",
+							"2344" : "clearPayloadPathAIS",
+							"2345" : "clearPayloadPathRDI",
+							"2347" : "evntPayloadNearEndLineLoopOff",
+							"2348" : "evntPayloadNearEndLocalLoopOff",
+							"2370" : "evntPayloadTestOff",
+							"2401" : "setTransOverheadAIS",
+							"2402" : "setTransOverheadRDI",
+							"2403" : "setTransOverheadOOF",
+							"2404" : "setTransOverheadLOF",
+							"2405" : "setTransOverheadLOS",
+							"2407" : "evntTransOverheadNearEndSysLineLooped",
+							"2408" : "evntTransOverheadNearEndPathLineLooped",
+							"2409" : "evntTransOverheadNearEndLocalLooped",
+							"2413" : "setTransOverheadSfDetect",
+							"2414" : "setTransOverheadSdDetect",
+							"2415" : "setTransOverheadLaserOffDetect",
+							"2430" : "evntTransOverheadInTest",
+							"2441" : "clearTransOverheadAIS",
+							"2442" : "clearTransOverheadRDI",
+							"2443" : "clearTransOverheadOOF",
+							"2444" : "clearTransOverheadLOF",
+							"2445" : "clearTransOverheadLOS",
+							"2447" : "evntTransOverheadNearEndSysLineLoopOff",
+							"2448" : "evntTransOverheadNearEndPathLineLoopOff",
+							"2449" : "evntTransOverheadNearEndLocalLoopOff",
+							"2453" : "clearTransOverheadSfDetect",
+							"2454" : "clearTransOverheadSdDetect",
+							"2455" : "clearTransOverheadLaserOffDetect",
+							"2470" : "evntTransOverheadTestOff",
+							"2501" : "setE3RcvFarEndLOF",
+							"2502" : "setE3NearEndSendLOF",
+							"2503" : "evntE3RcvingAIS",
+							"2504" : "setE3NearEndSendingAIS",
+							"2505" : "setE3NearEndLOF",
+							"2506" : "setE3NearEndLossOfSignal",
+							"2507" : "evntE3NearEndLooped",
+							"2512" : "setE3OtherLineStatus",
+							"2513" : "setE3NearEndUnavailableSig",
+							"2514" : "evntE3CarrierEquipOutOfService",
+							"2515" : "setE3NearEndSeverErroredFrame",
+							"2516" : "setE3TxRxClockFailure",
+							"2517" : "setE3FarEndBlockError",
+							"2519" : "setE3MbitsInError",
+							"2520" : "setE3LIUOtherStatus",
+							"2523" : "setE3LIUCodingViolation",
+							"2525" : "setE3ConfigError",
+							"2530" : "evntE3InTest",
+							"2531" : "evntE3OutOfService",
+							"2541" : "clearE3RcvFarEndLOF",
+							"2542" : "clearE3NearEndSendLOF",
+							"2543" : "evntE3StoppedRcvingAIS",
+							"2544" : "clearE3NearEndSendingAIS",
+							"2545" : "clearE3NearEndLOF",
+							"2546" : "clearE3NearEndLossOfSignal",
+							"2547" : "evntE3NearEndLoopOff",
+							"2552" : "clearE3OtherLineStatus",
+							"2553" : "clearE3NearEndUnavailableSig",
+							"2554" : "evntE3CarrierEquipInService",
+							"2555" : "clearE3NearEndSeverErroredFrame",
+							"2556" : "clearE3TxRxClockFailure",
+							"2557" : "clearE3FarEndBlockError",
+							"2559" : "clearE3MbitsInError",
+							"2560" : "clearE3LIUOtherStatus",
+							"2563" : "clearE3LIUCodingViolation",
+							"2565" : "clearE3ConfigError",
+							"2570" : "evntE3TestOff",
+							"2571" : "evntE3InService",
+							"2601" : "setContactClosureInputAlarm",
+							"2625" : "setContactClosureCfgError",
+							"2641" : "clearContactClosureInputAlarm",
+							"2665" : "clearContactClosureCfgError",
+							"2701" : "setVoltMeasureAlarm",
+							"2725" : "setVoltMeasureCfgError",
+							"2741" : "clearVoltMeasureAlarm",
+							"2765" : "clearVoltMeasureCfgError",
+							"2801" : "setAsyncRxFifoError",
+							"2802" : "setAsyncTxFifoError",
+							"2803" : "setAsyncOverrunError",
+							"2804" : "setAsyncParityError",
+							"2805" : "setAsyncFramingError",
+							"2841" : "clearAsyncRxFifoError",
+							"2842" : "clearAsyncTxFifoError",
+							"2843" : "clearAsyncOverrunError",
+							"2844" : "clearAsyncParityError",
+							"2845" : "clearAsyncFramingError",
+							"2901" : "setTempSensorOutOfRange",
+							"2941" : "clearTempSensorOutOfRange",
+							"3001" : "setVWanError",
+							"3025" : "setVWanCfgError",
+							"3041" : "clearVWanError",
+							"3065" : "clearVWanCfgError",
+							"3108" : "set1uPowerSupplyOffline",
+							"3109" : "set1uPowerSupplyDefective",
+							"3110" : "set1uPowerSupplyFanFailure",
+							"3116" : "evnt1uPowerSupplyFanOn",
+							"3119" : "set1uPowerSupplyCircuitMissing",
+							"3125" : "set1uPowerSupplyCfgMismatch",
+							"3148" : "clear1uPowerSupplyOffline",
+							"3149" : "clear1uPowerSupplyDefective",
+							"3150" : "clear1uPowerSupplyFanFailure",
+							"3156" : "evnt1uPowerSupplyFanOff",
+							"3159" : "clear1uPowerSupplyCircuitMissing",
+							"3165" : "clear1uPowerSupplyCfgMismatch"
+						},
+						"name" : "ERI-DNX-SMC-MIB::trapType",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the current status of the resource reporting the",
+							"trap."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapState",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The importance of the trap event.",
+							"nominal (0) Normal message, not used. ",
+							"informational (1) Informative message, not an error.",
+							"minor (2) Error that serves as a warning to user.",
+							"major (3) Error that requires user intervention.",
+							"critical (4) Severe error. Device failure could result.",
+							""
+						],
+						"enums" : {
+							"0" : "nominal",
+							"1" : "informational",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "ERI-DNX-SMC-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::deleteResourceTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a resource",
+				"has been deleted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "deleteResourceTrap",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "resourceKey:$v1",
+				"Summary" : "Resource $v1 deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::deleteResourceTrap ERI-DNX-SMC-MIB::resourceKey u 9999 ERI-DNX-SMC-MIB::trapSequence c 9999",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::deleteResourceTrap",
+				"oid" : "1.3.6.1.4.1.644.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This number uniquely identifies a system resource. This",
+							"number will be used throughout the system to identify a",
+							"resource."
+						],
+						"name" : "ERI-DNX-SMC-MIB::resourceKey",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::connectionEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a connection",
+				"has been changed, added, or deleted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4>=101 && $v3<=106) ? 1 : (($v4>=400 && $v4<=434) || ($v4==450) || ($v4>=500 && $v4<=502)) ? 2 : 3"
+				},
+				"EventType" : "connectionEventTrap",
+				"ExpireTime" : {
+					"eval" : "(($v4>=101 && $v3<=106) || ($v4>=400 && $v4<=434) || ($v4==450) || ($v4>=500 && $v4<=502)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "(($v4>=101 && $v3<=106) ? 0 : ($v4>=400 && $v4<=434) || ($v4==450) || ($v4>=500 && $v4<=502)) ? 3 : 2"
+				},
+				"SubNode" : "sysMapID:$v2;sysConnID:$v3",
+				"Summary" : "NMS gets notified when the connection $v3 is modified. Command status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::connectionEventTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::sysMapID i 0 ERI-DNX-SMC-MIB::sysConnID i 9999 ERI-DNX-SMC-MIB::sysCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::connectionEventTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a system connection map. This",
+							"number will be used in conjunction with the connection ID to ",
+							"uniquely identify a connection."
+						],
+						"enums" : {
+							"0" : "activeMap",
+							"1" : "map01",
+							"2" : "map02",
+							"3" : "map03",
+							"4" : "map04",
+							"5" : "map05"
+						},
+						"name" : "ERI-DNX-SMC-MIB::sysMapID",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a connection within a given ",
+							"configuration map. This number will be used in conjunction with ",
+							"the map ID to uniquely identify a system connection."
+						],
+						"name" : "ERI-DNX-SMC-MIB::sysConnID",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.3.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The command status for this system connection row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"Action States used in SET Command (1..99)",
+							"update (1)",
+							"change existing connection",
+							"delete (2)",
+							"remove existing connection",
+							"add (3)",
+							"add new connection ",
+							"addNsave (4)",
+							"add new connection and save to file immediately",
+							"updateNsave (5)",
+							"change existing connection and save to file ",
+							"immediately ",
+							"deleteNsave (6)",
+							"delete existing connection and update map file ",
+							"immediately ",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"connection has been successfully modified",
+							"delete-successful (102)",
+							"connection has been successfully deleted",
+							"add-successful (103)",
+							"connection has been successfully added",
+							"add-save-successful (104)",
+							"connection has been successfully added & saved",
+							"update-save-successful (105)",
+							"connection has been successfully modified & saved",
+							"del-save-successful (106)",
+							"connection has been successfully removed & saved",
+							"",
+							"Connection Error Codes used in GET RESPONSE Command (200..799)",
+							"err-general-connection-error (400)",
+							"An unknown system connection error occurred",
+							"err-src-broadcast-id-not-found (401)",
+							"Unable to find listener using this broadcast ID",
+							"err-conn-name-in-use (404)",
+							"Connection name already exists",
+							"err-src-port-bandwidth-exceeded (409)",
+							"Source port cannot support requested timeslots",
+							"err-dest-port-bandwidth-exceeded (413)",
+							"Dest port cannot support requested timeslots",
+							"err-invalid-command (414)",
+							"Unrecognized connection command-action",
+							"err-not-enough-bts-available (415)",
+							"Not enough available timeslots on Backplane",
+							"err-src-port-cannot-support-voice (416)",
+							"Device type in source slot does not support voice",
+							"err-dest-port-cannot-support-voice (417)",
+							"Device type in dest slot does not support voice",
+							"err-invalid-communications-for-device (418)",
+							"Only E1 devices support Au-law to Mu-law conversion ",
+							"err-invalid-communications-type (419)",
+							"Unrecognized connection communications",
+							"err-invalid-conn-name (420)",
+							"Invalid connection name length",
+							"err-invalid-conn-speed (422)",
+							"Unrecognized connection speed code",
+							"err-invalid-conn-record (423)",
+							"Connection record contains missing or invalid fields",
+							"err-conn-not-saved-to-map(426)",
+							"Connection was changed but save to file failed",
+							"err-invalid-conn-bit-group (429)",
+							"Invalid bit-group selected for the globally set compression rate.",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size "
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update",
+							"2" : "delete",
+							"3" : "add",
+							"4" : "addNsave",
+							"5" : "updateNsave",
+							"6" : "deleteNsave",
+							"101" : "update-successful",
+							"102" : "delete-successful",
+							"103" : "add-successful",
+							"104" : "add-save-successful",
+							"105" : "update-save-successful",
+							"106" : "del-save-successful",
+							"400" : "err-general-connection-error",
+							"401" : "err-src-broadcast-id-not-found",
+							"402" : "err-src-port-in-use",
+							"403" : "err-dest-port-in-use",
+							"404" : "err-conn-name-in-use",
+							"405" : "err-invalid-broadcast-id",
+							"406" : "err-invalid-src-slot",
+							"407" : "err-invalid-src-port",
+							"408" : "err-invalid-src-timeslot",
+							"409" : "err-src-port-bandwidth-exceeded",
+							"410" : "err-invalid-dest-slot",
+							"411" : "err-invalid-dest-port",
+							"412" : "err-invalid-dest-timeslot",
+							"413" : "err-dest-port-bandwidth-exceeded",
+							"414" : "err-invalid-command",
+							"415" : "err-not-enough-bts-available",
+							"416" : "err-src-port-cannot-be-voice",
+							"417" : "err-dest-port-cannot-be-voice",
+							"418" : "err-invalid-communications-dev",
+							"419" : "err-invalid-communications-type",
+							"420" : "err-invalid-conn-name",
+							"421" : "err-invalid-conn-type",
+							"422" : "err-invalid-conn-speed",
+							"423" : "err-invalid-conn-record",
+							"424" : "err-conn-test-in-progress",
+							"425" : "err-invalid-conn-id",
+							"426" : "err-conn-not-saved-to-map",
+							"427" : "err-connection-map-full",
+							"428" : "err-invalid-card-type",
+							"429" : "err-invalid-conn-bit-group",
+							"430" : "err-conn-max-channels-used",
+							"431" : "err-src-xlink-slot-not-assigned",
+							"432" : "err-dest-xlink-slot-not-assigned",
+							"433" : "err-protection-grp-conn-error",
+							"434" : "err-cannot-chg-net-conn",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-SMC-MIB::sysCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.3.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::connMapMgrTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a new connection",
+				"map has been activated or that a connection map has been",
+				"successfully copied to another inactive map."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==200 || ($v3>=202 && $v3<=205) || $v3==450 || ($v3>=500 && $v3<=502)) ? 2 : 3"
+				},
+				"EventType" : "connMapMgrTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==200 || ($v3>=202 && $v3<=205) || $v3==450 || ($v3>=500 && $v3<=502)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==200 || ($v3>=202 && $v3<=205) || $v3==450 || ($v3>=500 && $v3<=502)) ? 3 : 2"
+				},
+				"SubNode" : "connMapID:$v2",
+				"Summary" : "State of connection map $v2 is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::connMapMgrTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::connMapID i 1 ERI-DNX-SMC-MIB::connMapCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::connMapMgrTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a system connection map."
+						],
+						"name" : "ERI-DNX-SMC-MIB::connMapID",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The command status for this connection map configuration ",
+							"row/record. The value used in a SET will be replaced by a ",
+							"response value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"Map Commands used in SET Command (1..99)",
+							"update-map (1)",
+							"Update the map name and/or map description.",
+							"delete-map (2)",
+							"Delete all connections from an inactive map.",
+							"activate-map (7)",
+							"Make this map the active map. Changing the Map Status from ",
+							"inactive to active for a map will result in the current ",
+							"active map to be changed to inactive.",
+							"save-map (8)",
+							"Save the connection data configured for this map.",
+							"Each time the save-map command is used, the map version and ",
+							"date will be updated. The maps should be saved after changing ",
+							"the system connection configuration to avoid losing those ",
+							"changes in the event of unexpected power loss or system reset.",
+							"copy-map-to-tagged-maps(9)",
+							"Copy the connection configuration from this map to all other",
+							"maps tagged as a destination.",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"command-in-progress (100)",
+							"map command is still working",
+							"update-successful (101)",
+							"map data has been successfully changed",
+							"delete-successful (102)",
+							"map connection data has been successfully deleted",
+							"activate-successful (107)",
+							"connection map has been successfully activated and previous",
+							"active map has been de-activated.",
+							"save-successful (108)",
+							"connection map has been successfully saved",
+							"copy-successful (109)",
+							"connection map has been successfully copied",
+							"",
+							"Map Config Error Codes used in GET RESPONSE Command (200..799)",
+							"err-general-map-config-error (200)",
+							"Unknown map configuration error occurred",
+							"err-invalid-map-command (202)",
+							"Unrecognized map command-action",
+							"err-invalid-map-name (203)",
+							"Configured map name too long",
+							"err-invalid-map-desc (204)",
+							"Configured map description too long",
+							"err-invalid-map-status (205)",
+							"Unrecognized map status or invalid for current map",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update-map",
+							"2" : "delete-map",
+							"7" : "activate-map",
+							"8" : "save-map",
+							"9" : "copy-map-to-tagged-maps",
+							"100" : "command-in-progress",
+							"101" : "update-successful",
+							"102" : "delete-successful",
+							"107" : "activate-successful",
+							"108" : "save-successful",
+							"109" : "copy-successful",
+							"200" : "err-general-map-config-error",
+							"202" : "err-invalid-map-command",
+							"203" : "err-invalid-map-name",
+							"204" : "err-invalid-map-desc",
+							"205" : "err-invalid-map-status",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-SMC-MIB::connMapCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::connMapCopyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has ",
+				"copied all connections from a source map (lastMapCopied)",
+				"to another destination map indicated by connMapID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "connMapCopyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "connMapID:$v3",
+				"Summary" : "NMS gets notified when all connections from $v2 copied to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::connMapCopyTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::lastMapCopied i 0 ERI-DNX-SMC-MIB::connMapID i 1",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::connMapCopyTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This is the ID of the last Connection Map used as a source in",
+							"a Connection Map copy operation to one or more destination maps."
+						],
+						"name" : "ERI-DNX-SMC-MIB::lastMapCopied",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a system connection map."
+						],
+						"name" : "ERI-DNX-SMC-MIB::connMapID",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::bulkConnPurgeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify users that due to a change in ",
+				"device/port configuration, all connections affected by the ",
+				"changed resource have been purged. The Resource key can be",
+				"used to identify which resource was re-configured causing ",
+				"connections to be removed and the Map ID identifies which ",
+				"Connection Map was purged. The ConnMapCounts field indicates ",
+				"the total number of connections deleted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "bulkConnPurgeTrap",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "connMapID:$v3",
+				"Summary" : "Connections ($v3) affected by change in configuration of $v2 are purged"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::bulkConnPurgeTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::resourceKey u 9999 ERI-DNX-SMC-MIB::connMapID i 1 ERI-DNX-SMC-MIB::connMapCounts c 9999",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::bulkConnPurgeTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a system resource. This",
+							"number will be used throughout the system to identify a",
+							"resource."
+						],
+						"name" : "ERI-DNX-SMC-MIB::resourceKey",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a system connection map."
+						],
+						"name" : "ERI-DNX-SMC-MIB::connMapID",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is the number of system connections configured and saved ",
+							"in this map."
+						],
+						"name" : "ERI-DNX-SMC-MIB::connMapCounts",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.2.1.5",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::clockSrcChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that the system ",
+				"has detected a change in the Clock Source settings.",
+				"These changes can result from either an automatic ",
+				"system fallback due to failure or a user configured ",
+				"clock source modification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v2<=1 || $v2>=4) ? 2 : 3"
+				},
+				"EventType" : "clockSrcChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2 || $v2<=1 || $v2>=4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : ($v2<=1 || $v2>=4) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Current clock source in use: primary $v3' : (($v2==3) ? 'Current clock source in use: secondary $v4' : (($v2==4) ? 'Current clock source in use: tertiary $v5' : 'Current clock source in use: $v2'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::clockSrcChgTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::clockSrcActive i 0 ERI-DNX-SMC-MIB::primaryClockSrc a 192.0.2.1 ERI-DNX-SMC-MIB::secondaryClockSrc a 192.0.2.1 ERI-DNX-SMC-MIB::tertiaryClockSrc a 192.0.2.1 ERI-DNX-SMC-MIB::clockSrcCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::clockSrcChgTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This is the current clock source in use."
+						],
+						"enums" : {
+							"0" : "freerun",
+							"1" : "holdover",
+							"2" : "primary",
+							"3" : "secondary",
+							"4" : "tertiary",
+							"6" : "primary-protected",
+							"7" : "secondary-protected",
+							"8" : "tertiary-protected"
+						},
+						"name" : "ERI-DNX-SMC-MIB::clockSrcActive",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.7.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Primary Clock Source slot/port address or Station ",
+							"Identifier. The format is represented using an IP address ",
+							"syntax (4 byte string) with the first byte unused.",
+							"",
+							"The 2nd byte represents the Clock Source Slot Number (1-11).",
+							"A non-zero value in this byte indicates an outside Clock Source",
+							"and should have valid values for the slot number and also the",
+							"port in the third byte. A zero for the 4th byte is expected since ",
+							"the Station Clock is not applicable.",
+							"",
+							"The 3rd byte represents the destination Port Number (1-84).",
+							"A non-zero value in this byte indicates an outside Clock Source",
+							"and should have valid values for the port number and also the",
+							"slot in the previous byte. A zero for the 4th byte is expected since ",
+							"the Station Clock is not applicable.",
+							"",
+							"The 4th byte represents the Station Clock Source.",
+							"A non-zero in this byte indicates whether to use station A (1) ",
+							"or B (2) and should have zero(0) values in the previous bytes",
+							"for slot and port.",
+							"",
+							"NOTE: To designate a Freerun Source or Inactive Clock Source",
+							"this field should have no slot, port, or station info. The entire",
+							"ClockSrcAddress value would then be 0.0.0.0"
+						],
+						"name" : "ERI-DNX-SMC-MIB::primaryClockSrc",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.7.2.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Secondary Clock Source slot/port address or Station ",
+							"Identifier. The format is represented using an IP address ",
+							"syntax (4 byte string) with the first byte unused.",
+							"",
+							"The 2nd byte represents the Clock Source Slot Number (1-11).",
+							"A non-zero value in this byte indicates an outside Clock Source",
+							"and should have valid values for the slot number and also the",
+							"port in the third byte. A zero for the 4th byte is expected since ",
+							"the Station Clock is not applicable.",
+							"",
+							"The 3rd byte represents the destination Port Number (1-84).",
+							"A non-zero value in this byte indicates an outside Clock Source",
+							"and should have valid values for the port number and also the",
+							"slot in the previous byte. A zero for the 4th byte is expected since ",
+							"the Station Clock is not applicable.",
+							"",
+							"The 4th byte represents the Station Clock Source.",
+							"A non-zero in this byte indicates whether to use station A (1) ",
+							"or B (2) and should have zero(0) values in the previous bytes",
+							"for slot and port.",
+							"",
+							"NOTE: To designate a Freerun Source or Inactive Clock Source",
+							"this field should have no slot, port, or station info. The entire",
+							"ClockSrcAddress value would then be 0.0.0.0"
+						],
+						"name" : "ERI-DNX-SMC-MIB::secondaryClockSrc",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.7.2.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Tertiary Clock Source slot/port address or Station ",
+							"Identifier. The format is represented using an IP address ",
+							"syntax (4 byte string) with the first byte unused.",
+							"",
+							"The 2nd byte represents the Clock Source Slot Number (1-11).",
+							"A non-zero value in this byte indicates an outside Clock Source",
+							"and should have valid values for the slot number and also the",
+							"port in the third byte. A zero for the 4th byte is expected since ",
+							"the Station Clock is not applicable.",
+							"",
+							"The 3rd byte represents the destination Port Number (1-84).",
+							"A non-zero value in this byte indicates an outside Clock Source",
+							"and should have valid values for the port number and also the",
+							"slot in the previous byte. A zero for the 4th byte is expected since ",
+							"the Station Clock is not applicable.",
+							"",
+							"The 4th byte represents the Station Clock Source.",
+							"A non-zero in this byte indicates whether to use station A (1) ",
+							"or B (2) and should have zero(0) values in the previous bytes",
+							"for slot and port.",
+							"",
+							"NOTE: To designate a Freerun Source or Inactive Clock Source",
+							"this field should have no slot, port, or station info. The entire",
+							"ClockSrcAddress value would then be 0.0.0.0"
+						],
+						"name" : "ERI-DNX-SMC-MIB::tertiaryClockSrc",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.7.2.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The command status for this Clock Source configuration.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"Clock Source Commands used in SET Command (1..99) ",
+							"update-clock-src (1)",
+							"Change the source for primary, secondary or tertiary",
+							"clocks",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"clock source data has been successfully changed",
+							"",
+							"Clock Source Error Codes used in GET RESPONSE Command (200..799)",
+							"err-gen-clock-src-config-error (200)",
+							"Unknown clock src configuration error occurred.",
+							"err-invalid-slot (201)",
+							"Configured slot not in valid range",
+							"err-invalid-port (202)",
+							"Configured port not in valid range",
+							"err-invalid-clock-src-command (203",
+							"Unrecognized clock src command action",
+							"err-invalid-clock-mode (204)",
+							"Unrecognized clock src fallback ",
+							"err-invalid-station-clock (205)",
+							"Configured station not valid",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update-clock-src",
+							"101" : "update-successful",
+							"200" : "err-gen-clock-src-config-error",
+							"201" : "err-invalid-slot",
+							"202" : "err-invalid-port",
+							"203" : "err-invalid-clock-src-command",
+							"204" : "err-invalid-clock-mode",
+							"205" : "err-invalid-station-clock",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-SMC-MIB::clockSrcCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.7.2.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::trunkCondProfTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that the system ",
+				"has detected a change in the trunk Conditioning Profile",
+				"settings. These changes are user configured."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==101) ? 1 : ($v3==200 || $v3==208 || $v3==400 || $v3==450 || ($v3>=500 && $v3<=502)) ? 2 : 3"
+				},
+				"EventType" : "trunkCondProfTrap",
+				"ExpireTime" : {
+					"eval" : "(($v3==101) || $v3==200 || $v3==208 || $v3==400 || $v3==450 || ($v3>=500 && $v3<=502)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==101) ? 0 : ($v3==200 || $v3==208 || $v3==400 || $v3==450 || ($v3>=500 && $v3<=502)) ? 3 : 2"
+				},
+				"SubNode" : "trunkProfileID:$v2",
+				"Summary" : "NMS gets notified when the system detected change in Trunk Conditioning Profile: $v2. Command status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::trunkCondProfTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::trunkProfileID i 1 ERI-DNX-SMC-MIB::trunkCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::trunkCondProfTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies a Trunk Conditioning Profile."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trunkProfileID",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.6.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The command status for this configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"Trunk Conditioning Profile Commands used in SET Command (1..99) ",
+							"update (1)",
+							"Change existing Trunk Conditioning Profile Configuration",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"Trunk Conditioning data/value has been successfully changed",
+							"",
+							"Trunk Conditioning Profile Config Error Codes used in GET RESPONSE ",
+							"Command (200..799)",
+							"err-general-trunk-error (200)",
+							"Unknown Trunk Conditioning Profile Error occurred",
+							"err-invalid-command (208)",
+							"Unrecognized voltage channel command-action",
+							"err-general-config-error (400)",
+							"Unknown configuration error occurred ",
+							"err-invalid-trunk-limit (404)",
+							"Invalid upper or lower boundary limit",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name.",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update",
+							"101" : "update-successful",
+							"200" : "err-general-trunk-error",
+							"208" : "err-invalid-command",
+							"400" : "err-general-config-error",
+							"404" : "err-invalid-trunk-value",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-SMC-MIB::trunkCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.8.6.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::systemEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a generic event ",
+				"has occured in the system which is reported as a text message."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==0 || $v3==1) ? 3 : 2"
+				},
+				"EventType" : "systemEventTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==0 || $v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 3 : ($v3==3) ? 4 : ($v3==4) ? 5 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::systemEventTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::trapSysEvent s EXAMPLE ERI-DNX-SMC-MIB::trapSeverity i 0",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::systemEventTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This is the text message from the resource reporting the trap."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSysEvent",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The importance of the trap event.",
+							"nominal (0) Normal message, not used. ",
+							"informational (1) Informative message, not an error.",
+							"minor (2) Error that serves as a warning to user.",
+							"major (3) Error that requires user intervention.",
+							"critical (4) Severe error. Device failure could result.",
+							""
+						],
+						"enums" : {
+							"0" : "nominal",
+							"1" : "informational",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "ERI-DNX-SMC-MIB::trapSeverity",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::trapDestCfgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has ",
+				"updated the configuration for a given Trap Destination entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==101) ? 1 : (($v3>=200 && $v3<=206) || $v3==450 || ($v3>=500 && $v3<=502)) ? 2 : 3"
+				},
+				"EventType" : "trapDestCfgTrap",
+				"ExpireTime" : {
+					"eval" : "(($v3==101) || ($v3>=200 && $v3<=206) || $v3==450 || ($v3>=500 && $v3<=502)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==101) ? 0 : (($v3>=200 && $v3<=206) || $v3==450 || ($v3>=500 && $v3<=502)) ? 3 : 2"
+				},
+				"SubNode" : "TrapDestAddr:$v2",
+				"Summary" : "NMS gets notified when the Trap Destination ($v2) configuration updated. Command status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::trapDestCfgTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::trapDestAddr a 192.0.2.1 ERI-DNX-SMC-MIB::trapDestCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::trapDestCfgTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The Trap Destination IP Address where all Trap PDUs ",
+							"are sent for this Client."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapDestAddr",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.20.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The command status for this trap dest configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"Initial default status for a row ",
+							"",
+							"Trap Dest Commands used in SET Command (1..99) ",
+							"update-trap-dest (1)",
+							"Change an aspect of current trap destination",
+							"delete-trap-dest (2)",
+							"Delete Trap Destination entry from table.",
+							"create-trap-dest (3)",
+							"Add New Trap Destination entry to the table.",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"Trap dest has been successfully changed",
+							"delete-successful (102)",
+							"Trap dest has been successfully removed",
+							"create-successful (103)",
+							"Trap dest has been successfully added",
+							"",
+							"Trap Dest Error Codes used in GET RESPONSE Command (200..799)",
+							"err-general-trap-dest-cfg-error (200)",
+							"Unknown configuration error occurred.",
+							"err-invalid-trap-dest-addr (201)",
+							"Invalid Destination IP address",
+							"err-invalid-trap-dest-cmd (202) ",
+							"Unrecognized trap command action",
+							"err-invalid-trap-dest-name (203)",
+							"Configured trap community name too long",
+							"err-invalid-trap-dest-pdu (204) ",
+							"Unrecognized trap PDU type settings",
+							"err-invalid-trap-dest-retry (205) ",
+							"Invalid trap Max Retry range",
+							"err-invalid-trap-dest-tmout (206) ",
+							"Unrecognized trap timeout setting",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update-trap-dest",
+							"2" : "delete-trap-dest",
+							"3" : "create-trap-dest",
+							"101" : "update-successful",
+							"102" : "delete-successful",
+							"103" : "create-successful",
+							"200" : "err-general-trap-dest-cfg-error",
+							"201" : "err-invalid-trap-dest-addr",
+							"202" : "err-invalid-trap-dest-cmd",
+							"203" : "err-invalid-trap-dest-name",
+							"204" : "err-invalid-trap-dest-pdu",
+							"205" : "err-invalid-trap-dest-retry",
+							"206" : "err-invalid-trap-dest-tmout",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-SMC-MIB::trapDestCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.20.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-SMC-MIB::featureKeyCfgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has ",
+				"added to or modified the configuration of the system Feature Keys."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==0) ? 3 : ($v3==1) ? 1 : 2"
+				},
+				"EventType" : "featureKeyCfgTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 2 : ($v3==1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v2 Feature Key status is $v3. Command status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-SMC-MIB::featureKeyCfgTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-SMC-MIB::featureKeyName s EXAMPLE ERI-DNX-SMC-MIB::featureKeyState i 0 ERI-DNX-SMC-MIB::featureKeyCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-SMC-MIB::featureKeyCfgTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The text name describing the type of Feature.",
+							"",
+							"KeyId Feature Key Name Description",
+							"----- ---------------- -----------",
+							"1. ADPCM Tcoder - Transcoder subsystem",
+							"2. Subrate Switching - High and Low Nibble connections",
+							"3. Monitor and Control - Voltage Measurement, Input/ Output ",
+							"Contact Closures, & Ambient Temperature subsystems",
+							"4. Basic Routing - Terminal Server, PPP, Channelized Routing",
+							"RIP, NAT, DHCP, & Packet Filtering.",
+							"5. Advanced Routing - OSPF, VLAN Mapping & GRE data encapsulation",
+							"6. APS - Automatic Protection Switching",
+							"7. High Speed Data - Synchronous subsystem",
+							"8. High Availablity - Circuit Protection Groups ",
+							""
+						],
+						"name" : "ERI-DNX-SMC-MIB::featureKeyName",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.6.100.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Determines if the Feature is active or inactive. This can ",
+							"only be SET after the associated feature key has been",
+							"entered."
+						],
+						"enums" : {
+							"0" : "noKey",
+							"1" : "active",
+							"2" : "inactive"
+						},
+						"name" : "ERI-DNX-SMC-MIB::featureKeyState",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.6.100.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The command status for this configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"Feature Key Commands used in SET Command (1..99) ",
+							"update (1)",
+							"Update the Feature Key state",
+							"deleteKey (2)",
+							"Remove the Feature Key from the system",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"Feature Key has been successfully updated",
+							"delete-successful (102)",
+							"Feature Key has been successfully deleted",
+							"",
+							"Feature Key Config Error Codes used in GET RESPONSE Command (200..799)",
+							"err-general-key-config-error (400)",
+							"Unknown key configuration error occurred ",
+							"err-invalid-state (401)",
+							"Unrecognized key state ",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name.",
+							"err-invalid-cmd-status (451)",
+							"Invalid or missing command status field ",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update",
+							"2" : "deleteKey",
+							"101" : "update-successful",
+							"102" : "delete-successful",
+							"400" : "err-general-key-config-error",
+							"401" : "err-invalid-state",
+							"450" : "err-data-locked-by-another-user",
+							"451" : "err-invalid-cmd-status",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-SMC-MIB::featureKeyCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.6.100.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

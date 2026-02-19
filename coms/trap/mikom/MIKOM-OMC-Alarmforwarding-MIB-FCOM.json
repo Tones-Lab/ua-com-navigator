@@ -1,0 +1,377 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MIKOM-OMC-Alarmforwarding-MIB::mAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send if an AlarmEvent occurs",
+				"Index is nodeAlarmNo"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "mAlarmTrapStatus:$v9",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v8==1) ? 5 : (($v8==2) ? 4 : 3)"
+				},
+				"SubNode" : "nodeRepeaterID:$v6",
+				"Summary" : {
+					"eval" : "($v11 ne '') ? '$v11' : 'Alarm ($v2) occurred due to $v10. $v12'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIKOM-OMC-Alarmforwarding-MIB::mAlarmTrap MIKOM-OMC-Alarmforwarding-MIB::nodeTrapNo i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeAlarmNo i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeOMCIndex i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeOMCPrefix s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeRepDN s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeRepeaterID s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeRaiseTime s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodePerceivedSeveritie i 0 MIKOM-OMC-Alarmforwarding-MIB::nodeEventType i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeProbableCause i 0 MIKOM-OMC-Alarmforwarding-MIB::nodeSpecificProblem s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeAdditionalText s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeTrendIndication i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeWorstCase i 9999",
+			"trap" : {
+				"name" : "MIKOM-OMC-Alarmforwarding-MIB::mAlarmTrap",
+				"oid" : "1.3.6.1.4.1.6408.100.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Trap No. (i=i+1 in Runtime, Resetted by Restart or mRestart)"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeTrapNo",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm No. (i=i+1 in Runtime, Resetted by Restart or mRestart)"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeAlarmNo",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OMC Index for this Alarm: Unique for each Alarm, (Constant by restart)",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeOMCIndex",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Simillar to mOMCPrefix"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeOMCPrefix",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Distinguished Name of the Repeater stored in the OMC",
+							"Beware: ",
+							"If a Repeater has no Distinguished Name, ",
+							"Alarms and Alarm Clear Messages are not forwarded.",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeRepDN",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Includes the RepeaterID used in the OMC",
+							"",
+							"",
+							"Format: MR: ID (stored to the OMC and to the Repeater)",
+							"",
+							"MOR: ID+SPACE+SlaveNo. (Messages referring to the Master or Slaves)",
+							"ID (Messages referring to the complete System)",
+							"",
+							"",
+							"",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeRepeaterID",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"X733 Time Stamp from OMC by creating this Alarm in MIKOM Standard",
+							"",
+							"",
+							"Format: YYYY-MM-DD,HH:MM:SS",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeRaiseTime",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"X733 Severitie of this Alarm in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodePerceivedSeveritie",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"X733 EventType of this Alarm in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeEventType",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"X733 ProbableCause of this Alarm in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeProbableCause",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"X733 Alarm Translation into a MIKOM Standard Format"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeSpecificProblem",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"X733 Additional Text Line from the OMC- Keyword Table"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeAdditionalText",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"X733 TrendIndication in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeTrendIndication",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"X733 WorstCase in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeWorstCase",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIKOM-OMC-Alarmforwarding-MIB::mAlarmClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send if an AlarmClearEvent occurs",
+				"Index is nodeAlarmNo"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "mAlarmTrapStatus:$v9",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "nodeRepeaterID:$v6",
+				"Summary" : "Alarm $v2 cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIKOM-OMC-Alarmforwarding-MIB::mAlarmClearTrap MIKOM-OMC-Alarmforwarding-MIB::nodeTrapNo i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeAlarmNo i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeOMCIndex i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeOMCPrefix s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeRepDN s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeRepeaterID s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeClearTime s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodePerceivedSeveritie i 0 MIKOM-OMC-Alarmforwarding-MIB::nodeEventType i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeProbableCause i 0 MIKOM-OMC-Alarmforwarding-MIB::nodeSpecificProblem s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeAdditionalText s EXAMPLE MIKOM-OMC-Alarmforwarding-MIB::nodeClearMessage i 9999",
+			"trap" : {
+				"name" : "MIKOM-OMC-Alarmforwarding-MIB::mAlarmClearTrap",
+				"oid" : "1.3.6.1.4.1.6408.100.1.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Trap No. (i=i+1 in Runtime, Resetted by Restart or mRestart)"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeTrapNo",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm No. (i=i+1 in Runtime, Resetted by Restart or mRestart)"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeAlarmNo",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OMC Index for this Alarm: Unique for each Alarm, (Constant by restart)",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeOMCIndex",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Simillar to mOMCPrefix"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeOMCPrefix",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Distinguished Name of the Repeater stored in the OMC",
+							"Beware: ",
+							"If a Repeater has no Distinguished Name, ",
+							"Alarms and Alarm Clear Messages are not forwarded.",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeRepDN",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Includes the RepeaterID used in the OMC",
+							"",
+							"",
+							"Format: MR: ID (stored to the OMC and to the Repeater)",
+							"",
+							"MOR: ID+SPACE+SlaveNo. (Messages referring to the Master or Slaves)",
+							"ID (Messages referring to the complete System)",
+							"",
+							"",
+							"",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeRepeaterID",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"X733 Time Stamp from OMC by clearing this Alarm in MIKOM Standard",
+							"",
+							"",
+							"Format: YYYY-MM-DD,HH:MM:SS"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeClearTime",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"X733 Severitie of this Alarm in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodePerceivedSeveritie",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"X733 EventType of this Alarm in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeEventType",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"X733 ProbableCause of this Alarm in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeProbableCause",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"X733 Alarm Translation into a MIKOM Standard Format"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeSpecificProblem",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"X733 Additional Text Line from the OMC- Keyword Table"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeAdditionalText",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"X733 ClearMessage in numeric MIKOM Standard"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeClearMessage",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIKOM-OMC-Alarmforwarding-MIB::mOverallAlarmClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send by Startup or Reset via mRestart",
+				"nodeAlarmNo (Index) is always 0"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mOverallAlarmClearTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Overall alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIKOM-OMC-Alarmforwarding-MIB::mOverallAlarmClearTrap MIKOM-OMC-Alarmforwarding-MIB::nodeTrapNo i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeOMCIndex i 9999 MIKOM-OMC-Alarmforwarding-MIB::nodeRaiseTime s EXAMPLE",
+			"trap" : {
+				"name" : "MIKOM-OMC-Alarmforwarding-MIB::mOverallAlarmClearTrap",
+				"oid" : "1.3.6.1.4.1.6408.100.1.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Trap No. (i=i+1 in Runtime, Resetted by Restart or mRestart)"
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeTrapNo",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OMC Index for this Alarm: Unique for each Alarm, (Constant by restart)",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeOMCIndex",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"X733 Time Stamp from OMC by creating this Alarm in MIKOM Standard",
+							"",
+							"",
+							"Format: YYYY-MM-DD,HH:MM:SS",
+							""
+						],
+						"name" : "MIKOM-OMC-Alarmforwarding-MIB::nodeRaiseTime",
+						"oid" : "1.3.6.1.4.1.6408.100.2.10.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

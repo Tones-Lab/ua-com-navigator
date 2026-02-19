@@ -1,0 +1,75 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201407080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ZXR10-LOG-MIB::zxr10LogMsgNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send the trap of the operating logging information ",
+				"to uniform network manager."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zxr10LogMsgNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? '$v3' : 'Log level $v2 operating logging information'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZXR10-LOG-MIB::zxr10LogMsgNotification ZXR10-LOG-MIB::zxr10LogClass i 1 ZXR10-LOG-MIB::zxr10LogLevel i 1 ZXR10-LOG-MIB::zxr10LogMsgText s EXAMPLE ZXR10-LOG-MIB::zxr10LogTimeStamp u 9999",
+			"trap" : {
+				"name" : "ZXR10-LOG-MIB::zxr10LogMsgNotification",
+				"oid" : "1.3.6.1.4.1.3902.3.305.4.1",
+				"variables" : [
+					{
+						"description" : [
+							"The class of the message."
+						],
+						"enums" : {
+							"1" : "cmdLog"
+						},
+						"name" : "ZXR10-LOG-MIB::zxr10LogClass",
+						"oid" : "1.3.6.1.4.1.3902.3.305.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The level of the message."
+						],
+						"name" : "ZXR10-LOG-MIB::zxr10LogLevel",
+						"oid" : "1.3.6.1.4.1.3902.3.305.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The text of the message. If the text of the message",
+							"exceeds 255 bytes, the message will be truncated to",
+							"254 bytes and a '*' character will be appended -",
+							"indicating that the message has been truncated."
+						],
+						"name" : "ZXR10-LOG-MIB::zxr10LogMsgText",
+						"oid" : "1.3.6.1.4.1.3902.3.305.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The time stamp of the message."
+						],
+						"name" : "ZXR10-LOG-MIB::zxr10LogTimeStamp",
+						"oid" : "1.3.6.1.4.1.3902.3.305.3.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

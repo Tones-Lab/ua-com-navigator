@@ -1,0 +1,3470 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201509161200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapPortStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the value of uapPortLinkStatus changes on a port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v12==1) ? 1 : (($v12==2) ? 2 : 3)"
+				},
+				"EventType" : "uapPortStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v12==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "portIndex:$v7",
+				"Summary" : "Port $v8 status is $v12"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapPortStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 6 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsName s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsRxDescrip s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsTxDescrip s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsAdmin i 1 IXIA-COMM-UAP-PORTS-MIB::uapPortsLinkStatus i 2",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapPortStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsName s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsRxDescrip s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsTxDescrip s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsAdmin i 1 IXIA-COMM-UAP-PORTS-MIB::uapPortsLinkStatus i 1"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapPortStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A generic string port index. Refers to the main entity whose staus is being reported."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::port",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Port name"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsName",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Port receive side description"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsRxDescrip",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Port transmit side description"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsTxDescrip",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative status"
+						],
+						"enums" : {
+							"1" : "enable",
+							"2" : "disable"
+						},
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsAdmin",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Link status of the port"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "linkUp",
+							"2" : "linkDown"
+						},
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsLinkStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapPortTxUtilizationAlertTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Description."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==2) ? 1 : (($v10==0) ? 3 : 2)"
+				},
+				"EventType" : "uapPortTxUtilizationAlertTrap",
+				"ExpireTime" : {
+					"eval" : "($v10==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "portIndex:$v7",
+				"Summary" : {
+					"eval" : "($v10 == 1) ? 'Tx utilization on port $v8 is above $v12 % threshold' : (($v10 == 2) ? 'Tx utilization on port $v8 is below $v13 % threshold' : 'Tx utilization on port $v8 is $v10')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapPortTxUtilizationAlertTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 6 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsName s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsTxDescrip s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertStatus i 1 IXIA-COMM-UAP-PORTS-MIB::portsStatsUtilTxUtilPctTimes1e4 C 999999 IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertRisingThresRate i 85 IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertFallingThresRate i 80",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapPortTxUtilizationAlertTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsName s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsTxDescrip s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertStatus i 2 IXIA-COMM-UAP-PORTS-MIB::portsStatsUtilTxUtilPctTimes1e4 C 696969 IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertRisingThresRate i 85 IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertFallingThresRate i 80"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapPortTxUtilizationAlertTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.3.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A generic string port index. Refers to the main entity whose staus is being reported."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::port",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Port name"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsName",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Port transmit side description"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsTxDescrip",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates a Rx utilization alert is raised or cleared"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "alertRising",
+							"2" : "alertFalling"
+						},
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.54",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tx bandwidth utilization of line rate. Units are in one ten-thousandths of a percent."
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::portsStatsUtilTxUtilPctTimes1e4",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.3.6.1.1.12",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"Tx utilization threshold rate (in percent) to trigger the alert"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertRisingThresRate",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.52",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Tx utilization threshold rate (in percent) to trigger the clearing of the alert"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertTxAlertFallingThresRate",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.53",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapPortRxUtilizationAlertTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Description."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==2) ? 1 : (($v10==0) ? 3 : 2)"
+				},
+				"EventType" : "uapPortRxUtilizationAlertTrap",
+				"ExpireTime" : {
+					"eval" : "($v10==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "portIndex:$v7",
+				"Summary" : {
+					"eval" : "($v10 == 1) ? 'Rx utilization on port $v8 is above $v12 % threshold' : (($v10 == 2) ? 'Rx utilization on port $v8 is below $v13 % threshold' : 'Rx utilization on port $v8 is $v10')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapPortRxUtilizationAlertTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 6 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsName s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsRxDescrip s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertStatus i 1 IXIA-COMM-UAP-PORTS-MIB::portsStatsUtilRxUtilPctTimes1e4 C 999999 IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertRisingThresRate i 85 IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertFallingThresRate i 80",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapPortRxUtilizationAlertTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsName s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsRxDescrip s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertStatus i 2 IXIA-COMM-UAP-PORTS-MIB::portsStatsUtilRxUtilPctTimes1e4 C 696969 IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertRisingThresRate i 85 IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertFallingThresRate i 80"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapPortRxUtilizationAlertTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.3.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A generic string port index. Refers to the main entity whose staus is being reported."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::port",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Port name"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsName",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Port receive side description"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsRxDescrip",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates a Rx utilization alert is raised or cleared"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "alertRising",
+							"2" : "alertFalling"
+						},
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.58",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Rx bandwidth utilization of line rate. Units are in one ten-thousandths of a percent."
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::portsStatsUtilRxUtilPctTimes1e4",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.3.6.1.1.14",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"Rx utilization threshold rate (in percent) to trigger the alert"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertRisingThresRate",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.56",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Rx utilization threshold rate (in percent) to trigger the clearing of the alert"
+						],
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::uapPortsUtilAlertRxAlertFallingThresRate",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.2.1.57",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapPortStatsTableResetTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Description."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "uapPortStatsTableResetTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Port stats table was reset"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapPortStatsTableResetTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-PORTS-MIB::statsAdminStatsTableReset i 1",
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapPortStatsTableResetTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Set this object to perform stats reset for all ports"
+						],
+						"enums" : {
+							"1" : "statsNa",
+							"2" : "statsRealTime"
+						},
+						"name" : "IXIA-COMM-UAP-PORTS-MIB::statsAdminStatsTableReset",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.3.1.3.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapHeartbeatStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the value of uapHeartbeatStatus changes on a port which is the member of a heartbeat pair. The trap is sent for each port in the pair."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==1) ? 1 : (($v10==2) ? 2 : 3)"
+				},
+				"EventType" : "uapHeartbeatStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v10==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "portIndex:$v7",
+				"Summary" : "Heartbeat status for ports $v7 & $v8 changed to $v10"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapHeartbeatStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 3 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE IXIA-COMM-UAP-HEARTBEAT-MIB::uapHeartbeatPeer s EXAM IXIA-COMM-UAP-HEARTBEAT-MIB::uapHeartbeatAdmin i 2 IXIA-COMM-UAP-HEARTBEAT-MIB::uapHeartbeatStatus i 3",
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapHeartbeatStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.13.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A generic string port index. Refers to the main entity whose staus is being reported."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::port",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Peer port - the other member of a heartbeat port pair."
+						],
+						"name" : "IXIA-COMM-UAP-HEARTBEAT-MIB::uapHeartbeatPeer",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.13.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Enable heartbeat generation and detection"
+						],
+						"enums" : {
+							"1" : "enable",
+							"2" : "disable"
+						},
+						"name" : "IXIA-COMM-UAP-HEARTBEAT-MIB::uapHeartbeatAdmin",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.13.1.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Heartbeat status"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "active",
+							"2" : "failed",
+							"3" : "disabled"
+						},
+						"name" : "IXIA-COMM-UAP-HEARTBEAT-MIB::uapHeartbeatStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.13.1.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapLfdStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapLfdPairsLfdState changes on an LFD pair."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10 == 2) ? 1 : (($v10 == 0 || $v10 == 1) ? 3 : 2)"
+				},
+				"EventType" : "uapLfdStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v10 == 0 || $v10 == 1 || $v10 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "port:$v7;peerPort:$v8",
+				"Summary" : "LFD state for ports $v7 & $v8 changed to $v10"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapLfdStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 5 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE1 IXIA-COMM-UAP-TRAPS-MIB::peerPort s EXAMPLE2 IXIA-COMM-UAP-LFD-MIB::uapLfdPairsAdmin i 1 IXIA-COMM-UAP-LFD-MIB::uapLfdPairsLfdState i 4 IXIA-COMM-UAP-LFD-MIB::uapLfdPairsPortAState i 1 IXIA-COMM-UAP-LFD-MIB::uapLfdPairsPortBState i 2",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapLfdStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::port s EXAMPLE1 IXIA-COMM-UAP-TRAPS-MIB::peerPort s EXAMPLE2 IXIA-COMM-UAP-LFD-MIB::uapLfdPairsAdmin i 1 IXIA-COMM-UAP-LFD-MIB::uapLfdPairsLfdState i 2 IXIA-COMM-UAP-LFD-MIB::uapLfdPairsPortAState i 1 IXIA-COMM-UAP-LFD-MIB::uapLfdPairsPortBState i 1"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapLfdStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.16.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A generic string port index. Refers to the main entity whose staus is being reported."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::port",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A generic string port index. Refers to the peer to the port entity whose staus is being reported.",
+							"For example, in a heartbeat port pair, the port whose status is being reported would be the port",
+							"object and the other member in the heartbeat pair would be the peerPort object."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::peerPort",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Enable LFD"
+						],
+						"enums" : {
+							"1" : "enable",
+							"2" : "disable"
+						},
+						"name" : "IXIA-COMM-UAP-LFD-MIB::uapLfdPairsAdmin",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.16.1.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"LFD state of pair"
+						],
+						"enums" : {
+							"0" : "lfdDisabled",
+							"1" : "lfdUnknown",
+							"2" : "lfdBothUp",
+							"3" : "lfdAdown",
+							"4" : "lfdBdown",
+							"5" : "lfdBothDown",
+							"6" : "lfdWaitForA",
+							"7" : "lfdWaitForB",
+							"8" : "lfdWaitForBoth"
+						},
+						"name" : "IXIA-COMM-UAP-LFD-MIB::uapLfdPairsLfdState",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.16.1.1.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"LFD state of link"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "lfdPortUp",
+							"2" : "lfdPortDown",
+							"3" : "lfdPortDisable",
+							"4" : "lfdPortStandby"
+						},
+						"name" : "IXIA-COMM-UAP-LFD-MIB::uapLfdPairsPortAState",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.16.1.1.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"LFD state of link"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "lfdPortUp",
+							"2" : "lfdPortDown",
+							"3" : "lfdPortDisable",
+							"4" : "lfdPortStandby"
+						},
+						"name" : "IXIA-COMM-UAP-LFD-MIB::uapLfdPairsPortBState",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.16.1.1.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapBypassStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapBypassStatus changes on a uapBypassEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==1) ? 1 : (($v10==0) ? 3 : 2)"
+				},
+				"EventType" : "uapBypassStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v10==0 || $v10==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "bypassId:$v7",
+				"Summary" : "Bypass $v8 status changed to $v10"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapBypassStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 6 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::bypassId i 9999 IXIA-COMM-UAP-BYPASS-MIB::uapBypassName s EXAMPLE IXIA-COMM-UAP-BYPASS-MIB::uapBypassDescription s EXAMPLE IXIA-COMM-UAP-BYPASS-MIB::uapBypassStatus i 2 IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairs s EXAMPLE IXIA-COMM-UAP-BYPASS-MIB::uapBypassEnabled i 1 IXIA-COMM-UAP-BYPASS-MIB::uapBypassBypassForce i 1",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapBypassStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::bypassId i 9999 IXIA-COMM-UAP-BYPASS-MIB::uapBypassName s EXAMPLE IXIA-COMM-UAP-BYPASS-MIB::uapBypassDescription s EXAMPLE IXIA-COMM-UAP-BYPASS-MIB::uapBypassStatus i 1 IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairs s EXAMPLE IXIA-COMM-UAP-BYPASS-MIB::uapBypassEnabled i 1 IXIA-COMM-UAP-BYPASS-MIB::uapBypassBypassForce i 1"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapBypassStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.25.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Numeric index identifying a bypass entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::bypassId",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Bypass name"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassName",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Bypass description"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Bypass status"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "on",
+							"2" : "off",
+							"3" : "disabled",
+							"4" : "forced-on",
+							"5" : "forced-off"
+						},
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"List of network ports pairs, First pair is active, succesive pairs are high-availabilty backups links listed in priority order"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairs",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administratively enable/disable bypass; enables/disables all functions"
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassEnabled",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.1.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"When force_on, all tools are bypassed; when force_off, all tools will not be bypassed(only valid in standalone)"
+						],
+						"enums" : {
+							"1" : "disable",
+							"2" : "force-on",
+							"3" : "force-off"
+						},
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassBypassForce",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapBypassNetPairStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapBypassNetPortPairsStatusStatus changes in a uapBypassNetPortPairsStatusEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==1) ? 1 : (($v11==0 || $v11==3) ? 3 : 2)"
+				},
+				"EventType" : "uapBypassNetPairStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v11==2 || $v11==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "bypassId:$v7",
+				"Summary" : "Bypass net pair $v8 status changed to $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapBypassNetPairStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 3 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::bypassId i 9999 IXIA-COMM-UAP-TRAPS-MIB::pair i 9999 IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairsStatusPortA s EXAM IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairsStatusPortB s EXAM IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairsStatusStatus i 3",
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapBypassNetPairStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.25.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Numeric index identifying a bypass entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::bypassId",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Numerical index of port pairs within a table."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::pair",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Network pair portA"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairsStatusPortA",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.50.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Network pair portB"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairsStatusPortB",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.50.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Pair status, if primary pair is either active or failed, secondary pairs can also have standby status"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "active",
+							"2" : "failed",
+							"3" : "standby",
+							"4" : "forced-bypass"
+						},
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassNetPortPairsStatusStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.50.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapBypassToolPairStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapBypassToolPortPairsStatusStatus changes on a tool port pair."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v15==1) ? 1 : (($v15==0 || $v15==3) ? 3 : 2)"
+				},
+				"EventType" : "uapBypassToolPairStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v15==2 || $v15==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "bypassId:$v7",
+				"Summary" : "Bypass tool $v10 pair status changed to $v15"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapBypassToolPairStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 3 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::bypassId i 9999 IXIA-COMM-UAP-TRAPS-MIB::tool i 9999 IXIA-COMM-UAP-TRAPS-MIB::pair i 9999 IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolName s EXAMPLE IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolDescription s EXAMPLE IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolRequiredTool i 1 IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolPortPairsStatusPortA s EXAM IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolPortPairsStatusPortB s EXAM IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolPortPairsStatusStatus i 3",
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapBypassToolPairStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.25.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Numeric index identifying a bypass entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::bypassId",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Numerical index of a tool entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::tool",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Numerical index of port pairs within a table."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::pair",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Tool name"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolName",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.60.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tool description"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.60.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"When true, if all the tool pairs in tool_port_pairs list loses link or any heartbeat defined for the port fails, then all tools are bypassed"
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolRequiredTool",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.60.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Network pair portA"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolPortPairsStatusPortA",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.70.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Network pair portB"
+						],
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolPortPairsStatusPortB",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.70.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Pair status, if primary pair is either active or failed, secondary pairs can also have standby status"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "active",
+							"2" : "failed",
+							"3" : "standby",
+							"4" : "forced-bypass"
+						},
+						"name" : "IXIA-COMM-UAP-BYPASS-MIB::uapBypassToolPortPairsStatusStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.25.1.70.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleInventoryStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapModulesInventoryInstalledType changes for a module slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "uapModuleInventoryStatusChangedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : "Installed type of module in slot $v7 is $v10"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleInventoryStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 2 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType i 101 IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus i 0",
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleInventoryStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Component category"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "psu",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack",
+							"12" : "cpu",
+							"100" : "daughterCard",
+							"101" : "battery",
+							"102" : "temperature",
+							"103" : "transceiver"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module installed type"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "unknown",
+							"101" : "im-21-byp"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module administrative status"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.52",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.54",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module operational status"
+						],
+						"enums" : {
+							"0" : "empty",
+							"1" : "up",
+							"2" : "down",
+							"3" : "poweredDown",
+							"4" : "failed",
+							"5" : "booting",
+							"6" : "mismatch",
+							"7" : "missing",
+							"8" : "unconfigured",
+							"9" : "ready",
+							"10" : "test"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.50",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module online status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "offline",
+							"2" : "online"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.51",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleAdminStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapModulesAdminStatus changes for a module slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==0) ? 2 : 1"
+				},
+				"EventType" : "uapModuleAdminStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v11==0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : "Administrative status of module in slot $v7 changed to $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleAdminStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 5 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus i 0",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleAdminStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus i 1 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus i 0"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleAdminStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Component category"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "psu",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack",
+							"12" : "cpu",
+							"100" : "daughterCard",
+							"101" : "battery",
+							"102" : "temperature",
+							"103" : "transceiver"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module installed type"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "unknown",
+							"101" : "im-21-byp"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module administrative status"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.52",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.54",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module operational status"
+						],
+						"enums" : {
+							"0" : "empty",
+							"1" : "up",
+							"2" : "down",
+							"3" : "poweredDown",
+							"4" : "failed",
+							"5" : "booting",
+							"6" : "mismatch",
+							"7" : "missing",
+							"8" : "unconfigured",
+							"9" : "ready",
+							"10" : "test"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.50",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module online status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "offline",
+							"2" : "online"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.51",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleAlarmStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapModulesStatusAlarmStatus changes for a module slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v12==1) ? 1 : (($v12==0) ? 3 : 2)"
+				},
+				"EventType" : "uapModuleAlarmStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v12==0 || $v12==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : {
+					"eval" : "($v13 ne '') ? '$v13' : 'Alarm status of module in slot $v7 is $v12'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 5 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus i 2 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus i 0",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus i 1 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus i 0"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleAlarmStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Component category"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "psu",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack",
+							"12" : "cpu",
+							"100" : "daughterCard",
+							"101" : "battery",
+							"102" : "temperature",
+							"103" : "transceiver"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module installed type"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "unknown",
+							"101" : "im-21-byp"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module administrative status"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.52",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.54",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module operational status"
+						],
+						"enums" : {
+							"0" : "empty",
+							"1" : "up",
+							"2" : "down",
+							"3" : "poweredDown",
+							"4" : "failed",
+							"5" : "booting",
+							"6" : "mismatch",
+							"7" : "missing",
+							"8" : "unconfigured",
+							"9" : "ready",
+							"10" : "test"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.50",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module online status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "offline",
+							"2" : "online"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.51",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleOperationalStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapModulesStatusOperStatus changes for a given module slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v14==1) ? 1 : (($v14==5 || $v14==9 || $v14==10) ? 3 : 2)"
+				},
+				"EventType" : "uapModuleOperationalStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v14==1 || $v14==5 || $v14==9 || $v14==10) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : "Operational status of module in slot $v7 is $v14"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleOperationalStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 2 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus i 5 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus i 0",
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleOperationalStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Component category"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "psu",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack",
+							"12" : "cpu",
+							"100" : "daughterCard",
+							"101" : "battery",
+							"102" : "temperature",
+							"103" : "transceiver"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module installed type"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "unknown",
+							"101" : "im-21-byp"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module administrative status"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.52",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.54",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module operational status"
+						],
+						"enums" : {
+							"0" : "empty",
+							"1" : "up",
+							"2" : "down",
+							"3" : "poweredDown",
+							"4" : "failed",
+							"5" : "booting",
+							"6" : "mismatch",
+							"7" : "missing",
+							"8" : "unconfigured",
+							"9" : "ready",
+							"10" : "test"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.50",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module online status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "offline",
+							"2" : "online"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.51",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleOnlineStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapModulesStatusOnlineStatus changes on a module slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v15==1) ? 2 : (($v15==2) ? 1 : 3)"
+				},
+				"EventType" : "uapModuleOnlineStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v15==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : "Online status of module in slot $v7 is $v15"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleOnlineStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 6 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus i 1",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleOnlineStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus i 0 IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus i 2"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleOnlineStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Component category"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "psu",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack",
+							"12" : "cpu",
+							"100" : "daughterCard",
+							"101" : "battery",
+							"102" : "temperature",
+							"103" : "transceiver"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryCategory",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module installed type"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "unknown",
+							"101" : "im-21-byp"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesInventoryInstalledType",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module administrative status"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesAdminStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.54",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.52",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module operational status"
+						],
+						"enums" : {
+							"0" : "empty",
+							"1" : "up",
+							"2" : "down",
+							"3" : "poweredDown",
+							"4" : "failed",
+							"5" : "booting",
+							"6" : "mismatch",
+							"7" : "missing",
+							"8" : "unconfigured",
+							"9" : "ready",
+							"10" : "test"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOperStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.50",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Module online status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "offline",
+							"2" : "online"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::uapModulesStatusOnlineStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.2.1.51",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleTemperatureAlarmStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of uapModuleTemperatureAlarmsAlarmStatus changes in a moduleTemperatureEntry"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==1) ? 1 : (($v10==0) ? 3 : 2)"
+				},
+				"EventType" : "uapModuleTemperatureAlarmStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v10==0 || $v10==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : {
+					"eval" : "($v11 ne '') ? '$v11' : 'Module temperature alarm status changed to $v10. $v6'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleTemperatureAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 6 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-TRAPS-MIB::index u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsAlarmStatus i 3 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureCurrentTemperatureMilliDegC i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsLowThresholdMinorTemperatureMilliDegC i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsLowThresholdMajorTemperatureMilliDegC i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsHighThresholdMinorTemperatureMilliDegC i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsHighThresholdMajorTemperatureMilliDegC i 9999",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleTemperatureAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-TRAPS-MIB::index u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsAlarmStatus i 1 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureCurrentTemperatureMilliDegC i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsLowThresholdMinorTemperatureMilliDegC i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsLowThresholdMajorTemperatureMilliDegC i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsHighThresholdMinorTemperatureMilliDegC i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsHighThresholdMajorTemperatureMilliDegC i 9999"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleTemperatureAlarmStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.50",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Generic unsigned integer index for a table entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::index",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Temperature Sensor Description"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.80.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.80.1.31",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.80.1.33",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Temperature in thousandths of degrees Celsius"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureCurrentTemperatureMilliDegC",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.80.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Temperature in thousandths of degrees Celsius"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsLowThresholdMinorTemperatureMilliDegC",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.80.1.35",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Temperature in thousandths of degrees Celsius"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsLowThresholdMajorTemperatureMilliDegC",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.80.1.37",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Temperature in thousandths of degrees Celsius"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsHighThresholdMinorTemperatureMilliDegC",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.80.1.41",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Temperature in thousandths of degrees Celsius"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleTemperatureAlarmsHighThresholdMajorTemperatureMilliDegC",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.80.1.43",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModulePsuAlarmStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of modulePsuAlarmsAlarmStatus changes for a modulePsuEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v13==1) ? 1 : (($v13==0) ? 3 : 2)"
+				},
+				"EventType" : "uapModulePsuAlarmStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v13==0 || $v13==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : {
+					"eval" : "($v14 ne '') ? '$v14' : 'PSU alarm status of module in slot $v7 is $v13'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModulePsuAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 5 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-TRAPS-MIB::index u 9999 IXIA-COMM-UAP-MODULES-MIB::modulePsuDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::modulePsuIsFru i 1 IXIA-COMM-UAP-MODULES-MIB::modulePsuInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::modulePsuInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::modulePsuAlarmStatus i 2 IXIA-COMM-UAP-MODULES-MIB::modulePsuAlarmDescription s EXAMPLE",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModulePsuAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-TRAPS-MIB::index u 9999 IXIA-COMM-UAP-MODULES-MIB::modulePsuDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::modulePsuIsFru i 1 IXIA-COMM-UAP-MODULES-MIB::modulePsuInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::modulePsuInstalledType i 0 IXIA-COMM-UAP-MODULES-MIB::modulePsuAlarmStatus i 1 IXIA-COMM-UAP-MODULES-MIB::modulePsuAlarmDescription s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModulePsuAlarmStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.60",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Generic unsigned integer index for a table entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::index",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Description"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::modulePsuDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.90.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"PSU is field-replaceable unit (FRU)"
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::modulePsuIsFru",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.90.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"PSU Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::modulePsuInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.90.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"PSU installed type"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "unknown",
+							"1001" : "pSU-AC-460W",
+							"1002" : "pSU-DC-460W"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::modulePsuInstalledType",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.90.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::modulePsuAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.90.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::modulePsuAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.90.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleBatteryChargeStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of moduleBatteryStatus changes in a moduleBatteryEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "uapModuleBatteryChargeStatusChangedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : {
+					"eval" : "($v11 ne '') ? '$v11' : 'Battery status of module in slot $v7 is $v9'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleBatteryChargeStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 2 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-TRAPS-MIB::index u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryStatus i 1 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmStatus i 0 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleBatteryIsFru i 1 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryMilliPercentCharged u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryCurrentVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMinorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMajorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMinorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMajorVoltageMilliVolts i 9999",
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleBatteryChargeStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.80",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Generic unsigned integer index for a table entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::index",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Battery States"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "charged",
+							"2" : "charging",
+							"3" : "discharging",
+							"4" : "failed"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.31",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.33",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Battery is field-replaceable unit (FRU)"
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryIsFru",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Battery Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Percent of full charge in thousandths of a percent"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryMilliPercentCharged",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryCurrentVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMinorVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.35",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMajorVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.37",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMinorVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.41",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMajorVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.43",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleBatteryAlarmStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of moduleBatteryAlarmStatusStatus changes in a moduleBatteryEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==1) ? 1 : (($v10==0) ? 3 : 2)"
+				},
+				"EventType" : "uapModuleBatteryAlarmStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v10==0 || $v10==1 || $v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : {
+					"eval" : "($v11 ne '') ? '$v11' : 'Battery alarm status of module in slot $v7 is $v10'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleBatteryAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 4 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-TRAPS-MIB::index u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmStatus i 2 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleBatteryIsFru i 1 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryMilliPercentCharged u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryCurrentVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMinorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMajorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMinorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMajorVoltageMilliVolts i 9999",
+				"$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleBatteryAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 0 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-TRAPS-MIB::index u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmStatus i 1 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleBatteryIsFru i 1 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryMilliPercentCharged u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryCurrentVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMinorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMajorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMinorVoltageMilliVolts i 9999 IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMajorVoltageMilliVolts i 9999"
+			],
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleBatteryAlarmStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.81",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Generic unsigned integer index for a table entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::index",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Battery States"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "charged",
+							"2" : "charging",
+							"3" : "discharging",
+							"4" : "failed"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.31",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.33",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Battery is field-replaceable unit (FRU)"
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryIsFru",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Battery Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Percent of full charge in thousandths of a percent"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryMilliPercentCharged",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryCurrentVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.21",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMinorVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.35",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsLowThresholdMajorVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.37",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMinorVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.41",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Voltage in thousandths of volts"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleBatteryAlarmsHighThresholdMajorVoltageMilliVolts",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.100.1.43",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleFanAlarmStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever the value of moduleFanAlarmStatus changes in a moduleFanEntry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==1) ? 1 : (($v10==0) ? 3 : 2)"
+				},
+				"EventType" : "uapModuleFanAlarmStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v10==0 || $v10==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : (($v3==7) ? 5 : 2)))"
+				},
+				"SubNode" : "slotNum:$v7",
+				"Summary" : {
+					"eval" : "($v11 ne '') ? '$v11' : 'Fan alarm status of module in slot $v7 is $v10'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IXIA-COMM-UAP-TRAPS-MIB::uapModuleFanAlarmStatusChangedTrap IXIA-COMM-TRAPS-MIB::alertSequence u 9999 IXIA-COMM-TRAPS-MIB::eventIndex u 9999 IXIA-COMM-TRAPS-MIB::alertSeverity i 4 IXIA-COMM-TRAPS-MIB::alertType s EXAMPLE IXIA-COMM-TRAPS-MIB::alertDateTime s EXAMPLEE IXIA-COMM-TRAPS-MIB::alertMessage s EXAMPLE IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero u 9999 IXIA-COMM-UAP-TRAPS-MIB::index u 9999 IXIA-COMM-UAP-MODULES-MIB::moduleFanDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleFanAlarmStatus i 0 IXIA-COMM-UAP-MODULES-MIB::moduleFanAlarmDescription s EXAMPLE IXIA-COMM-UAP-MODULES-MIB::moduleFanInventoryStatus i 0 IXIA-COMM-UAP-MODULES-MIB::moduleFanIsFru i 1 IXIA-COMM-UAP-MODULES-MIB::moduleFanRpm u 9999",
+			"trap" : {
+				"name" : "IXIA-COMM-UAP-TRAPS-MIB::uapModuleFanAlarmStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.1.27.0.90",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A counting sequence number, used to identify the unique event which spawned a trap."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "IXIA-COMM-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for IXIAAlertType."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "IXIA-COMM-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.3054.100.9.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module slot index 1,2,3 etc. or 0 indicating the chassis itself. This allows reusing certain module status change traps as chassis status change traps."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::slotNumOrZero",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Generic unsigned integer index for a table entry."
+						],
+						"name" : "IXIA-COMM-UAP-TRAPS-MIB::index",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.9.1.2.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Fan Unit Description"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleFanDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.110.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ok",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleFanAlarmStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.110.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Description of current alarm"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleFanAlarmDescription",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.110.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Fan Inventory Status"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "empty",
+							"2" : "installed",
+							"3" : "removed",
+							"4" : "mismatched"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleFanInventoryStatus",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.110.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fan is field-replaceable unit (FRU)"
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleFanIsFru",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.110.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fan speed in RPM"
+						],
+						"name" : "IXIA-COMM-UAP-MODULES-MIB::moduleFanRpm",
+						"oid" : "1.3.6.1.4.1.3054.1.1.100.1.27.1.110.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

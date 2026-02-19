@@ -1,0 +1,333 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ES-STACK-MIB::ciscoEsStackCfgChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when there is a change in the ",
+				"stack configuration i.e. when either a new switch is ",
+				"added to the stack or a switch leaves a stack.",
+				"ciscoEsNumSwitches indicates the current number of switches",
+				"which are part of the stack. The management station has to ",
+				"update its stack information according to the",
+				"stack table."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoEsStackCfgChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Number of switches in stack has changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ES-STACK-MIB::ciscoEsStackCfgChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-ES-STACK-MIB::ciscoEsNumSwitches i 9999",
+			"trap" : {
+				"name" : "CISCO-ES-STACK-MIB::ciscoEsStackCfgChange",
+				"oid" : "1.3.6.1.4.1.9.5.14.1.1.0.1",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ES-STACK-MIB::ciscoEsNumSwitches",
+						"oid" : "1.3.6.1.4.1.9.5.14.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ES-STACK-MIB::ciscoEsStackProStackMatrixChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when the stack switches over",
+				"from primary to secondary Matrix or from ",
+				"secondary back to primary Matrix."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoEsStackProStackMatrixChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Switch matrix status has changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ES-STACK-MIB::ciscoEsStackProStackMatrixChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-ES-STACK-MIB::ciscoEsProStackMatrixStatus i 1",
+			"trap" : {
+				"name" : "CISCO-ES-STACK-MIB::ciscoEsStackProStackMatrixChange",
+				"oid" : "1.3.6.1.4.1.9.5.14.1.1.0.2",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "primary",
+							"2" : "secondary",
+							"3" : "none",
+							"4" : "failed"
+						},
+						"name" : "CISCO-ES-STACK-MIB::ciscoEsProStackMatrixStatus",
+						"oid" : "1.3.6.1.4.1.9.5.14.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ES-STACK-MIB::ciscoEsStackTempChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when the temperature in a ",
+				"switch exceeds normal or returns to normal. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : 2"
+				},
+				"EventType" : "ciscoEsStackTempChange",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Switch temperature status has changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ES-STACK-MIB::ciscoEsStackTempChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-ES-STACK-MIB::ciscoEsStackSwitchTemperature i 1",
+			"trap" : {
+				"name" : "CISCO-ES-STACK-MIB::ciscoEsStackTempChange",
+				"oid" : "1.3.6.1.4.1.9.5.14.2.0.1",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "toohigh",
+							"3" : "unknown"
+						},
+						"name" : "CISCO-ES-STACK-MIB::ciscoEsStackSwitchTemperature",
+						"oid" : "1.3.6.1.4.1.9.5.14.2.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ES-STACK-MIB::ciscoEsPortStrNFwdEntry",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a port automatically",
+				"enters store and forward mode when the error rate ",
+				"exceeds the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoEsPortStrNFwdEntry",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Port has entered store and forward mode"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ES-STACK-MIB::ciscoEsPortStrNFwdEntry RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-ES-STACK-MIB::ciscoEsPortActiveMode i 1",
+			"trap" : {
+				"name" : "CISCO-ES-STACK-MIB::ciscoEsPortStrNFwdEntry",
+				"oid" : "1.3.6.1.4.1.9.5.14.4.0.1",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "ieee8021d",
+							"2" : "cutthru",
+							"3" : "unknown"
+						},
+						"name" : "CISCO-ES-STACK-MIB::ciscoEsPortActiveMode",
+						"oid" : "1.3.6.1.4.1.9.5.14.4.1.1.37",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ES-STACK-MIB::ciscoEsEtherChannelFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when one of the links in an",
+				"EtherChannel fail. The variable ciscoEsECPorts",
+				"contains the ports which are operational in the",
+				"EtherChannel. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoEsEtherChannelFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "One of the links in an EtherChannel has failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ES-STACK-MIB::ciscoEsEtherChannelFailed RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-ES-STACK-MIB::ciscoEsECPorts s 9999",
+			"trap" : {
+				"name" : "CISCO-ES-STACK-MIB::ciscoEsEtherChannelFailed",
+				"oid" : "1.3.6.1.4.1.9.5.14.6.0.1",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ES-STACK-MIB::ciscoEsECPorts",
+						"oid" : "1.3.6.1.4.1.9.5.14.6.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ES-STACK-MIB::ciscoEsVLANNewRoot",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is a vlan specific version of the",
+				"newRoot trap as described in RFC1493.",
+				"The newRoot trap indicates that the sending agent",
+				"has become the new root of the Spanning Tree; the",
+				"trap is sent by a bridge soon after its election",
+				"as the new root, e.g., upon expiration of the",
+				"Topology Change Timer immediately subsequent to",
+				"its election. Implementation of this trap is",
+				"optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoEsVLANNewRoot",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "VLAN $v1",
+				"Summary" : "Switch has become new root of spanning tree for VLAN $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ES-STACK-MIB::ciscoEsVLANNewRoot CISCO-ES-STACK-MIB::ciscoEsVLANInfoVLANNumber i 9",
+			"trap" : {
+				"name" : "CISCO-ES-STACK-MIB::ciscoEsVLANNewRoot",
+				"oid" : "1.3.6.1.4.1.9.5.14.8.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ES-STACK-MIB::ciscoEsVLANInfoVLANNumber",
+						"oid" : "1.3.6.1.4.1.9.5.14.8.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ES-STACK-MIB::ciscoEsVLANTopologyChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is a vlan specific version of the",
+				"topologyChange trap as described in RFC1493.",
+				"A topologyChange trap is sent by a bridge when",
+				"any of its configured ports transitions from the",
+				"Learning state to the Forwarding state, or from",
+				"the Forwarding state to the Blocking state. The",
+				"trap is not sent if a newRoot trap is sent for the",
+				"same transition. Implementation of this trap is",
+				"optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoEsVLANTopologyChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "VLAN $v1",
+				"Summary" : "A topology change has occurred for VLAN $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ES-STACK-MIB::ciscoEsVLANTopologyChange CISCO-ES-STACK-MIB::ciscoEsVLANInfoVLANNumber i 9",
+			"trap" : {
+				"name" : "CISCO-ES-STACK-MIB::ciscoEsVLANTopologyChange",
+				"oid" : "1.3.6.1.4.1.9.5.14.8.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-ES-STACK-MIB::ciscoEsVLANInfoVLANNumber",
+						"oid" : "1.3.6.1.4.1.9.5.14.8.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,385 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "LSIRAID-IDE-MIB::trRebuildStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Rebuild was started"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "trRebuildStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "DeviceId:$v1",
+				"Summary" : "Rebuild started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LSIRAID-IDE-MIB::trRebuildStarted LSIRAID-IDE-MIB::rtPDrvID i 9999",
+			"trap" : {
+				"name" : "LSIRAID-IDE-MIB::trRebuildStarted",
+				"oid" : "1.3.6.1.4.1.674.3.2.0.200",
+				"variables" : [
+					{
+						"description" : [
+							"Device ID of the Physical Drive for which Trap is Generated."
+						],
+						"name" : "LSIRAID-IDE-MIB::rtPDrvID",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LSIRAID-IDE-MIB::trRebuildStoped",
+			"certification" : "STANDARD",
+			"description" : [
+				"Rebuild was finished"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==99) ? 3 : $v2"
+				},
+				"EventType" : "trRebuildStoped",
+				"ExpireTime" : {
+					"eval" : "($v2==99 || $v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ?  4 : 2)"
+				},
+				"SubNode" : "DeviceId:$v1",
+				"Summary" : "Rebuild finised with result $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LSIRAID-IDE-MIB::trRebuildStoped LSIRAID-IDE-MIB::rtPDrvID i 9999 LSIRAID-IDE-MIB::rtLDrvOPStatus i 1",
+			"trap" : {
+				"name" : "LSIRAID-IDE-MIB::trRebuildStoped",
+				"oid" : "1.3.6.1.4.1.674.3.2.0.201",
+				"variables" : [
+					{
+						"description" : [
+							"Device ID of the Physical Drive for which Trap is Generated."
+						],
+						"name" : "LSIRAID-IDE-MIB::rtPDrvID",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Last operation status for Logical drive."
+						],
+						"enums" : {
+							"1" : "succeed",
+							"2" : "aborted",
+							"99" : "noOperation"
+						},
+						"name" : "LSIRAID-IDE-MIB::rtLDrvOPStatus",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LSIRAID-IDE-MIB::trConsistencyStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Consistency Check was started"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "trConsistencyStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "DriveNo:$v1",
+				"Summary" : "Consistency check started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LSIRAID-IDE-MIB::trConsistencyStarted LSIRAID-IDE-MIB::rtLDriveID i 9999",
+			"trap" : {
+				"name" : "LSIRAID-IDE-MIB::trConsistencyStarted",
+				"oid" : "1.3.6.1.4.1.674.3.2.0.202",
+				"variables" : [
+					{
+						"description" : [
+							"Logical Drive Number for which Trap is generated."
+						],
+						"name" : "LSIRAID-IDE-MIB::rtLDriveID",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LSIRAID-IDE-MIB::trConsistencyStopped",
+			"certification" : "STANDARD",
+			"description" : [
+				"Consistency check was finished"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==99) ? 3 : $v2"
+				},
+				"EventType" : "trConsistencyStopped",
+				"ExpireTime" : {
+					"eval" : "($v2==99 || $v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ?  4 : 2)"
+				},
+				"SubNode" : "DriveNo:$v1",
+				"Summary" : "Consistency check finised with result $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LSIRAID-IDE-MIB::trConsistencyStopped LSIRAID-IDE-MIB::rtLDriveID i 9999 LSIRAID-IDE-MIB::rtLDrvOPStatus i 1",
+			"trap" : {
+				"name" : "LSIRAID-IDE-MIB::trConsistencyStopped",
+				"oid" : "1.3.6.1.4.1.674.3.2.0.203",
+				"variables" : [
+					{
+						"description" : [
+							"Logical Drive Number for which Trap is generated."
+						],
+						"name" : "LSIRAID-IDE-MIB::rtLDriveID",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Last operation status for Logical drive."
+						],
+						"enums" : {
+							"1" : "succeed",
+							"2" : "aborted",
+							"99" : "noOperation"
+						},
+						"name" : "LSIRAID-IDE-MIB::rtLDrvOPStatus",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LSIRAID-IDE-MIB::trPDriveStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Drive status has been changed"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==99) ? 1 : (($v2==13 || $v2==14 || $v2==255) ? 3 : 2)"
+				},
+				"EventType" : "trPDriveStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v2==99) ? 3600 : (($v2==13 || $v2==14 || $v2==255) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v2==99) ? 0 : (($v2==1) ? 5 : (($v2==2) ? 4 : (($v2==15) ? 3 : (($v2==13 || $v2==14) ? 2 : 1))))"
+				},
+				"SubNode" : "DeviceId:$v1",
+				"Summary" : "Physical drive ($v1) status : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LSIRAID-IDE-MIB::trPDriveStatusChanged LSIRAID-IDE-MIB::rtPDrvID i 9999 LSIRAID-IDE-MIB::rtPDriveStatus i 1",
+			"trap" : {
+				"name" : "LSIRAID-IDE-MIB::trPDriveStatusChanged",
+				"oid" : "1.3.6.1.4.1.674.3.2.0.204",
+				"variables" : [
+					{
+						"description" : [
+							"Device ID of the Physical Drive for which Trap is Generated."
+						],
+						"name" : "LSIRAID-IDE-MIB::rtPDrvID",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Physical drive status."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "failed",
+							"13" : "hotSpare",
+							"14" : "rebuilding",
+							"15" : "offLine",
+							"99" : "online",
+							"255" : "undefined"
+						},
+						"name" : "LSIRAID-IDE-MIB::rtPDriveStatus",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LSIRAID-IDE-MIB::trLDriveStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Logical Drive status has been changed"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==99) ? 1 : 2"
+				},
+				"EventType" : "trLDriveStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v2==99) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==99) ? 0 : (($v2==1) ? 5 : (($v2==2) ? 4 : 3))"
+				},
+				"SubNode" : "DeviceId:$v1",
+				"Summary" : "Logical drive ($v1) status : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LSIRAID-IDE-MIB::trLDriveStatusChanged LSIRAID-IDE-MIB::rtLDriveID i 9999 LSIRAID-IDE-MIB::rtLDriveStatus i 1",
+			"trap" : {
+				"name" : "LSIRAID-IDE-MIB::trLDriveStatusChanged",
+				"oid" : "1.3.6.1.4.1.674.3.2.0.205",
+				"variables" : [
+					{
+						"description" : [
+							"Logical Drive Number for which Trap is generated."
+						],
+						"name" : "LSIRAID-IDE-MIB::rtLDriveID",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Logical drive status."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "degraded",
+							"3" : "offLine",
+							"4" : "deleted",
+							"99" : "online",
+							"255" : "notPresent"
+						},
+						"name" : "LSIRAID-IDE-MIB::rtLDriveStatus",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LSIRAID-IDE-MIB::trDriveNewError",
+			"certification" : "STANDARD",
+			"description" : [
+				"Physical drive media error has been found"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "trDriveNewError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "DeviceId:$v1",
+				"Summary" : "Physical drive media $v2 error"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LSIRAID-IDE-MIB::trDriveNewError LSIRAID-IDE-MIB::rtPDrvID i 9999 LSIRAID-IDE-MIB::rtDriveErrorType i 1",
+			"trap" : {
+				"name" : "LSIRAID-IDE-MIB::trDriveNewError",
+				"oid" : "1.3.6.1.4.1.674.3.2.0.206",
+				"variables" : [
+					{
+						"description" : [
+							"Device ID of the Physical Drive for which Trap is Generated."
+						],
+						"name" : "LSIRAID-IDE-MIB::rtPDrvID",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Physical drive error types."
+						],
+						"enums" : {
+							"1" : "read",
+							"2" : "write",
+							"3" : "verify",
+							"4" : "drive",
+							"255" : "unknown"
+						},
+						"name" : "LSIRAID-IDE-MIB::rtDriveErrorType",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LSIRAID-IDE-MIB::trDriveSMARTError",
+			"certification" : "STANDARD",
+			"description" : [
+				"S.M.A.R.T. error found"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "trDriveSMARTError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "DeviceId:$v1",
+				"Summary" : "S.M.A.R.T error"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LSIRAID-IDE-MIB::trDriveSMARTError LSIRAID-IDE-MIB::rtPDrvID i 9999",
+			"trap" : {
+				"name" : "LSIRAID-IDE-MIB::trDriveSMARTError",
+				"oid" : "1.3.6.1.4.1.674.3.2.0.207",
+				"variables" : [
+					{
+						"description" : [
+							"Device ID of the Physical Drive for which Trap is Generated."
+						],
+						"name" : "LSIRAID-IDE-MIB::rtPDrvID",
+						"oid" : "1.3.6.1.4.1.674.3.2.5.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

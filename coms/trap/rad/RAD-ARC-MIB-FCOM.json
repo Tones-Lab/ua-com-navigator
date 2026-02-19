@@ -1,0 +1,4340 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceSystemTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap alerts of major problems in the device."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==4 || $v1==6 || $v1==7 || $v1==9 || $v1==11 || $v1==13 || $v1==15 || $v1==17 || $v1==19) ? 1 : (($v1==21 || $v1==22) ? 3 : 2)"
+				},
+				"EventType" : "atmAceSystemTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==4 || $v1==6 || $v1==7 || $v1==9 || $v1==11 || $v1==13 || $v1==15 || $v1==17 || $v1==19) ? 3600 : (($v1==21 || $v1==22) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==4 || $v1==6 || $v1==7 || $v1==9 || $v1==11 || $v1==13 || $v1==15 || $v1==17 || $v1==19) ? 0 : (($v3==3) ? 2 : (($v3==4) ? 3 : (($v3==5 || $v3==6) ? 4 : 5)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceSystemTrap RAD-MIB::atmNteEventType i 3 RAD-MIB::agnLed s EXAMPLE RAD-MIB::alarmSeverity i 3",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceSystemTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This parameter identifies the event.",
+							"On - the problem exist.",
+							"Off - the problem not exist.",
+							"InvalidLogin - Invalid login on local console.",
+							"CorrectLogin - Successful login operation."
+						],
+						"enums" : {
+							"3" : "ps1NotActive",
+							"4" : "ps1Active",
+							"5" : "ps2NotActive",
+							"6" : "ps2Active",
+							"7" : "heatAlarmOff",
+							"8" : "heatAlarmOn",
+							"9" : "inputAlarm1Off",
+							"10" : "inputAlarm1On",
+							"11" : "inputAlarm2Off",
+							"12" : "inputAlarm2On",
+							"13" : "inputAlarm3Off",
+							"14" : "inputAlarm3On",
+							"15" : "inputAlarm4Off",
+							"16" : "inputAlarm4On",
+							"17" : "fan1Ok",
+							"18" : "fan1Fail",
+							"19" : "fan2Ok",
+							"20" : "fan2Fail",
+							"21" : "invalidLogin",
+							"22" : "validLogin",
+							"23" : "powerFailure",
+							"24" : "writeToFlashFailure"
+						},
+						"name" : "RAD-MIB::atmNteEventType",
+						"oid" : "1.3.6.1.4.1.164.12.3.1.2.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This entry specifies the LEDs status of the agent module . Each led will be represented by 4 ",
+							"bits where the first 2 bits (left) will specify the status :",
+							"(00=NA, 01=OFF, 10=ON, 11=BLINK)",
+							"and the next two bits (right) will specify the color :",
+							"(00=GREEN, 01=RED, 10=YELLOW, 11=GRAY)"
+						],
+						"name" : "RAD-MIB::agnLed",
+						"oid" : "1.3.6.1.4.1.164.6.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmForwardingTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon starting or stopping Alarm ",
+				"Forwarding Mechanism."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "atmAceAlarmForwardingTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'Alarm forwarding mechanism stopped' : 'Alarm forwarding mechanism started'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmForwardingTrap RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmForwardingTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmLOS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Loss Of Signal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmLOS",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Loss of signal resolved' : 'Loss of signal detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmLOS RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmLOS",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmLOF",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Loss Of Frame."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmLOF",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Loss of frame resolved' : 'Loss of frame detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmLOF RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmLOF",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmLCD",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Loss of Cell Delineation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmLCD",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Loss of cell delineation resolved' : 'Loss of cell delineation detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmLCD RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmLCD",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmSLM",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Signal Line Mismatch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmSLM",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Signal line matched' : 'Signal line mismatched'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmSLM RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmSLM",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmLOP",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Loss of Pointer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmLOP",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Loss of pointer resolved' : 'Loss of pointer detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmLOP RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmLOP",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmLineAIS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Line AIS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmLineAIS",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Line AIS resolved' : 'Line AIS detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmLineAIS RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmLineAIS",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPathAIS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Path AIS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPathAIS",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Path AIS resolved' : 'Path AIS detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPathAIS RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPathAIS",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmLineRDI",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Line RDI."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmLineRDI",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Line RDI resolved' : 'Line RDI detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmLineRDI RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmLineRDI",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPathRDI",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Path RDIand Path RAI(Yellow) for",
+				"DS1 interfaces."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPathRDI",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Path RDI resolved' : 'Path RDI detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPathRDI RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPathRDI",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmSectionBIP",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Section Bit Interleave Parity."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmSectionBIP",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Section bit interleave parity resolved' : 'Section bit interleave parity detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmSectionBIP RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmSectionBIP",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmLineBIP",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Line Bit Interleave Parity."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmLineBIP",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Line bit interleave parity resolved' : 'Line bit interleave parity detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmLineBIP RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmLineBIP",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPathBIP",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Path Bit Interleave Parity."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPathBIP",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Path bit interleave parity resolved' : 'Path bit interleave parity detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPathBIP RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPathBIP",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmLineFEBE",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Line Far End Block Error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmLineFEBE",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Line far end block error cleared' : 'Line far end block error detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmLineFEBE RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmLineFEBE",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPathFEBE",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Path Far End Block Error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPathFEBE",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Path far end block error cleared' : 'Path far end block error detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPathFEBE RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPathFEBE",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPlcpLOF",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates T3 PLCP Loss Of Frame."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPlcpLOF",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'T3 PLCP loss of frame resolved' : 'T3 PLCP loss of frame detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPlcpLOF RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPlcpLOF",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPlcpYELLOW",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates T3 Plcp Yellow."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPlcpYELLOW",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'T3 PLCP yellow alarm resolved' : 'T3 PLCP yellow alarm detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPlcpYELLOW RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPlcpYELLOW",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPlcpBIP",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates T3 Plcp Bit Interleave Parity."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPlcpBIP",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'T3 PLCP bit interleave parity resolved' : 'T3 PLCP bit interleave parity detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPlcpBIP RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPlcpBIP",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPlcpFEBE",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates T3 Plcp Far End Block Error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPlcpFEBE",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'T3 PLCP far end block error cleared' : 'T3 PLCP far end block error detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPlcpFEBE RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPlcpFEBE",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmPlcpP1P2",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates T3 Plcp Parity errors in P1/P2 bytes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmPlcpP1P2",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'T3 PLCP parity errors resolved in P1/P2 bytes' : 'T3 PLCP parity errors detected in P1/P2 bytes'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmPlcpP1P2 RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmPlcpP1P2",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmUAS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon UAS start or end per port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "atmAceAlarmUAS",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5)))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'UAS start per port' : 'UAS end per port'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmUAS RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmUAS",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmCluster",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon atmNteAlarmType start or end",
+				"for a cluster of VPs/VCs (according to atmNteLevel) with ",
+				"the same alarm on the same physical port.",
+				"This trap replaces sending the same alarm for a big ",
+				"quantity (the quantity described in the product ",
+				"specification document) of VPs/VCs in order to prevent ",
+				"flooding the NMS and the network with traps."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "atmAceAlarmCluster",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==2) ? '$v3 end for cluster of $v4' : '$v3 start for cluster of $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmCluster RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 RAD-MIB::atmNteAlarmType i 1 RAD-MIB::atmNteLevel i 2",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmCluster",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies the type of the alarm."
+						],
+						"enums" : {
+							"1" : "notApplicable",
+							"2" : "ais",
+							"3" : "rdi",
+							"4" : "continuityLoss",
+							"5" : "loopback"
+						},
+						"name" : "RAD-MIB::atmNteAlarmType",
+						"oid" : "1.3.6.1.4.1.164.12.3.1.2.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies the ATM level."
+						],
+						"enums" : {
+							"2" : "vp",
+							"3" : "vc"
+						},
+						"name" : "RAD-MIB::atmNteLevel",
+						"oid" : "1.3.6.1.4.1.164.12.3.1.2.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceHwFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon HW failure per port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceHwFailure",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'HW failure per port cleared' : 'HW failure per port detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceHwFailure RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceHwFailure",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.37",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceUnavailableBwTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when Bandwidth allocation is > max possible",
+				"value for the installed card.",
+				"For ACE2002 this trap will be sent for the following cases:",
+				"Card insertion - if the total Input and/or Output Bandwidth is over ",
+				"allocated, then the specific card rate will be set to 0 and this trap ",
+				"will be sent with the Input/Output rates values. ",
+				"Upgrade from former version - when an over allocated Bandwidth is detected, ",
+				"this trap will be sent with atmConfIfInputRate=atmConfIfOutputRate=0xFFFFFFFF."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "atmAceUnavailableBwTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==3) ? 2 : (($v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v2",
+				"Summary" : "Bandwidth allocation is greater than max possible value for the installed card"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceUnavailableBwTrap RAD-MIB::alarmSeverity i 3 IF-MIB::ifAlias s EXAMPLE RAD-MIB::atmConfIfInputRate i 9999 RAD-MIB::atmConfIfOutputRate i 9999",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceUnavailableBwTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.38",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This parameter indicates the input rate in cells/sec, which is ",
+							"supported per port. Successfully setting this parameter ",
+							"is dependent on all other ports values calculations, ",
+							"which are described in the NMS SRS."
+						],
+						"name" : "RAD-MIB::atmConfIfInputRate",
+						"oid" : "1.3.6.1.4.1.164.12.3.2.1.1.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This parameter indicates the output rate in cells/sec, which is ",
+							"supported per port. Successfully setting this parameter ",
+							"is dependent on all other ports values calculations, ",
+							"which are described in the NMS SRS."
+						],
+						"name" : "RAD-MIB::atmConfIfOutputRate",
+						"oid" : "1.3.6.1.4.1.164.12.3.2.1.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpContinuityLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Loss of Continuity Check on a VP Connection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVpContinuityLoss",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Loss of continuity check on VP connection resolved' : 'Loss of continuity check on VP connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpContinuityLoss RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpContinuityLoss",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.40",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpAISReception",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates AIS Reception on a VP Connection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVpAISReception",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'AIS reception on VP connection resolved' : 'AIS reception on VP connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpAISReception RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpAISReception",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.41",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpRDIReception",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates RDI Reception on a VP Connection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVpRDIReception",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'RDI reception on VP connection resolved' : 'RDI reception on VP connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpRDIReception RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpRDIReception",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.42",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpErroredCells",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Errored Cells on a VP Connection reported by PM."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVpErroredCells",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Errored cells on VP connection resolved' : 'Errored cells on VP connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpErroredCells RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpErroredCells",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpLostCells",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Lost Cells on a VP Connection reported by PM."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVpLostCells",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Lost cells on VP connection resolved' : 'Lost cells on VP connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpLostCells RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpLostCells",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpMisinsertedCells",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Misinserted Cells on a VP Connection ",
+				"reported by PM."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "atmAceAlarmVpMisinsertedCells",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5)))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Misinserted cells on VP connection resolved' : 'Misinserted cells on VP connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpMisinsertedCells RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpMisinsertedCells",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.45",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpUAS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon UAS start or end per VP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "atmAceAlarmVpUAS",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5)))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'UAS start per VP' : 'UAS end per VP'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpUAS RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpUAS",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.46",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpLoopback",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon OAM LoopBack fail status per VP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVpLoopback",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'OAM loopback success' : 'OAM loopback failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpLoopback RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpLoopback",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.47",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVpGCRAViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates GCRA violation on a VP Connection",
+				"reported by UPC device."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVpGCRAViolation",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'GCRA violation on VP connection cleared' : 'GCRA violation on VP connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVpGCRAViolation RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVpGCRAViolation",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.48",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcContinuityLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Loss of Continuity Check on a VC Connection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcContinuityLoss",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Loss of continuity check on VC connection cleared' : 'Loss of continuity check on VC connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcContinuityLoss RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcContinuityLoss",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.56",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcAISReception",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates AIS Reception on a VC."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcAISReception",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'AIS reception on VC resolved' : 'AIS reception on VC detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcAISReception RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcAISReception",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.57",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcRDIReception",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates RDI Reception on a VC Connection."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcRDIReception",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'RDI reception on VC connection resolved' : 'RDI reception on VC connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcRDIReception RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcRDIReception",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.58",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcErroredCells",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Errored Cells on a VC Connection reported by PM."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcErroredCells",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Errored cells on VC connection resolved' : 'Errored cells on VC connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcErroredCells RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcErroredCells",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.59",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcLostCells",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Lost Cells on a VC Connection reported by PM."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcLostCells",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Lost cells on VC connection resolved' : 'Lost cells on VC connection reported by PM'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcLostCells RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcLostCells",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.60",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcMisinsertedCells",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates Misinserted Cells on a VC Connection reported ",
+				"by PM."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcMisinsertedCells",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Misinserted cells resolved on VC connection' : 'Misinserted cells on VC connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcMisinsertedCells RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcMisinsertedCells",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.61",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcUnexpectedCell",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates an unexpected cell from user or network port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcUnexpectedCell",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Expected cell detected from user or network port' : 'Unexpected cell detected from user or network port'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcUnexpectedCell RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcUnexpectedCell",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.62",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcUAS",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon UAS start or end per VC."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "atmAceAlarmVcUAS",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5)))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'UAS start per VC' : 'UAS end per VC'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcUAS RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcUAS",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.63",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcLoopback",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent upon OAM LoopBack fail status per VC."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcLoopback",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'OAM loopback success' : 'OAM loopback failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcLoopback RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcLoopback",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.64",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmVcGCRAViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates GCRA violation on a VC Connection",
+				"reported by UPC device."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmVcGCRAViolation",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3 || $v1==4) ? 3 : (($v1==5 || $v1==6) ? 4 : 5))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'GCRA violation on VC connection resolved' : 'GCRA violation on VC connection detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmVcGCRAViolation RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmVcGCRAViolation",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.65",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap is sent every time there is a change in",
+				"the state of one of the LEDs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3) ? 1 : ($v2==2) ? 3 : 2"
+				},
+				"EventType" : "atmAceStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v2==3) ? 3600 : ($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==3) ? 0 : ($v2==2) ? 2 : ($v2==2 || $v2==4) ? 3 : ($v1==1 || $v1==5) ? 4 : 5"
+				},
+				"SubNode" : "Device",
+				"Summary" : "LED state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceStatusChange RAD-MIB::agnLed s EXAMPLE RAD-MIB::agnIndication i 1",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceStatusChange",
+				"oid" : "1.3.6.1.4.1.164.12.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This entry specifies the LEDs status of the agent module . Each led will be represented by 4 ",
+							"bits where the first 2 bits (left) will specify the status :",
+							"(00=NA, 01=OFF, 10=ON, 11=BLINK)",
+							"and the next two bits (right) will specify the color :",
+							"(00=GREEN, 01=RED, 10=YELLOW, 11=GRAY)"
+						],
+						"name" : "RAD-MIB::agnLed",
+						"oid" : "1.3.6.1.4.1.164.6.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Attribute describing the state of the entity the agent is responsible for.",
+							"In case of a modular entity, the value of this attribute will be according",
+							"to the component which is in the worst state.",
+							"The order of severity (from top to bottom) is:",
+							"critical-> major (or faulty)-> minor-> event-> warning-> normal (off)."
+						],
+						"enums" : {
+							"1" : "faulty",
+							"2" : "warning",
+							"3" : "normal",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "event",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::agnIndication",
+						"oid" : "1.3.6.1.4.1.164.6.2.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap is sent whenever there is a transition from a no alarm",
+				"state to a state with at least one active alarm. An active alarm ",
+				"state exists if:",
+				"1) The atmInterfaceActiveAlarms vector is different than 0.",
+				"2) The atmNteAlarmVpTable contains entries.",
+				"3) The atmNteAlarmVcTable contains entries. ",
+				"The trap is also sent when a transition into the no alarm state",
+				"occurs.",
+				"The second variable will be atmInterfaceActiveAlarms to ",
+				"indicate the kind of the alarm.",
+				"The trap is not sent more than once in a 10 second interval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : 2"
+				},
+				"EventType" : "atmAceAlarmTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==3) ? 'Alarm is active' : 'Alarm is inactive'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceAlarmTrap RAD-MIB::atmInterfaceAlarmStatus i 2",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceAlarmTrap",
+				"oid" : "1.3.6.1.4.1.164.12.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The variable is on(3) when there is any active alarm",
+							"on this interface."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::atmInterfaceAlarmStatus",
+						"oid" : "1.3.6.1.4.1.164.12.3.2.1.2.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceModuleChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap is sent every time a module is changed (Hot swapping).",
+				"The second variable will be atmNteCardType to indicate the ",
+				"type of card that was inserted. The value empty(255) indicates that ",
+				"a card was taken out."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "atmAceModuleChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Module changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceModuleChangeTrap IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceModuleChangeTrap",
+				"oid" : "1.3.6.1.4.1.164.12.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RAD-ARC-MIB::atmAceRedundancyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap is sent upon change in link as a result of redundancy. ",
+				"The ifIndex parameter indicates the current active link."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "atmAceRedundancyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Change in active link due to redundancy"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-ARC-MIB::atmAceRedundancyTrap IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "RAD-ARC-MIB::atmAceRedundancyTrap",
+				"oid" : "1.3.6.1.4.1.164.12.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

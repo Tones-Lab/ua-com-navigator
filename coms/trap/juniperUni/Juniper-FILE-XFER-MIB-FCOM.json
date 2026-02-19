@@ -1,0 +1,68 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200209162144Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "Juniper-FILE-XFER-MIB::juniFileXferTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An indication that the status associated with a particular file",
+				"transfer entry has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2 || $v1==5 || $v1==6 || $v1==8) ? 3 : 2)"
+				},
+				"EventType" : "juniFileXferTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : (($v1==2 || $v1==5 || $v1==6 || $v1==8) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==3 || $v1==7) ? 3 : (($v1==4 || $v1==9) ? 4 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "File transfer entry status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Juniper-FILE-XFER-MIB::juniFileXferTrap Juniper-FILE-XFER-MIB::juniFileXferStatus i 1 Juniper-FILE-XFER-MIB::juniFileXferTimeStamp t 31536000",
+			"trap" : {
+				"name" : "Juniper-FILE-XFER-MIB::juniFileXferTrap",
+				"oid" : "1.3.6.1.4.1.4874.2.2.23.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The status of the file transfer."
+						],
+						"enums" : {
+							"1" : "juniFileXferSuccessfulCompletion",
+							"2" : "juniFileXferInProgress",
+							"3" : "juniFileXferRemoteUnreachable",
+							"4" : "juniFileXferUserAuthFailed",
+							"5" : "juniFileXferFileNotFound",
+							"6" : "juniFileXferFileTooBig",
+							"7" : "juniFileXferFileIncompatible",
+							"8" : "juniFileXferPended",
+							"9" : "juniFileXferCopyRunningCfgFailed"
+						},
+						"name" : "Juniper-FILE-XFER-MIB::juniFileXferStatus",
+						"oid" : "1.3.6.1.4.1.4874.2.2.23.1.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sysUpTime at the last status change for this entry."
+						],
+						"name" : "Juniper-FILE-XFER-MIB::juniFileXferTimeStamp",
+						"oid" : "1.3.6.1.4.1.4874.2.2.23.1.1.1.11",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		}
+	]
+}

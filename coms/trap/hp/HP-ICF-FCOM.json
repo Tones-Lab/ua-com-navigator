@@ -1,0 +1,592 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9501180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HP-ICF::thresholdTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A thresholdTrap(0) is specific to ICF devices. It",
+				"signifies that the threshold entity in the device",
+				"has detected that the object identified by",
+				"evthObject has exceeded the threshold identified",
+				"by evthThreshold during the time interval",
+				"evthTimeInterval. After this condition occurs, it",
+				"will not reoccur until the the object identified",
+				"by evthObject falls below evthHysteresis for the",
+				"duration of evthTimeInterval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "thresholdTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "ICF devices evthObject threshold $v2 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::thresholdTrap HP-ICF::evthObject o 1.3.6.1.4.1.8072.2.1.1 HP-ICF::evthThreshold i 9999 HP-ICF::evthHysteresis i 9999 HP-ICF::evthTimeInterval t 31536000",
+			"trap" : {
+				"name" : "HP-ICF::thresholdTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.1.0.0",
+				"variables" : [
+					{
+						"description" : [
+							"The data of this object is itself an OBJECT",
+							"IDENTIFIER which selects the mib object and",
+							"instance that is to be monitored for the event.",
+							"Only types INTEGER and Counter are allowed."
+						],
+						"name" : "HP-ICF::evthObject",
+						"oid" : "1.3.6.1.4.1.11.2.14.1.7.3.3",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The threshold against which the variable ",
+							"specified in evthObject is tested over the time",
+							"interval specified in the evthTimeInterval When",
+							"the threshold is met or exceeded, the event is",
+							"triggered. The event will not trigger again until",
+							"the variable falls to or below the evthHysteresis",
+							"value, and then meets or exceeds the threshold."
+						],
+						"name" : "HP-ICF::evthThreshold",
+						"oid" : "1.3.6.1.4.1.11.2.14.1.7.3.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The low value which the variable specified in",
+							"evthObject must fall to or below after exceeding",
+							"evthThreshold before the event can re-occur when",
+							"the threshold is met or exceeded."
+						],
+						"name" : "HP-ICF::evthHysteresis",
+						"oid" : "1.3.6.1.4.1.11.2.14.1.7.3.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time interval over which the variable",
+							"specified in the evthObject is sampled."
+						],
+						"name" : "HP-ICF::evthTimeInterval",
+						"oid" : "1.3.6.1.4.1.11.2.14.1.7.3.6",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::linkBeatTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A linkBeatTrap(3) is device type specific to ICF",
+				"hubs. It signifies that the hub hardware has",
+				"detected a change of state in a port's link beat",
+				"status. The current value of the port's link beat",
+				"status is returned in the PDU."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "linkBeatTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Port link beat status changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::linkBeatTrap HP-ICF::hubPortLinkBeatStatus i 9999",
+			"trap" : {
+				"name" : "HP-ICF::linkBeatTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This is a flag which is 'true' if link beat is",
+							"detected on the port and 'false' otherwise. The",
+							"value of this variable will always be 'true' when",
+							"the corresponding instance of",
+							"hubPortLinkBeatEnable is 'false'.",
+							"",
+							"This object has been deprecated in favor of",
+							"rpMauMediaAvailable."
+						],
+						"name" : "HP-ICF::hubPortLinkBeatStatus",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.3.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::segmentationTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A segmentationTrap(4) is device type specific to",
+				"ICF hubs. It signifies that the hub hardware has",
+				"detected a change of state in a port's",
+				"segmentation status. The current value of the",
+				"port's segmentation status is returned in the",
+				"PDU."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "segmentationTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Port segmentation status changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::segmentationTrap HP-ICF::hubPortSegmentation i 9999",
+			"trap" : {
+				"name" : "HP-ICF::segmentationTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This is a flag which is 'true' if the port is",
+							"currently segmented and 'false' otherwise.",
+							"",
+							"This object has been deprecated in favor of",
+							"rptrPortAutoPartitionState."
+						],
+						"name" : "HP-ICF::hubPortSegmentation",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.3.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::backupLinkTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A backupLinkTrap(5) is device type specific to",
+				"most ICF hubs. It signifies that there has been a",
+				"change in state of rptrPortAdminStatus for a",
+				"backup port on the hub. The new value of ",
+				"rptrPortAdminStatus is returned in the PDU. ",
+				"Note that in EtherTwist hubs with revision 'D' or",
+				"earlier firmware, the SNMP-REPEATER-MIB is not",
+				"supported. These hubs map hub ports to interfaces",
+				"in the interfaces group of RFC1213-MIB. For these",
+				"hubs, the variable binding list contains",
+				"ifAdminStatus for the backup port on the hub",
+				"instead of rptrPortAdminStatus.",
+				"Backup links are not supported on the HP28688A ",
+				"hub."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2 "
+				},
+				"EventType" : "backupLinkTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400 "
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4 "
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port admin status $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::backupLinkTrap SNMP-REPEATER-MIB::rptrPortAdminStatus i 1",
+			"trap" : {
+				"name" : "HP-ICF::backupLinkTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Setting this object to disabled(2) disables the",
+							"port. A disabled port neither transmits nor",
+							"receives. Once disabled, a port must be",
+							"explicitly enabled to restore operation. A port",
+							"which is disabled when power is lost or when a",
+							"reset is exerted shall remain disabled when normal",
+							"operation resumes.",
+							"",
+							"The admin status takes precedence over auto-",
+							"partition and functionally operates between the",
+							"auto-partition mechanism and the AUI/PMA.",
+							"",
+							"Setting this object to enabled(1) enables the port",
+							"and exerts a BEGIN on the port's auto-partition",
+							"state machine.",
+							"",
+							"(In effect, when a port is disabled, the value of",
+							"rptrPortAutoPartitionState for that port is frozen",
+							"until the port is next enabled. When the port",
+							"becomes enabled, the rptrPortAutoPartitionState",
+							"becomes notAutoPartitioned(1), regardless of its",
+							"pre-disabling state.)"
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "SNMP-REPEATER-MIB::rptrPortAdminStatus",
+						"oid" : "1.3.6.1.2.1.22.1.3.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::intrusionTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An intrusionTrap(6) is device type specific to",
+				"EtherTwist hubs with revision 'E' firmware or ",
+				"later and AdvanceStack hubs. It signifies that a",
+				"port security violation has been detected on a",
+				"port which has the hubSecPtAlarmEnable flag set",
+				"to 'enabled'. The MAC address of the intruder",
+				"and the port on which the intrusion occurred are",
+				"returned in the PDU."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "intrusionTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Port:$v2",
+				"Summary" : "Intrusion occurred on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::intrusionTrap HP-ICF::hubIntruderAddress s EXAMPL HP-ICF::hubIntruderPort i 0",
+			"trap" : {
+				"name" : "HP-ICF::intrusionTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the source MAC address of",
+							"the intruder."
+						],
+						"name" : "HP-ICF::hubIntruderAddress",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.10.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the port within the group",
+							"on which this intrusion occurred. A port number",
+							"of zero indicates that this entry is unused and",
+							"the values for the other variables in this entry",
+							"are undefined."
+						],
+						"name" : "HP-ICF::hubIntruderPort",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.10.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::addressMovedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An addressMovedTrap(7) is device type specific",
+				"to EtherTwist hubs with revision 'E' firmware or",
+				"later and AdvanceStack hubs. It signifies that a",
+				"source MAC address which had been operating at",
+				"one port has moved to a new port. The MAC",
+				"address that moved, the group and port that the",
+				"address moved from, and the group and port that",
+				"the address moved to are returned in the PDU."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "addressMovedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Port:$v5",
+				"Summary" : "MAC address moved from port $v3 to port $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::addressMovedTrap HP-ICF::hubAddrMoveAddress s EXAMPL HP-ICF::hubAddrMoveOldGroup i 0 HP-ICF::hubAddrMoveOldPort i 0 HP-ICF::hubAddrMoveNewGroup i 0 HP-ICF::hubAddrMoveNewPort i 0",
+			"trap" : {
+				"name" : "HP-ICF::addressMovedTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The MAC address of the station that moved to a",
+							"new port."
+						],
+						"name" : "HP-ICF::hubAddrMoveAddress",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.11.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The group containing the port on which this",
+							"address had been operating before it moved."
+						],
+						"name" : "HP-ICF::hubAddrMoveOldGroup",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.11.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port within the group on which this address",
+							"had been operating before it moved."
+						],
+						"name" : "HP-ICF::hubAddrMoveOldPort",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.11.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The group containing the port that the address",
+							"moved to."
+						],
+						"name" : "HP-ICF::hubAddrMoveNewGroup",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.11.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port within the group that the address moved",
+							"to."
+						],
+						"name" : "HP-ICF::hubAddrMoveNewPort",
+						"oid" : "1.3.6.1.4.1.11.2.14.2.11.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::newAddressTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A newAddressTrap(8) is device type specific to",
+				"EtherTwist hubs with revision 'E' firmware or ",
+				"later and AdvanceStack hubs. It signifies that a",
+				"new MAC address has been detected on one of the",
+				"hub's ports. The instance of",
+				"rptrAddrTrackLastSourceAddress for the port with",
+				"the new address is returned in the PDU."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "newAddressTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New MAC address detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::newAddressTrap SNMP-REPEATER-MIB::rptrAddrTrackLastSourceAddress s EXAMPL",
+			"trap" : {
+				"name" : "HP-ICF::newAddressTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.2.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object is the SourceAddress of the last",
+							"readable frame (i.e., counted by",
+							"rptrMonitorPortReadableFrames) received by this",
+							"port.",
+							"",
+							"This object has been deprecated because its value",
+							"is undefined when no frames have been observed on",
+							"this port. The replacement object is",
+							"rptrAddrTrackNewLastSrcAddress."
+						],
+						"name" : "SNMP-REPEATER-MIB::rptrAddrTrackLastSourceAddress",
+						"oid" : "1.3.6.1.2.1.22.3.3.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::stpTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A stpTrap(3) is device type specific to ICF",
+				"bridges. It signifies that the Spanning Tree",
+				"entity in the bridge has detected a change of",
+				"state to either Blocking or Forwarding."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "stpTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Bridge state changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::stpTrap HP-ICF::stpPortState i 9999",
+			"trap" : {
+				"name" : "HP-ICF::stpTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The state of a port on a 2 port bridge is really",
+							"the state of the bridge itself. Management is only",
+							"allowed to set this object to 'stpDisabled' or",
+							"'stpBlocking'. Setting the object to 'stpDisabled'",
+							"will turn off spanning tree only if the state is",
+							"not 'stpBlocking' (to prevent loops). Setting the",
+							"object to 'stpBlocking' will turn on spanning tree",
+							"only if it was previously disabled. see: IEEE",
+							"802.1(d) 6.8.2.1.3(2), 4.4, 4.5.5.2"
+						],
+						"name" : "HP-ICF::stpPortState",
+						"oid" : "1.3.6.1.4.1.11.2.14.3.6.15.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::temperatureTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A temperatureTrap(4) is device type specific to",
+				"ICF bridges. It signifies that the bridge hardware",
+				"has detected an overheated condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "temperatureTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Bridge hardware temperature threshold exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::temperatureTrap ",
+			"trap" : {
+				"name" : "HP-ICF::temperatureTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.3.0.4"
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::hpicfChainAddition",
+			"certification" : "STANDARD",
+			"description" : [
+				"An hpicfChainAddition trap indicates that a new node",
+				"has been added to the Distributed Management Chain",
+				"connected to this agent. The hpicfChainId returned",
+				"is the identifier for the new node."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpicfChainAddition",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "hpicfChainId:$v1",
+				"Summary" : "New node added to distributed management chain"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::hpicfChainAddition HP-ICF::hpicfChainId s EXAMPL",
+			"trap" : {
+				"name" : "HP-ICF::hpicfChainAddition",
+				"oid" : "1.3.6.1.4.1.11.2.14.12.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"An identifier which uniquely identifies this ",
+							"particular box. In practice, this will be a box",
+							"serial number or MAC address."
+						],
+						"name" : "HP-ICF::hpicfChainId",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.1.1.5.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF::hpicfChainRemoval",
+			"certification" : "STANDARD",
+			"description" : [
+				"An hpicfChainRemoval trap indicates that a node has",
+				"been removed from the Distributed Management Chain",
+				"connected to this agent. The hpicfChainId returned",
+				"is the identifier for the node that was removed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpicfChainRemoval",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "hpicfChainId:$v1",
+				"Summary" : "Node removed from distributed management chain"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF::hpicfChainRemoval HP-ICF::hpicfChainId s EXAMPL",
+			"trap" : {
+				"name" : "HP-ICF::hpicfChainRemoval",
+				"oid" : "1.3.6.1.4.1.11.2.14.12.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"An identifier which uniquely identifies this ",
+							"particular box. In practice, this will be a box",
+							"serial number or MAC address."
+						],
+						"name" : "HP-ICF::hpicfChainId",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.1.1.5.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

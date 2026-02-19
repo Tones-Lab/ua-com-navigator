@@ -1,0 +1,346 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200702070000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "IPSEC-SPD-MIB::spdActionNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification that an action was executed by a rule.",
+				"Only actions with logging enabled will result in this",
+				"notification getting sent. The object includes the",
+				"spdActionExecuted object, which will indicate which action",
+				"was executed within the scope of the rule. Additionally",
+				"the spdIPSourceType, spdIPSourceAddress",
+				"spdIPDestinationType, and spdIPDestinationAddress objects",
+				"are included to indicate the packet source and destination",
+				"of the packet that triggered the action. Finally, the",
+				"spdIPEndpointAddType, spdIPEndpointAddress, and",
+				"spdPacketDirection objects indicate which interface the",
+				"executed action was associated with, and if the packet was",
+				"ingress or egress through the endpoint.",
+				"A spdActionNotification SHOULD be limited to a maximum of",
+				"one notification sent per minute for any action",
+				"notifications that do not have any other configuration",
+				"controlling their send rate.",
+				"Note that compound actions with multiple executed",
+				"sub-actions may result in multiple notifications being sent",
+				"from a single rule execution."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "spdActionNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "spdIPEndpointAddress:$v3",
+				"Summary" : "An $v8 packet triggered the action $v1. Source: $v5; Destination: $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IPSEC-SPD-MIB::spdActionNotification IPSEC-SPD-MIB::spdActionExecuted o 1.3.6.1.4.1.8072.2.1.1 IPSEC-SPD-MIB::spdIPEndpointAddType i 0 IPSEC-SPD-MIB::spdIPEndpointAddress s EXAMPLE IPSEC-SPD-MIB::spdIPSourceType i 0 IPSEC-SPD-MIB::spdIPSourceAddress s EXAMPLE IPSEC-SPD-MIB::spdIPDestinationType i 0 IPSEC-SPD-MIB::spdIPDestinationAddress s EXAMPLE IPSEC-SPD-MIB::spdPacketDirection i 1",
+			"trap" : {
+				"name" : "IPSEC-SPD-MIB::spdActionNotification",
+				"oid" : "1.3.6.1.2.1.153.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Points to the action instance that was executed that",
+							"resulted in the notification being sent."
+						],
+						"name" : "IPSEC-SPD-MIB::spdActionExecuted",
+						"oid" : "1.3.6.1.2.1.153.2.1.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"Contains the address type for the interface that the",
+							"notification triggering packet is passing through."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-SPD-MIB::spdIPEndpointAddType",
+						"oid" : "1.3.6.1.2.1.153.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the interface address for the interface that the",
+							"notification triggering packet is passing through.",
+							"",
+							"The format of this object is specified by the",
+							"spdIPEndpointAddType object."
+						],
+						"name" : "IPSEC-SPD-MIB::spdIPEndpointAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the source address type of the packet that",
+							"triggered the notification."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-SPD-MIB::spdIPSourceType",
+						"oid" : "1.3.6.1.2.1.153.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the source address of the packet that",
+							"triggered the notification.",
+							"",
+							"The format of this object is specified by the",
+							"spdIPSourceType object."
+						],
+						"name" : "IPSEC-SPD-MIB::spdIPSourceAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the destination address type of the packet",
+							"that triggered the notification."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-SPD-MIB::spdIPDestinationType",
+						"oid" : "1.3.6.1.2.1.153.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the destination address of the packet that",
+							"triggered the notification.",
+							"",
+							"The format of this object is specified by the",
+							"spdIPDestinationType object."
+						],
+						"name" : "IPSEC-SPD-MIB::spdIPDestinationAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates if the packet that triggered the action in",
+							"questions was ingress (inbound) or egress (outbound)."
+						],
+						"enums" : {
+							"1" : "inbound",
+							"2" : "outbound"
+						},
+						"name" : "IPSEC-SPD-MIB::spdPacketDirection",
+						"oid" : "1.3.6.1.2.1.153.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IPSEC-SPD-MIB::spdPacketNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification that a packet passed through a Security",
+				"Association (SA). Only SAs created by actions with packet",
+				"logging enabled will result in this notification getting",
+				"sent. The objects sent MUST include the spdActionExecuted",
+				"which will indicate which action was executed within the",
+				"scope of the rule. Additionally, the spdIPSourceType",
+				"spdIPSourceAddress, spdIPDestinationType, and",
+				"spdIPDestinationAddress objects MUST be included to",
+				"indicate the packet source and destination of the packet",
+				"that triggered the action. The spdIPEndpointAddType",
+				"spdIPEndpointAddress, and spdPacketDirection objects are",
+				"included to indicate which endpoint the packet was",
+				"associated with. Finally, spdPacketPart is included to",
+				"enable sending a variable sized part of the front of the",
+				"packet with the size dependent on the value of the object of",
+				"TC syntax 'SpdIPPacketLogging', which indicated that logging",
+				"should be done.",
+				"A spdPacketNotification SHOULD be limited to a maximum of",
+				"one notification sent per minute for any action",
+				"notifications that do not have any other configuration",
+				"controlling their send rate.",
+				"An action notification SHOULD be limited to a maximum of",
+				"one notification sent per minute for any action",
+				"notifications that do not have any other configuration",
+				"controlling their send rate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "spdPacketNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "spdIPEndpointAddress:$v3",
+				"Summary" : "An $v8 packet passed through Security Association. Source: $v5, Destination: $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IPSEC-SPD-MIB::spdPacketNotification IPSEC-SPD-MIB::spdActionExecuted o 1.3.6.1.4.1.8072.2.1.1 IPSEC-SPD-MIB::spdIPEndpointAddType i 0 IPSEC-SPD-MIB::spdIPEndpointAddress s EXAMPLE IPSEC-SPD-MIB::spdIPSourceType i 0 IPSEC-SPD-MIB::spdIPSourceAddress s EXAMPLE IPSEC-SPD-MIB::spdIPDestinationType i 0 IPSEC-SPD-MIB::spdIPDestinationAddress s EXAMPLE IPSEC-SPD-MIB::spdPacketDirection i 1 IPSEC-SPD-MIB::spdPacketPart s EXAMPLE",
+			"trap" : {
+				"name" : "IPSEC-SPD-MIB::spdPacketNotification",
+				"oid" : "1.3.6.1.2.1.153.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Points to the action instance that was executed that",
+							"resulted in the notification being sent."
+						],
+						"name" : "IPSEC-SPD-MIB::spdActionExecuted",
+						"oid" : "1.3.6.1.2.1.153.2.1.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"Contains the address type for the interface that the",
+							"notification triggering packet is passing through."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-SPD-MIB::spdIPEndpointAddType",
+						"oid" : "1.3.6.1.2.1.153.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the interface address for the interface that the",
+							"notification triggering packet is passing through.",
+							"",
+							"The format of this object is specified by the",
+							"spdIPEndpointAddType object."
+						],
+						"name" : "IPSEC-SPD-MIB::spdIPEndpointAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the source address type of the packet that",
+							"triggered the notification."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-SPD-MIB::spdIPSourceType",
+						"oid" : "1.3.6.1.2.1.153.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the source address of the packet that",
+							"triggered the notification.",
+							"",
+							"The format of this object is specified by the",
+							"spdIPSourceType object."
+						],
+						"name" : "IPSEC-SPD-MIB::spdIPSourceAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the destination address type of the packet",
+							"that triggered the notification."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-SPD-MIB::spdIPDestinationType",
+						"oid" : "1.3.6.1.2.1.153.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the destination address of the packet that",
+							"triggered the notification.",
+							"",
+							"The format of this object is specified by the",
+							"spdIPDestinationType object."
+						],
+						"name" : "IPSEC-SPD-MIB::spdIPDestinationAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates if the packet that triggered the action in",
+							"questions was ingress (inbound) or egress (outbound)."
+						],
+						"enums" : {
+							"1" : "inbound",
+							"2" : "outbound"
+						},
+						"name" : "IPSEC-SPD-MIB::spdPacketDirection",
+						"oid" : "1.3.6.1.2.1.153.2.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"spdPacketPart is the front part of the full IP packet that",
+							"triggered this notification. The initial size limit is",
+							"determined by the smaller of the size, indicated by:",
+							"",
+							"I. The value of the object with the TC syntax",
+							"'SpdIPPacketLogging' that indicated the packet SHOULD be",
+							"logged and",
+							"",
+							"II. The size of the triggering packet.",
+							"",
+							"The final limit is determined by the SNMP packet size when",
+							"sending the notification. The maximum size that can be",
+							"included will be the smaller of the initial size, given the",
+							"above, and the length that will fit in a single SNMP",
+							"notification packet after the rest of the notification's",
+							"objects and any other necessary packet data (headers encoding",
+							"etc.) have been included in the packet."
+						],
+						"name" : "IPSEC-SPD-MIB::spdPacketPart",
+						"oid" : "1.3.6.1.2.1.153.2.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

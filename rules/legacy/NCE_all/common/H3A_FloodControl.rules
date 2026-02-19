@@ -1,0 +1,538 @@
+use Assure1::API;
+use JSON;
+use Assure1::Core;
+use Assure1::Log;
+use Data::Dumper;
+use POSIX qw/strftime/;
+use Data::Dumper qw(Dumper);
+use List::Util 'sum';
+
+
+BEGIN {
+    use Assure1::Config;
+    $Config = Assure1::Config->new();
+}
+
+my  $API = Assure1::API->new({
+    url        => '/api/event/events',
+    configPath => $Config->{'BaseDir'} . '/etc/Assure1.conf',
+});
+
+$Log->Message( 'DEBUG',"FloodHash Data - Device Starting the Flood Rules ::::::::---------------".time());
+$Log->Message('DEBUG',"FloodHash Data - Device Dump---------------" . Dumper(\%IPFloodHash) . "--------------");
+
+
+my $defaulttimewindow = 120;
+my $defaultpreventionthrehold = 50;
+my $defaultdetectionthrehold = 30;
+
+
+
+my $temp_Node = $Event->{Node};
+my $temp_EMSHost = $Event->{EMSHost};
+my $tempCount = 0;
+
+$Log->Message('DEBUG',"FloodHash Data - Device Default Time Window---------------" . $defaulttimewindow . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - Device Default Prevention Count---------------" . $defaultpreventionthrehold . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - Device Default Detection Count---------------" . $defaultdetectionthrehold . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - Device Node value---------------" . $temp_Node . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - EMSHost value---------------" . $temp_EMSHost . "--------------");
+
+
+@IPFloodKeys = keys %IPFloodHash;
+#@MW_Nodes = keys %WindowHash;
+$Log->Message('DEBUG',"FloodHash Data - Device Keys Values ---------------" . Dumper(@IPFloodKeys) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - MW Keys Values ---------------" . $WindowHash->{$Event->{'Node'}} . "--------------");
+
+
+    my $currentTime = time();
+    my $time_min = int($currentTime / 60);
+    $time_min = $time_min * 60;
+    my $temp_count = 0;
+  
+                 if(exists($EMSFloodHash{$Event->{EMSHost}}{$time_min}))
+            {
+                $EMSFloodHash{$Event->{EMSHost}}{$time_min} = $EMSFloodHash{$Event->{EMSHost}}{$time_min} + 1;
+                $Log->Message('DEBUG',"EMSHost Data - Device Dump2 after increment---------------" . Dumper($EMSFloodHash) . "--------------");
+
+            }
+                else
+            {
+                $EMSFloodHash{$Event->{EMSHost}}{$time_min} = 1;
+                $Log->Message('DEBUG',"EMSHost Data - Device Dump3 adding new time stamp with count---------------" . Dumper(\%EMSFloodHash) . "--------------");
+
+            }
+    
+            if(exists($IPFloodHash{$Event->{Node}}{$time_min}))
+            {
+                $IPFloodHash{$Event->{Node}}{$time_min} = $IPFloodHash{$Event->{Node}}{$time_min} + 1;
+                $Log->Message('DEBUG',"FloodHash Data - Device Dump2 after increment---------------" . Dumper($IPFloodHash) . "--------------");
+
+            }
+            else
+            {
+                $IPFloodHash{$Event->{Node}}{$time_min} = 1;
+                $Log->Message('DEBUG',"FloodHash Data - Device Dump3 adding new time stamp with count---------------" . Dumper(\%IPFloodHash) . "--------------");
+
+            }
+
+######################### Deleting the hash enries older than 10 mins from IPFloodHash#############
+
+my @keys_inner =  sort keys %{$IPFloodHash{$Event->{Node}}};
+my $floodTimeWindow = 0 ;
+
+if(exists $deviceTimeWindow{$Event->{Node}})
+{
+ $floodTimeWindow = $deviceTimeWindow{$Event->{Node}};
+}
+else 
+{
+    $floodTimeWindow = $defaulttimewindow;
+
+}
+$Log->Message('DEBUG',"FloodHash Data - FloodTimeWindow values Dump---------------" . $floodTimeWindow . "--------------".Dumper(\%IPFloodHash)."--------------");
+
+my $CheckTime = time() - $floodTimeWindow;
+my $len_Node = scalar (@keys_inner);
+my $temp_count = 0;
+
+$Log->Message('DEBUG',"FloodHash Data - Checktime values Dump---------------" . $CheckTime . "--------------".Dumper(\%IPFloodHash)."--------------");
+$Log->Message('DEBUG',"FloodHash Data - node count ---------------" . $len_Node . "--------------".Dumper(\%IPFloodHash)."--------------");
+
+$Log->Message('DEBUG',"FloodHash Data - Device Dump---------------" . Dumper(\%IPFloodHash) . "--------------");
+
+while($temp_count < $len_Node)
+{
+        if($keys_inner[$temp_count] < $CheckTime)
+        {
+                delete $IPFloodHash{$Event->{Node}}{$keys_inner[$temp_count]};
+                $Log->Message('DEBUG',"FloodHash Data after deletion of the Node entry- Device Dump---------------" . Dumper(\%IPFloodHash) . "--------------");
+                $Log->Message('DEBUG',"FloodHash Data - timestamp entry deleted Dump---------------" . Dumper(\%IPFloodHash) . "--------------");
+
+        }
+$temp_count++;
+
+}
+
+my @keys_inner =  sort keys %{$IPFloodHash{$Event->{Node}}};
+my $len_Node = scalar (@keys_inner);
+
+if($len_Node == 0)
+{
+
+    delete $IPFloodHash{$Event->{Node}};
+$Log->Message('DEBUG',"FloodHash Data after deletion of the Node- Device Dump---------------" . Dumper(\%IPFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - Node Deleted Dump---------------" . (\%IPFloodHash) . "--------------");
+}
+
+$Log->Message('DEBUG',"FloodHash Data after deletion of the Node- Device Dump---------------" . Dumper(\%IPFloodHash) . "--------------");
+
+
+
+##########################Deletion done###########################################################
+
+
+##############DEclaring Default Parameters for EMS FLood #########################################
+
+my $defaulttimewindowEMS = 240;
+my $defaultpreventionthreholdEMS = 1000;
+my $defaultdetectionthreholdEMS = 500;
+
+###############Default Parameters Declared for EMS FLood #########################################
+
+######################### Deleting the hash enries older than 10 mins from EMSFloodHash###########
+
+my @keys_inner_EMS =  sort keys %{$EMSFloodHash{$Event->{EMSHost}}};
+my $floodTimeWindowEMS = 0 ;
+
+if(exists $deviceTimeWindow{$Event->{EMSHost}})
+{
+ $floodTimeWindowEMS = $deviceTimeWindow{$Event->{EMSHost}};
+}
+else 
+{
+    $floodTimeWindowEMS = $defaulttimewindowEMS;
+
+}
+$Log->Message('DEBUG',"FloodHash Data - FloodTimeWindowEMS values Dump---------------" . $floodTimeWindowEMS . "--------------".Dumper(\%EMSFloodHash)."--------------");
+
+my $CheckTime = time() - $floodTimeWindowEMS;
+my $len_Node = scalar (@keys_inner_EMS);
+my $temp_count = 0;
+
+$Log->Message('DEBUG',"FloodHash Data - Checktime values Dump---------------" . $CheckTime . "--------------".Dumper(\%EMSFloodHash)."--------------");
+$Log->Message('DEBUG',"FloodHash Data - node count ---------------" . $len_Node . "--------------".Dumper(\%EMSFloodHash)."--------------");
+
+$Log->Message('DEBUG',"FloodHash Data - Device Dump---------------" . Dumper(\%EMSFloodHash) . "--------------");
+
+while($temp_count < $len_Node)
+{
+        if($keys_inner_EMS[$temp_count] < $CheckTime)
+        {
+                delete $EMSFloodHash{$Event->{EMSHost}}{$keys_inner_EMS[$temp_count]};
+                $Log->Message('DEBUG',"FloodHash Data after deletion of the Node entry- Device Dump---------------" . Dumper(\%EMSFloodHash) . "--------------");
+                $Log->Message('DEBUG',"FloodHash Data - timestamp entry deleted Dump---------------" . Dumper(\%EMSFloodHash) . "--------------");
+
+        }
+$temp_count++;
+
+}
+
+my @keys_inner_EMS =  sort keys %{$EMSFloodHash{$Event->{EMSHost}}};
+my $len_Node = scalar (@keys_inner_EMS);
+
+if($len_Node == 0)
+{
+
+    delete $EMSFloodHash{$Event->{EMSHost}};
+$Log->Message('DEBUG',"FloodHash Data after deletion of the EMSHost- Device Dump---------------" . Dumper(\%EMSFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - EMSHost Deleted Dump---------------" . (\%EMSFloodHash) . "--------------");
+}
+
+$Log->Message('DEBUG',"FloodHash Data after deletion of the EMSHost- Device Dump---------------" . Dumper(\%EMSFloodHash) . "--------------");
+
+
+
+##########################Deletion done###########################################################
+
+##########################Calculating the alarm count per EMS ###################################
+my $count_Alarm_EMS =0;
+if(exists($EMSFloodHash{$Event->{EMSHost}}))
+{
+    $count_Alarm_EMS = sum values %{$EMSFloodHash{$Event->{EMSHost}}};
+}
+
+$Log->Message('DEBUG',"FloodHash Data - Device Alarm coount Per EMS---------------" . $count_Alarm_EMS . "--------------".(\%EMSFloodHash) . "--------------");
+
+##########################Alarm count Per EMS stored in  $count_Alarm_EMS ######################
+#####
+
+
+
+##########################Calculating the alarm count per Node ###################################
+my $count_Alarm_Node =0;
+if(exists($IPFloodHash{$Event->{Node}}))
+{
+    $count_Alarm_Node = sum values %{$IPFloodHash{$Event->{Node}}};
+}
+
+$Log->Message('DEBUG',"FloodHash Data - Device Alarm coount ---------------" . $count_Alarm_Node . "--------------".(\%IPFloodHash) . "--------------");
+
+##########################Alarm count Per Node stored in  $count_Alarm_Node ######################
+
+######### Calculating Threshold values for EMS HOST ##############################################
+my $detectionthresholdEMS = defined $DetectionMetatagsHash->{$Event->{'EMSHost'}} ? $DetectionMetatagsHash->{$Event->{'EMSHost'}} : $defaultdetectionthreholdEMS;
+my $preventionthresholdEMS = defined $PreventionMetatagsHash->{$Event->{'EMSHost'}} ? $PreventionMetatagsHash->{$Event->{'EMSHost'}} : $defaultpreventionthreholdEMS;
+$Log->Message('DEBUG',"FloodHash Data - EMS detectionthreshold count ---------------" . $detectionthresholdEMS . "--------------".(\%EMSFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - EMS preventionthreshold count ---------------" . $preventionthresholdEMS . "--------------".(\%EMSFloodHash) . "--------------");
+
+my $Flood_Prevention_Ratio_EMS = ($preventionthresholdEMS / $floodTimeWindowEMS);
+my $Flood_Detection_Ratio_EMS = ($detectionthresholdEMS / $floodTimeWindowEMS); 
+my $Event_Ratio_EMS = ($count_Alarm_Node / $floodTimeWindowEMS);
+
+$Log->Message('DEBUG',"FloodHash Data - EMS Flood_Detection_Ratio count ---------------" . $Flood_Detection_Ratio_EMS . "--------------".(\%EMSFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - EMS Flood_Prevention_Ratio count ---------------" . $Flood_Prevention_Ratio_EMS . "--------------".(\%EMSFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - EMS Event_Ratio count ---------------" . $Event_Ratio_EMS . "--------------".(\%EMSFloodHash) . "--------------");
+######### Calculating Threshold values Completed for EMS HOST #####################################
+
+######### Calculating Threshold values for Node ##############################################
+
+my $detectionthreshold = defined $DetectionMetatagsHash->{$Event->{'Node'}} ? $DetectionMetatagsHash->{$Event->{'Node'}} : $defaultdetectionthrehold;
+my $preventionthreshold = defined $PreventionMetatagsHash->{$Event->{'Node'}} ? $PreventionMetatagsHash->{$Event->{'Node'}} : $defaultpreventionthrehold;
+
+$Log->Message('DEBUG',"FloodHash Data - Device detectionthreshold count ---------------" . $detectionthreshold . "--------------".(\%IPFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - Device preventionthreshold count ---------------" . $preventionthreshold . "--------------".(\%IPFloodHash) . "--------------");
+
+
+my $Flood_Prevention_Ratio = ($preventionthreshold / $floodTimeWindow);
+my $Flood_Detection_Ratio = ($detectionthreshold / $floodTimeWindow); 
+my $Event_Ratio = ($count_Alarm_Node / $floodTimeWindow);
+
+$Log->Message('DEBUG',"FloodHash Data - Device Flood_Detection_Ratio count ---------------" . $Flood_Detection_Ratio . "--------------".(\%IPFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - Device Flood_Prevention_Ratio count ---------------" . $Flood_Prevention_Ratio . "--------------".(\%IPFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - Device Event_Ratio count ---------------" . $Event_Ratio . "--------------".(\%IPFloodHash) . "--------------");
+
+######### Calculating Threshold values Completed for Node #####################################
+
+
+##########################################Checking Prevention Scenario############################
+our $envRef = LibUtil_GetEnvironmentalNVPs('uums-internal-webhookd');
+if($Event_Ratio_EMS >= $Flood_Prevention_Ratio_EMS && $Event->{EMSHost} ne ''){
+    $Log->Message('DEBUG',"FloodHash Data - Device Prevention Scenario Entry for EMS ---------------");
+   
+        ########It is a prevention scenario
+
+			my %alert_values;
+					#$alert_values{EMSName} = $temp_EMSHost;
+					$alert_values{Node} = $temp_EMSHost;
+					$alert_values{EventType} = "Maintenance Alarm";
+					$alert_values{Severity} = 5;
+					$alert_values{EventCategory} = 2;
+					$alert_values{ExpireTime} = 7200;
+					$alert_values{ZoneID} = 2001;
+					$alert_values{LastReported} = time();
+					$alert_values{NEFirstReported} = time();
+					$alert_values{NELastReported} = time();
+					$alert_values{EMSHost} = hostname();
+					$alert_values{Summary} = 'Prevention Flood Event for EMS: '.$temp_EMSHost;
+					$alert_values{LifeCycle} = 'SYNTHETIC';
+					$alert_values{EventKey} = "Flood Alarm for ".$temp_EMSHost."synthetic alarm";
+					$Log->Message('INFO',"Event Key of the alarm: ". $alert_values{'EventKey'});
+					$Log->Message('DEBUG',"JSON:". Dumper(%alert_values));
+					my ($ReturnCode) = LibUtil_CreateSyntheticEvent(\%alert_values);
+						if ($ReturnCode ==0)
+							{
+							$Log->Message('INFO', "Alarm successfully sent to internal aggregator");
+							}
+						else {
+							$Log->Message('INFO', "Alarm not sent to internal aggregator, Received return code: $ReturnCode");
+							}           
+
+        my $now_seconds = time();
+        my $startTime = strftime "%Y-%m-%d %H:%M:%S", localtime($now_seconds);
+        my $endTime = strftime "%Y-%m-%d %H:%M:%S", localtime($now_seconds + 7200);
+        
+        $Log->Message( 'DEBUG',"FloodHash Data - Device MW StartTime::::::::---------------".$startTime);
+        $Log->Message( 'DEBUG',"FloodHash Data - Device End TIme::::::::---------------".$endTime);
+        
+        my $API = Assure1::API->new({
+            url          => '/api/device/devices',
+            configPath   => $Config->{'BaseDir'} . '/etc/Assure1.conf',
+        });
+
+        ##### - FILTERED READ
+        my $response     = $API->read(undef, {
+            filter       => [{
+                property => 'DeviceName',
+                operator => 'eq',
+                value    => $temp_EMSHost
+            }]
+        });
+        my $total = $response->{'total'};
+        my $deviceId = $response->{data}->[0]->{DeviceID};
+        
+        $Log->Message( 'DEBUG',"FloodHash Data - Device The Value of device ID::::::::---------------".$deviceId);
+
+        if( $total >=1 )
+        {
+        $Log->Message( 'DEBUG',"FloodHash Data - Device Entered into the MW Creation Block---------------");
+        
+        
+            my $API2   = Assure1::API->new({
+            url        => '/api/device/windows',
+            configPath => $Config->{'BaseDir'} . '/etc/Assure1.conf'
+            });
+            my $response = $API2->create(
+            {
+                "WindowID"    => "",
+                "WindowName"  => "H3A_FloodDetected_EMS_".$temp_EMSHost."_".time(),
+                "WindowDescr" => $temp_EMSHost,
+                "StartTime"   => $startTime,
+                "StopTime"    => $endTime,
+                "DeviceCount" => "",
+                "Devices"     => [$deviceId]
+            },
+                "total" => "1"
+            );
+            
+            $Log->Message( 'DEBUG',"FloodHash Data - Device MW CREATED::::::::---------------".Dumper($response));
+
+        } else {
+            $Log->Message( 'DEBUG',"FloodHash Data - Device ------ $temp_Node not existed in Devices table. MW not created---------------");
+        }
+
+            # calling function readmaintenancewindow for refreshing the hash to update the new MW
+            LibUtil_ReadMaintenanceWindows();
+            my $StartWindow = int($WindowHash->{$Event->{'EMSHost'}}->{StartTime} || $WindowHash->{$Event->{'IPAddress'}}->{StartTime});
+            my $EndWindow   = int($WindowHash->{$Event->{'EMSHost'}}->{StopTime}  || $WindowHash->{$Event->{'IPAddress'}}->{StopTime});
+            my $CurrentTime = time();
+             if (($StartWindow <= $CurrentTime) && ($EndWindow >= $CurrentTime)) 
+             {
+                $Log->Message('DEBUG',"FloodHash Data - Device Maintenance Windows for Node:::".$Event->{'temp_EMSHost'});
+                $Event->{'Severity'}         = 0;
+                $Event->{Details}->{Message} = "Under Maintenance";
+              }
+            $Log->Message('DEBUG',"FloodHash Data - Device Maintenance Windows for StartTime:::---------------".$StartWindow);
+            $Log->Message('DEBUG',"FloodHash Data - Device Maintenance Windows for EndTime:::---------------".$EndWindow);
+            $Log->Message('DEBUG',"FloodHash Data - Device Maintenance Windows for Currenttime:::---------------".$CurrentTime);
+            delete $EMSFloodHash{$Event->{EMSHost}};
+            delete $FloodDetectionCountHash{$Event->{EMSHost}};
+
+}
+elsif ($Event_Ratio >= $Flood_Prevention_Ratio) ##### prevention ratio metatags should be there then only 
+    {
+
+
+     $Log->Message('DEBUG',"FloodHash Data - Device Prevention Scenario Entry ---------------");
+   
+        ########It is a prevention scenario
+			my %alert_values;
+					#$alert_values{EMSName} = $temp_EMSHost;
+					$alert_values{Node} =$temp_Node;
+					$alert_values{EventType} = "Maintenance Alarm";
+					$alert_values{Severity} = 5;
+					$alert_values{EventCategory} = 2;
+					$alert_values{ExpireTime} = 7200;
+					$alert_values{ZoneID} = 2001;
+					$alert_values{LastReported} = time();
+					$alert_values{NEFirstReported} = time();
+					$alert_values{NELastReported} = time();
+					$alert_values{EMSHost} = hostname();
+					$alert_values{Summary} = 'Prevention Flood Event for '.$temp_Node;
+					$alert_values{LifeCycle} = 'SYNTHETIC';
+					$alert_values{EventKey} = "Flood Alarm for ".$temp_Node."synthetic alarm";
+					$Log->Message('INFO',"Event Key of the alarm: ". $alert_values{'EventKey'});
+					$Log->Message('DEBUG',"JSON:". Dumper(%alert_values));
+					my ($ReturnCode) = LibUtil_CreateSyntheticEvent(\%alert_values);
+						if ($ReturnCode ==0)
+							{
+							$Log->Message('INFO', "Alarm successfully sent to internal aggregator");
+							}
+						else {
+							$Log->Message('INFO', "Alarm not sent to internal aggregator, Received return code: $ReturnCode");
+							}           
+       
+        my $now_seconds = time();
+        my $startTime = strftime "%Y-%m-%d %H:%M:%S", localtime($now_seconds);
+        my $endTime = strftime "%Y-%m-%d %H:%M:%S", localtime($now_seconds + 7200);
+        
+        $Log->Message( 'DEBUG',"FloodHash Data - Device MW StartTime::::::::---------------".$startTime);
+        $Log->Message( 'DEBUG',"FloodHash Data - Device End TIme::::::::---------------".$endTime);
+        
+        my $API = Assure1::API->new({
+            url          => '/api/device/devices',
+            configPath   => $Config->{'BaseDir'} . '/etc/Assure1.conf',
+        });
+
+        ##### - FILTERED READ
+        my $response     = $API->read(undef, {
+            filter       => [{
+                property => 'DeviceName',
+                operator => 'eq',
+                value    => $temp_Node
+            }]
+        });
+        my $total = $response->{'total'};
+        my $deviceId = $response->{data}->[0]->{DeviceID};
+        
+        $Log->Message( 'DEBUG',"FloodHash Data - Device The Value of device ID::::::::---------------".$deviceId);
+
+        if( $total >=1 )
+        {
+        $Log->Message( 'DEBUG',"FloodHash Data - Device Entered into the MW Creation Block---------------");
+        
+        
+            my $API2   = Assure1::API->new({
+            url        => '/api/device/windows',
+            configPath => $Config->{'BaseDir'} . '/etc/Assure1.conf'
+            });
+            my $response = $API2->create(
+            {
+                "WindowID"    => "",
+                "WindowName"  => "H3A_FloodDetected_".$temp_Node."_".time(),
+                "WindowDescr" => $temp_Node,
+                "StartTime"   => $startTime,
+                "StopTime"    => $endTime,
+                "DeviceCount" => "",
+                "Devices"     => [$deviceId]
+            },
+                "total" => "1"
+            );
+            
+            $Log->Message( 'DEBUG',"FloodHash Data - Device MW CREATED::::::::---------------".Dumper($response));
+
+        } else {
+            $Log->Message( 'DEBUG',"FloodHash Data - Device ------ $temp_Node not existed in Devices table. MW not created---------------");
+        }
+
+            # calling function readmaintenancewindow for refreshing the hash to update the new MW
+            LibUtil_ReadMaintenanceWindows();
+            my $StartWindow = int($WindowHash->{$Event->{'Node'}}->{StartTime} || $WindowHash->{$Event->{'IPAddress'}}->{StartTime});
+            my $EndWindow   = int($WindowHash->{$Event->{'Node'}}->{StopTime}  || $WindowHash->{$Event->{'IPAddress'}}->{StopTime});
+            my $CurrentTime = time();
+             if (($StartWindow <= $CurrentTime) && ($EndWindow >= $CurrentTime)) 
+             {
+                $Log->Message('DEBUG',"FloodHash Data - Device Maintenance Windows for Node:::".$Event->{'Node'});
+                $Event->{'Severity'}         = 0;
+                $Event->{Details}->{Message} = "Under Maintenance";
+              }
+            $Log->Message('DEBUG',"FloodHash Data - Device Maintenance Windows for StartTime:::---------------".$StartWindow);
+            $Log->Message('DEBUG',"FloodHash Data - Device Maintenance Windows for EndTime:::---------------".$EndWindow);
+            $Log->Message('DEBUG',"FloodHash Data - Device Maintenance Windows for Currenttime:::---------------".$CurrentTime);
+            delete $IPFloodHash{$Event->{Node}};
+            delete $FloodDetectionCountHash{$Event->{Node}};
+            
+    }
+elsif($Event_Ratio_EMS >= $Flood_Detection_Ratio_EMS && $FloodDetectionCountHash{$Event->{EMSHost}} !=1 && $Event->{EMSHost} ne '')
+{
+    
+    $Log->Message('DEBUG',"FloodHash Data - Device Detection for EMS HOST Scenario Entry ---------------");
+	my %alert_values;
+					#$alert_values{EMSName} = $temp_EMSHost;
+					$alert_values{Node} =$temp_EMSHost;
+					$alert_values{EventType} = "Flood Alarm";
+					$alert_values{Severity} = 3;
+					$alert_values{EventCategory} = 2;
+					$alert_values{ExpireTime} = 7200;
+					$alert_values{ZoneID} = 2001;
+					$alert_values{LastReported} = time();
+					$alert_values{NEFirstReported} = time();
+					$alert_values{NELastReported} = time();
+					$alert_values{EMSHost} = hostname();
+					$alert_values{Summary} = 'Detection Flood Event for EMS: '.$temp_EMSHost;
+					$alert_values{LifeCycle} = 'SYNTHETIC';
+					$alert_values{EventKey} = "Flood Alarm for ".$temp_EMSHost."synthetic alarm";
+					$Log->Message('INFO',"Event Key of the alarm: ". $alert_values{'EventKey'});
+					$Log->Message('DEBUG',"JSON:". Dumper(%alert_values));
+					my ($ReturnCode) = LibUtil_CreateSyntheticEvent(\%alert_values);
+						if ($ReturnCode ==0)
+							{
+							$Log->Message('INFO', "Alarm successfully sent to internal aggregator");
+							}
+						else {
+							$Log->Message('INFO', "Alarm not sent to internal aggregator, Received return code: $ReturnCode");
+							}           
+        
+        $FloodDetectionCountHash{$Event->{EMSHost}} = 1;
+}
+##Detection
+elsif($Event_Ratio >= $Flood_Detection_Ratio && $FloodDetectionCountHash{$Event->{Node}} !=1)
+
+    {
+        
+        $Log->Message('DEBUG',"FloodHash Data - Device Detection Scenario Entry ---------------");
+			my %alert_values;
+					#$alert_values{EMSName} = $temp_EMSHost;
+					$alert_values{Node} =$temp_Node;
+					$alert_values{EventType} = "Flood Alarm";
+					$alert_values{Severity} = 3;
+					$alert_values{EventCategory} = 2;
+					$alert_values{ExpireTime} = 7200;
+					$alert_values{ZoneID} = 2001;
+					$alert_values{LastReported} = time();
+					$alert_values{NEFirstReported} = time();
+					$alert_values{NELastReported} = time();
+					$alert_values{EMSHost} = hostname();
+					$alert_values{Summary} = 'Detection Flood Event for '.$temp_Node;
+					$alert_values{LifeCycle} = 'SYNTHETIC';
+					$alert_values{EventKey} = "Flood Alarm for ".$temp_Node."synthetic alarm";
+					$Log->Message('INFO',"Event Key of the alarm: ". $alert_values{'EventKey'});
+					$Log->Message('DEBUG',"JSON:". Dumper(%alert_values));
+					my ($ReturnCode) = LibUtil_CreateSyntheticEvent(\%alert_values);
+						if ($ReturnCode ==0)
+							{
+							$Log->Message('INFO', "Alarm successfully sent to internal aggregator");
+							}
+						else {
+							$Log->Message('INFO', "Alarm not sent to internal aggregator, Received return code: $ReturnCode");
+							}           
+    
+        $FloodDetectionCountHash{$Event->{Node}} = 1;
+            ########It is a Detection scenario
+    }
+#$Log->Message('DEBUG',"FloodHash Data - FLood Detetion Count ::::::::".Dumper(\%FloodDetectionCountHash) . "--------------"); 
+$Log->Message('DEBUG',"FloodHash Data - Device Final Hash Values for flood::::::::".Dumper(\%IPFloodHash) . "--------------");
+$Log->Message('DEBUG',"FloodHash Data - Device Final Hash Values for EMS flood::::::::".Dumper(\%EMSFloodHash) . "--------------");
+
+$Log->Message( 'DEBUG',"FloodHash Data - Device Ending the Flood Rules ::::::::".time());
+#########################################END SCenario Checking####################################

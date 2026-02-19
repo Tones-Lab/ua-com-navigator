@@ -1,0 +1,102 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200801010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PRVT-UPS-MIB::upsStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The upsStatusChange trap indicates that the sending ",
+				"agent monitor detected a change in the status of the external ",
+				"UPS, connected to the device."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "upsStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'UPS connected' : 'UPS disconnected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD PRVT-UPS-MIB::upsStatusChange PRVT-UPS-MIB::upsConnectedStatus i 2 PRVT-UPS-MIB::upsLinePowerStatus i 1 PRVT-UPS-MIB::upsBatteryStorageStatus i 2 PRVT-UPS-MIB::upsInternalStatus i 1",
+				"$SNMPTRAPCMD PRVT-UPS-MIB::upsStatusChange PRVT-UPS-MIB::upsConnectedStatus i 1 PRVT-UPS-MIB::upsLinePowerStatus i 1 PRVT-UPS-MIB::upsBatteryStorageStatus i 1 PRVT-UPS-MIB::upsInternalStatus i 1"
+			],
+			"trap" : {
+				"name" : "PRVT-UPS-MIB::upsStatusChange",
+				"oid" : "1.3.6.1.4.1.738.1.5.103.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates, if a UPS is connected to the device."
+						],
+						"enums" : {
+							"1" : "connected",
+							"2" : "disconnected"
+						},
+						"name" : "PRVT-UPS-MIB::upsConnectedStatus",
+						"oid" : "1.3.6.1.4.1.738.1.5.103.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the external AD power line status: ",
+							"the UPS is supplying the power from the internal battery",
+							"or from an external AC power connection."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "fromExternalConnection",
+							"3" : "fromInternalBattery"
+						},
+						"name" : "PRVT-UPS-MIB::upsLinePowerStatus",
+						"oid" : "1.3.6.1.4.1.738.1.5.103.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object shows the estimated time left until the UPS battery ",
+							"will discharge to the level at which the UPS must shutdown."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "moreThan30Minutes",
+							"3" : "lessThan30Minutes"
+						},
+						"name" : "PRVT-UPS-MIB::upsBatteryStorageStatus",
+						"oid" : "1.3.6.1.4.1.738.1.5.103.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object shows if the UPS has some kind of an internal ",
+							"failure."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "ok",
+							"3" : "failure"
+						},
+						"name" : "PRVT-UPS-MIB::upsInternalStatus",
+						"oid" : "1.3.6.1.4.1.738.1.5.103.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

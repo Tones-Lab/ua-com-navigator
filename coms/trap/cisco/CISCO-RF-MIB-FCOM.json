@@ -1,0 +1,293 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202307130000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-RF-MIB::ciscoRFSwactNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A SWACT notification is sent by the newly active redundant",
+				"unit whenever a switch of activity occurs. In the case where a",
+				"SWACT event may be indistinguishable from a reset event, a",
+				"network management station should use this notification to",
+				"differentiate the activity.",
+				"sysUpTime is the same sysUpTime defined in the RFC-1213 MIB."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoRFSwactNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RFUnitId: $v1",
+				"Summary" : "RF $v1 has become the new active redundant unit due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RF-MIB::ciscoRFSwactNotif CISCO-RF-MIB::cRFStatusUnitId i 9999 SNMPv2-MIB::sysUpTime t 31536000 CISCO-RF-MIB::cRFStatusLastSwactReasonCode i 1",
+			"trap" : {
+				"name" : "CISCO-RF-MIB::ciscoRFSwactNotif",
+				"oid" : "1.3.6.1.4.1.9.9.176.2.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-RF-MIB::cRFStatusUnitId",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SNMPv2-MIB::sysUpTime",
+						"oid" : "1.3.6.1.2.1.1.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "unsupported",
+							"2" : "none",
+							"3" : "notKnown",
+							"4" : "userInitiated",
+							"5" : "userForced",
+							"6" : "activeUnitFailed",
+							"7" : "activeUnitRemoved"
+						},
+						"name" : "CISCO-RF-MIB::cRFStatusLastSwactReasonCode",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RF-MIB::ciscoRFProgressionNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A progression notification is sent by the active redundant",
+				"unit whenever its RF state changes or the RF state of the peer",
+				"unit changes.",
+				"To avoid a flurry of notifications for all state transitions",
+				"notifications will only be sent for transitions to the",
+				"following RF states:",
+				"disabled (for the peer state)",
+				"standbyCold",
+				"standbyHot",
+				"active",
+				"activeExtraload"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoRFProgressionNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "LocRF $v1 RemRF $v3",
+				"Summary" : "State change for active Local RF $v1 status $v2 with Remote RF $v3 status $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RF-MIB::ciscoRFProgressionNotif CISCO-RF-MIB::cRFStatusUnitId i 9999 CISCO-RF-MIB::cRFStatusUnitState i 1 CISCO-RF-MIB::cRFStatusPeerUnitId i 9999 CISCO-RF-MIB::cRFStatusPeerUnitState i 1",
+			"trap" : {
+				"name" : "CISCO-RF-MIB::ciscoRFProgressionNotif",
+				"oid" : "1.3.6.1.4.1.9.9.176.2.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-RF-MIB::cRFStatusUnitId",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "notKnown",
+							"2" : "disabled",
+							"3" : "initialization",
+							"4" : "negotiation",
+							"5" : "standbyCold",
+							"6" : "standbyColdConfig",
+							"7" : "standbyColdFileSys",
+							"8" : "standbyColdBulk",
+							"9" : "standbyHot",
+							"10" : "activeFast",
+							"11" : "activeDrain",
+							"12" : "activePreconfig",
+							"13" : "activePostconfig",
+							"14" : "active",
+							"15" : "activeExtraload",
+							"16" : "activeHandback",
+							"17" : "standbyWarm"
+						},
+						"name" : "CISCO-RF-MIB::cRFStatusUnitState",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-RF-MIB::cRFStatusPeerUnitId",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "notKnown",
+							"2" : "disabled",
+							"3" : "initialization",
+							"4" : "negotiation",
+							"5" : "standbyCold",
+							"6" : "standbyColdConfig",
+							"7" : "standbyColdFileSys",
+							"8" : "standbyColdBulk",
+							"9" : "standbyHot",
+							"10" : "activeFast",
+							"11" : "activeDrain",
+							"12" : "activePreconfig",
+							"13" : "activePostconfig",
+							"14" : "active",
+							"15" : "activeExtraload",
+							"16" : "activeHandback",
+							"17" : "standbyWarm"
+						},
+						"name" : "CISCO-RF-MIB::cRFStatusPeerUnitState",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RF-MIB::ciscoRFIssuStateNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ISSU notification to indicate the new state of",
+				"the system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoRFIssuStateNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RFUnitId: $v1",
+				"Summary" : "Status of RF $v1 has changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RF-MIB::ciscoRFIssuStateNotif CISCO-RF-MIB::cRFStatusUnitId i 9999 CISCO-RF-MIB::cRFStatusUnitState i 1 CISCO-RF-MIB::cRFStatusIssuState i 0",
+			"trap" : {
+				"name" : "CISCO-RF-MIB::ciscoRFIssuStateNotif",
+				"oid" : "1.3.6.1.4.1.9.9.176.2.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-RF-MIB::cRFStatusUnitId",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "notKnown",
+							"2" : "disabled",
+							"3" : "initialization",
+							"4" : "negotiation",
+							"5" : "standbyCold",
+							"6" : "standbyColdConfig",
+							"7" : "standbyColdFileSys",
+							"8" : "standbyColdBulk",
+							"9" : "standbyHot",
+							"10" : "activeFast",
+							"11" : "activeDrain",
+							"12" : "activePreconfig",
+							"13" : "activePostconfig",
+							"14" : "active",
+							"15" : "activeExtraload",
+							"16" : "activeHandback",
+							"17" : "standbyWarm"
+						},
+						"name" : "CISCO-RF-MIB::cRFStatusUnitState",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "unset",
+							"1" : "init",
+							"2" : "loadVersion",
+							"3" : "runVersion",
+							"4" : "commitVersion"
+						},
+						"name" : "CISCO-RF-MIB::cRFStatusIssuState",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RF-MIB::ciscoRFIssuStateNotifRev1",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ISSU notification to indicate the new state of",
+				"the system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoRFIssuStateNotifRev1",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "RF is state is $v1 due to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RF-MIB::ciscoRFIssuStateNotifRev1 CISCO-RF-MIB::cRFStatusIssuStateRev1 i 0 CISCO-RF-MIB::cRFStatusIssuFromVersion s EXAMPLE CISCO-RF-MIB::cRFStatusIssuToVersion s EXAMPLE CISCO-RF-MIB::cRFStatusLastSwactReasonCode i 1",
+			"trap" : {
+				"name" : "CISCO-RF-MIB::ciscoRFIssuStateNotifRev1",
+				"oid" : "1.3.6.1.4.1.9.9.176.2.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "init",
+							"1" : "systemReset",
+							"3" : "loadVersion",
+							"4" : "loadVersionSwitchover",
+							"6" : "runVersion",
+							"7" : "runVersionSwitchover",
+							"9" : "commitVersion"
+						},
+						"name" : "CISCO-RF-MIB::cRFStatusIssuStateRev1",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-RF-MIB::cRFStatusIssuFromVersion",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-RF-MIB::cRFStatusIssuToVersion",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "unsupported",
+							"2" : "none",
+							"3" : "notKnown",
+							"4" : "userInitiated",
+							"5" : "userForced",
+							"6" : "activeUnitFailed",
+							"7" : "activeUnitRemoved"
+						},
+						"name" : "CISCO-RF-MIB::cRFStatusLastSwactReasonCode",
+						"oid" : "1.3.6.1.4.1.9.9.176.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

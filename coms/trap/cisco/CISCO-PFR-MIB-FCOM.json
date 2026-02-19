@@ -1,0 +1,395 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201211130000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-PFR-MIB::cpfrMCStatusChangeNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when one of",
+				"cpfrMCLoggingAdminStatus, cpfrMCAdminStatus, cpfrMCControlMode",
+				"cpfrMCClear, on PfR master controller is changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpfrMCStatusChangeNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "$v1 on PfR master controller has changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PFR-MIB::cpfrMCStatusChangeNotify CISCO-PFR-MIB::cpfrMCChangeConfigType i 1 CISCO-PFR-MIB::cpfrMCChangeConfigValue i 9999",
+			"trap" : {
+				"name" : "CISCO-PFR-MIB::cpfrMCStatusChangeNotify",
+				"oid" : "1.3.6.1.4.1.9.9.772.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "cpfrMCLoggingAdminStatus",
+							"2" : "cpfrMCAdminStatus",
+							"3" : "cpfrMCControlMode",
+							"4" : "cpfrMCClear"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrMCChangeConfigType",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.1.1.31",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrMCChangeConfigValue",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.1.1.32",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-PFR-MIB::cpfrBRStatusChangeNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the master",
+				"controller detects a status change with a border router."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 2) ? 2 : (($v3 == 2) ? 2 : 1)"
+				},
+				"EventType" : "cpfrBRStatusChangeNotify",
+				"ExpireTime" : {
+					"eval" : "($v4 == 2) ? 86400 : (($v3 == 2) ? 2 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 2) ? 5 : (($v3 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "$v2",
+				"Summary" : "Border router $v2 connection status is $v4 and operational status is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PFR-MIB::cpfrBRStatusChangeNotify CISCO-PFR-MIB::cpfrBRAddressType i 0 CISCO-PFR-MIB::cpfrBRAddress s EXAMPLE CISCO-PFR-MIB::cpfrBROperStatus i 1 CISCO-PFR-MIB::cpfrBRConnStatus i 1 CISCO-PFR-MIB::cpfrBRConnFailureReason i 1",
+			"trap" : {
+				"name" : "CISCO-PFR-MIB::cpfrBRStatusChangeNotify",
+				"oid" : "1.3.6.1.4.1.9.9.772.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrBRAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrBRAddress",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrBROperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrBRConnStatus",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "versionMismatch",
+							"2" : "none",
+							"3" : "authFailure",
+							"4" : "socketError",
+							"5" : "timerExpired"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrBRConnFailureReason",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-PFR-MIB::cpfrExitStatusChangeNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the master",
+				"controller detects a status change with an exit link."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 2) ? 2 : 1"
+				},
+				"EventType" : "cpfrExitStatusChangeNotify",
+				"ExpireTime" : {
+					"eval" : "($v3 == 2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 2) ? 5 : 0"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "PfR exit link $v1 is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PFR-MIB::cpfrExitStatusChangeNotify CISCO-PFR-MIB::cpfrExitName s EXAMPLE CISCO-PFR-MIB::cpfrExitType i 1 CISCO-PFR-MIB::cpfrExitOperStatus i 1 CISCO-PFR-MIB::cpfrBRAddressType i 0 CISCO-PFR-MIB::cpfrBRAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-PFR-MIB::cpfrExitStatusChangeNotify",
+				"oid" : "1.3.6.1.4.1.9.9.772.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-PFR-MIB::cpfrExitName",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.9.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "internal",
+							"2" : "external"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrExitType",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrExitOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.9.1.50",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrBRAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrBRAddress",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-PFR-MIB::cpfrTrafficClassEventNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when the master",
+				"controller detects a traffic class status event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpfrTrafficClassEventNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Traffic class status has changed to $v1 for reason $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PFR-MIB::cpfrTrafficClassEventNotify CISCO-PFR-MIB::cpfrTCStatus i 1 CISCO-PFR-MIB::cpfrTCSLastOOPReason i 1 CISCO-PFR-MIB::cpfrBRAddressType i 0 CISCO-PFR-MIB::cpfrBRAddress s EXAMPLE CISCO-PFR-MIB::cpfrExitName s EXAMPLE CISCO-PFR-MIB::cpfrLinkGroupType i 1",
+			"trap" : {
+				"name" : "CISCO-PFR-MIB::cpfrTrafficClassEventNotify",
+				"oid" : "1.3.6.1.4.1.9.9.772.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "default",
+							"2" : "choose",
+							"3" : "holddown",
+							"4" : "inpolicy",
+							"5" : "oopolicy"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrTCStatus",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.12.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "delayOOPPassiveMode",
+							"2" : "lossOOPPassiveMode",
+							"3" : "unreachableOOPPassiveMode",
+							"4" : "delayOOPActiveMode",
+							"5" : "lossOOPActiveMode",
+							"6" : "unreachableOOPActiveMode",
+							"7" : "jitterOOPActiveMode",
+							"8" : "mosOOPActiveMode",
+							"9" : "none",
+							"10" : "rsvpOOPRecomputeExclude"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrTCSLastOOPReason",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.12.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrBRAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrBRAddress",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.8.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrExitName",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.9.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "primaryLinkGroup",
+							"2" : "fallbackLinkGroup",
+							"3" : "none"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrLinkGroupType",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.14.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-PFR-MIB::cpfrTCInpolicyThresholdBelowNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification, when the master",
+				"controller detects number of in-policy traffic class falls",
+				"below the configured threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpfrTCInpolicyThresholdBelowNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "In-policy traffic class count $v3 has fallen below $v1 threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PFR-MIB::cpfrTCInpolicyThresholdBelowNotify CISCO-PFR-MIB::cpfrMapEventNotifCtrlType i 1 CISCO-PFR-MIB::cpfrMapEventNotifCtrlThreshold u 9999 CISCO-PFR-MIB::cpfrMapEventTCCount u 9999",
+			"trap" : {
+				"name" : "CISCO-PFR-MIB::cpfrTCInpolicyThresholdBelowNotify",
+				"oid" : "1.3.6.1.4.1.9.9.772.0.5",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "relative",
+							"2" : "threshold"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrMapEventNotifCtrlType",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.2.1.38",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrMapEventNotifCtrlThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.2.1.39",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrMapEventTCCount",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.2.1.40",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-PFR-MIB::cpfrTCPrimaryThresholdBelowNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification, when the master",
+				"controller detects number of in-policy traffic classes at",
+				"primary link group falls below the configured threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpfrTCPrimaryThresholdBelowNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "PfR primary link group traffic class count $v3 has fallen below $v1 threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PFR-MIB::cpfrTCPrimaryThresholdBelowNotify CISCO-PFR-MIB::cpfrMapEventNotifCtrlType i 1 CISCO-PFR-MIB::cpfrMapEventNotifCtrlThreshold u 9999 CISCO-PFR-MIB::cpfrMapEventTCCount u 9999",
+			"trap" : {
+				"name" : "CISCO-PFR-MIB::cpfrTCPrimaryThresholdBelowNotify",
+				"oid" : "1.3.6.1.4.1.9.9.772.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "relative",
+							"2" : "threshold"
+						},
+						"name" : "CISCO-PFR-MIB::cpfrMapEventNotifCtrlType",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.2.1.38",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrMapEventNotifCtrlThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.2.1.39",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-PFR-MIB::cpfrMapEventTCCount",
+						"oid" : "1.3.6.1.4.1.9.9.772.1.2.1.40",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

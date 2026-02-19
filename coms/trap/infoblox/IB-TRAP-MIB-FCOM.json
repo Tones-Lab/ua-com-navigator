@@ -1,0 +1,1403 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202211240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "IB-TRAP-MIB::ibEquipmentFailureTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This event is generated for any equipment failure.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ibEquipmentFailureTrap:$v4",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2) ? 2 : (($v2==4) ? 4 : (($v2==5) ? 5 : 3)))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'Equipment failure detected: $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IB-TRAP-MIB::ibEquipmentFailureTrap IB-TRAP-MIB::ibNodeName s EXAMPLE IB-TRAP-MIB::ibTrapSeverity i 4 IB-TRAP-MIB::ibObjectName s EXAMPLE IB-TRAP-MIB::ibProbableCause i 0 IB-TRAP-MIB::ibTrapDesc s EXAMPLE",
+			"trap" : {
+				"name" : "IB-TRAP-MIB::ibEquipmentFailureTrap",
+				"oid" : "1.3.6.1.4.1.7779.3.1.1.1.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"It is the node name (node ip address) the trap occurred.",
+							"This node name may or may not the same as the node sending",
+							"out the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibNodeName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the severity of the trap."
+						],
+						"enums" : {
+							"1" : "indetermined",
+							"2" : "info",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "IB-TRAP-MIB::ibTrapSeverity",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It describes the object for which the trap is generated."
+						],
+						"name" : "IB-TRAP-MIB::ibObjectName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It describes the probable cause of a problem ."
+						],
+						"enums" : {
+							"0" : "ibClear",
+							"1" : "ibUnknown",
+							"2" : "ibPrimaryDiskFailure",
+							"3" : "ibFanFailure-old",
+							"4" : "ibPowerSupplyFailure",
+							"5" : "ibDBFailure",
+							"6" : "ibApacheSoftwareFailure",
+							"7" : "ibSerialConsoleFailure",
+							"11" : "ibControldSoftwareFailure",
+							"12" : "ibUpgradeFailure",
+							"13" : "ibSNMPDFailure",
+							"15" : "ibSSHDSoftwareFailure",
+							"16" : "ibNTPDSoftwareFailure",
+							"17" : "ibClusterdSoftwarFailure",
+							"18" : "ibLCDSoftwareFailure",
+							"19" : "ibDHCPdSoftwareFailure",
+							"20" : "ibNamedSoftwareFailure",
+							"21" : "ibAuthServerGroupDown",
+							"22" : "ibAuthServerGroupUp",
+							"24" : "ibNTLMSoftwareFailure",
+							"25" : "ibNetBIOSDaemonFailure",
+							"26" : "ibWindowBindDaemonFailure",
+							"27" : "ibTFTPDSoftwareFailure",
+							"28" : "ibUNUSED28",
+							"29" : "ibBackupSoftwareFailure",
+							"30" : "ibBackupDatabaseSoftwareFailure",
+							"31" : "ibBackupModuleSoftwareFailure",
+							"32" : "ibBackupSizeSoftwareFailure",
+							"33" : "ibBackupLockSoftwareFailure",
+							"34" : "ibHTTPFileDistSoftwareFailure",
+							"35" : "ibOSPFSoftwareFailure",
+							"36" : "ibAuthDHCPNamedSoftwareFailure",
+							"37" : "ibFan1Failure",
+							"38" : "ibFan2Failure",
+							"39" : "ibFan3Failure",
+							"40" : "ibFan1OK",
+							"41" : "ibFan2OK",
+							"42" : "ibFan3OK",
+							"44" : "ibFTPDSoftwareFailure",
+							"45" : "ibBloxtoolsSoftwareFailure",
+							"46" : "ibPowerSupplyOK",
+							"47" : "ibWebUISoftwareFailure",
+							"48" : "ibUNUSED48",
+							"49" : "ibADAgentSyncFailure",
+							"50" : "ibIFMAPSoftwareFailure",
+							"51" : "ibCaptivePortalSoftwareFailure",
+							"52" : "ibDuplicateIPAddressFailure",
+							"53" : "ibBGPSoftwareFailure",
+							"54" : "ibRevokedLicense",
+							"58" : "ibGUILoginFailure",
+							"59" : "ibSerialConsoleLoginFailure",
+							"60" : "ibSystemReboot",
+							"61" : "ibSystemRestart",
+							"62" : "ibZoneTransferFailure",
+							"63" : "ibDHCPLeaseConflict",
+							"64" : "ibDHCPAddressConflict",
+							"65" : "ibDHCPRangeConflict",
+							"66" : "ibDHCPHostConflict",
+							"67" : "ibSyslogFailure",
+							"68" : "ibPowerSupply1Failure",
+							"69" : "ibPowerSupply2Failure",
+							"70" : "ibPowerSupply1OK",
+							"71" : "ibPowerSupply2OK",
+							"72" : "ibReportingTaskSwFailure",
+							"73" : "ibReportingDbBackupFailure",
+							"74" : "ibFan4Failure",
+							"75" : "ibFan5Failure",
+							"76" : "ibFan6Failure",
+							"77" : "ibFan7Failure",
+							"78" : "ibFan8Failure",
+							"79" : "ibFan4OK",
+							"80" : "ibFan5OK",
+							"81" : "ibFan6OK",
+							"82" : "ibFan7OK",
+							"83" : "ibFan8OK",
+							"84" : "ibOSPF6SoftwareFailure",
+							"85" : "ibOCSPResponderFailure",
+							"86" : "ibReportingAlertTriggered",
+							"87" : "ibCapturedQueriesUploadFailure",
+							"88" : "ibLDAPServerFailure",
+							"89" : "ibRIRSWIPRegistrationFailure",
+							"90" : "ibPowerSupply1Removed",
+							"91" : "ibPowerSupply2Removed",
+							"92" : "ibIPMISensorErrorDetected",
+							"93" : "ibDiscoveryConsolidatorTaskSwFailure",
+							"94" : "ibDiscoveryCollectorTaskSwFailure",
+							"95" : "ibDiscoveryBackupSwFailure",
+							"96" : "ibThreatProtectionAutoDownloadFailure",
+							"97" : "ibThreatProtectionPublishFailure",
+							"98" : "ibPassiveHANodeARPConnectivityFailure",
+							"99" : "ibPassiveHANodeARPConnectivitySuccess",
+							"100" : "ibDNSIntegrityCheckConnectionFailed",
+							"101" : "ibDNSIntegrityCheckPrimaryServersFailed",
+							"102" : "ibDNSIntegrityCheckNameserversFailed",
+							"103" : "ibCloudApiFailure",
+							"104" : "ibRpzRefreshFailure",
+							"105" : "ibUnboundSoftwareFailure",
+							"106" : "ibAnalyticsAutoDownloadFailure",
+							"107" : "ibDnsHealthCheckFailed",
+							"108" : "ibDnsHealthCheckSucceed",
+							"109" : "ibBFDSoftwareFailure",
+							"110" : "ibOutboundWorkerFailed",
+							"111" : "ibIMCServerFailure",
+							"3001" : "ibRAIDIsOptimal",
+							"3002" : "ibRAIDIsDegraded",
+							"3003" : "ibRAIDIsRebuilding",
+							"3004" : "ibRAIDStatusUnknown",
+							"3005" : "ibRAIDBatteryIsOK",
+							"3006" : "ibRAIDBatteryFailed",
+							"3007" : "ibRAIDOptimalMismatch",
+							"3008" : "ibRAIDDegradedMismatch",
+							"3009" : "ibRAIDRebuildingMismatch",
+							"3010" : "ibRAIDBatteryWeak",
+							"3011" : "ibRAIDIsDegradedDisk1",
+							"3012" : "ibRAIDIsDegradedDisk2",
+							"3013" : "ibRAIDIsDegradedDisk3",
+							"3014" : "ibRAIDIsDegradedDisk4",
+							"3015" : "ibRAIDIsDegradedDisk5",
+							"3016" : "ibRAIDIsDegradedDisk6",
+							"3017" : "ibRAIDIsDegradedDisk7",
+							"3018" : "ibRAIDIsDegradedDisk8",
+							"3019" : "ibRAIDIsRebuildingDisk1",
+							"3020" : "ibRAIDIsRebuildingDisk2",
+							"3021" : "ibRAIDIsRebuildingDisk3",
+							"3022" : "ibRAIDIsRebuildingDisk4",
+							"3023" : "ibRAIDIsRebuildingDisk5",
+							"3024" : "ibRAIDIsRebuildingDisk6",
+							"3025" : "ibRAIDIsRebuildingDisk7",
+							"3026" : "ibRAIDIsRebuildingDisk8",
+							"3027" : "ibRAIDDegradedMismatchDisk1",
+							"3028" : "ibRAIDDegradedMismatchDisk2",
+							"3029" : "ibRAIDDegradedMismatchDisk3",
+							"3030" : "ibRAIDDegradedMismatchDisk4",
+							"3031" : "ibRAIDDegradedMismatchDisk5",
+							"3032" : "ibRAIDDegradedMismatchDisk6",
+							"3033" : "ibRAIDDegradedMismatchDisk7",
+							"3034" : "ibRAIDDegradedMismatchDisk8",
+							"3035" : "ibRAIDRebuildingMismatchDisk1",
+							"3036" : "ibRAIDRebuildingMismatchDisk2",
+							"3037" : "ibRAIDRebuildingMismatchDisk3",
+							"3038" : "ibRAIDRebuildingMismatchDisk4",
+							"3039" : "ibRAIDRebuildingMismatchDisk5",
+							"3040" : "ibRAIDRebuildingMismatchDisk6",
+							"3041" : "ibRAIDRebuildingMismatchDisk7",
+							"3042" : "ibRAIDRebuildingMismatchDisk8",
+							"3043" : "ibRAIDIsInoperable",
+							"3044" : "ibRAIDPredictedDegraded",
+							"3045" : "ibRAIDPredictedDegradedDisk1",
+							"3046" : "ibRAIDPredictedDegradedDisk2",
+							"3047" : "ibRAIDPredictedDegradedDisk3",
+							"3048" : "ibRAIDPredictedDegradedDisk4",
+							"3049" : "ibRAIDPredictedDegradedDisk5",
+							"3050" : "ibRAIDPredictedDegradedDisk6",
+							"3051" : "ibRAIDPredictedDegradedDisk7",
+							"3052" : "ibRAIDPredictedDegradedDisk8",
+							"4001" : "ibDisconnectedGridAttachFailed",
+							"4002" : "ibDisconnectedGridDetachFailed",
+							"4003" : "ibDisconnectedGridDetachFailedSubgridOffline",
+							"4004" : "ibDisconnectedGridSnapshotFailed",
+							"4005" : "ibDnssecAutomaticKSKRolloverApproching",
+							"4006" : "ibDnssecManualKSKRolloverDueApproching",
+							"4007" : "ibDnssecAutomaticKSKRolloverDone",
+							"4008" : "ibDnssecManualKSKRolloverDone",
+							"4009" : "ibDnssecKSKRolloverOverdue",
+							"4010" : "ibPortDiscoveryConflict",
+							"4011" : "ibDeviceDiscoveryConflict",
+							"4012" : "ibDeviceUnmanaged",
+							"4013" : "ibAnalyticsDnstUpdate",
+							"4014" : "ibSyslogBackupDone",
+							"4015" : "ibSyslogBackupFailed"
+						},
+						"name" : "IB-TRAP-MIB::ibProbableCause",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It contains the description of the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibTrapDesc",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IB-TRAP-MIB::ibProcessingFailureTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated whenever a software failure is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ibProcessingFailureTrap:$v4",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2) ? 2 : (($v2==4) ? 4 : (($v2==5) ? 5 : 3)))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'Processing failure detected: $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IB-TRAP-MIB::ibProcessingFailureTrap IB-TRAP-MIB::ibNodeName s EXAMPLE IB-TRAP-MIB::ibTrapSeverity i 4 IB-TRAP-MIB::ibSubsystemName s EXAMPLE IB-TRAP-MIB::ibProbableCause i 0 IB-TRAP-MIB::ibTrapDesc s EXAMPLE",
+			"trap" : {
+				"name" : "IB-TRAP-MIB::ibProcessingFailureTrap",
+				"oid" : "1.3.6.1.4.1.7779.3.1.1.1.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"It is the node name (node ip address) the trap occurred.",
+							"This node name may or may not the same as the node sending",
+							"out the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibNodeName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the severity of the trap."
+						],
+						"enums" : {
+							"1" : "indetermined",
+							"2" : "info",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "IB-TRAP-MIB::ibTrapSeverity",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It describes the subsystem for which the trap is generated."
+						],
+						"name" : "IB-TRAP-MIB::ibSubsystemName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It describes the probable cause of a problem ."
+						],
+						"enums" : {
+							"0" : "ibClear",
+							"1" : "ibUnknown",
+							"2" : "ibPrimaryDiskFailure",
+							"3" : "ibFanFailure-old",
+							"4" : "ibPowerSupplyFailure",
+							"5" : "ibDBFailure",
+							"6" : "ibApacheSoftwareFailure",
+							"7" : "ibSerialConsoleFailure",
+							"11" : "ibControldSoftwareFailure",
+							"12" : "ibUpgradeFailure",
+							"13" : "ibSNMPDFailure",
+							"15" : "ibSSHDSoftwareFailure",
+							"16" : "ibNTPDSoftwareFailure",
+							"17" : "ibClusterdSoftwarFailure",
+							"18" : "ibLCDSoftwareFailure",
+							"19" : "ibDHCPdSoftwareFailure",
+							"20" : "ibNamedSoftwareFailure",
+							"21" : "ibAuthServerGroupDown",
+							"22" : "ibAuthServerGroupUp",
+							"24" : "ibNTLMSoftwareFailure",
+							"25" : "ibNetBIOSDaemonFailure",
+							"26" : "ibWindowBindDaemonFailure",
+							"27" : "ibTFTPDSoftwareFailure",
+							"28" : "ibUNUSED28",
+							"29" : "ibBackupSoftwareFailure",
+							"30" : "ibBackupDatabaseSoftwareFailure",
+							"31" : "ibBackupModuleSoftwareFailure",
+							"32" : "ibBackupSizeSoftwareFailure",
+							"33" : "ibBackupLockSoftwareFailure",
+							"34" : "ibHTTPFileDistSoftwareFailure",
+							"35" : "ibOSPFSoftwareFailure",
+							"36" : "ibAuthDHCPNamedSoftwareFailure",
+							"37" : "ibFan1Failure",
+							"38" : "ibFan2Failure",
+							"39" : "ibFan3Failure",
+							"40" : "ibFan1OK",
+							"41" : "ibFan2OK",
+							"42" : "ibFan3OK",
+							"44" : "ibFTPDSoftwareFailure",
+							"45" : "ibBloxtoolsSoftwareFailure",
+							"46" : "ibPowerSupplyOK",
+							"47" : "ibWebUISoftwareFailure",
+							"48" : "ibUNUSED48",
+							"49" : "ibADAgentSyncFailure",
+							"50" : "ibIFMAPSoftwareFailure",
+							"51" : "ibCaptivePortalSoftwareFailure",
+							"52" : "ibDuplicateIPAddressFailure",
+							"53" : "ibBGPSoftwareFailure",
+							"54" : "ibRevokedLicense",
+							"58" : "ibGUILoginFailure",
+							"59" : "ibSerialConsoleLoginFailure",
+							"60" : "ibSystemReboot",
+							"61" : "ibSystemRestart",
+							"62" : "ibZoneTransferFailure",
+							"63" : "ibDHCPLeaseConflict",
+							"64" : "ibDHCPAddressConflict",
+							"65" : "ibDHCPRangeConflict",
+							"66" : "ibDHCPHostConflict",
+							"67" : "ibSyslogFailure",
+							"68" : "ibPowerSupply1Failure",
+							"69" : "ibPowerSupply2Failure",
+							"70" : "ibPowerSupply1OK",
+							"71" : "ibPowerSupply2OK",
+							"72" : "ibReportingTaskSwFailure",
+							"73" : "ibReportingDbBackupFailure",
+							"74" : "ibFan4Failure",
+							"75" : "ibFan5Failure",
+							"76" : "ibFan6Failure",
+							"77" : "ibFan7Failure",
+							"78" : "ibFan8Failure",
+							"79" : "ibFan4OK",
+							"80" : "ibFan5OK",
+							"81" : "ibFan6OK",
+							"82" : "ibFan7OK",
+							"83" : "ibFan8OK",
+							"84" : "ibOSPF6SoftwareFailure",
+							"85" : "ibOCSPResponderFailure",
+							"86" : "ibReportingAlertTriggered",
+							"87" : "ibCapturedQueriesUploadFailure",
+							"88" : "ibLDAPServerFailure",
+							"89" : "ibRIRSWIPRegistrationFailure",
+							"90" : "ibPowerSupply1Removed",
+							"91" : "ibPowerSupply2Removed",
+							"92" : "ibIPMISensorErrorDetected",
+							"93" : "ibDiscoveryConsolidatorTaskSwFailure",
+							"94" : "ibDiscoveryCollectorTaskSwFailure",
+							"95" : "ibDiscoveryBackupSwFailure",
+							"96" : "ibThreatProtectionAutoDownloadFailure",
+							"97" : "ibThreatProtectionPublishFailure",
+							"98" : "ibPassiveHANodeARPConnectivityFailure",
+							"99" : "ibPassiveHANodeARPConnectivitySuccess",
+							"100" : "ibDNSIntegrityCheckConnectionFailed",
+							"101" : "ibDNSIntegrityCheckPrimaryServersFailed",
+							"102" : "ibDNSIntegrityCheckNameserversFailed",
+							"103" : "ibCloudApiFailure",
+							"104" : "ibRpzRefreshFailure",
+							"105" : "ibUnboundSoftwareFailure",
+							"106" : "ibAnalyticsAutoDownloadFailure",
+							"107" : "ibDnsHealthCheckFailed",
+							"108" : "ibDnsHealthCheckSucceed",
+							"109" : "ibBFDSoftwareFailure",
+							"110" : "ibOutboundWorkerFailed",
+							"111" : "ibIMCServerFailure",
+							"3001" : "ibRAIDIsOptimal",
+							"3002" : "ibRAIDIsDegraded",
+							"3003" : "ibRAIDIsRebuilding",
+							"3004" : "ibRAIDStatusUnknown",
+							"3005" : "ibRAIDBatteryIsOK",
+							"3006" : "ibRAIDBatteryFailed",
+							"3007" : "ibRAIDOptimalMismatch",
+							"3008" : "ibRAIDDegradedMismatch",
+							"3009" : "ibRAIDRebuildingMismatch",
+							"3010" : "ibRAIDBatteryWeak",
+							"3011" : "ibRAIDIsDegradedDisk1",
+							"3012" : "ibRAIDIsDegradedDisk2",
+							"3013" : "ibRAIDIsDegradedDisk3",
+							"3014" : "ibRAIDIsDegradedDisk4",
+							"3015" : "ibRAIDIsDegradedDisk5",
+							"3016" : "ibRAIDIsDegradedDisk6",
+							"3017" : "ibRAIDIsDegradedDisk7",
+							"3018" : "ibRAIDIsDegradedDisk8",
+							"3019" : "ibRAIDIsRebuildingDisk1",
+							"3020" : "ibRAIDIsRebuildingDisk2",
+							"3021" : "ibRAIDIsRebuildingDisk3",
+							"3022" : "ibRAIDIsRebuildingDisk4",
+							"3023" : "ibRAIDIsRebuildingDisk5",
+							"3024" : "ibRAIDIsRebuildingDisk6",
+							"3025" : "ibRAIDIsRebuildingDisk7",
+							"3026" : "ibRAIDIsRebuildingDisk8",
+							"3027" : "ibRAIDDegradedMismatchDisk1",
+							"3028" : "ibRAIDDegradedMismatchDisk2",
+							"3029" : "ibRAIDDegradedMismatchDisk3",
+							"3030" : "ibRAIDDegradedMismatchDisk4",
+							"3031" : "ibRAIDDegradedMismatchDisk5",
+							"3032" : "ibRAIDDegradedMismatchDisk6",
+							"3033" : "ibRAIDDegradedMismatchDisk7",
+							"3034" : "ibRAIDDegradedMismatchDisk8",
+							"3035" : "ibRAIDRebuildingMismatchDisk1",
+							"3036" : "ibRAIDRebuildingMismatchDisk2",
+							"3037" : "ibRAIDRebuildingMismatchDisk3",
+							"3038" : "ibRAIDRebuildingMismatchDisk4",
+							"3039" : "ibRAIDRebuildingMismatchDisk5",
+							"3040" : "ibRAIDRebuildingMismatchDisk6",
+							"3041" : "ibRAIDRebuildingMismatchDisk7",
+							"3042" : "ibRAIDRebuildingMismatchDisk8",
+							"3043" : "ibRAIDIsInoperable",
+							"3044" : "ibRAIDPredictedDegraded",
+							"3045" : "ibRAIDPredictedDegradedDisk1",
+							"3046" : "ibRAIDPredictedDegradedDisk2",
+							"3047" : "ibRAIDPredictedDegradedDisk3",
+							"3048" : "ibRAIDPredictedDegradedDisk4",
+							"3049" : "ibRAIDPredictedDegradedDisk5",
+							"3050" : "ibRAIDPredictedDegradedDisk6",
+							"3051" : "ibRAIDPredictedDegradedDisk7",
+							"3052" : "ibRAIDPredictedDegradedDisk8",
+							"4001" : "ibDisconnectedGridAttachFailed",
+							"4002" : "ibDisconnectedGridDetachFailed",
+							"4003" : "ibDisconnectedGridDetachFailedSubgridOffline",
+							"4004" : "ibDisconnectedGridSnapshotFailed",
+							"4005" : "ibDnssecAutomaticKSKRolloverApproching",
+							"4006" : "ibDnssecManualKSKRolloverDueApproching",
+							"4007" : "ibDnssecAutomaticKSKRolloverDone",
+							"4008" : "ibDnssecManualKSKRolloverDone",
+							"4009" : "ibDnssecKSKRolloverOverdue",
+							"4010" : "ibPortDiscoveryConflict",
+							"4011" : "ibDeviceDiscoveryConflict",
+							"4012" : "ibDeviceUnmanaged",
+							"4013" : "ibAnalyticsDnstUpdate",
+							"4014" : "ibSyslogBackupDone",
+							"4015" : "ibSyslogBackupFailed"
+						},
+						"name" : "IB-TRAP-MIB::ibProbableCause",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It contains the description of the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibTrapDesc",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IB-TRAP-MIB::ibThresholdCrossingEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This event is generated whenever a threshold crossing has",
+				"occurred for the first time."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ibThresholdCrossingEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2) ? 2 : (($v2==4) ? 4 : (($v2==5) ? 5 : 3)))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : {
+					"eval" : "($v7 ne '') ? '$v7' : 'Threshold crossing event occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IB-TRAP-MIB::ibThresholdCrossingEvent IB-TRAP-MIB::ibNodeName s EXAMPLE IB-TRAP-MIB::ibTrapSeverity i 4 IB-TRAP-MIB::ibObjectName s EXAMPLE IB-TRAP-MIB::ibCurThresholdValue i 9999 IB-TRAP-MIB::ibThresholdHigh i 9999 IB-TRAP-MIB::ibThresholdLow i 9999 IB-TRAP-MIB::ibTrapDesc s EXAMPLE",
+			"trap" : {
+				"name" : "IB-TRAP-MIB::ibThresholdCrossingEvent",
+				"oid" : "1.3.6.1.4.1.7779.3.1.1.1.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"It is the node name (node ip address) the trap occurred.",
+							"This node name may or may not the same as the node sending",
+							"out the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibNodeName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the severity of the trap."
+						],
+						"enums" : {
+							"1" : "indetermined",
+							"2" : "info",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "IB-TRAP-MIB::ibTrapSeverity",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It describes the object for which the trap is generated."
+						],
+						"name" : "IB-TRAP-MIB::ibObjectName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the current value of a threshold counter."
+						],
+						"name" : "IB-TRAP-MIB::ibCurThresholdValue",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It contains the value for threshold high"
+						],
+						"name" : "IB-TRAP-MIB::ibThresholdHigh",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It contains the value for threshold low"
+						],
+						"name" : "IB-TRAP-MIB::ibThresholdLow",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It contains the description of the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibTrapDesc",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IB-TRAP-MIB::ibStateChangeEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This event is generated whenever an object state change",
+				"has occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ibStateChangeEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2) ? 2 : (($v2==4) ? 4 : (($v2==5) ? 5 : 3)))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : {
+					"eval" : "($v6 ne '') ? '$v6' : 'State changed from $v4 to $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IB-TRAP-MIB::ibStateChangeEvent IB-TRAP-MIB::ibNodeName s EXAMPLE IB-TRAP-MIB::ibTrapSeverity i 1 IB-TRAP-MIB::ibObjectName s EXAMPLE IB-TRAP-MIB::ibPreviousState i 1 IB-TRAP-MIB::ibCurrentState i 1 IB-TRAP-MIB::ibTrapDesc s EXAMPLE",
+			"trap" : {
+				"name" : "IB-TRAP-MIB::ibStateChangeEvent",
+				"oid" : "1.3.6.1.4.1.7779.3.1.1.1.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"It is the node name (node ip address) the trap occurred.",
+							"This node name may or may not the same as the node sending",
+							"out the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibNodeName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the severity of the trap."
+						],
+						"enums" : {
+							"1" : "indetermined",
+							"2" : "info",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "IB-TRAP-MIB::ibTrapSeverity",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It describes the object for which the trap is generated."
+						],
+						"name" : "IB-TRAP-MIB::ibObjectName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the value for previous state"
+						],
+						"enums" : {
+							"1" : "ha-active",
+							"2" : "ha-passive",
+							"3" : "ha-initial",
+							"4" : "grid-connected",
+							"5" : "grid-disconnected",
+							"6" : "enet-link-up",
+							"7" : "enet-link-down",
+							"8" : "replication-online",
+							"9" : "replication-offline",
+							"10" : "replication-snapshotting",
+							"11" : "service-up",
+							"12" : "service-down",
+							"13" : "ha-replication-online",
+							"14" : "ha-replication-offline",
+							"15" : "ntp-sync-up",
+							"16" : "ntp-sync-down",
+							"17" : "ms-server-up",
+							"18" : "ms-server-down",
+							"19" : "ms-service-up",
+							"20" : "ms-service-down",
+							"21" : "nac-server-group-down",
+							"22" : "nac-server-group-up",
+							"23" : "mgm-service-up",
+							"24" : "mgm-service-down",
+							"25" : "ha-active-active",
+							"26" : "ftp-service-working",
+							"27" : "ftp-service-failed",
+							"28" : "ftp-service-inactive",
+							"29" : "tftp-service-working",
+							"30" : "tftp-service-failed",
+							"31" : "tftp-service-inactive",
+							"32" : "dns-service-working",
+							"33" : "dns-service-failed",
+							"34" : "dns-service-inactive",
+							"35" : "ntp-service-working",
+							"36" : "ntp-service-failed",
+							"37" : "ntp-service-inactive",
+							"38" : "http-file-dist-service-working",
+							"39" : "http-file-dist-service-failed",
+							"40" : "http-file-dist-service-inactive",
+							"41" : "bloxtools-service-working",
+							"42" : "bloxtools-service-warning",
+							"43" : "bloxtools-service-failed",
+							"44" : "bloxtools-service-inactive",
+							"45" : "dhcp-service-working",
+							"46" : "dhcp-service-warning",
+							"47" : "dhcp-service-failed",
+							"48" : "dhcp-service-inactive",
+							"49" : "capative-portal-service-working",
+							"50" : "captive-portal-service-failed",
+							"51" : "captive-portal-service-inactive",
+							"52" : "ifmap-service-working",
+							"53" : "ifmap-service-failed",
+							"54" : "ifmap-service-inactive",
+							"56" : "hsm-group-down",
+							"57" : "hsm-group-up",
+							"59" : "reporting-service-working",
+							"60" : "reporting-service-failed",
+							"61" : "reporting-service-inactive",
+							"62" : "dns-cache-acceleration-working",
+							"63" : "dns-cache-acceleration-failed",
+							"64" : "dns-cache-acceleration-inactive",
+							"65" : "ocsp-responders-ok",
+							"66" : "ocsp-responder-failed",
+							"67" : "ocsp-responders-unavailable",
+							"68" : "ocsp-service-inactive",
+							"69" : "subgrid-attached",
+							"70" : "subgrid-detached",
+							"71" : "snapshot-disabled",
+							"72" : "snapshot-enabled",
+							"73" : "lb-device-up",
+							"74" : "lb-device-down",
+							"76" : "ldap-servers-ok",
+							"77" : "ldap-server-failure",
+							"78" : "ldap-servers-unavailable",
+							"79" : "ldap-service-inactive",
+							"80" : "sgm-state-online",
+							"81" : "sgm-state-offline",
+							"82" : "discovery-consolidator-service-working",
+							"83" : "discovery-consolidator-service-warning",
+							"84" : "discovery-consolidator-service-failed",
+							"85" : "discovery-consolidator-service-inactive",
+							"86" : "discovery-collector-service-working",
+							"87" : "discovery-collector-service-warning",
+							"88" : "discovery-collector-service-failed",
+							"89" : "discovery-collector-service-inactive",
+							"90" : "threat-protection-service-working",
+							"91" : "threat-protection-service-warning",
+							"92" : "threat-protection-service-failed",
+							"93" : "threat-protection-service-inactive",
+							"94" : "mgm-external-storage-disabled",
+							"95" : "dns-integrity-check-failed",
+							"96" : "dns-integrity-check-working",
+							"97" : "dns-integrity-check-severity-indetermined",
+							"98" : "dns-integrity-check-severity-normal",
+							"99" : "dns-integrity-check-severity-informational",
+							"100" : "dns-integrity-check-severity-warning",
+							"101" : "dns-integrity-check-severity-severe",
+							"102" : "dns-integrity-check-severity-critical",
+							"103" : "cloud-api-service-working",
+							"104" : "cloud-api-service-failed",
+							"105" : "cloud-api-service-inactive",
+							"106" : "dns-service-dtc-failed",
+							"107" : "raid-status-is-unavailable",
+							"108" : "raid-status-is-available",
+							"109" : "ipmi-device-warning",
+							"110" : "ipmi-device-unavailable",
+							"111" : "ipmi-device-available",
+							"112" : "rpz-refresh-working",
+							"113" : "rpz-refresh-failed",
+							"114" : "rpz-refresh-unknown",
+							"115" : "dns-attack-active",
+							"116" : "dns-attack-inactive",
+							"117" : "high-rpz-hit-rate",
+							"118" : "normal-rpz-hit-rate",
+							"119" : "taxii-working",
+							"120" : "taxii-warning",
+							"121" : "taxii-failed",
+							"122" : "taxii-inactive",
+							"123" : "ciscoise-service-up",
+							"124" : "ciscoise-service-down",
+							"125" : "threat-analytics-service-inactive",
+							"126" : "threat-analytics-service-working",
+							"127" : "threat-analytics-service-warning",
+							"128" : "threat-analytics-service-failed",
+							"129" : "reporting-service-warning",
+							"130" : "outbound-service-manager-started",
+							"131" : "outbound-service-manager-failed",
+							"132" : "outbound-service-manager-stopped",
+							"133" : "imc-servers-ok",
+							"134" : "imc-server-failure",
+							"135" : "imc-servers-unavailable",
+							"136" : "imc-service-inactive",
+							"137" : "imc-zvelo-service-unavailable",
+							"138" : "imc-server-initializing",
+							"139" : "dns-service-atc-failed",
+							"140" : "dfp-working",
+							"141" : "dfp-failed",
+							"142" : "dfp-inactive",
+							"143" : "dfp-stopped",
+							"144" : "dot-doh-reboot-required",
+							"145" : "dot-doh-working",
+							"146" : "dot-doh-support-inactive",
+							"147" : "imc-bwl-support-inactive",
+							"148" : "imc-bwl-reboot-required",
+							"149" : "imc-bwl-working",
+							"163" : "imc-zvelo-database-update-failed",
+							"164" : "imc-zvelo-database-expired",
+							"165" : "imc-zvelo-snmp-clear-trap",
+							"166" : "cds-working",
+							"167" : "cds-failed",
+							"168" : "cds-initializing",
+							"169" : "cds-inactive"
+						},
+						"name" : "IB-TRAP-MIB::ibPreviousState",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It contains the value for current state"
+						],
+						"enums" : {
+							"1" : "ha-active",
+							"2" : "ha-passive",
+							"3" : "ha-initial",
+							"4" : "grid-connected",
+							"5" : "grid-disconnected",
+							"6" : "enet-link-up",
+							"7" : "enet-link-down",
+							"8" : "replication-online",
+							"9" : "replication-offline",
+							"10" : "replication-snapshotting",
+							"11" : "service-up",
+							"12" : "service-down",
+							"13" : "ha-replication-online",
+							"14" : "ha-replication-offline",
+							"15" : "ntp-sync-up",
+							"16" : "ntp-sync-down",
+							"17" : "ms-server-up",
+							"18" : "ms-server-down",
+							"19" : "ms-service-up",
+							"20" : "ms-service-down",
+							"21" : "nac-server-group-down",
+							"22" : "nac-server-group-up",
+							"23" : "mgm-service-up",
+							"24" : "mgm-service-down",
+							"25" : "ha-active-active",
+							"26" : "ftp-service-working",
+							"27" : "ftp-service-failed",
+							"28" : "ftp-service-inactive",
+							"29" : "tftp-service-working",
+							"30" : "tftp-service-failed",
+							"31" : "tftp-service-inactive",
+							"32" : "dns-service-working",
+							"33" : "dns-service-failed",
+							"34" : "dns-service-inactive",
+							"35" : "ntp-service-working",
+							"36" : "ntp-service-failed",
+							"37" : "ntp-service-inactive",
+							"38" : "http-file-dist-service-working",
+							"39" : "http-file-dist-service-failed",
+							"40" : "http-file-dist-service-inactive",
+							"41" : "bloxtools-service-working",
+							"42" : "bloxtools-service-warning",
+							"43" : "bloxtools-service-failed",
+							"44" : "bloxtools-service-inactive",
+							"45" : "dhcp-service-working",
+							"46" : "dhcp-service-warning",
+							"47" : "dhcp-service-failed",
+							"48" : "dhcp-service-inactive",
+							"49" : "capative-portal-service-working",
+							"50" : "captive-portal-service-failed",
+							"51" : "captive-portal-service-inactive",
+							"52" : "ifmap-service-working",
+							"53" : "ifmap-service-failed",
+							"54" : "ifmap-service-inactive",
+							"56" : "hsm-group-down",
+							"57" : "hsm-group-up",
+							"59" : "reporting-service-working",
+							"60" : "reporting-service-failed",
+							"61" : "reporting-service-inactive",
+							"62" : "dns-cache-acceleration-working",
+							"63" : "dns-cache-acceleration-failed",
+							"64" : "dns-cache-acceleration-inactive",
+							"65" : "ocsp-responders-ok",
+							"66" : "ocsp-responder-failed",
+							"67" : "ocsp-responders-unavailable",
+							"68" : "ocsp-service-inactive",
+							"69" : "subgrid-attached",
+							"70" : "subgrid-detached",
+							"71" : "snapshot-disabled",
+							"72" : "snapshot-enabled",
+							"73" : "lb-device-up",
+							"74" : "lb-device-down",
+							"76" : "ldap-servers-ok",
+							"77" : "ldap-server-failure",
+							"78" : "ldap-servers-unavailable",
+							"79" : "ldap-service-inactive",
+							"80" : "sgm-state-online",
+							"81" : "sgm-state-offline",
+							"82" : "discovery-consolidator-service-working",
+							"83" : "discovery-consolidator-service-warning",
+							"84" : "discovery-consolidator-service-failed",
+							"85" : "discovery-consolidator-service-inactive",
+							"86" : "discovery-collector-service-working",
+							"87" : "discovery-collector-service-warning",
+							"88" : "discovery-collector-service-failed",
+							"89" : "discovery-collector-service-inactive",
+							"90" : "threat-protection-service-working",
+							"91" : "threat-protection-service-warning",
+							"92" : "threat-protection-service-failed",
+							"93" : "threat-protection-service-inactive",
+							"94" : "mgm-external-storage-disabled",
+							"95" : "dns-integrity-check-failed",
+							"96" : "dns-integrity-check-working",
+							"97" : "dns-integrity-check-severity-indetermined",
+							"98" : "dns-integrity-check-severity-normal",
+							"99" : "dns-integrity-check-severity-informational",
+							"100" : "dns-integrity-check-severity-warning",
+							"101" : "dns-integrity-check-severity-severe",
+							"102" : "dns-integrity-check-severity-critical",
+							"103" : "cloud-api-service-working",
+							"104" : "cloud-api-service-failed",
+							"105" : "cloud-api-service-inactive",
+							"106" : "dns-service-dtc-failed",
+							"107" : "raid-status-is-unavailable",
+							"108" : "raid-status-is-available",
+							"109" : "ipmi-device-warning",
+							"110" : "ipmi-device-unavailable",
+							"111" : "ipmi-device-available",
+							"112" : "rpz-refresh-working",
+							"113" : "rpz-refresh-failed",
+							"114" : "rpz-refresh-unknown",
+							"115" : "dns-attack-active",
+							"116" : "dns-attack-inactive",
+							"117" : "high-rpz-hit-rate",
+							"118" : "normal-rpz-hit-rate",
+							"119" : "taxii-working",
+							"120" : "taxii-warning",
+							"121" : "taxii-failed",
+							"122" : "taxii-inactive",
+							"123" : "ciscoise-service-up",
+							"124" : "ciscoise-service-down",
+							"125" : "threat-analytics-service-inactive",
+							"126" : "threat-analytics-service-working",
+							"127" : "threat-analytics-service-warning",
+							"128" : "threat-analytics-service-failed",
+							"129" : "reporting-service-warning",
+							"130" : "outbound-service-manager-started",
+							"131" : "outbound-service-manager-failed",
+							"132" : "outbound-service-manager-stopped",
+							"133" : "imc-servers-ok",
+							"134" : "imc-server-failure",
+							"135" : "imc-servers-unavailable",
+							"136" : "imc-service-inactive",
+							"137" : "imc-zvelo-service-unavailable",
+							"138" : "imc-server-initializing",
+							"139" : "dns-service-atc-failed",
+							"140" : "dfp-working",
+							"141" : "dfp-failed",
+							"142" : "dfp-inactive",
+							"143" : "dfp-stopped",
+							"144" : "dot-doh-reboot-required",
+							"145" : "dot-doh-working",
+							"146" : "dot-doh-support-inactive",
+							"147" : "imc-bwl-support-inactive",
+							"148" : "imc-bwl-reboot-required",
+							"149" : "imc-bwl-working",
+							"163" : "imc-zvelo-database-update-failed",
+							"164" : "imc-zvelo-database-expired",
+							"165" : "imc-zvelo-snmp-clear-trap",
+							"166" : "cds-working",
+							"167" : "cds-failed",
+							"168" : "cds-initializing",
+							"169" : "cds-inactive"
+						},
+						"name" : "IB-TRAP-MIB::ibCurrentState",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It contains the description of the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibTrapDesc",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IB-TRAP-MIB::ibProcStartStopTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a process is started or",
+				"stopped normally."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ibProcStartStopTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "NodeName:$v1",
+				"Summary" : {
+					"eval" : "($v4 ne '') ? '$v4' : 'Process started or stopped normally'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IB-TRAP-MIB::ibProcStartStopTrap IB-TRAP-MIB::ibNodeName s EXAMPLE IB-TRAP-MIB::ibTrapSeverity i 1 IB-TRAP-MIB::ibSubsystemName s EXAMPLE IB-TRAP-MIB::ibTrapDesc s EXAMPLE",
+			"trap" : {
+				"name" : "IB-TRAP-MIB::ibProcStartStopTrap",
+				"oid" : "1.3.6.1.4.1.7779.3.1.1.1.1.5",
+				"variables" : [
+					{
+						"description" : [
+							"It is the node name (node ip address) the trap occurred.",
+							"This node name may or may not the same as the node sending",
+							"out the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibNodeName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the severity of the trap."
+						],
+						"enums" : {
+							"1" : "indetermined",
+							"2" : "info",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "IB-TRAP-MIB::ibTrapSeverity",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It describes the subsystem for which the trap is generated."
+						],
+						"name" : "IB-TRAP-MIB::ibSubsystemName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the description of the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibTrapDesc",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IB-TRAP-MIB::ibRevokedLicenseTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a license is revoked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ibRevokedLicenseTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2) ? 2 : (($v2==4) ? 4 : (($v2==5) ? 5 : 3)))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : {
+					"eval" : "($v4 ne '') ? '$v4' : 'License is revoked'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IB-TRAP-MIB::ibRevokedLicenseTrap IB-TRAP-MIB::ibNodeName s EXAMPLE IB-TRAP-MIB::ibTrapSeverity i 4 IB-TRAP-MIB::ibSubsystemName s EXAMPLE IB-TRAP-MIB::ibTrapDesc s EXAMPLE",
+			"trap" : {
+				"name" : "IB-TRAP-MIB::ibRevokedLicenseTrap",
+				"oid" : "1.3.6.1.4.1.7779.3.1.1.1.1.6",
+				"variables" : [
+					{
+						"description" : [
+							"It is the node name (node ip address) the trap occurred.",
+							"This node name may or may not the same as the node sending",
+							"out the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibNodeName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the severity of the trap."
+						],
+						"enums" : {
+							"1" : "indetermined",
+							"2" : "info",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "IB-TRAP-MIB::ibTrapSeverity",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It describes the subsystem for which the trap is generated."
+						],
+						"name" : "IB-TRAP-MIB::ibSubsystemName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the description of the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibTrapDesc",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IB-TRAP-MIB::ibOperationTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated whenever a software operation is noteworthy."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ibOperationTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==1) ? 1 : (($v2==2) ? 2 : (($v2==4) ? 4 : (($v2==5) ? 5 : 3)))"
+				},
+				"SubNode" : "NodeName:$v1",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'Software operation is noteworthy: $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IB-TRAP-MIB::ibOperationTrap IB-TRAP-MIB::ibNodeName s EXAMPLE IB-TRAP-MIB::ibTrapSeverity i 3 IB-TRAP-MIB::ibSubsystemName s EXAMPLE IB-TRAP-MIB::ibProbableCause i 0 IB-TRAP-MIB::ibTrapDesc s EXAMPLE",
+			"trap" : {
+				"name" : "IB-TRAP-MIB::ibOperationTrap",
+				"oid" : "1.3.6.1.4.1.7779.3.1.1.1.1.7",
+				"variables" : [
+					{
+						"description" : [
+							"It is the node name (node ip address) the trap occurred.",
+							"This node name may or may not the same as the node sending",
+							"out the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibNodeName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It contains the severity of the trap."
+						],
+						"enums" : {
+							"1" : "indetermined",
+							"2" : "info",
+							"3" : "minor",
+							"4" : "major",
+							"5" : "critical"
+						},
+						"name" : "IB-TRAP-MIB::ibTrapSeverity",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It describes the subsystem for which the trap is generated."
+						],
+						"name" : "IB-TRAP-MIB::ibSubsystemName",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It describes the probable cause of a problem ."
+						],
+						"enums" : {
+							"0" : "ibClear",
+							"1" : "ibUnknown",
+							"2" : "ibPrimaryDiskFailure",
+							"3" : "ibFanFailure-old",
+							"4" : "ibPowerSupplyFailure",
+							"5" : "ibDBFailure",
+							"6" : "ibApacheSoftwareFailure",
+							"7" : "ibSerialConsoleFailure",
+							"11" : "ibControldSoftwareFailure",
+							"12" : "ibUpgradeFailure",
+							"13" : "ibSNMPDFailure",
+							"15" : "ibSSHDSoftwareFailure",
+							"16" : "ibNTPDSoftwareFailure",
+							"17" : "ibClusterdSoftwarFailure",
+							"18" : "ibLCDSoftwareFailure",
+							"19" : "ibDHCPdSoftwareFailure",
+							"20" : "ibNamedSoftwareFailure",
+							"21" : "ibAuthServerGroupDown",
+							"22" : "ibAuthServerGroupUp",
+							"24" : "ibNTLMSoftwareFailure",
+							"25" : "ibNetBIOSDaemonFailure",
+							"26" : "ibWindowBindDaemonFailure",
+							"27" : "ibTFTPDSoftwareFailure",
+							"28" : "ibUNUSED28",
+							"29" : "ibBackupSoftwareFailure",
+							"30" : "ibBackupDatabaseSoftwareFailure",
+							"31" : "ibBackupModuleSoftwareFailure",
+							"32" : "ibBackupSizeSoftwareFailure",
+							"33" : "ibBackupLockSoftwareFailure",
+							"34" : "ibHTTPFileDistSoftwareFailure",
+							"35" : "ibOSPFSoftwareFailure",
+							"36" : "ibAuthDHCPNamedSoftwareFailure",
+							"37" : "ibFan1Failure",
+							"38" : "ibFan2Failure",
+							"39" : "ibFan3Failure",
+							"40" : "ibFan1OK",
+							"41" : "ibFan2OK",
+							"42" : "ibFan3OK",
+							"44" : "ibFTPDSoftwareFailure",
+							"45" : "ibBloxtoolsSoftwareFailure",
+							"46" : "ibPowerSupplyOK",
+							"47" : "ibWebUISoftwareFailure",
+							"48" : "ibUNUSED48",
+							"49" : "ibADAgentSyncFailure",
+							"50" : "ibIFMAPSoftwareFailure",
+							"51" : "ibCaptivePortalSoftwareFailure",
+							"52" : "ibDuplicateIPAddressFailure",
+							"53" : "ibBGPSoftwareFailure",
+							"54" : "ibRevokedLicense",
+							"58" : "ibGUILoginFailure",
+							"59" : "ibSerialConsoleLoginFailure",
+							"60" : "ibSystemReboot",
+							"61" : "ibSystemRestart",
+							"62" : "ibZoneTransferFailure",
+							"63" : "ibDHCPLeaseConflict",
+							"64" : "ibDHCPAddressConflict",
+							"65" : "ibDHCPRangeConflict",
+							"66" : "ibDHCPHostConflict",
+							"67" : "ibSyslogFailure",
+							"68" : "ibPowerSupply1Failure",
+							"69" : "ibPowerSupply2Failure",
+							"70" : "ibPowerSupply1OK",
+							"71" : "ibPowerSupply2OK",
+							"72" : "ibReportingTaskSwFailure",
+							"73" : "ibReportingDbBackupFailure",
+							"74" : "ibFan4Failure",
+							"75" : "ibFan5Failure",
+							"76" : "ibFan6Failure",
+							"77" : "ibFan7Failure",
+							"78" : "ibFan8Failure",
+							"79" : "ibFan4OK",
+							"80" : "ibFan5OK",
+							"81" : "ibFan6OK",
+							"82" : "ibFan7OK",
+							"83" : "ibFan8OK",
+							"84" : "ibOSPF6SoftwareFailure",
+							"85" : "ibOCSPResponderFailure",
+							"86" : "ibReportingAlertTriggered",
+							"87" : "ibCapturedQueriesUploadFailure",
+							"88" : "ibLDAPServerFailure",
+							"89" : "ibRIRSWIPRegistrationFailure",
+							"90" : "ibPowerSupply1Removed",
+							"91" : "ibPowerSupply2Removed",
+							"92" : "ibIPMISensorErrorDetected",
+							"93" : "ibDiscoveryConsolidatorTaskSwFailure",
+							"94" : "ibDiscoveryCollectorTaskSwFailure",
+							"95" : "ibDiscoveryBackupSwFailure",
+							"96" : "ibThreatProtectionAutoDownloadFailure",
+							"97" : "ibThreatProtectionPublishFailure",
+							"98" : "ibPassiveHANodeARPConnectivityFailure",
+							"99" : "ibPassiveHANodeARPConnectivitySuccess",
+							"100" : "ibDNSIntegrityCheckConnectionFailed",
+							"101" : "ibDNSIntegrityCheckPrimaryServersFailed",
+							"102" : "ibDNSIntegrityCheckNameserversFailed",
+							"103" : "ibCloudApiFailure",
+							"104" : "ibRpzRefreshFailure",
+							"105" : "ibUnboundSoftwareFailure",
+							"106" : "ibAnalyticsAutoDownloadFailure",
+							"107" : "ibDnsHealthCheckFailed",
+							"108" : "ibDnsHealthCheckSucceed",
+							"109" : "ibBFDSoftwareFailure",
+							"110" : "ibOutboundWorkerFailed",
+							"111" : "ibIMCServerFailure",
+							"3001" : "ibRAIDIsOptimal",
+							"3002" : "ibRAIDIsDegraded",
+							"3003" : "ibRAIDIsRebuilding",
+							"3004" : "ibRAIDStatusUnknown",
+							"3005" : "ibRAIDBatteryIsOK",
+							"3006" : "ibRAIDBatteryFailed",
+							"3007" : "ibRAIDOptimalMismatch",
+							"3008" : "ibRAIDDegradedMismatch",
+							"3009" : "ibRAIDRebuildingMismatch",
+							"3010" : "ibRAIDBatteryWeak",
+							"3011" : "ibRAIDIsDegradedDisk1",
+							"3012" : "ibRAIDIsDegradedDisk2",
+							"3013" : "ibRAIDIsDegradedDisk3",
+							"3014" : "ibRAIDIsDegradedDisk4",
+							"3015" : "ibRAIDIsDegradedDisk5",
+							"3016" : "ibRAIDIsDegradedDisk6",
+							"3017" : "ibRAIDIsDegradedDisk7",
+							"3018" : "ibRAIDIsDegradedDisk8",
+							"3019" : "ibRAIDIsRebuildingDisk1",
+							"3020" : "ibRAIDIsRebuildingDisk2",
+							"3021" : "ibRAIDIsRebuildingDisk3",
+							"3022" : "ibRAIDIsRebuildingDisk4",
+							"3023" : "ibRAIDIsRebuildingDisk5",
+							"3024" : "ibRAIDIsRebuildingDisk6",
+							"3025" : "ibRAIDIsRebuildingDisk7",
+							"3026" : "ibRAIDIsRebuildingDisk8",
+							"3027" : "ibRAIDDegradedMismatchDisk1",
+							"3028" : "ibRAIDDegradedMismatchDisk2",
+							"3029" : "ibRAIDDegradedMismatchDisk3",
+							"3030" : "ibRAIDDegradedMismatchDisk4",
+							"3031" : "ibRAIDDegradedMismatchDisk5",
+							"3032" : "ibRAIDDegradedMismatchDisk6",
+							"3033" : "ibRAIDDegradedMismatchDisk7",
+							"3034" : "ibRAIDDegradedMismatchDisk8",
+							"3035" : "ibRAIDRebuildingMismatchDisk1",
+							"3036" : "ibRAIDRebuildingMismatchDisk2",
+							"3037" : "ibRAIDRebuildingMismatchDisk3",
+							"3038" : "ibRAIDRebuildingMismatchDisk4",
+							"3039" : "ibRAIDRebuildingMismatchDisk5",
+							"3040" : "ibRAIDRebuildingMismatchDisk6",
+							"3041" : "ibRAIDRebuildingMismatchDisk7",
+							"3042" : "ibRAIDRebuildingMismatchDisk8",
+							"3043" : "ibRAIDIsInoperable",
+							"3044" : "ibRAIDPredictedDegraded",
+							"3045" : "ibRAIDPredictedDegradedDisk1",
+							"3046" : "ibRAIDPredictedDegradedDisk2",
+							"3047" : "ibRAIDPredictedDegradedDisk3",
+							"3048" : "ibRAIDPredictedDegradedDisk4",
+							"3049" : "ibRAIDPredictedDegradedDisk5",
+							"3050" : "ibRAIDPredictedDegradedDisk6",
+							"3051" : "ibRAIDPredictedDegradedDisk7",
+							"3052" : "ibRAIDPredictedDegradedDisk8",
+							"4001" : "ibDisconnectedGridAttachFailed",
+							"4002" : "ibDisconnectedGridDetachFailed",
+							"4003" : "ibDisconnectedGridDetachFailedSubgridOffline",
+							"4004" : "ibDisconnectedGridSnapshotFailed",
+							"4005" : "ibDnssecAutomaticKSKRolloverApproching",
+							"4006" : "ibDnssecManualKSKRolloverDueApproching",
+							"4007" : "ibDnssecAutomaticKSKRolloverDone",
+							"4008" : "ibDnssecManualKSKRolloverDone",
+							"4009" : "ibDnssecKSKRolloverOverdue",
+							"4010" : "ibPortDiscoveryConflict",
+							"4011" : "ibDeviceDiscoveryConflict",
+							"4012" : "ibDeviceUnmanaged",
+							"4013" : "ibAnalyticsDnstUpdate",
+							"4014" : "ibSyslogBackupDone",
+							"4015" : "ibSyslogBackupFailed"
+						},
+						"name" : "IB-TRAP-MIB::ibProbableCause",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It contains the description of the trap."
+						],
+						"name" : "IB-TRAP-MIB::ibTrapDesc",
+						"oid" : "1.3.6.1.4.1.7779.3.1.1.1.2.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

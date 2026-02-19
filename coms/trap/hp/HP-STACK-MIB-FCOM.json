@@ -1,0 +1,648 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201001030000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HP-STACK-MIB::hpStackPortChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the state",
+				"of a stack port has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 1 : 2"
+				},
+				"EventType" : "hpStackPortChange",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 0 : ($v4==2) ? 4 : 3"
+				},
+				"SubNode" : "PortId:$v2",
+				"Summary" : "Stack port $v3 state: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-STACK-MIB::hpStackPortChange HP-STACK-MIB::hpStackMemberIdForTrap i 9999 HP-STACK-MIB::hpStackPortIdForTrap i 9999 HP-STACK-MIB::hpStackPortTypeForTrap i 1 HP-STACK-MIB::hpStackPortOperStatus i 1 HP-STACK-MIB::hpStackPortNeighbor s EXAMPLE",
+			"trap" : {
+				"name" : "HP-STACK-MIB::hpStackPortChange",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This is same as hpStackMemberId. ",
+							"This is useful only for the notifications."
+						],
+						"name" : "HP-STACK-MIB::hpStackMemberIdForTrap",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.13",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is same as hpStackPortId. ",
+							"This is useful only for the notifications."
+						],
+						"name" : "HP-STACK-MIB::hpStackPortIdForTrap",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.5.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is same as hpStackPortType. ",
+							"This is useful only for the notifications."
+						],
+						"enums" : {
+							"1" : "backPlane",
+							"2" : "frontPlane"
+						},
+						"name" : "HP-STACK-MIB::hpStackPortTypeForTrap",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.5.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This gives the stack port state."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "disabled",
+							"4" : "blocked"
+						},
+						"name" : "HP-STACK-MIB::hpStackPortOperStatus",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This contains the value of the ",
+							"hpStackMemberId and hpStackPortId ",
+							"of the switch's chassis to which this ",
+							"stack port is connected. If the ",
+							"stack port is not connected, it returns ",
+							"a value of zero."
+						],
+						"name" : "HP-STACK-MIB::hpStackPortNeighbor",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.5.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-STACK-MIB::hpStackCommanderChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a new commander ",
+				"first comes up. The notification is also sent when ",
+				"a failover happens, and the standby becomes commander or",
+				"when the commander is down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpStackCommanderChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Stack commander changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-STACK-MIB::hpStackCommanderChange HP-STACK-MIB::hpStackMemberIdForTrap i 9999 HP-STACK-MIB::hpStackMemberState i 0",
+			"trap" : {
+				"name" : "HP-STACK-MIB::hpStackCommanderChange",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This is same as hpStackMemberId. ",
+							"This is useful only for the notifications."
+						],
+						"name" : "HP-STACK-MIB::hpStackMemberIdForTrap",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.13",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This gives the status of the switch in the stack. ",
+							"unusedId (0) - The member ID does not exist. ",
+							"missing (1) - A member switch in the stack when",
+							"it becomes Non responsive, it is ",
+							"marked as the missing member. Either ",
+							"the stack link goes down or the stack ",
+							"member crashed. Note that it is possible ",
+							"to remove even the missing member from ",
+							"the stack. In this case, the missing members ",
+							"configuration is removed from the ",
+							"stack config file.",
+							"provision (2) - A member switch whose config is ",
+							"provisioned and that does not exist physically.",
+							"commander (3) - One physical switch whose master ",
+							"CPU takes up the role that the",
+							"active management module in ",
+							"the 8200 switch would take.",
+							"standby (4) - One physical switch whose master",
+							"CPU takes up the role that the",
+							"standby management module in ",
+							"the 8200 switch would take.",
+							"member (5) - A switch that is part of the",
+							"stack.",
+							"shutdown (6) - The switch is in the shutdown ",
+							"state.",
+							"booting (7) - The switch is in the booting ",
+							"state.",
+							"communicationFailure (8) - This is an error condition. ",
+							"The switch cannot be reached.",
+							"incompatibleOs (9) - This is an error condition. ",
+							"The member switch runs with a different",
+							"OS image.",
+							"unknownState (10) - The member switch's state cannot be ",
+							"determined. This is an error condition.",
+							"standbyBooting (11) - The standby switch is currently",
+							"booting up. When boot is",
+							"completed, the state will be",
+							"'standby (4)'."
+						],
+						"enums" : {
+							"0" : "unusedId",
+							"1" : "missing",
+							"2" : "provision",
+							"3" : "commander",
+							"4" : "standby",
+							"5" : "member",
+							"6" : "shutdown",
+							"7" : "booting",
+							"8" : "communicationFailure",
+							"9" : "incompatibleOs",
+							"10" : "unknownState",
+							"11" : "standbyBooting"
+						},
+						"name" : "HP-STACK-MIB::hpStackMemberState",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-STACK-MIB::hpStackMemberChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a new member joins ",
+				"the stack or when it moves from a loose provisioned to ",
+				"strict provisioned."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==10 || $v2==2 || $v2==3 || $v2==5 || $v2==7 || $v2==11) ? 3 : 2"
+				},
+				"EventType" : "hpStackMemberChange",
+				"ExpireTime" : {
+					"eval" : "($v2==10 || $v2==2 || $v2==3 || $v2==5 || $v2==7 || $v2==11) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==10) ? 1 : ($v2==0 || $v2==1 || $v2==4 || $v2==9) ? 3 : ($v2==6 || $v2==8) ? 4 : 2"
+				},
+				"SubNode" : "MemberId:$v1",
+				"Summary" : "Stack member $v1 state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-STACK-MIB::hpStackMemberChange HP-STACK-MIB::hpStackMemberIdForTrap i 9999 HP-STACK-MIB::hpStackMemberState i 0",
+			"trap" : {
+				"name" : "HP-STACK-MIB::hpStackMemberChange",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This is same as hpStackMemberId. ",
+							"This is useful only for the notifications."
+						],
+						"name" : "HP-STACK-MIB::hpStackMemberIdForTrap",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.13",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This gives the status of the switch in the stack. ",
+							"unusedId (0) - The member ID does not exist. ",
+							"missing (1) - A member switch in the stack when",
+							"it becomes Non responsive, it is ",
+							"marked as the missing member. Either ",
+							"the stack link goes down or the stack ",
+							"member crashed. Note that it is possible ",
+							"to remove even the missing member from ",
+							"the stack. In this case, the missing members ",
+							"configuration is removed from the ",
+							"stack config file.",
+							"provision (2) - A member switch whose config is ",
+							"provisioned and that does not exist physically.",
+							"commander (3) - One physical switch whose master ",
+							"CPU takes up the role that the",
+							"active management module in ",
+							"the 8200 switch would take.",
+							"standby (4) - One physical switch whose master",
+							"CPU takes up the role that the",
+							"standby management module in ",
+							"the 8200 switch would take.",
+							"member (5) - A switch that is part of the",
+							"stack.",
+							"shutdown (6) - The switch is in the shutdown ",
+							"state.",
+							"booting (7) - The switch is in the booting ",
+							"state.",
+							"communicationFailure (8) - This is an error condition. ",
+							"The switch cannot be reached.",
+							"incompatibleOs (9) - This is an error condition. ",
+							"The member switch runs with a different",
+							"OS image.",
+							"unknownState (10) - The member switch's state cannot be ",
+							"determined. This is an error condition.",
+							"standbyBooting (11) - The standby switch is currently",
+							"booting up. When boot is",
+							"completed, the state will be",
+							"'standby (4)'."
+						],
+						"enums" : {
+							"0" : "unusedId",
+							"1" : "missing",
+							"2" : "provision",
+							"3" : "commander",
+							"4" : "standby",
+							"5" : "member",
+							"6" : "shutdown",
+							"7" : "booting",
+							"8" : "communicationFailure",
+							"9" : "incompatibleOs",
+							"10" : "unknownState",
+							"11" : "standbyBooting"
+						},
+						"name" : "HP-STACK-MIB::hpStackMemberState",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-STACK-MIB::hpStackMemberStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a member becomes",
+				"active or inactive."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==10 || $v3==2 || $v3==3 || $v3==5 || $v3==7 || $v3==11) ? 3 : 2"
+				},
+				"EventType" : "hpStackMemberStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==10 || $v3==2 || $v3==3 || $v3==5 || $v3==7 || $v3==11) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==10) ? 1 : ($v3==0 || $v3==1 || $v3==4 || $v3==9) ? 3 : ($v3==6 || $v3==8) ? 4 : 2"
+				},
+				"SubNode" : "MACAddress:$v2",
+				"Summary" : "Stack member $v1 status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-STACK-MIB::hpStackMemberStatusChange HP-STACK-MIB::hpStackMemberIdForTrap i 9999 NETSWITCH-MIB::hpSwitchBaseMACAddress s EXAMPL HP-STACK-MIB::hpStackMemberState i 0",
+			"trap" : {
+				"name" : "HP-STACK-MIB::hpStackMemberStatusChange",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This is same as hpStackMemberId. ",
+							"This is useful only for the notifications."
+						],
+						"name" : "HP-STACK-MIB::hpStackMemberIdForTrap",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.13",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Return the base MAC address of the switch. This is",
+							"also the MAC address of the default vlan. "
+						],
+						"name" : "NETSWITCH-MIB::hpSwitchBaseMACAddress",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This gives the status of the switch in the stack. ",
+							"unusedId (0) - The member ID does not exist. ",
+							"missing (1) - A member switch in the stack when",
+							"it becomes Non responsive, it is ",
+							"marked as the missing member. Either ",
+							"the stack link goes down or the stack ",
+							"member crashed. Note that it is possible ",
+							"to remove even the missing member from ",
+							"the stack. In this case, the missing members ",
+							"configuration is removed from the ",
+							"stack config file.",
+							"provision (2) - A member switch whose config is ",
+							"provisioned and that does not exist physically.",
+							"commander (3) - One physical switch whose master ",
+							"CPU takes up the role that the",
+							"active management module in ",
+							"the 8200 switch would take.",
+							"standby (4) - One physical switch whose master",
+							"CPU takes up the role that the",
+							"standby management module in ",
+							"the 8200 switch would take.",
+							"member (5) - A switch that is part of the",
+							"stack.",
+							"shutdown (6) - The switch is in the shutdown ",
+							"state.",
+							"booting (7) - The switch is in the booting ",
+							"state.",
+							"communicationFailure (8) - This is an error condition. ",
+							"The switch cannot be reached.",
+							"incompatibleOs (9) - This is an error condition. ",
+							"The member switch runs with a different",
+							"OS image.",
+							"unknownState (10) - The member switch's state cannot be ",
+							"determined. This is an error condition.",
+							"standbyBooting (11) - The standby switch is currently",
+							"booting up. When boot is",
+							"completed, the state will be",
+							"'standby (4)'."
+						],
+						"enums" : {
+							"0" : "unusedId",
+							"1" : "missing",
+							"2" : "provision",
+							"3" : "commander",
+							"4" : "standby",
+							"5" : "member",
+							"6" : "shutdown",
+							"7" : "booting",
+							"8" : "communicationFailure",
+							"9" : "incompatibleOs",
+							"10" : "unknownState",
+							"11" : "standbyBooting"
+						},
+						"name" : "HP-STACK-MIB::hpStackMemberState",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-STACK-MIB::hpStackMergeFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a new member",
+				"attempts to join the stack, but was denied. ",
+				"This could be because of:",
+				"a. Merge policy of stack prevents the switch from joining",
+				"b. Merge policy of switch prevents it from joining",
+				"c. Stacking disabled on switch",
+				"d. No available member ID's on stack",
+				"e. Switch is incorrectly provisioned ",
+				"(wrong J-Number, correct MAC).",
+				"hpStackId here is the other Stack Id. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hpStackMergeStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "StackId:$v3",
+				"Summary" : "Stack $v3 merge failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-STACK-MIB::hpStackMergeFailed HP-STACK-MIB::hpStackMemberIdForTrap i 9999 HP-STACK-MIB::hpStackMemberState i 0 HP-STACK-MIB::hpStackId s EXAMPLE",
+			"trap" : {
+				"name" : "HP-STACK-MIB::hpStackMergeFailed",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This is same as hpStackMemberId. ",
+							"This is useful only for the notifications."
+						],
+						"name" : "HP-STACK-MIB::hpStackMemberIdForTrap",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.13",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This gives the status of the switch in the stack. ",
+							"unusedId (0) - The member ID does not exist. ",
+							"missing (1) - A member switch in the stack when",
+							"it becomes Non responsive, it is ",
+							"marked as the missing member. Either ",
+							"the stack link goes down or the stack ",
+							"member crashed. Note that it is possible ",
+							"to remove even the missing member from ",
+							"the stack. In this case, the missing members ",
+							"configuration is removed from the ",
+							"stack config file.",
+							"provision (2) - A member switch whose config is ",
+							"provisioned and that does not exist physically.",
+							"commander (3) - One physical switch whose master ",
+							"CPU takes up the role that the",
+							"active management module in ",
+							"the 8200 switch would take.",
+							"standby (4) - One physical switch whose master",
+							"CPU takes up the role that the",
+							"standby management module in ",
+							"the 8200 switch would take.",
+							"member (5) - A switch that is part of the",
+							"stack.",
+							"shutdown (6) - The switch is in the shutdown ",
+							"state.",
+							"booting (7) - The switch is in the booting ",
+							"state.",
+							"communicationFailure (8) - This is an error condition. ",
+							"The switch cannot be reached.",
+							"incompatibleOs (9) - This is an error condition. ",
+							"The member switch runs with a different",
+							"OS image.",
+							"unknownState (10) - The member switch's state cannot be ",
+							"determined. This is an error condition.",
+							"standbyBooting (11) - The standby switch is currently",
+							"booting up. When boot is",
+							"completed, the state will be",
+							"'standby (4)'."
+						],
+						"enums" : {
+							"0" : "unusedId",
+							"1" : "missing",
+							"2" : "provision",
+							"3" : "commander",
+							"4" : "standby",
+							"5" : "member",
+							"6" : "shutdown",
+							"7" : "booting",
+							"8" : "communicationFailure",
+							"9" : "incompatibleOs",
+							"10" : "unknownState",
+							"11" : "standbyBooting"
+						},
+						"name" : "HP-STACK-MIB::hpStackMemberState",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The stack ID uniquely identifies the stack; all",
+							"members of the stack have the same stack ID. A",
+							"switch is considered to be a part of a stack",
+							"When it has the same stack ID as the stack",
+							"commander. The stack ID is valid only when",
+							"hpStackSwitchAdminStatus is true (1). This",
+							"value is set by the first elected commander and",
+							"stays with the stack until the user sets the",
+							"hpStackSwitchAdminStatus to 'false (2)' or when",
+							"hpStackSetStacking is set to 'true (1)' in an",
+							"inactive fragment."
+						],
+						"name" : "HP-STACK-MIB::hpStackId",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-STACK-MIB::hpStackMergeSuccess",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a new member ",
+				"attempts to join the stack and have successfully merged. ",
+				"This will be sent by each stack that got merged."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hpStackMergeStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "StackId:$v3",
+				"Summary" : "Stack $v3 merged successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-STACK-MIB::hpStackMergeSuccess HP-STACK-MIB::hpStackMemberIdForTrap i 9999 HP-STACK-MIB::hpStackMemberState i 0 HP-STACK-MIB::hpStackId s EXAMPLE",
+			"trap" : {
+				"name" : "HP-STACK-MIB::hpStackMergeSuccess",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This is same as hpStackMemberId. ",
+							"This is useful only for the notifications."
+						],
+						"name" : "HP-STACK-MIB::hpStackMemberIdForTrap",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.13",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This gives the status of the switch in the stack. ",
+							"unusedId (0) - The member ID does not exist. ",
+							"missing (1) - A member switch in the stack when",
+							"it becomes Non responsive, it is ",
+							"marked as the missing member. Either ",
+							"the stack link goes down or the stack ",
+							"member crashed. Note that it is possible ",
+							"to remove even the missing member from ",
+							"the stack. In this case, the missing members ",
+							"configuration is removed from the ",
+							"stack config file.",
+							"provision (2) - A member switch whose config is ",
+							"provisioned and that does not exist physically.",
+							"commander (3) - One physical switch whose master ",
+							"CPU takes up the role that the",
+							"active management module in ",
+							"the 8200 switch would take.",
+							"standby (4) - One physical switch whose master",
+							"CPU takes up the role that the",
+							"standby management module in ",
+							"the 8200 switch would take.",
+							"member (5) - A switch that is part of the",
+							"stack.",
+							"shutdown (6) - The switch is in the shutdown ",
+							"state.",
+							"booting (7) - The switch is in the booting ",
+							"state.",
+							"communicationFailure (8) - This is an error condition. ",
+							"The switch cannot be reached.",
+							"incompatibleOs (9) - This is an error condition. ",
+							"The member switch runs with a different",
+							"OS image.",
+							"unknownState (10) - The member switch's state cannot be ",
+							"determined. This is an error condition.",
+							"standbyBooting (11) - The standby switch is currently",
+							"booting up. When boot is",
+							"completed, the state will be",
+							"'standby (4)'."
+						],
+						"enums" : {
+							"0" : "unusedId",
+							"1" : "missing",
+							"2" : "provision",
+							"3" : "commander",
+							"4" : "standby",
+							"5" : "member",
+							"6" : "shutdown",
+							"7" : "booting",
+							"8" : "communicationFailure",
+							"9" : "incompatibleOs",
+							"10" : "unknownState",
+							"11" : "standbyBooting"
+						},
+						"name" : "HP-STACK-MIB::hpStackMemberState",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.3.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The stack ID uniquely identifies the stack; all",
+							"members of the stack have the same stack ID. A",
+							"switch is considered to be a part of a stack",
+							"When it has the same stack ID as the stack",
+							"commander. The stack ID is valid only when",
+							"hpStackSwitchAdminStatus is true (1). This",
+							"value is set by the first elected commander and",
+							"stays with the stack until the user sets the",
+							"hpStackSwitchAdminStatus to 'false (2)' or when",
+							"hpStackSetStacking is set to 'true (1)' in an",
+							"inactive fragment."
+						],
+						"name" : "HP-STACK-MIB::hpStackId",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.69.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

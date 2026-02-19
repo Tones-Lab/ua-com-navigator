@@ -1,0 +1,307 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200212100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "IPSEC-POLICY-MIB::ipspActionNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification that an action was executed by a rule. Only",
+				"actions with logging enabled will result in this notification",
+				"getting sent. The objects sent must include the",
+				"ipspActionExecuted object which will indicate which",
+				"action was executed within the scope of the rule.",
+				"Additionally the ipspIPSourceType",
+				"ipspIPSourceAddress, ipspIPDestinationType, and",
+				"ipspIPDestinationAddress objects must be included to",
+				"indicate the packet source and destination of the packet that",
+				"triggered the action. Finally the",
+				"ipspIPInterfaceType, ipspIPInterfaceAddress",
+				"and ipspPacketDirection objects are included to",
+				"indicate which interface the action was executed in",
+				"association with and if the packet was inbound or outbond",
+				"through the endpoint.",
+				"Note that compound actions with multiple",
+				"executed subactions may result in multiple notifications",
+				"being sent from a single rule execution."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ipspActionNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ipspIPInterfaceAddress:$v3",
+				"Summary" : "IPSEC policy action $v1 triggered by $v8 packet on $v2 interface $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IPSEC-POLICY-MIB::ipspActionNotification IPSEC-POLICY-MIB::ipspActionExecuted o 1.3.6.1.4.1.8072.2.1.1 IPSEC-POLICY-MIB::ipspIPInterfaceType i 0 IPSEC-POLICY-MIB::ipspIPInterfaceAddress s EXAMPLE IPSEC-POLICY-MIB::ipspIPSourceType i 0 IPSEC-POLICY-MIB::ipspIPSourceAddress s EXAMPLE IPSEC-POLICY-MIB::ipspIPDestinationType i 0 IPSEC-POLICY-MIB::ipspIPDestinationAddress s EXAMPLE IPSEC-POLICY-MIB::ipspPacketDirection i 1",
+			"trap" : {
+				"name" : "IPSEC-POLICY-MIB::ipspActionNotification",
+				"oid" : "1.3.6.1.2.1.153.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Points to the action instance that was executed that",
+							"resulted in the notification being sent."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspActionExecuted",
+						"oid" : "1.3.6.1.2.1.153.2.1.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"Contains the interface type for the interface that the",
+							"packet which triggered the notification in question is",
+							"passing through."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-POLICY-MIB::ipspIPInterfaceType",
+						"oid" : "1.3.6.1.2.1.153.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the interface address for the interface that the",
+							"packet which triggered the notification in question is",
+							"passing through."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspIPInterfaceAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the source address type of the packet which",
+							"triggered the notification in question."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-POLICY-MIB::ipspIPSourceType",
+						"oid" : "1.3.6.1.2.1.153.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the source address of the packet which triggered the",
+							"notification in question."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspIPSourceAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the destination address type of the packet which",
+							"triggered the notification in question."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-POLICY-MIB::ipspIPDestinationType",
+						"oid" : "1.3.6.1.2.1.153.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the destination address of the packet which",
+							"triggered the notification in question."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspIPDestinationAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates if the packet whic triggered the action in",
+							"questions was inbound our outbound."
+						],
+						"enums" : {
+							"1" : "inbound",
+							"2" : "outbound"
+						},
+						"name" : "IPSEC-POLICY-MIB::ipspPacketDirection",
+						"oid" : "1.3.6.1.2.1.153.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "IPSEC-POLICY-MIB::ipspPacketNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification that a packet passed through an SA. Only",
+				"SA's created by actions with packet logging enabled will",
+				"result in this notification getting sent. The objects sent",
+				"must include the ipspActionExecuted which will",
+				"indicate which action was executed within the scope of the",
+				"rule. Additionally, the ipspIPSourceType",
+				"ipspIPSourceAddress, ipspIPDestinationType, and",
+				"ipspIPDestinationAddress, objects must be included to",
+				"indicate the packet source and destination of the packet that",
+				"triggered the action. The ipspIPInterfaceType",
+				"ipspIPInterfaceAddress, and ipspPacketDirection",
+				"objects are included to indicate which endpoint the packet",
+				"was associated with. Finally, ipspPacketPart is",
+				"including for sending a variable sized part of the front of",
+				"the packet depending on the value of IpspIPPacketLogging."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ipspPacketNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ipspIPInterfaceAddress:$v3",
+				"Summary" : "$v8 packet passed through SA with $v1 action executed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IPSEC-POLICY-MIB::ipspPacketNotification IPSEC-POLICY-MIB::ipspActionExecuted o 1.3.6.1.4.1.8072.2.1.1 IPSEC-POLICY-MIB::ipspIPInterfaceType i 0 IPSEC-POLICY-MIB::ipspIPInterfaceAddress s EXAMPLE IPSEC-POLICY-MIB::ipspIPSourceType i 0 IPSEC-POLICY-MIB::ipspIPSourceAddress s EXAMPLE IPSEC-POLICY-MIB::ipspIPDestinationType i 0 IPSEC-POLICY-MIB::ipspIPDestinationAddress s EXAMPLE IPSEC-POLICY-MIB::ipspPacketDirection i 1 IPSEC-POLICY-MIB::ipspPacketPart s EXAMPLE",
+			"trap" : {
+				"name" : "IPSEC-POLICY-MIB::ipspPacketNotification",
+				"oid" : "1.3.6.1.2.1.153.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Points to the action instance that was executed that",
+							"resulted in the notification being sent."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspActionExecuted",
+						"oid" : "1.3.6.1.2.1.153.2.1.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"Contains the interface type for the interface that the",
+							"packet which triggered the notification in question is",
+							"passing through."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-POLICY-MIB::ipspIPInterfaceType",
+						"oid" : "1.3.6.1.2.1.153.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the interface address for the interface that the",
+							"packet which triggered the notification in question is",
+							"passing through."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspIPInterfaceAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the source address type of the packet which",
+							"triggered the notification in question."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-POLICY-MIB::ipspIPSourceType",
+						"oid" : "1.3.6.1.2.1.153.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the source address of the packet which triggered the",
+							"notification in question."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspIPSourceAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the destination address type of the packet which",
+							"triggered the notification in question."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "IPSEC-POLICY-MIB::ipspIPDestinationType",
+						"oid" : "1.3.6.1.2.1.153.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the destination address of the packet which",
+							"triggered the notification in question."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspIPDestinationAddress",
+						"oid" : "1.3.6.1.2.1.153.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates if the packet whic triggered the action in",
+							"questions was inbound our outbound."
+						],
+						"enums" : {
+							"1" : "inbound",
+							"2" : "outbound"
+						},
+						"name" : "IPSEC-POLICY-MIB::ipspPacketDirection",
+						"oid" : "1.3.6.1.2.1.153.2.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Is the front part of the packet that triggered this",
+							"notification. The size is determined by the value of",
+							"'IpspIPPacketLogging' or the size of the packet, whichever",
+							"is smaller."
+						],
+						"name" : "IPSEC-POLICY-MIB::ipspPacketPart",
+						"oid" : "1.3.6.1.2.1.153.2.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

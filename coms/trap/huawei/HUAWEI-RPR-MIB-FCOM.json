@@ -1,0 +1,995 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200601090000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRexcessReservedRateDefect",
+			"certification" : "STANDARD",
+			"description" : [
+				"This defect indicates that the amount of reserved",
+				"bandwidth on a ringlet exceeds the available LINK_RATE.",
+				"When an excess reserved rate defect is present",
+				"a notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwRPRexcessReservedRateDefect",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Reserved bandwidth $v1 exceeded link rate on ringlet"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRexcessReservedRateDefect IEEE-802DOT17-RPR-MIB::rprSpanTotalRingletReservedRate u 9999",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRexcessReservedRateDefect",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The total reserved subclassA0 bandwidth on the ringlet.",
+							"This variable is used by the fairness module",
+							"to determine the total reclaimable bandwidth."
+						],
+						"name" : "IEEE-802DOT17-RPR-MIB::rprSpanTotalRingletReservedRate",
+						"oid" : "1.0.8802.17.1.1.1.1.3.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRprotMisconfigDefect",
+			"certification" : "STANDARD",
+			"description" : [
+				"A critical severity defect that indicates the presence",
+				"of mismatched-protection-configuration stations, based",
+				"on the value returned by MismatchedProtection().",
+				"When a protection configuration defect is present",
+				"on the station, a notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwRPRprotMisconfigDefect",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Mismatched protection configuration stations detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRprotMisconfigDefect IEEE-802DOT17-RPR-MIB::rprIfWrapConfig i 1 IEEE-802DOT17-RPR-MIB::rprIfRingOperModes b 0",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRprotMisconfigDefect",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the configured protection mode, ",
+							"steering or wrapping, in a MAC that supports both modes.",
+							"If wrap configured bit is set, the station will ",
+							"perform wrap protection during ring failures.",
+							"If the station detects another station on the ring that",
+							"has a protection configuration that conflicts with its own",
+							"the station will generate a defect to higher layers.",
+							"Default value for wrap preferred is false for steering ",
+							"only stations, and true for stations that implement wrapping."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "IEEE-802DOT17-RPR-MIB::rprIfWrapConfig",
+						"oid" : "1.0.8802.17.1.1.1.1.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The summary of the ring operational modes",
+							"collected through the topology discovery protocol.",
+							"If at least one station doesn't support jumbo frames, ",
+							"the jumboFrame bit in this attribute is set to false.",
+							"Only if all stations support jumbo frames, the bit is true.",
+							"If at least one station wasn't configured to wrap, ",
+							"the wrap bit in this attribute is set to false.",
+							"Only if all stations configured to wrap, the bit is true.",
+							"If the ring doesn't complete full loop, the ring is considered",
+							"openRing, with at least one detected edge."
+						],
+						"enums" : {
+							"0" : "jumboFrames",
+							"1" : "wrapProtection",
+							"2" : "openRing"
+						},
+						"name" : "IEEE-802DOT17-RPR-MIB::rprIfRingOperModes",
+						"oid" : "1.0.8802.17.1.1.1.1.1.1.18",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRtopoChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"When an topology change is present",
+				"a notification may be generated.."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwRPRtopoChange",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IfIndex:$v1",
+				"Summary" : "RPR topology changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRtopoChange IEEE-802DOT17-RPR-MIB::rprTopoImageStationIfIndex i 9999 IEEE-802DOT17-RPR-MIB::rprTopoImageStatus b 0 IEEE-802DOT17-RPR-MIB::rprTopoImageWestProtectionStatus b 0 IEEE-802DOT17-RPR-MIB::rprTopoImageEastProtectionStatus b 0 IEEE-802DOT17-RPR-MIB::rprIfCurrentStatus b 0",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRtopoChange",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"The station ifIndex."
+						],
+						"name" : "IEEE-802DOT17-RPR-MIB::rprTopoImageStationIfIndex",
+						"oid" : "1.0.8802.17.1.1.1.2.1.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Status of the station",
+							"the reachability of station through ringlet0 and ringlet1",
+							"wrap active on the station spans",
+							"events of reception frames with bad FCS",
+							"events of reception multichoke fairness frames."
+						],
+						"enums" : {
+							"0" : "reachableRinglet0",
+							"1" : "reachableRinglet1",
+							"2" : "wrapActiveWest",
+							"3" : "wrapActiveEast",
+							"4" : "receivedBadFcs",
+							"5" : "receivedMultichokeFairness"
+						},
+						"name" : "IEEE-802DOT17-RPR-MIB::rprTopoImageStatus",
+						"oid" : "1.0.8802.17.1.1.1.2.1.1.18",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The current protection status of the West span."
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"1" : "waitToRestore",
+							"2" : "manualSwitch",
+							"3" : "signalDegraded",
+							"4" : "signalFailed",
+							"5" : "forcedSwitch"
+						},
+						"name" : "IEEE-802DOT17-RPR-MIB::rprTopoImageWestProtectionStatus",
+						"oid" : "1.0.8802.17.1.1.1.2.1.1.14",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The current protection status of the east span."
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"1" : "waitToRestore",
+							"2" : "manualSwitch",
+							"3" : "signalDegraded",
+							"4" : "signalFailed",
+							"5" : "forcedSwitch"
+						},
+						"name" : "IEEE-802DOT17-RPR-MIB::rprTopoImageEastProtectionStatus",
+						"oid" : "1.0.8802.17.1.1.1.2.1.1.16",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"Indicates the current status of the RPR interface.",
+							"this attribute is used to generate alarm to the management system."
+						],
+						"enums" : {
+							"0" : "neighborInconsistency",
+							"1" : "duplicateMac",
+							"2" : "exceedMaxStations"
+						},
+						"name" : "IEEE-802DOT17-RPR-MIB::rprIfCurrentStatus",
+						"oid" : "1.0.8802.17.1.1.1.1.1.1.19",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRtopoInvalidDefect",
+			"certification" : "STANDARD",
+			"description" : [
+				"A critical severity defect indicating that an",
+				"invalid entry has been found within the scope",
+				"of the topology,the stations on the ring excess",
+				"the MAX_STATIONS or the local station has one",
+				"or more duplicate secondary MAC addresses. When",
+				"a topology entry invalid defect ,exceeing MaxStations",
+				"or duplicate secondary MAC addresses is present",
+				"a notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwRPRtopoInvalidDefect",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "RPR topology invalid defect detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRtopoInvalidDefect IF-MIB::ifPhysAddress s EXAMPLE IEEE-802DOT17-RPR-MIB::rprIfCurrentStatus b 0",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRtopoInvalidDefect",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.4",
+				"variables" : [
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the current status of the RPR interface.",
+							"this attribute is used to generate alarm to the management system."
+						],
+						"enums" : {
+							"0" : "neighborInconsistency",
+							"1" : "duplicateMac",
+							"2" : "exceedMaxStations"
+						},
+						"name" : "IEEE-802DOT17-RPR-MIB::rprIfCurrentStatus",
+						"oid" : "1.0.8802.17.1.1.1.1.1.1.19",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRduplicateMacAddressDefect",
+			"certification" : "STANDARD",
+			"description" : [
+				"A critical severity defect indicating that a",
+				"duplicateMacAddress has been found on the ring.",
+				"When a duplicateMacAddress defect is present",
+				"a notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwRPRduplicateMacAddressDefect",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Duplicate MAC address found on ring"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRduplicateMacAddressDefect IF-MIB::ifPhysAddress s EXAMPLE IEEE-802DOT17-RPR-MIB::rprTopoImageRinglet0Hops i 9999 IEEE-802DOT17-RPR-MIB::rprTopoImageRinglet1Hops i 9999",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRduplicateMacAddressDefect",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The number of hops to this station through ringlet0.",
+							"The self station is indicated with zero hops.",
+							"A non reachable station is indicated with -1 value."
+						],
+						"name" : "IEEE-802DOT17-RPR-MIB::rprTopoImageRinglet0Hops",
+						"oid" : "1.0.8802.17.1.1.1.2.1.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The number of hops to this station through ringlet1.",
+							"The self station is indicated with zero hops.",
+							"A non reachable station is indicated with -1 value."
+						],
+						"name" : "IEEE-802DOT17-RPR-MIB::rprTopoImageRinglet1Hops",
+						"oid" : "1.0.8802.17.1.1.1.2.1.1.12",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRtopoInstabilityDefect",
+			"certification" : "STANDARD",
+			"description" : [
+				"The critical severity Instable topology defect.",
+				"When an Instable topology defect is present",
+				"a notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwRPRtopoStabilityStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Instable topology defect detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRtopoInstabilityDefect IF-MIB::ifPhysAddress s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRtopoInstabilityDefect",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRtopoStabilityRestore",
+			"certification" : "STANDARD",
+			"description" : [
+				"The critical severity Instable topology restore.",
+				"When an stable topology is present",
+				"a notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwRPRtopoStabilityStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "RPR topology stability restored"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRtopoStabilityRestore IF-MIB::ifPhysAddress s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRtopoStabilityRestore",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.7",
+				"variables" : [
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRPhyIfEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The critical severity physical interface defect.",
+				"When an physical interface defect is present",
+				"a notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwRPRPhyIfEventTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "IfIndex:$v1",
+				"Summary" : "Physical interface defect detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRPhyIfEventTrap HUAWEI-RPR-MIB::hwRPRLogicIfIndex i 9999 HUAWEI-RPR-MIB::hwRPRLogicIfSpanId i 1 HUAWEI-RPR-MIB::hwRPRPhyIfEvent i 1",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRPhyIfEventTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.8",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex of this RPR logic interface."
+						],
+						"name" : "HUAWEI-RPR-MIB::hwRPRLogicIfIndex",
+						"oid" : "1.3.6.1.4.1.2011.5.25.36.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The SpanId of this RPR logic interface."
+						],
+						"enums" : {
+							"1" : "east",
+							"2" : "west"
+						},
+						"name" : "HUAWEI-RPR-MIB::hwRPRLogicIfSpanId",
+						"oid" : "1.3.6.1.4.1.2011.5.25.36.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of physical interface event.",
+							"SDHFramerSDst indicates that SDH Signal of the RPR physical interface degrades;",
+							"SDHFramerSFst indicates that SDH Signal of the RPR physical interface fails;",
+							"SDHFramerLOSst indicates that SDH Signal of the RPR physical interface loses;",
+							"SDHFramerLOFst indicates that SDH framer of the RPR physical interface loses;",
+							"SDHFramerRDIst indicates that remote Defect Indication ;",
+							"SDHFramerAISst indicates that alarm Indication Signal;",
+							"SDHFramerREIst indicates that remote ErrorIndication;",
+							"Miscabling indicates that cable of the RPR physical interface is linked incorrect;",
+							"Keepalive indicates that an exchange of messages allowing verification",
+							"that communication between stations is not active;",
+							"MateState indicates that mate cable of the RPR physical interface is linked incorrect."
+						],
+						"enums" : {
+							"1" : "sdHFramerSDst",
+							"2" : "sdHFramerSFst",
+							"3" : "sdHFramerLOSst",
+							"4" : "sdHFramerLOFst",
+							"5" : "sdHFramerRDIst",
+							"6" : "sdHFramerAISst",
+							"7" : "sdHFramerREIst",
+							"8" : "miscabling",
+							"9" : "keepalive",
+							"10" : "mateState"
+						},
+						"name" : "HUAWEI-RPR-MIB::hwRPRPhyIfEvent",
+						"oid" : "1.3.6.1.4.1.2011.5.25.36.1.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRLogicIfEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The critical severity Logic interface defect.",
+				"When an logic interface defect that caused",
+				"by physical interface event is present",
+				"a notification may be generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwRPRLogicIfEventTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "IfIndex:$v1",
+				"Summary" : "Logic interface defect occurred due to physical interface event ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRLogicIfEventTrap HUAWEI-RPR-MIB::hwRPRLogicIfIndex i 9999 HUAWEI-RPR-MIB::hwRPRLogicIfSpanId i 1 HUAWEI-RPR-MIB::hwRPRLogicIfEvent i 1",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRLogicIfEventTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.9",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex of this RPR logic interface."
+						],
+						"name" : "HUAWEI-RPR-MIB::hwRPRLogicIfIndex",
+						"oid" : "1.3.6.1.4.1.2011.5.25.36.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The SpanId of this RPR logic interface."
+						],
+						"enums" : {
+							"1" : "east",
+							"2" : "west"
+						},
+						"name" : "HUAWEI-RPR-MIB::hwRPRLogicIfSpanId",
+						"oid" : "1.3.6.1.4.1.2011.5.25.36.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of logic interface event.",
+							"SD indicates that SDH Signal of the RPR logic interface degrades;",
+							"SF indicates that SDH Signal of the RPR logic interface fails;",
+							"MATEERR indicates that mate cable error caused by mate cable of",
+							"the RPR physical interface is linked incorrect;"
+						],
+						"enums" : {
+							"1" : "sd",
+							"2" : "sf",
+							"3" : "mateerr"
+						},
+						"name" : "HUAWEI-RPR-MIB::hwRPRLogicIfEvent",
+						"oid" : "1.3.6.1.4.1.2011.5.25.36.1.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRNodeConErr",
+			"certification" : "STANDARD",
+			"description" : [
+				"On RPR ring, to detect the connection, a kind of packet",
+				"is send between neighbor RPR nodes, This kind of packet ",
+				"is SC(Single-Choke) packet, If a node cannot receive SC ",
+				"packet from neighbor node in KEEPALIVE time, then there ",
+				"is failure between the two nodes. When happened, auto protection ",
+				"is executed by software.!"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwRPRNodeConStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "RPR node connection error occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRNodeConErr IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRNodeConErr",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.10",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRNodeConErrResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"On RPR ring, to detect the connection, a kind of packet",
+				"is send between neighbor RPR nodes, This kind of packet ",
+				"is SC(Single-Choke) packet, If a node cannot receive SC ",
+				"packet from neighbor node in KEEPALIVE time, then there ",
+				"is failure between the two nodes. When failure is resumed",
+				", this notification is sent.!"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwRPRNodeConStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "RPR node connection error resolved"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRNodeConErrResume IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRNodeConErrResume",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.11",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRNodeMisCabling",
+			"certification" : "STANDARD",
+			"description" : [
+				"Optical fiber is connected in error. i.e the east direction ",
+				"of one node is connected with east direction of another node, ",
+				"or the west direction of one node is connected with west direction ",
+				"of another node!"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwRPRNodeCablingStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "Optical fiber connection error occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRNodeMisCabling IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRNodeMisCabling",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.12",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRNodeMisCablingResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"when phenomena that Optical fiber is connected in error disappears",
+				"this notification is sent!"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwRPRNodeCablingStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "Optical fiber connection error resolved"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRNodeMisCablingResume IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRNodeMisCablingResume",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.13",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRMateErr",
+			"certification" : "STANDARD",
+			"description" : [
+				"In double RPR operating mode, east and west directions ",
+				"of one rpr node lay on two RPR cards, These two cards are ",
+				"internally conntected by Gigaibit-ethernet, which is called ",
+				"MATE interface. The RPR nodes cannot work normaly under ",
+				"condition of MATE error.!"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwRPRMateErrStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "RPR nodes not work normally due to MATE error occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRMateErr IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRMateErr",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.14",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRMateErrResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"In double RPR operating mode, east and west directions ",
+				"of one rpr node lay on two RPR cards, These two cards are ",
+				"internally conntected by Gigaibit-ethernet, which is called ",
+				"MATE interface. The RPR nodes cannot work normaly under ",
+				"condition of MATE error.when MATE error is resumed ,this ",
+				"notification is sent!"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwRPRMateErrStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "RPR nodes back to normal and MATE error cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRMateErrResume IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRMateErrResume",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.15",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRLOS",
+			"certification" : "STANDARD",
+			"description" : [
+				"On RPR physical layer, link connection is detected ",
+				"through physical singal. When can't receive physical",
+				"singal, then local node from neighbor node, LOS(lost of signal) ",
+				"alarm is report, auto protection is executed by software.!"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwRPRLOSStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "RPR loss of signal alarm occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRLOS IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRLOS",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.16",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-RPR-MIB::hwRPRLOSResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"On RPR physical layer, link connection is detected ",
+				"through physical singal. When can't receive physical",
+				"singal, then local node from neighbor node, LOS(lost of signal) ",
+				"alarm is report, auto protection is executed by software.when LOS",
+				"is resumed,this notification is sent"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwRPRLOSStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "RPR loss of signal alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-RPR-MIB::hwRPRLOSResume IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-RPR-MIB::hwRPRLOSResume",
+				"oid" : "1.3.6.1.4.1.2011.5.25.36.2.17",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

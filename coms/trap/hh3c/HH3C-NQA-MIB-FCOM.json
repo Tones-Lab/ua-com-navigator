@@ -1,0 +1,1430 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200608140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HH3C-NQA-MIB::hh3cNqaProbeTimeOverThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"It is generated when the value of hh3cNqaReactCurrentStatus",
+				"changes.",
+				"The change may occur when the watched condition is over threshold",
+				"or below threshold.",
+				"The over threshold situations is specified as below.",
+				"1. Probe time(equals to RTT for some type of tests) is not in",
+				"the range hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit.",
+				"2. The probe time is accumulatively not in the range",
+				"hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit for a number of times",
+				"specified in hh3cNqaReactThresholdAccumNum.",
+				"3. The probe time is consecutively in the range",
+				"hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit for a number of times",
+				"specified in hh3cNqaReactThresholdConsecNum.",
+				"This notification is valid only when hh3cNqaReactActionType",
+				"is 'trapOnly' or 'trapAndTrigger' and pingCtlType of the test",
+				"is not hh3cNqajitter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cNqaProbeTimeOverThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Probe time $v8 threshold status : $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-NQA-MIB::hh3cNqaProbeTimeOverThreshold HH3C-NQA-MIB::hh3cNqaReactOwnerIndex s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactTestName s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactItemIndex u 1 DISMAN-PING-MIB::pingCtlTargetAddressType i 0 DISMAN-PING-MIB::pingCtlTargetAddress s EXAMPLE DISMAN-PING-MIB::pingCtlType o 1.3.6.1.4.1.8072.2.1.1 DISMAN-PING-MIB::pingCtlDescr s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactThresholdType i 0 HH3C-NQA-MIB::hh3cNqaReactCurrentStatus i 1",
+			"trap" : {
+				"name" : "HH3C-NQA-MIB::hh3cNqaProbeTimeOverThreshold",
+				"oid" : "1.3.6.1.4.1.25506.8.3.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"The first index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlOwnerIndex in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactOwnerIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The second index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlTestName in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactTestName",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The third index of hh3cNqaReactionTable, it definitely",
+							"identifies one of the reaction configurations for a test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactItemIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the type of host address to be used at a remote",
+							"host for performing a ping operation."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddressType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the host address to be used at a remote host for",
+							"performing a ping operation. The host address type is",
+							"determined by the object value of corresponding",
+							"pingCtlTargetAddressType.",
+							"A value for this object MUST be set prior to transitioning",
+							"its corresponding pingCtlEntry to active(1) via",
+							"pingCtlRowStatus."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddress",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object is used to either report or",
+							"select the implementation method to be used for",
+							"calculating a ping response time. The value of this",
+							"object MAY be selected from pingImplementationTypeDomains.",
+							"",
+							"Additional implementation types SHOULD be allocated as",
+							"required by implementers of the DISMAN-PING-MIB under",
+							"their enterprise specific registration point and not",
+							"beneath pingImplementationTypeDomains."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.16",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to provide a",
+							"descriptive name of the remote ping test."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlDescr",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the reaction threshold types.",
+							"",
+							"invalid(0): Invalid value.",
+							"",
+							"average(1): If reaction threshold type is average and the average",
+							"value of watched operation exceeds threshold limit",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"consecutive(2): If reaction threshold type is consecutive and",
+							"the times of watched operation consecutively exceeds",
+							"the limit specified by hh3cNqaReactThresholdConsecNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"accumulative(3): If reaction threshold type is accumulative and",
+							"the times of watched operation accumulatively exceeds",
+							"the limit specified by hh3cNqaReactThresholdAccumNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"If reaction threshold type is not configured, the value of this",
+							"object is 'invalid'."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "average",
+							"2" : "consecutive",
+							"3" : "accumulative"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactThresholdType",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the current status of this reaction entry:",
+							"",
+							"invalid - The status of the reaction entry is unknown.",
+							"",
+							"overThreshold - The status of the reaction entry is overThreshold",
+							"when the monitored result exceeds the threshold",
+							"value for the hh3cNqaReactThresholdType.",
+							"",
+							"belowThreshold - The status of the reaction entry is belowThreshold",
+							"when the monitored result is under the threshold",
+							"value for the hh3cNqaReactThresholdType."
+						],
+						"enums" : {
+							"1" : "invalid",
+							"2" : "overThreshold",
+							"3" : "belowThreshold"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactCurrentStatus",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-NQA-MIB::hh3cNqaJitterRTTOverThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"It is generated when the value of hh3cNqaReactCurrentStatus",
+				"changes.",
+				"The change may occur when the watched condition is over threshold",
+				"or below threshold.",
+				"The over threshold situations is specified as below.",
+				"1. The average NQA round-trip-time (RTT) of jitter packets",
+				"is not in the range hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit.",
+				"2. The RTT of jitter packets is accumulatively not in the range",
+				"hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit for a number of times specified",
+				"in hh3cNqaReactThresholdAccumNum in one test.",
+				"This notification is valid only when hh3cNqaReactActionType",
+				"is 'trapOnly' or 'trapAndTrigger' and pingCtlType of the test",
+				"is hh3cNqajitter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cNqaJitterRTTOverThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Jitter packets RTT $v8 threshold status : $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-NQA-MIB::hh3cNqaJitterRTTOverThreshold HH3C-NQA-MIB::hh3cNqaReactOwnerIndex s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactTestName s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactItemIndex u 1 DISMAN-PING-MIB::pingCtlTargetAddressType i 0 DISMAN-PING-MIB::pingCtlTargetAddress s EXAMPLE DISMAN-PING-MIB::pingCtlType o 1.3.6.1.4.1.8072.2.1.1 DISMAN-PING-MIB::pingCtlDescr s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactThresholdType i 0 HH3C-NQA-MIB::hh3cNqaReactCurrentStatus i 1",
+			"trap" : {
+				"name" : "HH3C-NQA-MIB::hh3cNqaJitterRTTOverThreshold",
+				"oid" : "1.3.6.1.4.1.25506.8.3.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"The first index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlOwnerIndex in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactOwnerIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The second index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlTestName in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactTestName",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The third index of hh3cNqaReactionTable, it definitely",
+							"identifies one of the reaction configurations for a test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactItemIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the type of host address to be used at a remote",
+							"host for performing a ping operation."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddressType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the host address to be used at a remote host for",
+							"performing a ping operation. The host address type is",
+							"determined by the object value of corresponding",
+							"pingCtlTargetAddressType.",
+							"A value for this object MUST be set prior to transitioning",
+							"its corresponding pingCtlEntry to active(1) via",
+							"pingCtlRowStatus."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddress",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object is used to either report or",
+							"select the implementation method to be used for",
+							"calculating a ping response time. The value of this",
+							"object MAY be selected from pingImplementationTypeDomains.",
+							"",
+							"Additional implementation types SHOULD be allocated as",
+							"required by implementers of the DISMAN-PING-MIB under",
+							"their enterprise specific registration point and not",
+							"beneath pingImplementationTypeDomains."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.16",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to provide a",
+							"descriptive name of the remote ping test."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlDescr",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the reaction threshold types.",
+							"",
+							"invalid(0): Invalid value.",
+							"",
+							"average(1): If reaction threshold type is average and the average",
+							"value of watched operation exceeds threshold limit",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"consecutive(2): If reaction threshold type is consecutive and",
+							"the times of watched operation consecutively exceeds",
+							"the limit specified by hh3cNqaReactThresholdConsecNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"accumulative(3): If reaction threshold type is accumulative and",
+							"the times of watched operation accumulatively exceeds",
+							"the limit specified by hh3cNqaReactThresholdAccumNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"If reaction threshold type is not configured, the value of this",
+							"object is 'invalid'."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "average",
+							"2" : "consecutive",
+							"3" : "accumulative"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactThresholdType",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the current status of this reaction entry:",
+							"",
+							"invalid - The status of the reaction entry is unknown.",
+							"",
+							"overThreshold - The status of the reaction entry is overThreshold",
+							"when the monitored result exceeds the threshold",
+							"value for the hh3cNqaReactThresholdType.",
+							"",
+							"belowThreshold - The status of the reaction entry is belowThreshold",
+							"when the monitored result is under the threshold",
+							"value for the hh3cNqaReactThresholdType."
+						],
+						"enums" : {
+							"1" : "invalid",
+							"2" : "overThreshold",
+							"3" : "belowThreshold"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactCurrentStatus",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-NQA-MIB::hh3cNqaProbeFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"It is generated when the value of hh3cNqaReactCurrentStatus",
+				"changes.",
+				"The change may occur when the watched condition is over threshold",
+				"or below threshold.",
+				"The over threshold situations is specified as below.",
+				"1. When the probe test accumulatively failed for a",
+				"number of times specified in hh3cNqaReactThresholdAccumNum in one",
+				"test while the value of hh3cNqaReactThresholdType is 'accumulative'.",
+				"2. When the probe test consecutively failed for",
+				"a number of times specified in hh3cNqaReactThresholdConsecNum in one",
+				"test while the value of hh3cNqaReactThresholdType is 'consecutive'.",
+				"This notification is valid only when hh3cNqaReactActionType",
+				"is 'trapOnly' or 'trapAndTrigger' and pingCtlType of the test",
+				"is not hh3cNqajitter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cNqaProbeFailure",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Probe test failure $v8 threshold status : $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-NQA-MIB::hh3cNqaProbeFailure HH3C-NQA-MIB::hh3cNqaReactOwnerIndex s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactTestName s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactItemIndex u 1 DISMAN-PING-MIB::pingCtlTargetAddressType i 0 DISMAN-PING-MIB::pingCtlTargetAddress s EXAMPLE DISMAN-PING-MIB::pingCtlType o 1.3.6.1.4.1.8072.2.1.1 DISMAN-PING-MIB::pingCtlDescr s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactThresholdType i 0 HH3C-NQA-MIB::hh3cNqaReactCurrentStatus i 1",
+			"trap" : {
+				"name" : "HH3C-NQA-MIB::hh3cNqaProbeFailure",
+				"oid" : "1.3.6.1.4.1.25506.8.3.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"The first index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlOwnerIndex in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactOwnerIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The second index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlTestName in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactTestName",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The third index of hh3cNqaReactionTable, it definitely",
+							"identifies one of the reaction configurations for a test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactItemIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the type of host address to be used at a remote",
+							"host for performing a ping operation."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddressType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the host address to be used at a remote host for",
+							"performing a ping operation. The host address type is",
+							"determined by the object value of corresponding",
+							"pingCtlTargetAddressType.",
+							"A value for this object MUST be set prior to transitioning",
+							"its corresponding pingCtlEntry to active(1) via",
+							"pingCtlRowStatus."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddress",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object is used to either report or",
+							"select the implementation method to be used for",
+							"calculating a ping response time. The value of this",
+							"object MAY be selected from pingImplementationTypeDomains.",
+							"",
+							"Additional implementation types SHOULD be allocated as",
+							"required by implementers of the DISMAN-PING-MIB under",
+							"their enterprise specific registration point and not",
+							"beneath pingImplementationTypeDomains."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.16",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to provide a",
+							"descriptive name of the remote ping test."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlDescr",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the reaction threshold types.",
+							"",
+							"invalid(0): Invalid value.",
+							"",
+							"average(1): If reaction threshold type is average and the average",
+							"value of watched operation exceeds threshold limit",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"consecutive(2): If reaction threshold type is consecutive and",
+							"the times of watched operation consecutively exceeds",
+							"the limit specified by hh3cNqaReactThresholdConsecNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"accumulative(3): If reaction threshold type is accumulative and",
+							"the times of watched operation accumulatively exceeds",
+							"the limit specified by hh3cNqaReactThresholdAccumNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"If reaction threshold type is not configured, the value of this",
+							"object is 'invalid'."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "average",
+							"2" : "consecutive",
+							"3" : "accumulative"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactThresholdType",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the current status of this reaction entry:",
+							"",
+							"invalid - The status of the reaction entry is unknown.",
+							"",
+							"overThreshold - The status of the reaction entry is overThreshold",
+							"when the monitored result exceeds the threshold",
+							"value for the hh3cNqaReactThresholdType.",
+							"",
+							"belowThreshold - The status of the reaction entry is belowThreshold",
+							"when the monitored result is under the threshold",
+							"value for the hh3cNqaReactThresholdType."
+						],
+						"enums" : {
+							"1" : "invalid",
+							"2" : "overThreshold",
+							"3" : "belowThreshold"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactCurrentStatus",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-NQA-MIB::hh3cNqaJitterPacketLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"It is generated when the value of hh3cNqaReactCurrentStatus",
+				"changes.",
+				"The change may occur when the watched condition is over threshold",
+				"or below threshold.",
+				"The over threshold situations is specified as below.",
+				"1. When the jitter packets accumulatively lost for a",
+				"number of times specified in hh3cNqaReactThresholdAccumNum in one",
+				"test while the value of hh3cNqaReactThresholdType is 'accumulative'.",
+				"This notification is valid only when hh3cNqaReactActionType",
+				"is 'trapOnly' or 'trapAndTrigger' and pingCtlType of the test",
+				"is hh3cNqajitter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cNqaJitterPacketLoss",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Jitter packets loss $v8 threshold status : $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-NQA-MIB::hh3cNqaJitterPacketLoss HH3C-NQA-MIB::hh3cNqaReactOwnerIndex s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactTestName s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactItemIndex u 1 DISMAN-PING-MIB::pingCtlTargetAddressType i 0 DISMAN-PING-MIB::pingCtlTargetAddress s EXAMPLE DISMAN-PING-MIB::pingCtlType o 1.3.6.1.4.1.8072.2.1.1 DISMAN-PING-MIB::pingCtlDescr s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactThresholdType i 0 HH3C-NQA-MIB::hh3cNqaReactCurrentStatus i 1",
+			"trap" : {
+				"name" : "HH3C-NQA-MIB::hh3cNqaJitterPacketLoss",
+				"oid" : "1.3.6.1.4.1.25506.8.3.3.4",
+				"variables" : [
+					{
+						"description" : [
+							"The first index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlOwnerIndex in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactOwnerIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The second index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlTestName in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactTestName",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The third index of hh3cNqaReactionTable, it definitely",
+							"identifies one of the reaction configurations for a test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactItemIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the type of host address to be used at a remote",
+							"host for performing a ping operation."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddressType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the host address to be used at a remote host for",
+							"performing a ping operation. The host address type is",
+							"determined by the object value of corresponding",
+							"pingCtlTargetAddressType.",
+							"A value for this object MUST be set prior to transitioning",
+							"its corresponding pingCtlEntry to active(1) via",
+							"pingCtlRowStatus."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddress",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object is used to either report or",
+							"select the implementation method to be used for",
+							"calculating a ping response time. The value of this",
+							"object MAY be selected from pingImplementationTypeDomains.",
+							"",
+							"Additional implementation types SHOULD be allocated as",
+							"required by implementers of the DISMAN-PING-MIB under",
+							"their enterprise specific registration point and not",
+							"beneath pingImplementationTypeDomains."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.16",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to provide a",
+							"descriptive name of the remote ping test."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlDescr",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the reaction threshold types.",
+							"",
+							"invalid(0): Invalid value.",
+							"",
+							"average(1): If reaction threshold type is average and the average",
+							"value of watched operation exceeds threshold limit",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"consecutive(2): If reaction threshold type is consecutive and",
+							"the times of watched operation consecutively exceeds",
+							"the limit specified by hh3cNqaReactThresholdConsecNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"accumulative(3): If reaction threshold type is accumulative and",
+							"the times of watched operation accumulatively exceeds",
+							"the limit specified by hh3cNqaReactThresholdAccumNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"If reaction threshold type is not configured, the value of this",
+							"object is 'invalid'."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "average",
+							"2" : "consecutive",
+							"3" : "accumulative"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactThresholdType",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the current status of this reaction entry:",
+							"",
+							"invalid - The status of the reaction entry is unknown.",
+							"",
+							"overThreshold - The status of the reaction entry is overThreshold",
+							"when the monitored result exceeds the threshold",
+							"value for the hh3cNqaReactThresholdType.",
+							"",
+							"belowThreshold - The status of the reaction entry is belowThreshold",
+							"when the monitored result is under the threshold",
+							"value for the hh3cNqaReactThresholdType."
+						],
+						"enums" : {
+							"1" : "invalid",
+							"2" : "overThreshold",
+							"3" : "belowThreshold"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactCurrentStatus",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-NQA-MIB::hh3cNqaJitterSDOverThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SD means the jitter values from source to destination.",
+				"It is generated when the value of hh3cNqaReactCurrentStatus",
+				"changes.",
+				"The change may occur when the watched condition is over threshold",
+				"or below threshold.",
+				"The over threshold situations is specified as below.",
+				"1. The average of SD in one jitter test is not in the range",
+				"hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit and the",
+				"hh3cNqaReactThresholdType is specified as 'average' type.",
+				"2. The average of SD in one jitter test is accumulatively",
+				"not in the range hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit for a number of times specified",
+				"in hh3cNqaReactThresholdAccumNum and the",
+				"hh3cNqaReactThresholdType is specified as 'accumulative' type.",
+				"This notification is valid only when hh3cNqaReactActionType",
+				"is 'trapOnly' or 'trapAndTrigger' and pingCtlType of the test",
+				"is hh3cNqajitter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cNqaJitterSDOverThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Jitter value from source to destination $v8 threshold status : $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-NQA-MIB::hh3cNqaJitterSDOverThreshold HH3C-NQA-MIB::hh3cNqaReactOwnerIndex s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactTestName s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactItemIndex u 1 DISMAN-PING-MIB::pingCtlTargetAddressType i 0 DISMAN-PING-MIB::pingCtlTargetAddress s EXAMPLE DISMAN-PING-MIB::pingCtlType o 1.3.6.1.4.1.8072.2.1.1 DISMAN-PING-MIB::pingCtlDescr s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactThresholdType i 0 HH3C-NQA-MIB::hh3cNqaReactCurrentStatus i 1",
+			"trap" : {
+				"name" : "HH3C-NQA-MIB::hh3cNqaJitterSDOverThreshold",
+				"oid" : "1.3.6.1.4.1.25506.8.3.3.5",
+				"variables" : [
+					{
+						"description" : [
+							"The first index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlOwnerIndex in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactOwnerIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The second index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlTestName in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactTestName",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The third index of hh3cNqaReactionTable, it definitely",
+							"identifies one of the reaction configurations for a test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactItemIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the type of host address to be used at a remote",
+							"host for performing a ping operation."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddressType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the host address to be used at a remote host for",
+							"performing a ping operation. The host address type is",
+							"determined by the object value of corresponding",
+							"pingCtlTargetAddressType.",
+							"A value for this object MUST be set prior to transitioning",
+							"its corresponding pingCtlEntry to active(1) via",
+							"pingCtlRowStatus."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddress",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object is used to either report or",
+							"select the implementation method to be used for",
+							"calculating a ping response time. The value of this",
+							"object MAY be selected from pingImplementationTypeDomains.",
+							"",
+							"Additional implementation types SHOULD be allocated as",
+							"required by implementers of the DISMAN-PING-MIB under",
+							"their enterprise specific registration point and not",
+							"beneath pingImplementationTypeDomains."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.16",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to provide a",
+							"descriptive name of the remote ping test."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlDescr",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the reaction threshold types.",
+							"",
+							"invalid(0): Invalid value.",
+							"",
+							"average(1): If reaction threshold type is average and the average",
+							"value of watched operation exceeds threshold limit",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"consecutive(2): If reaction threshold type is consecutive and",
+							"the times of watched operation consecutively exceeds",
+							"the limit specified by hh3cNqaReactThresholdConsecNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"accumulative(3): If reaction threshold type is accumulative and",
+							"the times of watched operation accumulatively exceeds",
+							"the limit specified by hh3cNqaReactThresholdAccumNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"If reaction threshold type is not configured, the value of this",
+							"object is 'invalid'."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "average",
+							"2" : "consecutive",
+							"3" : "accumulative"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactThresholdType",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the current status of this reaction entry:",
+							"",
+							"invalid - The status of the reaction entry is unknown.",
+							"",
+							"overThreshold - The status of the reaction entry is overThreshold",
+							"when the monitored result exceeds the threshold",
+							"value for the hh3cNqaReactThresholdType.",
+							"",
+							"belowThreshold - The status of the reaction entry is belowThreshold",
+							"when the monitored result is under the threshold",
+							"value for the hh3cNqaReactThresholdType."
+						],
+						"enums" : {
+							"1" : "invalid",
+							"2" : "overThreshold",
+							"3" : "belowThreshold"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactCurrentStatus",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-NQA-MIB::hh3cNqaJitterDSOverThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS means the jitter values from destination to source.",
+				"It is generated when the value of hh3cNqaReactCurrentStatus",
+				"changes.",
+				"The change may occur when the watched condition is over threshold",
+				"or below threshold.",
+				"The over threshold situations is specified as below.",
+				"1. The average of DS in one jitter test is not in the range",
+				"hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit and the",
+				"hh3cNqaReactThresholdType is specified as 'average' type.",
+				"2. The average of DS in one jitter test is accumulatively not",
+				"in the range hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit for a number of times specified",
+				"in hh3cNqaReactThresholdAccumNum and the",
+				"hh3cNqaReactThresholdType is specified as 'accumulative' type.",
+				"This notification is valid only when hh3cNqaReactActionType",
+				"is 'trapOnly' or 'trapAndTrigger' and pingCtlType of the test",
+				"is hh3cNqajitter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cNqaJitterDSOverThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Jitter value from destination to source $v8 threshold status : $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-NQA-MIB::hh3cNqaJitterDSOverThreshold HH3C-NQA-MIB::hh3cNqaReactOwnerIndex s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactTestName s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactItemIndex u 1 DISMAN-PING-MIB::pingCtlTargetAddressType i 0 DISMAN-PING-MIB::pingCtlTargetAddress s EXAMPLE DISMAN-PING-MIB::pingCtlType o 1.3.6.1.4.1.8072.2.1.1 DISMAN-PING-MIB::pingCtlDescr s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactThresholdType i 0 HH3C-NQA-MIB::hh3cNqaReactCurrentStatus i 1",
+			"trap" : {
+				"name" : "HH3C-NQA-MIB::hh3cNqaJitterDSOverThreshold",
+				"oid" : "1.3.6.1.4.1.25506.8.3.3.6",
+				"variables" : [
+					{
+						"description" : [
+							"The first index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlOwnerIndex in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactOwnerIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The second index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlTestName in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactTestName",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The third index of hh3cNqaReactionTable, it definitely",
+							"identifies one of the reaction configurations for a test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactItemIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the type of host address to be used at a remote",
+							"host for performing a ping operation."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddressType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the host address to be used at a remote host for",
+							"performing a ping operation. The host address type is",
+							"determined by the object value of corresponding",
+							"pingCtlTargetAddressType.",
+							"A value for this object MUST be set prior to transitioning",
+							"its corresponding pingCtlEntry to active(1) via",
+							"pingCtlRowStatus."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddress",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object is used to either report or",
+							"select the implementation method to be used for",
+							"calculating a ping response time. The value of this",
+							"object MAY be selected from pingImplementationTypeDomains.",
+							"",
+							"Additional implementation types SHOULD be allocated as",
+							"required by implementers of the DISMAN-PING-MIB under",
+							"their enterprise specific registration point and not",
+							"beneath pingImplementationTypeDomains."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.16",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to provide a",
+							"descriptive name of the remote ping test."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlDescr",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the reaction threshold types.",
+							"",
+							"invalid(0): Invalid value.",
+							"",
+							"average(1): If reaction threshold type is average and the average",
+							"value of watched operation exceeds threshold limit",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"consecutive(2): If reaction threshold type is consecutive and",
+							"the times of watched operation consecutively exceeds",
+							"the limit specified by hh3cNqaReactThresholdConsecNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"accumulative(3): If reaction threshold type is accumulative and",
+							"the times of watched operation accumulatively exceeds",
+							"the limit specified by hh3cNqaReactThresholdAccumNum",
+							"an action specified in hh3cNqaReactActionType is",
+							"generated when hh3cNqaReactCurrentStatus changes.",
+							"",
+							"If reaction threshold type is not configured, the value of this",
+							"object is 'invalid'."
+						],
+						"enums" : {
+							"0" : "invalid",
+							"1" : "average",
+							"2" : "consecutive",
+							"3" : "accumulative"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactThresholdType",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the current status of this reaction entry:",
+							"",
+							"invalid - The status of the reaction entry is unknown.",
+							"",
+							"overThreshold - The status of the reaction entry is overThreshold",
+							"when the monitored result exceeds the threshold",
+							"value for the hh3cNqaReactThresholdType.",
+							"",
+							"belowThreshold - The status of the reaction entry is belowThreshold",
+							"when the monitored result is under the threshold",
+							"value for the hh3cNqaReactThresholdType."
+						],
+						"enums" : {
+							"1" : "invalid",
+							"2" : "overThreshold",
+							"3" : "belowThreshold"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactCurrentStatus",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-NQA-MIB::hh3cNqaICPIFOverThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"It is generated when the value of hh3cNqaReactCurrentStatus",
+				"changes.",
+				"The change may occur when the watched condition is over threshold",
+				"or below threshold.",
+				"The over threshold situations is specified as below.",
+				"1. When the ICPIF value in one jitter test is not in",
+				"the range hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit.",
+				"This notification is valid only when hh3cNqaReactActionType",
+				"is 'trapOnly' or 'trapAndTrigger', pingCtlType of the test",
+				"is hh3cNqajitter and hh3cNqaCtlCodecType is 'g711Alaw' or 'g711Ulaw'",
+				"or 'g729A'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cNqaICPIFOverThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v8==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Jitter test ICPIF value threshold status : $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-NQA-MIB::hh3cNqaICPIFOverThreshold HH3C-NQA-MIB::hh3cNqaReactOwnerIndex s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactTestName s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactItemIndex u 1 DISMAN-PING-MIB::pingCtlTargetAddressType i 0 DISMAN-PING-MIB::pingCtlTargetAddress s EXAMPLE DISMAN-PING-MIB::pingCtlType o 1.3.6.1.4.1.8072.2.1.1 DISMAN-PING-MIB::pingCtlDescr s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactCurrentStatus i 1",
+			"trap" : {
+				"name" : "HH3C-NQA-MIB::hh3cNqaICPIFOverThreshold",
+				"oid" : "1.3.6.1.4.1.25506.8.3.3.7",
+				"variables" : [
+					{
+						"description" : [
+							"The first index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlOwnerIndex in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactOwnerIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The second index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlTestName in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactTestName",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The third index of hh3cNqaReactionTable, it definitely",
+							"identifies one of the reaction configurations for a test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactItemIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the type of host address to be used at a remote",
+							"host for performing a ping operation."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddressType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the host address to be used at a remote host for",
+							"performing a ping operation. The host address type is",
+							"determined by the object value of corresponding",
+							"pingCtlTargetAddressType.",
+							"A value for this object MUST be set prior to transitioning",
+							"its corresponding pingCtlEntry to active(1) via",
+							"pingCtlRowStatus."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddress",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object is used to either report or",
+							"select the implementation method to be used for",
+							"calculating a ping response time. The value of this",
+							"object MAY be selected from pingImplementationTypeDomains.",
+							"",
+							"Additional implementation types SHOULD be allocated as",
+							"required by implementers of the DISMAN-PING-MIB under",
+							"their enterprise specific registration point and not",
+							"beneath pingImplementationTypeDomains."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.16",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to provide a",
+							"descriptive name of the remote ping test."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlDescr",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the current status of this reaction entry:",
+							"",
+							"invalid - The status of the reaction entry is unknown.",
+							"",
+							"overThreshold - The status of the reaction entry is overThreshold",
+							"when the monitored result exceeds the threshold",
+							"value for the hh3cNqaReactThresholdType.",
+							"",
+							"belowThreshold - The status of the reaction entry is belowThreshold",
+							"when the monitored result is under the threshold",
+							"value for the hh3cNqaReactThresholdType."
+						],
+						"enums" : {
+							"1" : "invalid",
+							"2" : "overThreshold",
+							"3" : "belowThreshold"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactCurrentStatus",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HH3C-NQA-MIB::hh3cNqaMOSOverThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"It is generated when the value of hh3cNqaReactCurrentStatus",
+				"changes.",
+				"The change may occur when the watched condition is over threshold",
+				"or below threshold.",
+				"The over threshold situations is specified as below.",
+				"1. When the MOS value in one jitter test is not in",
+				"the range hh3cNqaReactThresholdLowerLimit through",
+				"hh3cNqaReactThresholdUpperLimit.",
+				"This notification is valid only when hh3cNqaReactActionType",
+				"is 'trapOnly' or 'trapAndTrigger', pingCtlType of the test",
+				"is hh3cNqajitter and hh3cNqaCtlCodecType is 'g711Alaw' or 'g711Ulaw'",
+				"or 'g729A'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cNqaMOSOverThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v8==1) ? 1 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Jitter test MOS value threshold status : $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-NQA-MIB::hh3cNqaMOSOverThreshold HH3C-NQA-MIB::hh3cNqaReactOwnerIndex s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactTestName s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactItemIndex u 1 DISMAN-PING-MIB::pingCtlTargetAddressType i 0 DISMAN-PING-MIB::pingCtlTargetAddress s EXAMPLE DISMAN-PING-MIB::pingCtlType o 1.3.6.1.4.1.8072.2.1.1 DISMAN-PING-MIB::pingCtlDescr s EXAMPLE HH3C-NQA-MIB::hh3cNqaReactCurrentStatus i 1",
+			"trap" : {
+				"name" : "HH3C-NQA-MIB::hh3cNqaMOSOverThreshold",
+				"oid" : "1.3.6.1.4.1.25506.8.3.3.8",
+				"variables" : [
+					{
+						"description" : [
+							"The first index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlOwnerIndex in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactOwnerIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The second index of hh3cNqaReactionTable, it is the same as",
+							"pingCtlTestName in pingCtlTable. hh3cNqaReactOwnerIndex and",
+							"hh3cNqaReactTestName identify an existed test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactTestName",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The third index of hh3cNqaReactionTable, it definitely",
+							"identifies one of the reaction configurations for a test."
+						],
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactItemIndex",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the type of host address to be used at a remote",
+							"host for performing a ping operation."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddressType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the host address to be used at a remote host for",
+							"performing a ping operation. The host address type is",
+							"determined by the object value of corresponding",
+							"pingCtlTargetAddressType.",
+							"A value for this object MUST be set prior to transitioning",
+							"its corresponding pingCtlEntry to active(1) via",
+							"pingCtlRowStatus."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlTargetAddress",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object is used to either report or",
+							"select the implementation method to be used for",
+							"calculating a ping response time. The value of this",
+							"object MAY be selected from pingImplementationTypeDomains.",
+							"",
+							"Additional implementation types SHOULD be allocated as",
+							"required by implementers of the DISMAN-PING-MIB under",
+							"their enterprise specific registration point and not",
+							"beneath pingImplementationTypeDomains."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlType",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.16",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to provide a",
+							"descriptive name of the remote ping test."
+						],
+						"name" : "DISMAN-PING-MIB::pingCtlDescr",
+						"oid" : "1.3.6.1.2.1.80.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the current status of this reaction entry:",
+							"",
+							"invalid - The status of the reaction entry is unknown.",
+							"",
+							"overThreshold - The status of the reaction entry is overThreshold",
+							"when the monitored result exceeds the threshold",
+							"value for the hh3cNqaReactThresholdType.",
+							"",
+							"belowThreshold - The status of the reaction entry is belowThreshold",
+							"when the monitored result is under the threshold",
+							"value for the hh3cNqaReactThresholdType."
+						],
+						"enums" : {
+							"1" : "invalid",
+							"2" : "overThreshold",
+							"3" : "belowThreshold"
+						},
+						"name" : "HH3C-NQA-MIB::hh3cNqaReactCurrentStatus",
+						"oid" : "1.3.6.1.4.1.25506.8.3.1.13.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

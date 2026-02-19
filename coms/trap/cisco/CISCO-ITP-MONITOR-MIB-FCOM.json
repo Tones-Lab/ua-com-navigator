@@ -1,0 +1,95 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200407200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ITP-MONITOR-MIB::ciscoItpMonitorCongestion",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when a connection ",
+				"enters or exits congestion state. The value of ",
+				"cItpmConnCongestion indicates new state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 2 : 1"
+				},
+				"EventType" : "ciscoItpMonitorCongestion",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 3 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Connection congestion state set to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ITP-MONITOR-MIB::ciscoItpMonitorCongestion CISCO-ITP-MONITOR-MIB::cItpmConnCongestion i 1",
+			"trap" : {
+				"name" : "CISCO-ITP-MONITOR-MIB::ciscoItpMonitorCongestion",
+				"oid" : "1.3.6.1.4.1.9.9.379.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-ITP-MONITOR-MIB::cItpmConnCongestion",
+						"oid" : "1.3.6.1.4.1.9.9.379.1.1.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ITP-MONITOR-MIB::ciscoItpMonitorState",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when a connection ",
+				"changes states. The value of ",
+				"cItpmConnMonitorState indicates new state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "ciscoItpMonitorState",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Connection state set to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ITP-MONITOR-MIB::ciscoItpMonitorState CISCO-ITP-MONITOR-MIB::cItpmConnMonitorState i 1",
+			"trap" : {
+				"name" : "CISCO-ITP-MONITOR-MIB::ciscoItpMonitorState",
+				"oid" : "1.3.6.1.4.1.9.9.379.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive"
+						},
+						"name" : "CISCO-ITP-MONITOR-MIB::cItpmConnMonitorState",
+						"oid" : "1.3.6.1.4.1.9.9.379.1.1.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,46 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗ 
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝ 
+#  
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+##################################################################################################################
+#       Desciption:     Here are only hwNmNorthboundEventSynchronizationStart trap:
+#       OID:            .1.3.6.1.4.1.2011.2.15.1.7.7.1
+#       Name:           hwNmNorthboundEventSynchronizationStart
+# 		Reference:		Huawei_iMaster_NCE_hwNmNorthboundEventSynchronizationStart.rules
+##################################################################################################################
+
+my $rulesfile = "Huawei_NCE_Fabric_hwNmNorthboundEventSynchronizationStart.rules";
+$Log->Message('DEBUG', "Executing: " . $rulesfile);
+$Event->{SubMethod} = $rulesfile;
+
+if ($specific == 9) {
+    # HW-IMAPV1NORTHBOUND-TRAP-MIB::hwNmNorthboundEventSynchronizationStartNotify
+
+    $Event->{'Node'}					= $ip;
+    $Event->{'EventType'}				= "EMS Alarmsynchronization";
+    $Event->{'SubNode'}					= $Event->{'EMSName'};
+    $Event->{'Summary'}       			= $Event->{'EMSName'} . ": Alarm Synchronization START";
+    $Event->{'Severity'}      			= 4;
+    $Event->{'EventCategory'} 			= 2;
+    $Event->{MsgGroup} = "OSS-Umbrella";
+    $Event->{SubDeviceType} = 313;
+    $Event->{AlarmCode} = "Alarmsynchronization";
+    LibUtil_AddSuppression($Event, "Delay", "Rules", (time() + 600), "hwNmNorthboundEventSynchronizationStart", $rulesfile);
+            	
+}
+
+$Log->Message('DEBUG', $rulesfile . " ...done");

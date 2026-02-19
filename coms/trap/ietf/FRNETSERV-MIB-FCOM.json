@@ -1,0 +1,361 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200009280000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FRNETSERV-MIB::frPVCConnectStatusNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the indicated",
+				"PVC has changed state.",
+				"This notification is not sent if an FR-UNI changes",
+				"state; a linkDown or linkUp notification should be",
+				"sent instead. The first instance of",
+				"frPVCEndptRcvdSigStatus is for the endpoint with",
+				"LowIfIndex, LowDLCIIndex. The second instance of",
+				"frPVCEndptRcvdSigStatus is for the endpoint with",
+				"HighIfIndex, HighDLCIIndex"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : (($v3==4) ? 3 : 2)"
+				},
+				"EventType" : "frPVCConnectStatusNotif",
+				"ExpireTime" : {
+					"eval" : "($v3==2 || $v3==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : (($v3==4) ? 2 : (($v3==1) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PVC connection status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FRNETSERV-MIB::frPVCConnectStatusNotif FRNETSERV-MIB::frPVCConnectL2hOperStatus i 1 FRNETSERV-MIB::frPVCConnectH2lOperStatus i 1 FRNETSERV-MIB::frPVCEndptRcvdSigStatus i 1",
+			"trap" : {
+				"name" : "FRNETSERV-MIB::frPVCConnectStatusNotif",
+				"oid" : "1.3.6.1.2.1.10.44.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the current",
+							"operational status of the PVC segment connection",
+							"in one direction; (i.e., in the low to high",
+							"direction). This value affects the PVC status",
+							"indicated across the ingress NNI/UNI (low side) of",
+							"the PVC segment.",
+							"",
+							"The values mean:",
+							"",
+							"active(1) - PVC is currently operational",
+							"",
+							"inactive(2) - PVC is currently not operational.",
+							"This may be because of an underlying",
+							"LMI or DS1 failure.",
+							"",
+							"testing(3) - PVC is currently undergoing a test.",
+							"This may be because of an underlying",
+							"frLport or DS1 undergoing a test.",
+							"",
+							"unknown(4) - the status of the PVC currently can",
+							"not be determined."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive",
+							"3" : "testing",
+							"4" : "unknown"
+						},
+						"name" : "FRNETSERV-MIB::frPVCConnectL2hOperStatus",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the current",
+							"operational status of the PVC segment connection",
+							"in one direction; (i.e., in the high to low",
+							"direction).. This value affects the PVC status",
+							"indicated across the ingress NNI/UNI (high side)",
+							"of the PVC segment.",
+							"",
+							"The values mean:",
+							"",
+							"active(1) - PVC is currently operational",
+							"",
+							"inactive(2) - PVC is currently not operational.",
+							"This may be because of an underlying",
+							"LMI or DS1 failure.",
+							"",
+							"testing(3) - PVC is currently undergoing a test.",
+							"This may be because of an underlying",
+							"frLport or DS1 undergoing a test.",
+							"",
+							"unknown(4) - the status of the PVC currently can",
+							"not be determined."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive",
+							"3" : "testing",
+							"4" : "unknown"
+						},
+						"name" : "FRNETSERV-MIB::frPVCConnectH2lOperStatus",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the PVC",
+							"status received via the local in-channel signaling",
+							"procedures for this PVC end-point. This object is",
+							"only pertinent for interfaces that perform the",
+							"bidirectional procedures.",
+							"",
+							"Each value has the following meaning:",
+							"deleted(1): This PVC is not listed in the full",
+							"status reports received from the",
+							"user device. The object retains",
+							"this value for as long as the PVC",
+							"is not listed in the full status",
+							"reports",
+							"",
+							"active(2): This PVC is reported as active, or",
+							"operational, by the user device.",
+							"",
+							"inactive(3): This PVC is reported as inactive",
+							"or non-operational, by the user",
+							"device.",
+							"",
+							"none(4): This interface is only using the",
+							"network-side in-channel signaling",
+							"procedures, so this object does",
+							"not apply."
+						],
+						"enums" : {
+							"1" : "deleted",
+							"2" : "active",
+							"3" : "inactive",
+							"4" : "none"
+						},
+						"name" : "FRNETSERV-MIB::frPVCEndptRcvdSigStatus",
+						"oid" : "1.3.6.1.2.1.10.44.1.3.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FRNETSERV-MIB::frPVCConnectStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Refer to the description of the",
+				"frPVCConnectStatusNotif notification that has",
+				"replaced this notification. The notification is",
+				"deprecated due to the incorrect inclusion of index",
+				"values and to take advantage of the trap prefix",
+				"for automatic conversion from SMIv2 to SMIv1 by",
+				"making the one but last sub-ID a zero (i.e. the",
+				"so-called trap prefix)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v8==2) ? 1 : (($v8==4) ? 3 : 2)"
+				},
+				"EventType" : "frPVCConnectStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v8==2 || $v8==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v8==2) ? 0 : (($v8==4) ? 2 : (($v8==1) ? 3 : 4))"
+				},
+				"SubNode" : "PVCConnectIndex:$v1",
+				"Summary" : "PVC connection ($v1) status: $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FRNETSERV-MIB::frPVCConnectStatusChange FRNETSERV-MIB::frPVCConnectIndex i 9999 FRNETSERV-MIB::frPVCConnectLowIfIndex i 9999 FRNETSERV-MIB::frPVCConnectLowDLCIIndex i 9999 FRNETSERV-MIB::frPVCConnectHighIfIndex i 9999 FRNETSERV-MIB::frPVCConnectHighDLCIIndex i 9999 FRNETSERV-MIB::frPVCConnectL2hOperStatus i 1 FRNETSERV-MIB::frPVCConnectH2lOperStatus i 1 FRNETSERV-MIB::frPVCEndptRcvdSigStatus i 1",
+			"trap" : {
+				"name" : "FRNETSERV-MIB::frPVCConnectStatusChange",
+				"oid" : "1.3.6.1.2.1.10.44.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object is equal to the",
+							"frPVCConnectIndexValue obtained to uniquely",
+							"identify this PVC segment connection."
+						],
+						"name" : "FRNETSERV-MIB::frPVCConnectIndex",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object is equal to IF-MIB",
+							"ifIndex value of the UNI/NNI logical port for this",
+							"PVC segment. The term low implies that this PVC",
+							"segment end-point has the numerically lower",
+							"ifIndex value than the connected/associated PVC",
+							"segment end-point.",
+							"",
+							"RFC 1604 permitted a zero value for this object to",
+							"identify termination at a non-frame relay",
+							"interface. However, this cross-connect table is",
+							"limited to frame relay connections. See the frame",
+							"relay/ATM IWF MIB [28] for the cross-connect table",
+							"used for those types of connections."
+						],
+						"name" : "FRNETSERV-MIB::frPVCConnectLowIfIndex",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object is equal to the DLCI",
+							"value for this end-point of the PVC segment."
+						],
+						"name" : "FRNETSERV-MIB::frPVCConnectLowDLCIIndex",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object is equal to IF-MIB",
+							"ifIndex value for the UNI/NNI logical port for",
+							"this PVC segment. The term high implies that this",
+							"PVC segment end-point has the numerically higher",
+							"ifIndex value than the connected/associated PVC",
+							"segment end-point."
+						],
+						"name" : "FRNETSERV-MIB::frPVCConnectHighIfIndex",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object is equal to the egress",
+							"DLCI value for this end-point of the PVC segment."
+						],
+						"name" : "FRNETSERV-MIB::frPVCConnectHighDLCIIndex",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the current",
+							"operational status of the PVC segment connection",
+							"in one direction; (i.e., in the low to high",
+							"direction). This value affects the PVC status",
+							"indicated across the ingress NNI/UNI (low side) of",
+							"the PVC segment.",
+							"",
+							"The values mean:",
+							"",
+							"active(1) - PVC is currently operational",
+							"",
+							"inactive(2) - PVC is currently not operational.",
+							"This may be because of an underlying",
+							"LMI or DS1 failure.",
+							"",
+							"testing(3) - PVC is currently undergoing a test.",
+							"This may be because of an underlying",
+							"frLport or DS1 undergoing a test.",
+							"",
+							"unknown(4) - the status of the PVC currently can",
+							"not be determined."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive",
+							"3" : "testing",
+							"4" : "unknown"
+						},
+						"name" : "FRNETSERV-MIB::frPVCConnectL2hOperStatus",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the current",
+							"operational status of the PVC segment connection",
+							"in one direction; (i.e., in the high to low",
+							"direction).. This value affects the PVC status",
+							"indicated across the ingress NNI/UNI (high side)",
+							"of the PVC segment.",
+							"",
+							"The values mean:",
+							"",
+							"active(1) - PVC is currently operational",
+							"",
+							"inactive(2) - PVC is currently not operational.",
+							"This may be because of an underlying",
+							"LMI or DS1 failure.",
+							"",
+							"testing(3) - PVC is currently undergoing a test.",
+							"This may be because of an underlying",
+							"frLport or DS1 undergoing a test.",
+							"",
+							"unknown(4) - the status of the PVC currently can",
+							"not be determined."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive",
+							"3" : "testing",
+							"4" : "unknown"
+						},
+						"name" : "FRNETSERV-MIB::frPVCConnectH2lOperStatus",
+						"oid" : "1.3.6.1.2.1.10.44.1.5.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the PVC",
+							"status received via the local in-channel signaling",
+							"procedures for this PVC end-point. This object is",
+							"only pertinent for interfaces that perform the",
+							"bidirectional procedures.",
+							"",
+							"Each value has the following meaning:",
+							"deleted(1): This PVC is not listed in the full",
+							"status reports received from the",
+							"user device. The object retains",
+							"this value for as long as the PVC",
+							"is not listed in the full status",
+							"reports",
+							"",
+							"active(2): This PVC is reported as active, or",
+							"operational, by the user device.",
+							"",
+							"inactive(3): This PVC is reported as inactive",
+							"or non-operational, by the user",
+							"device.",
+							"",
+							"none(4): This interface is only using the",
+							"network-side in-channel signaling",
+							"procedures, so this object does",
+							"not apply."
+						],
+						"enums" : {
+							"1" : "deleted",
+							"2" : "active",
+							"3" : "inactive",
+							"4" : "none"
+						},
+						"name" : "FRNETSERV-MIB::frPVCEndptRcvdSigStatus",
+						"oid" : "1.3.6.1.2.1.10.44.1.3.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

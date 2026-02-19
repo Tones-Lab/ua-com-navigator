@@ -1,0 +1,319 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201001100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PRVT-EFM-OAM-MIB::prvtEfmOamLoopBackState",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap should be sent whenever the loopback",
+				"state has been change from remote, when",
+				"prvtEfmOamInterfaceRole is passive or",
+				"prvtEfmOamInterfaceEnable is false the",
+				"interface cannot be on remoteLoopback state",
+				"and should send this trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "prvtEfmOamLoopBackState",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "EFM OAM loopback state has been changed from remote"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EFM-OAM-MIB::prvtEfmOamLoopBackState PRVT-EFM-OAM-MIB::prvtEfmOamInterfaceEnable i 1 PRVT-EFM-OAM-MIB::prvtEfmOamInterfaceRole i 1 PRVT-EFM-OAM-MIB::prvtEfmOamInterfaceLoopbackStatus i 1",
+			"trap" : {
+				"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamLoopBackState",
+				"oid" : "1.3.6.1.4.1.738.10.5.133.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Enable/disable efm-oam protocol per port."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamInterfaceEnable",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.23.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Interface efm-oam mode."
+						],
+						"enums" : {
+							"1" : "passive",
+							"2" : "active"
+						},
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamInterfaceRole",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.23.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Efm-oam interface loopback status"
+						],
+						"enums" : {
+							"1" : "noLoopback",
+							"2" : "initiatingLoopback",
+							"3" : "remoteLoopback",
+							"4" : "terminatingLoopback",
+							"5" : "localLoopback",
+							"6" : "unknownLoopback"
+						},
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamInterfaceLoopbackStatus",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.23.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EFM-OAM-MIB::prvtEfmOamDyingGasp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification alarms for a failure due to",
+				"loss of local power - Dying Gasp"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "prvtEfmOamDyingGasp",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Dying Gasp: failure due to loss of local power"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EFM-OAM-MIB::prvtEfmOamDyingGasp ",
+			"trap" : {
+				"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamDyingGasp",
+				"oid" : "1.3.6.1.4.1.738.10.5.133.0.2"
+			}
+		},
+		{
+			"@objectName" : "PRVT-EFM-OAM-MIB::prvtEfmOamThresholdEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"A prvtEfmOamThresholdEvent notification is sent when a local or",
+				"remote threshold crossing event is detected. A local",
+				"threshold crossing event is detected by the local entity",
+				"while a remote threshold crossing event is detected by the",
+				"reception of an Ethernet OAM Event Notification OAMPDU",
+				"that indicates a threshold event.",
+				"The OAM entity can be derived from extracting the ifIndex from",
+				"the variable bindings. The objects in the notification",
+				"correspond to the values in a row instance in the",
+				"prvtEfmOamEventLogTable.",
+				"The management entity should periodically check",
+				"prvtEfmOamEventLogTable to detect any missed events."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "prvtEfmOamThresholdEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "A $v4 threshold crossing event ( $v3 ) has been detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EFM-OAM-MIB::prvtEfmOamThresholdEvent PRVT-EFM-OAM-MIB::prvtEfmOamEventLogTimeStamp u 9999 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogOui s EXAMPLE PRVT-EFM-OAM-MIB::prvtEfmOamEventLogType i 1 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogLocation i 1 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogWindow c 9999 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogThreshold c 9999 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogValue c 9999 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogRunningTotal c 9999 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogEventTotal u 9999",
+			"trap" : {
+				"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamThresholdEvent",
+				"oid" : "1.3.6.1.4.1.738.10.5.133.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"prvtEfmOamEventLogTimeStamp"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogTimeStamp",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogOui"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogOui",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogType"
+						],
+						"enums" : {
+							"1" : "erroredSymbolEvent",
+							"2" : "erroredFramePeriodEvent",
+							"3" : "erroredFrameEvent",
+							"4" : "erroredFrameSecondsEvent",
+							"256" : "linkFault",
+							"257" : "dyingGaspEvent",
+							"258" : "criticalEvent"
+						},
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogType",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogLocation"
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogLocation",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogWindow"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogWindow",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.6",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogThreshold"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogThreshold",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.7",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogValue"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogValue",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.8",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogRunningTotal"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogRunningTotal",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.9",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogEventTotal"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogEventTotal",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.10",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EFM-OAM-MIB::prvtEfmOamNonThresholdEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"A prvtEfmOamNonThresholdEvent notification is sent when a local",
+				"or remote non-threshold crossing event is detected. A local",
+				"event is detected by the local entity, while a remote event is",
+				"detected by the reception of an Ethernet OAM Event",
+				"Notification OAMPDU that indicates a non-threshold crossing",
+				"event.",
+				"The OAM entity can be derived from extracting the ifIndex from",
+				"the variable bindings. The objects in the notification",
+				"correspond to the values in a row instance of the",
+				"prvtEfmOamEventLogTable.",
+				"The management entity should periodically check",
+				"prvtEfmOamEventLogTable to detect any missed events."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "prvtEfmOamNonThresholdEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "A $v4 non-threshold crossing event ( $v3 ) has been detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EFM-OAM-MIB::prvtEfmOamNonThresholdEvent PRVT-EFM-OAM-MIB::prvtEfmOamEventLogTimeStamp u 9999 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogOui s EXAMPLE PRVT-EFM-OAM-MIB::prvtEfmOamEventLogType i 1 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogLocation i 1 PRVT-EFM-OAM-MIB::prvtEfmOamEventLogEventTotal u 9999",
+			"trap" : {
+				"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamNonThresholdEvent",
+				"oid" : "1.3.6.1.4.1.738.10.5.133.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"prvtEfmOamEventLogTimeStamp"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogTimeStamp",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogOui"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogOui",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogType"
+						],
+						"enums" : {
+							"1" : "erroredSymbolEvent",
+							"2" : "erroredFramePeriodEvent",
+							"3" : "erroredFrameEvent",
+							"4" : "erroredFrameSecondsEvent",
+							"256" : "linkFault",
+							"257" : "dyingGaspEvent",
+							"258" : "criticalEvent"
+						},
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogType",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogLocation"
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogLocation",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"prvtEfmOamEventLogEventTotal"
+						],
+						"name" : "PRVT-EFM-OAM-MIB::prvtEfmOamEventLogEventTotal",
+						"oid" : "1.3.6.1.4.1.738.10.5.133.1.22.1.10",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

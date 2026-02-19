@@ -1,0 +1,129 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200205140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ERI-DNX-APS-MIB::apsConfigTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has updated ",
+				"the configuration for a given APS Device entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==101) ? 1 : (($v3>=400 && $v3<=404) || $v3==450 || ($v3>=500 && $v3<=502)) ? 2 : 3"
+				},
+				"EventType" : "apsConfigTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==101 || ($v3>=400 && $v3<=404) || $v3==450 || ($v3>=500 && $v3<=502)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==101) ? 0 : ($v3==400 || $v3==401) ? 4 : (($v3>=402 && $v3<=404) || $v3==450 || ($v3>=500 && $v3<=502)) ? 3 : 2"
+				},
+				"SubNode" : "APSConfigAddr:$v2",
+				"Summary" : "Configuration update on APS device $v2 . Command status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-APS-MIB::apsConfigTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-APS-MIB::apsCfgAddr a 192.0.2.1 ERI-DNX-APS-MIB::apsCfgCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-APS-MIB::apsConfigTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This number uniquely identifies Nest/Slot configured ",
+							"location of the APS Device card. ",
+							"",
+							"The format is represented using an IP address ",
+							"syntax (4 byte string). Note that the maximum valid slot ",
+							"number will vary depending on the specified Nest type: DNX11 or ",
+							"DNX4. ",
+							"The 1st byte represents the Nest Number (0-7) ",
+							"The 2nd byte represents the Slot Number (1-11) ",
+							"The 3rd byte is reserved for future use ",
+							"The 4th byte is reserved for future use ",
+							""
+						],
+						"name" : "ERI-DNX-APS-MIB::apsCfgAddr",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.12.2.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The command status for this link configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"APS Cfg Commands used in SET Command (1..199)",
+							"update-config(1)",
+							"Change existing APS Configuration",
+							"",
+							"APS Cfg Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (201)",
+							"Device data has been successfully changed",
+							"",
+							"APS Config Error Codes used in GET RESPONSE Command (400..799)",
+							"err-general-aps-config-error (400)",
+							"Unknown APS configuration error occurred ",
+							"err-invalid-asp-threshold (401)",
+							"Unrecognized APS SD or SF threshold number",
+							"err-invalid-rdi-criteria (402)",
+							"Unrecognized APS RDI setting",
+							"err-invalid-aps-dev-command (403)",
+							"Unrecognized APS device command-action ",
+							"err-aps-not-applicable (404)",
+							"APS cannot be configured for this device",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name.",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update-config",
+							"101" : "update-successful",
+							"400" : "err-general-aps-config-error",
+							"401" : "err-invalid-asp-threshold",
+							"402" : "err-invalid-rdi-criteria",
+							"403" : "err-invalid-aps-dev-command",
+							"404" : "err-aps-not-applicable",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-APS-MIB::apsCfgCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.12.2.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

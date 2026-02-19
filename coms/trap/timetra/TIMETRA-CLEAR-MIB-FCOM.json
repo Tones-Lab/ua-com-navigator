@@ -1,0 +1,98 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0501240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-CLEAR-MIB::tmnxClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxClear notification is generated to report the results",
+				"of the clear function that was run as a result of setting",
+				"tmnxClearAction to 'doAction'. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 1 : 2"
+				},
+				"EventType" : "tmnxClear",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v4==1) ? 'Clear function ($v1) completed successfully' : 'Clear function ($v1) failed due to $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-CLEAR-MIB::tmnxClear TIMETRA-CLEAR-MIB::tmnxClearName s EXAMPLE TIMETRA-CLEAR-MIB::tmnxClearParams s EXAMPLE TIMETRA-CLEAR-MIB::tmnxClearLastClearedTime t 31536000 TIMETRA-CLEAR-MIB::tmnxClearResult i 1 TIMETRA-CLEAR-MIB::tmnxClearErrorText s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-CLEAR-MIB::tmnxClear",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.13.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the application clear function associated with this",
+							"row entry."
+						],
+						"name" : "TIMETRA-CLEAR-MIB::tmnxClearName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.13.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The tmnxClearParams string is a sequence of parameter name",
+							"value pairs to be used to determine the managed object to",
+							"which to apply the application clear function associated with",
+							"this row entry."
+						],
+						"name" : "TIMETRA-CLEAR-MIB::tmnxClearParams",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.13.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The tmnxClearLastClearedTime variable contains the sysUpTime",
+							"value when tmnxClearAction was last set to 'doAction (1)' to ",
+							"run the application clear function associated with this row entry."
+						],
+						"name" : "TIMETRA-CLEAR-MIB::tmnxClearLastClearedTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.13.1.1.5",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The result of the last attempt to enact the application clear",
+							"function associated with this row entry."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failure"
+						},
+						"name" : "TIMETRA-CLEAR-MIB::tmnxClearResult",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.13.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"If the result of the last attempt to enact the application clear",
+							"function associated with this row entry failed, tmnxClearResult is",
+							"'failure (2)', tmnxClearErrorText contains a text string to further",
+							"explain the cause of the failure."
+						],
+						"name" : "TIMETRA-CLEAR-MIB::tmnxClearErrorText",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.13.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

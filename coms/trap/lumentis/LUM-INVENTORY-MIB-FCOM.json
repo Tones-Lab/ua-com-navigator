@@ -1,0 +1,703 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "LUM-INVENTORY-MIB::invNotificationPhysAdded",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent when a physical entity is added to the",
+				"inventory.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "invNotificationPhysAdded",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PhysIndex:$v1",
+				"Summary" : "$v5 $v2 added to inventory"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LUM-INVENTORY-MIB::invNotificationPhysAdded LUM-INVENTORY-MIB::invPhysIndex u 9999 LUM-INVENTORY-MIB::invPhysDescr s EXAMPLE LUM-INVENTORY-MIB::invPhysVendorType o 1.3.6.1.4.1.8072.2.1.1 LUM-INVENTORY-MIB::invPhysContainedIn u 9999 LUM-INVENTORY-MIB::invPhysClass i 0 LUM-INVENTORY-MIB::invPhysParentRelPos i 9999 LUM-INVENTORY-MIB::invPhysName s EXAMPLE LUM-INVENTORY-MIB::invPhysHardwareRev s EXAMPLE LUM-INVENTORY-MIB::invPhysFirmwareRev s EXAMPLE LUM-INVENTORY-MIB::invPhysProductDataRev s EXAMPLE LUM-INVENTORY-MIB::invPhysSerialNum s EXAMPLE LUM-INVENTORY-MIB::invPhysMfgName s EXAMPLE LUM-INVENTORY-MIB::invPhysModelName s EXAMPLE LUM-INVENTORY-MIB::invPhysIsFRU i 1",
+			"trap" : {
+				"name" : "LUM-INVENTORY-MIB::invNotificationPhysAdded",
+				"oid" : "1.3.6.1.4.1.8708.2.3.2.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The index for this entry."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysIndex",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A textual description of physical entity. This",
+							"object should contain a string which identifies",
+							"the manufacturers name for the physical entity",
+							"and should be set to a distinct value for each",
+							"version or model of the physical entity."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysDescr",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An indication of the vendor-specific hardware",
+							"type of the physical entity. Note that this is",
+							"different from the definition of MIB-IIs",
+							"sysObjectID.",
+							"",
+							"An agent should set this object to a",
+							"enterprise-specific registration identifier value",
+							"indicating the specific equipment type in detail.",
+							"The associated instance of invPhysClass is used",
+							"to indicate the general type of hardware device.",
+							"",
+							"If no vendor-specific registration identifier",
+							"exists for this physical entity, or the value",
+							"is unknown by this agent, then the value { 0 0 }",
+							"is returned."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysVendorType",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.3",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of invPhysIndex for the physical",
+							"entity which 'contains' this physical entity.",
+							"A value of zero indicates this physical entity",
+							"is not contained in any other physical entity.",
+							"Note that the set of 'containment' relationships",
+							"define a strict hierarchy; that is, recursion",
+							"is not allowed.",
+							"",
+							"In the event a physical entity is contained by",
+							"more than one physical entity (e.g., double-wide",
+							"modules), this object should identify the",
+							"containing entity with the lowest value",
+							"of invPhysIndex."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysContainedIn",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"An indication of the general hardware type of",
+							"the physical entity.",
+							"",
+							"An agent should set this object to the standard",
+							"enumeration value which most accurately indicates",
+							"the general class of the physical entity, or the",
+							"primary class if there is more than one.",
+							"",
+							"If no appropriate standard registration",
+							"identifier exists for this physical entity, then",
+							"the value 'other(1)' is returned. If the value",
+							"is unknown by this agent, then the value",
+							"'unknown(2)' is returned."
+						],
+						"enums" : {
+							"0" : "undefined",
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "powerSupply",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack"
+						},
+						"name" : "LUM-INVENTORY-MIB::invPhysClass",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An indication of the relative position of this",
+							"'child' component among all its 'sibling'",
+							"components. Sibling components are defined as",
+							"invPhysEntries which share the same instance",
+							"values of each of the invPhysContainedIn",
+							"and invPhysClass objects.",
+							"",
+							"An NMS can use this object to identify the",
+							"relative ordering for all sibling components",
+							"of a particular parent (identified by the",
+							"invPhysContainedIn instance in each sibling",
+							"entry).",
+							"",
+							"This value should match any external labeling",
+							"of the physical component if possible. For example",
+							"for a container (e.g., card slot) labeled as",
+							"'slot #3', invPhysParentRelPos should have the",
+							"value '3'. Note that the invPhysEntry for the",
+							"module plugged in slot 3 should have an",
+							"invPhysParentRelPos value of '1'.",
+							"",
+							"If the physical position of this component",
+							"does not match any external numbering or clearly",
+							"visible ordering, then user documentation or",
+							"other external reference material should be",
+							"used to determine the parent-relative position.",
+							"If this is not possible, then the the agent should",
+							"assign a consistent (but possibly arbitrary)",
+							"ordering to a given set of 'sibling' components",
+							"perhaps based on internal representation of the",
+							"components.",
+							"",
+							"If the agent cannot determine the parent-relative",
+							"position for some reason, or if the associated",
+							"value of invPhysContainedIn is '0', then the",
+							"value '-1' is returned. Otherwise a non-negative",
+							"integer is returned, indicating the parent-relative",
+							"position of this physical entity.",
+							"",
+							"Parent-relative ordering normally starts from",
+							"'1' and continues to 'N', where 'N' represents",
+							"the highest positioned child entity. However",
+							"if the physical entities (e.g., slots) are labeled",
+							"from a starting position of zero, then the first",
+							"sibling should be associated with a",
+							"invPhysParentRelPos value of '0'. Note that this",
+							"ordering may be sparse or dense, depending on agent",
+							"implementation.",
+							"",
+							"The actual values returned are not globally",
+							"meaningful, as each 'parent' component may use",
+							"different numbering algorithms. The ordering is",
+							"only meaningful among siblings of the same parent",
+							"component.",
+							"",
+							"The agent should retain parent-relative position",
+							"values across reboots, either through algorithmic",
+							"assignment or use of non-volatile storage."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysParentRelPos",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The textual name of the physical entity. The",
+							"value of this object should be the name of the",
+							"component as assigned by the local device and",
+							"should be suitable for use in commands entered",
+							"at the 'console' of the device. This might be a",
+							"text name, such as 'console' or a simple component",
+							"number (e.g., port or module number), such as '1'",
+							"depending on the physical component naming syntax",
+							"of the device.",
+							"",
+							"If there is no local name, or this object is",
+							"otherwise not applicable, then this object",
+							"contains a zero-length string.",
+							"",
+							"Note that the value of invPhysName for two",
+							"physical entities will be the same in the event",
+							"that the console interface does not distinguish",
+							"between them, e.g., slot-1 and the card in slot-1."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysName",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific hardware revision string for",
+							"the physical entity. The preferred value is the",
+							"hardware revision identifier actually printed on",
+							"the component itself (if present).",
+							"",
+							"Note that if revision information is stored",
+							"internally in a non-printable (e.g., binary)",
+							"format, then the agent must convert such",
+							"information to a printable format, in an",
+							"implementation-specific manner.",
+							"",
+							"If no specific hardware revision string is",
+							"associated with the physical component, or this",
+							"information is unknown to the agent, then this",
+							"object will contain a zero-length string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysHardwareRev",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific firmware revision string for",
+							"the physical entity.",
+							"",
+							"Note that if revision information is stored",
+							"internally in a non-printable (e.g., binary)",
+							"format, then the agent must convert such",
+							"information to a printable format, in an",
+							"implementation-specific manner.",
+							"",
+							"If no specific firmware programs are associated",
+							"with the physical component, or this information",
+							"is unknown to the agent, then this object will",
+							"contain a zero-length string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysFirmwareRev",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific product data revision string",
+							"for the physical entity.",
+							"",
+							"Note that if revision information is stored",
+							"internally in a non-printable (e.g., binary)",
+							"format, then the agent must convert such",
+							"information to a printable format, in an",
+							"implementation-specific manner.",
+							"",
+							"If no specific software programs are associated",
+							"with the physical component, or this information",
+							"is unknown to the agent, then this object will",
+							"contain a zero-length string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysProductDataRev",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific serial number string for the",
+							"physical entity. The preferred value is the",
+							"serial number string actually printed on the",
+							"component itself (if present).",
+							"",
+							"On the first instantiation of an physical entity",
+							"the value of invPhysSerialNum associated with",
+							"that entity is set to the correct vendor-assigned",
+							"serial number, if this information is available",
+							"to the agent. If a serial number is unknown or",
+							"non-existent, the invPhysSerialNum will be",
+							"set to a zero-length string instead."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysSerialNum",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the manufacturer of this physical",
+							"component. The preferred value is the manufacturer",
+							"name string actually printed on the component",
+							"itself (if present).",
+							"",
+							"If the manufacturer name string associated with",
+							"the physical component is unknown to the agent",
+							"then this object will contain a zero-length",
+							"string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysMfgName",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific model name identifier string",
+							"associated with this physical component. The",
+							"preferred value is the customer-visible",
+							"product/part number, which may be printed on the",
+							"component itself.",
+							"",
+							"If the model name string associated with the",
+							"physical component is unknown to the agent",
+							"then this object will contain a zero-length string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysModelName",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates whether or not this",
+							"physical entity is considered a 'field replaceable",
+							"unit' by the vendor. If this object contains",
+							"the value 'true(1)' then this invPhysEntry",
+							"identifies a field replaceable unit. For all",
+							"invPhysEntries which represent components that",
+							"are permanently contained within a field",
+							"replaceable unit, the value 'false(2)' should",
+							"be returned for this object."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "LUM-INVENTORY-MIB::invPhysIsFRU",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LUM-INVENTORY-MIB::invNotificationPhysRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent when a physical entity is removed from the",
+				"inventory.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "invNotificationPhysRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PhysIndex:$v1",
+				"Summary" : "$v5 $v2 removed from inventory"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LUM-INVENTORY-MIB::invNotificationPhysRemoved LUM-INVENTORY-MIB::invPhysIndex u 9999 LUM-INVENTORY-MIB::invPhysDescr s EXAMPLE LUM-INVENTORY-MIB::invPhysVendorType o 1.3.6.1.4.1.8072.2.1.1 LUM-INVENTORY-MIB::invPhysContainedIn u 9999 LUM-INVENTORY-MIB::invPhysClass i 0 LUM-INVENTORY-MIB::invPhysParentRelPos i 9999 LUM-INVENTORY-MIB::invPhysName s EXAMPLE LUM-INVENTORY-MIB::invPhysHardwareRev s EXAMPLE LUM-INVENTORY-MIB::invPhysFirmwareRev s EXAMPLE LUM-INVENTORY-MIB::invPhysProductDataRev s EXAMPLE LUM-INVENTORY-MIB::invPhysSerialNum s EXAMPLE LUM-INVENTORY-MIB::invPhysMfgName s EXAMPLE LUM-INVENTORY-MIB::invPhysModelName s EXAMPLE LUM-INVENTORY-MIB::invPhysIsFRU i 1",
+			"trap" : {
+				"name" : "LUM-INVENTORY-MIB::invNotificationPhysRemoved",
+				"oid" : "1.3.6.1.4.1.8708.2.3.2.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The index for this entry."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysIndex",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A textual description of physical entity. This",
+							"object should contain a string which identifies",
+							"the manufacturers name for the physical entity",
+							"and should be set to a distinct value for each",
+							"version or model of the physical entity."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysDescr",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An indication of the vendor-specific hardware",
+							"type of the physical entity. Note that this is",
+							"different from the definition of MIB-IIs",
+							"sysObjectID.",
+							"",
+							"An agent should set this object to a",
+							"enterprise-specific registration identifier value",
+							"indicating the specific equipment type in detail.",
+							"The associated instance of invPhysClass is used",
+							"to indicate the general type of hardware device.",
+							"",
+							"If no vendor-specific registration identifier",
+							"exists for this physical entity, or the value",
+							"is unknown by this agent, then the value { 0 0 }",
+							"is returned."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysVendorType",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.3",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of invPhysIndex for the physical",
+							"entity which 'contains' this physical entity.",
+							"A value of zero indicates this physical entity",
+							"is not contained in any other physical entity.",
+							"Note that the set of 'containment' relationships",
+							"define a strict hierarchy; that is, recursion",
+							"is not allowed.",
+							"",
+							"In the event a physical entity is contained by",
+							"more than one physical entity (e.g., double-wide",
+							"modules), this object should identify the",
+							"containing entity with the lowest value",
+							"of invPhysIndex."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysContainedIn",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"An indication of the general hardware type of",
+							"the physical entity.",
+							"",
+							"An agent should set this object to the standard",
+							"enumeration value which most accurately indicates",
+							"the general class of the physical entity, or the",
+							"primary class if there is more than one.",
+							"",
+							"If no appropriate standard registration",
+							"identifier exists for this physical entity, then",
+							"the value 'other(1)' is returned. If the value",
+							"is unknown by this agent, then the value",
+							"'unknown(2)' is returned."
+						],
+						"enums" : {
+							"0" : "undefined",
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "powerSupply",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack"
+						},
+						"name" : "LUM-INVENTORY-MIB::invPhysClass",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An indication of the relative position of this",
+							"'child' component among all its 'sibling'",
+							"components. Sibling components are defined as",
+							"invPhysEntries which share the same instance",
+							"values of each of the invPhysContainedIn",
+							"and invPhysClass objects.",
+							"",
+							"An NMS can use this object to identify the",
+							"relative ordering for all sibling components",
+							"of a particular parent (identified by the",
+							"invPhysContainedIn instance in each sibling",
+							"entry).",
+							"",
+							"This value should match any external labeling",
+							"of the physical component if possible. For example",
+							"for a container (e.g., card slot) labeled as",
+							"'slot #3', invPhysParentRelPos should have the",
+							"value '3'. Note that the invPhysEntry for the",
+							"module plugged in slot 3 should have an",
+							"invPhysParentRelPos value of '1'.",
+							"",
+							"If the physical position of this component",
+							"does not match any external numbering or clearly",
+							"visible ordering, then user documentation or",
+							"other external reference material should be",
+							"used to determine the parent-relative position.",
+							"If this is not possible, then the the agent should",
+							"assign a consistent (but possibly arbitrary)",
+							"ordering to a given set of 'sibling' components",
+							"perhaps based on internal representation of the",
+							"components.",
+							"",
+							"If the agent cannot determine the parent-relative",
+							"position for some reason, or if the associated",
+							"value of invPhysContainedIn is '0', then the",
+							"value '-1' is returned. Otherwise a non-negative",
+							"integer is returned, indicating the parent-relative",
+							"position of this physical entity.",
+							"",
+							"Parent-relative ordering normally starts from",
+							"'1' and continues to 'N', where 'N' represents",
+							"the highest positioned child entity. However",
+							"if the physical entities (e.g., slots) are labeled",
+							"from a starting position of zero, then the first",
+							"sibling should be associated with a",
+							"invPhysParentRelPos value of '0'. Note that this",
+							"ordering may be sparse or dense, depending on agent",
+							"implementation.",
+							"",
+							"The actual values returned are not globally",
+							"meaningful, as each 'parent' component may use",
+							"different numbering algorithms. The ordering is",
+							"only meaningful among siblings of the same parent",
+							"component.",
+							"",
+							"The agent should retain parent-relative position",
+							"values across reboots, either through algorithmic",
+							"assignment or use of non-volatile storage."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysParentRelPos",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The textual name of the physical entity. The",
+							"value of this object should be the name of the",
+							"component as assigned by the local device and",
+							"should be suitable for use in commands entered",
+							"at the 'console' of the device. This might be a",
+							"text name, such as 'console' or a simple component",
+							"number (e.g., port or module number), such as '1'",
+							"depending on the physical component naming syntax",
+							"of the device.",
+							"",
+							"If there is no local name, or this object is",
+							"otherwise not applicable, then this object",
+							"contains a zero-length string.",
+							"",
+							"Note that the value of invPhysName for two",
+							"physical entities will be the same in the event",
+							"that the console interface does not distinguish",
+							"between them, e.g., slot-1 and the card in slot-1."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysName",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific hardware revision string for",
+							"the physical entity. The preferred value is the",
+							"hardware revision identifier actually printed on",
+							"the component itself (if present).",
+							"",
+							"Note that if revision information is stored",
+							"internally in a non-printable (e.g., binary)",
+							"format, then the agent must convert such",
+							"information to a printable format, in an",
+							"implementation-specific manner.",
+							"",
+							"If no specific hardware revision string is",
+							"associated with the physical component, or this",
+							"information is unknown to the agent, then this",
+							"object will contain a zero-length string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysHardwareRev",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific firmware revision string for",
+							"the physical entity.",
+							"",
+							"Note that if revision information is stored",
+							"internally in a non-printable (e.g., binary)",
+							"format, then the agent must convert such",
+							"information to a printable format, in an",
+							"implementation-specific manner.",
+							"",
+							"If no specific firmware programs are associated",
+							"with the physical component, or this information",
+							"is unknown to the agent, then this object will",
+							"contain a zero-length string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysFirmwareRev",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific product data revision string",
+							"for the physical entity.",
+							"",
+							"Note that if revision information is stored",
+							"internally in a non-printable (e.g., binary)",
+							"format, then the agent must convert such",
+							"information to a printable format, in an",
+							"implementation-specific manner.",
+							"",
+							"If no specific software programs are associated",
+							"with the physical component, or this information",
+							"is unknown to the agent, then this object will",
+							"contain a zero-length string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysProductDataRev",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific serial number string for the",
+							"physical entity. The preferred value is the",
+							"serial number string actually printed on the",
+							"component itself (if present).",
+							"",
+							"On the first instantiation of an physical entity",
+							"the value of invPhysSerialNum associated with",
+							"that entity is set to the correct vendor-assigned",
+							"serial number, if this information is available",
+							"to the agent. If a serial number is unknown or",
+							"non-existent, the invPhysSerialNum will be",
+							"set to a zero-length string instead."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysSerialNum",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the manufacturer of this physical",
+							"component. The preferred value is the manufacturer",
+							"name string actually printed on the component",
+							"itself (if present).",
+							"",
+							"If the manufacturer name string associated with",
+							"the physical component is unknown to the agent",
+							"then this object will contain a zero-length",
+							"string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysMfgName",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific model name identifier string",
+							"associated with this physical component. The",
+							"preferred value is the customer-visible",
+							"product/part number, which may be printed on the",
+							"component itself.",
+							"",
+							"If the model name string associated with the",
+							"physical component is unknown to the agent",
+							"then this object will contain a zero-length string."
+						],
+						"name" : "LUM-INVENTORY-MIB::invPhysModelName",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates whether or not this",
+							"physical entity is considered a 'field replaceable",
+							"unit' by the vendor. If this object contains",
+							"the value 'true(1)' then this invPhysEntry",
+							"identifies a field replaceable unit. For all",
+							"invPhysEntries which represent components that",
+							"are permanently contained within a field",
+							"replaceable unit, the value 'false(2)' should",
+							"be returned for this object."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "LUM-INVENTORY-MIB::invPhysIsFRU",
+						"oid" : "1.3.6.1.4.1.8708.2.3.2.1.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

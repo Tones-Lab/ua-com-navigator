@@ -1,0 +1,247 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201308231200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DC-MPLS-VPN-MIB::mplsVpnVrfRouteMidThreshExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of routes",
+				"contained by the specified VRF exceeds the value indicated by",
+				"mplsVpnVrfConfMidRouteThreshold. A single notification MUST be",
+				"generated when this threshold is exceeded, and no other",
+				"notifications of this type should be issued until the value",
+				"of mplsVpnVrfPerfCurrNumRtes has fallen below that of",
+				"mplsVpnVrfConfMidRouteThreshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcMplsVpnVrfRouteMidThreshExceeded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Current number of routes {$v1} in VRF exceeded the mid threshold:$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-MPLS-VPN-MIB::mplsVpnVrfRouteMidThreshExceeded DC-MPLS-VPN-MIB::mplsVpnVrfPerfCurrNumRtes u 9999 DC-MPLS-VPN-MIB::mplsVpnVrfConfMidRouteThreshold u 9999",
+			"trap" : {
+				"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfRouteMidThreshExceeded",
+				"oid" : "1.2.826.0.1.1578918.5.118.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the number of routes currently used by this",
+							"VRF."
+						],
+						"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfPerfCurrNumRtes",
+						"oid" : "1.2.826.0.1.1578918.5.118.1.1.3.1.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Denotes mid-level water marker for the number of routes which this VRF",
+							"may hold. A single mplsVpnVrfRouteMidThreshExceeded notification is",
+							"generated when the number of routes contained by the VRF exceeds this",
+							"value.",
+							"",
+							"A value of zero indicates that there is no threshold."
+						],
+						"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfConfMidRouteThreshold",
+						"oid" : "1.2.826.0.1.1578918.5.118.1.1.2.1.1.9",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-MPLS-VPN-MIB::mplsVpnVrfRouteMaxThreshExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of routes",
+				"contained by the specified VRF exceeds or attempts to exceed",
+				"the maximum allowed value as indicated by",
+				"mplsVpnVrfConfHighRouteThreshold. In cases where",
+				"mplsVpnVrfConfHighRouteThreshold is set to the same value",
+				"as mplsVpnVrfConfMaxRoutes, mplsVpnVrfConfHighRouteThreshold",
+				"need not be exceeded; rather, just reached for this notification",
+				"to be issued.",
+				"Note that mplsVpnVrfConfRouteMaxThreshTime denotes the interval",
+				"at which the this notification will be reissued after the",
+				"maximum value has been exceeded (or reached if",
+				"mplsVpnVrfConfMaxRoutes and mplsVpnVrfConfHighRouteThreshold are",
+				"equal) and the initial notification has been issued. This value",
+				"is intended to prevent continuous generation of notifications by",
+				"an agent in the event that routes are continually added to a VRF",
+				"after it has reached its maximum value. The default value is 0",
+				"minutes. If this value is set to 0, the agent should only issue",
+				"a single notification at the time that the maximum threshold has",
+				"been reached, and should not issue any more notifications until",
+				"the value of routes has fallen below the configured threshold",
+				"value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "dcMplsVpnVrfRouteMaxThreshState",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Current number of routes {$v1} in VRF exceeded the max threshold:$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-MPLS-VPN-MIB::mplsVpnVrfRouteMaxThreshExceeded DC-MPLS-VPN-MIB::mplsVpnVrfPerfCurrNumRtes u 9999 DC-MPLS-VPN-MIB::mplsVpnVrfConfHighRouteThreshold u 9999",
+			"trap" : {
+				"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfRouteMaxThreshExceeded",
+				"oid" : "1.2.826.0.1.1578918.5.118.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the number of routes currently used by this",
+							"VRF."
+						],
+						"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfPerfCurrNumRtes",
+						"oid" : "1.2.826.0.1.1578918.5.118.1.1.3.1.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Denotes high-level water marker for the number of routes which this VRF",
+							"may hold. An mplsVpnVrfRouteMaxThreshExceeded notification is generated",
+							"when the number of routes contained by the VRF exceeds this value.",
+							"",
+							"A value of zero indicates that there is no threshold."
+						],
+						"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfConfHighRouteThreshold",
+						"oid" : "1.2.826.0.1.1578918.5.118.1.1.2.1.1.10",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-MPLS-VPN-MIB::mplsVpnVrfSecIllglLblThrshExcd",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the number of illegal",
+				"label violations on a VRF as indicated by",
+				"mplsVpnVrfSecIllegalLblVltns has exceeded",
+				"mplsVpnIllLblRcvThrsh."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcMplsVpnVrfSecIllglLblThrshExcd",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Number of illegal label violations on VRF is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-MPLS-VPN-MIB::mplsVpnVrfSecIllglLblThrshExcd DC-MPLS-VPN-MIB::mplsVpnVrfSecIllegalLblVltns c 9999",
+			"trap" : {
+				"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfSecIllglLblThrshExcd",
+				"oid" : "1.2.826.0.1.1578918.5.118.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the number of illegally received",
+							"labels on this VPN/VRF.",
+							"",
+							"Discontinuities in the value of this counter can occur",
+							"at re-initialization of the management system, and at",
+							"other times as indicated by the value of",
+							"mplsVpnVrfSecDiscontinuityTime."
+						],
+						"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfSecIllegalLblVltns",
+						"oid" : "1.2.826.0.1.1578918.5.118.1.1.2.6.1.1",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-MPLS-VPN-MIB::mplsVpnVrfRouteMaxThreshCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated only after the number of routes",
+				"contained by the specified VRF exceeds or attempts to exceed",
+				"the maximum allowed value as indicated by",
+				"mplsVpnVrfConfHighRouteThreshold, and then falls below this value.",
+				"The emission of this notification informs the operator that the",
+				"error condition has been cleared without the operator having to",
+				"query the device.",
+				"Note that mplsVpnVrfConfRouteMaxThreshTime denotes the interval at",
+				"which the mplsNumVrfRouteMaxThreshExceeded notification will",
+				"be reissued after the maximum value has been exceeded (or",
+				"reached if mplsVpnVrfConfMaxRoutes and",
+				"mplsVpnVrfConfHighRouteThreshold are equal) and the initial",
+				"notification has been issued. Therefore, the generation of",
+				"this notification should also be emitted with this same",
+				"frequency (assuming that the error condition is cleared).",
+				"Specifically, if the error condition is reached and cleared",
+				"several times during the period of time specified in",
+				"mplsVpnVrfConfRouteMaxThreshTime, only a single notification will",
+				"be issued to indicate the first instance of the error condition",
+				"as well as the first time the error condition is cleared.",
+				"This behavior is intended to prevent continuous generation of",
+				"notifications by an agent in the event that routes are",
+				"continually added and removed to/from a VRF after it has",
+				"reached its maximum value. The default value is 0. If this",
+				"value is set to 0, the agent should issue a notification",
+				"whenever the maximum threshold has been cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "dcMplsVpnVrfRouteMaxThreshState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Number of routes in VRF falls below the max threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-MPLS-VPN-MIB::mplsVpnVrfRouteMaxThreshCleared DC-MPLS-VPN-MIB::mplsVpnVrfPerfCurrNumRtes u 9999 DC-MPLS-VPN-MIB::mplsVpnVrfConfHighRouteThreshold u 9999",
+			"trap" : {
+				"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfRouteMaxThreshCleared",
+				"oid" : "1.2.826.0.1.1578918.5.118.1.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the number of routes currently used by this",
+							"VRF."
+						],
+						"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfPerfCurrNumRtes",
+						"oid" : "1.2.826.0.1.1578918.5.118.1.1.3.1.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Denotes high-level water marker for the number of routes which this VRF",
+							"may hold. An mplsVpnVrfRouteMaxThreshExceeded notification is generated",
+							"when the number of routes contained by the VRF exceeds this value.",
+							"",
+							"A value of zero indicates that there is no threshold."
+						],
+						"name" : "DC-MPLS-VPN-MIB::mplsVpnVrfConfHighRouteThreshold",
+						"oid" : "1.2.826.0.1.1578918.5.118.1.1.2.1.1.10",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

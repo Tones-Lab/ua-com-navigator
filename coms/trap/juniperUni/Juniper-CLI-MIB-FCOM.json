@@ -1,0 +1,81 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200712101325Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "Juniper-CLI-MIB::juniCliSecurityAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"Reports a cli security alert. Events such as the following generate",
+				"this notification when it is enabled:",
+				"- Logins/logouts from telnet or console access",
+				"- Logins/logout from SSH",
+				"- Access from unknown IP addreses",
+				"- Access list accept or failures",
+				"- Successful and unsuccessful authentications "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==-1) ? 1 : (($v1==5 || $v1==6 || $v1==7) ? 3 : 2)"
+				},
+				"EventType" : "juniCliSecurityAlert",
+				"ExpireTime" : {
+					"eval" : "($v1==-1) ? 3600 : (($v1==5 || $v1==6 || $v1==7) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==-1) ? 0 : (($v1==0) ? 5 : (($v1==3 || $v1==4) ? 3 : ((($v1==1 || $v1==2) ? 4 : 2))))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Juniper-CLI-MIB::juniCliSecurityAlert Juniper-CLI-MIB::juniCliSecurityAlertPriority i -1 Juniper-CLI-MIB::juniCliSecurityAlertMessage s EXAMPLE Juniper-CLI-MIB::juniCliSecurityAlertTime s EXAMPLEE",
+			"trap" : {
+				"name" : "Juniper-CLI-MIB::juniCliSecurityAlert",
+				"oid" : "1.3.6.1.4.1.4874.2.2.30.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of the cli security alert."
+						],
+						"enums" : {
+							"0" : "emergency",
+							"-1" : "off",
+							"1" : "alert",
+							"2" : "critical",
+							"3" : "error",
+							"4" : "warning",
+							"5" : "notice",
+							"6" : "info",
+							"7" : "debug"
+						},
+						"name" : "Juniper-CLI-MIB::juniCliSecurityAlertPriority",
+						"oid" : "1.3.6.1.4.1.4874.2.2.30.1.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cli security alert message."
+						],
+						"name" : "Juniper-CLI-MIB::juniCliSecurityAlertMessage",
+						"oid" : "1.3.6.1.4.1.4874.2.2.30.1.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The date and time of this cliSecurityAlert."
+						],
+						"name" : "Juniper-CLI-MIB::juniCliSecurityAlertTime",
+						"oid" : "1.3.6.1.4.1.4874.2.2.30.1.2.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

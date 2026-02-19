@@ -1,0 +1,495 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200302280000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "APS-MIB::apsEventSwitchover",
+			"certification" : "STANDARD",
+			"description" : [
+				"An apsEventSwitchover notification is sent when the",
+				"value of an instance of apsChanStatusSwitchovers increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apsEventSwitchover",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "APS channel switched over to protection line (count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB::apsEventSwitchover APS-MIB::apsChanStatusSwitchovers c 9999 APS-MIB::apsChanStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB::apsEventSwitchover",
+				"oid" : "1.3.6.1.2.1.10.49.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"When queried with index value apsChanConfigNumber other than",
+							"0, this object will return the number of times this channel",
+							"has switched to the protection line.",
+							"",
+							"When queried with index value apsChanConfigNumber set to 0",
+							"which is the protection line, this object will return the",
+							"number of times that any working channel has been switched",
+							"back to the working line from this protection line.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"apsChanStatusDiscontinuityTime."
+						],
+						"name" : "APS-MIB::apsChanStatusSwitchovers",
+						"oid" : "1.3.6.1.2.1.10.49.1.6.1.4",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Indicates the current state of the port.",
+							"",
+							"lockedOut",
+							"",
+							"This bit, when applied to a working channel, indicates that",
+							"the channel is prevented from switching to the protection",
+							"line. When applied to the null channel, this bit indicates",
+							"that no working channel may switch to the protection line.",
+							"",
+							"sd",
+							"",
+							"A signal degrade condition is in effect.",
+							"",
+							"sf",
+							"",
+							"A signal failure condition is in effect.",
+							"",
+							"switched",
+							"",
+							"The switched bit is applied to a working channel if that",
+							"channel is currently switched to the protection line.",
+							"",
+							"wtr",
+							"",
+							"A Wait-to-Restore state is in effect."
+						],
+						"enums" : {
+							"0" : "lockedOut",
+							"1" : "sd",
+							"2" : "sf",
+							"3" : "switched",
+							"4" : "wtr"
+						},
+						"name" : "APS-MIB::apsChanStatusCurrent",
+						"oid" : "1.3.6.1.2.1.10.49.1.6.1.1",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APS-MIB::apsEventModeMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"An apsEventModeMismatch notification is sent when the",
+				"value of an instance of apsStatusModeMismatches increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apsEventModeMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "APS mode mismatch (count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB::apsEventModeMismatch APS-MIB::apsStatusModeMismatches c 9999 APS-MIB::apsStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB::apsEventModeMismatch",
+				"oid" : "1.3.6.1.2.1.10.49.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Mode Mismatch conditions.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"apsStatusDiscontinuityTime."
+						],
+						"name" : "APS-MIB::apsStatusModeMismatches",
+						"oid" : "1.3.6.1.2.1.10.49.1.2.1.4",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"modeMismatch",
+							"",
+							"Modes other than 1+1 unidirectional monitor protection line",
+							"K2 bit 5, which indicates the architecture and K2 bits",
+							"6-8, which indicate if the mode is unidirectional or",
+							"bidirectional. A conflict between the current local mode",
+							"and the received K2 mode information constitutes a",
+							"mode mismatch.",
+							"",
+							"channelMismatch",
+							"",
+							"This bit indicates a mismatch between the transmitted K1",
+							"channel and the received K2 channel has been detected.",
+							"",
+							"psbf",
+							"",
+							"This bit indicates a Protection Switch Byte Failure (PSBF) is",
+							"in effect. This condition occurs when either an inconsistent",
+							"APS byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last 12",
+							"successive frames are identical, starting with the last frame",
+							"containing a previously consistent byte. An invalid code occurs",
+							"when the incoming K1 byte contains an unused code or a code",
+							"irrelevant for the specific switching operation (e.g., Reverse",
+							"Request while no switching request is outstanding) in three",
+							"consecutive frames. An invalid code also occurs when the",
+							"incoming K1 byte contains an invalid channel number in three",
+							"consecutive frames.",
+							"",
+							"feplf",
+							"",
+							"Modes other than 1+1 unidirectional monitor the K1 byte",
+							"for Far-End Protection-Line failures. A Far-End",
+							"Protection-Line defect is declared based on receiving",
+							"SF on the protection line.",
+							"",
+							"extraTraffic",
+							"",
+							"This bit indicates whether extra traffic is currently being",
+							"accepted on the protection line. "
+						],
+						"enums" : {
+							"0" : "modeMismatch",
+							"1" : "channelMismatch",
+							"2" : "psbf",
+							"3" : "feplf",
+							"4" : "extraTraffic"
+						},
+						"name" : "APS-MIB::apsStatusCurrent",
+						"oid" : "1.3.6.1.2.1.10.49.1.2.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APS-MIB::apsEventChannelMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"An apsEventChannelMismatch notification is sent when the",
+				"value of an instance of apsStatusChannelMismatches increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apsEventChannelMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "APS channel mismatch (count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB::apsEventChannelMismatch APS-MIB::apsStatusChannelMismatches c 9999 APS-MIB::apsStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB::apsEventChannelMismatch",
+				"oid" : "1.3.6.1.2.1.10.49.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Channel Mismatch conditions.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"apsStatusDiscontinuityTime."
+						],
+						"name" : "APS-MIB::apsStatusChannelMismatches",
+						"oid" : "1.3.6.1.2.1.10.49.1.2.1.5",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"modeMismatch",
+							"",
+							"Modes other than 1+1 unidirectional monitor protection line",
+							"K2 bit 5, which indicates the architecture and K2 bits",
+							"6-8, which indicate if the mode is unidirectional or",
+							"bidirectional. A conflict between the current local mode",
+							"and the received K2 mode information constitutes a",
+							"mode mismatch.",
+							"",
+							"channelMismatch",
+							"",
+							"This bit indicates a mismatch between the transmitted K1",
+							"channel and the received K2 channel has been detected.",
+							"",
+							"psbf",
+							"",
+							"This bit indicates a Protection Switch Byte Failure (PSBF) is",
+							"in effect. This condition occurs when either an inconsistent",
+							"APS byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last 12",
+							"successive frames are identical, starting with the last frame",
+							"containing a previously consistent byte. An invalid code occurs",
+							"when the incoming K1 byte contains an unused code or a code",
+							"irrelevant for the specific switching operation (e.g., Reverse",
+							"Request while no switching request is outstanding) in three",
+							"consecutive frames. An invalid code also occurs when the",
+							"incoming K1 byte contains an invalid channel number in three",
+							"consecutive frames.",
+							"",
+							"feplf",
+							"",
+							"Modes other than 1+1 unidirectional monitor the K1 byte",
+							"for Far-End Protection-Line failures. A Far-End",
+							"Protection-Line defect is declared based on receiving",
+							"SF on the protection line.",
+							"",
+							"extraTraffic",
+							"",
+							"This bit indicates whether extra traffic is currently being",
+							"accepted on the protection line. "
+						],
+						"enums" : {
+							"0" : "modeMismatch",
+							"1" : "channelMismatch",
+							"2" : "psbf",
+							"3" : "feplf",
+							"4" : "extraTraffic"
+						},
+						"name" : "APS-MIB::apsStatusCurrent",
+						"oid" : "1.3.6.1.2.1.10.49.1.2.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APS-MIB::apsEventPSBF",
+			"certification" : "STANDARD",
+			"description" : [
+				"An apsEventPSBF notification is sent when the",
+				"value of an instance of apsStatusPSBFs increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apsEventPSBF",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "APS protection switch byte failure (count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB::apsEventPSBF APS-MIB::apsStatusPSBFs c 9999 APS-MIB::apsStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB::apsEventPSBF",
+				"oid" : "1.3.6.1.2.1.10.49.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Protection Switch Byte Failure conditions.",
+							"This condition occurs when either an inconsistent APS",
+							"byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last",
+							"12 successive frames are identical, starting with the last",
+							"frame containing a previously consistent byte. An invalid",
+							"code occurs when the incoming K1 byte contains an unused",
+							"code or a code irrelevant for the specific switching",
+							"operation (e.g., Reverse Request while no switching request",
+							"is outstanding) in three consecutive frames. An invalid code",
+							"also occurs when the incoming K1 byte contains an invalid",
+							"channel number in three consecutive frames.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"apsStatusDiscontinuityTime."
+						],
+						"name" : "APS-MIB::apsStatusPSBFs",
+						"oid" : "1.3.6.1.2.1.10.49.1.2.1.6",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"modeMismatch",
+							"",
+							"Modes other than 1+1 unidirectional monitor protection line",
+							"K2 bit 5, which indicates the architecture and K2 bits",
+							"6-8, which indicate if the mode is unidirectional or",
+							"bidirectional. A conflict between the current local mode",
+							"and the received K2 mode information constitutes a",
+							"mode mismatch.",
+							"",
+							"channelMismatch",
+							"",
+							"This bit indicates a mismatch between the transmitted K1",
+							"channel and the received K2 channel has been detected.",
+							"",
+							"psbf",
+							"",
+							"This bit indicates a Protection Switch Byte Failure (PSBF) is",
+							"in effect. This condition occurs when either an inconsistent",
+							"APS byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last 12",
+							"successive frames are identical, starting with the last frame",
+							"containing a previously consistent byte. An invalid code occurs",
+							"when the incoming K1 byte contains an unused code or a code",
+							"irrelevant for the specific switching operation (e.g., Reverse",
+							"Request while no switching request is outstanding) in three",
+							"consecutive frames. An invalid code also occurs when the",
+							"incoming K1 byte contains an invalid channel number in three",
+							"consecutive frames.",
+							"",
+							"feplf",
+							"",
+							"Modes other than 1+1 unidirectional monitor the K1 byte",
+							"for Far-End Protection-Line failures. A Far-End",
+							"Protection-Line defect is declared based on receiving",
+							"SF on the protection line.",
+							"",
+							"extraTraffic",
+							"",
+							"This bit indicates whether extra traffic is currently being",
+							"accepted on the protection line. "
+						],
+						"enums" : {
+							"0" : "modeMismatch",
+							"1" : "channelMismatch",
+							"2" : "psbf",
+							"3" : "feplf",
+							"4" : "extraTraffic"
+						},
+						"name" : "APS-MIB::apsStatusCurrent",
+						"oid" : "1.3.6.1.2.1.10.49.1.2.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APS-MIB::apsEventFEPLF",
+			"certification" : "STANDARD",
+			"description" : [
+				"An apsEventFEPLFs notification is sent when the",
+				"value of an instance of apsStatusFEPLFs increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apsEventFEPLF",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "APS far-end protection-line failure (count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB::apsEventFEPLF APS-MIB::apsStatusFEPLFs c 9999 APS-MIB::apsStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB::apsEventFEPLF",
+				"oid" : "1.3.6.1.2.1.10.49.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Far-End Protection-Line Failure conditions.",
+							"This condition is declared based on receiving SF on",
+							"the protection line in the K1 byte.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"apsStatusDiscontinuityTime."
+						],
+						"name" : "APS-MIB::apsStatusFEPLFs",
+						"oid" : "1.3.6.1.2.1.10.49.1.2.1.7",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"modeMismatch",
+							"",
+							"Modes other than 1+1 unidirectional monitor protection line",
+							"K2 bit 5, which indicates the architecture and K2 bits",
+							"6-8, which indicate if the mode is unidirectional or",
+							"bidirectional. A conflict between the current local mode",
+							"and the received K2 mode information constitutes a",
+							"mode mismatch.",
+							"",
+							"channelMismatch",
+							"",
+							"This bit indicates a mismatch between the transmitted K1",
+							"channel and the received K2 channel has been detected.",
+							"",
+							"psbf",
+							"",
+							"This bit indicates a Protection Switch Byte Failure (PSBF) is",
+							"in effect. This condition occurs when either an inconsistent",
+							"APS byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last 12",
+							"successive frames are identical, starting with the last frame",
+							"containing a previously consistent byte. An invalid code occurs",
+							"when the incoming K1 byte contains an unused code or a code",
+							"irrelevant for the specific switching operation (e.g., Reverse",
+							"Request while no switching request is outstanding) in three",
+							"consecutive frames. An invalid code also occurs when the",
+							"incoming K1 byte contains an invalid channel number in three",
+							"consecutive frames.",
+							"",
+							"feplf",
+							"",
+							"Modes other than 1+1 unidirectional monitor the K1 byte",
+							"for Far-End Protection-Line failures. A Far-End",
+							"Protection-Line defect is declared based on receiving",
+							"SF on the protection line.",
+							"",
+							"extraTraffic",
+							"",
+							"This bit indicates whether extra traffic is currently being",
+							"accepted on the protection line. "
+						],
+						"enums" : {
+							"0" : "modeMismatch",
+							"1" : "channelMismatch",
+							"2" : "psbf",
+							"3" : "feplf",
+							"4" : "extraTraffic"
+						},
+						"name" : "APS-MIB::apsStatusCurrent",
+						"oid" : "1.3.6.1.2.1.10.49.1.2.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		}
+	]
+}

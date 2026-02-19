@@ -1,0 +1,387 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200102030000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-CAS-MIB::sonusCasSvcGrpInServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the CAS Service Group was put in service ",
+				"by maintenance staff."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sonusCasSvcGrpStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "CasSvcGrpName:$v1",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-CAS-MIB::sonusCasSvcGrpInServiceNotification SONUS-CAS-MIB::sonusCasSvcGrpName s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-CAS-MIB::sonusCasSvcGrpInServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.5.1.10.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the CAS service group."
+						],
+						"name" : "SONUS-CAS-MIB::sonusCasSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-CAS-MIB::sonusCasSvcGrpOutOfServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the CAS Service Group was taken out of ",
+				"service by maintenance staff."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1 || $v4==2 || $v4==3) ? 2 : 3"
+				},
+				"EventType" : "sonusCasSvcGrpStatus",
+				"ExpireTime" : {
+					"eval" : "($v4==1 || $v4==2 || $v4==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 5 : (($v4==2) ? 4 : (($v4==3) ? 3 : 2))"
+				},
+				"SubNode" : "CasSvcGrpName:$v1",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-CAS-MIB::sonusCasSvcGrpOutOfServiceNotification SONUS-CAS-MIB::sonusCasSvcGrpName s EXAMPLE SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-CAS-MIB::sonusCasSvcGrpOutOfServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.5.1.10.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the CAS service group."
+						],
+						"name" : "SONUS-CAS-MIB::sonusCasSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-CAS-MIB::sonusCasChannelInServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a CAS channel was put in service by CAS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sonusCasChannelStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ShelfIndex:$v2;SlotIndex:$v3;PortIndex:$v4",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-CAS-MIB::sonusCasChannelInServiceNotification SONUS-CAS-MIB::sonusCasSvcGrpName s EXAMPLE SONUS-CAS-MIB::sonusCassgChannelShelfIndex i 9999 SONUS-CAS-MIB::sonusCassgChannelSlotIndex i 9999 SONUS-CAS-MIB::sonusCassgChannelPortIndex i 9999 SONUS-CAS-MIB::sonusCassgChannelIndex i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-CAS-MIB::sonusCasChannelInServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.5.1.10.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the CAS service group."
+						],
+						"name" : "SONUS-CAS-MIB::sonusCasSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The shelf in which the channel is contained"
+						],
+						"name" : "SONUS-CAS-MIB::sonusCassgChannelShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.3.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot in which the channel is contained"
+						],
+						"name" : "SONUS-CAS-MIB::sonusCassgChannelSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port in which the channel is contained"
+						],
+						"name" : "SONUS-CAS-MIB::sonusCassgChannelPortIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The relative channel number within the port"
+						],
+						"name" : "SONUS-CAS-MIB::sonusCassgChannelIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.3.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-CAS-MIB::sonusCasChannelOutOfServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a channel was taken out of service by ",
+				"the CAS SG due to signaling errors exceeding a configured ",
+				"threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v8==1 || $v8==2 || $v8==3) ? 2 : 3"
+				},
+				"EventType" : "sonusCasChannelStatus",
+				"ExpireTime" : {
+					"eval" : "($v8==1 || $v8==2 || $v8==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v8==1) ? 5 : (($v8==2) ? 4 : (($v8==3) ? 3 : 2))"
+				},
+				"SubNode" : "ShelfIndex:$v2;SlotIndex:$v3;PortIndex:$v4",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-CAS-MIB::sonusCasChannelOutOfServiceNotification SONUS-CAS-MIB::sonusCasSvcGrpName s EXAMPLE SONUS-CAS-MIB::sonusCassgChannelShelfIndex i 9999 SONUS-CAS-MIB::sonusCassgChannelSlotIndex i 9999 SONUS-CAS-MIB::sonusCassgChannelPortIndex i 9999 SONUS-CAS-MIB::sonusCassgChannelIndex i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-CAS-MIB::sonusCasChannelOutOfServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.6.5.1.10.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Name of the CAS service group."
+						],
+						"name" : "SONUS-CAS-MIB::sonusCasSvcGrpName",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The shelf in which the channel is contained"
+						],
+						"name" : "SONUS-CAS-MIB::sonusCassgChannelShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.3.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The slot in which the channel is contained"
+						],
+						"name" : "SONUS-CAS-MIB::sonusCassgChannelSlotIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port in which the channel is contained"
+						],
+						"name" : "SONUS-CAS-MIB::sonusCassgChannelPortIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The relative channel number within the port"
+						],
+						"name" : "SONUS-CAS-MIB::sonusCassgChannelIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.6.5.1.3.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

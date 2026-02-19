@@ -1,0 +1,105 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201210180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "BAY-STACK-VRRP-EXT-MIB::bsveVrrpTrapStateTransition",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vrrpTrapStateTransition trap signifies a state",
+				"transition has occurred on a particular vrrp interface.",
+				"Implementation of this trap is optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bsveVrrpTrapStateTransition",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "InterfaceIP:$v3",
+				"Summary" : "VRRP interface $v3 state transition ($v1) occurred due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BAY-STACK-VRRP-EXT-MIB::bsveVrrpTrapStateTransition BAY-STACK-VRRP-EXT-MIB::bsveVrrpTrapStateTransitionType i 1 BAY-STACK-VRRP-EXT-MIB::bsveVrrpTrapStateTransitionCause i 1 VRRP-MIB::vrrpOperPrimaryIpAddr a 192.0.2.1 IP-MIB::ipAdEntAddr a 192.0.2.1",
+			"trap" : {
+				"name" : "BAY-STACK-VRRP-EXT-MIB::bsveVrrpTrapStateTransition",
+				"oid" : "1.3.6.1.4.1.45.5.11.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Potential types of state transitions.",
+							"Used by bsveVrrpTrapStateTransition trap."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "masterToBackup",
+							"3" : "backupToMaster",
+							"4" : "initializeToMaster",
+							"5" : "masterToInitialize",
+							"6" : "initializeToBackup",
+							"7" : "backupToInitialize",
+							"8" : "backupToBackUpMaster",
+							"9" : "backUpMasterToBackup"
+						},
+						"name" : "BAY-STACK-VRRP-EXT-MIB::bsveVrrpTrapStateTransitionType",
+						"oid" : "1.3.6.1.4.1.45.5.11.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Potential types of causes that will",
+							"generate a bsveVrrpTrapStateTransition trap."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "higherPriorityAdvertizeReceived",
+							"3" : "shutdownReceived",
+							"4" : "vrrpAddrAndPhysicalAddrMatch",
+							"5" : "masterDownInterval",
+							"6" : "preempted",
+							"7" : "criticalIPFail",
+							"8" : "usrConfig",
+							"9" : "syncFromPrimary",
+							"10" : "iPInterfaceDown",
+							"11" : "lowerPrioAdvReceived",
+							"12" : "higherSrcIPEqualPrioAdvReceived",
+							"13" : "lowerSrcIPEqualPrioAdvReceived",
+							"14" : "startVR",
+							"15" : "other",
+							"16" : "reboot"
+						},
+						"name" : "BAY-STACK-VRRP-EXT-MIB::bsveVrrpTrapStateTransitionCause",
+						"oid" : "1.3.6.1.4.1.45.5.11.1.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"In the case where there is more than one IP address for",
+							"a given `ifIndex', this object is used to specify the IP",
+							"address that will become the `vrrpOperMasterIpAddr', should",
+							"the virtual router transition from backup to master. If",
+							"this object is set to 0.0.0.0, the IP address which is",
+							"numerically lowest will be selected."
+						],
+						"name" : "VRRP-MIB::vrrpOperPrimaryIpAddr",
+						"oid" : "1.3.6.1.2.1.68.1.3.1.8",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address to which this entry's addressing",
+							"information pertains."
+						],
+						"name" : "IP-MIB::ipAdEntAddr",
+						"oid" : "1.3.6.1.2.1.4.20.1.1",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		}
+	]
+}

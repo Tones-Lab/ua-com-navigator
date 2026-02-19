@@ -1,0 +1,609 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201811050000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"cefcModuleOperStatus changes. It can be utilized by ",
+				"an NMS to update the status of the module it is",
+				"managing."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2 || $v1==16 || $v1==26) ? 1 : (($v1==1 || $v1==5 || $v1==6 || $v1==21 || $v1==22 || $v1==24) ? 3 : 2)"
+				},
+				"EventType" : "cefcModuleStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==5 || $v1==6 || $v1==16 || $v1==21 || $v1==22 || $v1==24 || $v1==26) ?  3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2 || $v1==16 || $v1==26) ? 0 : (($v1==1) ? 1 : (($v1==5 || $v1==6 || $v1==21 || $v1==22 || $v1==24) ? 2 : (($v1==4 || $v1==7 || $v1==11 || $v1==12 || $v1==15 || $v1==18 || $v1==20 || $v1==23 || $v1==27) ? 4 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Module operational state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleOperStatus i 7 CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusLastChangeTime t 31536000",
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleOperStatus i 2 CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusLastChangeTime t 31536000",
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleOperStatus i 5 CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusLastChangeTime t 31536000"
+			],
+			"trap" : {
+				"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.117.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object shows the module's operational state."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "ok",
+							"3" : "disabled",
+							"4" : "okButDiagFailed",
+							"5" : "boot",
+							"6" : "selfTest",
+							"7" : "failed",
+							"8" : "missing",
+							"9" : "mismatchWithParent",
+							"10" : "mismatchConfig",
+							"11" : "diagFailed",
+							"12" : "dormant",
+							"13" : "outOfServiceAdmin",
+							"14" : "outOfServiceEnvTemp",
+							"15" : "poweredDown",
+							"16" : "poweredUp",
+							"17" : "powerDenied",
+							"18" : "powerCycled",
+							"19" : "okButPowerOverWarning",
+							"20" : "okButPowerOverCritical",
+							"21" : "syncInProgress",
+							"22" : "upgrading",
+							"23" : "okButAuthFailed",
+							"24" : "mdr",
+							"25" : "fwMismatchFound",
+							"26" : "fwDownloadSuccess",
+							"27" : "fwDownloadFailure"
+						},
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sysUpTime at the time the cefcModuleOperStatus",
+							"is changed."
+						],
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcModuleStatusLastChangeTime",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.2.1.1.4",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcPowerStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cefcFRUPowerStatusChange notification indicates that",
+				"the power status of a FRU has changed. The varbind for this",
+				"notification indicates the entPhysicalIndex of the FRU",
+				"and the new operational-status of the FRU."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==1 || $v1==3) ? 3 : 2)"
+				},
+				"EventType" : "cefcPowerStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2 || $v1==1 || $v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==1) ? 1 : (($v1==3) ? 2 : (($v1==4 || $v1==11) ? 3 : 4)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "FRU power status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcPowerStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUPowerOperStatus i 12 CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUPowerAdminStatus i 1",
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcPowerStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUPowerOperStatus i 2 CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUPowerAdminStatus i 2",
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcPowerStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUPowerOperStatus i 3 CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUPowerAdminStatus i 3"
+			],
+			"trap" : {
+				"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcPowerStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.117.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Operational FRU power state."
+						],
+						"enums" : {
+							"1" : "offEnvOther",
+							"2" : "on",
+							"3" : "offAdmin",
+							"4" : "offDenied",
+							"5" : "offEnvPower",
+							"6" : "offEnvTemp",
+							"7" : "offEnvFan",
+							"8" : "failed",
+							"9" : "onButFanFail",
+							"10" : "offCooling",
+							"11" : "offConnectorRating",
+							"12" : "onButInlinePowerFail"
+						},
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUPowerOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Administratively desired FRU power state."
+						],
+						"enums" : {
+							"1" : "on",
+							"2" : "off",
+							"3" : "inlineAuto",
+							"4" : "inlineOn",
+							"5" : "powerCycle"
+						},
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUPowerAdminStatus",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.1.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUInserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cecfFRUInserted notification indicates that a FRU was",
+				"inserted. The varbind for this notification indicates the",
+				"entPhysicalIndex of the inserted FRU, and the entPhysicalIndex",
+				"of the FRU's container."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cefcFRUInserted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "FRU inserted in container $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUInserted ENTITY-MIB::entPhysicalContainedIn i 9999",
+			"trap" : {
+				"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRUInserted",
+				"oid" : "1.3.6.1.4.1.9.9.117.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of entPhysicalIndex for the physical entity which",
+							"'contains' this physical entity. A value of zero indicates",
+							"this physical entity is not contained in any other physical",
+							"entity. Note that the set of 'containment' relationships",
+							"define a strict hierarchy; that is, recursion is not",
+							"allowed.",
+							"",
+							"In the event that a physical entity is contained by more",
+							"than one physical entity (e.g., double-wide modules), this",
+							"object should identify the containing entity with the lowest",
+							"value of entPhysicalIndex."
+						],
+						"name" : "ENTITY-MIB::entPhysicalContainedIn",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRURemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cefcFRURemoved notification indicates that a FRU was",
+				"removed. The varbind for this notification indicates the",
+				"entPhysicalIndex of the removed FRU, and the entPhysicalIndex",
+				"of the FRU's container."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cefcFRURemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "FRU removed from container $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRURemoved ENTITY-MIB::entPhysicalContainedIn i 9999",
+			"trap" : {
+				"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFRURemoved",
+				"oid" : "1.3.6.1.4.1.9.9.117.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of entPhysicalIndex for the physical entity which",
+							"'contains' this physical entity. A value of zero indicates",
+							"this physical entity is not contained in any other physical",
+							"entity. Note that the set of 'containment' relationships",
+							"define a strict hierarchy; that is, recursion is not",
+							"allowed.",
+							"",
+							"In the event that a physical entity is contained by more",
+							"than one physical entity (e.g., double-wide modules), this",
+							"object should identify the containing entity with the lowest",
+							"value of entPhysicalIndex."
+						],
+						"name" : "ENTITY-MIB::entPhysicalContainedIn",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcUnrecognizedFRU",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cefcUnrecognizedFRU notification indicates that a FRU was",
+				"inserted whose product ID is not supported. The varbind for",
+				"this notification indicates the entPhysicalIndex of the ",
+				"inserted FRU, the entPhysicalClass this FRU belongs to, the",
+				"entPhysicalVendorType of this FRU, the entPhysicalName",
+				"of the FRU, the entPhysicalModelName of the inserted FRU, and",
+				"the cefcPhysicalStatus telling the reason code for sending this",
+				"notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cefcUnrecognizedFRU",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PhysicalName:$v3",
+				"Summary" : "Unrecognized $v1 FRU $v3 inserted with status $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcUnrecognizedFRU ENTITY-MIB::entPhysicalClass i 1 ENTITY-MIB::entPhysicalVendorType o 1.3.6.1.4.1.8072.2.1.1 ENTITY-MIB::entPhysicalName s EXAMPLE ENTITY-MIB::entPhysicalModelName s EXAMPLE CISCO-ENTITY-FRU-CONTROL-MIB::cefcPhysicalStatus i 1",
+			"trap" : {
+				"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcUnrecognizedFRU",
+				"oid" : "1.3.6.1.4.1.9.9.117.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"An indication of the general hardware type of the physical",
+							"entity.",
+							"",
+							"An agent should set this object to the standard enumeration",
+							"value that most accurately indicates the general class of",
+							"the physical entity, or the primary class if there is more",
+							"than one entity.",
+							"",
+							"If no appropriate standard registration identifier exists",
+							"for this physical entity, then the value 'other(1)' is",
+							"returned. If the value is unknown by this agent, then the",
+							"value 'unknown(2)' is returned."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "powerSupply",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack",
+							"12" : "cpu"
+						},
+						"name" : "ENTITY-MIB::entPhysicalClass",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An indication of the vendor-specific hardware type of the",
+							"physical entity. Note that this is different from the",
+							"definition of MIB-II's sysObjectID.",
+							"",
+							"An agent should set this object to an enterprise-specific",
+							"registration identifier value indicating the specific",
+							"equipment type in detail. The associated instance of",
+							"entPhysicalClass is used to indicate the general type of",
+							"hardware device.",
+							"",
+							"If no vendor-specific registration identifier exists for",
+							"this physical entity, or the value is unknown by this agent",
+							"then the value { 0 0 } is returned."
+						],
+						"name" : "ENTITY-MIB::entPhysicalVendorType",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.3",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The textual name of the physical entity. The value of this",
+							"object should be the name of the component as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name (e.g., `console') or a simple component number (e.g.",
+							"port or module number, such as `1'), depending on the",
+							"physical component naming syntax of the device.",
+							"",
+							"If there is no local name, or if this object is otherwise",
+							"not applicable, then this object contains a zero-length",
+							"string.",
+							"",
+							"Note that the value of entPhysicalName for two physical",
+							"entities will be the same in the event that the console",
+							"interface does not distinguish between them, e.g., slot-1",
+							"and the card in slot-1."
+						],
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific model name identifier string associated",
+							"with this physical component. The preferred value is the",
+							"customer-visible part number, which may be printed on the",
+							"component itself.",
+							"",
+							"If the model name string associated with the physical",
+							"component is unknown to the agent, then this object will",
+							"contain a zero-length string."
+						],
+						"name" : "ENTITY-MIB::entPhysicalModelName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status of this physical entity.",
+							"other(1) - the status is not any of the listed below.",
+							"supported(2) - this entity is supported.",
+							"unsupported(3) - this entity is unsupported.",
+							"incompatible(4) - this entity is incompatible.",
+							"It would be unsupported(3), if the ID read from Serial",
+							"EPROM is not supported. It would be incompatible(4), if",
+							"in the present configuration this FRU is not supported."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "supported",
+							"3" : "unsupported",
+							"4" : "incompatible"
+						},
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcPhysicalStatus",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.5.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"cefcFanTrayOperStatus changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==1) ? 3 : 2)"
+				},
+				"EventType" : "cefcFanTrayStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2 || $v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==1) ? 1 : (($v1==4) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Fan tray operational status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayOperStatus i 3",
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayOperStatus i 2",
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayStatusChange CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayOperStatus i 1"
+			],
+			"trap" : {
+				"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.117.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The operational state of the fan or fan tray.",
+							"unknown(1) - unknown.",
+							"up(2) - powered on.",
+							"down(3) - powered down.",
+							"warning(4) - partial failure, needs replacement ",
+							"as soon as possible."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "up",
+							"3" : "down",
+							"4" : "warning"
+						},
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcFanTrayOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.4.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcPowerSupplyOutputChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification indicates that the power",
+				"supply's output capacity has changed.",
+				"This notification is triggered whenever one instance ",
+				"of the power supply's cefcPSOutputModeInOperation ",
+				"has transitioned from 'false' to 'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cefcPowerSupplyOutputChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PhysicalName:$v1",
+				"Summary" : "Power supply output capacity changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcPowerSupplyOutputChange ENTITY-MIB::entPhysicalName s EXAMPLE ENTITY-MIB::entPhysicalModelName s EXAMPLE CISCO-ENTITY-FRU-CONTROL-MIB::cefcPSOutputModeCurrent i 9999",
+			"trap" : {
+				"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcPowerSupplyOutputChange",
+				"oid" : "1.3.6.1.4.1.9.9.117.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the physical entity. The value of this",
+							"object should be the name of the component as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name (e.g., `console') or a simple component number (e.g.",
+							"port or module number, such as `1'), depending on the",
+							"physical component naming syntax of the device.",
+							"",
+							"If there is no local name, or if this object is otherwise",
+							"not applicable, then this object contains a zero-length",
+							"string.",
+							"",
+							"Note that the value of entPhysicalName for two physical",
+							"entities will be the same in the event that the console",
+							"interface does not distinguish between them, e.g., slot-1",
+							"and the card in slot-1."
+						],
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor-specific model name identifier string associated",
+							"with this physical component. The preferred value is the",
+							"customer-visible part number, which may be printed on the",
+							"component itself.",
+							"",
+							"If the model name string associated with the physical",
+							"component is unknown to the agent, then this object will",
+							"contain a zero-length string."
+						],
+						"name" : "ENTITY-MIB::entPhysicalModelName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The output capacity of the power supply."
+						],
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcPSOutputModeCurrent",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.6.2.1.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"cefcVmModuleOperStatus changes. It can be utilized by ",
+				"an NMS to update the status of the module it is",
+				"managing."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==3) ? 3 : 2)"
+				},
+				"EventType" : "cefcVmModuleStatusChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v1==2 || $v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==3) ? 1 : (($v1==4) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "VM module operational state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusChangeNotif CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleOperStatus i 1 CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusLastChangeTime t 31536000",
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusChangeNotif CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleOperStatus i 2 CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusLastChangeTime t 31536000",
+				"$SNMPTRAPCMD CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusChangeNotif CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleOperStatus i 3 CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusLastChangeTime t 31536000"
+			],
+			"trap" : {
+				"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.117.2.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the VM module's operational state."
+						],
+						"enums" : {
+							"1" : "down",
+							"2" : "up",
+							"3" : "unknown",
+							"4" : "goingDown"
+						},
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.2.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sysUpTime at the time the cefcVmModuleOperStatus",
+							"is changed."
+						],
+						"name" : "CISCO-ENTITY-FRU-CONTROL-MIB::cefcVmModuleStatusLastChangeTime",
+						"oid" : "1.3.6.1.4.1.9.9.117.1.2.1.1.10",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,223 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200706290000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaClosedConnectionToSnas",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever the device closes the",
+				"connection to the NSNAS. The reason why the connection is closed",
+				"is indicated in nsnaClosedConnectionReason."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nsnaClosedConnectionToSnas",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "NSNAS connection closed due to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaClosedConnectionToSnas NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaClosedConnectionReason i 1",
+			"trap" : {
+				"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaClosedConnectionToSnas",
+				"oid" : "1.3.6.1.4.1.45.5.10.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the reason why the connection to the NSNAS was closed."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "snasClosedConnection",
+							"3" : "dataStreamCorrupted",
+							"4" : "bufferAllocationFailure",
+							"5" : "messageProcessingFailure",
+							"6" : "inactivityIntervalExpired",
+							"7" : "nsnaAdministrativelyDown"
+						},
+						"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaClosedConnectionReason",
+						"oid" : "1.3.6.1.4.1.45.5.10.1.8.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaStatusQuoIntervalExpired",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever the status-quo interval",
+				"expires after the connection to the NSNAS has closed. Note that",
+				"if the configured status-quo interval is 0 (indicating no status",
+				"quo interval), this notification will be generated at the same",
+				"time as the corresponding nsnaClosedConnectionToSnas notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nsnaStatusQuoIntervalExpired",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Status-quo interval expired"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaStatusQuoIntervalExpired ",
+			"trap" : {
+				"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaStatusQuoIntervalExpired",
+				"oid" : "1.3.6.1.4.1.45.5.10.0.2"
+			}
+		},
+		{
+			"@objectName" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaInvalidMessageFromSnas",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever the device receives an",
+				"invalid message from the NSNAS. This generally means that the",
+				"received message is corrupted. As much of the message header",
+				"as is available will be included in nsnaInvalidMessageHeader."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nsnaInvalidMessageFromSnas",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Device received invalid message ($v1) from the NSNAS"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaInvalidMessageFromSnas NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaInvalidMessageHeader s EXAMPLE",
+			"trap" : {
+				"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaInvalidMessageFromSnas",
+				"oid" : "1.3.6.1.4.1.45.5.10.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The header of an invalid message from the NSNAS. Note that if",
+							"an entire header is not available, only the portion that is",
+							"available will be provided in this object."
+						],
+						"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaInvalidMessageHeader",
+						"oid" : "1.3.6.1.4.1.45.5.10.1.8.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaSnasConnected",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever an NSNAS successfully",
+				"connects to the switch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nsnaSnasConnected",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "InetAddress:$v2",
+				"Summary" : "NSNAS $v2 successfully connected to the switch"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaSnasConnected NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasInetAddressType i 0 NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasInetAddress s EXAMPLE NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasSendHelloInterval i 9999 NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasInactivityInterval i 9999 NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasStatusQuoInterval i 9999",
+			"trap" : {
+				"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaSnasConnected",
+				"oid" : "1.3.6.1.4.1.45.5.10.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"If a NSNAS is currently connected to the switch, this indicates",
+							"the type of the internet address from which the NSNAS connected.",
+							"The contents of nsnaSnasInetAddress will be of this type.",
+							"If there is not currently a NSNAS connected, the value will be",
+							"unknown(0)."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasInetAddressType",
+						"oid" : "1.3.6.1.4.1.45.5.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"If a NSNAS is currently connected to the switch, this indicates",
+							"the internet address from which the NSNAS connected. If there",
+							"is not currently a NSNAS connected, this will be an empty string."
+						],
+						"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasInetAddress",
+						"oid" : "1.3.6.1.4.1.45.5.10.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interval for sending SSCP Hello messages for the current SSCP",
+							"connection. If this period of time passes without any SSCP",
+							"messages being sent, a Hello message will be generated. If there",
+							"is not curently an NSNAS connected, this value will be zero",
+							"otherwise it will be non-zero."
+						],
+						"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasSendHelloInterval",
+						"oid" : "1.3.6.1.4.1.45.5.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The inactivity interval for the current SSCP connection. If this",
+							"period of time passes without any SSCP messages being received",
+							"the SSCP connection will be closed. If there is not curently an",
+							"NSNAS connected, this value will be zero, otherwise it will be",
+							"non-zero."
+						],
+						"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasInactivityInterval",
+						"oid" : "1.3.6.1.4.1.45.5.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The status-quo interval for the current or last SSCP connection.",
+							"If the NSNAS is disconnected from the switch for any reason, the",
+							"switch will wait this period of time before moving all NSNA enabled",
+							"ports to the red VLAN. The maximum value, 65535, indicates an",
+							"infinite status quo interval, i.e., SSA enabled ports will not be",
+							"moved to the red VLAN. A value of 0 means no status quo interval",
+							"is used, and ports are immediately moved the the red VLAN if the",
+							"NSNAS is disconnected.",
+							"",
+							"If the NSNAS has disconnected and the status-quo interval timer is",
+							"running, this value will reflect the remaining time until the",
+							"status-quo timer will expire."
+						],
+						"name" : "NORTEL-SECURE-NETWORK-ACCESS-MIB::nsnaNsnasStatusQuoInterval",
+						"oid" : "1.3.6.1.4.1.45.5.10.1.1.8",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,275 @@
+{
+	"metaData" : {
+		"sourceRevision" : "1104151830Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "BROCADE-SYSTEM-MIB::swFCPortScn",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever an FC port operational status or",
+				"its type changed. The events that trigger this trap are",
+				"port goes to online/offline, port type changed to ",
+				"E-port/F-port/FL-port. swFCPortName and swSsn are optional ",
+				"varbind in the trap PDU.swSsn is optional varbind sent when swExtTrap",
+				"is also enabled.swVfId is optional if VF is enabled."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : (($v1==3) ? 3 : 2)"
+				},
+				"EventType" : "swFCPortScn",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==0 || $v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==0) ? 1 : (($v1==3) ? 2 : 4))"
+				},
+				"SubNode" : "PortIndex:$v2",
+				"Summary" : "FC port ($v3) operational status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BROCADE-SYSTEM-MIB::swFCPortScn BROCADE-SYSTEM-MIB::swFCPortOpStatus i 0 BROCADE-SYSTEM-MIB::swFCPortIndex i 9999 BROCADE-SYSTEM-MIB::swFCPortName s EXAMPLE BROCADE-SYSTEM-MIB::swSsn s EXAMPLE BROCADE-SYSTEM-MIB::swFCPortFlag b 0 BROCADE-SYSTEM-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "BROCADE-SYSTEM-MIB::swFCPortScn",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object identifies the operational status of",
+							"the port. The online(1) state indicates that user frames",
+							"can be passed. The unknown(0) state indicates that likely",
+							"the port module is physically absent (see swFCPortPhyState)."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "online",
+							"2" : "offline",
+							"3" : "testing",
+							"4" : "faulty"
+						},
+						"name" : "BROCADE-SYSTEM-MIB::swFCPortOpStatus",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object identifies the switch port index.",
+							"Note that the value of a port index is 1 higher than the",
+							"port number labeled on the front panel.",
+							"E.g. port index 1 correspond to port number 0."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swFCPortIndex",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A string indicates the name of the addressed port.",
+							"The names should be persistent across switch reboots.",
+							"Port names do not have to be unique within a switch or",
+							"within a fabric."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swFCPortName",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.36",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A bit map of port status flags which includes the information of port type.",
+							"Currently this will indicate if the port is virtual or physical."
+						],
+						"enums" : {
+							"0" : "physical",
+							"1" : "virtual"
+						},
+						"name" : "BROCADE-SYSTEM-MIB::swFCPortFlag",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.38",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "BROCADE-SYSTEM-MIB::swEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when an event whose",
+				"level at or below swEventTrapLevel occurs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swEventTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==1) ? 5 : (($v3==2) ? 4 : (($v3==4) ? 2 : 3))"
+				},
+				"SubNode" : "EventIndex:$v1",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'Software event $v1 occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BROCADE-SYSTEM-MIB::swEventTrap BROCADE-SYSTEM-MIB::swEventIndex i 9999 BROCADE-SYSTEM-MIB::swEventTimeInfo s EXAMPLE BROCADE-SYSTEM-MIB::swEventLevel i 1 BROCADE-SYSTEM-MIB::swEventRepeatCount i 9999 BROCADE-SYSTEM-MIB::swEventDescr s EXAMPLE BROCADE-SYSTEM-MIB::swSsn s EXAMPLE BROCADE-SYSTEM-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "BROCADE-SYSTEM-MIB::swEventTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object identifies the event entry."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swEventIndex",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies the date and time when this",
+							"event occurred, in textual format."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swEventTimeInfo",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the severity level of this",
+							"event entry."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "error",
+							"3" : "warning",
+							"4" : "informational",
+							"5" : "debug"
+						},
+						"name" : "BROCADE-SYSTEM-MIB::swEventLevel",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object identifies how many times this particular",
+							"event has occurred."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swEventRepeatCount",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies the textual description of",
+							"the event."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swEventDescr",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "BROCADE-SYSTEM-MIB::swStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever switch state changes to online/offline"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : (($v1==3) ? 3 : 2)"
+				},
+				"EventType" : "swStateChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==3) ? 2 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Switch state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BROCADE-SYSTEM-MIB::swStateChangeTrap BROCADE-SYSTEM-MIB::swOperStatus i 1 BROCADE-SYSTEM-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "BROCADE-SYSTEM-MIB::swStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The current operational status of the switch.",
+							"The states are as follow:",
+							"o online(1) means the switch is accessible by an external",
+							"Fibre Channel port;",
+							"o offline(2) means the switch is not accessible;",
+							"o testing(3) means the switch is in a built-in test mode",
+							"and is not accessible by an external Fibre Channel port;",
+							"o faulty(4) means the switch is not operational."
+						],
+						"enums" : {
+							"1" : "online",
+							"2" : "offline",
+							"3" : "testing",
+							"4" : "faulty"
+						},
+						"name" : "BROCADE-SYSTEM-MIB::swOperStatus",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "BROCADE-SYSTEM-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,129 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201202281200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppPortalStatChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxWppPortalStatChanged notification is sent when ",
+				"the value of one of the objects in the tmnxWppPortalStatTable changes. ",
+				"[EFFECT] No effect on the service. ",
+				"[RECOVERY] No recovery required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxWppPortalStatChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Rtr:$v1",
+				"Summary" : "WPP portal state changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppPortalStatChanged TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppPortalStateControlledRtr i 9999 TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppPortalStateNumInterfaces u 9999",
+			"trap" : {
+				"name" : "TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppPortalStatChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.80.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxWppPortalStateControlledRtr indicates",
+							"the identifier of the virtual router instance ",
+							"being controlled by this portal.",
+							"The value zero indicates that this portal is currently not ",
+							"controlling any router instance."
+						],
+						"name" : "TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppPortalStateControlledRtr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.80.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxWppPortalStateNumInterfaces indicates ",
+							"the number of interfaces associated with this portal that are",
+							"administratively enabled."
+						],
+						"name" : "TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppPortalStateNumInterfaces",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.80.1.1.2.1.2",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppHostAuthenticationFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxWppHostAuthenticationFailed notification is sent when ",
+				"a WPP host could not be authenticated. ",
+				"More detailed information is supplied ",
+				"in the object tmnxWppNotifyDescription.",
+				"[EFFECT] The corresponding row in the tmnxWppHostTable disappears if",
+				"the value of the object tmnxWppIfRestoreDisconnected is ",
+				"equal to 'false'; otherwise, the value of the object tmnxWppHostStatus",
+				"is set to 'idle'.",
+				"[RECOVERY] The recovery action will depend on the exact failure cause",
+				"as given by the value of tmnxWppNotifyDescription."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==4) ? 1 : 2"
+				},
+				"EventType" : "tmnxWppHostAuthenticationFailed",
+				"ExpireTime" : {
+					"eval" : "($v1==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==4) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 ne '') ? '$v2' : 'WPP host authentication status: $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppHostAuthenticationFailed TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppHostStatus i 1 TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppNotifyDescription s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppHostAuthenticationFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.80.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxWppHostStatus indicates the",
+							"state of the WPP host."
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "challenged",
+							"3" : "authenticating",
+							"4" : "authenticated",
+							"5" : "established",
+							"6" : "loggingOut"
+						},
+						"name" : "TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppHostStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.80.1.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object tmnxWppNotifyDescription is a printable character ",
+							"string."
+						],
+						"name" : "TIMETRA-WEB-PORTAL-PROTOCOL-MIB::tmnxWppNotifyDescription",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.80.2.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

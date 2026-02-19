@@ -1,0 +1,870 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201601010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIpv4InstStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrLdpNgIpv4InstStateChange is generated when the IPv4 LDP ",
+				"instance changes state operationally as specified by",
+				"vRtrLdpNgGenIPv4OperState.",
+				"[EFFECT] Based on the vRtrLdpNgGenIPv4OperDownReason reason code, the ",
+				"system may not be able to accept new requests from peers.",
+				"[RECOVERY] Based on the vRtrLdpNgGenIPv4OperDownReason reason code, ",
+				"appropriate configuration changes in LDP may be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v2==3) ? 2 : 3"
+				},
+				"EventType" : "vRtrLdpNgIpv4InstStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v2==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : ($v2==1) ? 1 : ($v2==4) ? 2 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'IPv4 LDP instance is out of service due to $v4' : 'Operational state of IPv4 LDP instance: $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgIpv4InstStateChange TIMETRA-LDP-NG-MIB::vRtrLdpNgGenAdminState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgGenIPv4OperState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgInstNotifyReasonCode i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgGenIPv4OperDownReason i 0",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIpv4InstStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpNgGenAdminState specifies the desired ",
+							"administrative state for this LDP instance."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgGenAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.47.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgGenIPv4OperState indicates the current",
+							"operational state of this IPv4 LDP instance."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgGenIPv4OperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.47.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgInstNotifyReasonCode indicates the reason ",
+							"for the LDP instance state change."
+						],
+						"enums" : {
+							"1" : "adminUp",
+							"2" : "adminDown",
+							"3" : "operUp",
+							"4" : "operDown"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgInstNotifyReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.56.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgGenIPv4OperDownReason indicates the reason",
+							"that the IPv4 LDP instance is operationally down."
+						],
+						"enums" : {
+							"0" : "operUp",
+							"1" : "adminDown",
+							"2" : "noListenSocket",
+							"3" : "noDiscoverySocket",
+							"4" : "noRtm",
+							"5" : "noTtm",
+							"6" : "iomFailure",
+							"7" : "recvFailure",
+							"8" : "clearDown",
+							"9" : "noResources",
+							"10" : "systemIpDown",
+							"11" : "helloFailure",
+							"12" : "ipv6NotSupported",
+							"13" : "noBgp"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgGenIPv4OperDownReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.47.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIpv6InstStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrLdpNgIpv6InstStateChange is generated when the IPv6 LDP ",
+				"instance changes state operationally as specified by ",
+				"vRtrLdpNgGenIPv6OperState.",
+				"[EFFECT] Based on the vRtrLdpNgGenIPv6OperDownReason reason code, the ",
+				"system may not be able to accept new requests from peers.",
+				"[RECOVERY] Based on the vRtrLdpNgGenIPv6OperDownReason reason code, ",
+				"appropriate configuration changes in LDP may be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v2==3) ? 2 : 3"
+				},
+				"EventType" : "vRtrLdpNgIpv6InstStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v2==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : ($v2==1) ? 1 : ($v2==4) ? 2 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==3) ? 'IPv6 LDP instance is out of service due to $v4' : 'Operational state of IPv6 LDP instance: $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgIpv6InstStateChange TIMETRA-LDP-NG-MIB::vRtrLdpNgGenAdminState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgGenIPv6OperState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgInstNotifyReasonCode i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgGenIPv6OperDownReason i 0",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIpv6InstStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpNgGenAdminState specifies the desired ",
+							"administrative state for this LDP instance."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgGenAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.47.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgGenIPv6OperState indicates the current",
+							"operational state of this IPv6 LDP instance."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgGenIPv6OperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.47.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgInstNotifyReasonCode indicates the reason ",
+							"for the LDP instance state change."
+						],
+						"enums" : {
+							"1" : "adminUp",
+							"2" : "adminDown",
+							"3" : "operUp",
+							"4" : "operDown"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgInstNotifyReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.56.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgGenIPv6OperDownReason indicates the reason",
+							"that the IPv6 LDP instance is operationally down."
+						],
+						"enums" : {
+							"0" : "operUp",
+							"1" : "adminDown",
+							"2" : "noListenSocket",
+							"3" : "noDiscoverySocket",
+							"4" : "noRtm",
+							"5" : "noTtm",
+							"6" : "iomFailure",
+							"7" : "recvFailure",
+							"8" : "clearDown",
+							"9" : "noResources",
+							"10" : "systemIpDown",
+							"11" : "helloFailure",
+							"12" : "ipv6NotSupported",
+							"13" : "noBgp"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgGenIPv6OperDownReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.47.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrLdpNgIfStateChange notification is generated when the LDP",
+				"interface changes state either administratively or operationally.",
+				"[EFFECT] Based on the vRtrLdpNgIfOperDownReason reason code, the ",
+				"system may not be able to accept new requests from peers over this",
+				"interface.",
+				"[RECOVERY] Based on the vRtrLdpNgIfOperDownReason reason code, ",
+				"appropriate configuration changes in LDP may be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2 && $v1==2) ? 1 : ($v2==3 || $v1==3) ? 2 : 3"
+				},
+				"EventType" : "vRtrLdpNgIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2 && $v1==2) ? 3600 : ($v2==3 || $v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2 && $v1==2) ? 0 : ($v2==1) ? 1 : ($v2==3 || $v1==3) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "LDP interface operational state : $v2, admin state : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgIfStateChange TIMETRA-LDP-NG-MIB::vRtrLdpNgIfAdminState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgIfOperState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgIfOperDownReason i 0",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIfStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpNgIfAdminState specifies the desired administrative",
+							"state for LDP on this interface."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIfAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgIfOperState indicates the current operational",
+							"state of LDP of this interface"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIfOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgIfOperDownReason indicates the reason",
+							"that the LDP interface is operationally down."
+						],
+						"enums" : {
+							"0" : "operUp",
+							"1" : "adminDown",
+							"2" : "noListenSocket",
+							"3" : "noDiscoverySocket",
+							"4" : "noResources",
+							"5" : "addrFecDeprogram",
+							"6" : "svcFecDeprogram",
+							"7" : "clearDown",
+							"8" : "instanceDown",
+							"9" : "interfaceDown",
+							"10" : "targetIpInvalid",
+							"11" : "interfaceInvalid",
+							"12" : "lsrInterfaceDown",
+							"13" : "lsrInterfaceInvalid",
+							"14" : "helloFailure",
+							"15" : "parentIfDown",
+							"16" : "interfaceNoValidIp",
+							"17" : "lsrInterfaceNoValidIp"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgIfOperDownReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.2.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrLdpNgInetIfStateChange notification is generated when the LDP",
+				"sub-interface changes state either administratively or operationally.",
+				"[EFFECT] Based on the vRtrLdpNgInetIfOperDownReason reason code, the ",
+				"system may not be able to accept new requests over this interface.",
+				"[RECOVERY] Based on the vRtrLdpNgInetIfOperDownReason reason code, ",
+				"appropriate configuration changes in LDP may be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2 && $v1==2) ? 1 : ($v2==3 || $v1==3) ? 2 : 3"
+				},
+				"EventType" : "vRtrLdpNgInetIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2 && $v1==2) ? 3600 : ($v2==3 || $v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2 && $v1==2) ? 0 : ($v2==1) ? 1 : ($v2==3 || $v1==3) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "LDP sub-interface operational state : $v2, admin state : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfStateChange TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfAdminState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfOperState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfOperDownReason i 0",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpNgInetIfAdminState specifies the desired",
+							"administrative state for this interface."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.41.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgInetIfOperState indicates the current operational",
+							"state of this interface."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.41.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgInetIfOperDownReason indicates the reason that the",
+							"LDP interface is operationally down."
+						],
+						"enums" : {
+							"0" : "operUp",
+							"1" : "adminDown",
+							"2" : "noListenSocket",
+							"3" : "noDiscoverySocket",
+							"4" : "noResources",
+							"5" : "addrFecDeprogram",
+							"6" : "svcFecDeprogram",
+							"7" : "clearDown",
+							"8" : "instanceDown",
+							"9" : "interfaceDown",
+							"10" : "targetIpInvalid",
+							"11" : "interfaceInvalid",
+							"12" : "lsrInterfaceDown",
+							"13" : "lsrInterfaceInvalid",
+							"14" : "helloFailure",
+							"15" : "parentIfDown",
+							"16" : "interfaceNoValidIp",
+							"17" : "lsrInterfaceNoValidIp"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgInetIfOperDownReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.41.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrLdpNgTargPeerStateChange notification is generated when ",
+				"the LDP peer changes state either administratively or operationally.",
+				"[EFFECT] Based on the vRtrLdpNgTargPeerOperDownReason reason code, the ",
+				"system may not be able to accept new requests from this peer.",
+				"[RECOVERY] Based on the vRtrLdpNgTargPeerOperDownReason reason code, ",
+				"appropriate configuration changes in LDP may be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2 && $v1==2) ? 1 : ($v2==3 || $v1==3) ? 2 : 3"
+				},
+				"EventType" : "vRtrLdpNgTargPeerStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2 && $v1==2) ? 3600 : ($v2==3 || $v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2 && $v1==2) ? 0 : ($v2==1) ? 1 : ($v2==3 || $v1==3) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "LDP peer operational state : $v2, admin state : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerStateChange TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerAdminState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerOperState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerOperDownReason i 0",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpNgTargPeerAdminState specifies the desired",
+							"administrative state for this LDP targeted peer."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.38.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgTargPeerOperState indicates the current",
+							"operational state of LDP targeted peer."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.38.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgTargPeerOperDownReason indicates the operational",
+							"down reason for targeted peer."
+						],
+						"enums" : {
+							"0" : "operUp",
+							"1" : "adminDown",
+							"2" : "noListenSocket",
+							"3" : "noDiscoverySocket",
+							"4" : "noResources",
+							"5" : "addrFecDeprogram",
+							"6" : "svcFecDeprogram",
+							"7" : "clearDown",
+							"8" : "instanceDown",
+							"9" : "interfaceDown",
+							"10" : "targetIpInvalid",
+							"11" : "interfaceInvalid",
+							"12" : "lsrInterfaceDown",
+							"13" : "lsrInterfaceInvalid",
+							"14" : "helloFailure",
+							"15" : "parentIfDown",
+							"16" : "interfaceNoValidIp",
+							"17" : "lsrInterfaceNoValidIp"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgTargPeerOperDownReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.38.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessionStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrLdpNgSessionStateChange notification is generated when",
+				"the LDP Overload Notification message is sent to or received from the peer ",
+				"vRtrLdpNgPeerLdpId for the combination of vRtrLdpNgSessOverloadFecType and ",
+				"vRtrLdpNgSessOvldFecTypeSubTyp while vRtrLdpNgSessState remains 'operational'.",
+				"[EFFECT] Once the Local LSR has sent the LDP Overload Notification message ",
+				"to the peer vRtrLdpNgPeerLdpId for fec and sub type fec indicated by ",
+				"vRtrLdpNgSessOverloadFecType and vRtrLdpNgSessOvldFecTypeSubTyp ",
+				"and vRtrLdpNgSessOverloadState has the value of 'true', then new Label ",
+				"Mapping Messages received for this peer for the given combination of fec ",
+				"and sub type fec is returned with a Label Release Message.",
+				"If the Local LSR has received an LDP Overload Notification message ",
+				"from the peer vRtrLdpNgPeerLdpId for fec and sub type fec indicated by ",
+				"vRtrLdpNgSessOverloadFecType and vRtrLdpNgSessOvldFecTypeSubTyp ",
+				"and vRtrLdpNgSessOverloadState has the value of 'true', no new Label Mapping",
+				"Message for the given combination of fec and sub type fec will be sent to",
+				"this peer.",
+				"If the Local LSR has received an LDP Overload Notification message ",
+				"from the peer vRtrLdpNgPeerLdpId for fec and sub type fec indicated by ",
+				"vRtrLdpNgSessOverloadFecType and vRtrLdpNgSessOvldFecTypeSubTyp ",
+				"and vRtrLdpNgSessOverloadState has the value of 'false', then the Local ",
+				"LSR will send all pending and any new Label Mapping Message for the given ",
+				"combination of fec and sub type fec to this peer.",
+				"[RECOVERY] In case the Local LSR sent the LDP Overload Notification message ",
+				"to the peer vRtrLdpNgPeerLdpId and vRtrLdpNgSessOverloadState has the value ",
+				"of 'true' for fec and sub type fec indicated by ",
+				"vRtrLdpNgSessOverloadFecType and vRtrLdpNgSessOvldFecTypeSubTyp, then ",
+				"appropriate LDP configuration changes may be required on the Local ",
+				"and/or Remote LSR. ",
+				"Once the Local LSR is not overloaded anymore, an LDP Overload Notification ",
+				"message is sent to the peer vRtrLdpNgPeerLdpId and vRtrLdpNgSessOverloadState ",
+				"has the value of 'false' for given fec and sub type fec."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==5) ? 1 : ($v1==1) ? 2 : 3"
+				},
+				"EventType" : "vRtrLdpNgSessionStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==5) ? 3600 : ($v1==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==5) ? 0 : ($v1==1) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "LDP session state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgSessionStateChange TIMETRA-LDP-NG-MIB::vRtrLdpNgSessState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOverloadState i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOverloadDirection i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOverloadFecType i 1 TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOvldFecTypeSubTyp i 1",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessionStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessState indicates the current state ",
+							"of the LDP session. All of the states 1 - 5 are based on the ",
+							"state machine for session negotiation behavior."
+						],
+						"enums" : {
+							"1" : "nonexistent",
+							"2" : "initialized",
+							"3" : "openrec",
+							"4" : "opensent",
+							"5" : "operational"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.4.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessOverloadState indicates if session is",
+							"overload or not."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOverloadState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.56.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessOverloadDirection indicates if the ",
+							"LDP Overload Notification message is sent to or received from the peer."
+						],
+						"enums" : {
+							"1" : "sent",
+							"2" : "received"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOverloadDirection",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.56.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessOverloadFecType indicates the overloaded FEC",
+							"type."
+						],
+						"enums" : {
+							"1" : "prefixes",
+							"2" : "p2mp",
+							"3" : "svcFec128",
+							"4" : "svcFec129"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOverloadFecType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.56.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessOvldFecTypeSubTyp indicates the sub type",
+							"for overloaded FEC type."
+						],
+						"enums" : {
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "allVcType"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOvldFecTypeSubTyp",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.56.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessMaxFecThresChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A vRtrLdpNgSessMaxFecThresChanged notification is generated ",
+				"when the number of FECs accepted from the peer has exceeded or drops ",
+				"below vRtrLdpNgSessOperMaxFecThreshold percent of the value specified ",
+				"by vRtrLdpNgSessParamMaxFec. ",
+				"New notification will not be generated if multiple ",
+				"internal event change occurs for the same level indicated by ",
+				"vRtrLdpNgSessOperThresLevel during a 2 minute interval.",
+				"If any parameter in FEC limit configuration changes then we would ",
+				"always raise this trap if current number of FEC's are above the ",
+				"configured threshold or has crossed the threshold downwards. If we ",
+				"remain on or below the configured threshold before and after the",
+				"configuration changes then no trap would be generated.",
+				"[EFFECT] No direct effect but if the peer LSR continues to send further",
+				"Label Mapping Message, then the number of FECs may exceed the",
+				"configured maximum (vRtrLdpNgSessParamMaxFec) resulting in the ",
+				"generation of vRtrLdpNgSessMaxFecLimitReached notification.",
+				"[RECOVERY] Appropriate Configuration changes in local or peer",
+				"LSR will be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 2 : 1"
+				},
+				"EventType" : "vRtrLdpNgSessMaxFecThresChanged",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 4 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Number of FECs accepted from peer exceeded the threshold ($v1)' : 'Number of FECs accepted from peer drops below the threshold ($v1)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgSessMaxFecThresChanged TIMETRA-LDP-NG-MIB::vRtrLdpNgSessParamMaxFec u 0 TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOperThresLevel i 0 TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOperMaxFecThreshold u 9999",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessMaxFecThresChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessParamMaxFec specifies the maximum number of ",
+							"FECs that will be accepted from this peer LSR.",
+							"A value of zero specifies there is no limit to the number of FECs",
+							"accepted from this peer LSR.",
+							"The vRtrLdpNgSessMaxFecThresChanged notification is sent when the number",
+							"of FECs receive from this peer LSR exceeds a percentage of this limit",
+							"as specified by vRtrLdpPeerMaxFecThreshold.",
+							"Furthermore, once the limit is exhausted, following actions are taken",
+							"if vRtrLdpNgSessParamMaxFecLogOnly has value of 'false'.",
+							"(1) If LSR Overload capability is supported, this LSR will follow the",
+							"LSR Overload procedure.",
+							"(2) If LSR Overload capability is not supported, any further Label",
+							"Mapping Message is returned with Label Release Message with LDP ",
+							"status code 'No_Label_Resources'. "
+						],
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessParamMaxFec",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.8.1.21",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessOperThresLevel indicates whether the number ",
+							"of fec-bindings has exceeded or is below the configured fec threshold."
+						],
+						"enums" : {
+							"0" : "up",
+							"1" : "down"
+						},
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOperThresLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.56.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessOperMaxFecThreshold indicates the ",
+							"operational percentage of vRtrLdpNgSessParamMaxFec. "
+						],
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOperMaxFecThreshold",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.4.1.63",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessMaxFecLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A vRtrLdpNgSessMaxFecLimitReached notification is generated ",
+				"when the number of FEC's accepted from the peer has reached the value",
+				"specified by vRtrLdpNgSessParamMaxFec.",
+				"If the current number of FEC's go below the limit but higher than the ",
+				"configured threshold and again start to increase and hit the limit a ",
+				"second time, we will raise a trap if 2 or more minutes have elapsed ",
+				"since the first vRtrLdpNgSessMaxFecLimitReached trap was sent.",
+				"If any parameter in FEC limit configuration changes and the current",
+				"number of FEC's are equal to or higher than the limit specified by",
+				"vRtrLdpPeerMaxFec, then we would always raise the ",
+				"vRtrLdpNgSessMaxFecLimitReached trap. ",
+				"[EFFECT] When the number of FECs exceed the configured maximum ",
+				"(vRtrLdpNgSessParamMaxFec) it results in any of the following:",
+				"(1) If vRtrLdpNgSessParamMaxFecLogOnly is set to 'false' and LSR ",
+				"Overload Capability is supported, then Overload procedure will take ",
+				"place.",
+				"(2) If vRtrLdpNgSessParamMaxFecLogOnly is set to 'false' and LSR ",
+				"Overload Capability is not supported, Label Mapping Message will be ",
+				"returned with Label Release Message.",
+				"(3) If vRtrLdpNgSessParamMaxFecLogOnly is set to 'true', no action",
+				"will be taken.",
+				"[RECOVERY] Appropriate Configuration changes in local or peer",
+				"LSR will be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrLdpNgSessMaxFecLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Number of FECs accepted from peer reached threshold ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgSessMaxFecLimitReached TIMETRA-LDP-NG-MIB::vRtrLdpNgSessParamMaxFec u 0 TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOperMaxFecThreshold u 9999",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessMaxFecLimitReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessParamMaxFec specifies the maximum number of ",
+							"FECs that will be accepted from this peer LSR.",
+							"A value of zero specifies there is no limit to the number of FECs",
+							"accepted from this peer LSR.",
+							"The vRtrLdpNgSessMaxFecThresChanged notification is sent when the number",
+							"of FECs receive from this peer LSR exceeds a percentage of this limit",
+							"as specified by vRtrLdpPeerMaxFecThreshold.",
+							"Furthermore, once the limit is exhausted, following actions are taken",
+							"if vRtrLdpNgSessParamMaxFecLogOnly has value of 'false'.",
+							"(1) If LSR Overload capability is supported, this LSR will follow the",
+							"LSR Overload procedure.",
+							"(2) If LSR Overload capability is not supported, any further Label",
+							"Mapping Message is returned with Label Release Message with LDP ",
+							"status code 'No_Label_Resources'. "
+						],
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessParamMaxFec",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.8.1.21",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrLdpNgSessOperMaxFecThreshold indicates the ",
+							"operational percentage of vRtrLdpNgSessParamMaxFec. "
+						],
+						"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgSessOperMaxFecThreshold",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.91.4.1.63",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgResourceExhaustion",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrLdpNgResourceExhaustion notification is generated when a",
+				"CPM or data path resource required for FEC resolution is exhausted. The",
+				"new notification will not be generated if multiple internal event",
+				"changes occur within a 10 minute interval.",
+				"[EFFECT] The system may not be able to accept new requests from peers.",
+				"[RECOVERY] Appropriate configuration changes in LDP may be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrLdpNgResourceExhaustion",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "vRtrID:$v1",
+				"Summary" : "CPM or data path resource required for FEC resolution is exhausted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDP-NG-MIB::vRtrLdpNgResourceExhaustion TIMETRA-VRTR-MIB::vRtrID i 9999",
+			"trap" : {
+				"name" : "TIMETRA-LDP-NG-MIB::vRtrLdpNgResourceExhaustion",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.91.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

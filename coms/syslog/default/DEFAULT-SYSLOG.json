@@ -1,0 +1,42 @@
+{
+    "objects": [
+        {
+            "@objectName": "SYSLOG::DEFAULT",
+            "version": "v2",
+            "certification": "STANDARD",
+            "description": [
+                "Default syslog FCOM"
+            ],
+            "domain": "FAULT",
+            "event": {
+                "EventCategory": 3,
+                "ExpireTime": 3600,
+                "Severity": 1,
+                "EscalationFlag": 0,
+                "OrigSeverity": 1,
+                "Summary": "${.syslog.message}",
+                "SubNode": "None",
+                "EventType": "Unknown",
+                "Method": "Syslog-Collector",
+                "SubMethod": "Syslog-Collector - Generic",
+                "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+                "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+                "EventKey" : "${.event.Node}+${.event.SubNode}+${.event.EventType}+${.event.Summary}"
+            },
+            "method": "syslog",
+            "postProcessors" : [
+                {
+                    "remove": {
+                        "source": "$.event.Details"
+                    }
+                },
+                {
+                    "set": {
+                        "source": "$.syslog.datagram",
+                        "targetField": "$.event.Details.syslog.datagram"
+                    }
+                }
+            ]
+        }
+    ]
+}

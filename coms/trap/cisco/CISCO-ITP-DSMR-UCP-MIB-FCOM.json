@@ -1,0 +1,63 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200505180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ITP-DSMR-UCP-MIB::ciscoItpDsmrUcpSessionState",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever SMPP destination",
+				"changes state. This notification provides information",
+				"on the availablity of the destination to receive and",
+				"process packets using the UCP protocol."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : (($v3 == 2) ? 2 : 3)"
+				},
+				"EventType" : "ciscoItpDsmrUcpSessionState",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : (($v3 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 0 : (($v3 == 2) ? 5 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "UCP destination state to receive process packets using UCP is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ITP-DSMR-UCP-MIB::ciscoItpDsmrUcpSessionState CISCO-ITP-GSP-MIB::cgspEventSequenceNumber c 9999 CISCO-ITP-GSP-MIB::cgspCLLICode s EXAMPLE CISCO-ITP-DSMR-UCP-MIB::cdsmrUcpDestState i 1",
+			"trap" : {
+				"name" : "CISCO-ITP-DSMR-UCP-MIB::ciscoItpDsmrUcpSessionState",
+				"oid" : "1.3.6.1.4.1.9.9.1302.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ITP-GSP-MIB::cgspEventSequenceNumber",
+						"oid" : "1.3.6.1.4.1.9.9.336.1.1.6",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-ITP-GSP-MIB::cgspCLLICode",
+						"oid" : "1.3.6.1.4.1.9.9.336.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive",
+							"3" : "open"
+						},
+						"name" : "CISCO-ITP-DSMR-UCP-MIB::cdsmrUcpDestState",
+						"oid" : "1.3.6.1.4.1.9.9.1302.1.7.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

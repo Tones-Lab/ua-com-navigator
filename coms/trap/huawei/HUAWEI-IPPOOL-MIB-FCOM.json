@@ -1,0 +1,1046 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201412260000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUserIPConflictAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"1 Notice/Trap name: IP address conflict error.",
+				"2 Notice/Trap generation cause: user IP address conflict.",
+				"3 Repair suggestions:",
+				"Check whether to renew configuring the BAS IP pool.",
+				"Check whether the IP address of BAS interface conflicts user IP address."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwUserIPConflictAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "User IP address conflict detected in pool $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUserIPConflictAlarm HUAWEI-IPPOOL-MIB::hwUserIPAddress a 192.0.2.1 HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUserIPConflictAlarm",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"IP address of the user."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwUserIPAddress",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUserIPLeaseAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"1 Notice/Trap name: IP address lease alarm.",
+				"2 Notice/Trap generation cause: The user IP lease is over.",
+				"3 Repair suggestion:",
+				"Check whether to renew configuring BAS IP pool."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwUserIPLeaseAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "User IP address lease expired"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUserIPLeaseAlarm HUAWEI-IPPOOL-MIB::hwUserIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUserIPLeaseAlarm",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"IP address of the user."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwUserIPAddress",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.1",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwAllocUserIPFailAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"1 Notice/Trap name: allocate user IP fail alarm.",
+				"2 Notice/Trap generation cause: there are no enough IP addresses for users.",
+				"3 Repair suggestion:",
+				"Check whether there are enough addresses in IP pool of the domain."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwAllocUserIPFailAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Index:$v1",
+				"Summary" : "User IP address allocation failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwAllocUserIPFailAlarm HUAWEI-IPPOOL-MIB::hwIPPoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwAllocUserIPFailAlarm",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of address pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwDhcpServerDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"Description: The DHCP server does not respond. This alarm is generated if the network is unstable, the DHCP server is Down, or there is not any available address in the DHCP server when a user applies for an address to the external DHCP server. ",
+				"Parameter: IP address of the DHCP server, address pool that the user expects (the address pool is identified by the gateway address because there may be multiple address pools on a server), VPN instance name, The reason of that DHCP server is set down status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwDhcpServerDown",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "DHCP server down due to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwDhcpServerDown HUAWEI-IPPOOL-MIB::hwDHCPServerAddr a 192.0.2.1 HUAWEI-IPPOOL-MIB::hwRemoteIPPoolRouterIPAddr a 192.0.2.1 HUAWEI-IPPOOL-MIB::hwDhcpSvrVrfName s EXAMPLE HUAWEI-IPPOOL-MIB::hwDhcpSvrDownReason s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwDhcpServerDown",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"IP address of the DHCP server."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwDHCPServerAddr",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"IP address of the gateway."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwRemoteIPPoolRouterIPAddr",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.6.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"DHCP VPN instance name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwDhcpSvrVrfName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"DHCP server down reason."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwDhcpSvrDownReason",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwLocalIPPoolDifferWithServer",
+			"certification" : "STANDARD",
+			"description" : [
+				"The configuration of the IP address pool on the DHCP server is not the same as the configuration of the remote address pool on the local equipment.",
+				"Solution: Check whether the configuration of the IP address pool on the DHCP server, including the gateway address, mask, and the address range, is the same as the configuration of the remote address pool on the local equipment."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwLocalIPPoolDifferWithServer",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Local IP address pool configuration differs from DHCP server"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwLocalIPPoolDifferWithServer HUAWEI-IPPOOL-MIB::hwRemoteIPPoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwLocalIPPoolDifferWithServer",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Name of an address pool.",
+							"The service module ensures that the name is unique."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwRemoteIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.6.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUsedIPReachThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of used IP addresses in the pool exceeds the threshold.",
+				"Repair suggestion: Check the configuration of the IP address pool."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwUsedIPReachThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Index:$v1",
+				"Summary" : "Pool $v2 IP address usage exceeded threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUsedIPReachThreshold HUAWEI-IPPOOL-MIB::hwIPPoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUsedIPReachThreshold",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of address pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUsedIPReachThresholdResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of used IP addresses in the pool is under the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwUsedIPReachThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Index:$v1",
+				"Summary" : "Pool $v2 IP address threshold recovered"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUsedIPReachThresholdResume HUAWEI-IPPOOL-MIB::hwIPPoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUsedIPReachThresholdResume",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of address pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUsedDeleteUnnumberedRouter",
+			"certification" : "STANDARD",
+			"description" : [
+				"The interface is unnumbered by the pool."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwUsedDeleteUnnumberedRouter",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Index:$v1",
+				"Summary" : "Unnumbered interface in pool $v2 deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUsedDeleteUnnumberedRouter HUAWEI-IPPOOL-MIB::hwIPPoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUsedDeleteUnnumberedRouter",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of address pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPReachThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of used IP addresses in the IP pool group exceeds the threshold.",
+				"Repair suggestion: Check the configuration of the IP address pool group."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwPoolGroupUsedIPReachThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IP address usage in pool group $v2 exceeded threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPReachThreshold HUAWEI-IPPOOL-MIB::hwIPPoolGroupIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolGroupName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPReachThreshold",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of IP pool group."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolGroupIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Name of an IP Pool Group."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolGroupName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPReachThresholdResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of used IP addresses in the IP pool group is under the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwPoolGroupUsedIPReachThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IP address usage in pool group $v2 threshold recovered"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPReachThresholdResume HUAWEI-IPPOOL-MIB::hwIPPoolGroupIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolGroupName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPReachThresholdResume",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of IP pool group."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolGroupIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Name of an IP Pool Group."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolGroupName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPPoolConstantIndexFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The constance index of ip pool recover failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIPPoolConstantIndexFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Failed to recover constant index for IP pool"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPPoolConstantIndexFail ",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolConstantIndexFail",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.11"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPv6PrefixConstantIndexFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The constance index of ipv6 prefix pool recover failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIPv6PrefixConstantIndexFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Failed to recover constant index for ipv6 prefix pool"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPv6PrefixConstantIndexFail ",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PrefixConstantIndexFail",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.12"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolConstantIndexFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The constance index of ipv6 pool recover failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIPv6PoolConstantIndexFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Failed to recover constant index for ipv6 pool"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPv6PoolConstantIndexFail ",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolConstantIndexFail",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.13"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUsedIPExhaust",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of IP addresses in the IP pool is exhausted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwUsedIPExhaustStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IP addresses exhausted in IP pool $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUsedIPExhaust HUAWEI-IPPOOL-MIB::hwIPPoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUsedIPExhaust",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of address pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUsedIPExhaustResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of IP addresses in the IP pool is under the exhaust."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwUsedIPExhaustStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IP addresses in IP pool $v2 recovered"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUsedIPExhaustResume HUAWEI-IPPOOL-MIB::hwIPPoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUsedIPExhaustResume",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of address pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPExhaust",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of IP addresses in the IP pool group is exhausted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwPoolGroupUsedIPExhaustStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IP addresses exhausted in IP pool group $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPExhaust HUAWEI-IPPOOL-MIB::hwIPPoolGroupIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolGroupName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPExhaust",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of IP pool group."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolGroupIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Name of an IP Pool Group."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolGroupName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPExhaustResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of IP addresses in the IP pool group is under the exhaust."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwPoolGroupUsedIPExhaustStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IP addresses in IP pool group $v2 recovered"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPExhaustResume HUAWEI-IPPOOL-MIB::hwIPPoolGroupIndex i 0 HUAWEI-IPPOOL-MIB::hwIPPoolGroupName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwPoolGroupUsedIPExhaustResume",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"Exclusive index of IP pool group."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolGroupIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Name of an IP Pool Group."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolGroupName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUsedIPv6AddressAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of used IPv6 addresses in the pool exceeds the threshold.",
+				"Repair suggestion: Check the configuration of the IP address pool."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwUsedIPv6AddressAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IPv6 address usage in pool $v2 exceeded threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUsedIPv6AddressAlarm HUAWEI-IPPOOL-MIB::hwIPv6PoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPv6PoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUsedIPv6AddressAlarm",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The index of IPv6 addres pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.17.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The name of IPv6 addres pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.17.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwUsedIPv6AddressAlarmResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of used IPv6 addresses in the IP pool group is under the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwUsedIPv6AddressAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IPv6 address usage in pool $v2 below threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwUsedIPv6AddressAlarmResume HUAWEI-IPPOOL-MIB::hwIPv6PoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPv6PoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwUsedIPv6AddressAlarmResume",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"The index of IPv6 addres pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.17.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The name of IPv6 addres pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.17.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPv6AddressExhaustAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The IPv6 addresses in the IPv6 pool is exhausted. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwIPv6AddressExhaustAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IPv6 addresses in IPv6 pool $v2 exhausted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPv6AddressExhaustAlarm HUAWEI-IPPOOL-MIB::hwIPv6PoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPv6PoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPv6AddressExhaustAlarmStatus",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The index of IPv6 addres pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.17.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The name of IPv6 addres pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.17.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPv6AddressExhaustAlarmResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"The IPv6 addresses exhausted alarm cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwIPv6AddressExhaustAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Index:$v1",
+				"Summary" : "IPv6 addresses exhausted alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPv6AddressExhaustAlarmResume HUAWEI-IPPOOL-MIB::hwIPv6PoolIndex i 0 HUAWEI-IPPOOL-MIB::hwIPv6PoolName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPv6AddressExhaustAlarmResume",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"The index of IPv6 addres pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.17.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The name of IPv6 addres pool."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPv6PoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.17.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPApplyUnsuccessful",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fail to apply for the address segment."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIPPoolDAPApplyUnsuccessful",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Failed to apply for address segment"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPPoolDAPApplyUnsuccessful HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE HUAWEI-IPPOOL-MIB::hwIPPoolRouterIPAddr a 192.0.2.1 HUAWEI-IPPOOL-MIB::hwIPPoolRouterIPMask a 192.0.2.1",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPApplyUnsuccessful",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Gateway IP address.",
+							"By default, the mask is 255.255.255.255."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolRouterIPAddr",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Gateway mask.",
+							"By default, the mask is 255.255.255.255."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolRouterIPMask",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.4",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPReleaseUnsuccessful",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fail to release the address segment."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIPPoolDAPReleaseUnsuccessful",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Failed to release address segment"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPPoolDAPReleaseUnsuccessful HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE HUAWEI-IPPOOL-MIB::hwIPPoolRouterIPAddr a 192.0.2.1 HUAWEI-IPPOOL-MIB::hwIPPoolRouterIPMask a 192.0.2.1",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPReleaseUnsuccessful",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Gateway IP address.",
+							"By default, the mask is 255.255.255.255."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolRouterIPAddr",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Gateway mask.",
+							"By default, the mask is 255.255.255.255."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolRouterIPMask",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.4",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPSubnetFull",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of address segments dynamically allocated to the device reached the upper limit allowed by the dynamic address pool."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIPPoolDAPSubnetFull",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Dynamically allocated address segments reached upper limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPPoolDAPSubnetFull HUAWEI-IPPOOL-MIB::hwIPPoolName s EXAMPLE HUAWEI-IPPOOL-MIB::hwIPPoolDAPName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPSubnetFull",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"IP address pool name, the service module guarantees the exclusiveness of the name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"DAP name."
+						],
+						"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPName",
+						"oid" : "1.3.6.1.4.1.2011.6.8.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPDeviceSubnetFull",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of address segments dynamically allocated to the device reached the maximum number allowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIPPoolDAPDeviceSubnetFull",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Dynamically allocated address segments reached maximum number"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-IPPOOL-MIB::hwIPPoolDAPDeviceSubnetFull ",
+			"trap" : {
+				"name" : "HUAWEI-IPPOOL-MIB::hwIPPoolDAPDeviceSubnetFull",
+				"oid" : "1.3.6.1.4.1.2011.6.8.2.2.0.25"
+			}
+		}
+	]
+}

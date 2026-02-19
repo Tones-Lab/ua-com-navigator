@@ -1,0 +1,115 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200212310000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SCSI-MIB::ciscoScsiTgtDevStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				" A notification will be generated for each occurrence of the ",
+				"abnormal status (e.g., if the SCSI target device's current ",
+				"status is abnormal) providing that the SCSI instance's value ",
+				"of ciscoScsiInstNotifEnable is enabled. ",
+				"An SNMP agent implementing the SCSI MIB should not send more ",
+				"than three SCSI identical notifications in any 10-second ",
+				"period. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 3 : (($v1 == 2) ? 1 : 2)"
+				},
+				"EventType" : "ciscoScsiTgtDevStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : (($v1 == 2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 2 : (($v1 == 2) ? 0 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SCSI target device's current status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SCSI-MIB::ciscoScsiTgtDevStatusChanged CISCO-SCSI-MIB::ciscoScsiTgtDeviceStatus i 1",
+			"trap" : {
+				"name" : "CISCO-SCSI-MIB::ciscoScsiTgtDevStatusChanged",
+				"oid" : "1.3.6.1.4.1.9.10.95.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "available",
+							"3" : "broken",
+							"4" : "readying",
+							"5" : "abnormal",
+							"6" : "nonAddrFailure",
+							"7" : "nonAddrFailReadying",
+							"8" : "nonAddrFailAbnormal"
+						},
+						"name" : "CISCO-SCSI-MIB::ciscoScsiTgtDeviceStatus",
+						"oid" : "1.3.6.1.4.1.9.10.95.1.4.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SCSI-MIB::ciscoScsiLuStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				" A notification will be generated each time that ",
+				"ciscoScsiLuStatus will change providing that the SCSI ",
+				"instance's value of ciscoScsiInstScsiNotificationsEnable is ",
+				"enabled. ",
+				"An SNMP agent implementing the SCSI MIB should not send ",
+				"more than three SCSI identical notifications in any ",
+				"10-second period. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 3 : (($v1 == 2) ? 1 : 2)"
+				},
+				"EventType" : "ciscoScsiLuStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : (($v1 == 2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 2 : (($v1 == 2) ? 0 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SCSI instance has changed $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SCSI-MIB::ciscoScsiLuStatusChanged CISCO-SCSI-MIB::ciscoScsiLuStatus i 1",
+			"trap" : {
+				"name" : "CISCO-SCSI-MIB::ciscoScsiLuStatusChanged",
+				"oid" : "1.3.6.1.4.1.9.10.95.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "available",
+							"3" : "notAvailable",
+							"4" : "broken",
+							"5" : "readying",
+							"6" : "abnormal"
+						},
+						"name" : "CISCO-SCSI-MIB::ciscoScsiLuStatus",
+						"oid" : "1.3.6.1.4.1.9.10.95.1.5.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,169 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201812050000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CIENA-CES-OAM-MIB::cienaCesOamLinkEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesOamLinkEventTrap notification is sent whenever a local or remote link event is detected",
+				"and recorded in the cienaCesOamEventLogTable.",
+				"To enable the device to send this trap, cienaCesOamLinkEventTrapState needs to be set to enabled. ",
+				"The cienaCesOamLinkEventTrapState is enabled by default. Variable bindings include: ",
+				"cienaGlobalSeverity, cienaGlobalMacAddress, cienaCesOamEventNotifChassisIndex, ",
+				"cienaCesOamEventNotifShelfIndex, cienaCesOamEventNotifSlotIndex, cienaCesOamEventNotifPortNumber",
+				"cienaCesOamEventLogType, cienaCesOamEventLogLocation, and cienaCesOamEventNotifChannelNumber."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesOamLinkEvent:$v7",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==3) ? 5 : (($v1==4) ? 4 : (($v1==5 || $v1==6) ? 3 : (($v1==0) ? 1 : 2))))"
+				},
+				"SubNode" : "cienaCesOamLinkEntry:$v3.$v4.$v5.$v6",
+				"Summary" : {
+					"eval" : "($v8==1) ? 'Local $v7 link event detected' : 'Remote $v7 link event detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CIENA-CES-OAM-MIB::cienaCesOamLinkEventTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 5 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-OAM-MIB::cienaCesOamEventNotifChassisIndex u 1 CIENA-CES-OAM-MIB::cienaCesOamEventNotifShelfIndex u 1 CIENA-CES-OAM-MIB::cienaCesOamEventNotifSlotIndex u 1 CIENA-CES-OAM-MIB::cienaCesOamEventNotifPortNumber u 9998 CIENA-CES-OAM-MIB::cienaCesOamEventLogType i 2 CIENA-CES-OAM-MIB::cienaCesOamEventLogLocation i 1 CIENA-CES-OAM-MIB::cienaCesOamEventNotifChannelNumber u 9998",
+				"$SNMPTRAPCMD CIENA-CES-OAM-MIB::cienaCesOamLinkEventTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 3 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-OAM-MIB::cienaCesOamEventNotifChassisIndex u 1 CIENA-CES-OAM-MIB::cienaCesOamEventNotifShelfIndex u 1 CIENA-CES-OAM-MIB::cienaCesOamEventNotifSlotIndex u 1 CIENA-CES-OAM-MIB::cienaCesOamEventNotifPortNumber u 9999 CIENA-CES-OAM-MIB::cienaCesOamEventLogType i 5 CIENA-CES-OAM-MIB::cienaCesOamEventLogLocation i 2 CIENA-CES-OAM-MIB::cienaCesOamEventNotifChannelNumber u 9999"
+			],
+			"trap" : {
+				"name" : "CIENA-CES-OAM-MIB::cienaCesOamLinkEventTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.15.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis index for the port used for trap definition."
+						],
+						"name" : "CIENA-CES-OAM-MIB::cienaCesOamEventNotifChassisIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.3.5.1.1.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the shelf index for the port used for trap definition."
+						],
+						"name" : "CIENA-CES-OAM-MIB::cienaCesOamEventNotifShelfIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.3.5.1.1.2.1.15",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the slot index for the port used for trap definition."
+						],
+						"name" : "CIENA-CES-OAM-MIB::cienaCesOamEventNotifSlotIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.3.5.1.1.2.1.16",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the port number for the corresponding PGID",
+							"used for trap definition."
+						],
+						"name" : "CIENA-CES-OAM-MIB::cienaCesOamEventNotifPortNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.3.5.1.1.2.1.17",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The type of event that generated this entry in the event log.",
+							"",
+							"When the OUI is the IEEE 802.3 OUI of 0x0180C2, the following",
+							"event types are defined:",
+							"erroredSymbolEvent(1), ",
+							"erroredFramePeriodEvent (2), ",
+							"erroredFrameEvent(3)",
+							"erroredFrameSecondsEvent(4), ",
+							"linkFault(256), ",
+							"dyingGaspEvent(257)",
+							"criticalLinkEvent(258)",
+							"The first four are considered threshold crossing events as",
+							"they are generated when a metric exceeds a given value within",
+							"a specified window. The other three are not threshold",
+							"crossing events. ",
+							"",
+							"When the OUI is not 0x0180C2, then some other organization has",
+							"defined the event space. If event subtyping is known to the",
+							"implementation, it may be reflected here. Otherwise, this",
+							"value should return noEvent (99). ",
+							""
+						],
+						"enums" : {
+							"1" : "errFramePeriodEvent",
+							"2" : "errFrameEvent",
+							"3" : "errFrameSecSummEvent",
+							"4" : "linkFaultEvent",
+							"5" : "dyingGaspEvent",
+							"6" : "criticalLinkEvent",
+							"99" : "noEvent"
+						},
+						"name" : "CIENA-CES-OAM-MIB::cienaCesOamEventLogType",
+						"oid" : "1.3.6.1.4.1.1271.2.3.5.1.1.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Whether this event occurred locally, or was received from the",
+							"OAM peer via Ethernet OAM."
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "CIENA-CES-OAM-MIB::cienaCesOamEventLogLocation",
+						"oid" : "1.3.6.1.4.1.1271.2.3.5.1.1.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the channel number for the corresponding PGID",
+							"used for trap definition. The value 0 is used if port of concern is",
+							"not channelized."
+						],
+						"name" : "CIENA-CES-OAM-MIB::cienaCesOamEventNotifChannelNumber",
+						"oid" : "1.3.6.1.4.1.1271.2.3.5.1.1.2.1.18",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

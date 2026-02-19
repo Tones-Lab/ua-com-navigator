@@ -1,0 +1,324 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200906070000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysClockChangedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"A clock changed notification is generated when the current",
+				"local date and time for the system has been manually changed.",
+				"The value of h3cSysLocalClock reflects new date and time.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSysClockChangedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Current local date and time of the system changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-HUAWEI-SYS-MAN-MIB::h3cSysClockChangedNotification A3COM-HUAWEI-SYS-MAN-MIB::h3cSysLocalClock s EXAMPLEE",
+			"trap" : {
+				"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysClockChangedNotification",
+				"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"",
+							"This node gives the current local time of the system.",
+							"The unit of it is DateAndTime.",
+							""
+						],
+						"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysLocalClock",
+						"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"A h3cSysReloadNotification will be sent before the corresponding entity is",
+				"rebooted. It will also be sent if the entity fails to reboot because the clock",
+				"has changed.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSysReloadNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Entity $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadNotification A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadImage i 9999 A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadCfgFile i 9999 A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadReason s EXAMPLE A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadScheduleTime s EXAMPLEE A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadAction i 1",
+			"trap" : {
+				"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadNotification",
+				"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"",
+							"The value indicates an entry in h3cSysImageTable.",
+							"It defines an image file for reload action.",
+							"It is the value of corresponding h3cSysImageIndex in h3cSysImageTable.",
+							"",
+							"If dual image is supported, the main image attribute can be",
+							"set through this object or by h3cSysImageType of h3cSysImageTable",
+							"of the entity. It is strongly suggested to set this attribute by",
+							"the latter.",
+							"",
+							"If main image attribute is set here, the h3cSysImageType in h3cSysImageTable",
+							"of the corresponding entity will be updated, and vice versa.",
+							"",
+							"Before reboot, the device will check the validation of the entry. If the file does",
+							"not exist, the device will not reboot and a trap will be send to NMS.",
+							""
+						],
+						"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadImage",
+						"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.1.3.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"",
+							"The value indicates an entry in h3cSysCFGFileTable.",
+							"It defines a configuration file for reload action.",
+							"It is the value of corresponding h3cSysCFGFileIndex in h3cSysCFGFileTable.",
+							"The zero value means no configuration file has been set for this entry, and",
+							"no configuration file is used during system reloading.",
+							""
+						],
+						"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadCfgFile",
+						"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.1.3.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"",
+							"The reason of system's reloading.",
+							"It is a zero length octet string when not set.",
+							""
+						],
+						"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadReason",
+						"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.1.3.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"",
+							"Specify the local time at which the reload action will",
+							"occur. we will only take octet strings",
+							"with length 8 for this object which indicates the",
+							"local time of the switch. The maximum scheduled",
+							"interval between the specified time and the current",
+							"system clock time is 24 days .",
+							"",
+							"field octets contents range",
+							"----- ------ -------- -----",
+							"1 1-2 year 0..65536",
+							"2 3 month 1..12",
+							"3 4 day 1..31",
+							"4 5 hour 0..23",
+							"5 6 minutes 0..59",
+							"6 7 seconds 0..60",
+							"",
+							"For example, Tuesday May 26, 1992 at 1:30:15 PM would be",
+							"displayed as:",
+							"",
+							"1992-5-26,13:30:15",
+							"",
+							"If the set value is less than the value of h3cSysLocalClock",
+							"or beyond the maximum scheduled time limit, a bad value error",
+							"occurred.",
+							"The value of all-zero octet strings indicates system reload",
+							"at once if the reload action is reloadOnSchedule(2).",
+							""
+						],
+						"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadScheduleTime",
+						"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.1.3.3.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"",
+							"Writing reloadOnSchedule(2) to this object performs the reload operation on schedule.",
+							"If h3cSysReloadScheduleTime is not set, the value of h3cSysReloadAction can't be set to",
+							"'reloadOnSchedule(2)'.",
+							"",
+							"Writing reloadAtOnce(3)to this object performs the reload operation at once",
+							"regardless of the h3cSysReloadScheduleTime.",
+							"",
+							"When reloadCancel(4)is set, the scheduled reload action will be cancelled and the value of",
+							"h3cSysReloadAction will be 'reloadUnavailable(1)',the value of h3cSysReloadSchedule will be",
+							"0, h3cSysReloadTag will be given a value of zero length, but the content of",
+							"h3cSysReloadScheduleTable will remain.",
+							"",
+							"",
+							"The h3cSysReloadSchedule and h3cSysReloadTag determine the reload entity(ies) in mutually",
+							"exclusive way. And the h3cSysReloadSchedule will be handled at first. If the value of",
+							"h3cSysReloadSchedule is invalid, then the h3cSysReloadTag will be handled.",
+							"",
+							"If the value of h3cSysReloadSchedule is valid, the value of h3cSysReloadTag is ignored and a",
+							"reload action will be implemented to the entity specified by h3cSysReloadEntity in the entry",
+							"pointed by h3cSysReloadSchedule.",
+							"",
+							"If h3cSysReloadSchedule is valid, but the entry h3cSysReloadSchedule pointing to is not active",
+							"the reload action will be ignored , and an inconsistent value will be returned.",
+							"",
+							"",
+							"If multiple entities are required to be reloaded at the same time, the value of h3cSysReloadTag",
+							"must be specified to select the reload parameters in the h3cSysReloadSceduelTable, and",
+							"h3cSysReloadSchedule must have the value of '0'.",
+							"",
+							"If the whole fabric is to be reloaded in an XRN device, all the units in the fabric must",
+							"have at least one entry in the h3cSysReloadSceduelTable with the same tag in h3cSysReloadSceduelTagList.",
+							"",
+							"When a reload action is done, or there is no reload action, the value",
+							"should be reloadUnavailable(1).",
+							""
+						],
+						"enums" : {
+							"1" : "reloadUnavailable",
+							"2" : "reloadOnSchedule",
+							"3" : "reloadAtOnce",
+							"4" : "reloadCancel"
+						},
+						"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysReloadAction",
+						"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.1.3.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysStartUpNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"a h3cSysStartUpNotification trap will be sent when the system starts up with 'main' image file failed",
+				"a trap will be sent to indicate which type the current image file (I.e backup or secure)is.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSysStartUpNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "$v1 image file failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-HUAWEI-SYS-MAN-MIB::h3cSysStartUpNotification A3COM-HUAWEI-SYS-MAN-MIB::h3cSysImageType i 1",
+			"trap" : {
+				"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysStartUpNotification",
+				"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"",
+							"It indicates the reloading sequence attribute of the image.",
+							"",
+							"For devices which support dual image:",
+							"",
+							"If the value is 'main(1)',the image will be the first image",
+							"in the next reloading procedure. If the value is 'backup(2)'",
+							"the image will be used if the main image fails. If the value",
+							"is 'secure(4)', the image will be used if the main image and",
+							"backup image both fail. If the value is 'none(3)',the image will",
+							"not be used in the next reloading procedure.",
+							"",
+							"At the same time,you also can specify the main image by",
+							"h3cSysReloadImage in h3cSysReloadScheduleTable. If the",
+							"image is different from previous main image, the previous main image",
+							"will not be main image again. And the image table will update with",
+							"this variation. Vice versa, if you have defined the reload schedule",
+							"and then you define a new main image through h3cSysImageType when you",
+							"are waiting the reload schedule to be executed, the real main image",
+							"will be the latest one.",
+							"",
+							"",
+							"It is strongly suggested to define the main image here, not by h3cSysReloadImage",
+							"in h3cSysReloadScheduleTable.",
+							"",
+							"There are some rules for setting the value of h3cSysImageType:",
+							"",
+							"a)When a new image file is defined as 'main' or 'backup' file,the h3cSysImageType",
+							"of old 'main' or 'backup' file will automatically be 'none'.",
+							"b)It is forbidden to set 'none' attribute manually.",
+							"c)It is forbidden to set 'secure' attribute manually.",
+							"d)If 'main' image is set to 'backup', the file keeps 'main'. And vice versa.",
+							"At this time, the file has 'main-backup' property.",
+							"e)If the secure image is set to 'main' or 'backup', the file has 'main-secure' or 'backup-secure'property.",
+							"f)If the secure image is set to 'main' and 'backup', the file has the 'main-backup-secure' property.",
+							"g)If the none image is set to 'main' or 'backup', the file has the 'main' or 'backup' property.",
+							"",
+							"The following table describes whether it is ok to set to another state",
+							"directly from original state.",
+							"",
+							"+--------------+-----------+-------------+-------------+",
+							"| set to | set to | set to | set to |",
+							"| | | | |",
+							"original | 'main' | 'backup' | 'none' | 'secure' |",
+							"state | | | | |",
+							"--------------+--------------+-----------+-------------+-------------+",
+							"| | | | |",
+							"main | --- | yes | no | no |",
+							"| | | | |",
+							"| | | | |",
+							"--------------+--------------+-----------+-------------|-------------+",
+							"| | | | |",
+							"backup | yes | --- | no | no |",
+							"| | | | |",
+							"--------------+--------------+-----------+-------------|-------------+",
+							"| | | | |",
+							"| | | | |",
+							"none | yes | yes | --- | no |",
+							"| | | | |",
+							"--------------+--------------+-----------+-------------+-------------+",
+							"| | | | |",
+							"secure | yes | yes | no | --- |",
+							"| | | | |",
+							"| | | | |",
+							"-"
+						],
+						"enums" : {
+							"1" : "main",
+							"2" : "backup",
+							"3" : "none",
+							"4" : "secure",
+							"5" : "main-backup",
+							"6" : "main-secure",
+							"7" : "backup-secure",
+							"8" : "main-backup-secure"
+						},
+						"name" : "A3COM-HUAWEI-SYS-MAN-MIB::h3cSysImageType",
+						"oid" : "1.3.6.1.4.1.43.45.1.10.2.3.1.4.2.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

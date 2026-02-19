@@ -1,0 +1,167 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200904140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-FABRIC-HFR-MIB::cfhPlaneStateNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fabric plane operational state change notification.",
+				"This notification is sent when the fabric plane operational",
+				"state transition occurs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cfhPlaneStateNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 3) ? 3 : 5)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Fabric plane operational state is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FABRIC-HFR-MIB::cfhPlaneStateNotification CISCO-FABRIC-HFR-MIB::cfhPlaneOperStatus i 1",
+			"trap" : {
+				"name" : "CISCO-FABRIC-HFR-MIB::cfhPlaneStateNotification",
+				"oid" : "1.3.6.1.4.1.9.9.257.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "mcastDown",
+							"4" : "oos"
+						},
+						"name" : "CISCO-FABRIC-HFR-MIB::cfhPlaneOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.257.1.2.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-FABRIC-HFR-MIB::cfhBundleStateNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fabric bundle operational state change notification.",
+				"This notification is sent when the cfhBundleOperStatus",
+				"state transition occurs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cfhBundleStateNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 5"
+				},
+				"SubNode" : "$v3",
+				"Summary" : "Fabric bundle $v3 is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FABRIC-HFR-MIB::cfhBundleStateNotification CISCO-FABRIC-HFR-MIB::cfhBundleOperStatus i 1 CISCO-FABRIC-HFR-MIB::cfhBundlePlane u 9999 CISCO-FABRIC-HFR-MIB::cfhBundleName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-FABRIC-HFR-MIB::cfhBundleStateNotification",
+				"oid" : "1.3.6.1.4.1.9.9.257.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-FABRIC-HFR-MIB::cfhBundleOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.257.1.3.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FABRIC-HFR-MIB::cfhBundlePlane",
+						"oid" : "1.3.6.1.4.1.9.9.257.1.3.3.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-FABRIC-HFR-MIB::cfhBundleName",
+						"oid" : "1.3.6.1.4.1.9.9.257.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-FABRIC-HFR-MIB::cfhBundleDownedLinkNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fabric bundle link notification.",
+				"This notification is sent if the value of cfhBundleOperStatus",
+				"is 'up' and the value of cfhBundleDownedLinks is changed from",
+				"0 to nonzero or from non-zero to zero."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 0) ? 1 : 2"
+				},
+				"EventType" : "cfhBundleDownedLinkNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 0 : 3"
+				},
+				"SubNode" : "$v4",
+				"Summary" : "Fabric bundle $v4 has $v3 downed links"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FABRIC-HFR-MIB::cfhBundleDownedLinkNotification CISCO-FABRIC-HFR-MIB::cfhBundleOperStatus i 1 CISCO-FABRIC-HFR-MIB::cfhBundlePlane u 9999 CISCO-FABRIC-HFR-MIB::cfhBundleDownedLinks u 9999 CISCO-FABRIC-HFR-MIB::cfhBundleName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-FABRIC-HFR-MIB::cfhBundleDownedLinkNotification",
+				"oid" : "1.3.6.1.4.1.9.9.257.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-FABRIC-HFR-MIB::cfhBundleOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.257.1.3.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FABRIC-HFR-MIB::cfhBundlePlane",
+						"oid" : "1.3.6.1.4.1.9.9.257.1.3.3.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-FABRIC-HFR-MIB::cfhBundleDownedLinks",
+						"oid" : "1.3.6.1.4.1.9.9.257.1.3.3.1.6",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-FABRIC-HFR-MIB::cfhBundleName",
+						"oid" : "1.3.6.1.4.1.9.9.257.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

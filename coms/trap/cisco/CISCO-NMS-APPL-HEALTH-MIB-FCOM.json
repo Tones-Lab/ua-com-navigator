@@ -1,0 +1,83 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200110240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent out to notify normal startup, shutdown",
+				"intermediate health/status (ex: busy etc.), failed or exit status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 1) ? 1 : 2"
+				},
+				"EventType" : "cnaHealthNotif",
+				"ExpireTime" : {
+					"eval" : "($v5 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v5 == 1) ? 0 : (($v5 == 2) ? 1 : (($v5 == 3) ? 5 : (($v5 == 4) ? 4 : (($v5 == 7) ? 2 : 3))))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3 $v4 : $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-NMS-APPL-HEALTH-MIB::cnaHealthNotif CISCO-NMS-APPL-HEALTH-MIB::cnaHealthNotifSeqNum c 9999 CISCO-NMS-APPL-HEALTH-MIB::cnaHealthStatusChangeTime s EXAMPLEE CISCO-NMS-APPL-HEALTH-MIB::cnaHealthName s EXAMPLE CISCO-NMS-APPL-HEALTH-MIB::cnaHealthStatus i 1 CISCO-NMS-APPL-HEALTH-MIB::cnaHealthSevLevel i 9999 CISCO-NMS-APPL-HEALTH-MIB::cnaHealthComLineArgs s EXAMPLE CISCO-NMS-APPL-HEALTH-MIB::cnaHealthStatusDesc s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthNotif",
+				"oid" : "1.3.6.1.4.1.9.9.237.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthNotifSeqNum",
+						"oid" : "1.3.6.1.4.1.9.9.237.1.1.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthStatusChangeTime",
+						"oid" : "1.3.6.1.4.1.9.9.237.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthName",
+						"oid" : "1.3.6.1.4.1.9.9.237.1.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "started",
+							"2" : "stopped",
+							"3" : "busy",
+							"4" : "failed",
+							"5" : "exited"
+						},
+						"name" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthStatus",
+						"oid" : "1.3.6.1.4.1.9.9.237.1.1.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthSevLevel",
+						"oid" : "1.3.6.1.4.1.9.9.237.1.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthComLineArgs",
+						"oid" : "1.3.6.1.4.1.9.9.237.1.1.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-NMS-APPL-HEALTH-MIB::cnaHealthStatusDesc",
+						"oid" : "1.3.6.1.4.1.9.9.237.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

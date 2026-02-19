@@ -1,0 +1,337 @@
+{
+  "objects": [
+    {
+      "@objectName": "ARUBA::WEBHOOK",
+      "version": "v2",
+      "certification": "STANDARD",
+      "description": [
+        "Default Aruba Central FCOM deifnition for Webhook alarms."
+      ],
+      "domain": "FAULT",
+      "event": {
+        "EventCategory": 3,
+        "ExpireTime": 86400,
+        "Severity": 5,
+        "Summary": "$.webhook.content.description",
+        "SubNode": "$.webhook.content.device_id",
+        "EventType": "$.webhook.content.alert_type",
+        "FirstReported": "$.webhook.content.timestamp",
+        "Method": "Aruba-poller",
+        "SubMethod": "webhook-subscription",
+        "GeoLocation": "{ \"type\": \"Point\", \"coordinates\": [0, 0] }",
+        "GeoPath": "{ \"type\": \"LineString\", \"coordinates\": [[0, 0], [0, 0]] }",
+        "EventKey": "${.event.Node}+${.event.SubNode}+${.event.EventType}"
+      },
+      "method": "webhook",
+      "webhook": {
+        "$.webhook.endpoint": "\/webhook\/aruba"
+      },
+      "subMethod": "event",
+      "postProcessors": [
+        {
+          "switch": {
+            "source": "$.webhook.content.severity",
+            "operator": "==",
+            "case": [
+              {
+                "match": "Critical",
+                "then": [
+                  {
+                    "set": {
+                      "source": 5,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "Major",
+                "then": [
+                  {
+                    "set": {
+                      "source": 4,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "Minor",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "Warning",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "switch": {
+            "source": "$.webhook.content.state",
+            "operator": "==",
+            "case": [
+              {
+                "match": "Close",
+                "then": [
+                  {
+                    "set": {
+                      "source": "0",
+                      "targetField": "$.event.Severity"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": "1",
+                      "targetField": "$.event.EventCategory"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "switch": {
+            "source": "$.webhook.content.alert_type",
+            "operator": "==",
+            "case": [
+              {
+                "match": "Modem Plugged",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.EventCategory"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": 2,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "New AP detected",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.EventCategory"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": 2,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "New Virtual Controller detected",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.EventCategory"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": 2,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "New Switch Connected",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.EventCategory"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": 2,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "NEW_GATEWAY_DETECTED",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.EventCategory"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": 2,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "GATEWAY_CONNECTED_TO_CLUSTER",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.EventCategory"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": 2,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "New User account added",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.EventCategory"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": 2,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              },
+              {
+                "match": "User account edited",
+                "then": [
+                  {
+                    "set": {
+                      "source": 3,
+                      "targetField": "$.event.EventCategory"
+                    }
+                  },
+                  {
+                    "set": {
+                      "source": 2,
+                      "targetField": "$.event.Severity"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "split": {
+            "source": "$.webhook.content.setting_id",
+            "delimiter": "-",
+            "targetField": "$.localmem.settingID"
+          }
+        },
+        {
+          "lookup": {
+            "source": "gdb",
+            "properties": {
+              "database": "graph",
+              "variables": {
+                "customerID": "$.localmem.settingID[0]"
+              },
+              "query": "match (v:Customer) where v.Name = '$customerID' return v;"
+            },
+            "cache": {
+              "enabled": true,
+              "object": "Vertex",
+              "keys": [
+                "$.event.Node"
+              ]
+            },
+            "targetField": "$.localmem.customerName"
+          }
+        },
+        {
+          "log": {
+            "source": "$.localmem.customerName",
+            "type": "debug"
+          }
+        },
+        {
+          "set": {
+            "source": "$.lookups.arubaZones.%s",
+            "args": [
+              "$.localmem.customerName[0].v.CustomName"
+            ],
+            "targetField": "$.event.ZoneID"
+          }
+        },
+        {
+          "if": {
+            "conditions": {
+              "and": [
+                {
+                  "property": "$.event.ZoneID",
+                  "operator": "==",
+                  "value": ""
+                }
+              ]
+            },
+            "then": [
+              {
+                "set": {
+                  "source": "$.webhook.ZoneID",
+                  "targetField": "$.event.ZoneID"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "lookup": {
+            "source": "db",
+            "properties": {
+              "database": "Assure1",
+              "variables": {
+                "serialNumber": "$.webhook.content.device_id"
+              },
+              "query": "SELECT DeviceName FROM Devices WHERE DeviceID in (SELECT DeviceID FROM DeviceMetaData WHERE DeviceMetaTypeID=76 AND MetaData=:serialNumber);"
+            },
+            "targetField": "$.localmem"
+          }
+        },
+        {
+          "set": {
+            "source": "$.localmem[0].DeviceName",
+            "targetField": "$.event.Node"
+          }
+        }
+      ]
+    }
+  ]
+}

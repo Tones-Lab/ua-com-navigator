@@ -1,0 +1,167 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FECLIENT827x-MIB::fe827xPCIAdapStatusChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap announces a change in the status of the PCI adapter.",
+				"It shall be sent if the value of either fe827xPCIAdapOperType",
+				"fe827xPCIAdapDiagStatus, fe827xPCIAdapNetworkStatus",
+				"or fe827xPCIAdapFaultStatus changes and fe827xNotifyStatus",
+				"has a value of enabled(1)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fe827xPCIAdapStatusChg",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "PCIAdapterStatus $v1, PCIAdapterOperStatus $v2, PCIAdapDiagStatus $v3, PCIAdapNetworkStatus $v4, PCIAdapFaultStatus $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FECLIENT827x-MIB::fe827xPCIAdapStatusChg FECLIENT827x-MIB::fe827xPCIAdapConfigType i 1 FECLIENT827x-MIB::fe827xPCIAdapOperStatus i 1 FECLIENT827x-MIB::fe827xPCIAdapDiagStatus i 1 FECLIENT827x-MIB::fe827xPCIAdapNetworkStatus i 1 FECLIENT827x-MIB::fe827xPCIAdapFaultStatus i 1",
+			"trap" : {
+				"name" : "FECLIENT827x-MIB::fe827xPCIAdapStatusChg",
+				"oid" : "1.3.6.1.4.1.2.6.118.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The router configuration type for this slot. The variable",
+							"shall assume a value of notConfigured(1) if no configuration",
+							"exist for this slot. The variable shall assume a value of",
+							"atm(2) if the slot is configured for an ATM adapter."
+						],
+						"enums" : {
+							"1" : "notConfigured",
+							"2" : "atm"
+						},
+						"name" : "FECLIENT827x-MIB::fe827xPCIAdapConfigType",
+						"oid" : "1.3.6.1.4.1.2.6.118.4.1.2.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The operational status of this PCI adapter for the balde.",
+							"The variable shall assume a value of unknown(1)",
+							"if the adapter inserted in the slot cannot be recognized. The",
+							"variable shall assume a value of notConfigured(2) if the adapter",
+							"inserted in the slot is recognized but no router configuration",
+							"exists. The variable shall assume a value of notPresent(3) if",
+							"the adapter is not inserted in the slot but the router",
+							"configuration exists. The variable shall assume a value of",
+							"unavailable(4) if adapter inserted in the slot can not be used",
+							"nor made ready to be used; for example, a hardware error. The",
+							"variable shall assume a value of doesNotApply(5) if this adapter",
+							"does not contain an operational state. The variable shall assume",
+							"a value of enablePending(6) if commands have been issued to enable",
+							"the adapter but have not been completed. The variable shall assume",
+							"a value of enabled(7) if commands have been successfully issued",
+							"to enable the adapter. The variable shall assume a value of",
+							"disablePending(8) if commands have been issued to disable the",
+							"adapter but have not been completed. The variable shall assume",
+							"a value of disabled(9) if commands have been successfully issued",
+							"to disable the adapter. The variable shall assume a value of",
+							"missConfigured(10) if the adapter is inserted in the slot",
+							"but the router configuration is of a different type. This object",
+							"would also drive the Unit LED's."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "notConfigured",
+							"3" : "notPresent",
+							"4" : "unavailable",
+							"5" : "doesNotApply",
+							"6" : "enablePending",
+							"7" : "enabled",
+							"8" : "disablePending",
+							"9" : "disabled",
+							"10" : "missConfigured"
+						},
+						"name" : "FECLIENT827x-MIB::fe827xPCIAdapOperStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.4.1.2.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The diagnostic status of this PCI adapter for the blade.",
+							"The variable shall assume a value of auto(1) if",
+							"commands have been issued by the system to determine the status",
+							"of the adapter; for example, at initialization. The variable shall",
+							"assume a value of inactive(2) if the adapter is not currently",
+							"running any diagnostics. The variable shall assume a value",
+							"of idle(3) if the adapter is in the disabled operational state",
+							"ready to run the diagnostics. The variable shall assume a value",
+							"of active(4) if commands have been issued by the user to",
+							"run the diagnostics."
+						],
+						"enums" : {
+							"1" : "auto",
+							"2" : "inactive",
+							"3" : "idle",
+							"4" : "active"
+						},
+						"name" : "FECLIENT827x-MIB::fe827xPCIAdapDiagStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.4.1.2.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The network status of this PCI adapter in this blade",
+							"The variable shall assume a value of up(1) if the adapter",
+							"is connected to the network. The variable shall assume a value",
+							"of down(3) if the adapter can not verify a network connection.",
+							"The variable shall assume a value of testing(4) if the",
+							"adapter is running tests for the network connection. The",
+							"variable shall assume a value of unknown(1) if network status",
+							"can not be determined. The variable shall assume a value of",
+							"doesNotApply(5) if the adapter does not contain a network",
+							"state."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "up",
+							"3" : "down",
+							"4" : "testing",
+							"5" : "doesNotApply"
+						},
+						"name" : "FECLIENT827x-MIB::fe827xPCIAdapNetworkStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.4.1.2.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The fault status of this PCI adapter in this blade.",
+							"The variable shall assume a value of noFault(2)",
+							"if no fault that is associated with this adapter has been",
+							"detected. The variable shall assume a value of isolated(3) if this",
+							"fault that can be isolated on the adapter itself. The variable",
+							"shall assume a value of nonIsolated(4) if the fault",
+							"can not isolated on the adapter or in the network.",
+							"The variable shall assume a value of unknown(1) if the",
+							"fault status has not been determined; for example, at",
+							"initialization. This object would drive the port LED's also.",
+							"status noFault(2) indicates LED green other values indicate",
+							"port LED yellow."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "noFault",
+							"3" : "isolated",
+							"4" : "nonIsolated"
+						},
+						"name" : "FECLIENT827x-MIB::fe827xPCIAdapFaultStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.4.1.2.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

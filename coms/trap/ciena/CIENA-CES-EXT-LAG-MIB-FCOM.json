@@ -1,0 +1,99 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201802130000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CIENA-CES-EXT-LAG-MIB::cienaCesExtLagMclagStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when MC-LAG oper state changes.",
+				"Var binding cienaCesExtAggId represents the MC-LAG PGID. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 && $v4==3) ? 1 : (($v1==0 || $v1==2 || $v1==7 || $v1==8 || $v1==9 || $v1==10 || $v4==5 || $v4==6) ? 3 : 2)"
+				},
+				"EventType" : "cienaCesExtLagMclagStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v4==3 || $v1==0 || $v1==7 || $v1==8 || $v1==9 || $v1==10 || $v1==2 || $v4==6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 && $v4==3) ? 0 : (($v1==3) ? 5 : ($v1==4 || $v4==1) ? 4 : (($v1==5 || $v1==6 || $v1==4) ? 3 : (($v4==2 || $v1==0 || $v4==6) ? 1 : 2)))"
+				},
+				"SubNode" : "cienaCesExtAggIndex:$v3",
+				"Summary" : "MC-LAG $v3 operational state: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-EXT-LAG-MIB::cienaCesExtLagMclagStateChange CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-EXT-LAG-MIB::cienaCesExtAggIndex i 9999 CIENA-CES-EXT-LAG-MIB::cienaCesExtAggRedundancyState i 1",
+			"trap" : {
+				"name" : "CIENA-CES-EXT-LAG-MIB::cienaCesExtLagMclagStateChange",
+				"oid" : "1.3.6.1.4.1.1271.2.2.21.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique identifier allocated to this LAG by",
+							"the local system. This attribute identifies an",
+							"LAG instance among the subordinate managed",
+							"objects of the containing object.",
+							"This value is read-only. This object refers to the ",
+							"dot3adAggIndex in the ieee-8023-lag-mib."
+						],
+						"name" : "CIENA-CES-EXT-LAG-MIB::cienaCesExtAggIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.3.1.1.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object specifies the oper state of the MC-LAG node"
+						],
+						"enums" : {
+							"1" : "down",
+							"2" : "unavailable",
+							"3" : "active",
+							"4" : "standby",
+							"5" : "standalone",
+							"6" : "none"
+						},
+						"name" : "CIENA-CES-EXT-LAG-MIB::cienaCesExtAggRedundancyState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.3.1.1.3.1.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

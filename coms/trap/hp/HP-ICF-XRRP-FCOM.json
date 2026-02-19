@@ -1,0 +1,172 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200508050000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HP-ICF-XRRP::hpicfXrrpTrapStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a XRRP router has changed",
+				"state. The trap contains the domain number, the router ",
+				"coordinator number and state value for the change.",
+				"This trap is being controlled by the state of",
+				"'hpicfXrrpTrapCntl' object."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 2 : ($v3==4) ? 1 : 3 "
+				},
+				"EventType" : "hpicfXrrpTrapStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 86400 : ($v3==4) ? 3600 : 3600 "
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 4 : ($v3==4) ? 0 : 2 "
+				},
+				"SubNode" : "RouterId:$v2",
+				"Summary" : "Router $v2 state: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF-XRRP::hpicfXrrpTrapStateChange HP-ICF-XRRP::hpicfXrrpDomain i 1 HP-ICF-XRRP::hpicfXrrpStatsRcRouterId i 1 HP-ICF-XRRP::hpicfXrrpStatsRcOperState i 1",
+			"trap" : {
+				"name" : "HP-ICF-XRRP::hpicfXrrpTrapStateChange",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Domain that this router is in. The router can only be in ",
+							"one domain. Routers in the same domain can fail-over for ",
+							"each other. Up to 2 routers that have common VLANs can use",
+							"the same XRRP Domain."
+						],
+						"name" : "HP-ICF-XRRP::hpicfXrrpDomain",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.2.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The router coordinator number."
+						],
+						"name" : "HP-ICF-XRRP::hpicfXrrpStatsRcRouterId",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.3.13.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The current operational state of the router coordinator."
+						],
+						"enums" : {
+							"1" : "initialize",
+							"2" : "backup",
+							"3" : "master",
+							"4" : "failback"
+						},
+						"name" : "HP-ICF-XRRP::hpicfXrrpStatsRcOperState",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.3.13.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HP-ICF-XRRP::hpicfXrrpTrapAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the authentication error occurred",
+				"on a XRRP VLAN. The trap contains the domain number, this",
+				"router number, instance id (owner router number and",
+				"VLAN ID) that detected the error and type of the",
+				"authentication error. This trap is being controlled by the",
+				"state of 'hpicfXrrpTrapCntl' object. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpicfXrrpTrapAuth:$v5",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "VlanId:$v4;RouterId:$v3",
+				"Summary" : "XRRP VLAN $v4 authentication failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF-XRRP::hpicfXrrpTrapAuthFailure HP-ICF-XRRP::hpicfXrrpDomain i 1 HP-ICF-XRRP::hpicfXrrpRouterId i 1 HP-ICF-XRRP::hpicfXrrpInstanceRouterId i 1 HP-ICF-XRRP::hpicfXrrpInstanceVlanId i 1 HP-ICF-XRRP::hpicfXrrpTrapAuthErrorType i 1",
+			"trap" : {
+				"name" : "HP-ICF-XRRP::hpicfXrrpTrapAuthFailure",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Domain that this router is in. The router can only be in ",
+							"one domain. Routers in the same domain can fail-over for ",
+							"each other. Up to 2 routers that have common VLANs can use",
+							"the same XRRP Domain."
+						],
+						"name" : "HP-ICF-XRRP::hpicfXrrpDomain",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.2.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Unique number for this router within a given domain.",
+							"The router number (in combination with a VLAN ID) is ",
+							"used as an identifier for an XRRP instance within a",
+							"domain. Along with 'hpicfXrrpDomain' it is used to ",
+							"create the XRRP MAC address for the XRRP instance this ",
+							"router owns. No two routers in the same domain can have",
+							"the same router number in the same level 2 switching ",
+							"fabric."
+						],
+						"name" : "HP-ICF-XRRP::hpicfXrrpRouterId",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.2.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The router number which owns the virtual router interface",
+							"(XRRP instance). In combination with ",
+							"'hpicfXrrpInstanceVlanId' used as an index value to ",
+							"uniquely identify a row in the ",
+							"'hpicfXrrpInstancesTable' table."
+						],
+						"name" : "HP-ICF-XRRP::hpicfXrrpInstanceRouterId",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.2.7.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The VLAN ID where the virtual router (XRRP instance) is ",
+							"running on. In combination with 'hpicfXrrpInstanceRouterId'",
+							"is used as an index value to uniquely identify a row in the ",
+							"'hpicfXrrpInstancesTable' table."
+						],
+						"name" : "HP-ICF-XRRP::hpicfXrrpInstanceVlanId",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.2.7.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by hpicfXrrpTrapAuthFailure trap."
+						],
+						"enums" : {
+							"1" : "invalidAuthType",
+							"2" : "authTypeMismatch",
+							"3" : "authFailure"
+						},
+						"name" : "HP-ICF-XRRP::hpicfXrrpTrapAuthErrorType",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.18.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

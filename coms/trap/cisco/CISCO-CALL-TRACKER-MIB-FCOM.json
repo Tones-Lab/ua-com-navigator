@@ -1,0 +1,102 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200504120000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CALL-TRACKER-MIB::cctCallSetupNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Call Tracker Setup notification is generated whenever",
+				"a new active call entry is created in the cctActiveTable.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cctCallSetupNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v3",
+				"Summary" : "New active $v4 call entry created for call from $v3 to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CALL-TRACKER-MIB::cctCallSetupNotification CISCO-CALL-TRACKER-MIB::cctActiveSetupTime t 31536000 CISCO-CALL-TRACKER-MIB::cctActiveCalledPartyId s EXAMPLE CISCO-CALL-TRACKER-MIB::cctActiveCallingPartyId s EXAMPLE CISCO-CALL-TRACKER-MIB::cctActiveCallCategory i 1",
+			"trap" : {
+				"name" : "CISCO-CALL-TRACKER-MIB::cctCallSetupNotification",
+				"oid" : "1.3.6.1.4.1.9.9.163.2.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-CALL-TRACKER-MIB::cctActiveSetupTime",
+						"oid" : "1.3.6.1.4.1.9.9.163.1.2.3.1.2",
+						"valueType" : "TICKS"
+					},
+					{
+						"name" : "CISCO-CALL-TRACKER-MIB::cctActiveCalledPartyId",
+						"oid" : "1.3.6.1.4.1.9.9.163.1.2.3.1.22",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-CALL-TRACKER-MIB::cctActiveCallingPartyId",
+						"oid" : "1.3.6.1.4.1.9.9.163.1.2.3.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "other",
+							"3" : "modem",
+							"4" : "isdnSync",
+							"5" : "v110",
+							"6" : "v120",
+							"7" : "casDigital",
+							"8" : "mgcpData",
+							"9" : "syncData",
+							"10" : "lapb-ta"
+						},
+						"name" : "CISCO-CALL-TRACKER-MIB::cctActiveCallCategory",
+						"oid" : "1.3.6.1.4.1.9.9.163.1.2.3.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CALL-TRACKER-MIB::cctCallTerminateNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Call Tracker Terminate notification is generated whenever",
+				"a new history call entry is created in the cctHistoryTable.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cctCallTerminateNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "New historic call entry created for call $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CALL-TRACKER-MIB::cctCallTerminateNotification CISCO-CALL-TRACKER-MIB::cctHistoryCallId u 9999",
+			"trap" : {
+				"name" : "CISCO-CALL-TRACKER-MIB::cctCallTerminateNotification",
+				"oid" : "1.3.6.1.4.1.9.9.163.2.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-CALL-TRACKER-MIB::cctHistoryCallId",
+						"oid" : "1.3.6.1.4.1.9.9.163.1.3.7.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

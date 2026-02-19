@@ -1,0 +1,449 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201706160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiChangedPeriodNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent to all managing NMS in case the time",
+				"period for sending alarm summary or heartbeat notifications",
+				"has been changed by one NMS (i.e. via NBI) or locally on",
+				"NetAct."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nbiChangedPeriodNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Time period for sending $v3 notifications to NMS changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiChangedPeriodNotification NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId i 9999 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime s EXAMPLE NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiChangedPeriodType i 1 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSupervisionPeriod i 0",
+			"trap" : {
+				"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiChangedPeriodNotification",
+				"oid" : "1.3.6.1.4.1.28458.1.26.2.0.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The object represents the NMS-specific sequence number",
+							"of the current trap which already passed the filter check",
+							"and has been forwarded at NBI."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the NetAct generation time of the",
+							"notification forwarded over the northbound interface."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.6.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It indicates the type of traps the sending period has been",
+							"changed for."
+						],
+						"enums" : {
+							"1" : "alarmSummary",
+							"2" : "heartbeat"
+						},
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiChangedPeriodType",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.6.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object is used in the 'changedPeriod' notification",
+							"indicating the new time period used by SNMP Agent for sending",
+							"either heartbeat or alarm summary notifications. In case the",
+							"value is set to 0, the sending of the related periodic",
+							"notification has been turned off."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSupervisionPeriod",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.6.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiHeartbeatNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is forwarded periodically to all NMS allowing",
+				"the check of the NMS-NetAct communication state. Note that the",
+				"time period is the same for all managing NMS. If the period is",
+				"set to 0, the sending of heartbeat notifications is turned off."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nbiHeartbeatNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "NBI heartbeat notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiHeartbeatNotification NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId i 9999 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime s EXAMPLE",
+			"trap" : {
+				"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiHeartbeatNotification",
+				"oid" : "1.3.6.1.4.1.28458.1.26.2.0.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"The object represents the NMS-specific sequence number",
+							"of the current trap which already passed the filter check",
+							"and has been forwarded at NBI."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the NetAct generation time of the",
+							"notification forwarded over the northbound interface."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.6.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiStartUpNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent to all managing NMS:",
+				"a) in case NetAct NBI has started and successfully initialized",
+				"i.e. communication over NBI is (again) possible OR",
+				"b) in case of loss of management information and the",
+				"configurable parameter onlyFMsupported is set 'true'.",
+				"The reception of this notification should be used by each NMS",
+				"as a signal to trigger synchronization of topology data and/or",
+				"alarms."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nbiStartUpNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "NBI startup notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiStartUpNotification NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId i 9999 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime s EXAMPLE",
+			"trap" : {
+				"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiStartUpNotification",
+				"oid" : "1.3.6.1.4.1.28458.1.26.2.0.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"The object represents the NMS-specific sequence number",
+							"of the current trap which already passed the filter check",
+							"and has been forwarded at NBI."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the NetAct generation time of the",
+							"notification forwarded over the northbound interface."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.6.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiShutDownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent to all managing NMS in case of a",
+				"controlled NetAct NBI shut down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nbiShutDownNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Controlled NetAct NBI shut down notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiShutDownNotification NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId i 9999 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime s EXAMPLE",
+			"trap" : {
+				"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiShutDownNotification",
+				"oid" : "1.3.6.1.4.1.28458.1.26.2.0.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"The object represents the NMS-specific sequence number",
+							"of the current trap which already passed the filter check",
+							"and has been forwarded at NBI."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the NetAct generation time of the",
+							"notification forwarded over the northbound interface."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.6.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSyncRequestedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent to all managing NMS in case of",
+				"loss of management information and the configurable",
+				"parameter onlyFMsupported is set 'false'.",
+				"The reception of this notification should be used by each NMS",
+				"as a signal to trigger synchronization of topology data or",
+				"alarms, depending of the nbiRequestedSyncType value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nbiSyncRequestedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "NBI $v3 synchronization request notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSyncRequestedNotification NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId i 9999 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime s EXAMPLE NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiRequestedSyncType i 1",
+			"trap" : {
+				"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSyncRequestedNotification",
+				"oid" : "1.3.6.1.4.1.28458.1.26.2.0.1.5",
+				"variables" : [
+					{
+						"description" : [
+							"The object represents the NMS-specific sequence number",
+							"of the current trap which already passed the filter check",
+							"and has been forwarded at NBI."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the NetAct generation time of the",
+							"notification forwarded over the northbound interface."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.6.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"It represents the type of data synchronization indicated",
+							"in the nbiSyncRequestedNotification."
+						],
+						"enums" : {
+							"1" : "alarms",
+							"2" : "topology"
+						},
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiRequestedSyncType",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEndOfSequenceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent after the processing of the",
+				"following NMS requests is finished:",
+				"a) getAllAlarms",
+				"b) getActiveAlarms",
+				"c) getAckAlarms",
+				"d) getClearedAlarms",
+				"e) getAlarmsByStartingTime",
+				"f) getTopologyData",
+				"g) retransmitTraps",
+				"h) acknowledgeAlarms",
+				"i) unacknowledgeAlarms",
+				"j) clearAlarms",
+				"k) commentAlarms",
+				"The object nbiNmsUser represents the identification of the",
+				"user who triggers an alarm handling request (acknowledgement",
+				"unacknowledgement, clear, comment alarms). It can be an empty",
+				"string.",
+				"The object nbiNmsName represents the identification of the",
+				"requesting NMS and allows for the correlation between this",
+				"notification and the previous NMS request.",
+				"The object nbiNmsRequestType represents the type of NMS",
+				"request which triggered the notification sequence.",
+				"The object nbiProcessingStatus represents the final",
+				"execution status of the NMS request. Possible values:",
+				"success (1), partialSuccess (2), failure (3). The value",
+				"partialSuccess max be returned in case of request types h)",
+				"i), j) or k), e.g. when some nbiAlarmId values are wrong.",
+				"The total number of notifications sent as result of the",
+				"request is represented by the object nbiNoOfResponseTraps.",
+				"The object nbiFailureReason is set only in case the",
+				"object nbiProcessingStatus has the value partialSuccess",
+				"or failure, otherwise it is an empty string."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 3 : 2)"
+				},
+				"EventType" : "nbiEndOfSequenceNotification",
+				"ExpireTime" : {
+					"eval" : "($v3==1 || $v3==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : (($v3==2) ? 2 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Final processing status of the NMS request: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEndOfSequenceNotification NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId i 9999 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime s EXAMPLE NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiProcessingStatus i 1 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiNmsUser s EXAMPLE NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiNmsName s EXAMPLE NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiNmsRequestType s EXAMPLE NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiNoOfResponseTraps i 9999 NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEndOfSequenceNotification",
+				"oid" : "1.3.6.1.4.1.28458.1.26.2.0.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The object represents the NMS-specific sequence number",
+							"of the current trap which already passed the filter check",
+							"and has been forwarded at NBI."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiSequenceId",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the NetAct generation time of the",
+							"notification forwarded over the northbound interface."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiEventTime",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.6.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This information is used by SNMP Agent in the 'endOfSequence'",
+							"notification, indicating the final processing status of the NMS",
+							"request."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "partialSuccess",
+							"3" : "failure"
+						},
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiProcessingStatus",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"It provides the identification of the NMS user who triggers",
+							"an alarm handling request (acknowledgement, unacknowledgement",
+							"clear, comment alarms).",
+							"The value is empty in case of other notifications sequences",
+							"sent as response to previous NMS requests."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiNmsUser",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is used by SNMP Agent in the 'endOfSequence'",
+							"notification, indicating the unambiguous identification of",
+							"the NMS which triggered the sending of the trap sequence.",
+							"It allows for the logical correlation of the 'endOfSequence'",
+							"notification with an NMS request (which contained this",
+							"identification)."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiNmsName",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is used by SNMP Agent in the 'endOfSequence'",
+							"notification, indicating the type of NMS request which",
+							"triggered the sending of the trap sequence (e.g. 'clearAlarms'",
+							"or 'getActiveAlarms')."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiNmsRequestType",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This information is used by SNMP Agent in the 'endOfSequence'",
+							"notification, indicating the number of notification sent due",
+							"to processing of a previous NMS request. It is used for NMS",
+							"synchronization, retransmission or alarm handling requests."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiNoOfResponseTraps",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is set only in case the object nbiProcessingStatus",
+							"in the 'endOfSequence' notification has either the value",
+							"partialSuccess or failure, otherwise it is an empty string."
+						],
+						"name" : "NSN-SNMP-NBI-COMMONFUNCTIONS-MIB::nbiFailureReason",
+						"oid" : "1.3.6.1.4.1.28458.1.26.2.1.3.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

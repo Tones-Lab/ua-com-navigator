@@ -1,0 +1,2323 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201102010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyPeerStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcRedundancyPeerStateChanged is sent when ",
+				"the connection to a specific peer is lost or established."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "tmnxMcRedundancyPeerStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Peer operational state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyPeerStateChanged TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagConfigOperState i 0",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyPeerStateChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcLagConfigOperState indicates the operational",
+							"status of this multi-chassis LAG peer."
+						],
+						"enums" : {
+							"0" : "inService",
+							"1" : "outOfService"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagConfigOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.6.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyMismatchDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcRedundancyMismatchDetected is sent when ",
+				"a configuration mismatch is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxMcRedundancyMismatch",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'Multi-chassis configuration mismatch detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyMismatchDetected TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagConfigMismatchString s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyMismatchDetected",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcLagConfigMismatchString is a printable character",
+							"string which contains information about the multi-chassis configuration",
+							"mismatch."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagConfigMismatchString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.10.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyMismatchResolved",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcRedundancyMismatchResolved is sent when all",
+				"configuration mismatches are resolved."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxMcRedundancyMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'Multi-chassis configuration mismatch resolved'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyMismatchResolved TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagConfigMismatchString s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRedundancyMismatchResolved",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcLagConfigMismatchString is a printable character",
+							"string which contains information about the multi-chassis configuration",
+							"mismatch."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagConfigMismatchString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.10.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcPeerSyncStatusChanged is generated when the",
+				"status of the synchronization with the multi-chassis peer changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2) ? 3 : 2"
+				},
+				"EventType" : "tmnxMcPeerSyncStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : ($v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==2) ? 2 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Multi-chassis peer synchronization status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncStatusChanged TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncStatusChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSyncStatus indicates the status of the",
+							"synchronization process."
+						],
+						"enums" : {
+							"1" : "inSync",
+							"2" : "syncInProgress",
+							"3" : "outOfSync"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.2.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClientAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcSyncClientAlarmRaised is generated when a ",
+				"multi-chassis sync client has atleast one locally deleted entry in the",
+				"database."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxMcSyncClientAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "IpAddr:$v2",
+				"Summary" : "$v3 multi-chassis sync client alarm raised"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClientAlarmRaised TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncClient i 0",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClientAlarmRaised",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSyncClient indicates which client has caused ",
+							"the generation of tmnxMcSyncClientAlarmRaised or",
+							"tmnxMcSyncClientAlarmCleared."
+						],
+						"enums" : {
+							"0" : "igmp",
+							"1" : "igmpSnooping",
+							"2" : "subMgmtIpoe",
+							"3" : "srrp",
+							"4" : "mcRing",
+							"5" : "mldSnooping",
+							"6" : "dhcpServer",
+							"7" : "subHostTrk",
+							"8" : "subMgmtPppoe"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncClient",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClientAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcSyncClientAlarmCleared is generated when a ",
+				"multi-chassis sync client has no locally deleted entries in the",
+				"database."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxMcSyncClientAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IpAddr:$v2",
+				"Summary" : "$v3 multi-chassis sync client alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClientAlarmCleared TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncClient i 0",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClientAlarmCleared",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSyncClient indicates which client has caused ",
+							"the generation of tmnxMcSyncClientAlarmRaised or",
+							"tmnxMcSyncClientAlarmCleared."
+						],
+						"enums" : {
+							"0" : "igmp",
+							"1" : "igmpSnooping",
+							"2" : "subMgmtIpoe",
+							"3" : "srrp",
+							"4" : "mcRing",
+							"5" : "mldSnooping",
+							"6" : "dhcpServer",
+							"7" : "subHostTrk",
+							"8" : "subMgmtPppoe"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncClient",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSubnetMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpSubnetMismatch is generated when the IP ",
+				"address list received through SRRP-MCS synchronization received ",
+				"from the current master does not match the local configured IP ",
+				"address list.",
+				"This is an edge triggered notification. A second notification will ",
+				"not be generated for a packet from the same master until this ",
+				"event has been cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSrrpSubnetMismatch",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "IpAddr:$v3",
+				"Summary" : "SRRP subnet mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSubnetMismatch TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSubnetMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpType specifies the address type of ",
+							"tmnxMcPeerSrcIpAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSubnetMismatchCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpSubnetMismatchCleared is generated when ",
+				"the mismatch in the IP address list received through SRRP-MCS ",
+				"synchronization received from the current master is cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSrrpSubnetMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IpAddr:$v3",
+				"Summary" : "SRRP subnet mismatch cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSubnetMismatchCleared TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSubnetMismatchCleared",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpType specifies the address type of ",
+							"tmnxMcPeerSrcIpAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpInstanceIdMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpInstanceIdMismatch is generated when any ",
+				"one of the SAPs SRRP is backing up is backed by a different SRRP ",
+				"instance on the remote peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpInstanceIdMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IpAddr:$v3",
+				"Summary" : "SRRP instance ID mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpInstanceIdMismatch TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpInstanceIdMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpType specifies the address type of ",
+							"tmnxMcPeerSrcIpAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSapMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpSapMismatch is generated when the SAPs SRRP ",
+				"is backing up on the local interface do not match with the ones ",
+				"on the remote interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpSapMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IfName:$v2",
+				"Summary" : "SRRP SAPs mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSapMismatch TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteGrpIfNameForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSapMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcRemoteGrpIfNameForNotify indicates the name of a",
+							"remote group interface."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteGrpIfNameForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSapTagMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpSapTagMismatch is generated when the tag ",
+				"for a local SAP do not match those of the remote SAP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpSapTagMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IfName:$v3",
+				"Summary" : "SRRP SAP tag mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSapTagMismatch TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncPortEncapSyncTag s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteGrpIfNameForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteSyncTag s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSapTagMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSyncPortEncapSyncTag specifies a",
+							"synchronization tag to be used while synchronizing this encapsulation",
+							"value range with the multi-chassis peer. This object MUST be specified",
+							"at row creation time."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSyncPortEncapSyncTag",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.4.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcRemoteGrpIfNameForNotify indicates the name of a",
+							"remote group interface."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteGrpIfNameForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcRemoteSyncTag indicates the sync tag of a ",
+							"remote object."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteSyncTag",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpRedIfMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpRedIfMismatch is generated when the local ",
+				"and remote redundant interfaces are not properly paired."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpRedIfMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IfName:$v7",
+				"Summary" : "SRRP redundant interface mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpRedIfMismatch TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteGrpIfNameForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteRedIfNameForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpRedIfMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpType specifies the address type of ",
+							"tmnxMcPeerSrcIpAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcRemoteGrpIfNameForNotify indicates the name of a",
+							"remote group interface."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteGrpIfNameForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcRemoteRedIfNameForNotify indicates the name of a",
+							"remote redundant interface."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteRedIfNameForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpDualMaster",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpDualMaster is generated when both the local ",
+				"and remote SRRP instances are in the master state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpDualMaster",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IfName:$v6",
+				"Summary" : "Local and remote SRRP instances are in master state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpDualMaster TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteGrpIfNameForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpDualMaster",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpType specifies the address type of ",
+							"tmnxMcPeerSrcIpAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcRemoteGrpIfNameForNotify indicates the name of a",
+							"remote group interface."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRemoteGrpIfNameForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagInfoLagChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcLagInfoLagChanged is generated when entries ",
+				"in tmnxMcLagInfoLagTable were changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxMcLagInfoLagChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Entries in info lag table changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagInfoLagChanged TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagConfigLagIds s EXAMPLEEXAMPLEEXAMPLEEXAM",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagInfoLagChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcLagConfigLagIds is a bitmap that indicates a set of",
+							"tmnxMcLagConfigLagId's."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcLagConfigLagIds",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSystemIpNotSet",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpSystemIpNotSet is generated when SRRP ",
+				"tries to send out advertisement packets but the system IP address ",
+				"has not yet been set. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpSystemIpNotSet",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SRRP system IP address has not set"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSystemIpNotSet ",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpSystemIpNotSet",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.15"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingOperStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcRingOperStateChanged is generated when the",
+				"operational state of a multi-chassis ring changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==5) ? 1 : ($v1==1 || $v1==9 || $v1==11) ? 3 : 2"
+				},
+				"EventType" : "tmnxMcRingOperStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==5) ? 3600 : ($v1==1 || $v1==9 || $v1==11) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==5) ? 0 : (($v1==1) ? 1 : (($v1==9 || $v1==11) ? 2 : (($v1==4 || $v1==10) ? 3 : 4)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Multi-chassis ring operational state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingOperStateChanged TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingInfoOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingOperStateChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcRingInfoOperState indicates the",
+							"operational state of the multi-chassis ring."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "shutdown",
+							"3" : "configErr",
+							"4" : "noPeer",
+							"5" : "connected",
+							"6" : "broken",
+							"7" : "localBroken",
+							"8" : "conflict",
+							"9" : "testingRing",
+							"10" : "halfBroken",
+							"11" : "waitingForPeer"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingInfoOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.16.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingInbCtrlOperStateChgd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcRingInbCtrlOperStateChgd is generated when the",
+				"operational state of a multi-chassis ring's inband control connection ",
+				"changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1 || $v1==4) ? 3 : 2"
+				},
+				"EventType" : "tmnxMcRingInbCtrlOperStateChgd",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1 || $v1==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==1) ? 1 : (($v1==4) ? 2 : (($v1==6) ? 3 : 4)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Multi-chassis ring inband control connection operational state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingInbCtrlOperStateChgd TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingInfoInbCtrlOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingInbCtrlOperStateChgd",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcRingInfoInbCtrlOperState indicates the ",
+							"operational state of the inband control connection."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "connected",
+							"3" : "broken",
+							"4" : "testing",
+							"5" : "peerDetectsDown",
+							"6" : "notConfigured"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingInfoInbCtrlOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.16.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingNodeLocOperStateChgd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcRingNodeLocOperStateChgd is generated ",
+				"upon a change of the operational state of a provisioned ring node ",
+				"as monitored by the local chassis, or when an unprovisioned ring",
+				"node appears or disappears."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6) ? 1 : ($v1==1 || $v1==4 || $v1==5) ? 3 : 2"
+				},
+				"EventType" : "tmnxMcRingNodeLocOperStateChgd",
+				"ExpireTime" : {
+					"eval" : "($v1==6) ? 3600 : ($v1==1 || $v1==4 || $v1==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==6) ? 0 : (($v1==1) ? 1 : (($v1==4 || $v1==5) ? 2 : (($v1==2) ? 3 : 4)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Ring node as monitored by the local chassis operational status is changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingNodeLocOperStateChgd TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingNodeInfoLocOperState i 1 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingNodeInfoInUse i 1",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingNodeLocOperStateChgd",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcRingNodeInfoLocOperState indicates the",
+							"operational state of the ring node as monitored by the local chassis."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "notProvisioned",
+							"3" : "configErr",
+							"4" : "notTested",
+							"5" : "testing",
+							"6" : "connected",
+							"7" : "disconnected"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingNodeInfoLocOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.20.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcRingNodeInfoInUse indicates if this ring node is",
+							"currently used by any subscriber or configured as ring-node on any",
+							"SAP."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcRingNodeInfoInUse",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.20.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClockSkewRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcSyncClockSkewRaised is generated when the",
+				"MCS peer system clock time is greater than 60 seconds different",
+				"than the local system clock."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxMcSyncClockSkew",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "IpAddr:$v2",
+				"Summary" : "Difference between MCS peer system clock time and local system clock time is exceeded the threshold of 60 sec"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClockSkewRaised TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerClockSkew u 9999",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClockSkewRaised",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerClockSkew indicates the difference, in seconds",
+							"between the MCS peer system clock time and the local system clock."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerClockSkew",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClockSkewCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcSyncClockSkewCleared is generated when the",
+				"MCS peer system clock time has returned to less than 60 seconds ",
+				"different than the local system clock.",
+				"This notification would only be generated following a ",
+				"tmnxMcSyncClockSkewRaised notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxMcSyncClockSkew",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IpAddr:$v2",
+				"Summary" : "Difference between peer system clock time and local system clock time drops below the threshold 60 secs"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClockSkewCleared TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerClockSkew u 9999",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcSyncClockSkewCleared",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerClockSkew indicates the difference, in seconds",
+							"between the MCS peer system clock time and the local system clock."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerClockSkew",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpDuplicateSubIfAddress",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpDuplicateSubIfAddress is generated when",
+				"the IP address for a local subscriber interface conflicts with the IP",
+				"address for a remote subscriber interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpDuplicateSubIfAddress",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IpAddr:$v3",
+				"Summary" : "SRRP duplicate sub interface address detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpDuplicateSubIfAddress TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpDuplicateSubIfAddress",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpType specifies the address type of ",
+							"tmnxMcPeerSrcIpAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerRingsOperStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMcPeerRingsOperStateChanged is sent when ",
+				"the operational state - with respect to multi-chassis ring operation -",
+				"of a peer changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxMcPeerRingsOperStateChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==1) ? 1 : (($v1==4) ? 2 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Multi-chassis peer rings operational state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerRingsOperStateChanged TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerRingsOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerRingsOperStateChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerRingsOperState indicates the operational state",
+							"of this multi-chassis peer with respect to multi-chassis ring",
+							"operation.",
+							"If there are no entries in the tmnxMcRingTable associated with this",
+							"peer, the value of tmnxMcPeerRingsOperState is 'unknown'."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerRingsOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpTrapNewMaster",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSrrpTrapNewMaster trap indicates that the sending",
+				"multi-chassis SRRP instance has transitioned to 'Master' state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpTrapNewMaster",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "IpAddr:$v3",
+				"Summary" : "Multi-chassis SRRP instance transitioned to master state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpTrapNewMaster TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpTrapNewMaster",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpBecameBackup",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSrrpBecameBackup trap is generated when the sending",
+				"multi-chassis SRRP instance has transitioned to 'Backup' state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSrrpBecameBackup",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IpAddr:$v3",
+				"Summary" : "Multi-chassis SRRP instance transitioned to backup state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpBecameBackup TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags b 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpBecameBackup",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpOperFlags indicates the operational status",
+							"of this SRRP instance.",
+							"subnetMismatch(0) One the subnets that SRRP is backing up",
+							"does not have a match with the peer.",
+							"srrpIdMismatch(1) The peer has a different SRRP instance ID",
+							"backing the same subnet.",
+							"sapMismatch(2) The local SRRP instance is backing a different",
+							"set of SAPs than the peer.",
+							"sapTagMismatch(3) The local SRRP instance is backing a set of",
+							"SAPs with different remote and local tags.",
+							"redIfMismatch(4) The local SRRP instance and remote SRRP",
+							"instance have mismatching redundant interfaces.",
+							"dualMaster(5) Both SRRP instances are master at the same time.",
+							"dupSubIfAddr(6) The IP address for a local subscriber interface",
+							"conflicts with the IP address for a remote",
+							"subscriber interface."
+						],
+						"enums" : {
+							"0" : "subnetMismatch",
+							"1" : "srrpIdMismatch",
+							"2" : "sapMismatch",
+							"3" : "sapTagMismatch",
+							"4" : "redIfMismatch",
+							"5" : "dualMaster",
+							"6" : "dupSubIfAddr"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.9.1.17",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrTypeForNotify indicates the",
+							"address type of tmnxMcPeerIpAddrForNotify."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrTypeForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerIpAddrForNotify indicates the address",
+							"of the multi-chassis peer to be used in notifications. Its type",
+							"is specified by tmnxMcPeerIpAddrTypeForNotify."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerIpAddrForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpBfdIntfSessStateChgd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxSrrpBfdIntfSessStateChgd is generated when the",
+				"operational state of BFD session of the SRRP instance changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==2) ? 1 : ($v5==1) ? 3 : 2"
+				},
+				"EventType" : "tmnxSrrpBfdIntfSessStateChgd",
+				"ExpireTime" : {
+					"eval" : "($v5==2) ? 3600 : ($v5==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v5==2) ? 0 : (($v5==1) ? 1 : (($v5==5 || $v5==6) ? 3 : 4))"
+				},
+				"SubNode" : "IfName:$v2",
+				"Summary" : "Operational state of SRRP instance BFD session changed to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpBfdIntfSessStateChgd TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfSvcId u 9999 TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfIfName s EXAMPLE TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfDestIpType i 0 TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfDestIp s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfSessState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpBfdIntfSessStateChgd",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSrrpNotifBfdIntfSvcId specifies the service",
+							"ID of the interface running BFD in the notification."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfSvcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxSrrpNotifBfdIntfIfName specifies the name of the",
+							"interface running BFD in the notification."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfIfName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxSrrpNotifBfdIntfDestIpType specifies the address type",
+							"of tmnxSrrpNotifBfdIntfDestIp object."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfDestIpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSrrpNotifBfdIntfDestIp specifies the destination",
+							"IP address on the interface running BFD in the notification."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfDestIp",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxSrrpNotifBfdIntfSessState indicates the operational",
+							"state of BFD session on the interface in the notification."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "connected",
+							"3" : "broken",
+							"4" : "peerDetectsDown",
+							"5" : "notConfigured",
+							"6" : "noResources"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxSrrpNotifBfdIntfSessState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionOpen",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxMcPeerEPBfdSessionOpen notification is generated",
+				"when the multi-chassis endpoint is attempting to open BFD",
+				"session to the mutli-chassis endpoint peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==0) ? 1 : 2"
+				},
+				"EventType" : "tmnxMcPeerEPBfdSessionOpen",
+				"ExpireTime" : {
+					"eval" : "($v2==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==0) ? 0 : (($v2==1) ? 3 : 4)"
+				},
+				"SubNode" : "IpAddr:$v1",
+				"Summary" : "Multi-chassis peer endpoint BFD session open status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionOpen TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionOpenStatus i 0",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionOpen",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerEPBfdSessionOpenStatus indicates the",
+							"status of multi-chasis endpoint's attempt to open BFD",
+							"session to the multi-chassis endpoint peer."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "invalidSrcAddr",
+							"2" : "nonSysLoopbackIf",
+							"3" : "clientUseSessionFail",
+							"4" : "clientAppUseIfFail"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionOpenStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionClose",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxMcPeerEPBfdSessionClose notification is generated",
+				"when the multi-chassis endpoint is closing BFD session to the",
+				"multi-chassis endpoint peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxMcPeerEPBfdSessionClose",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "IpAddr:$v1",
+				"Summary" : "Multi-chassis peer endpoint BFD session closed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionClose TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionClose",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxMcPeerEPBfdSessionUp notification is generated",
+				"when operational state of the BFD session between the",
+				"multi-chassis endpoint and its peer is changed to 'up'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxMcPeerEPBfdSession",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IpAddr:$v1",
+				"Summary" : "Multi-chassis peer endpoint BFD session up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionUp TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionUp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxMcPeerEPBfdSessionDown notification is generated",
+				"when operational state of the BFD session between the",
+				"multi-chassis endpoint and its peer is changed to 'down'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxMcPeerEPBfdSession",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "IpAddr:$v1",
+				"Summary" : "Multi-chassis peer endpoint BFD session down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionDown TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPBfdSessionDown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPOperDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxMcPeerEPOperDown notification is generated",
+				"when the multi-chassis endpoint detects time-out communicating",
+				"with the multi-chassis endpoint peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxMcPeerEPOper",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "IpAddr:$v1",
+				"Summary" : "Multi-chassis peer endpoint operationally down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPOperDown TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPOperDown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPOperUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxMcPeerEPOperUp notification is generated",
+				"when the multi-chassis endpoint clears time-out condition in",
+				"communicating with the multi-chassis endpoint peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxMcPeerEPOper",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IpAddr:$v1",
+				"Summary" : "Multi-chassis peer endpoint operationally up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPOperUp TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPOperUp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMCEPSessionPsvModeEnabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMCEPSessionPsvModeEnabled is generated when ",
+				"passive-mode for the session between the multi-chassis endpoint and its",
+				"peer is 'enabled' from either local or peer endpoint."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxMCEPSessionPsvModeEnabled",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IpAddr:$v1",
+				"Summary" : "Multi-chassis endpoint session passive-mode enabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMCEPSessionPsvModeEnabled TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPPassiveMode i 1 TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPPsvModeConfigState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMCEPSessionPsvModeEnabled",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerEPPassiveMode specifies whether passive-mode",
+							"behavior is configured for the multi-chassis end-point tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPPassiveMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.34.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerEPPsvModeConfigState indicates the",
+							"configuration state of passive-mode with peer."
+						],
+						"enums" : {
+							"1" : "mismatch",
+							"2" : "mismatchResolved"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPPsvModeConfigState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.3.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMCEPSessionPsvModeDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxMCEPSessionPsvModeDisabled is generated when ",
+				"passive-mode for the session between the multi-chassis endpoint and its",
+				"peer is 'disabled' from both local and peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxMCEPSessionPsvModeDisabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "IpAddr:$v1",
+				"Summary" : "Multi-chassis endpoint session passive-mode disabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MC-REDUNDANCY-MIB::tmnxMCEPSessionPsvModeDisabled TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr s EXAM TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPPassiveMode i 1",
+			"trap" : {
+				"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMCEPSessionPsvModeDisabled",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.40.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxMcPeerSrcIpAddr specifies the source address used to",
+							"communicate with the multi-chassis peer. Its type is specified by ",
+							"tmnxMcPeerSrcIpType.",
+							"It must be a valid unicast address."
+						],
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerSrcIpAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxMcPeerEPPassiveMode specifies whether passive-mode",
+							"behavior is configured for the multi-chassis end-point tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "TIMETRA-MC-REDUNDANCY-MIB::tmnxMcPeerEPPassiveMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.40.1.34.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

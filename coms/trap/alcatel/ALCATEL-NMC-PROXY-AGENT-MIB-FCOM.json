@@ -1,0 +1,525 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ALCATEL-NMC-PROXY-AGENT-MIB::packedCmipTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"packed forwarded trap :",
+				"contains a part (or all) of the arguments of the CMIP notification",
+				"inside one variable binding.",
+				"The arguments are selected with the NMC.",
+				"This form suits well to a simple display of informations.",
+				"HP OpenView Display=> Packed form: 2"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "packedCmipTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Packed forwarded trap ($v2) notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-NMC-PROXY-AGENT-MIB::packedCmipTrap HPOV-NNM-MIB::openViewSeverity s EXAMPLE ALCATEL-NMC-PROXY-AGENT-MIB::packedForm s EXAMPLE",
+			"trap" : {
+				"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::packedCmipTrap",
+				"oid" : "1.3.6.1.4.1.637.64.0.10.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The OpenView event severity associated with the trap/event."
+						],
+						"name" : "HPOV-NNM-MIB::openViewSeverity",
+						"oid" : "1.3.6.1.4.1.11.2.17.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"contains the packed form of a part (or all) of the arguments",
+							"of a CMIP notification"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::packedForm",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-NMC-PROXY-AGENT-MIB::startOfResyncTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"start of resynchronization :",
+				"this trap announces the beginning of the reemission of all",
+				"the traps corresponding to the active alarms of",
+				"the managed nodes.",
+				"HP OpenView Display=> Start of resynchronization: "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "startOfResyncTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Resynchronization started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-NMC-PROXY-AGENT-MIB::startOfResyncTrap ",
+			"trap" : {
+				"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::startOfResyncTrap",
+				"oid" : "1.3.6.1.4.1.637.64.0.10.1.2.0.2"
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-NMC-PROXY-AGENT-MIB::cmipTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"developped form trap :",
+				"contains all arguments of the CMIP notification, each of them",
+				"is placed in one independant variable binding.",
+				"This form suits well for the processing of informations on",
+				"a supervision station in a view to build an application",
+				"like a topology presentation and animation.",
+				"HP OpenView Display=> Top class: 1 | Base Class: 2 | Hierarchy height: 3 | ClassId: 4-6-8-10-12 Values: 5-7-9-11-13 | Date: 14 | Event type: 15 | Severity: 16 | Probable cause: 17 | Notification ID: 18 | Add Text: 19"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v16==6) ? 1 : (($v16==1) ? 3 : 2)"
+				},
+				"EventType" : "cmipTrap:$v15",
+				"ExpireTime" : {
+					"eval" : "($v16==6 || $v16==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v16==6) ? 0 : (($v16==1) ? 1 : (($v16==2) ? 5 : (($v16==3) ? 4 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v16==6) ? 'CMIP notification cleared' : 'CMIP notification occurred due to $v17. $v19'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-NMC-PROXY-AGENT-MIB::cmipTrap ALCATEL-NMC-PROXY-AGENT-MIB::topClass i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::baseClass i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::rdnDepth i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::classId1 i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue1 s EXAMPLE ALCATEL-NMC-PROXY-AGENT-MIB::classId2 i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue2 s EXAMPLE ALCATEL-NMC-PROXY-AGENT-MIB::classId3 i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue3 s EXAMPLE ALCATEL-NMC-PROXY-AGENT-MIB::classId4 i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue4 s EXAMPLE ALCATEL-NMC-PROXY-AGENT-MIB::classId5 i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue5 s EXAMPLE ALCATEL-NMC-PROXY-AGENT-MIB::eventTime s EXAMPLE ALCATEL-NMC-PROXY-AGENT-MIB::eventType i 2 ALCATEL-NMC-PROXY-AGENT-MIB::severity i 1 ALCATEL-NMC-PROXY-AGENT-MIB::probableCause i 0 ALCATEL-NMC-PROXY-AGENT-MIB::notificationId i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::addText s EXAMPLE",
+			"trap" : {
+				"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::cmipTrap",
+				"oid" : "1.3.6.1.4.1.637.64.0.10.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"identifier which allows the identification of the system.",
+							"For instance an Alcatel 4400"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::topClass",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"identifier which allows to identify the impacted object",
+							"without ambiguity for a given system. For instance",
+							"a board of a 4400"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::baseClass",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"value that specifies the depth of the impacted object class",
+							"inside the containment tree"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::rdnDepth",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"object class, level one"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::classId1",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"value, level one"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue1",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"object class, level two"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::classId2",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"value, level two"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue2",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"object class, level three"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::classId3",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"value, level three"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue3",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"object class, level four"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::classId4",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"value, level four"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue4",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.4.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"object class, level five"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::classId5",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.5.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"value, level five"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue5",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.5.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"date and time of detection of the notification",
+							"by the managed system"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::eventTime",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"OSI type of the notification"
+						],
+						"enums" : {
+							"2" : "communicationAlarm",
+							"3" : "environmentalAlarm",
+							"4" : "equipmentAlarm",
+							"10" : "processingErrorAlarm",
+							"11" : "qualityOfServiceAlarm"
+						},
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::eventType",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSI severity of the notification"
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "clear"
+						},
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::severity",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"probable cause of the notification"
+						],
+						"enums" : {
+							"0" : "Unknown",
+							"1" : "AdapterError",
+							"2" : "ApplicationSubsystemFailure",
+							"3" : "BandWidthReduced",
+							"4" : "CallEstablishmentError",
+							"5" : "CommunicationsProtocolError",
+							"6" : "CommunicationsSubsystemFailure",
+							"7" : "ConfigurationOrCustomizationError",
+							"8" : "Congestion",
+							"9" : "CorruptData",
+							"10" : "CpuCyclesLimitExceeded",
+							"11" : "DataSetOrModemError",
+							"12" : "DegradedSignal",
+							"13" : "DteDceInterfaceError",
+							"14" : "EnclosureDoorOpen",
+							"15" : "EquipmentMalFunction",
+							"16" : "ExcessiveVibration",
+							"17" : "FileError",
+							"18" : "FireDetected",
+							"19" : "FloodDetected",
+							"20" : "FramingError",
+							"21" : "HeatingVentilationCoolingSystemProblem",
+							"22" : "HumidityUnacceptable",
+							"23" : "InputOutputDeviceError",
+							"24" : "InputDeviceError",
+							"25" : "LANError",
+							"26" : "LeakDetected",
+							"27" : "LocalNodeTransmissionError",
+							"28" : "LossOfFrame",
+							"29" : "LossOfSignal",
+							"30" : "MaterialSupplyExhausted",
+							"31" : "MultiplexerProblem",
+							"32" : "OutOfMemory",
+							"33" : "OutputDeviceError",
+							"34" : "PerformanceDegraded",
+							"35" : "PowerProblem",
+							"36" : "PressureUnacceptable",
+							"37" : "ProcessorProblem",
+							"38" : "PumpFailure",
+							"39" : "QueueSizeExceeded",
+							"40" : "ReceiveFailure",
+							"41" : "ReceiverFailure",
+							"42" : "RemoteNodeTransmissionFailure",
+							"43" : "ResourceAtOrNearingCapacity",
+							"44" : "ResponseTimeExcessive",
+							"45" : "RetransmissionRateExcessive",
+							"46" : "SoftwareError",
+							"47" : "SoftwareProgramAbnormallyTerminated",
+							"48" : "SoftwareProgramError",
+							"49" : "StorageCapacityProblem",
+							"50" : "TemperatureUnacceptable",
+							"51" : "ThresholdCrossed",
+							"52" : "TimingProblem",
+							"53" : "ToxicLeakDetected",
+							"54" : "TransmitFailure",
+							"55" : "TransmitterFailure",
+							"56" : "UnderlyingResourceUnavailable",
+							"57" : "VersionMismatch"
+						},
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::probableCause",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"number that permits the exact identification of the",
+							"alarm that occured"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::notificationId",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"contains text information"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::addText",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-NMC-PROXY-AGENT-MIB::startProxyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"proxy started :",
+				"this trap announces that a proxy has just been started",
+				"HP OpenView Display=> Start of NMC proxy A"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "startProxyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Proxy started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-NMC-PROXY-AGENT-MIB::startProxyTrap ",
+			"trap" : {
+				"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::startProxyTrap",
+				"oid" : "1.3.6.1.4.1.637.64.0.10.1.2.0.4"
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-NMC-PROXY-AGENT-MIB::stopProxyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"proxy stopped :",
+				"this trap announces that a proxy has just been stopped",
+				"HP OpenView Display=> End of proxy: A"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "stopProxyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Proxy stopped"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-NMC-PROXY-AGENT-MIB::stopProxyTrap ",
+			"trap" : {
+				"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::stopProxyTrap",
+				"oid" : "1.3.6.1.4.1.637.64.0.10.1.2.0.5"
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-NMC-PROXY-AGENT-MIB::eventLostTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"event lost :",
+				"this trap announces that a proxy didn't succeed to send all",
+				"events and that the operator should perform a resynchronization.",
+				"HP OpenView Display=> Event lost from A"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "eventLostTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Event lost"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-NMC-PROXY-AGENT-MIB::eventLostTrap ",
+			"trap" : {
+				"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::eventLostTrap",
+				"oid" : "1.3.6.1.4.1.637.64.0.10.1.2.0.6"
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-NMC-PROXY-AGENT-MIB::topClassStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"state trap :",
+				"contains arguments that describe the current state of a top class",
+				"object.",
+				"HP OpenView Display=> Voice element 2 of class 1 has state 3"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==6) ? 1 : (($v3==1) ? 3 : 2)"
+				},
+				"EventType" : "topClassStateTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==6 || $v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==6) ? 0 : (($v3==1) ? 1 : (($v3==2) ? 5 : (($v3==3) ? 4 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Top class state trap"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-NMC-PROXY-AGENT-MIB::topClassStateTrap ALCATEL-NMC-PROXY-AGENT-MIB::classId1 i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue1 s EXAMPLE ALCATEL-NMC-PROXY-AGENT-MIB::severity i 1 ALCATEL-NMC-PROXY-AGENT-MIB::objectNumber i 9999 ALCATEL-NMC-PROXY-AGENT-MIB::parentNumber i 9999",
+			"trap" : {
+				"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::topClassStateTrap",
+				"oid" : "1.3.6.1.4.1.637.64.0.10.1.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"object class, level one"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::classId1",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"value, level one"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::rdnValue1",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"OSI severity of the notification"
+						],
+						"enums" : {
+							"1" : "indeterminate",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "clear"
+						},
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::severity",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Object numeric identifier"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::objectNumber",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Parent object numeric identifier"
+						],
+						"name" : "ALCATEL-NMC-PROXY-AGENT-MIB::parentNumber",
+						"oid" : "1.3.6.1.4.1.637.64.0.10.1.1.2.4.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

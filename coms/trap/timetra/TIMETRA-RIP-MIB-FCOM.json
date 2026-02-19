@@ -1,0 +1,315 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201102010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-RIP-MIB::vRtrRipAuthTypeMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vRtrRipAuthTypeMismatch trap is generated when the ",
+				"authentication type field in a received RIPv2 packet ",
+				"conflicts with the authentication type configured for",
+				"this router."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrRipAuthTypeMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Authentication type field mismatched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RIP-MIB::vRtrRipAuthTypeMismatch TIMETRA-RIP-MIB::vRtrRipPeerLastUpdate t 31536000",
+			"trap" : {
+				"name" : "TIMETRA-RIP-MIB::vRtrRipAuthTypeMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.9.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"vRtrRipPeerLastUpdate specifies the value of sysUpTime when ",
+							"the most recent RIP update was received from this peer."
+						],
+						"name" : "TIMETRA-RIP-MIB::vRtrRipPeerLastUpdate",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.9.7.1.3",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RIP-MIB::vRtrRipAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vRtrRipAuthFailure trap is generated when the ",
+				"authentication key in a received RIPv2 packet conflicts ",
+				"with the authentication key configured for this router."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrRipAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Router RIP authentication failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RIP-MIB::vRtrRipAuthFailure TIMETRA-RIP-MIB::vRtrRipPeerLastUpdate t 31536000",
+			"trap" : {
+				"name" : "TIMETRA-RIP-MIB::vRtrRipAuthFailure",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.9.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"vRtrRipPeerLastUpdate specifies the value of sysUpTime when ",
+							"the most recent RIP update was received from this peer."
+						],
+						"name" : "TIMETRA-RIP-MIB::vRtrRipPeerLastUpdate",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.9.7.1.3",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RIP-MIB::vRtrRipInstanceShuttingDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vRtrRipInstanceShuttingDown trap is generated when the RIP ",
+				"instance shuts down on its own accord when the protocol runs ",
+				"out of resources such as memory. The instance will attempt to",
+				"restart within 30 seconds of shutting down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrRipInstanceStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "RIP instance is shut down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RIP-MIB::vRtrRipInstanceShuttingDown TIMETRA-RIP-MIB::vRtrRipInstanceOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceShuttingDown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.9.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrRipInstanceOperStatus indicates the current",
+							"operational status of this RIP instance"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.9.2.1.26",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RIP-MIB::vRtrRipInstanceRestarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"When a RIP protocol instance runs out of resources, the instance ",
+				"will shut down and then attempt to restart within 30 seconds. A ",
+				"vRtrRipInstanceRestarted trap is generated when the RIP instance ",
+				"has restarted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrRipInstanceStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "RIP instance restarted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RIP-MIB::vRtrRipInstanceRestarted TIMETRA-RIP-MIB::vRtrRipInstanceOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceRestarted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.9.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrRipInstanceOperStatus indicates the current",
+							"operational status of this RIP instance"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.9.2.1.26",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RIP-MIB::vRtrRipInstanceExpLmtReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vRtrRipInstanceExpLmtReached notification is generated when the ",
+				"configured value of exported routes, vRtrRipInstanceExportLimit is ",
+				"reached. Additional routes would not be exported into RIP from the ",
+				"route table."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrRipInstanceExpLmtReached",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Configured value of exported routes exceeded the threshold ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RIP-MIB::vRtrRipInstanceExpLmtReached TIMETRA-RIP-MIB::vRtrRipInstanceExportLimit u 9999",
+			"trap" : {
+				"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceExpLmtReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.9.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrRipInstanceExportLimit specifies the maximum number of ",
+							"routes or prefixes that can be exported into RIP from the route table.",
+							"",
+							"A value of 0 indicates that the export limit for routes or prefixes has",
+							"been disabled."
+						],
+						"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceExportLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.9.2.1.28",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RIP-MIB::vRtrRipInstanceExpLmtWarning",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vRtrRipInstanceExpLmtWarning notification is generated when the ",
+				"number of exported routes is equal to the configured percent, ",
+				"vRtrRipInstanceExpLmtLogPercent of the export limit, ",
+				"vRtrRipInstanceExportLimit. Additional routes will continue to be ",
+				"exported into RIP from the route table till the export limit is ",
+				"reached."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrRipInstanceExpLmtWarning",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Router RIP instance export limit ($v1) warning detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RIP-MIB::vRtrRipInstanceExpLmtWarning TIMETRA-RIP-MIB::vRtrRipInstanceExportLimit u 9999 TIMETRA-RIP-MIB::vRtrRipInstanceExpLmtLogPercent u 0",
+			"trap" : {
+				"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceExpLmtWarning",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.9.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrRipInstanceExportLimit specifies the maximum number of ",
+							"routes or prefixes that can be exported into RIP from the route table.",
+							"",
+							"A value of 0 indicates that the export limit for routes or prefixes has",
+							"been disabled."
+						],
+						"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceExportLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.9.2.1.28",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrRipInstanceExpLmtLogPercent specifies the percentage",
+							"of the export-limit, at which a warning log message and SNMP ",
+							"notification would be sent. This would only be a warning and additional ",
+							"routes will be learned up to 100% of vRtrRipInstanceExportLimit.",
+							"",
+							"A value of 0 indicates that vRtrRipInstanceExpLmtLogPercent is disabled",
+							"and no log message or SNMP notification would be sent."
+						],
+						"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceExpLmtLogPercent",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.9.2.1.29",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-RIP-MIB::vRtrRipInstanceRtsExpLmtDropped",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vRtrRipInstanceRtsExpLmtDropped notification is generated when the ",
+				"number of exported routes drops below the export limit, ",
+				"vRtrRipInstanceExportLimit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrRipInstanceRtsExpLmtDropped",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Number of exported routes droped below the export limit ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-RIP-MIB::vRtrRipInstanceRtsExpLmtDropped TIMETRA-RIP-MIB::vRtrRipInstanceExportLimit u 9999",
+			"trap" : {
+				"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceRtsExpLmtDropped",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.9.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrRipInstanceExportLimit specifies the maximum number of ",
+							"routes or prefixes that can be exported into RIP from the route table.",
+							"",
+							"A value of 0 indicates that the export limit for routes or prefixes has",
+							"been disabled."
+						],
+						"name" : "TIMETRA-RIP-MIB::vRtrRipInstanceExportLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.9.2.1.28",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

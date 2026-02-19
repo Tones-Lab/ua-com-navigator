@@ -1,0 +1,2512 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201503201400Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncControlResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification sent at the end of a long running command. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncControlResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==1 || $v4==5 || $v4==12 || $v4==16) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Synchronization control request $v3 result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncControlResult SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncCgSourcePriority i 0 SHE-SYNC-MIB::sheSyncCgControlReq i 1 SHE-SYNC-MIB::sheSyncCgControlReqResult i 11",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncControlResult SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncCgSourcePriority i 0 SHE-SYNC-MIB::sheSyncCgControlReq i 1 SHE-SYNC-MIB::sheSyncCgControlReqResult i 16"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncControlResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to select an entry in the sheSyncSourceTable where ",
+							"sheSyncSourcePriority == sheSyncCgSourcePriority."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgSourcePriority",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"",
+							"sheModifySyncSource (101):",
+							"sheSyncCgSourcePriority",
+							"sheSyncCgSourceAlarmSeverityIndex",
+							"",
+							"sheModifySyncWaitTimeToRestore (102):",
+							"sheSyncCgSourceWaitTimeToRestore ",
+							"",
+							"sheModifySyncGlobals (103):",
+							"-> New in R2.8",
+							"sheSyncCgMode",
+							"sheSyncCgSourceWaitTimeToRestore",
+							"sheSyncCgSourceSSMLevel",
+							"sheSyncCgBestForwardedSSMLevel (new with R4.0M) ",
+							"",
+							"sheModifyUsedSyncSource (104): ",
+							"-> A maximum two sources may be selected from sheSyncSourceAvailabilityTable, ",
+							"if hiX1148V, CXU_B3, CXU_G1 or CXU_G11 is used.",
+							"All other CXU types will only accept one table entry!",
+							"-> Only a maximum of 2 different SyncE sources may be used for both T0 and T4. ",
+							"Attempting to configure a third SyncE source will result in an error.",
+							"sheSyncCgSourcePriority",
+							"sheSyncCgSourceAvailabilityIndex",
+							"sheSyncCgSourceSSMLevel",
+							"",
+							"sheSetVaribaleSyncSourceTypeToT3 (105):",
+							"sheSetVaribaleSyncSourceTypeToE1 (106):",
+							"sheSetVaribaleSyncSourceTypeToBits (107):",
+							"-> New in R2.8 MTC",
+							"-> Applicable only if clock sources for which ",
+							"sheSyncSourceAvailabilityTypeSelectionPossible == true(1) are available on ",
+							"the system.",
+							"-> More then one trap can be sent, if more then one clock source is reconfigured ",
+							"by a single command.",
+							"-> The affected clock sources should NOT be selected as clock synchronization ",
+							"references when these commands are executed.",
+							"",
+							"setSyncQLModeEnable (111):",
+							"-> New in R4.0M",
+							"-> Applicable only to clock sources where ",
+							"sheSyncSourceAvailabilityType == sheEthernetSyncSource(4)",
+							"-> The affected clock sources should NOT be selected as clock synchronization ",
+							"references for T0 or T4 when these commands are executed.",
+							"sheSyncCgSourceAvailabilityIndex",
+							"",
+							"setSyncQLModeDisable (112):",
+							"-> New in R4.0M",
+							"-> Applicable only to clock sources where ",
+							"sheSyncSourceAvailabilityType == sheEthernetSyncSource(4)",
+							"-> The affected clock sources should NOT be selected as clock synchronization ",
+							"references for T0 or T4 when these commands are executed.",
+							"sheSyncCgSourceAvailabilityIndex",
+							"",
+							"enable1ppsOutput (120):",
+							"-> New in SR5.1.",
+							"-> Supported on CXU_D1 only.",
+							"",
+							"disable1ppsOutput (121):",
+							"-> New in SR5.1.",
+							"-> Supported on CXU_D1 only.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: enable1ppsOutput(120) and disable1ppsOutput(121) added.",
+							""
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"101" : "sheModifySyncSource",
+							"102" : "sheModifySyncWaitTimeToRestore",
+							"103" : "sheModifySyncGlobals",
+							"104" : "sheModifyUsedSyncSource",
+							"105" : "sheSetVaribaleSyncSourceTypeToT3",
+							"106" : "sheSetVaribaleSyncSourceTypeToE1",
+							"107" : "sheSetVaribaleSyncSourceTypeToBits",
+							"110" : "setSyncOperationMode",
+							"111" : "setSyncQLModeEnable",
+							"112" : "setSyncQLModeDisable",
+							"115" : "sheModifyExtT4UsedSyncSource",
+							"116" : "setSyncExtT4Source",
+							"117" : "setSyncExtT4MinQL",
+							"118" : "setSyncExtT4AlarmSeverity",
+							"120" : "enable1ppsOutput",
+							"121" : "disable1ppsOutput"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlReq",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command. "
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"5" : "commExecStarted",
+							"11" : "paramFaulty",
+							"12" : "requestBusy",
+							"13" : "setDataFailed",
+							"14" : "aswTimeout",
+							"15" : "commandFailed",
+							"16" : "commandSucceeded",
+							"23" : "wrongAlarmSeverityIndex",
+							"24" : "clockSourceNotAvailable",
+							"25" : "clockSourceNotAccessible",
+							"26" : "clockModeNotSupported",
+							"27" : "clockSourceTypeModifyNotSupported",
+							"28" : "clockSourceTypeModifyNotPossibleForActiveClocks",
+							"29" : "clockSourceSyncEthRestrictionForParallelT0andT4Usage",
+							"30" : "clockSourceQLModeModifyNotSupportedForThisSourceType",
+							"31" : "clockSourceQLModeModifyNotSupportedForSelectedSources"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncClockSourceModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that an entry in the sheSyncSourceTable ",
+				"has been modified by user configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncClockSourceModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Synchronization clock source modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncClockSourceModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncCgSourcePriority i 0 SHE-SYNC-MIB::sheSyncSourceAlarmSeverityIndex i 1",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncClockSourceModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to select an entry in the sheSyncSourceTable where ",
+							"sheSyncSourcePriority == sheSyncCgSourcePriority."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgSourcePriority",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The configured Alarm Severity Profile for this source.",
+							"",
+							"The value of this object references the index of a row in ",
+							"the sheAlarmSeverityProfileTable."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncSourceAlarmSeverityIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.2.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncWaitTimeToRestoreModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that the WaitTimeToRestore has been ",
+				"modified by user configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncWaitTimeToRestoreModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Synchronization WaitTimeToRestore changed to $v2 ds"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncWaitTimeToRestoreModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncWaitTimeToRestore i 9999",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncWaitTimeToRestoreModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The configuration of the time that has to expire before switch back to a ",
+							"higher clock source after error condition.",
+							"",
+							"Unit is 100 msec.",
+							"",
+							"NOTE:",
+							"The SYNTAX has been restricted with R3.7M to a set of fixed values, ",
+							"representing within the range 0 - 15 minutes, because of HW restrictions. ",
+							"Note also that the basic unit of measurement has not been changed, so that to",
+							"configure a time of 1 min, a value of 600 (600 x 100msec) is still used."
+						],
+						"enums" : {
+							"0" : "noWaitTime",
+							"600" : "wait1min",
+							"1200" : "wait2min",
+							"1800" : "wait3min",
+							"2400" : "wait4min",
+							"3000" : "wait5min",
+							"3600" : "wait6min",
+							"4200" : "wait7min",
+							"4800" : "wait8min",
+							"5400" : "wait9min",
+							"6000" : "wait10min",
+							"6600" : "wait11min",
+							"7200" : "wait12min",
+							"7800" : "wait13min",
+							"8400" : "wait14min",
+							"9000" : "wait15min"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncWaitTimeToRestore",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncActiveClockSourceChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Status notification indicating that the active clock synchronization source ",
+				"for T0 has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncActiveClockSourceChanged",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==0) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==0) ? 'No sync source available using internal clock' : 'Synchronization active clock source changed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncActiveClockSourceChanged SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncActiveClockSource i 0",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncActiveClockSourceChanged SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncActiveClockSource i 2"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncActiveClockSourceChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A status object reporting the clock synchronization source that is ",
+							"currently selected for T0. ",
+							"",
+							"VALUES",
+							"0 : No synchronizaton source is available or configured and the NE ",
+							"uses its own internal clock source on the CXU for synchronization.",
+							"1..2 : Identifies an entry in the sheSyncSourceTable."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncActiveClockSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncGlobalsModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that the global objects in ",
+				"sheSyncGlobalObjects have been modified by user configuration.",
+				"REVISION HISTORY",
+				"R2.8: New.",
+				"R4.0M: Additional objects added."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncGlobalsModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Global synchronization configuration modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncGlobalsModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncWaitTimeToRestore i 0 SHE-SYNC-MIB::sheSyncMode i 1 SHE-SYNC-MIB::sheSyncLocalClockSSMLevel u 0 SHE-SYNC-MIB::sheSyncCgBestForwardedSSMLevel u 0",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncGlobalsModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.5",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The configuration of the time that has to expire before switch back to a ",
+							"higher clock source after error condition.",
+							"",
+							"Unit is 100 msec.",
+							"",
+							"NOTE:",
+							"The SYNTAX has been restricted with R3.7M to a set of fixed values, ",
+							"representing within the range 0 - 15 minutes, because of HW restrictions. ",
+							"Note also that the basic unit of measurement has not been changed, so that to",
+							"configure a time of 1 min, a value of 600 (600 x 100msec) is still used."
+						],
+						"enums" : {
+							"0" : "noWaitTime",
+							"600" : "wait1min",
+							"1200" : "wait2min",
+							"1800" : "wait3min",
+							"2400" : "wait4min",
+							"3000" : "wait5min",
+							"3600" : "wait6min",
+							"4200" : "wait7min",
+							"4800" : "wait8min",
+							"5400" : "wait9min",
+							"6000" : "wait10min",
+							"6600" : "wait11min",
+							"7200" : "wait12min",
+							"7800" : "wait13min",
+							"8400" : "wait14min",
+							"9000" : "wait15min"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncWaitTimeToRestore",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The configuration of the synchronization mode to use for synchronization ",
+							"source selection.",
+							"",
+							"VALUES",
+							"revertive(1) : The highest priority sync source with a valid reference ",
+							"is always selected.",
+							"(Default)",
+							"nonrevertive(2) : The active sync source will always remain active so long ",
+							"as it remains valid. Only if the sync source becomes invalid",
+							"will a switchover to a valid reference source with highest ",
+							"priority be initiated.",
+							"",
+							"REVISION HISTORY",
+							"R2.8. New."
+						],
+						"enums" : {
+							"1" : "revertive",
+							"2" : "nonrevertive"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncMode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The configuration of the SSM level for the local clock.",
+							"",
+							"The SSM level for the local clock is transmitted, if all selected clock sources ",
+							"fail and the NE uses its own internal clock reference (free run) for synchronization.",
+							"",
+							"VALUES",
+							"The level is defined in 16 steps from 0..15, where 0 is the highest quality level. ",
+							"",
+							"Value SSM Quality-Level Interpretations",
+							"Code G.781 Option I G.781 Option II G.8264",
+							"Synch Networks Synch Networks",
+							"0 0000 QL-INV0 QL-STU",
+							"1 0001 QL-INV1 QL-PRS",
+							"2 0010 QL-PRC QL-INV2",
+							"3 0011 QL-INV3 QL-INV3",
+							"4 0100 QL-SSU-A QL-TNC",
+							"5 0101 QL-INV5 QL-INV5",
+							"6 0110 QL-INV6 QL-INV6",
+							"7 0111 QL-INV7 QL-ST2",
+							"8 1000 QL-SSU-B QL-INV8",
+							"9 1001 QL-INV9 QL-INV9",
+							"10 1010 QL-INV10 QL-ST3 QL-EEC2",
+							"11 1011 QL-SEC QL-INV11 QL-EEC1",
+							"12 1100 QL-INV12 QL-SMC",
+							"13 1101 QL-INV13 QL-ST3E",
+							"14 1110 QL-INV14 QL-PROV",
+							"15 1111 QL-DNU QL-DUS",
+							"",
+							"REVISION HISTORY",
+							"R2.8. New."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncLocalClockSSMLevel",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to set sheSyncBestForwardedSSMLevel.",
+							"",
+							"REVISION HISTORY",
+							"R4.0. New."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgBestForwardedSSMLevel",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.12",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncUsedSyncSourcesModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that an entry in the sheSyncSourceTable ",
+				"has been modified by user configuration.",
+				"REVISION HISTORY",
+				"R2.8. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncUsedSyncSourcesModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Used synchronization source table reconfigured"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncUsedSyncSourcesModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncCgSourcePriority i 0 SHE-SYNC-MIB::sheSyncCgSourceAvailabilityIndex i 0 SHE-SYNC-MIB::sheSyncCgSourceSSMLevel u 0",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncUsedSyncSourcesModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.6",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to select an entry in the sheSyncSourceTable where ",
+							"sheSyncSourcePriority == sheSyncCgSourcePriority."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgSourcePriority",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used to set sheSyncSourceSelectedAvailabilityIndex.",
+							"",
+							"REVISION HISTORY",
+							"R2.8. New."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgSourceAvailabilityIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used to set sheSyncSourceSSMLevel.",
+							"",
+							"REVISION HISTORY",
+							"R2.8. New."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgSourceSSMLevel",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.9",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncAvailableSyncSourceTypeModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that the types of an available source",
+				"was modified by user configuration.",
+				"More then one trap may be sent, if more then one clock source was modified by ",
+				"a single command.",
+				"REVISION HISTORY",
+				"R2.8. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncAvailableSyncSourceTypeModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Type of available sync source reconfigured: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncAvailableSyncSourceTypeModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncSourceAvailabilityType i 1",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncAvailableSyncSourceTypeModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.7",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The type of the synchronization source of the network element.",
+							"",
+							"VALUES",
+							"sheInternalSyncSource(1) : Internal clock source; ",
+							"always available on CXU boards",
+							"sheT3orE1SyncSource(2) : CLK1/CLK2 input on PM module; ",
+							"clock mode currently not known",
+							"sheBitsSyncSource(3) : CLK1/CLK2 input on PM module; ",
+							"clock mode has been set to BITS",
+							"sheEthernetSyncSource(4) : Synchronous Ethernet (SyncE) source",
+							"sheTimingOverPacketSyncSource(6) : Timing over Packet source;",
+							"NOTE: Not supported by NE",
+							"sheT3SyncSource(8) : CLK1/CLK2 input on PM module; ",
+							"clock mode has been set to T3",
+							"sheE1SyncSource(9) : CLK1/CLK2 input on PM module; ",
+							"clock mode has been set to E1",
+							"",
+							"NOTE",
+							"The NE cannot automatically determine the clocking mode used for CLK1/CLK2 and, ",
+							"therefore, this needs to be configured by the user for correct operation. ",
+							"The configuration applies to both CLK1 and CLK2, i.e., these two clock inputs ",
+							"can only be configured for the same clocking mode. "
+						],
+						"enums" : {
+							"1" : "sheInternalSyncSource",
+							"2" : "sheT3orE1SyncSource",
+							"3" : "sheBitsSyncSource",
+							"4" : "sheEthernetSyncSource",
+							"6" : "sheTimingOverPacketSyncSource",
+							"8" : "sheT3SyncSource",
+							"9" : "sheE1SyncSource"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncSourceAvailabilityType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.5.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncAvailabilityTableUpdated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Status notification indicating that one or more entries in the ",
+				"sheSyncSourceAvailabilityTable have changed.",
+				"This can occur, if power modules with clock interfaces are plugged in or out.",
+				"REVISION HISTORY",
+				"R2.8. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncAvailabilityTableUpdated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "List of available sync sources changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncAvailabilityTableUpdated SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncAvailabilityTableUpdated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.8",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncOperationModeModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that sheSyncOperationMode has been ",
+				"modified by user configuration.",
+				"REVISION HISTORY",
+				"R3.7M: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncOperationModeModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Synchronization operation mode changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncOperationModeModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncCgOperationMode i 1 SHE-SYNC-MIB::sheSyncCgControlStatus i 0 SHE-SYNC-MIB::sheSyncCgControlReqResult i 1",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncOperationModeModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.10",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to set sheSyncOperationMode.",
+							"",
+							"NOTE:",
+							"Not supported by NE.",
+							"",
+							"REVISION HISTORY",
+							"R3.7M: New."
+						],
+						"enums" : {
+							"1" : "pllSyncMode",
+							"2" : "ptpSyncMode"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncCgOperationMode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the status of a control request. "
+						],
+						"enums" : {
+							"0" : "requestNone",
+							"1" : "requestIdle",
+							"2" : "requestBusy",
+							"3" : "requestPassed",
+							"4" : "requestFailed"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command. "
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"5" : "commExecStarted",
+							"11" : "paramFaulty",
+							"12" : "requestBusy",
+							"13" : "setDataFailed",
+							"14" : "aswTimeout",
+							"15" : "commandFailed",
+							"16" : "commandSucceeded",
+							"23" : "wrongAlarmSeverityIndex",
+							"24" : "clockSourceNotAvailable",
+							"25" : "clockSourceNotAccessible",
+							"26" : "clockModeNotSupported",
+							"27" : "clockSourceTypeModifyNotSupported",
+							"28" : "clockSourceTypeModifyNotPossibleForActiveClocks",
+							"29" : "clockSourceSyncEthRestrictionForParallelT0andT4Usage",
+							"30" : "clockSourceQLModeModifyNotSupportedForThisSourceType",
+							"31" : "clockSourceQLModeModifyNotSupportedForSelectedSources"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncSourceModifiedReqResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating the completion of a long running command.",
+				"REVISION HISTORY",
+				"R3.7M: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncSourceModifiedReqResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==1 || $v3==5 || $v3==12 || $v3==16) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Synchronization source modification request $v1 result: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncSourceModifiedReqResult SHE-SYNC-MIB::sheSyncCgControlReq i 1 SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncCgControlReqResult i 11",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncSourceModifiedReqResult SHE-SYNC-MIB::sheSyncCgControlReq i 1 SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncCgControlReqResult i 16"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncSourceModifiedReqResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.11",
+				"variables" : [
+					{
+						"description" : [
+							"",
+							"sheModifySyncSource (101):",
+							"sheSyncCgSourcePriority",
+							"sheSyncCgSourceAlarmSeverityIndex",
+							"",
+							"sheModifySyncWaitTimeToRestore (102):",
+							"sheSyncCgSourceWaitTimeToRestore ",
+							"",
+							"sheModifySyncGlobals (103):",
+							"-> New in R2.8",
+							"sheSyncCgMode",
+							"sheSyncCgSourceWaitTimeToRestore",
+							"sheSyncCgSourceSSMLevel",
+							"sheSyncCgBestForwardedSSMLevel (new with R4.0M) ",
+							"",
+							"sheModifyUsedSyncSource (104): ",
+							"-> A maximum two sources may be selected from sheSyncSourceAvailabilityTable, ",
+							"if hiX1148V, CXU_B3, CXU_G1 or CXU_G11 is used.",
+							"All other CXU types will only accept one table entry!",
+							"-> Only a maximum of 2 different SyncE sources may be used for both T0 and T4. ",
+							"Attempting to configure a third SyncE source will result in an error.",
+							"sheSyncCgSourcePriority",
+							"sheSyncCgSourceAvailabilityIndex",
+							"sheSyncCgSourceSSMLevel",
+							"",
+							"sheSetVaribaleSyncSourceTypeToT3 (105):",
+							"sheSetVaribaleSyncSourceTypeToE1 (106):",
+							"sheSetVaribaleSyncSourceTypeToBits (107):",
+							"-> New in R2.8 MTC",
+							"-> Applicable only if clock sources for which ",
+							"sheSyncSourceAvailabilityTypeSelectionPossible == true(1) are available on ",
+							"the system.",
+							"-> More then one trap can be sent, if more then one clock source is reconfigured ",
+							"by a single command.",
+							"-> The affected clock sources should NOT be selected as clock synchronization ",
+							"references when these commands are executed.",
+							"",
+							"setSyncQLModeEnable (111):",
+							"-> New in R4.0M",
+							"-> Applicable only to clock sources where ",
+							"sheSyncSourceAvailabilityType == sheEthernetSyncSource(4)",
+							"-> The affected clock sources should NOT be selected as clock synchronization ",
+							"references for T0 or T4 when these commands are executed.",
+							"sheSyncCgSourceAvailabilityIndex",
+							"",
+							"setSyncQLModeDisable (112):",
+							"-> New in R4.0M",
+							"-> Applicable only to clock sources where ",
+							"sheSyncSourceAvailabilityType == sheEthernetSyncSource(4)",
+							"-> The affected clock sources should NOT be selected as clock synchronization ",
+							"references for T0 or T4 when these commands are executed.",
+							"sheSyncCgSourceAvailabilityIndex",
+							"",
+							"enable1ppsOutput (120):",
+							"-> New in SR5.1.",
+							"-> Supported on CXU_D1 only.",
+							"",
+							"disable1ppsOutput (121):",
+							"-> New in SR5.1.",
+							"-> Supported on CXU_D1 only.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: enable1ppsOutput(120) and disable1ppsOutput(121) added.",
+							""
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"101" : "sheModifySyncSource",
+							"102" : "sheModifySyncWaitTimeToRestore",
+							"103" : "sheModifySyncGlobals",
+							"104" : "sheModifyUsedSyncSource",
+							"105" : "sheSetVaribaleSyncSourceTypeToT3",
+							"106" : "sheSetVaribaleSyncSourceTypeToE1",
+							"107" : "sheSetVaribaleSyncSourceTypeToBits",
+							"110" : "setSyncOperationMode",
+							"111" : "setSyncQLModeEnable",
+							"112" : "setSyncQLModeDisable",
+							"115" : "sheModifyExtT4UsedSyncSource",
+							"116" : "setSyncExtT4Source",
+							"117" : "setSyncExtT4MinQL",
+							"118" : "setSyncExtT4AlarmSeverity",
+							"120" : "enable1ppsOutput",
+							"121" : "disable1ppsOutput"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlReq",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The result of the last user command. "
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"5" : "commExecStarted",
+							"11" : "paramFaulty",
+							"12" : "requestBusy",
+							"13" : "setDataFailed",
+							"14" : "aswTimeout",
+							"15" : "commandFailed",
+							"16" : "commandSucceeded",
+							"23" : "wrongAlarmSeverityIndex",
+							"24" : "clockSourceNotAvailable",
+							"25" : "clockSourceNotAccessible",
+							"26" : "clockModeNotSupported",
+							"27" : "clockSourceTypeModifyNotSupported",
+							"28" : "clockSourceTypeModifyNotPossibleForActiveClocks",
+							"29" : "clockSourceSyncEthRestrictionForParallelT0andT4Usage",
+							"30" : "clockSourceQLModeModifyNotSupportedForThisSourceType",
+							"31" : "clockSourceQLModeModifyNotSupportedForSelectedSources"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncExtT4SourceTableModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that an entry in the ",
+				"sheSyncExtT4SourceTable has been modified by user configuration.",
+				"REVISION HISTORY",
+				"R4.0M. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncExtT4SourceTableModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "External T4 synchronization source table changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4SourceTableModified SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncExtT4SourceControlSourcePriority i 0 SHE-SYNC-MIB::sheSyncExtT4SourceControlAlarmSeverityIndex i 1 SHE-SYNC-MIB::sheSyncExtT4SourceControlSSMLevel u 0 SHE-SYNC-MIB::sheSyncExtT4SourceControlAvailabilityIndex i 0",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceTableModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.12",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to select an entry in the sheSyncExtT4SourceTable where ",
+							"sheSyncExtT4SourcePriority == sheSyncExtT4SourceControlSourcePriority"
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlSourcePriority",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used to set sheSyncExtT4SourceAlarmSeverityIndex using ",
+							"sheSyncExtT4SourceControlReq(115) or ",
+							"sheSyncExtT4AlarmSeverityIndex using setSyncExtT4AlarmSeverity(118)."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlAlarmSeverityIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Used to set sheSyncExtT4SourceSSMLevel."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlSSMLevel",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to set sheSyncExtT4SourceSelectedAvailabilityIndex."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlAvailabilityIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncExtT4SourceModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that sheSyncExtT4Source has been ",
+				"modified by user configuration.",
+				"REVISION HISTORY",
+				"R4.0M. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncExtT4SourceModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "External T4 synchronization source set to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4SourceModified SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncExtT4SourceControlT4Source i 0",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.13",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to set sheSyncExtT4Source."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "systemClockT0",
+							"2" : "syncEthernet"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlT4Source",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncActiveT4ClockSourceChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Status notification indicating that the active clock synchronization source ",
+				"for T4 has changed.",
+				"REVISION HISTORY",
+				"R4.0M. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncActiveT4ClockSourceChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "T4 clock source active synchronization set to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncActiveT4ClockSourceChanged SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncActiveT4ClockSource i 0",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncActiveT4ClockSourceChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.14",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A status object reporting the clock synchronization source that is ",
+							"currently selected for T4",
+							"",
+							"VALUES",
+							"0 : No synchronizaton source is available or configured; ",
+							"the T4 output is switched OFF.",
+							"1..2 : Identifies an entry in the sheSyncSourceAvailabilityTable.",
+							"",
+							"NOTES:",
+							"- T4 output is only available on the CXU_D1, CXU_G1 and CXU_G11.",
+							"- If T4 was configured in sheSyncExtT4Source to be derived from the system clock, T0, ",
+							"this object nevertheless points to the valid clock source in the ",
+							"sheSyncSourceAvailabilityTable from which T0 is currently derived.",
+							"",
+							"REVISION HISTORY",
+							"R4.0M: New."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncActiveT4ClockSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncAvailableSyncSourceQLModeModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that sheSyncSourceAvailabilityQLModeEnabled",
+				"for an entry in the sheSyncSourceAvailabilityTable has been modified by user ",
+				"configuration.",
+				"REVISION HISTORY",
+				"R4.0M. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncAvailableSyncSourceQLModeModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Synchronization source QL mode enabled' : 'Synchronization source QL mode disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncAvailableSyncSourceQLModeModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncSourceAvailabilityQLModeEnabled i 2",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncAvailableSyncSourceQLModeModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncSourceAvailabilityQLModeEnabled i 1"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncAvailableSyncSourceQLModeModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.15",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This configuration parameter enables or diables SSM-QL mode for the given source. ",
+							"",
+							"SSM-QL mode can only be enabled for SyncE sources ",
+							"(sheSyncSourceAvailabilityType == sheEthernetSyncSource(4)).",
+							"",
+							"If enabled, SSM-QL information is to be used automatic clock source selection.",
+							"",
+							"If SSM-QL information is not supported by a given source, SSM-QL mode should be ",
+							"disabled (default setting).",
+							"",
+							"If SSM-QL is disabled, the configured SSM Quality Level (sheSyncSourceSSMLevel, ",
+							"sheSyncExtT4SourceSSMLevel) will be used for clock source selection and ",
+							"forwarded SSM-QL information.",
+							"",
+							"REVISION HISTORY",
+							"R4.0M. New."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-SYNC-MIB::sheSyncSourceAvailabilityQLModeEnabled",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.5.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncExtT4MinQLModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that sheSyncExtT4MinQL ",
+				"has been modified by user configuration.",
+				"REVISION HISTORY",
+				"SR5.1. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncExtT4MinQLModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Value of minimum quality level for T4 output changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4MinQLModified SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncExtT4MinQL u 0",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncExtT4MinQLModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.16",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The configuration of the minimum quality level (QL) for the external ",
+							"T4 output.",
+							"",
+							"If the QL of the T4 output falls below this minimum, the T4 ",
+							"output will be squelched and the alarm sheSyncT4MinQLFailedAlarm ",
+							"will be raised.",
+							"",
+							"NOTES",
+							"- Since a value of 0 represents the highest quality level and a ",
+							"value of 15 the lowest, the T4 output will be squelched, if ",
+							"QL value of T4 > sheSyncExtT4MinQL.",
+							"- T4 output is only available on the CXU_D1, CXU_G1 and CXU_G11.",
+							"",
+							"VALUES",
+							"The level is defined in 16 steps from 0..15, where 0 is the ",
+							"highest quality level. ",
+							"",
+							"Value SSM Quality-Level Interpretations",
+							"Code G.781 Option I G.781 Option II G.8264",
+							"Synch Networks Synch Networks",
+							"0 0000 QL-INV0 QL-STU",
+							"1 0001 QL-INV1 QL-PRS",
+							"2 0010 QL-PRC QL-INV2",
+							"3 0011 QL-INV3 QL-INV3",
+							"4 0100 QL-SSU-A QL-TNC",
+							"5 0101 QL-INV5 QL-INV5",
+							"6 0110 QL-INV6 QL-INV6",
+							"7 0111 QL-INV7 QL-ST2",
+							"8 1000 QL-SSU-B QL-INV8",
+							"9 1001 QL-INV9 QL-INV9",
+							"10 1010 QL-INV10 QL-ST3 QL-EEC2",
+							"11 1011 QL-SEC QL-INV11 QL-EEC1",
+							"12 1100 QL-INV12 QL-SMC",
+							"13 1101 QL-INV13 QL-ST3E",
+							"14 1110 QL-INV14 QL-PROV",
+							"15 1111 QL-DNU QL-DUS",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4MinQL",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.9",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncExtT4AlarmSeverityIndexModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that sheSyncExtT4AlarmSeverityIndex",
+				"has been modified by user configuration.",
+				"REVISION HISTORY",
+				"SR5.1. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSyncExtT4AlarmSeverityIndexModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "External T4 alarm severity index configuration set to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4AlarmSeverityIndexModified SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp u 9999 SHE-SYNC-MIB::sheSyncExtT4AlarmSeverityIndex i 1",
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncExtT4AlarmSeverityIndexModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.17",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.7.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The Alarm Severity Profile assigned to the external ",
+							"T4 output.",
+							"",
+							"The value of this object references the index of a ",
+							"row in the sheAlarmSeverityProfileTable.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncExtT4AlarmSeverityIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.10",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSync1ppsOutputEnableModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration notification indicating that sheSync1ppsOutputEnable",
+				"has been modified by user configuration.",
+				"REVISION HISTORY",
+				"SR5.1. New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSync1ppsOutputEnableModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==1) ? '1PPS output signal is enabled' : '1PPS output signal is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSync1ppsOutputEnableModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSync1ppsOutputEnable i 2",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSync1ppsOutputEnableModified SHE-SYNC-MIB::sheSyncCgControlTimeStamp u 9999 SHE-SYNC-MIB::sheSync1ppsOutputEnable i 1"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSync1ppsOutputEnableModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.1.20",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SYNC-MIB::sheSyncCgControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.3.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This configuration enables (true(1)) or disables (false(2)) ",
+							"the 1 pulse per second (1pps) output signal on the CXU ",
+							"front panel.",
+							"",
+							"VALUES",
+							"true(1) - 1pps output signal is enabled",
+							"false(2) - 1pps output signal is disabled",
+							"",
+							"NOTE",
+							"1pps clock output is only supported on the CXU_D1.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1 : New."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-SYNC-MIB::sheSync1ppsOutputEnable",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncClockSourceAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised when a selected clock synchronization source is not ",
+				"available and can not be used for synchronization of T0.",
+				"sheAlarmReportingSourceType = syncSource(11)",
+				"sheAlarmReportingSource = sheSyncSourcePriority",
+				"sheAlarmSeverity = determined through the configuration ",
+				"of sheSyncSourceAlarmSeverityIndex",
+				"NOTE",
+				"This alarm is only possible on a hiX1148V, CXU_B3, CXU_D1, CXU_G1 ",
+				"or CXU_G11."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheSyncClockSourceAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Synchronization clock source in use' : 'Synchronization clock source unusable'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncClockSourceAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncClockSourceAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncClockSourceAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncClockNoSSMInfoAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised when no SSM data is incoming for a selected ",
+				"clock synchronization source for T0 that supports SSM information. ",
+				"The SSMLevelRec will be set to '1111' in this case.",
+				"sheAlarmReportingSourceType = syncSource(11)",
+				"sheAlarmReportingSource = sheSyncSourcePriority",
+				"sheAlarmSeverity = determined through the configuration ",
+				"of sheSyncSourceAlarmSeverityIndex",
+				"NOTE",
+				"This alarm is only possible on a hiX1148V, CXU_B3, CXU_D1, CXU_G1 ",
+				"or CXU_G11.",
+				"REVISION HISTORY",
+				"R2.8: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheSyncClockNoSSMInfoAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'SSM information detected on clock source' : 'No SSM information detected on clock source'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncClockNoSSMInfoAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncClockNoSSMInfoAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncClockNoSSMInfoAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncExtT4SourceAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised when a selected clock synchronization source is not ",
+				"available and can not be used for synchronization of T4.",
+				"sheAlarmReportingSourceType = syncT4Source(14)",
+				"sheAlarmReportingSource = sheSyncExtT4SourcePriority",
+				"sheAlarmSeverity = determined through the configuration ",
+				"of sheSyncExtT4SourceAlarmSeverityIndex",
+				"NOTE",
+				"This alarm is only possible on a CXU_D1, CXU_G1 or CXU_G11.",
+				"REVISION HISTORY",
+				"R4.0M: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheSyncExtT4SourceAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'T4 external synchronization clock source available' : 'T4 external synchronization clock source unavailable'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4SourceAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4SourceAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncExtT4SourceAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncExtT4NoSSMInfoAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised when no SSM data is incoming for a selected ",
+				"clock synchronization source for T4 that supports SSM information. ",
+				"The SSMLevelRec will be set to '1111' in this case.",
+				"sheAlarmReportingSourceType = syncT4Source(14)",
+				"sheAlarmReportingSource = sheSyncExtT4SourcePriority",
+				"sheAlarmSeverity = determined through the configuration ",
+				"of sheSyncExtT4SourceAlarmSeverityIndex",
+				"NOTE",
+				"This alarm is only possible on a CXU_D1, CXU_G1 or CXU_G11.",
+				"REVISION HISTORY",
+				"SR5.1: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheSyncExtT4NoSSMInfoAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Receiving SSM data from T4 external synchronization clock' : 'No SSM data from T4 external synchronization clock'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4NoSSMInfoAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4NoSSMInfoAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncExtT4NoSSMInfoAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.2.4",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncExtT4MinQLFailedAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised only if NO sheSyncExtT4NoSSMInfoAlarm ",
+				"is raised AND the received QL of the configured input used ",
+				"as source for the T4 output falls below the minimum allowed ",
+				"QL level as configured in sheSyncExtT4MinQL, in which case ",
+				"the output of T4 will have been squelched.",
+				"sheAlarmReportingSourceType = syncT4Out(31)",
+				"sheAlarmReportingSource = (no relevance)",
+				"sheAlarmSeverity = determined through the configuration ",
+				"of sheSyncExtT4AlarmSeverityIndex",
+				"NOTE",
+				"This alarm is only possible on a CXU_D1, CXU_G1 or CXU_G11.",
+				"REVISION HISTORY",
+				"SR5.1: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheSyncExtT4MinQLFailedAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'T4 external source quality level is in normal range' : 'T4 external source quality is below minimum level'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4MinQLFailedAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncExtT4MinQLFailedAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncExtT4MinQLFailedAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SYNC-MIB::sheSyncClockSourceMinQLFailedAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised when the QL of a clock source",
+				"falls below the minimum allowed QL level as configured in ",
+				"sheSyncSourceSSMLevel or sheSyncExtT4SourceSSMLevel ",
+				"depending on whether the source is T0 or T4 respectively.",
+				"sheAlarmReportingSourceType = T0: syncSource(11) ",
+				"T4: syncT4Source(14)",
+				"sheAlarmReportingSource = 0 = Prio 1",
+				"1 = Prio 2",
+				"sheAlarmSeverity = syncSource(11): ",
+				"determined through the configuration ",
+				"of sheSyncSourceAlarmSeverityIndex",
+				"syncT4Source(14): ",
+				"determined through the configuration ",
+				"of sheSyncExtT4SourceAlarmSeverityIndex",
+				"NOTE",
+				"This alarm is only possible on a CXU_D1, CXU_G1 or CXU_G11.",
+				"REVISION HISTORY",
+				"SR5.1: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheSyncClockSourceMinQLFailedAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Synchronization clock source quality level is in normal range' : 'Synchronization clock source quality is below minimum level'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncClockSourceMinQLFailedAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-SYNC-MIB::sheSyncClockSourceMinQLFailedAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-SYNC-MIB::sheSyncClockSourceMinQLFailedAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.15.1.4.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

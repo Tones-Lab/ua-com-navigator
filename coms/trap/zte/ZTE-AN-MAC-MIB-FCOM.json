@@ -1,0 +1,55 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201404090000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ZTE-AN-MAC-MIB::zxAnMacTableUtilOverThresh",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the current utilization exceeds the threshold in a ",
+				"monitoring period, then a notification is generated. In one",
+				"monitoring period the system may generate only one ",
+				"notification at most."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zxAnMacTableUtilOverThresh",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Current utilization ($v1) exceeded the threshold ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-AN-MAC-MIB::zxAnMacTableUtilOverThresh ZTE-AN-MAC-MIB::zxAnMacTableCurrUtilization i 9999 ZTE-AN-MAC-MIB::zxAnMacTableUtilizationThreshold i 1",
+			"trap" : {
+				"name" : "ZTE-AN-MAC-MIB::zxAnMacTableUtilOverThresh",
+				"oid" : "1.3.6.1.4.1.3902.1082.40.10.3.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The current utilization of the MAC forwarding table."
+						],
+						"name" : "ZTE-AN-MAC-MIB::zxAnMacTableCurrUtilization",
+						"oid" : "1.3.6.1.4.1.3902.1082.40.10.2.1.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The utilization threshold of the MAC forwarding table. The",
+							"zxAnMacTableUtilOverThresh trap should be generated when it",
+							"is exceeded."
+						],
+						"name" : "ZTE-AN-MAC-MIB::zxAnMacTableUtilizationThreshold",
+						"oid" : "1.3.6.1.4.1.3902.1082.40.10.2.1.1.8",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

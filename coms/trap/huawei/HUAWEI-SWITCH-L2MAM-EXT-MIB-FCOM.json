@@ -1,0 +1,958 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201508041600Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap when mac-address is learned or aging."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwMacTrapAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'MAC address is learned or aging'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapAlarm HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapMacInfo s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapAlarm",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"The information of mac-trap."
+						],
+						"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapMacInfo",
+						"oid" : "1.3.6.1.4.1.2011.5.25.315.2.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwPortVlanSecureMacAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The alarm when MAC addresses that received are illegal"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwPortVlanSecureMacAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "VlanId:$v3",
+				"Summary" : "Received MAC addresses is illegal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwPortVlanSecureMacAlarm RFC1213-MIB::ifDescr s EXAMPLE HUAWEI-L2MAM-MIB::hwCfgFdbMac s EXAMPL HUAWEI-L2MAM-MIB::hwCfgFdbVlanId u 0 HUAWEI-L2MAM-MIB::hwPortSecurityProtectAction i 1",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwPortVlanSecureMacAlarm",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"A textual string containing information about the",
+							"interface. This string should include the name of the",
+							"manufacturer, the product name and the version of the",
+							"interface hardware/software."
+						],
+						"name" : "RFC1213-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object indicates the unicast MAC address entry in the static MAC address table."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbMac",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object indicates the VLAN ID related to the static MAC address table. The value ranges from 0 to 4094."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbVlanId",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The port security protect action of this entry. The",
+							"meanings of the values are:",
+							"restrict(1)- shutdown the port",
+							"protect(2)- discard the unknow source mac packets and not learn",
+							"shutdown(3)- send trap",
+							"noaction(4)- broadcast the packet ."
+						],
+						"enums" : {
+							"1" : "restrict",
+							"2" : "protect",
+							"3" : "shutdown",
+							"4" : "noaction"
+						},
+						"name" : "HUAWEI-L2MAM-MIB::hwPortSecurityProtectAction",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.11.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwSlotMacUsageRaisingThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates the MAC usage of the slot raising the threshold"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSlotMacUsageRaisingThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "MAC usage ($v5) raising threshold alarm detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwSlotMacUsageRaisingThreshold HUAWEI-BASE-TRAP-MIB::hwBaseTrapEventType i 1 HUAWEI-BASE-TRAP-MIB::hwBaseTrapSeverity i 1 HUAWEI-BASE-TRAP-MIB::hwBaseTrapProbableCause i 1 HUAWEI-L2MAM-MIB::hwMacEntityUsage i 0 HUAWEI-L2MAM-MIB::hwMacEntityUsageThreshold i 0 ENTITY-MIB::entPhysicalName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwSlotMacUsageRaisingThreshold",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"To describe the type of trap."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "communicationsAlarm",
+							"3" : "qualityOfServiceAlarm",
+							"4" : "processingErrorAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "environmentalAlarm",
+							"7" : "integrityViolation",
+							"8" : "operationalViolation",
+							"9" : "physicalViolation",
+							"10" : "securityServiceOrMechanismViolation",
+							"11" : "timeDomainViolation"
+						},
+						"name" : "HUAWEI-BASE-TRAP-MIB::hwBaseTrapEventType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.129.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"To describe the level of trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning"
+						},
+						"name" : "HUAWEI-BASE-TRAP-MIB::hwBaseTrapSeverity",
+						"oid" : "1.3.6.1.4.1.2011.5.25.129.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"To describe the probable cause of trap."
+						],
+						"enums" : {
+							"1" : "aIS",
+							"2" : "callSetUpFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "transmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBER",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "receiveFailure",
+							"18" : "transmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"21" : "broadcastChannelFailure",
+							"22" : "connectionEstablishmentError",
+							"23" : "invalidMessageReceived",
+							"24" : "localNodeTransmissionError",
+							"25" : "remoteNodeTransmissionError",
+							"26" : "routingFailure",
+							"51" : "backplaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIFDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "nEIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronizationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"71" : "antennaFailure",
+							"72" : "batteryChargingFailure",
+							"73" : "diskFailure",
+							"74" : "frequencyHoppingFailure",
+							"75" : "iODeviceError",
+							"76" : "lossOfSynchronisation",
+							"77" : "lossOfRedundancy",
+							"78" : "powerSupplyFailure",
+							"79" : "signalQualityEvaluationFailure",
+							"80" : "tranceiverFailure",
+							"81" : "protectionMechanismFailure",
+							"82" : "protectingResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowFVoltage",
+							"117" : "ventilationsSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "intrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperatue",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"134" : "coolingSystemFailure",
+							"135" : "externalEquipmentFailure",
+							"136" : "externalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "sfwrEnvironmentProblem",
+							"156" : "sfwrDownloadFailure",
+							"157" : "lossOfRealTimel",
+							"158" : "applicationSubsystemFailure",
+							"159" : "configurationOrCustomisationError",
+							"160" : "databaseInconsistency",
+							"161" : "fileError",
+							"162" : "outOfMemory",
+							"163" : "softwareError",
+							"164" : "timeoutExpired",
+							"165" : "underlayingResourceUnavailable",
+							"166" : "versionMismatch",
+							"201" : "bandwidthReduced",
+							"202" : "congestion",
+							"203" : "excessiveErrorRate",
+							"204" : "excessiveResponseTime",
+							"205" : "excessiveRetransmissionRate",
+							"206" : "reducedLoggingCapability",
+							"207" : "systemResourcesOverload",
+							"500" : "adapterError",
+							"501" : "applicationSubsystemFailture",
+							"502" : "bandwidthReducedX733",
+							"503" : "callEstablishmentError",
+							"504" : "communicationsProtocolError",
+							"505" : "communicationsSubsystemFailure",
+							"506" : "configurationOrCustomizationError",
+							"507" : "congestionX733",
+							"508" : "coruptData",
+							"509" : "cpuCyclesLimitExceeded",
+							"510" : "dataSetOrModemError",
+							"511" : "degradedSignalX733",
+							"512" : "dteDceInterfaceError",
+							"513" : "enclosureDoorOpenX733",
+							"514" : "equipmentMalfunction",
+							"515" : "excessiveVibration",
+							"516" : "fileErrorX733",
+							"517" : "fireDetected",
+							"518" : "framingErrorX733",
+							"519" : "heatingVentCoolingSystemProblem",
+							"520" : "humidityUnacceptable",
+							"521" : "inputOutputDeviceError",
+							"522" : "inputDeviceError",
+							"523" : "lanError",
+							"524" : "leakDetected",
+							"525" : "localNodeTransmissionErrorX733",
+							"526" : "lossOfFrameX733",
+							"527" : "lossOfSignalX733",
+							"528" : "materialSupplyExhausted",
+							"529" : "multiplexerProblemX733",
+							"530" : "outOfMemoryX733",
+							"531" : "ouputDeviceError",
+							"532" : "performanceDegraded",
+							"533" : "powerProblems",
+							"534" : "pressureUnacceptable",
+							"535" : "processorProblems",
+							"536" : "pumpFailureX733",
+							"537" : "queueSizeExceeded",
+							"538" : "receiveFailureX733",
+							"539" : "receiverFailureX733",
+							"540" : "remoteNodeTransmissionErrorX733",
+							"541" : "resourceAtOrNearingCapacity",
+							"542" : "responseTimeExecessive",
+							"543" : "retransmissionRateExcessive",
+							"544" : "softwareErrorX733",
+							"545" : "softwareProgramAbnormallyTerminated",
+							"546" : "softwareProgramError",
+							"547" : "storageCapacityProblemX733",
+							"548" : "temperatureUnacceptable",
+							"549" : "thresholdCrossed",
+							"550" : "timingProblemX733",
+							"551" : "toxicLeakDetected",
+							"552" : "transmitFailureX733",
+							"553" : "transmiterFailure",
+							"554" : "underlyingResourceUnavailable",
+							"555" : "versionMismatchX733",
+							"600" : "authenticationFailure",
+							"601" : "breachOfConfidentiality",
+							"602" : "cableTamper",
+							"603" : "delayedInformation",
+							"604" : "denialOfService",
+							"605" : "duplicateInformation",
+							"606" : "informationMissing",
+							"607" : "informationModificationDetected",
+							"608" : "informationOutOfSequence",
+							"609" : "keyExpired",
+							"610" : "nonRepudiationFailure",
+							"611" : "outOfHoursActivity",
+							"612" : "outOfService",
+							"613" : "proceduralError",
+							"614" : "unauthorizedAccessAttempt",
+							"615" : "unexpectedInformation",
+							"1024" : "other"
+						},
+						"name" : "HUAWEI-BASE-TRAP-MIB::hwBaseTrapProbableCause",
+						"oid" : "1.3.6.1.4.1.2011.5.25.129.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"MAC usage in every IO board"
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwMacEntityUsage",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.5.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"MAC usage range"
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwMacEntityUsageThreshold",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.5.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The textual name of the physical entity. The value of this",
+							"object should be the name of the component as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name (e.g., `console') or a simple component number (e.g.",
+							"port or module number, such as `1'), depending on the",
+							"physical component naming syntax of the device.",
+							"If there is no local name, or if this object is otherwise",
+							"not applicable, then this object contains a zero-length",
+							"string.",
+							"Note that the value of entPhysicalName for two physical",
+							"entities will be the same in the event that the console",
+							"interface does not distinguish between them, e.g., slot-1",
+							"and the card in slot-1."
+						],
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwSlotMacUsageFallingThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates the MAC usage of the slot falling the threshold"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSlotMacUsageFallingThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "MAC usage falling threshold alarm detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwSlotMacUsageFallingThreshold HUAWEI-BASE-TRAP-MIB::hwBaseTrapEventType i 1 HUAWEI-BASE-TRAP-MIB::hwBaseTrapSeverity i 1 HUAWEI-BASE-TRAP-MIB::hwBaseTrapProbableCause i 1 ENTITY-MIB::entPhysicalName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwSlotMacUsageFallingThreshold",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.4",
+				"variables" : [
+					{
+						"description" : [
+							"To describe the type of trap."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "communicationsAlarm",
+							"3" : "qualityOfServiceAlarm",
+							"4" : "processingErrorAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "environmentalAlarm",
+							"7" : "integrityViolation",
+							"8" : "operationalViolation",
+							"9" : "physicalViolation",
+							"10" : "securityServiceOrMechanismViolation",
+							"11" : "timeDomainViolation"
+						},
+						"name" : "HUAWEI-BASE-TRAP-MIB::hwBaseTrapEventType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.129.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"To describe the level of trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning"
+						},
+						"name" : "HUAWEI-BASE-TRAP-MIB::hwBaseTrapSeverity",
+						"oid" : "1.3.6.1.4.1.2011.5.25.129.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"To describe the probable cause of trap."
+						],
+						"enums" : {
+							"1" : "aIS",
+							"2" : "callSetUpFailure",
+							"3" : "degradedSignal",
+							"4" : "farEndReceiverFailure",
+							"5" : "framingError",
+							"6" : "lossOfFrame",
+							"7" : "lossOfPointer",
+							"8" : "lossOfSignal",
+							"9" : "payloadTypeMismatch",
+							"10" : "transmissionError",
+							"11" : "remoteAlarmInterface",
+							"12" : "excessiveBER",
+							"13" : "pathTraceMismatch",
+							"14" : "unavailable",
+							"15" : "signalLabelMismatch",
+							"16" : "lossOfMultiFrame",
+							"17" : "receiveFailure",
+							"18" : "transmitFailure",
+							"19" : "modulationFailure",
+							"20" : "demodulationFailure",
+							"21" : "broadcastChannelFailure",
+							"22" : "connectionEstablishmentError",
+							"23" : "invalidMessageReceived",
+							"24" : "localNodeTransmissionError",
+							"25" : "remoteNodeTransmissionError",
+							"26" : "routingFailure",
+							"51" : "backplaneFailure",
+							"52" : "dataSetProblem",
+							"53" : "equipmentIdentifierDuplication",
+							"54" : "externalIFDeviceProblem",
+							"55" : "lineCardProblem",
+							"56" : "multiplexerProblem",
+							"57" : "nEIdentifierDuplication",
+							"58" : "powerProblem",
+							"59" : "processorProblem",
+							"60" : "protectionPathFailure",
+							"61" : "receiverFailure",
+							"62" : "replaceableUnitMissing",
+							"63" : "replaceableUnitTypeMismatch",
+							"64" : "synchronizationSourceMismatch",
+							"65" : "terminalProblem",
+							"66" : "timingProblem",
+							"67" : "transmitterFailure",
+							"68" : "trunkCardProblem",
+							"69" : "replaceableUnitProblem",
+							"70" : "realTimeClockFailure",
+							"71" : "antennaFailure",
+							"72" : "batteryChargingFailure",
+							"73" : "diskFailure",
+							"74" : "frequencyHoppingFailure",
+							"75" : "iODeviceError",
+							"76" : "lossOfSynchronisation",
+							"77" : "lossOfRedundancy",
+							"78" : "powerSupplyFailure",
+							"79" : "signalQualityEvaluationFailure",
+							"80" : "tranceiverFailure",
+							"81" : "protectionMechanismFailure",
+							"82" : "protectingResourceFailure",
+							"101" : "airCompressorFailure",
+							"102" : "airConditioningFailure",
+							"103" : "airDryerFailure",
+							"104" : "batteryDischarging",
+							"105" : "batteryFailure",
+							"106" : "commercialPowerFailure",
+							"107" : "coolingFanFailure",
+							"108" : "engineFailure",
+							"109" : "fireDetectorFailure",
+							"110" : "fuseFailure",
+							"111" : "generatorFailure",
+							"112" : "lowBatteryThreshold",
+							"113" : "pumpFailure",
+							"114" : "rectifierFailure",
+							"115" : "rectifierHighVoltage",
+							"116" : "rectifierLowFVoltage",
+							"117" : "ventilationsSystemFailure",
+							"118" : "enclosureDoorOpen",
+							"119" : "explosiveGas",
+							"120" : "fire",
+							"121" : "flood",
+							"122" : "highHumidity",
+							"123" : "highTemperature",
+							"124" : "highWind",
+							"125" : "iceBuildUp",
+							"126" : "intrusionDetection",
+							"127" : "lowFuel",
+							"128" : "lowHumidity",
+							"129" : "lowCablePressure",
+							"130" : "lowTemperatue",
+							"131" : "lowWater",
+							"132" : "smoke",
+							"133" : "toxicGas",
+							"134" : "coolingSystemFailure",
+							"135" : "externalEquipmentFailure",
+							"136" : "externalPointFailure",
+							"151" : "storageCapacityProblem",
+							"152" : "memoryMismatch",
+							"153" : "corruptData",
+							"154" : "outOfCPUCycles",
+							"155" : "sfwrEnvironmentProblem",
+							"156" : "sfwrDownloadFailure",
+							"157" : "lossOfRealTimel",
+							"158" : "applicationSubsystemFailure",
+							"159" : "configurationOrCustomisationError",
+							"160" : "databaseInconsistency",
+							"161" : "fileError",
+							"162" : "outOfMemory",
+							"163" : "softwareError",
+							"164" : "timeoutExpired",
+							"165" : "underlayingResourceUnavailable",
+							"166" : "versionMismatch",
+							"201" : "bandwidthReduced",
+							"202" : "congestion",
+							"203" : "excessiveErrorRate",
+							"204" : "excessiveResponseTime",
+							"205" : "excessiveRetransmissionRate",
+							"206" : "reducedLoggingCapability",
+							"207" : "systemResourcesOverload",
+							"500" : "adapterError",
+							"501" : "applicationSubsystemFailture",
+							"502" : "bandwidthReducedX733",
+							"503" : "callEstablishmentError",
+							"504" : "communicationsProtocolError",
+							"505" : "communicationsSubsystemFailure",
+							"506" : "configurationOrCustomizationError",
+							"507" : "congestionX733",
+							"508" : "coruptData",
+							"509" : "cpuCyclesLimitExceeded",
+							"510" : "dataSetOrModemError",
+							"511" : "degradedSignalX733",
+							"512" : "dteDceInterfaceError",
+							"513" : "enclosureDoorOpenX733",
+							"514" : "equipmentMalfunction",
+							"515" : "excessiveVibration",
+							"516" : "fileErrorX733",
+							"517" : "fireDetected",
+							"518" : "framingErrorX733",
+							"519" : "heatingVentCoolingSystemProblem",
+							"520" : "humidityUnacceptable",
+							"521" : "inputOutputDeviceError",
+							"522" : "inputDeviceError",
+							"523" : "lanError",
+							"524" : "leakDetected",
+							"525" : "localNodeTransmissionErrorX733",
+							"526" : "lossOfFrameX733",
+							"527" : "lossOfSignalX733",
+							"528" : "materialSupplyExhausted",
+							"529" : "multiplexerProblemX733",
+							"530" : "outOfMemoryX733",
+							"531" : "ouputDeviceError",
+							"532" : "performanceDegraded",
+							"533" : "powerProblems",
+							"534" : "pressureUnacceptable",
+							"535" : "processorProblems",
+							"536" : "pumpFailureX733",
+							"537" : "queueSizeExceeded",
+							"538" : "receiveFailureX733",
+							"539" : "receiverFailureX733",
+							"540" : "remoteNodeTransmissionErrorX733",
+							"541" : "resourceAtOrNearingCapacity",
+							"542" : "responseTimeExecessive",
+							"543" : "retransmissionRateExcessive",
+							"544" : "softwareErrorX733",
+							"545" : "softwareProgramAbnormallyTerminated",
+							"546" : "softwareProgramError",
+							"547" : "storageCapacityProblemX733",
+							"548" : "temperatureUnacceptable",
+							"549" : "thresholdCrossed",
+							"550" : "timingProblemX733",
+							"551" : "toxicLeakDetected",
+							"552" : "transmitFailureX733",
+							"553" : "transmiterFailure",
+							"554" : "underlyingResourceUnavailable",
+							"555" : "versionMismatchX733",
+							"600" : "authenticationFailure",
+							"601" : "breachOfConfidentiality",
+							"602" : "cableTamper",
+							"603" : "delayedInformation",
+							"604" : "denialOfService",
+							"605" : "duplicateInformation",
+							"606" : "informationMissing",
+							"607" : "informationModificationDetected",
+							"608" : "informationOutOfSequence",
+							"609" : "keyExpired",
+							"610" : "nonRepudiationFailure",
+							"611" : "outOfHoursActivity",
+							"612" : "outOfService",
+							"613" : "proceduralError",
+							"614" : "unauthorizedAccessAttempt",
+							"615" : "unexpectedInformation",
+							"1024" : "other"
+						},
+						"name" : "HUAWEI-BASE-TRAP-MIB::hwBaseTrapProbableCause",
+						"oid" : "1.3.6.1.4.1.2011.5.25.129.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The textual name of the physical entity. The value of this",
+							"object should be the name of the component as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name (e.g., `console') or a simple component number (e.g.",
+							"port or module number, such as `1'), depending on the",
+							"physical component naming syntax of the device.",
+							"If there is no local name, or if this object is otherwise",
+							"not applicable, then this object contains a zero-length",
+							"string.",
+							"Note that the value of entPhysicalName for two physical",
+							"entities will be the same in the event that the console",
+							"interface does not distinguish between them, e.g., slot-1",
+							"and the card in slot-1."
+						],
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapPortCfgAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap when mac-address is learned or aging."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwMacTrapPortCfgAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "VlanId:$v3",
+				"Summary" : "MAC address ($v2) is learned or aging"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapPortCfgAlarm HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapMacInfo s EXAMPLE HUAWEI-L2MAM-MIB::hwCfgFdbMac s EXAMPL HUAWEI-L2MAM-MIB::hwCfgFdbVlanId u 0 RFC1213-MIB::ifDescr s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapPortCfgAlarm",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.5",
+				"variables" : [
+					{
+						"description" : [
+							"The information of mac-trap."
+						],
+						"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapMacInfo",
+						"oid" : "1.3.6.1.4.1.2011.5.25.315.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object indicates the unicast MAC address entry in the static MAC address table."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbMac",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object indicates the VLAN ID related to the static MAC address table. The value ranges from 0 to 4094."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbVlanId",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A textual string containing information about the",
+							"interface. This string should include the name of the",
+							"manufacturer, the product name and the version of the",
+							"interface hardware/software."
+						],
+						"name" : "RFC1213-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapHashConflictAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that MAC address hash conflict occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwMacTrapHashConflictAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "VlanId:$v3",
+				"Summary" : "MAC address hash conflict occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapHashConflictAlarm RFC1213-MIB::ifDescr s EXAMPLE HUAWEI-L2MAM-MIB::hwCfgFdbMac s EXAMPL HUAWEI-L2MAM-MIB::hwCfgFdbVlanId u 0 HUAWEI-L2MAM-MIB::hwCfgFdbVsiName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwMacTrapHashConflictAlarm",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.6",
+				"variables" : [
+					{
+						"description" : [
+							"A textual string containing information about the",
+							"interface. This string should include the name of the",
+							"manufacturer, the product name and the version of the",
+							"interface hardware/software."
+						],
+						"name" : "RFC1213-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object indicates the unicast MAC address entry in the static MAC address table."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbMac",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object indicates the VLAN ID related to the static MAC address table. The value ranges from 0 to 4094."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbVlanId",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The VSI-ID or other identifier referring to the VSI",
+							"which is correlative to the hwFdbMac."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbVsiName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwTrunkMemSpeedDifferentAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The active member ports in trunk have inconsistent bandwidth."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwTrunkMemSpeedDifferent",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Active member ports in trunk have inconsistent bandwidth"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwTrunkMemSpeedDifferentAlarm RFC1213-MIB::ifDescr s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwTrunkMemSpeedDifferentAlarm",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.7",
+				"variables" : [
+					{
+						"description" : [
+							"A textual string containing information about the",
+							"interface. This string should include the name of the",
+							"manufacturer, the product name and the version of the",
+							"interface hardware/software."
+						],
+						"name" : "RFC1213-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwTrunkMemSpeedDifferentResume",
+			"certification" : "STANDARD",
+			"description" : [
+				"The active member ports in trunk have consistent bandwidth."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwTrunkMemSpeedDifferent",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Active member ports in trunk have consistent bandwidth"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwTrunkMemSpeedDifferentResume RFC1213-MIB::ifDescr s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwTrunkMemSpeedDifferentResume",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.8",
+				"variables" : [
+					{
+						"description" : [
+							"A textual string containing information about the",
+							"interface. This string should include the name of the",
+							"manufacturer, the product name and the version of the",
+							"interface hardware/software."
+						],
+						"name" : "RFC1213-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwPortsecStaticFlpAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Description."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwPortsecStaticFlpAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "VlanId:$v2",
+				"Summary" : "Port sec static FLP alarm occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SWITCH-L2MAM-EXT-MIB::hwPortsecStaticFlpAlarm HUAWEI-L2MAM-MIB::hwCfgFdbMac s EXAMPL HUAWEI-L2MAM-MIB::hwCfgFdbVlanId u 0 RFC1213-MIB::ifDescr s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SWITCH-L2MAM-EXT-MIB::hwPortsecStaticFlpAlarm",
+				"oid" : "1.3.6.1.4.1.2011.5.25.315.3.9",
+				"variables" : [
+					{
+						"description" : [
+							"The object indicates the unicast MAC address entry in the static MAC address table."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbMac",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object indicates the VLAN ID related to the static MAC address table. The value ranges from 0 to 4094."
+						],
+						"name" : "HUAWEI-L2MAM-MIB::hwCfgFdbVlanId",
+						"oid" : "1.3.6.1.4.1.2011.5.25.42.2.1.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A textual string containing information about the",
+							"interface. This string should include the name of the",
+							"manufacturer, the product name and the version of the",
+							"interface hardware/software."
+						],
+						"name" : "RFC1213-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,162 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201105260000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdated",
+			"certification" : "STANDARD",
+			"description" : [
+				"A zxAnCpeVersionUpdateTrap trap is sent when the",
+				"version of Remote Unit software was updated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 4) ? 2 : ($v4 == 3) ? 1 : 3"
+				},
+				"EventType" : "zxAnRuSwUpdated",
+				"ExpireTime" : {
+					"eval" : "($v4 == 4) ? 86400 : ($v4 == 3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 4) ? 4 : ($v4 == 3) ? 0 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Remote unit software version update is $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdated ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusServiceType s EXAMPLE ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusEquipType s EXAMPLE ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusFileName s EXAMPLE ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusResult i 1 ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusFailReason i 1 ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusSource i 1 ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusTaskName s EXAMPLE ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusCurrVersion s EXAMPLE ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusLastVersion s EXAMPLE ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusModifyTime s EXAMPLEE ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusFileLocation i 1",
+			"trap" : {
+				"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdated",
+				"oid" : "1.3.6.1.4.1.3902.1082.20.40.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"The Remote Unit service type such as 'GPON', 'EPON', 'ADSL2'",
+							"'VDSL2' etc. "
+						],
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusServiceType",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Remote Unit equipment type such as 'F620', 'D420', 'F622' etc."
+						],
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusEquipType",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The version file name."
+						],
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusFileName",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The result status of updating version."
+						],
+						"enums" : {
+							"1" : "notStarted",
+							"2" : "inProgress",
+							"3" : "success",
+							"4" : "failure",
+							"5" : "waiting"
+						},
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusResult",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The failure reason of updating version.",
+							"Some of reasons as following:",
+							"none(1), downloadErr(2), commitErr(3), activateErr(4), ",
+							"crcErr(5), validErr(6), useAbort(7), offline(8), ",
+							"sdNotSupported(21), sdOffline(22), sdDisabled(23), sdNoFile(24)",
+							"remoteNoFile(32)."
+						],
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusFailReason",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The source of updating version.",
+							"It includes two ways, one is task updating, the other is ",
+							"manual updating."
+						],
+						"enums" : {
+							"1" : "task",
+							"2" : "manual"
+						},
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusSource",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The updating task name.",
+							"When zxAnRuSwUpdateStatusSource is 'task' requires this attribute.",
+							"When zxAnRuSwUpdateStatusFileLocate is 'manual' then the ",
+							"size of the attribute is zero."
+						],
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusTaskName",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute identifies the now version of the software."
+						],
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusCurrVersion",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This attribute identifies the old version of the software."
+						],
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusLastVersion",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The last modification time.",
+							"The format is yyyy-mm-dd HH:MM:SS.For example",
+							"2001-01-01 02:22:33 ."
+						],
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusModifyTime",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The software file location. ",
+							"Location type is defined as following:",
+							"1: file comes from flash.",
+							"2: file comes from remote FTP server.",
+							"3: file comes from SD card."
+						],
+						"enums" : {
+							"1" : "flash",
+							"2" : "remote",
+							"3" : "sdCard"
+						},
+						"name" : "ZTE-AN-REMOTE-UNIT-SW-MIB::zxAnRuSwUpdateStatusFileLocation",
+						"oid" : "1.3.6.1.4.1.3902.1082.20.40.2.4.1.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

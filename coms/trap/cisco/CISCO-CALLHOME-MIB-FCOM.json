@@ -1,0 +1,213 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201511200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CALLHOME-MIB::ccmSmtpServerFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ccmSmtpServerFailNotif is sent if the device fails on",
+				"sending an e-mail notification through an SMTP server in",
+				"ccmSmtpServersTable.",
+				"For each SMTP server, an agent should not generate more",
+				"than one ccmSmtpServerFailNotif 'notification-event'",
+				"in a given time interval (ten seconds is the suggested",
+				"default). A 'notification-event' is the transmission of",
+				"a single trap or inform PDU to a list of notification",
+				"destinations.",
+				"If within the throttling period, additional failures to",
+				"send a message through same server occur, then ",
+				"notification-events for these failure should be suppressed",
+				"by the agent until the current throttling period expires."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmSmtpServerFailNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Failed to send email notification through port $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CALLHOME-MIB::ccmSmtpServerFailNotif CISCO-CALLHOME-MIB::ccmSmtpServersPort u 9999",
+			"trap" : {
+				"name" : "CISCO-CALLHOME-MIB::ccmSmtpServerFailNotif",
+				"oid" : "1.3.6.1.4.1.9.9.300.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-CALLHOME-MIB::ccmSmtpServersPort",
+						"oid" : "1.3.6.1.4.1.9.9.300.1.1.22.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CALLHOME-MIB::ccmAlertGroupTypeAddedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ccmAlertGroupTypeAddedNotif is sent, when",
+				"a new entry corresponds to the ",
+				"'callHomeAlertGroupName' object in this ",
+				"notification is added into the ",
+				"callHomeAlertGroupTypeTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmAlertGroupTypeAddedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Entry $v1 has been added to the callHomeAlertGroupTypeTable."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CALLHOME-MIB::ccmAlertGroupTypeAddedNotif CISCO-CALLHOME-MIB::callHomeAlertGroupName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CALLHOME-MIB::ccmAlertGroupTypeAddedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.300.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-CALLHOME-MIB::callHomeAlertGroupName",
+						"oid" : "1.3.6.1.4.1.9.9.300.1.1.25.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CALLHOME-MIB::ccmAlertGroupTypeDeletedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ccmAlertGroupTypeAddedNotif is sent, when an",
+				"entry corresponds to 'callHomeAlertGroupName'",
+				"object in this notification is deleted ",
+				"from the callHomeAlertGroupTypeTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmAlertGroupTypeDeletedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Entry $v1 has been deleted from the callHomeAlertGroupTypeTable."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CALLHOME-MIB::ccmAlertGroupTypeDeletedNotif CISCO-CALLHOME-MIB::callHomeAlertGroupName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CALLHOME-MIB::ccmAlertGroupTypeDeletedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.300.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-CALLHOME-MIB::callHomeAlertGroupName",
+						"oid" : "1.3.6.1.4.1.9.9.300.1.1.25.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CALLHOME-MIB::ccmSmtpMsgSendFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ccmSmtpMsgSendFailNotif is generated if the device",
+				"fails to send an e-mail notification through all of the",
+				"SMTP servers in ccmSmtpServersTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccmSmtpMsgSendFailNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Failed to send email notification through any SMTP servers in ccmSmtpServersTable."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CALLHOME-MIB::ccmSmtpMsgSendFailNotif",
+			"trap" : {
+				"name" : "CISCO-CALLHOME-MIB::ccmSmtpMsgSendFailNotif",
+				"oid" : "1.3.6.1.4.1.9.9.300.0.4"
+			}
+		},
+		{
+			"@objectName" : "CISCO-CALLHOME-MIB::ccmEventNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated every time a Call Home",
+				"external event is triggered in the system. Internal events ",
+				"like Periodic Configuration and Inventory events do not ",
+				"generate notifications."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : "3",
+				"EventType" : "ccmEventNotif",
+				"ExpireTime" : "3600",
+				"Severity" : {
+					"eval" : "($v4 == 2) ? 0 : (($v4 == 3) ? 2 : (($v4 == 4) ? 3 : (($v4 == 5) ? 4 : (($v4 >= 6) ? 5 : 2))))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CALLHOME-MIB::ccmEventNotif SNMPv2-MIB::sysName s EXAMPLE CISCO-CALLHOME-MIB::ccmEventDescription s EXAMPLE CISCO-CALLHOME-MIB::ccmEventTime t 31536000 CISCO-CALLHOME-MIB::ccmEventUrgencyLevel i 1",
+			"trap" : {
+				"name" : "CISCO-CALLHOME-MIB::ccmEventNotif",
+				"oid" : "1.3.6.1.4.1.9.9.300.0.5",
+				"variables" : [
+					{
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-CALLHOME-MIB::ccmEventDescription",
+						"oid" : "1.3.6.1.4.1.9.9.300.1.8.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-CALLHOME-MIB::ccmEventTime",
+						"oid" : "1.3.6.1.4.1.9.9.300.1.8.2",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "debug",
+							"2" : "normal",
+							"3" : "notification",
+							"4" : "warning",
+							"5" : "minor",
+							"6" : "major",
+							"7" : "critical",
+							"8" : "fatal",
+							"9" : "disaster",
+							"10" : "catastrophic"
+						},
+						"name" : "CISCO-CALLHOME-MIB::ccmEventUrgencyLevel",
+						"oid" : "1.3.6.1.4.1.9.9.300.1.8.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

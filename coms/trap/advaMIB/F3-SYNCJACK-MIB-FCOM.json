@@ -1,0 +1,442 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201205100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdCrossingAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent each time a threshold on a PM condition",
+				"on an PTP Network Probe is crossed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "f3SyncJPTPNetworkProbeThresholdCrossingAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "PTP network probe threshold crossed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdCrossingAlert F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdIndex i 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdInterval i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdVariable o 1.3.6.1.4.1.8072.2.1.1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdValueLo u 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdValueHi u 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdMonValue C 9999",
+			"trap" : {
+				"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdCrossingAlert",
+				"oid" : "1.3.6.1.4.1.2544.1.12.22.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"An index that uniquely identifies an entry in the",
+							"f3SyncJPTPNetworkProbeThresholdTable."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdIndex",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.2.3.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The interval over which monitored value is",
+							"sampled and compared with the specified threshold."
+						],
+						"enums" : {
+							"1" : "interval-15min",
+							"2" : "interval-1day",
+							"3" : "rollover",
+							"4" : "interval-5min"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdInterval",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.2.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object identifier of the particular variable to be",
+							"sampled."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdVariable",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.2.3.1.3",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"Lower 32 bits of the threshold value."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdValueLo",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.2.3.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Higher 32 bits of the threshold value."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdValueHi",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.2.3.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Monitored value corresponding to f3SyncJPTPNetworkProbeThresholdVariable."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeThresholdMonValue",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.2.3.1.6",
+						"valueType" : "COUNTER64"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "F3-SYNCJACK-MIB::f3SyncJClockProbeStatusChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent each time any status changes happen",
+				"on a SyncJack Clock Probe."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 3) ? 1 : (($v1 == 2 || $v1 == 1) ? 3 : 2)"
+				},
+				"EventType" : "f3SyncJClockProbeStatusChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2 || $v1 == 1 || $v1 == 3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 3) ? 0 : (($v1 == 2 || $v1 == 1) ? 2 : (($v1 == 6) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SyncJack clock probe status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJClockProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJClockProbeTestState i 4 F3-SYNCJACK-MIB::f3SyncJClockProbeSourceFailure i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeStatusMTIEMaskFailed i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeStatusMTIEMarginFailed i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeActualTestStartTime s EXAMPLEE",
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJClockProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJClockProbeTestState i 3 F3-SYNCJACK-MIB::f3SyncJClockProbeSourceFailure i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeStatusMTIEMaskFailed i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeStatusMTIEMarginFailed i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeActualTestStartTime s EXAMPLEE",
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJClockProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJClockProbeTestState i 2 F3-SYNCJACK-MIB::f3SyncJClockProbeSourceFailure i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeStatusMTIEMaskFailed i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeStatusMTIEMarginFailed i 1 F3-SYNCJACK-MIB::f3SyncJClockProbeActualTestStartTime s EXAMPLEE"
+			],
+			"trap" : {
+				"name" : "F3-SYNCJACK-MIB::f3SyncJClockProbeStatusChangeTrap",
+				"oid" : "1.3.6.1.4.1.2544.1.12.22.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object provides the Clock Probe test state."
+						],
+						"enums" : {
+							"1" : "waiting",
+							"2" : "running",
+							"3" : "completed",
+							"4" : "failed",
+							"5" : "suspended",
+							"6" : "notscheduled"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJClockProbeTestState",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.1.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on whether the source failed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJClockProbeSourceFailure",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on whether the reference failed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJClockProbeReferenceFailure",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides the result status, whether MTIE Mask has failed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJClockProbeStatusMTIEMaskFailed",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.1.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides the result status, whether MTIE Margin has failed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJClockProbeStatusMTIEMarginFailed",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.1.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on the actual test start time."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJClockProbeActualTestStartTime",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.1.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent each time any status changes happen",
+				"on a SyncJack PTP Clock Probe."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 3) ? 1 : (($v1 == 2 || $v1 == 1) ? 3 : 2)"
+				},
+				"EventType" : "f3SyncJPTPClockProbeStatusChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2 || $v1 == 1 || $v1 == 3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 3) ? 0 : (($v1 == 2 || $v1 == 1) ? 2 : (($v1 == 6) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SyncJack PTP clock probe status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJPTPClockProbeTestState i 4 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeNoTimestampFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeNoEventMessageFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusMTIEMaskFailed i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusMTIEMarginFailed i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeActualTestStartTime s EXAMPLEE",
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJPTPClockProbeTestState i 3 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeNoTimestampFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeNoEventMessageFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusMTIEMaskFailed i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusMTIEMarginFailed i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeActualTestStartTime s EXAMPLEE",
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJPTPClockProbeTestState i 2 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeNoTimestampFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeNoEventMessageFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusMTIEMaskFailed i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusMTIEMarginFailed i 1 F3-SYNCJACK-MIB::f3SyncJPTPClockProbeActualTestStartTime s EXAMPLEE"
+			],
+			"trap" : {
+				"name" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusChangeTrap",
+				"oid" : "1.3.6.1.4.1.2544.1.12.22.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object provides the PTP Clock Probe test state."
+						],
+						"enums" : {
+							"1" : "waiting",
+							"2" : "running",
+							"3" : "completed",
+							"4" : "failed",
+							"5" : "suspended",
+							"6" : "notscheduled"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeTestState",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.5.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on whether the measured PTP source",
+							"indicated a no-timestamp failure."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeNoTimestampFailure",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.5.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on whether the measured PTP source",
+							"indicated a no-event message failure."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeNoEventMessageFailure",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.5.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on whether the reference failed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeReferenceFailure",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.5.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides the result status, whether MTIE Mask has failed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusMTIEMaskFailed",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.5.1.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides the result status, whether MTIE Margin has failed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeStatusMTIEMarginFailed",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.5.1.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on the actual test start time."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPClockProbeActualTestStartTime",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.5.1.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeStatusChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent each time any status changes happen",
+				"on a SyncJack PTP Network Probe."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 3) ? 1 : (($v1 == 2 || $v1 == 1) ? 3 : 2)"
+				},
+				"EventType" : "f3SyncJPTPNetworkProbeStatusChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2 || $v1 == 1 || $v1 == 3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 3) ? 0 : (($v1 == 2 || $v1 == 1) ? 2 : (($v1 == 6) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SyncJack PTP network probe status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeTestState i 4 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeNoTimestampFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeNoEventMessageFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeFwdScore u 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeRevScore u 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeActualTestStartTime s EXAMPLEE",
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeTestState i 3 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeNoTimestampFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeNoEventMessageFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeFwdScore u 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeRevScore u 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeActualTestStartTime s EXAMPLEE",
+				"$SNMPTRAPCMD F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeStatusChangeTrap F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeTestState i 2 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeNoTimestampFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeNoEventMessageFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeReferenceFailure i 1 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeFwdScore u 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeRevScore u 9999 F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeActualTestStartTime s EXAMPLEE"
+			],
+			"trap" : {
+				"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeStatusChangeTrap",
+				"oid" : "1.3.6.1.4.1.2544.1.12.22.3.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object provides the PTP Network Probe test state."
+						],
+						"enums" : {
+							"1" : "waiting",
+							"2" : "running",
+							"3" : "completed",
+							"4" : "failed",
+							"5" : "suspended",
+							"6" : "notscheduled"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeTestState",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.9.1.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on whether the measured PTP source",
+							"indicated a no-timestamp failure."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeNoTimestampFailure",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.9.1.26",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on whether the measured PTP source",
+							"indicated a no-event message failure."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeNoEventMessageFailure",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.9.1.27",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides information on whether the reference failed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeReferenceFailure",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.9.1.30",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object provides the current score in the forward direction."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeFwdScore",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.9.1.28",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object provides the current score in the reverse direction."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeRevScore",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.9.1.29",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object provides information on the actual test start time."
+						],
+						"name" : "F3-SYNCJACK-MIB::f3SyncJPTPNetworkProbeActualTestStartTime",
+						"oid" : "1.3.6.1.4.1.2544.1.12.22.1.9.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,533 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0008180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ENVIRONMENT-MIB::nnenvTemperatureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envTemeratureNotification is sent if the ",
+				"environmental monitoring detects that the temperature ",
+				"is at a critical state. This may cause the system to ",
+				"shut down. This notification is sent only if ",
+				"envEnableTemperatureNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nnenvTemperatureNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Temperature ($v1) is in critical state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENVIRONMENT-MIB::nnenvTemperatureNotification ENVIRONMENT-MIB::nnenvTempSensorValue u 9999 ENVIRONMENT-MIB::nnenvTempSensorState i 1",
+			"trap" : {
+				"name" : "ENVIRONMENT-MIB::nnenvTemperatureNotification",
+				"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The Average value of the temperature sensors.",
+							""
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvTempSensorValue",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.1.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The Average status of the temperature sensors.",
+							""
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "fail",
+							"5" : "turned-off"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvTempSensorState",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ENVIRONMENT-MIB::nnenvFanNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envFanNotification is sent if the environmental",
+				"monitoring detects that a fan is in a critical state. ",
+				"This may cause the system to shut down. This ",
+				"notification is sent only if envEnableFanNotification ",
+				"is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "nnenvFanNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "nnenvFanUnitIndex:$v1",
+				"Summary" : "Fan $v1 is in critical state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENVIRONMENT-MIB::nnenvFanNotification ENVIRONMENT-MIB::nnenvFanUnitIndex i 0 ENVIRONMENT-MIB::nnenvFanState i 1",
+			"trap" : {
+				"name" : "ENVIRONMENT-MIB::nnenvFanNotification",
+				"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The index to access an entry in the table.",
+							""
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvFanUnitIndex",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current state of fan 0, normal/fail.",
+							""
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "critical",
+							"4" : "fail",
+							"5" : "turned-off"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvFanState",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ENVIRONMENT-MIB::nnenvPowerSupply1DownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envPowerNotification is sent if the environmental",
+				"monitoring detects that a power supply has changed status. ",
+				"This notification is sent only if ",
+				"envEnablePowerNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "nnenvPowerSupply1Notification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "nnenvPwrsupIndex:$v2",
+				"Summary" : "Power supply 1 ($v5) is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENVIRONMENT-MIB::nnenvPowerSupply1DownNotification ENVIRONMENT-MIB::nnenvPwrsupPowerFailCount i 9999 ENVIRONMENT-MIB::nnenvPwrsupIndex i 1 ENVIRONMENT-MIB::nnenvPwrsupInstalled i 1 ENVIRONMENT-MIB::nnenvPwrsupStatus i 1 ENVIRONMENT-MIB::nnenvPwrsupType i 1 ENVIRONMENT-MIB::nnenvPwrsupUptime i 9999 ENVIRONMENT-MIB::nnenvPwrsupDowntime i 9999",
+			"trap" : {
+				"name" : "ENVIRONMENT-MIB::nnenvPowerSupply1DownNotification",
+				"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Number of failures of either power supply ",
+							"since boot-up."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupPowerFailCount",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Index to access entry."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupIndex",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply installed flag."
+						],
+						"enums" : {
+							"1" : "not-installed",
+							"2" : "installed"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupInstalled",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply up/down status."
+						],
+						"enums" : {
+							"1" : "absent",
+							"2" : "failed",
+							"3" : "normal"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupStatus",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply type."
+						],
+						"enums" : {
+							"1" : "supply-AC-ONLY",
+							"2" : "supply-AC-PoE",
+							"3" : "supply-DC",
+							"4" : "unknown"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupType",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply came up."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupUptime",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Seconds since power supply went down."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupDowntime",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ENVIRONMENT-MIB::nnenvPowerSupply1UpNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envPowerNotification is sent if the environmental",
+				"monitoring detects that a power supply has changed status. ",
+				"This notification is sent only if ",
+				"envEnablePowerNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "nnenvPowerSupply1Notification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "nnenvPwrsupIndex:$v2",
+				"Summary" : "Power supply 1 ($v5) is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENVIRONMENT-MIB::nnenvPowerSupply1UpNotification ENVIRONMENT-MIB::nnenvPwrsupPowerFailCount i 9999 ENVIRONMENT-MIB::nnenvPwrsupIndex i 1 ENVIRONMENT-MIB::nnenvPwrsupInstalled i 1 ENVIRONMENT-MIB::nnenvPwrsupStatus i 1 ENVIRONMENT-MIB::nnenvPwrsupType i 1 ENVIRONMENT-MIB::nnenvPwrsupUptime i 9999 ENVIRONMENT-MIB::nnenvPwrsupDowntime i 9999",
+			"trap" : {
+				"name" : "ENVIRONMENT-MIB::nnenvPowerSupply1UpNotification",
+				"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Number of failures of either power supply ",
+							"since boot-up."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupPowerFailCount",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Index to access entry."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupIndex",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply installed flag."
+						],
+						"enums" : {
+							"1" : "not-installed",
+							"2" : "installed"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupInstalled",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply up/down status."
+						],
+						"enums" : {
+							"1" : "absent",
+							"2" : "failed",
+							"3" : "normal"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupStatus",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply type."
+						],
+						"enums" : {
+							"1" : "supply-AC-ONLY",
+							"2" : "supply-AC-PoE",
+							"3" : "supply-DC",
+							"4" : "unknown"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupType",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply came up."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupUptime",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Seconds since power supply went down."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupDowntime",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ENVIRONMENT-MIB::nnenvPowerSupply2DownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envPowerNotification is sent if the environmental",
+				"monitoring detects that a power supply has changed status. ",
+				"This notification is sent only if ",
+				"envEnablePowerNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "nnenvPowerSupply2Notification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "nnenvPwrsupIndex:$v2",
+				"Summary" : "Power supply 2 ($v5) is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENVIRONMENT-MIB::nnenvPowerSupply2DownNotification ENVIRONMENT-MIB::nnenvPwrsupPowerFailCount i 9999 ENVIRONMENT-MIB::nnenvPwrsupIndex i 1 ENVIRONMENT-MIB::nnenvPwrsupInstalled i 1 ENVIRONMENT-MIB::nnenvPwrsupStatus i 1 ENVIRONMENT-MIB::nnenvPwrsupType i 1 ENVIRONMENT-MIB::nnenvPwrsupUptime i 9999 ENVIRONMENT-MIB::nnenvPwrsupDowntime i 9999",
+			"trap" : {
+				"name" : "ENVIRONMENT-MIB::nnenvPowerSupply2DownNotification",
+				"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Number of failures of either power supply ",
+							"since boot-up."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupPowerFailCount",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Index to access entry."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupIndex",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply installed flag."
+						],
+						"enums" : {
+							"1" : "not-installed",
+							"2" : "installed"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupInstalled",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply up/down status."
+						],
+						"enums" : {
+							"1" : "absent",
+							"2" : "failed",
+							"3" : "normal"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupStatus",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply type."
+						],
+						"enums" : {
+							"1" : "supply-AC-ONLY",
+							"2" : "supply-AC-PoE",
+							"3" : "supply-DC",
+							"4" : "unknown"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupType",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply came up."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupUptime",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Seconds since power supply went down."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupDowntime",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ENVIRONMENT-MIB::nnenvPowerSupply2UpNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An envPowerNotification is sent if the environmental",
+				"monitoring detects that a power supply has changed status. ",
+				"This notification is sent only if ",
+				"envEnablePowerNotification is set to true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "nnenvPowerSupply2Notification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "nnenvPwrsupIndex:$v2",
+				"Summary" : "Power supply 2 ($v5) is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENVIRONMENT-MIB::nnenvPowerSupply2UpNotification ENVIRONMENT-MIB::nnenvPwrsupPowerFailCount i 9999 ENVIRONMENT-MIB::nnenvPwrsupIndex i 1 ENVIRONMENT-MIB::nnenvPwrsupInstalled i 1 ENVIRONMENT-MIB::nnenvPwrsupStatus i 1 ENVIRONMENT-MIB::nnenvPwrsupType i 1 ENVIRONMENT-MIB::nnenvPwrsupUptime i 9999 ENVIRONMENT-MIB::nnenvPwrsupDowntime i 9999",
+			"trap" : {
+				"name" : "ENVIRONMENT-MIB::nnenvPowerSupply2UpNotification",
+				"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Number of failures of either power supply ",
+							"since boot-up."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupPowerFailCount",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Index to access entry."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupIndex",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply installed flag."
+						],
+						"enums" : {
+							"1" : "not-installed",
+							"2" : "installed"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupInstalled",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply up/down status."
+						],
+						"enums" : {
+							"1" : "absent",
+							"2" : "failed",
+							"3" : "normal"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupStatus",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Power supply type."
+						],
+						"enums" : {
+							"1" : "supply-AC-ONLY",
+							"2" : "supply-AC-PoE",
+							"3" : "supply-DC",
+							"4" : "unknown"
+						},
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupType",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Seconds since power supply came up."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupUptime",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Seconds since power supply went down."
+						],
+						"name" : "ENVIRONMENT-MIB::nnenvPwrsupDowntime",
+						"oid" : "1.3.6.1.4.1.562.73.1.1.1.3.1.4.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

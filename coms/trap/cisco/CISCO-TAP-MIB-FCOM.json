@@ -1,0 +1,320 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200510120000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-TAP-MIB::cTapMIBActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is sent when an intercepting router or",
+				"switch is first capable of intercepting a packet corresponding",
+				"to a configured data stream. If the configured data stream is",
+				"an IP one, the value of the corresponding cTapStreamIpStatus ",
+				"is included in this notification. If the configured data stream",
+				"is an IEEE 802 one, the value of the corresponding ",
+				"cTapStream802Status is included in this notification. ",
+				"This notification may be generated in conjunction with the",
+				"intercept application, which is designed to expect the",
+				"notification to be sent as reliably as possible, e.g., through",
+				"the use of a finite number of retransmissions until",
+				"acknowledged, as and when such mechanisms are available; for",
+				"example, with SNMPv3, this would be an InformRequest. Filter",
+				"installation can take a long period of time, during which call",
+				"progress may be delayed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cTapMIBActive",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Intercepting device is capable of intercepting data stream packets. Status: {$v1}"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TAP-MIB::cTapMIBActive CISCO-TAP-MIB::cTapStream802Status i 1",
+			"trap" : {
+				"name" : "CISCO-TAP-MIB::cTapMIBActive",
+				"oid" : "1.3.6.1.4.1.9.9.252.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The status of this conceptual row. This object manages",
+							"creation, modification, and deletion of rows in this table.",
+							"cTapStream802InterceptEnable can be modified any time even the",
+							"value of this entry rowStatus object is active. When other",
+							"rows must be changed, cTapStream802Status must be first set to",
+							"'notInService'."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "CISCO-TAP-MIB::cTapStream802Status",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.2.3.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TAP-MIB::cTapMediationTimedOut",
+			"certification" : "STANDARD",
+			"description" : [
+				"When an intercept is autonomously removed by an intercepting",
+				"device, such as due to the time specified in",
+				"cTapMediationTimeout arriving, the device notifies the manager",
+				"of the action."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cTapMediationTimedOut",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Intercept is autonomously removed by an intercepting device. Mediation status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TAP-MIB::cTapMediationTimedOut CISCO-TAP-MIB::cTapMediationStatus i 1",
+			"trap" : {
+				"name" : "CISCO-TAP-MIB::cTapMediationTimedOut",
+				"oid" : "1.3.6.1.4.1.9.9.252.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The status of this conceptual row. This object is used to",
+							"manage creation, modification and deletion of rows in this",
+							"table.",
+							"",
+							"cTapMediationTimeout may be modified at any time (even while the",
+							"row is active). But when the row is active, the other writable",
+							"objects may not be modified without setting its value to",
+							"'notInService'.",
+							"",
+							"The entry may not be deleted or deactivated by setting its",
+							"value to 'destroy' or 'notInService' if there is any associated",
+							"entry in cTapStreamIpTable, or other such tables when such are",
+							"defined."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "CISCO-TAP-MIB::cTapMediationStatus",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.1.2.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TAP-MIB::cTapMediationDebug",
+			"certification" : "STANDARD",
+			"description" : [
+				"When there is intervention needed due to some events related",
+				"to entries configured in cTapMediationTable, the device",
+				"notifies the manager of the event.",
+				"This notification may be generated in conjunction with the",
+				"intercept application, which is designed to expect the",
+				"notification to be sent as reliably as possible, e.g., through",
+				"the use of a finite number of retransmissions until",
+				"acknowledged, as and when such mechanisms are available; for",
+				"example, with SNMPv3, this would be an InformRequest."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cTapMediationDebug",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cTapMediationContentId:$v1",
+				"Summary" : "Intervention required on device relating to enteries in Tap Mediation Table. Debug index: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TAP-MIB::cTapMediationDebug CISCO-TAP-MIB::cTapMediationContentId i 9999 CISCO-TAP-MIB::cTapDebugIndex u 9999",
+			"trap" : {
+				"name" : "CISCO-TAP-MIB::cTapMediationDebug",
+				"oid" : "1.3.6.1.4.1.9.9.252.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"cTapMediationContentId is a session identifier, from the",
+							"intercept application's perspective, and a content identifier",
+							"from the Mediation Device's perspective. The Mediation Device",
+							"is responsible for making sure these are unique, although the",
+							"SNMP RowStatus row creation process will help by not allowing",
+							"it to create conflicting entries. Before creating a new entry",
+							"a value for this variable may be obtained by reading",
+							"cTapMediationNewIndex to reduce the probability of a value",
+							"collision."
+						],
+						"name" : "CISCO-TAP-MIB::cTapMediationContentId",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Indicates an error code."
+						],
+						"name" : "CISCO-TAP-MIB::cTapDebugIndex",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.3.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TAP-MIB::cTapStreamIpDebug",
+			"certification" : "STANDARD",
+			"description" : [
+				"When there is intervention needed due to some events related",
+				"to entries configured in cTapStreamIpTable, the device",
+				"notifies the manager of the event.",
+				"This notification may be generated in conjunction with the",
+				"intercept application, which is designed to expect the",
+				"notification to be sent as reliably as possible, e.g., through",
+				"the use of a finite number of retransmissions until",
+				"acknowledged, as and when such mechanisms are available; for",
+				"example, with SNMPv3, this would be an InformRequest."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cTapStreamIpDebug",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cTapStreamIpIndex:$v2",
+				"Summary" : "Intervention required relating to entries in the Tap Stream IP Table. Debug index: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TAP-MIB::cTapStreamIpDebug CISCO-TAP-MIB::cTapMediationContentId i 9999 CISCO-TAP-MIB::cTapStreamIpIndex i 9999 CISCO-TAP-MIB::cTapDebugIndex u 9999",
+			"trap" : {
+				"name" : "CISCO-TAP-MIB::cTapStreamIpDebug",
+				"oid" : "1.3.6.1.4.1.9.9.252.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"cTapMediationContentId is a session identifier, from the",
+							"intercept application's perspective, and a content identifier",
+							"from the Mediation Device's perspective. The Mediation Device",
+							"is responsible for making sure these are unique, although the",
+							"SNMP RowStatus row creation process will help by not allowing",
+							"it to create conflicting entries. Before creating a new entry",
+							"a value for this variable may be obtained by reading",
+							"cTapMediationNewIndex to reduce the probability of a value",
+							"collision."
+						],
+						"name" : "CISCO-TAP-MIB::cTapMediationContentId",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The index of the stream itself."
+						],
+						"name" : "CISCO-TAP-MIB::cTapStreamIpIndex",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Indicates an error code."
+						],
+						"name" : "CISCO-TAP-MIB::cTapDebugIndex",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.3.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TAP-MIB::cTapStream802Debug",
+			"certification" : "STANDARD",
+			"description" : [
+				"When there is intervention needed due to some events related",
+				"to entries configured in cTapStream802Table, the device",
+				"notifies the manager of the event.",
+				"This notification may be generated in conjunction with the",
+				"intercept application, which is designed to expect the",
+				"notification to be sent as reliably as possible, e.g., through",
+				"the use of a finite number of retransmissions until",
+				"acknowledged, as and when such mechanisms are available; for",
+				"example, with SNMPv3, this would be an InformRequest."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cTapStream802Debug",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cTapStream802Index:$v2",
+				"Summary" : "Intervention needed related to event in Tap Stream802 Table. Debug index: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TAP-MIB::cTapStream802Debug CISCO-TAP-MIB::cTapMediationContentId i 9999 CISCO-TAP-MIB::cTapStream802Index i 9999 CISCO-TAP-MIB::cTapDebugIndex u 9999",
+			"trap" : {
+				"name" : "CISCO-TAP-MIB::cTapStream802Debug",
+				"oid" : "1.3.6.1.4.1.9.9.252.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"cTapMediationContentId is a session identifier, from the",
+							"intercept application's perspective, and a content identifier",
+							"from the Mediation Device's perspective. The Mediation Device",
+							"is responsible for making sure these are unique, although the",
+							"SNMP RowStatus row creation process will help by not allowing",
+							"it to create conflicting entries. Before creating a new entry",
+							"a value for this variable may be obtained by reading",
+							"cTapMediationNewIndex to reduce the probability of a value",
+							"collision."
+						],
+						"name" : "CISCO-TAP-MIB::cTapMediationContentId",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The index of the stream itself."
+						],
+						"name" : "CISCO-TAP-MIB::cTapStream802Index",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.2.3.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Indicates an error code."
+						],
+						"name" : "CISCO-TAP-MIB::cTapDebugIndex",
+						"oid" : "1.3.6.1.4.1.9.9.252.1.3.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

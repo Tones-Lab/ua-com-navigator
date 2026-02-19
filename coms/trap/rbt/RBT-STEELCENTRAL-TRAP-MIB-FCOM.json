@@ -1,0 +1,314 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201804200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "RBT-STEELCENTRAL-TRAP-MIB::testTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"SteelCentral test trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "testTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "SteelCentral test trap"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RBT-STEELCENTRAL-TRAP-MIB::testTrap ",
+			"trap" : {
+				"name" : "RBT-STEELCENTRAL-TRAP-MIB::testTrap",
+				"oid" : "1.3.6.1.4.1.17163.2.1.1.1"
+			}
+		},
+		{
+			"@objectName" : "RBT-STEELCENTRAL-TRAP-MIB::policyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Traffic violated policy thresholds"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "policyTrap:$v6",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==1) ? 3 : ($v2==2) ? 4 : 5"
+				},
+				"SubNode" : "PolicyID:$v5",
+				"Summary" : "Traffic policy ($v3) threshold exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RBT-STEELCENTRAL-TRAP-MIB::policyTrap RBT-STEELCENTRAL-TRAP-MIB::alertSeverity i 0 RBT-STEELCENTRAL-TRAP-MIB::alertSeverityLevel i 1 RBT-STEELCENTRAL-TRAP-MIB::alertPolicyName s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertPolicyDescription s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertPolicyID i 9999 RBT-STEELCENTRAL-TRAP-MIB::alertPolicyType i 1 RBT-STEELCENTRAL-TRAP-MIB::alertPolicyEvalPeriod i 9999 RBT-STEELCENTRAL-TRAP-MIB::alertID i 9999 RBT-STEELCENTRAL-TRAP-MIB::alertStart s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertUpdate s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertViolators s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertURL s EXAMPLE",
+			"trap" : {
+				"name" : "RBT-STEELCENTRAL-TRAP-MIB::policyTrap",
+				"oid" : "1.3.6.1.4.1.17163.2.1.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"Severity of the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Severity Level from 1 to 3: 1 is Minor, 2 is Major, 3 is Critical"
+						],
+						"enums" : {
+							"1" : "minor",
+							"2" : "major",
+							"3" : "critical"
+						},
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertSeverityLevel",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Name of the policy generating the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyName",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description of the policy generating the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyDescription",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Appliance Policy identifier for the policy generating the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyID",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of the policy generating the alert"
+						],
+						"enums" : {
+							"1" : "traffic",
+							"2" : "system",
+							"3" : "watch",
+							"4" : "pcap",
+							"5" : "autobaseline"
+						},
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyType",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Evaluation period (in seconds) of the policy generating the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyEvalPeriod",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Appliance ID number for the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertID",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Time alert started, in epoch time"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertStart",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Time of this update to the alert, in epoch time"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertUpdate",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Comma separated list of path-qualified entities that triggered the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertViolators",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"URL to access the alert report on the device"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertURL",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "RBT-STEELCENTRAL-TRAP-MIB::hardwareTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Hardware problem detected"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hardwareTrap:$v6",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==1) ? 3 : ($v2==2) ? 4 : 5"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v13"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RBT-STEELCENTRAL-TRAP-MIB::hardwareTrap RBT-STEELCENTRAL-TRAP-MIB::alertSeverity i 0 RBT-STEELCENTRAL-TRAP-MIB::alertSeverityLevel i 1 RBT-STEELCENTRAL-TRAP-MIB::alertPolicyName s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertPolicyDescription s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertPolicyID i 9999 RBT-STEELCENTRAL-TRAP-MIB::alertPolicyType i 1 RBT-STEELCENTRAL-TRAP-MIB::alertPolicyEvalPeriod i 9999 RBT-STEELCENTRAL-TRAP-MIB::alertID i 9999 RBT-STEELCENTRAL-TRAP-MIB::alertStart s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertUpdate s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertURL s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertInfoURL s EXAMPLE RBT-STEELCENTRAL-TRAP-MIB::alertMessage s EXAMPLE",
+			"trap" : {
+				"name" : "RBT-STEELCENTRAL-TRAP-MIB::hardwareTrap",
+				"oid" : "1.3.6.1.4.1.17163.2.1.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"Severity of the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Severity Level from 1 to 3: 1 is Minor, 2 is Major, 3 is Critical"
+						],
+						"enums" : {
+							"1" : "minor",
+							"2" : "major",
+							"3" : "critical"
+						},
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertSeverityLevel",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Name of the policy generating the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyName",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description of the policy generating the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyDescription",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Appliance Policy identifier for the policy generating the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyID",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of the policy generating the alert"
+						],
+						"enums" : {
+							"1" : "traffic",
+							"2" : "system",
+							"3" : "watch",
+							"4" : "pcap",
+							"5" : "autobaseline"
+						},
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyType",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Evaluation period (in seconds) of the policy generating the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertPolicyEvalPeriod",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Appliance ID number for the alert"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertID",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Time alert started, in epoch time"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertStart",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Time of this update to the alert, in epoch time"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertUpdate",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"URL to access the alert report on the device"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertURL",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"URL to access related information"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertInfoURL",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Description of the problem"
+						],
+						"name" : "RBT-STEELCENTRAL-TRAP-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.17163.2.1.2.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

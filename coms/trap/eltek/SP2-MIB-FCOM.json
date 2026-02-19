@@ -1,0 +1,2191 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201306271334Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SP2-MIB::alarmPowerSystemTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the power system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmPowerSystemTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Power system alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmPowerSystemTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmPowerSystemTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmBatteryTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the battery subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmBatteryTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Battery alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmBatteryTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmBatteryTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmLoadGroupTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Load subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmLoadGroupTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Load group alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmLoadGroupTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmLoadGroupTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmMainsTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Mains subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmMainsTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Mains alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmMainsTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmMainsTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.4",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmRectifierTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Rectifier subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmRectifierTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Rectifier alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmRectifierTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmRectifierTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmControlSystemTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Control-system subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmControlSystemTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Control system alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmControlSystemTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmControlSystemTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmDcDcTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the DCDC converter subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmDcDcTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "DCDC converter alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmDcDcTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmDcDcTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.7",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmInputsTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Inputs subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmInputsTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Inputs alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmInputsTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmInputsTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.8",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmOutputsTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Outputs subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmOutputsTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Outputs alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmOutputsTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmOutputsTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.9",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmGeneratorTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Generator subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmGeneratorTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Generator alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmGeneratorTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmGeneratorTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.10",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmSolarChargerTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the SolarCharger subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmSolarChargerTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Solar charger alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmSolarChargerTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmSolarChargerTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.11",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmWindChargerTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the WindCharger subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmWindChargerTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0) ? 0 : (($v3 == 1) ? 0 : (($v3 == 3) ? 4 : (($v3 == 4) ? 4 : (($v3 == 5) ? 4 : (($v3 == 6) ? 4 : (($v3 == 7) ? 4 : (($v3 == 8) ? 4 : (($v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3)))))))))"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Wind charger alarm $v4 ; Source: $v1 ; Value: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmWindChargerTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmWindChargerTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.12",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::infoHeartBeatTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"When enabled, this trap will be transmitted at regular inervals. This trap is not",
+				"intended to be an alarm but more like some information that the system is alive and",
+				"the link is up."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "infoHeartBeatTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "SP2 heartbeat from $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::infoHeartBeatTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE",
+			"trap" : {
+				"name" : "SP2-MIB::infoHeartBeatTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.13",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmInverterTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Inverter subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmInverterTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0 || $v3 == 1) ? 0 : (($v3 == 3 || $v3 == 4 || $v3 == 5 || $v3 == 6 || $v3 == 7 || $v3 == 8 || $v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v1",
+				"Summary" : "Inverter subsystem alarm is $v4 and measured value is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmInverterTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmInverterTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.14",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmGridInverterTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Grid Inverter subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmGridInverterTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0 || $v3 == 1) ? 0 : (($v3 == 3 || $v3 == 4 || $v3 == 5 || $v3 == 6 || $v3 == 7 || $v3 == 8 || $v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v1",
+				"Summary" : "Grid inverter subsystem alarm is $v4 and measured value is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmGridInverterTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmGridInverterTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.15",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SP2-MIB::alarmRectiverterTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when an alarm condition occurs in the Rectiverter subsystem."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 0) ? 1 : 2"
+				},
+				"EventType" : "alarmRectiverterTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 0 || $v3 == 1) ? 0 : (($v3 == 3 || $v3 == 4 || $v3 == 5 || $v3 == 6 || $v3 == 7 || $v3 == 8 || $v3 == 10) ? 4 : (($v3 == 18) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v1",
+				"Summary" : "Rectiverter subsystem alarm is $v4 and measured value is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SP2-MIB::alarmRectiverterTrap SP2-MIB::alarmSubsysSourceDescr s EXAMPLE SP2-MIB::alarmSubsysStatusOid o 1.3.6.1.4.1.12148.10.3.5.2 SP2-MIB::alarmSubsysStatusValue i 0 SP2-MIB::alarmSubsysStatusOnOff i 0 SP2-MIB::alarmMeasuredVarOid o 1.3.6.1.4.1.12148.10.3.5.1 SP2-MIB::alarmMeasuredVarValue i 9999 SP2-MIB::alarmTrapCounterVarValue i 9999 SP2-MIB::alarmTrapTime s EXAMPLEEXAM",
+			"trap" : {
+				"name" : "SP2-MIB::alarmRectiverterTrap",
+				"oid" : "1.3.6.1.4.1.12148.10.1.2.16",
+				"variables" : [
+					{
+						"description" : [
+							"A description of the source generating the trap for the Alarm Condition. ",
+							"Used in alarmSubSystemTrap to describe the alarm source. ",
+							"Example: 'batteryVoltageDescription'"
+						],
+						"name" : "SP2-MIB::alarmSubsysSourceDescr",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The OID (name) of the object indicating the alarm-status for which the alarm is ",
+							"generated. The Status must be an INTEGER type.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"1.3.6.1.4.1.12148.10.3.5.2:",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current Status object."
+						],
+						"name" : "SP2-MIB::alarmSubsysStatusOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the Status object of the subsystem for which the",
+							"alarm-status is generated. The OID (name) of this object is",
+							"indicated by alarmSubsysStatusOid above.",
+							"Example: the value of SP2-MIB::batteryVoltage.batteryVoltageStatus",
+							"one of: error (0), normal (1), minorAlarm (2), etc."
+						],
+						"enums" : {
+							"0" : "error",
+							"1" : "normal",
+							"2" : "minorAlarm",
+							"3" : "majorAlarm",
+							"4" : "disabled",
+							"5" : "disconnected",
+							"6" : "notPresent",
+							"7" : "minorAndMajor",
+							"8" : "majorLow",
+							"9" : "minorLow",
+							"10" : "majorHigh",
+							"11" : "minorHigh",
+							"12" : "event",
+							"13" : "valueVolt",
+							"14" : "valueAmp",
+							"15" : "valueTemp",
+							"16" : "valueUnit",
+							"17" : "valuePerCent",
+							"18" : "critical",
+							"19" : "warning"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicates if the abnormal condition is on or goes off."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SP2-MIB::alarmSubsysStatusOnOff",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The OID (name) of the measured-object indicating some",
+							"measurement (e.g voltage) for which the alarm is generated.",
+							"Example: SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"1.3.6.1.4.1.12148.10.3.5.1",
+							"This object maybe polled by the SNMP management application",
+							"to monitor the current measurement."
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarOid",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of the measured-object for which the alarm-status",
+							"is generated, for example 13 volt. The actual value is in",
+							"units defined by the actual variable (e.g volts). The units",
+							"must use INTEGER type.",
+							"The OID (name) of this object is indicated by",
+							"alarmMeasuredVarOid above.",
+							"Example: Value of SP2-MIB::batteryVoltage.batteryVoltageValue",
+							"'The measured battery voltage'"
+						],
+						"name" : "SP2-MIB::alarmMeasuredVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "SP2-MIB::alarmTrapCounterVarValue",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Time stemp of trap"
+						],
+						"name" : "SP2-MIB::alarmTrapTime",
+						"oid" : "1.3.6.1.4.1.12148.10.1.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

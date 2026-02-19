@@ -1,0 +1,192 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201602010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-LDAP-MIB::tmnxLdapOperStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE]The tmnxLdapOperStateChange notification is generated when",
+				"the tmnxLdapOperState has transitioned either from 'outOfService' to",
+				"'inService' or from 'inService' to 'outOfService' state.",
+				"[EFFECT]If tmnxLdapOperState has transitioned to 'outOfService' state",
+				"then the LDAP protocol is not available for use.",
+				"If tmnxLdapOperState has transitioned to 'inService' state then",
+				"the LDAP protocol is available for use.",
+				"[RECOVERY]If the new state corresponds to the value of",
+				"tmnxLdapAdminState, then this is desirable behavior and no recovery",
+				"is needed. If the new state of the tmnxLdapOperState object is",
+				"'outOfService' while the value of the object tmnxLdapAdminState",
+				"is 'inService', make sure that the value of tmnxLdapServerOperState",
+				"of at least one LDAP server connection is 'inService'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxLdapOperStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==1) ? 1 : ($v1==4) ? 2 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of LDAP protocol: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDAP-MIB::tmnxLdapOperStateChange TIMETRA-LDAP-MIB::tmnxLdapOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-LDAP-MIB::tmnxLdapOperStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.106.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxLdapOperState indicates the operational",
+							"state of the LDAP protocol.",
+							"If the value is 'outOfService' then the LDAP protocol is not available",
+							"for use. If the value is 'inService' then the LDAP protocol is",
+							"available for use. The value will be 'inService' if the value of",
+							"the object tmnxLdapServerOperState of at least one LDAP server is",
+							"in 'inService' state.",
+							"If the value of this object changes from 'outOfService' to 'inService'",
+							"or from 'inService' to 'outOfService' then tmnxLdapOperStateChange",
+							"notification will be sent."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDAP-MIB::tmnxLdapOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.106.1.2.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LDAP-MIB::tmnxLdapServerOperStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE]The tmnxLdapServerOperStateChange notification is generated",
+				"when the tmnxLdapServerOperState has transitioned either from",
+				"'outOfService' to 'inService' or from 'inService' to 'outOfService'",
+				"state.",
+				"[EFFECT]If tmnxLdapServerOperState has transitioned to 'outOfService'",
+				"state then the particular LDAP server connection is not available",
+				"for use. If tmnxLdapServerOperState has transitioned to 'inService'",
+				"state then the particular LDAP server connection is available for use.",
+				"[RECOVERY]If the new state corresponds to the tmnxLdapServerAdminState",
+				"then this is the desirable behavior and no recovery is needed.",
+				"If the new state of the tmnxLdapServerOperState object is",
+				"'outOfService' while the value of the object tmnxLdapServerAdminState",
+				"is 'inService', make sure that the LDAP server connection parameters",
+				"are properly configured and the LDAP server is reachable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v2==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxLdapServerOperStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v2==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : ($v2==1) ? 1 : ($v2==4) ? 2 : 4"
+				},
+				"SubNode" : "Port:$v5",
+				"Summary" : "Operational state of LDAP server ($v1) connection: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LDAP-MIB::tmnxLdapServerOperStateChange TIMETRA-LDAP-MIB::tmnxLdapServerName s EXAMPLE TIMETRA-LDAP-MIB::tmnxLdapServerOperState i 1 TIMETRA-LDAP-MIB::tmnxLdapServerInetAddressType i 0 TIMETRA-LDAP-MIB::tmnxLdapServerInetAddress s EXAM TIMETRA-LDAP-MIB::tmnxLdapServerPort i 9999",
+			"trap" : {
+				"name" : "TIMETRA-LDAP-MIB::tmnxLdapServerOperStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.106.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxLdapServerName specifies the",
+							"name assigned to this LDAP server by a user."
+						],
+						"name" : "TIMETRA-LDAP-MIB::tmnxLdapServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.106.2.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxLdapServerOperState indicates",
+							"the operational state of this LDAP server connection.",
+							"The value of this object is updated periodically if the health",
+							"check functionality is enabled, otherwise its value is updated when",
+							"connection to the LDAP server is attempted.",
+							"If the value is 'outOfService' then this LDAP server connection",
+							"is not available for use. If the value is 'inService' then",
+							"this LDAP server connection is available for use.",
+							"If the value of this object changes from 'outOfService' to 'inService'",
+							"or from 'inService' to 'outOfService' then",
+							"tmnxLdapServerOperStateChange notification will be sent."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-LDAP-MIB::tmnxLdapServerOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.106.2.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxLdapServerInetAddressType specifies",
+							"the address type of tmnxLdapServerInetAddress address.",
+							"The value of tmnxLdapServerInetAddressType can be either of",
+							"InetAddressType - 'unknown' or InetAddressType - 'ipv4' or",
+							"InetAddressType - 'ipv6'."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-LDAP-MIB::tmnxLdapServerInetAddressType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.106.2.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxLdapServerInetAddress specifies",
+							"the IP address of the LDAP server."
+						],
+						"name" : "TIMETRA-LDAP-MIB::tmnxLdapServerInetAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.106.2.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxLdapServerPort specifies",
+							"the number of IP port on which to contact the LDAP server."
+						],
+						"name" : "TIMETRA-LDAP-MIB::tmnxLdapServerPort",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.106.2.1.1.8",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

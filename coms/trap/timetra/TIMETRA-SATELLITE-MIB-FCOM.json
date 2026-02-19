@@ -1,0 +1,1134 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201701010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatelliteOperStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatelliteOperStateChange notification is generated",
+				"when there is a change in tmnxHwOperState for the satellite.",
+				"[EFFECT] The satellite has changed states. The",
+				"tmnxSatNotifyFailureReason is only valid when tmnxHwOperState is",
+				"'failed (5)', and should otherwise be blank.",
+				"[RECOVERY] Contact Nokia customer support if",
+				"tmnxSatNotifyFailureReason does not provide enough information to",
+				"rectify the situation."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==5) ? 2 : 3"
+				},
+				"EventType" : "tmnxSatelliteOperStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2) ? 0 : ($v1==5) ? 4 : ($v1==3 || $v1==11 || $v1==13) ? 3 : 2"
+				},
+				"SubNode" : "ChassisIndex:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : {
+					"eval" : "($v1==5) ? 'Satellite operational state is failed because of $v2' : 'Satellite operational state is $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatelliteOperStateChange TIMETRA-CHASSIS-MIB::tmnxHwOperState i 1 TIMETRA-SATELLITE-MIB::tmnxSatNotifyFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatelliteOperStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The actual operational status of this hardware component.",
+							"",
+							"unknown (1) Status cannot be determined",
+							"",
+							"inService (2) Online - If tmnxHwClass has a value of",
+							"'ioModule (8)' or 'cpmModule (9), the",
+							"card is present, booted, configured",
+							"and running.",
+							"",
+							"outOfService (3) Ready - The hardware component is OK",
+							"but is down because tmnxHwAdminState has",
+							"a value of 'outOfService (3)'.",
+							"",
+							"diagnosing (4) Not implemented.",
+							"",
+							"failed (5) This hardware component has failed. The",
+							"value of tmnxHwFailureReason indicates",
+							"the type of failure. If tmnxHwClass has",
+							"a value of 'ioModule(8)' or 'cpmModule(9)'",
+							"there is a card in the slot but it has",
+							"failed.",
+							"",
+							"booting (6) A card is in the transitional startup state.",
+							"",
+							"empty (7) There is no card in the slot and it has",
+							"not been pre-configured.",
+							"",
+							"provisioned (8) There is no card in the slot but it has",
+							"been pre-configured.",
+							"",
+							"unprovisioned (9) There is a card in the slot but it is not",
+							"configured.",
+							"",
+							"upgrade (10) Card software version is compatible with",
+							"and newer than that running on the current",
+							"active CPM.",
+							"",
+							"downgrade (11) Card software version is compatible with",
+							"and older than that running on the current",
+							"active CPM.",
+							"",
+							"inServiceUpgrade (12) Card is inService and the card software",
+							"version is compatible with and newer than",
+							"that running on the current active CPM.",
+							"This state applies only to a standby CPM",
+							"card. This enumeration is no longer",
+							"supported as of release 5.0.",
+							"",
+							"inServiceDowngrade (13) Card is inService and the card software",
+							"is compatible with and older than that",
+							"running on the current active CPM. This",
+							"state applies only to a standby CPM card.",
+							"This enumeration is no longer supported",
+							"as of release 5.0.",
+							"",
+							"resetPending (14) Card is awaiting reset following an",
+							"upgrade or downgrade activity switch.",
+							"The card software version is upgrade",
+							"or downgrade compatible but will be reset",
+							"in order to update it to match the active",
+							"CPM software. The value of",
+							"tmnxChassisUpdateWaitTime indicates the",
+							"how long the system will wait following",
+							"an upgrade or downgrade activity switch",
+							"before it resets IOM cards. This state",
+							"applies only to IOM cards. This",
+							"enumeration is no longer supported as of",
+							"release 5.0.",
+							"",
+							"softReset (15) Card is performing a soft reset. The",
+							"data path is active, but control path",
+							"transitional changes are suspended until",
+							"the card leaves this state"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "diagnosing",
+							"5" : "failed",
+							"6" : "booting",
+							"7" : "empty",
+							"8" : "provisioned",
+							"9" : "unprovisioned",
+							"10" : "upgrade",
+							"11" : "downgrade",
+							"12" : "inServiceUpgrade",
+							"13" : "inServiceDowngrade",
+							"14" : "resetPending",
+							"15" : "softReset",
+							"16" : "preExtension",
+							"17" : "downloading"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSatNotifyFailureReason indicates the reason why a",
+							"satellite is in a failed state."
+						],
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatNotifyFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.5.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRefSwitch",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimRefSwitch notification is generated when",
+				"there is a change of which timing reference is providing timing for",
+				"the satellite.",
+				"[EFFECT] This notification is for informational purposes only.",
+				"[RECOVERY] No recovery required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxSatClass>[0-9]+)\\.(?P<tmnxSatId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSatSyncIfTimRefSwitch",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SatelliteClass:$tmnxSatClass;SatelliteId:$tmnxSatId",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'First timing reference is currently in use for satellite: $tmnxSatId' : 'Second timing reference is currently in use for satellite: $tmnxSatId'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRefSwitch TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingRef1InUse i 1 TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingRef2InUse i 1",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRefSwitch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSatSyncIfTimingRef1InUse indicates whether the first",
+							"timing reference for the satellite is presently being used by the",
+							"synchronous timing subsystem. If it is in use",
+							"tmnxSatSyncIfTimingFreqOffset indicates the frequency offset for this",
+							"reference."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingRef1InUse",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.3.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSatSyncIfTimingRef2InUse indicates whether the second",
+							"timing reference for the satellite is presently being used by the",
+							"synchronous timing subsystem."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingRef2InUse",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.3.3.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimSystemQuality",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxEqSyncIfTimingSystemQuality notification is generated when",
+				"there is a change in the system timing quality level for the",
+				"satellite. This notification is a point-in-time state change event.",
+				"[CAUSE] This notification may be triggered for the following reasons:",
+				"1) There has been a switch in the timing reference in use by the",
+				"network element, either because the previously active timing",
+				"reference was disqualified, or to ensure that the network element",
+				"is using the timing reference with the best timing quality.",
+				"2) There has been a change in the active timing reference's quality",
+				"and the change does not result in a timing reference switch.",
+				"3) The network element has transitioned into or out of the holdover",
+				"state.",
+				"[EFFECT] The system quality level is used to determine the SSM code",
+				"transmitted on synchronous interfaces. This may affect the SSM code",
+				"transmitted on some or all interfaces, which may affect the",
+				"distribution of timing throughout the network.",
+				"[RECOVERY] If the customer is expecting the system to be locked to a",
+				"reference of a particular quality and the system quality has",
+				"decreased, the customer will need to determine the root cause (for",
+				"example, loss of communication with a satellite) and resolve the",
+				"issue."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxSatClass>[0-9]+)\\.(?P<tmnxSatId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSatSyncIfTimSystemQuality",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SatelliteClass:$tmnxSatClass;SatelliteId:$tmnxSatId",
+				"Summary" : "System timing quality level of the satellite ($tmnxSatId) is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimSystemQuality TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingSystemQltyLvl i 0",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimSystemQuality",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSatSyncIfTimingSystemQltyLvl indicates the quality",
+							"level of the system timing reference for the satellite. This is",
+							"normally the quality level of the selected timing reference. If no",
+							"timing reference has been selected, it indicates the freerun/holdover",
+							"quality of the system."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "prs",
+							"2" : "stu",
+							"3" : "st2",
+							"4" : "tnc",
+							"5" : "st3e",
+							"6" : "st3",
+							"7" : "smc",
+							"8" : "st4",
+							"9" : "dus",
+							"10" : "prc",
+							"11" : "ssua",
+							"12" : "ssub",
+							"13" : "sec",
+							"14" : "dnu",
+							"15" : "inv",
+							"16" : "pno",
+							"17" : "eec1",
+							"18" : "eec2",
+							"19" : "failed"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingSystemQltyLvl",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.3.3.1.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1Quality",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimRef1Quality notification is generated when",
+				"the received quality level changes on the first timing reference of",
+				"the satellite.",
+				"[EFFECT] This notification is for informational purposes only.",
+				"[RECOVERY] No recovery required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxSatClass>[0-9]+)\\.(?P<tmnxSatId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSatSyncIfTimRef1Quality",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SatelliteClass:$tmnxSatClass;SatelliteId:$tmnxSatId",
+				"Summary" : "Satellite: $tmnxSatId quality level of first timing reference is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1Quality TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingRef1RxQltyLvl i 0",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1Quality",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSatSyncIfTimingRef1RxQltyLvl indicates the received",
+							"SSM Quality Level of the first reference for the satellite."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "prs",
+							"2" : "stu",
+							"3" : "st2",
+							"4" : "tnc",
+							"5" : "st3e",
+							"6" : "st3",
+							"7" : "smc",
+							"8" : "st4",
+							"9" : "dus",
+							"10" : "prc",
+							"11" : "ssua",
+							"12" : "ssub",
+							"13" : "sec",
+							"14" : "dnu",
+							"15" : "inv",
+							"16" : "pno",
+							"17" : "eec1",
+							"18" : "eec2",
+							"19" : "failed"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingRef1RxQltyLvl",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.3.3.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2Quality",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimRef2Quality notification is generated when",
+				"the received quality level changes on the second timing reference of",
+				"the satellite.",
+				"[EFFECT] This notification is for informational purposes only.",
+				"[RECOVERY] No recovery required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxSatClass>[0-9]+)\\.(?P<tmnxSatId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSatSyncIfTimRef2Quality",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SatelliteClass:$tmnxSatClass;SatelliteId:$tmnxSatId",
+				"Summary" : "The received SSM quality level of second timing reference of the satellite: $tmnxSatId is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2Quality TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingRef2RxQltyLvl i 0",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2Quality",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSatSyncIfTimingRef2RxQltyLvl indicates the received",
+							"SSM Quality Level of the second reference for the satellite."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "prs",
+							"2" : "stu",
+							"3" : "st2",
+							"4" : "tnc",
+							"5" : "st3e",
+							"6" : "st3",
+							"7" : "smc",
+							"8" : "st4",
+							"9" : "dus",
+							"10" : "prc",
+							"11" : "ssua",
+							"12" : "ssub",
+							"13" : "sec",
+							"14" : "dnu",
+							"15" : "inv",
+							"16" : "pno",
+							"17" : "eec1",
+							"18" : "eec2",
+							"19" : "failed"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimingRef2RxQltyLvl",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.3.3.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimHoldover",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimHoldover notification is generated when",
+				"the synchronous equipment timing subsystem of the satellite",
+				"transitions into a holdover state.",
+				"[EFFECT] The transmit timing of all synchronous interfaces on the",
+				"satellite are no longer synchronous with the host. This could result",
+				"in traffic loss.",
+				"[RECOVERY] Investigate the state of the two input timing references on",
+				"the satellite and the links between the host and the satellite (i.e.",
+				"the uplinks) that drive them for failures."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSatSyncIfTimHoldoverStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "ChassisIndex:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Synchronous equipment timing subsystem of the satellite is in holdover state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimHoldover TIMETRA-CHASSIS-MIB::tmnxHwClass i 1",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimHoldover",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimHoldoverClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimHoldoverClear notification is generated",
+				"when the synchronous equipment timing subsystem of the satellite",
+				"transitions out of the holdover state.",
+				"[EFFECT] This notification is for informational purposes only.",
+				"[RECOVERY] No recovery required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSatSyncIfTimHoldoverStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ChassisIndex:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Synchronous equipment timing subsystem of the satellite recovered from holdover state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimHoldoverClear TIMETRA-CHASSIS-MIB::tmnxHwClass i 1",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimHoldoverClear",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1Alarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimRef1Alarm notification is generated when",
+				"an alarm condition on the first timing reference is detected.",
+				"[EFFECT] If the other timing reference is free of faults, the",
+				"satellite no longer has a backup timing reference. If the other timing",
+				"reference also has a fault, the satellite will likely no longer be",
+				"synchronous with the host.",
+				"[RECOVERY] Investigate the state of the link between the host and the",
+				"satellite (i.e. the uplink) that drives the first timing reference on",
+				"the satellite for faults."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSatSyncIfTimRef1AlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ChassisIndex:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Alarm on first timing reference because of $v2; Chassis index: $tmnxChassisIndex"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1Alarm TIMETRA-CHASSIS-MIB::tmnxHwClass i 1 TIMETRA-SATELLITE-MIB::tmnxSatNotifySyncIfTimRefAlarm i 0",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1Alarm",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSatNotifySyncIfTimRefAlarm indicates the reason a",
+							"timing reference alarm has been raised."
+						],
+						"enums" : {
+							"0" : "notUsed",
+							"1" : "los",
+							"2" : "oof",
+							"3" : "oopir"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatNotifySyncIfTimRefAlarm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1AlarmClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimRef1AlarmClear notification is generated",
+				"when the alarm condition on the first timing reference is cleared.",
+				"[EFFECT] This notification is for informational purposes only.",
+				"[RECOVERY] No recovery required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSatSyncIfTimRef1AlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ChassisIndex:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "First timing reference alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1AlarmClear TIMETRA-CHASSIS-MIB::tmnxHwClass i 1 TIMETRA-SATELLITE-MIB::tmnxSatNotifySyncIfTimRefAlarm i 0",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef1AlarmClear",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSatNotifySyncIfTimRefAlarm indicates the reason a",
+							"timing reference alarm has been raised."
+						],
+						"enums" : {
+							"0" : "notUsed",
+							"1" : "los",
+							"2" : "oof",
+							"3" : "oopir"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatNotifySyncIfTimRefAlarm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2Alarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimRef2Alarm notification is generated when",
+				"an alarm condition on the second timing reference is detected.",
+				"[EFFECT] If the other timing reference is free of faults, the",
+				"satellite no longer has a backup timing reference. If the other timing",
+				"reference also has a fault, the satellite will likely no longer be",
+				"synchronous with the host.",
+				"[RECOVERY] Investigate the state of the link between the host and the",
+				"satellite (i.e. the uplink) that drives the second timing reference on",
+				"the satellite for faults."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSatSyncIfTimRef2AlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ChassisIndex:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "$v2 alarm on second timing reference of satellite; Chassis index: $tmnxChassisIndex"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2Alarm TIMETRA-CHASSIS-MIB::tmnxHwClass i 1 TIMETRA-SATELLITE-MIB::tmnxSatNotifySyncIfTimRefAlarm i 0",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2Alarm",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSatNotifySyncIfTimRefAlarm indicates the reason a",
+							"timing reference alarm has been raised."
+						],
+						"enums" : {
+							"0" : "notUsed",
+							"1" : "los",
+							"2" : "oof",
+							"3" : "oopir"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatNotifySyncIfTimRefAlarm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2AlarmClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatSyncIfTimRef1AlarmClear notification is generated",
+				"when the alarm condition on the second timing reference is cleared.",
+				"[EFFECT] This notification is for informational purposes only.",
+				"[RECOVERY] No recovery required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSatSyncIfTimRef2AlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ChassisIndex:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Second timing reference alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2AlarmClear TIMETRA-CHASSIS-MIB::tmnxHwClass i 1 TIMETRA-SATELLITE-MIB::tmnxSatNotifySyncIfTimRefAlarm i 0",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatSyncIfTimRef2AlarmClear",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSatNotifySyncIfTimRefAlarm indicates the reason a",
+							"timing reference alarm has been raised."
+						],
+						"enums" : {
+							"0" : "notUsed",
+							"1" : "los",
+							"2" : "oof",
+							"3" : "oopir"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatNotifySyncIfTimRefAlarm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardStateChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatLocalForwardStateChg notification is generated when",
+				"the system detects a change in the administrative state, or",
+				"operational state of the satellite local forward.",
+				"[EFFECT] The administrative state or operational state of the",
+				"satellite local forward has changed.",
+				"[RECOVERY] If the administrative state is 'inService (2)', and the",
+				"operational state is 'down (2)', check to 5 valid configuration",
+				"of the satellite local forward, and verify the connection of the",
+				"satellite to the host. Contact Nokia customer support if the issue",
+				"cannot be resolved."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxSatLocalForwardId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? (($v1==2) ? 1 : 3) : 2"
+				},
+				"EventType" : "tmnxSatLocalForwardStateChg",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? (($v1==2) ? 3600 : 3600) : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? (($v1==2) ? 0 : 2) : (($v1==3) ? 5 : 4)"
+				},
+				"SubNode" : "SatelliteLocalForwardId:$tmnxSatLocalForwardId",
+				"Summary" : "Satellite local forward ($tmnxSatLocalForwardId) - administrative state: $v1, operational state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardStateChg TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardAdminState i 1 TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardStateChg",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSatLocalForwardAdminState specifies the",
+							"administrative state of the satellite local forward."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.9.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSatLocalForwardOperState indicates the operational",
+							"state of the satellite local forward."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.9.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardSapStateChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSatLocalForwardSapStateChg notification is generated",
+				"when the system detects a change in the administrative state, or",
+				"operational state of the satellite local forward SAP.",
+				"[EFFECT] The administrative state or operational state of the",
+				"satellite local forward SAP has changed.",
+				"[RECOVERY] If the administrative state is 'inService (2)', and the",
+				"operational state is 'down (2)', check to ensure valid configuration",
+				"of the satellite local forward SAP, and verify the connection of the",
+				"satellite to the host. Contact Nokia customer support if the issue",
+				"cannot be resolved."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxSatLocalForwardId>[0-9]+)\\.(?P<tmnxSatPortId>[0-9]+)\\.(?P<tmnxSatEncapValue>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? (($v1==2) ? 1 : 3) : 2"
+				},
+				"EventType" : "tmnxSatLocalForwardStateChg",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? (($v1==2) ? 3600 : 3600) : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? (($v1==2) ? 0 : 2) : (($v1==3) ? 5 : 4)"
+				},
+				"SubNode" : "SatelliteLocalForwardId:$tmnxSatLocalForwardId;SatellitePortId:$tmnxSatPortId",
+				"Summary" : "Satellite local forward SAP: Administrative state: $v1; Operational state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardSapStateChg TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardSapAdminState i 1 TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardSapOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardSapStateChg",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.103.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSatLocalForwardSapAdminState specifies the",
+							"administrative state of the satellite local forward SAP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardSapAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.10.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSatLocalForwardSapOperState indicates the operational",
+							"state of the satellite local forward SAP."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SATELLITE-MIB::tmnxSatLocalForwardSapOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.103.10.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

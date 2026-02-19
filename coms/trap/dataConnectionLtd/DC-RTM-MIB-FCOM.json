@@ -1,0 +1,400 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201404170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DC-RTM-MIB::rtmOperStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-RTM generates this trap when the operational state of RTM",
+				"enters 'up', 'down' or 'act_failed' state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : ($v2 == 3 || $v2 == 4 ) ? 3 : 2"
+				},
+				"EventType" : "dcRtmOperStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : ($v2 == 3 || $v2 == 4 ) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : ($v2 == 3 || $v2 == 4) ? 2 : ($v2 == 2) ? 5 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of RTM changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-RTM-MIB::rtmOperStateChange DC-RTM-MIB::rtmTrapEntityFteIndex u 9999 DC-RTM-MIB::rtmEntityOperStatus i 1",
+			"trap" : {
+				"name" : "DC-RTM-MIB::rtmOperStateChange",
+				"oid" : "1.2.826.0.1.1578918.5.61.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Version of rtmEntityFteIndex used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapEntityFteIndex",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The current operational state of the DC-RTM entity."
+						],
+						"enums" : {
+							"1" : "operStatusUp",
+							"2" : "operStatusDown",
+							"3" : "operStatusGoingUp",
+							"4" : "operStatusGoingDown",
+							"5" : "operStatusActFailed"
+						},
+						"name" : "DC-RTM-MIB::rtmEntityOperStatus",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.1.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-RTM-MIB::rtmStaticRouteChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-RTM generates this trap when a static route becomes",
+				"eligible or ineligible for installation in the FIB."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10 == 3) ? 1 : ($v10 == 0 || $v10 == 1 || $v10==2) ? 3 : 2"
+				},
+				"EventType" : "dcRtmStaticRouteChange",
+				"ExpireTime" : {
+					"eval" : "($v10 == 3) ? 3600 : ($v10 == 0 || $v10 == 1 || $v10==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v10 == 0 || $v10 == 1 || $v10 == 2) ? 2 : ($v10 == 3) ? 0 : ($v10 == 4 || $v10 == 6) ? 3 : 4"
+				},
+				"SubNode" : "dcRtmTrapStaticRtIfIndex:$v7",
+				"Summary" : "Static route is $v8 for installation in the FIB"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-RTM-MIB::rtmStaticRouteChange DC-RTM-MIB::rtmTrapEntityFteIndex u 9999 DC-RTM-MIB::rtmTrapStaticRtDestAddrType i 0 DC-RTM-MIB::rtmTrapStaticRtDestAddr s EXAM DC-RTM-MIB::rtmTrapStaticRtDestLen i 0 DC-RTM-MIB::rtmTrapStaticRtNextHopType i 0 DC-RTM-MIB::rtmTrapStaticRtNextHop s EXAM DC-RTM-MIB::rtmTrapStaticRtIfIndex i 9999 DC-RTM-MIB::rtmStaticRtTrapReason i 1 DC-RTM-MIB::rtmStaticRtBfdSupport i 1 DC-RTM-MIB::rtmStaticRtBfdStatus i 0",
+			"trap" : {
+				"name" : "DC-RTM-MIB::rtmStaticRouteChange",
+				"oid" : "1.2.826.0.1.1578918.5.61.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Version of rtmEntityFteIndex used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapEntityFteIndex",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Version of rtmStaticRtDestAddrType used for traps."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DC-RTM-MIB::rtmTrapStaticRtDestAddrType",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of rtmStaticRtDestAddr used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapStaticRtDestAddr",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Version of rtmStaticRtDestLen used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapStaticRtDestLen",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Version of rtmStaticRtNextHopType used for traps."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DC-RTM-MIB::rtmTrapStaticRtNextHopType",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of rtmStaticRtNextHop used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapStaticRtNextHop",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Version of rtmStaticRtIfIndex used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapStaticRtIfIndex",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Event that caused the trap to be made.",
+							"Used by the rtmStaticRouteChange trap."
+						],
+						"enums" : {
+							"1" : "eligible",
+							"2" : "ineligible"
+						},
+						"name" : "DC-RTM-MIB::rtmStaticRtTrapReason",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates whether DC-RTM should use BFD to check IP",
+							"reachability to the static route's next hop.",
+							"",
+							"DC-RTM will only attempt to use BFD if rtmEntityBfdIndex is non-zero",
+							"and the static route has rtmStaticRtAction set to 'forward'",
+							"and rtmStaticRtNextHop set to a non-null IP address.",
+							"",
+							"This object should be set as follows.",
+							"",
+							"- Set to 'none' if BFD is not required for this static route.",
+							"",
+							"- Set to 'desired' if it is not known whether the next hop",
+							"router supports BFD. DC-RTM will use BFD for reachability",
+							"checking if BFD is able to contact the next hop router. If the",
+							"BFD session fails, the static route will be removed from the",
+							"forwarding table and will not be used for redistribution.",
+							"",
+							"- Set to 'required' if it is known that the next hop router",
+							"supports BFD. DC-RTM will use BFD to check reachability of the",
+							"next hop. If BFD is unable to contact the next hop router or if",
+							"the BFD session fails, the static route will be removed from the",
+							"forwarding table and will not be used for redistribution.",
+							"",
+							"The current state of the BFD session is indicated by",
+							"rtmStaticRtBfdStatus."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "desired",
+							"3" : "required"
+						},
+						"name" : "DC-RTM-MIB::rtmStaticRtBfdSupport",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.1.3.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current BFD session state for this static route."
+						],
+						"enums" : {
+							"0" : "bfdSessNotRequired",
+							"1" : "bfdSessInitial",
+							"2" : "bfdSessActivating",
+							"3" : "bfdSessActive",
+							"4" : "bfdSessInactive",
+							"5" : "bfdSessAdminDown",
+							"6" : "bfdSessNoContact"
+						},
+						"name" : "DC-RTM-MIB::rtmStaticRtBfdStatus",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.1.3.1.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-RTM-MIB::rtmPathActivityChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-RTM generates this trap when a path becomes active or",
+				"inactive."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11 == 1) ? 1 : 2"
+				},
+				"EventType" : "dcRtmPathActivityChange",
+				"ExpireTime" : {
+					"eval" : "($v11 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v11 == 1) ? 0 : 4"
+				},
+				"SubNode" : "dcRtmTrapRibIfIndex:$v8",
+				"Summary" : "Route path to $v3 via next hop $v7 became $v11."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-RTM-MIB::rtmPathActivityChange DC-RTM-MIB::rtmTrapEntityFteIndex u 9999 DC-RTM-MIB::rtmTrapRibDestType i 0 DC-RTM-MIB::rtmTrapRibDest s EXAM DC-RTM-MIB::rtmTrapRibDestLen i 0 DC-RTM-MIB::rtmTrapRibTos i 0 DC-RTM-MIB::rtmTrapRibNextHopType i 0 DC-RTM-MIB::rtmTrapRibNextHop s EXAM DC-RTM-MIB::rtmTrapRibIfIndex i 9999 DC-RTM-MIB::rtmTrapRibProto i 1 DC-RTM-MIB::rtmTrapRibRpmIndex i 9999 DC-RTM-MIB::rtmPathTrapReason i 1",
+			"trap" : {
+				"name" : "DC-RTM-MIB::rtmPathActivityChange",
+				"oid" : "1.2.826.0.1.1578918.5.61.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Version of rtmEntityFteIndex used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapEntityFteIndex",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Version of rtmRibDestType used for traps."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DC-RTM-MIB::rtmTrapRibDestType",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of rtmRibDest used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapRibDest",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Version of rtmRibDestLen used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapRibDestLen",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.12",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Version of rtmRibTos used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapRibTos",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.13",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Version of rtmRibNextHopType used for traps."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "DC-RTM-MIB::rtmTrapRibNextHopType",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of rtmRibNextHop used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapRibNextHop",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Version of rtmRibIfIndex used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapRibIfIndex",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.16",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Version of rtmRibProto used for traps."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "local",
+							"3" : "netmgmt",
+							"4" : "icmp",
+							"5" : "egp",
+							"6" : "ggp",
+							"7" : "hello",
+							"8" : "rip",
+							"9" : "isIs",
+							"10" : "esIs",
+							"11" : "ciscoIgrp",
+							"12" : "bbnSpfIgp",
+							"13" : "ospf",
+							"14" : "bgp",
+							"15" : "idpr",
+							"16" : "ciscoEigrp",
+							"17" : "dvmrp",
+							"18" : "rpl"
+						},
+						"name" : "DC-RTM-MIB::rtmTrapRibProto",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of rtmRibRpmIndex used for traps."
+						],
+						"name" : "DC-RTM-MIB::rtmTrapRibRpmIndex",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.18",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Event that caused the trap to be made.",
+							"Used by the rtmPathActivityChange trap."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive"
+						},
+						"name" : "DC-RTM-MIB::rtmPathTrapReason",
+						"oid" : "1.2.826.0.1.1578918.5.61.1.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

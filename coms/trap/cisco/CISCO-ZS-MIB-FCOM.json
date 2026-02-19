@@ -1,0 +1,384 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200511100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ZS-MIB::zoneServiceReqRejNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever the local ",
+				"Zone Server rejects a registration request.",
+				"The Zone Server should update the ",
+				"zoneServiceRejReasonCode and zoneServiceRejReason-",
+				"CodeExp objects with the corresponding reason ",
+				"code and reason code explanation before sending the ",
+				"notification.",
+				"The zoneMemberType and zoneMemberID identify the ",
+				"source of the request."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zoneServiceReqRejNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "The Device with ID: $v2 has been denied registration to the Zone Server with code: $v3, reason: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ZS-MIB::zoneServiceReqRejNotify CISCO-ZS-MIB::zoneMemberFormat i 1 CISCO-ZS-MIB::zoneMemberID s EXAMPLE CISCO-ZS-MIB::zoneServiceRejReasonCode i 1 CISCO-ZS-MIB::zoneServiceRejReasonCodeExp i 1",
+			"trap" : {
+				"name" : "CISCO-ZS-MIB::zoneServiceReqRejNotify",
+				"oid" : "1.3.6.1.4.1.9.9.294.1.4.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "wwn",
+							"2" : "domainPort",
+							"3" : "fcAddr",
+							"4" : "fwwn",
+							"5" : "symNodeName",
+							"6" : "intf",
+							"7" : "domainIntf",
+							"8" : "ipAddr",
+							"9" : "ipAddrv6",
+							"10" : "deviceAlias"
+						},
+						"name" : "CISCO-ZS-MIB::zoneMemberFormat",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.1.11.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ZS-MIB::zoneMemberID",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.1.11.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "invalidCmdCode",
+							"3" : "invalidVerLevel",
+							"4" : "logicalError",
+							"5" : "invalidIUSize",
+							"6" : "logicalBusy",
+							"7" : "protocolError",
+							"8" : "unableToPerformCmdReq",
+							"9" : "cmdNotSupported",
+							"10" : "vendorError"
+						},
+						"name" : "CISCO-ZS-MIB::zoneServiceRejReasonCode",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "noAdditionalExplanation",
+							"2" : "zonesNotSupported",
+							"3" : "zoneSetNameUnknown",
+							"4" : "noZoneSetActive",
+							"5" : "zoneNameUnknown",
+							"6" : "zoneStateUnknown",
+							"7" : "incorrectPayloadLen",
+							"8" : "tooLargeZoneSet",
+							"9" : "deactivateZoneSetFailed",
+							"10" : "reqNotSupported",
+							"11" : "capabilityNotSupported",
+							"12" : "zoneMemberIDTypeNotSupp",
+							"13" : "invalidZoneSetDefinition"
+						},
+						"name" : "CISCO-ZS-MIB::zoneServiceRejReasonCodeExp",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.3.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ZS-MIB::zoneMergeFailureNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever there is ",
+				"a zone merge failure.",
+				"If all VSANs on a link have a zone-merge failure",
+				"at the same time, then just one notification is",
+				"generated in which zoneMergeFailureVSANNum object",
+				"has a zero value.",
+				"The zoneMergeFailureObject and ",
+				"zoneMergeFailureReason assist in providing",
+				"information regarding the point of merge failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "zoneMergeNotify",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "( $v2 == 0 ) ? 4 : 3 "
+				},
+				"SubNode" : "ifIndex: $v1",
+				"Summary" : {
+					"eval" : "( $v2 == 0 ) ? 'All VSANs on the link have a zone-merge failure. REASON: $v4' : 'VSAN number $v2 has a zone-merge failure. REASON: $v4' "
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ZS-MIB::zoneMergeFailureNotify IF-MIB::ifIndex i 9999 CISCO-ZS-MIB::zoneMergeFailureVSANNum u 9999 CISCO-ZS-MIB::zoneMergeFailureObject s EXAMPLE CISCO-ZS-MIB::zoneMergeFailureReason i 1",
+			"trap" : {
+				"name" : "CISCO-ZS-MIB::zoneMergeFailureNotify",
+				"oid" : "1.3.6.1.4.1.9.9.294.1.4.0.2",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-ZS-MIB::zoneMergeFailureVSANNum",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.3.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-ZS-MIB::zoneMergeFailureObject",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.3.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "zoningModeMismatch",
+							"3" : "qosNotEnabled",
+							"4" : "qosConflict",
+							"5" : "bcastNotEnabled",
+							"6" : "mergeCtrlMismatch",
+							"7" : "defZoneMismatch",
+							"8" : "qosAttrMissing",
+							"9" : "bcastAttrMissing",
+							"10" : "rdonlyAttrMissing",
+							"11" : "memberMismatch",
+							"12" : "invPayloadFormat",
+							"13" : "sizeExceeded",
+							"14" : "unlicensedMember",
+							"15" : "nonInteropZoneset"
+						},
+						"name" : "CISCO-ZS-MIB::zoneMergeFailureReason",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.3.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ZS-MIB::zoneMergeSuccessNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever a zone",
+				"merge happens successfully.",
+				"If all VSANs on a link have a zone-merge success",
+				"at the same time, then just one notification is",
+				"generated in which zoneMergeSuccessVSANNum object",
+				"has a zero value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "zoneMergeNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex: $v1",
+				"Summary" : {
+					"eval" : "( $v2 == 0 ) ? 'All VSANs on the link have successfully zone-merged.' : 'VSAN number $v2 has successfully zone-merged.' "
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ZS-MIB::zoneMergeSuccessNotify IF-MIB::ifIndex i 9999 CISCO-ZS-MIB::zoneMergeSuccessVSANNum u 9999",
+			"trap" : {
+				"name" : "CISCO-ZS-MIB::zoneMergeSuccessNotify",
+				"oid" : "1.3.6.1.4.1.9.9.294.1.4.0.3",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-ZS-MIB::zoneMergeSuccessVSANNum",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.3.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ZS-MIB::zoneDefZoneBehaviourChngNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever the",
+				"value of zoneDefaultZoneBehaviour changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zoneDefZoneBehaviourChngNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "The value for the default zone behaviour has changed to $v1."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ZS-MIB::zoneDefZoneBehaviourChngNotify CISCO-ZS-MIB::zoneDefaultZoneBehaviour i 1",
+			"trap" : {
+				"name" : "CISCO-ZS-MIB::zoneDefZoneBehaviourChngNotify",
+				"oid" : "1.3.6.1.4.1.9.9.294.1.4.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "permit",
+							"2" : "deny"
+						},
+						"name" : "CISCO-ZS-MIB::zoneDefaultZoneBehaviour",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.1.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ZS-MIB::zoneUnsuppMemInIntOpModeNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever one or",
+				"more zone members are not supported in the",
+				"mode in which the local switch is currently",
+				"configured to function. The switch can be",
+				"configured to operate in certain 'interoperable'",
+				"modes on a VSAN basis to enable it to work with ",
+				"switches from other vendors. The zoneVsanId object ",
+				"identifies the VSAN on which the mismatch has",
+				"been identified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zoneUnsuppMemInIntOpModeNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "One or more members of the zone are not supported by the current zone configuration."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ZS-MIB::zoneUnsuppMemInIntOpModeNotify CISCO-ZS-MIB::zoneVsanId i 999",
+			"trap" : {
+				"name" : "CISCO-ZS-MIB::zoneUnsuppMemInIntOpModeNotify",
+				"oid" : "1.3.6.1.4.1.9.9.294.1.4.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-ZS-MIB::zoneVsanId",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.1.33",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ZS-MIB::zoneActivateNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever a",
+				"zone set is activated/deactivated on a VSAN.",
+				"The zoneSetActivateResult object denotes",
+				"the outcome of the activation/deactivation.",
+				"The zoneSwitchWwn object represents the",
+				"WWN of the local device."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zoneActivateNotify",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "( $v1 == 2 ) ? 3 : (( $v1 == 4 ) ? 3 : 2 )"
+				},
+				"SubNode" : "Device",
+				"Summary" : "The Zone ( $v2 ) has had an active status change on a VSAN, new status is $v1."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ZS-MIB::zoneActivateNotify CISCO-ZS-MIB::zoneSetActivateResult i 1 CISCO-ZS-MIB::zoneSwitchWwn s EXAMPLES",
+			"trap" : {
+				"name" : "CISCO-ZS-MIB::zoneActivateNotify",
+				"oid" : "1.3.6.1.4.1.9.9.294.1.4.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "activateSuccess",
+							"2" : "activateFailure",
+							"3" : "deactivateSuccess",
+							"4" : "deactivateFailure",
+							"5" : "inProgress",
+							"6" : "newEntry"
+						},
+						"name" : "CISCO-ZS-MIB::zoneSetActivateResult",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.1.5.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ZS-MIB::zoneSwitchWwn",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.1.37",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ZS-MIB::zoneCompactNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever a",
+				"zone compaction on the VSAN specified by",
+				"zoneCompactVsan happens successfully."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "zoneCompactNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "VSAN with ID: $v1 has succesfully had a zone compaction"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ZS-MIB::zoneCompactNotify CISCO-ZS-MIB::zoneCompactVsan i 999",
+			"trap" : {
+				"name" : "CISCO-ZS-MIB::zoneCompactNotify",
+				"oid" : "1.3.6.1.4.1.9.9.294.1.4.0.7",
+				"variables" : [
+					{
+						"name" : "CISCO-ZS-MIB::zoneCompactVsan",
+						"oid" : "1.3.6.1.4.1.9.9.294.1.1.41",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

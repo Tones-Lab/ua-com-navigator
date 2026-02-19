@@ -1,0 +1,395 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200105080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The overall status of the connectivity unit has changed.",
+				"Recommended severity level (for filtering): alert"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2) ? 3 : ($v1==3) ? 1 : 2"
+				},
+				"EventType" : "fcConnUnitStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2) ? 2 : ($v1==3) ? 0 : ($v1==5) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Fibre channel connectivity unit status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FIBRE-CHANNEL-MGMT-MIB::fcConnUnitStatusChange FIBRE-CHANNEL-MGMT-MIB::fcConnUnitStatus i 1 FIBRE-CHANNEL-MGMT-MIB::fcConnUnitState i 1",
+			"trap" : {
+				"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitStatusChange",
+				"oid" : "1.3.6.1.2.1.8888.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object reports the overall status of the",
+							"connectivity unit. The warning (4) value means",
+							"that the connectivity unit needs attention; all",
+							"other values are essentially self-explanatory.",
+							"Any of these values may occur with any of the",
+							"fcConnUnitState values."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "unused",
+							"3" : "ok",
+							"4" : "warning",
+							"5" : "failed"
+						},
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitStatus",
+						"oid" : "1.3.6.1.2.1.8888.1.1.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object reports the overall state of the",
+							"connectivity unit. The meaning of all values",
+							"is essentially self-explanatory. Any of these",
+							"values may occur with any of the fcConnUnitStatus",
+							"values."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "online",
+							"3" : "offline"
+						},
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitState",
+						"oid" : "1.3.6.1.2.1.8888.1.1.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitDeletedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An fcConnUnit has been deleted from this agent.",
+				"Recommended severity level (for filtering): warning"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fcConnUnitDeletedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "fcConnUnitGlobalId:$v1",
+				"Summary" : "Fibre channel connectivity unit $v1 deleted from agent"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FIBRE-CHANNEL-MGMT-MIB::fcConnUnitDeletedTrap FIBRE-CHANNEL-MGMT-MIB::fcConnUnitGlobalId s EXAMPLEEXAMPLEEX",
+			"trap" : {
+				"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitDeletedTrap",
+				"oid" : "1.3.6.1.2.1.8888.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"An optional global-scope identifier for this connectivity",
+							"unit. It MUST be a WWN for this connectivity unit or 16",
+							"octets of value zero.",
+							"",
+							"WWN formats requiring fewer than 16 octets MUST be extended",
+							"to 16 octets with trailing zero octets. If a WWN is used for",
+							"fcConnUnitId, the same WWN MUST be used for fcConnUnitGlobalId.",
+							"",
+							"When a non-zero value is provided, it SHOULD be persistent",
+							"across agent and unit resets. It SHOULD be globally unique.",
+							"It SHOULD be one of these FC-PH/PH3 formats:",
+							"IEEE (NAA=1)",
+							"IEEE Extended (NAA=2)",
+							"IEEE Registered (NAA=5).",
+							"IEEE Registered extended (NAA=6).",
+							"",
+							"Use of the IEEE formats allows any IEEE-registered vendor to",
+							"assure global uniqueness independently. The following are",
+							"some references on IEEE WWN formats:",
+							"",
+							"http://standards.ieee.org/regauth/oui/tutorials/fibreformat.html",
+							"http://standards.ieee.org/regauth/oui/tutorials/fibrecomp_id.html",
+							"",
+							"If one or more WWNs are associated with the connectivity unit",
+							"via other management methods, one of them SHOULD be used for",
+							"fcConnUnitGlobalId. If there is not a WWN assigned specifically",
+							"to the connectivity unit, there is some merit, though not a",
+							"requirement, to using a WWN assigned to (one of) its",
+							"permanently attached FC/LAN interface(s). This can not risk",
+							"uniqueness, though. As a counterexample, if your agent runs",
+							"in a host and the host has an HBA, it is quite possible that",
+							"agent, host, and HBA will all be distinct connectivity units",
+							"so the host and agent can not use the WWN of the HBA.",
+							"",
+							"Another example: If your hub has a built-in Ethernet port",
+							"it might be reasonable for the hub to use its LAN address",
+							"(prefixed with the appropriate NAA) as its fcConnUnitId. But",
+							"if the Ethernet were a replaceable PCCard, the hub should",
+							"have an independent ID."
+						],
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitGlobalId",
+						"oid" : "1.3.6.1.2.1.8888.1.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event has been generated by the connectivity unit.",
+				"Recommended severity level (for filtering): info"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fcConnUnitEventType:$v2",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "fcConnUnitEventObject:$v3",
+				"Summary" : "$v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventTrap FIBRE-CHANNEL-MGMT-MIB::fcConnUnitGlobalId s EXAMPLEEXAMPLEEX FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventType i 1 FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventObject o 1.3.6.1.4.1.8072.2.1.1 FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventDescr s EXAMPLE",
+			"trap" : {
+				"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventTrap",
+				"oid" : "1.3.6.1.2.1.8888.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"An optional global-scope identifier for this connectivity",
+							"unit. It MUST be a WWN for this connectivity unit or 16",
+							"octets of value zero.",
+							"",
+							"WWN formats requiring fewer than 16 octets MUST be extended",
+							"to 16 octets with trailing zero octets. If a WWN is used for",
+							"fcConnUnitId, the same WWN MUST be used for fcConnUnitGlobalId.",
+							"",
+							"When a non-zero value is provided, it SHOULD be persistent",
+							"across agent and unit resets. It SHOULD be globally unique.",
+							"It SHOULD be one of these FC-PH/PH3 formats:",
+							"IEEE (NAA=1)",
+							"IEEE Extended (NAA=2)",
+							"IEEE Registered (NAA=5).",
+							"IEEE Registered extended (NAA=6).",
+							"",
+							"Use of the IEEE formats allows any IEEE-registered vendor to",
+							"assure global uniqueness independently. The following are",
+							"some references on IEEE WWN formats:",
+							"",
+							"http://standards.ieee.org/regauth/oui/tutorials/fibreformat.html",
+							"http://standards.ieee.org/regauth/oui/tutorials/fibrecomp_id.html",
+							"",
+							"If one or more WWNs are associated with the connectivity unit",
+							"via other management methods, one of them SHOULD be used for",
+							"fcConnUnitGlobalId. If there is not a WWN assigned specifically",
+							"to the connectivity unit, there is some merit, though not a",
+							"requirement, to using a WWN assigned to (one of) its",
+							"permanently attached FC/LAN interface(s). This can not risk",
+							"uniqueness, though. As a counterexample, if your agent runs",
+							"in a host and the host has an HBA, it is quite possible that",
+							"agent, host, and HBA will all be distinct connectivity units",
+							"so the host and agent can not use the WWN of the HBA.",
+							"",
+							"Another example: If your hub has a built-in Ethernet port",
+							"it might be reasonable for the hub to use its LAN address",
+							"(prefixed with the appropriate NAA) as its fcConnUnitId. But",
+							"if the Ethernet were a replaceable PCCard, the hub should",
+							"have an independent ID."
+						],
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitGlobalId",
+						"oid" : "1.3.6.1.2.1.8888.1.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of this event."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "status",
+							"4" : "configuration",
+							"5" : "topology"
+						},
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventType",
+						"oid" : "1.3.6.1.2.1.8888.1.1.7.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is used with the fcConnUnitEventType to identify",
+							"which object the event refers to. It can be the OID",
+							"of a connectivity unit or of another object like",
+							"fcConnUnitPortStatus[...]"
+						],
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventObject",
+						"oid" : "1.3.6.1.2.1.8888.1.1.7.1.6",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The description of the event."
+						],
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitEventDescr",
+						"oid" : "1.3.6.1.2.1.8888.1.1.7.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitSensorStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The overall status of the connectivity unit has changed.",
+				"Recommended severity level (for filtering): alert"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2) ? 3 : ($v1==3) ? 1 : 2"
+				},
+				"EventType" : "fcConnUnitSensorStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2) ? 2 : ($v1==3) ? 0 : ($v1==5) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Fibre channel connectivity unit sensor status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FIBRE-CHANNEL-MGMT-MIB::fcConnUnitSensorStatusChange FIBRE-CHANNEL-MGMT-MIB::fcConnUnitSensorStatus i 1",
+			"trap" : {
+				"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitSensorStatusChange",
+				"oid" : "1.3.6.1.2.1.8888.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The status indicated by the sensor.",
+							"unknown (1) = the unit cannot determine the status",
+							"other (2) = the status does not fit any of the",
+							"remaining values",
+							"ok (3) = indicates good status",
+							"warning (4) = indicates the unit needs attention",
+							"failed (5) = indicates the unit is non-functional"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "ok",
+							"4" : "warning",
+							"5" : "failed"
+						},
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitSensorStatus",
+						"oid" : "1.3.6.1.2.1.8888.1.1.5.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitPortStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The overall status of the connectivity unit has changed.",
+				"Recommended severity level (for filtering): alert"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : ($v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "fcConnUnitPortStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : ($v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==3) ? 0 : ($v1==5) ? 4 : ($v1==4) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Fibre channel connectivity unit port status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FIBRE-CHANNEL-MGMT-MIB::fcConnUnitPortStatusChange FIBRE-CHANNEL-MGMT-MIB::fcConnUnitPortStatus i 1 FIBRE-CHANNEL-MGMT-MIB::fcConnUnitPortState i 1",
+			"trap" : {
+				"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitPortStatusChange",
+				"oid" : "1.3.6.1.2.1.8888.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The current overall protocol status for the port. The",
+							"warning value (4) means that the port needs attention;",
+							"the notParticipating value (6) means that protocol is not",
+							"being processed; the initializing value (7) means that the",
+							"port is in the process of coming into service; the bypassed",
+							"value (8) means that the port has been manually or",
+							"automatically isolated from the loop or fabric; the other",
+							"values are essentially self-explanatory. Any value for this",
+							"object may co-exist with any value for the fcConnUnitPortState",
+							"object."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "unused",
+							"3" : "ok",
+							"4" : "warning",
+							"5" : "failure",
+							"6" : "notParticipating",
+							"7" : "initializing",
+							"8" : "bypassed"
+						},
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitPortStatus",
+						"oid" : "1.3.6.1.2.1.8888.1.1.6.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current state of the port hardware. The bypassed",
+							"value (4) means that the port is online but is currently",
+							"being isolated from the loop or fabric for some reason;",
+							"the other values are essentially self-explanatory. Any",
+							"value for this object may co-exist with any value for the",
+							"fcConnUnitPortStatus object."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "online",
+							"3" : "offline",
+							"4" : "bypassed"
+						},
+						"name" : "FIBRE-CHANNEL-MGMT-MIB::fcConnUnitPortState",
+						"oid" : "1.3.6.1.2.1.8888.1.1.6.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

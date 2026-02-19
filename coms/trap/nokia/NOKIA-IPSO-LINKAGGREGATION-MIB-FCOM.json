@@ -1,0 +1,132 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0105140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLinkAggregationMemberActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"A MemberActive trap signifies that the SNMP entity, acting in an",
+				"agent role, has detected that a member port for one of the",
+				"link aggregation groups has moved from inactive state to active",
+				"state. This indicates that the system may choose this port when",
+				"sending data out of the link aggregation group."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ipsoLinkAggregationMemberStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "GroupIfIndex:$v1;PortIfIndex:$v3",
+				"Summary" : "Link aggregation group member port $v3 is active"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLinkAggregationMemberActive NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAGroupIfIndex i 9999 NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAGroupID i 9999 NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAPortIfIndex i 9999",
+			"trap" : {
+				"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLinkAggregationMemberActive",
+				"oid" : "1.3.6.1.4.1.94.1.21.6.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The interface index of the link aggregation group in the",
+							"MIB-II interfaces table."
+						],
+						"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAGroupIfIndex",
+						"oid" : "1.3.6.1.4.1.94.1.21.6.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The LAgroup Index"
+						],
+						"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAGroupID",
+						"oid" : "1.3.6.1.4.1.94.1.21.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The interface index of the member port in the MIB-II interfaces table."
+						],
+						"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAPortIfIndex",
+						"oid" : "1.3.6.1.4.1.94.1.21.6.1.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLinkAggregationMemberInactive",
+			"certification" : "STANDARD",
+			"description" : [
+				"A MemberInactive trap signifies that the SNMP entity, acting in an",
+				"agent role, has detected that a member port for one of the",
+				"link aggregation groups has moved from active state to inactive",
+				"state. This indicates that the system will no longer choose this",
+				"port when sending data out of the link aggregation group."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ipsoLinkAggregationMemberStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "GroupIfIndex:$v1;PortIfIndex:$v3",
+				"Summary" : "Link aggregation group member port $v3 is inactive because of $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLinkAggregationMemberInactive NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAGroupIfIndex i 9999 NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAGroupID i 9999 NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAPortIfIndex i 9999 NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAPortInactiveReason i 1",
+			"trap" : {
+				"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLinkAggregationMemberInactive",
+				"oid" : "1.3.6.1.4.1.94.1.21.6.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The interface index of the link aggregation group in the",
+							"MIB-II interfaces table."
+						],
+						"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAGroupIfIndex",
+						"oid" : "1.3.6.1.4.1.94.1.21.6.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The LAgroup Index"
+						],
+						"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAGroupID",
+						"oid" : "1.3.6.1.4.1.94.1.21.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The interface index of the member port in the MIB-II interfaces table."
+						],
+						"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAPortIfIndex",
+						"oid" : "1.3.6.1.4.1.94.1.21.6.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The reason why this member port became inactive."
+						],
+						"enums" : {
+							"1" : "linkStateDown",
+							"2" : "wrongSpeed",
+							"3" : "unknown"
+						},
+						"name" : "NOKIA-IPSO-LINKAGGREGATION-MIB::ipsoLAPortInactiveReason",
+						"oid" : "1.3.6.1.4.1.94.1.21.6.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

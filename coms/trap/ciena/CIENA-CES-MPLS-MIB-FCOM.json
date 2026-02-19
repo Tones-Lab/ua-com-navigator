@@ -1,0 +1,4451 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201903260000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of an encap",
+				"tunnel changes. Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, cienaCesMplsNotifEncapTunnelIndex, ",
+				"cienaCesMplsNotifEncapTunnelType, cienaCesMplsNotifEncapTunnelName, ",
+				"cienaCesMplsNotifEncapTunnelAdminState, ",
+				"cienaCesMplsNotifEncapTunnelOperState",
+				"cienaCesMplsNotifEncapTunnelOamFaulted",
+				"cienaCesMplsNotifEncapTunnelFaultNodeId. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsNotifEncapTunnelType>[0-9]+)\\.(?P<cienaCesMplsNotifEncapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesMplsTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesMplsNotifEncapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of MPLS encap tunnel $v5 is enabled' : 'Operational state of MPLS encap tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelFaultedNodeId a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic",
+							"3" : "frr"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the encap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the encap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.7",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelGrpActiveEncapTunnelChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the active encap tunnel in ",
+				"a tunnel group changes. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsNotifEncapTunnelGrpIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesMplsEncapTunnelGrpActiveEncapTunnelChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cienaCesMplsNotifEncapTunnelGrpIndex.$v3",
+				"Summary" : "MPLS tunnel group $v4 : Active encap tunnel changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelGrpActiveEncapTunnelChange CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpActiveEncapTunlIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpActiveEncapTunlName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpActiveEncapTunlType i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelGrpActiveEncapTunnelChange",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel group index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.11.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Tunnel group name of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.11.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Active Encap Tunnel index of the tunnel group associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpActiveEncapTunlIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.11.1.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Active Encap Tunnel name of the Tunnel group associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpActiveEncapTunlName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.11.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic",
+							"3" : "frr"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelGrpActiveEncapTunlType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.11.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsTransitTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of a transit",
+				"tunnel changes. Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, cienaCesMplsNotifTransitTunnelIndex",
+				"cienaCesMplsNotifTransitTunnelType, cienaCesMplsNotifTransitTunnelName",
+				"cienaCesMplsNotifTransitTunnelAdminState",
+				"cienaCesMplsNotifTransitTunnelOperState",
+				"cienaCesMplsNotifTransitTunnelOamFaulted. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsNotifTransitTunnelType>[0-9]+)\\.(?P<cienaCesMplsNotifTransitTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesMplsTransitTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesMplsNotifTransitTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of MPLS transit tunnel $v5 is enabled' : 'Operational state of MPLS transit tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsTransitTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelOamFaulted i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsTransitTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the transit tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.10.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Transit tunnel type of the transit tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.10.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the transit tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.10.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the transit tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.10.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the transit tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.10.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifTransitTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.10.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsAssociatedTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of an associated",
+				"tunnel changes. Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, cienaCesMplsNotifAssociatedTunnelIndex, ",
+				"cienaCesMplsNotifAssociatedTunnelType, cienaCesMplsNotifAssociatedTunnelName, ",
+				"cienaCesMplsNotifAssociatedTunnelAdminState, ",
+				"cienaCesMplsNotifAssociatedTunnelOperState",
+				"cienaCesMplsNotifAssociatedTunnelOamFaulted",
+				"cienaCesMplsNotifAssociatedTunnelFaultedNodeId. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsNotifAssociatedTunnelType>[0-9]+)\\.(?P<cienaCesMplsNotifAssociatedTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesMplsAssociatedTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesMplsNotifAssociatedTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of MPLS associated tunnel $v5 is enabled' : 'Operational state of MPLS associated tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsAssociatedTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelFaultedNodeId a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsAssociatedTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the associated tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.14.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Associated tunnel type of the associated tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.14.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the associated tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.14.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the associated tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.14.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the associated tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.14.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.14.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifAssociatedTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.14.1.1.7",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsCacInterfaceThresholdTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when LSP bandwith usage exceeds the threshold.",
+				"Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesMplsNotifCasInterfaceIndex",
+				"cienaCesMplsNotifCacInterfaceClassType, cienaCesMplsNotifCacInterfaceName",
+				"cienaCesMplsNotifCacInterfaceThreshold."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsNotifCacInterfaceClassType>[0-9]+)\\.(?P<cienaCesMplsNotifCacInterfaceIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesMplsCacInterfaceThresholdTrap",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "cienaCesMplsNotifCacInterfaceIndex.$v3",
+				"Summary" : "LSP bandwith usage on CAC interface $v5 exceeds high threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsCacInterfaceThresholdTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsNotifCacInterfaceIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifCacInterfaceClassType u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifCacInterfaceName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsNotifCacInterfaceThreshold u 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsCacInterfaceThresholdTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"CAC entry index associated with the",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifCacInterfaceIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.15.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"CAC class type value of the associated interface associated with the",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifCacInterfaceClassType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.15.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the associated interface name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifCacInterfaceName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.15.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm threshold value of the associated interface associated with the",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifCacInterfaceThreshold",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.15.1.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelResizeResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the encap tunnel auto size is done",
+				"Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesMplsNotifEncapTunnelIndex",
+				"cienaCesMplsNotifEncapTunnelType, cienaCesMplsNotifEncapTunnelName",
+				"cienaCesMplsNotifEncapTunnelResult",
+				"cienaCesMplsNotifEncapTunnelProtectionRole",
+				"cienaCesMplsNotifEncapTunnelRequestdBw and",
+				"cienaCesMplsNotifEncapTunnelOperationalBw."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesMplsEncapTunnelResizeResultTrap",
+				"ExpireTime" : {
+					"eval" : "($v6 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesMplsNotifEncapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v6 == 1) ? 'Auto-sizing of MPLS encap tunnel $v5 succeeded' : 'Auto-sizing of MPLS encap tunnel $v5 failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelResizeResultTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelResult i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelProtectionRole i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelRequestedBw u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelOperationalBw u 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelResizeResultTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic",
+							"3" : "frr"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the result of encap tunnel auto sizing/MBB."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "fail"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelResult",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the protection role of the dynamic encap tunnel."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "primary",
+							"3" : "backup"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelProtectionRole",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the requested bandwidth of the dynamic encap tunnel."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelRequestedBw",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the operational bandwidth of the dynamic encap tunnel."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelOperationalBw",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.11",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelDeleteTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when a mpls encap tunnel gets deleted.",
+				"Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress",
+				"cienaCesMplsNotifEncapTunnelIndex, ",
+				"cienaCesMplsNotifEncapTunnelType, ",
+				"cienaCesMplsNotifEncapTunnelName"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesMplsEncapTunnelDeleteTrap",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "MPLS encap tunnel $v5 deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelDeleteTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelName s EXAMPLE",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelDeleteTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic",
+							"3" : "frr"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelMbbResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the encap tunnel MBB done",
+				"Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesMplsNotifEncapTunnelIndex",
+				"cienaCesMplsNotifEncapTunnelType, cienaCesMplsNotifEncapTunnelName",
+				"cienaCesMplsNotifEncapTunnelProtectionRole",
+				"cienaCesMplsNotifEncapTunnelRequestedBw",
+				"cienaCesMplsNotifEncapTunnelOperationalBw and",
+				"cienaCesMplsNotifEncapTunnelParentApp."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesMplsEncapTunnelMbbResultTrap",
+				"ExpireTime" : {
+					"eval" : "($v6 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesMplsNotifEncapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v6 == 1) ? 'MPLS Make-Before-Break procedure succeeded for encap tunnel $v5' : 'MPLS Make-Before-Break procedure failed for encap tunnel $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelMbbResultTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelResult i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelProtectionRole i 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelRequestedBw u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelOperationalBw u 1 CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelMbbParentApp i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsEncapTunnelMbbResultTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic",
+							"3" : "frr"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the result of encap tunnel auto sizing/MBB."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "fail"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelResult",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the protection role of the dynamic encap tunnel."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "primary",
+							"3" : "backup"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelProtectionRole",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the requested bandwidth of the dynamic encap tunnel."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelRequestedBw",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the operational bandwidth of the dynamic encap tunnel."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelOperationalBw",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Specifies the parent application using MBB of the dynamic encap tunnel."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "autosize",
+							"3" : "lspreoptimization",
+							"4" : "frrglobalreversion"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsNotifEncapTunnelMbbParentApp",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.1.9.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapUnidirTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of an encap",
+				"uni-direction tunnel changes. Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifEncapTunnelIndex, ",
+				"cienaCesGmplsNotifEncapTunnelType, cienaCesGmplsNotifEncapTunnelName",
+				"cienaCesGmplsNotifEncapTunnelAdminState",
+				"cienaCesGmplsNotifEncapTunnelOperState",
+				"cienaCesGmplsNotifEncapTunnelOamFaulted",
+				"cienaCesGmplsNotifEncapTunnelFaultedNodeId. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifEncapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifEncapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsEncapUnidirTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifEncapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of GMPLS encap uni-direction tunnel $v5 is enabled' : 'Operational state of GMPLS encap uni-direction tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsEncapUnidirTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFaultedNodeId a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapUnidirTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the encap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the encap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.7",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of an encap",
+				"corouted tunnel changes. Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifEncapTunnelIndex",
+				"cienaCesGmplsNotifEncapTunnelType, cienaCesGmplsNotifEncapTunnelName",
+				"cienaCesGmplsNotifEncapTunnelAdminState",
+				"cienaCesGmplsNotifEncapTunnelOperState",
+				"cienaCesGmplsNotifEncapTunnelOamFaulted",
+				"cienaCesGmplsNotifEncapTunnelFaultedNodeId."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifEncapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifEncapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsEncapCoroutedTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifEncapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of GMPLS encap corouted tunnel $v5 is enabled' : 'Operational state of GMPLS encap corouted tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFaultedNodeId a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the encap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the encap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.7",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of an decap",
+				"corouted tunnel changes. Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifDecapTunnelIndex",
+				"cienaCesGmplsNotifDecapTunnelType, cienaCesGmplsNotifDecapTunnelName",
+				"cienaCesGmplsNotifDecapTunnelAdminState",
+				"cienaCesGmplsNotifDecapTunnelOperState",
+				"cienaCesGmplsNotifDecapTunnelOamFaulted",
+				"cienaCesGmplsNotifDecapTunnelFaultedNodeId."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifDecapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifDecapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsDecapCoroutedTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifDecapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of GMPLS decap corouted tunnel $v5 is enabled' : 'Operational state of GMPLS decap corouted tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelFaultedNodeId a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the decap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Decap tunnel type of the decap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the decap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the decap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the decap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.7",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsTransitUnidirTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of a transit",
+				"uni-direcition tunnel changes. Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifTransitTunnelIndex",
+				"cienaCesGmplsNotifTransitTunnelType, cienaCesGmplsNotifTransitTunnelName",
+				"cienaCesGmplsNotifTransitTunnelAdminState",
+				"cienaCesGmplsNotifTransitTunnelOperState",
+				"cienaCesGmplsNotifTransitTunnelOamFaulted."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifTransitTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifTransitTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsTransitUnidirTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifTransitTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of GMPLS transit uni-direction tunnel $v5 is enabled' : 'Operational state of GMPLS transit uni-direction tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsTransitUnidirTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOamFaulted i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsTransitUnidirTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the transit tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Transit tunnel type of the transit tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the transit tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the transit tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the transit tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsTransitCoroutedTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of a transit",
+				"corouted tunnel changes. Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifTransitTunnelIndex",
+				"cienaCesGmplsNotifTransitTunnelType, cienaCesGmplsNotifTransitTunnelName",
+				"cienaCesGmplsNotifTransitTunnelAdminState",
+				"cienaCesGmplsNotifTransitTunnelOperState",
+				"cienaCesGmplsNotifTransitTunnelOamFaulted."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifTransitTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifTransitTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsTransitCoroutedTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifTransitTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of GMPLS transit corouted tunnel $v5 is enabled' : 'Operational state of GMPLS transit corouted tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsTransitCoroutedTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOamFaulted i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsTransitCoroutedTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the transit tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Transit tunnel type of the transit tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the transit tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the transit tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the transit tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapUnidirTunnelGrpActiveEncapTunnelChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the active encap tunnel in ",
+				"an encap uni-direction tunnel group changes. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifEncapTunnelGrpIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesGmplsEncapUnidirTunnelGrpActiveEncapTunnelChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cienaCesGmplsNotifEncapTunnelGrpIndex.$v3",
+				"Summary" : "GMPLS encap uni-direction tunnel group $v4 : Active encap tunnel changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsEncapUnidirTunnelGrpActiveEncapTunnelChangeTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlType i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapUnidirTunnelGrpActiveEncapTunnelChangeTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel group index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Tunnel group name of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Active Encap Tunnel index of the tunnel group associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Active Encap Tunnel name of the Tunnel group associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelGrpActiveEncapTunnelChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the active encap tunnel in",
+				"an encap corouted tunnel group changes."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifEncapTunnelGrpIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesGmplsEncapCoroutedTunnelGrpActiveEncapTunnelChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cienaCesGmplsNotifEncapTunnelGrpIndex.$v3",
+				"Summary" : "GMPLS encap corouted tunnel group $v4 : Active encap tunnel changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelGrpActiveEncapTunnelChangeTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlType i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelGrpActiveEncapTunnelChangeTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel group index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Tunnel group name of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Active Encap Tunnel index of the tunnel group associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Active Encap Tunnel name of the Tunnel group associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelGrpActiveEncapTunlType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.19.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelGrpActiveDecapTunnelChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever the active decap tunnel in",
+				"a decap corouted tunnel group changes."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifDecapTunnelGrpIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesGmplsDecapCoroutedTunnelGrpActiveDecapTunnelChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cienaCesGmplsNotifDecapTunnelGrpIndex.$v3",
+				"Summary" : "GMPLS decap corouted tunnel group $v4 : Active decap tunnel changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelGrpActiveDecapTunnelChangeTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpActiveDecapTunlIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpActiveDecapTunlName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpActiveDecapTunlType i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelGrpActiveDecapTunnelChangeTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel group index of the decap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.20.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Tunnel group name of the decap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.20.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Active Decap Tunnel index of the tunnel group associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpActiveDecapTunlIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.20.1.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Active Decap Tunnel name of the Tunnel group associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpActiveDecapTunlName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.20.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Decap tunnel type of the decap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelGrpActiveDecapTunlType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.20.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsAssociatedTunnelOperStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of an encap",
+				"tunnel changes. Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifAssociatedTunnelIndex",
+				"cienaCesGmplsNotifAssociatedTunnelType, cienaCesGmplsNotifAssociatedTunnelName",
+				"cienaCesGmplsNotifAssociatedTunnelAdminState",
+				"cienaCesGmplsNotifAssociatedTunnelOperState",
+				"cienaCesGmplsNotifAssociatedTunnelOamFaulted",
+				"cienaCesGmplsNotifAssociatedTunnelFaultedNodeId."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifAssociatedTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifAssociatedTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsAssociatedTunnelOperStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifAssociatedTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'Operational state of GMPLS associated tunnel $v5 is enabled' : 'Operational state of GMPLS associated tunnel $v5 is disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsAssociatedTunnelOperStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelFaultedNodeId a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsAssociatedTunnelOperStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.9",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the associated tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Associated tunnel type of the associated tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the associated tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the associated tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the associated tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.7",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelAisFaultStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is deprecated, its functionality is absorbed in the OperState Change",
+				"notification. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifEncapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifEncapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 2) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsEncapCoroutedTunnelAisFaultStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v6 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 2) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifEncapTunnelIndex.$v3",
+				"Summary" : "AIS fault state of GMPLS encap corouted tunnel $v5 is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelAisFaultStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAisFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFaultedNodeId a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFarEndLerId a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAisFaultReason i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedTunnelAisFaultStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.10",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is replaced by cienaCesGmplsNotifOamTunnelAisFaulted."
+						],
+						"enums" : {
+							"1" : "fault",
+							"2" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAisFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"IP address of the far end LER for the tunne with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFarEndLerId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.8",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Reason for the AIS fault."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "serviceFault",
+							"3" : "serviceDegrade",
+							"4" : "serviceFaultAndDegrade"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAisFaultReason",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelAisFaultStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is deprecated, its functionality is absorbed in the OperState Change",
+				"notification. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifDecapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifDecapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 2) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsDecapCoroutedTunnelAisFaultStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v6 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 2) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifDecapTunnelIndex.$v3",
+				"Summary" : "AIS fault state of GMPLS decap corouted tunnel $v5 is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelAisFaultStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelAisFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelFaultedNodeId a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelFarEndLerId a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelAisFaultReason i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedTunnelAisFaultStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.11",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the decap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Decap tunnel type of the decap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the decap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is replaced by cienaCesGmplsNotifDecapTunnelOamFaulted."
+						],
+						"enums" : {
+							"1" : "fault",
+							"2" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelAisFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"IP address of the far end LER for the tunne with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelFarEndLerId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.8",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Reason for the AIS fault."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "serviceFault",
+							"3" : "serviceDegrade",
+							"4" : "serviceFaultAndDegrade"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelAisFaultReason",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsAssociatedTunnelAisFaultStateChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is deprecated, its functionality is absorbed in the OperState Change",
+				"notification. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifAssociatedTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifAssociatedTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 2) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsAssociatedTunnelAisFaultStateChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v6 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 2) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifAssociatedTunnelIndex.$v3",
+				"Summary" : "AIS fault state of GMPLS associated tunnel $v5 is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsAssociatedTunnelAisFaultStateChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelAisFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelFaultedNodeId a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelFarEndLerId a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelAisFaultReason i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsAssociatedTunnelAisFaultStateChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.12",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the associated tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Associated tunnel type of the associated tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the associated tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Replaced by cienaCesGmplsNotifAssociatedTunnelOamFaulted"
+						],
+						"enums" : {
+							"1" : "fault",
+							"2" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelAisFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"IP address of the far end LER for the tunne with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelFarEndLerId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.8",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Reason for the AIS fault."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "serviceFault",
+							"3" : "serviceDegrade",
+							"4" : "serviceFaultAndDegrade"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifAssociatedTunnelAisFaultReason",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.18.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsTunnelAisFaultErrorTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when there is a fault sent for a ",
+				"LSP whose label is not associated with any tunnel. This will happen ",
+				"whenever the AIS admin state is disabled for the bidirectional tunnel.",
+				"Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifTunnelDecapLabel, ",
+				"and cienaCesGmplsNotifTunnelErrorMsg "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifTunnelDecapLabel>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsTunnelAisFaultErrorTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : ($v1==5) ? 3 : ($v1==4) ? 4 : ($v1==3) ? 5 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "GMPLS LSP $v3 : $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsTunnelAisFaultErrorTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 5 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTunnelDecapLabel u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTunnelErrorMsg s EXAMPLE",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsTunnelAisFaultErrorTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.13",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Decap label associated with the notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTunnelDecapLabel",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.21.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the fault error message for decap",
+							"label associated with the notification"
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTunnelErrorMsg",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.21.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapTunnelResizeResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the encap tunnel auto size is done",
+				"Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifEncapTunnelIndex",
+				"cienaCesGmplsNotifEncapTunnelType, cienaCesGmplsNotifEncapTunnelName",
+				"cienaCesGmplsNotifEncapTunnelResult, cienaCesGmplsNotifEncapTunnelProtectionRole, ",
+				"cienaCesGmplsNotifEncapTunnelRequestedBw and",
+				"cienaCesGmplsNotifEncapTunnelOperationalBw."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifEncapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifEncapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesMplsEncapTunnelResizeResultTrap",
+				"ExpireTime" : {
+					"eval" : "($v6 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifEncapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v6 == 1) ? 'Auto-sizing of GMPLS encap tunnel $v5 succeeded' : 'Auto-sizing of GMPLS encap tunnel $v5 failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsEncapTunnelResizeResultTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelResult i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelProtectionRole i 0 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelRequestedBw u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperationalBw u 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapTunnelResizeResultTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.14",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"specifies the result of encap tunnel auto sizing/MBB."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "fail"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelResult",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"specifies the protection role of the dynamic encap tunnel."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "primary",
+							"2" : "backup"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelProtectionRole",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"specifies the requested bandwidth of the dynamic encap tunnel."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelRequestedBw",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"specifies the operational bandwidth of the dynamic encap tunnel."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperationalBw",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.12",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapTunnelMbbResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the encap tunnel MBB done",
+				"Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifEncapTunnelIndex",
+				"cienaCesGmplsNotifEncapTunnelType, cienaCesGmplsNotifEncapTunnelName",
+				"cienaCesGmplsNotifEncapTunnelProtectionRole, ",
+				"cienaCesGmplsNotifEncapTunnelRequestedBw",
+				"cienaCesGmplsNotifEncapTunnelOperationalBw and",
+				"cienaCesGmplsNotifEncapTunnelParentApp."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifEncapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifEncapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 1) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsEncapTunnelMbbResultTrap",
+				"ExpireTime" : {
+					"eval" : "($v6 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 1) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifEncapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v6 == 1) ? 'GMPLS Make-Before-Break procedure succeeded for encap tunnel $v5' : 'GMPLS Make-Before-Break procedure failed for encap tunnel $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsEncapTunnelMbbResultTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelResult i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelProtectionRole i 0 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelRequestedBw u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperationalBw u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelMbbParentApp i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapTunnelMbbResultTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.15",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"specifies the result of encap tunnel auto sizing/MBB."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "fail"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelResult",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"specifies the protection role of the dynamic encap tunnel."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "primary",
+							"2" : "backup"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelProtectionRole",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"specifies the requested bandwidth of the dynamic encap tunnel."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelRequestedBw",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"specifies the operational bandwidth of the dynamic encap tunnel."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperationalBw",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"specifies the parent application using MBB of the dynamic encap tunnel."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "autosize",
+							"3" : "lspreoptimization"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelMbbParentApp",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedServiceDegradeChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the service degrade state of a static corouted ",
+				"encap tunnel changes. Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifEncapTunnelIndex",
+				"cienaCesGmplsNotifEncapTunnelType, cienaCesGmplsNotifEncapTunnelName",
+				"cienaCesGmplsNotifEncapTunnelAdminState",
+				"cienaCesGmplsNotifEncapTunnelOperState",
+				"cienaCesGmplsNotifEncapTunnelOamFaulted",
+				"cienaCesGmplsNotifEncapTunnelFaultedNodeId",
+				"cienaCesGmplsNotifEncapTunnelServiceDegradeState."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifEncapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifEncapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10 == 2) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsEncapCoroutedServiceDegradeChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v10 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v10 == 2) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifEncapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v10 == 2) ? 'GMPLS encap corouted tunnel $v5 service is not degraded' : 'GMPLS encap corouted tunnel $v5 service is degraded'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedServiceDegradeChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFaultedNodeId a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelServiceDegradeState i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsEncapCoroutedServiceDegradeChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.16",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the encap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Encap tunnel type of the encap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the encap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the encap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the encap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Specifies the service degrade state of static corouted encap tunnel."
+						],
+						"enums" : {
+							"1" : "set",
+							"2" : "clear"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifEncapTunnelServiceDegradeState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.15.1.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedServiceDegradeChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the service degrade state of a static corouted ",
+				"decap tunnel changes. Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifDecapTunnelIndex",
+				"cienaCesGmplsNotifDecapTunnelType, cienaCesGmplsNotifDecapTunnelName",
+				"cienaCesGmplsNotifdecapTunnelAdminState",
+				"cienaCesGmplsNotifDecapTunnelOperState",
+				"cienaCesGmplsNotifDecapTunnelOamFaulted",
+				"cienaCesGmplsNotifDecapTunnelFaultedNodeId",
+				"cienaCesGmplsNotifDecapTunnelServiceDegradeState."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifDecapTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifDecapTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10 == 2) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsDecapCoroutedServiceDegradeChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v10 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v10 == 2) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifDecapTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v10 == 2) ? 'GMPLS decap corouted tunnel $v5 service is not degraded' : 'GMPLS decap corouted tunnel $v5 service is degraded'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedServiceDegradeChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelFaultedNodeId a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelServiceDegradeState i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsDecapCoroutedServiceDegradeChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.17",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the decap tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Decap tunnel type of the decap tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the decap tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the decap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the decap tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of the node with the AIS fault."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelFaultedNodeId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Specifies the service degrade state of static corouted decap tunnel."
+						],
+						"enums" : {
+							"1" : "set",
+							"2" : "clear"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifDecapTunnelServiceDegradeState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.16.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesGmplsTransitCoroutedServiceDegradeChgTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the service degrade state of a static corouted ",
+				"transit tunnel changes. Variable bindings include: cienaGlobalSeverity",
+				"cienaGlobalMacAddress, cienaCesGmplsNotifTransitTunnelIndex",
+				"cienaCesGmplsNotifTransitTunnelType, cienaCesGmplsNotifTransitTunnelName",
+				"cienaCesGmplsNotifTransitTunnelAdminState",
+				"cienaCesGmplsNotifTransitTunnelOperState",
+				"cienaCesGmplsNotifTransitTunnelOamFaulted",
+				"cienaCesGmplsNotifTransitTunnelServiceDegradeState."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesGmplsNotifTransitTunnelType>[0-9]+)\\.(?P<cienaCesGmplsNotifTransitTunnelIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9 == 2) ? 1 : 2"
+				},
+				"EventType" : "cienaCesGmplsTransitCoroutedServiceDegradeChgTrap",
+				"ExpireTime" : {
+					"eval" : "($v9 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v9 == 2) ? 0 : 3"
+				},
+				"SubNode" : "cienaCesGmplsNotifTransitTunnelIndex.$v3",
+				"Summary" : {
+					"eval" : "($v9 == 2) ? 'GMPLS transit corouted tunnel $v5 service is not degraded' : 'GMPLS transit corouted tunnel $v5 service is degraded'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesGmplsTransitCoroutedServiceDegradeChgTrap CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelIndex u 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelType i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelAdminState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOperState i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOamFaulted i 1 CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelServiceDegradeState i 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsTransitCoroutedServiceDegradeChgTrap",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.1.18",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tunnel index of the transit tunnel associated with the ",
+							"notification."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Transit tunnel type of the transit tunnel associated with the ",
+							"notification."
+						],
+						"enums" : {
+							"1" : "static",
+							"2" : "dynamic"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the transit tunnel name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Administrative state of the transit tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operational state of the transit tunnel."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication if the tunnel has Oam fault."
+						],
+						"enums" : {
+							"1" : "aisfault",
+							"2" : "bfdfault",
+							"3" : "aisbfdfault",
+							"4" : "nofault"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelOamFaulted",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the service degrade state of static corouted transit tunnel."
+						],
+						"enums" : {
+							"1" : "set",
+							"2" : "clear"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesGmplsNotifTransitTunnelServiceDegradeState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.2.17.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of a pseudowire",
+				"has changed from up to down."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsPwNotifPwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesMplsPwUpDown",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "cienaCesMplsPwNotifPwIndex.$v3",
+				"Summary" : "MPLS Pseudowire $v4 is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsPwDown CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwDown",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique pseudowire index in the PW table"
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the locally configured PW name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique Pseudowire ID used to identify the PW in the signaling. For the",
+							"static PW this represents the locally configured value."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the IP address of the Peer on the remote end of the PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.4",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of a pseudowire",
+				"has changed from down to up."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsPwNotifPwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cienaCesMplsPwUpDown",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cienaCesMplsPwNotifPwIndex.$v3",
+				"Summary" : "MPLS Pseudowire $v4 is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsPwUp CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwUp",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique pseudowire index in the PW table"
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the locally configured PW name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique Pseudowire ID used to identify the PW in the signaling. For the",
+							"static PW this represents the locally configured value."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the IP address of the Peer on the remote end of the PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.4",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwBundleActivePwChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the active member of the pseudowire",
+				"bundle has changed."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsPwNotifPwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesMplsPwBundleActivePwChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "The active pseudowire of the bundle has changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsPwBundleActivePwChange CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifActPwIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifActPwName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifActPwId u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifActPwPeerIpAddr a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPriPwName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPriPwId u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPriPwPeerIpAddr a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwBundleActivePwChange",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique pseudowire index in the PW table"
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifActPwIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the PW name of the active PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifActPwName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents the PW Id of the active PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifActPwId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the IP address of the Peer on the remote end of the",
+							"active PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifActPwPeerIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.11",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"This represents the PW name of the primary PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPriPwName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents the PW Id of the primary PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPriPwId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the IP address of the Peer on the remote end of the",
+							"primary PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPriPwPeerIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.7",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwSwitchoverToForwardingState",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of a pseudowire",
+				"has changed from blocking to forwarding."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsPwNotifPwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cienaCesMplsPwSwitchoverState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cienaCesMplsPwNotifPwIndex.$v3",
+				"Summary" : "MPLS Pseudowire $v4 is in forwarding state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsPwSwitchoverToForwardingState CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwSwitchoverToForwardingState",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique pseudowire index in the PW table"
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the locally configured PW name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique Pseudowire ID used to identify the PW in the signaling. For the",
+							"static PW this represents the locally configured value."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the IP address of the Peer on the remote end of the PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.4",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwSwitchoverToBlockingState",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the operational state of a pseudowire",
+				"has changed from forwarding to blocking."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsPwNotifPwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesMplsPwSwitchoverState",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "cienaCesMplsPwNotifPwIndex.$v3",
+				"Summary" : "MPLS Pseudowire $v4 is in blocking state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsPwSwitchoverToBlockingState CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifForwardingStateUpTime u 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwSwitchoverToBlockingState",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.2.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique pseudowire index in the PW table"
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the locally configured PW name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique Pseudowire ID used to identify the PW in the signaling. For the",
+							"static PW this represents the locally configured value."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the IP address of the Peer on the remote end of the PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"This object specifies the time duration in seconds the Pseudowire",
+							"has been UP in the Forwarding state."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifForwardingStateUpTime",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwGroupSwitchOver",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when infrastructure pseudowire of a group detect a fault."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesMplsPwNotifPwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesMplsPwGroupSwitchOver",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "cienaCesMplsPwNotifPwIndex.$v3",
+				"Summary" : "Infrastructure pseudowire of group $v7 ($v4) has detected a fault"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsPwGroupSwitchOver CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr a 192.0.2.1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifVcGrpIndex u 1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwGroupSwitchOver",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.2.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique pseudowire index in the PW table"
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the locally configured PW name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique Pseudowire ID used to identify the PW in the signaling. For the",
+							"static PW this represents the locally configured value."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the IP address of the Peer on the remote end of the PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"This represents unique Group index for VCs"
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifVcGrpIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.14",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the PW has been",
+				"deleted, i.e., when the pwRowStatus has been set to",
+				"destroy(6) or the PW has been deleted by a non-MIB",
+				"application or due to an auto-discovery process."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesMplsPwDeleted",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Pseudowire $v3 has been deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MPLS-MIB::cienaCesMplsPwDeleted CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName s EXAMPLE CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwType i 0 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId u 1 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddrType i 0 CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwDeleted",
+				"oid" : "1.3.6.1.4.1.1271.2.2.17.2.9",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "indeterminate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents the locally configured PW name."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents the pseudowire type raw or tagged"
+						],
+						"enums" : {
+							"0" : "other",
+							"1" : "frameRelayDlciMartiniMode",
+							"2" : "atmAal5SduVcc",
+							"3" : "atmTransparent",
+							"4" : "ethernetTagged",
+							"5" : "ethernet",
+							"6" : "hdlc",
+							"7" : "ppp",
+							"8" : "cem",
+							"9" : "atmCellNto1Vcc",
+							"10" : "atmCellNto1Vpc",
+							"11" : "ipLayer2Transport",
+							"12" : "atmCell1to1Vcc",
+							"13" : "atmCell1to1Vpc",
+							"14" : "atmAal5PduVcc",
+							"15" : "frameRelayPortMode",
+							"16" : "cep",
+							"17" : "e1Satop",
+							"18" : "t1Satop",
+							"19" : "e3Satop",
+							"20" : "t3Satop",
+							"21" : "basicCesPsn",
+							"22" : "basicTdmIp",
+							"23" : "tdmCasCesPsn",
+							"24" : "tdmCasTdmIp",
+							"25" : "frDlci",
+							"32767" : "wildcard"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Unique Pseudowire ID used to identify the PW in the signaling. For the",
+							"static PW this represents the locally configured value."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwId",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This represents the IP address Type of the Peer "
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddrType",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This represents the IP address of the Peer on the remote end of the PW."
+						],
+						"name" : "CIENA-CES-MPLS-MIB::cienaCesMplsPwNotifPwPeerIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.18.1.4.4.1.1.4",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,316 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ADTRAN-ACTDAX-MIB::coldStart",
+			"certification" : "STANDARD",
+			"description" : [
+				"A coldStart trap signifes that the sending",
+				"protocol entity is reinitializing itself such that",
+				"the agent's configuration or the protocol entity",
+				"implementation may be altered."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "coldStart",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Protocol entity is reinitialized itself"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ACTDAX-MIB::coldStart ",
+			"trap" : {
+				"name" : "ADTRAN-ACTDAX-MIB::coldStart",
+				"oid" : "1.3.6.1.2.1.11.0.0"
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ACTDAX-MIB::ds1Alarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"A DS1 Alarm Trap indicates a DS1 Line Status",
+				"bit has changed state, producing an Alarm Event",
+				"for the DS1 interface. The bit map Line Events",
+				"variable identifies the alarm event(s). The bit",
+				"map Line Status variable contains the interface",
+				"status when the alarm occurred. Only enabled",
+				"(arm set) status produce an Alarm Trap.",
+				"Alarm event/status bit values:",
+				"1 No Alarm",
+				"2 Receive Yellow Alarm",
+				"4 Transmit Yellow Alarm",
+				"8 Receive Alarm Indication Signal (AIS)",
+				"16 Transmit AIS",
+				"32 RED Alarm",
+				"64 LOSS, Loss Of Receive Signal",
+				"128 Loopback",
+				"2048 Receive Test Code"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 & 1) ? 1 : (($v3 & 2048 || $v3 & 4096) ? 3 : 2)"
+				},
+				"EventType" : "ds1Alarm",
+				"ExpireTime" : {
+					"eval" : "($v3 & 1 || $v3 & 2048 || $v3 & 4096) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 & 1) ? 0 : (($v3 & 512 || $v3 & 1024) ? 4 : (($v3 & 2048) ? 2 : (($v3 & 4096) ? 1 : 3)))"
+				},
+				"SubNode" : "adDS1AlarmIndex:$v1",
+				"Summary" : {
+					"eval" : "($v3 & 1) ? 'DS1 Line $v1 status: No Alarm' : (($v3 & 2) ? 'DS1 Line $v1 status: Yellow Alarm' : (($v3 & 4) ? 'DS1 Line $v1 status: Near end LOF' : (($v3 & 8) ? 'DS1 Line $v1 status: Far end sending AIS' : (($v3 & 16) ? 'DS1 Line $v1 status: Near end sending AIS' : (($v3 & 32) ? 'DS1 Line $v1 status: Red Alarm' : (($v3 & 64) ? 'DS1 Line $v1 status: Near end loss of signal' : (($v3 & 128) ? 'DS1 Line $v1 status: Near end is looped' : (($v3 & 256) ? 'DS1 Line $v1 status: TS16 AIS' : (($v3 & 512) ? 'DS1 Line $v1 status: Far end sending TS16 LOMF' : (($v3 & 1024) ? 'DS1 Line $v1 status: Near end sending TS16 LOMF' : (($v3 & 2048) ? 'DS1 Line $v1 status: Test code at Near end' : 'DS1 Line $v1 status: Undefined')))))))))))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD ADTRAN-ACTDAX-MIB::ds1Alarm ADTRAN-DS1-MIB::adDS1AlarmIndex i 1 ADTRAN-DS1-MIB::adDS1LineEvent i 2 RFC1406-MIB::dsx1LineStatus i 2",
+				"$SNMPTRAPCMD ADTRAN-ACTDAX-MIB::ds1Alarm ADTRAN-DS1-MIB::adDS1AlarmIndex i 1 ADTRAN-DS1-MIB::adDS1LineEvent i 1 RFC1406-MIB::dsx1LineStatus i 1",
+				"$SNMPTRAPCMD ADTRAN-ACTDAX-MIB::ds1Alarm ADTRAN-DS1-MIB::adDS1AlarmIndex i 9 ADTRAN-DS1-MIB::adDS1LineEvent i 136 RFC1406-MIB::dsx1LineStatus i 136",
+				"$SNMPTRAPCMD ADTRAN-ACTDAX-MIB::ds1Alarm ADTRAN-DS1-MIB::adDS1AlarmIndex i 9 ADTRAN-DS1-MIB::adDS1LineEvent i 1 RFC1406-MIB::dsx1LineStatus i 1"
+			],
+			"trap" : {
+				"name" : "ADTRAN-ACTDAX-MIB::ds1Alarm",
+				"oid" : "1.3.6.1.4.1.664.1.2.0.201",
+				"variables" : [
+					{
+						"description" : [
+							"The index value which uniquely identifies the DS1 ",
+							"interface. The interface identified by a particular ",
+							"value of this index is the same interface as identified ",
+							"by dsx1LineIndex in DS1 MIB."
+						],
+						"name" : "ADTRAN-DS1-MIB::adDS1AlarmIndex",
+						"oid" : "1.3.6.1.4.1.664.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This bit map variable indicates state changes in the ",
+							"DS1 line status variable (dsx1LineStatus). When a line ",
+							"status bit changes state, the corresponding line event ",
+							"bit is set in this variable. If armed, setting the event ",
+							"will generate an Alarm Trap. After reporting the events ",
+							"in an Alarm Trap or Get response, the device clears ",
+							"the reported events. ",
+							"",
+							"The various alarm event bit positions are: ",
+							"1 No Alarm Present ",
+							"2 Far end LOF ( a.k.a., Yellow Alarm ) ",
+							"4 Near end sending LOF Indication ",
+							"8 Far end sending AIS ( Blue Alarm ) ",
+							"16 Near end sending AIS ",
+							"32 Near end LOF ( a.k.a., Red Alarm ) ",
+							"64 Near end Loss Of Signal ",
+							"128 Near end is looped ",
+							"256 E1 TS16 AIS ",
+							"512 Far End Sending TS16 LOMF ",
+							"1024 Near End Sending TS16 LOMF ",
+							"2048 Near End detects a test code ",
+							"4096 any line status not defined here"
+						],
+						"name" : "ADTRAN-DS1-MIB::adDS1LineEvent",
+						"oid" : "1.3.6.1.4.1.664.2.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ADTRAN-ACTDAX-MIB::ds1Alert",
+			"certification" : "STANDARD",
+			"description" : [
+				"A DS1 Threshold Crossing Alert has occurred. The",
+				"Performance Parameters which have exceeded their",
+				"Threshold Values are identified in the bit mapped",
+				"Alert variables for the Near End and Far End DS1",
+				"interface. Parameters identify Alerts for the",
+				"Current 15 minute interval and Total variables.",
+				"Threshold Crossing Alert bit values:",
+				"1 ES - Errored Seconds",
+				"2 SES - Severely Errored Seconds",
+				"4 SEFS - Severely Errored Framing Seconds",
+				"8 UAS - Unavailable Second",
+				"16 CSS - Controlled Slip Seconds",
+				"32 PCV - Path Coding Violations",
+				"64 LES - Line Errored Seconds",
+				"128 BES - Bursty Errored Seconds",
+				"256 DM - Degraded Minutes",
+				"512 LCV - Line Code Violations"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ds1Alert",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "adDS1AlarmIndex:$v1",
+				"Summary" : "Performance threshold crossed on DS1 line $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-ACTDAX-MIB::ds1Alert ADTRAN-DS1-MIB::adDS1AlertIndex i 9999 ADTRAN-DS1-MIB::adDS1CurrentAlert i 1 ADTRAN-DS1-MIB::adDS1TotalAlert i 1 ADTRAN-DS1-MIB::adDS1FarCurrentAlert i 1 ADTRAN-DS1-MIB::adDS1FarTotalAlert i 1",
+			"trap" : {
+				"name" : "ADTRAN-ACTDAX-MIB::ds1Alert",
+				"oid" : "1.3.6.1.4.1.664.1.2.0.202",
+				"variables" : [
+					{
+						"description" : [
+							"The index value which uniquely identifies the DS1 ",
+							"interface. The interface identified by a particular ",
+							"value of this index is the same interface as identified ",
+							"by dsx1LineIndex in DS1 MIB."
+						],
+						"name" : "ADTRAN-DS1-MIB::adDS1AlertIndex",
+						"oid" : "1.3.6.1.4.1.664.2.3.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This DS1 performance status variable indicates Threshold ",
+							"Crossing Alerts for Near End Current 15 minute interval. ",
+							"An alert bit is set in this variable when the value of ",
+							"the dsx1CurrentTable object exceeds the Threshold Value. ",
+							"This variable contains the sum of alert values. ",
+							"",
+							"Threshold Crossing Alert bit position values: ",
+							"",
+							"1 ES - Errored Seconds ",
+							"2 SES - Severely Errored Seconds ",
+							"4 SEFS - Severely Errored Framing Seconds ",
+							"8 UAS - Unavailable Seconds ",
+							"16 CSS - Controlled Slip Seconds ",
+							"32 PCV - Path Coding Violations ",
+							"64 LES - Line Errored Seconds ",
+							"128 BES - Bursty Errored Seconds ",
+							"256 DM - Degraded Minutes ",
+							"512 LCV - Line Code Violations"
+						],
+						"name" : "ADTRAN-DS1-MIB::adDS1CurrentAlert",
+						"oid" : "1.3.6.1.4.1.664.2.3.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This DS1 performance status variable indicates Threshold ",
+							"Crossing Alerts for Near End Total performance variables. ",
+							"An alert bit is set in this variable when the value of ",
+							"the dsx1TotalTable object exceeds the Threshold Value. ",
+							"This variable contains the sum of alert values. ",
+							"",
+							"Threshold Crossing Alert bit position values: ",
+							"1 ES - Errored Seconds ",
+							"2 SES - Severely Errored Seconds ",
+							"4 SEFS - Severely Errored Framing Seconds ",
+							"8 UAS - Unavailable Seconds ",
+							"16 CSS - Controlled Slip Seconds ",
+							"32 PCV - Path Coding Violations ",
+							"64 LES - Line Errored Seconds ",
+							"128 BES - Bursty Errored Seconds ",
+							"256 DM - Degraded Minutes ",
+							"512 LCV - Line Code Violations"
+						],
+						"name" : "ADTRAN-DS1-MIB::adDS1TotalAlert",
+						"oid" : "1.3.6.1.4.1.664.2.3.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This DS1 performance status variable indicates Threshold ",
+							"Crossing Alerts for Far End Current 15 minute interval. ",
+							"An alert bit is set in this variable when the value of ",
+							"the dsx1FarEndCurrentTable object exceeds the Threshold ",
+							"Value. This variable contains the sum of alert values. ",
+							"",
+							"Threshold Crossing Alert bit position values: ",
+							"1 ES - Errored Seconds ",
+							"2 SES - Severely Errored Seconds ",
+							"4 SEFS - Severely Errored Framing Seconds ",
+							"8 UAS - Unavailable Seconds ",
+							"16 CSS - Controlled Slip Seconds ",
+							"32 PCV - Path Coding Violations ",
+							"64 LES - Line Errored Seconds ",
+							"128 BES - Bursty Errored Seconds ",
+							"256 DM - Degraded Minutes"
+						],
+						"name" : "ADTRAN-DS1-MIB::adDS1FarCurrentAlert",
+						"oid" : "1.3.6.1.4.1.664.2.3.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This DS1 performance status variable indicates Threshold ",
+							"Crossing Alerts for Far End Total performance variables. ",
+							"An alert bit is set in this variable when the value of ",
+							"the dsx1FarEndTotalTable object exceeds the Threshold ",
+							"Value. This variable contains the sum of alert values. ",
+							"",
+							"Threshold Crossing Alert bit position values: ",
+							"1 ES - Errored Seconds ",
+							"2 SES - Severely Errored Seconds ",
+							"4 SEFS - Severely Errored Framing Seconds ",
+							"8 UAS - Unavailable Seconds ",
+							"16 CSS - Controlled Slip Seconds ",
+							"32 PCV - Path Coding Violations ",
+							"64 LES - Line Errored Seconds ",
+							"128 BES - Bursty Errored Seconds ",
+							"256 DM - Degraded Minutes"
+						],
+						"name" : "ADTRAN-DS1-MIB::adDS1FarTotalAlert",
+						"oid" : "1.3.6.1.4.1.664.2.3.2.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

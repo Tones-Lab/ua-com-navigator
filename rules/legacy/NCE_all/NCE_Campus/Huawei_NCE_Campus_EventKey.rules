@@ -1,0 +1,41 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗ 
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝ 
+#  
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+###############################################################################################
+# Special Deduplication Rules
+###############################################################################################
+
+my $rulesfile = "Huawei_NCE_Campus_EventKey.rules";
+$Log->Message('DEBUG', "Executing: " . $rulesfile);
+
+# default identifier
+$Event->{EventKey} = $Event->{Method} . ";" . $Event->{Node} . ";" . $Event->{EventType} . ";" . $Event->{SubNode} . ";" . $Event->{EventCategory} . ";" . $Event->{Severity};
+
+# implemented by majewsma on 12.03.2020 - deduplication rule transferred from former U2000 probe configuration
+if ( $Event->{HelpKey} eq '1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 12836' ) {
+	if ($hwNmNorthboundAdditionalInfo =~ /reason code/) {
+    	if ($hwNmNorthboundAdditionalInfo =~ /(.*),reason code.*/) {
+            my $extracted = $1;
+            $Event->{EventKey} = $Event->{EventKey} . "|" . $extracted;
+        }
+	} else {
+		$Event->{EventKey} = $Event->{EventKey} . "|" . $hwNmNorthboundAdditionalInfo;
+	}
+}
+
+$Log->Message('DEBUG', $rulesfile . " ...done");

@@ -1,0 +1,1655 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201708170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeBeginNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification occurs when ap begin to update."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysWlanApUpgradeBeginNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "WLAN AP upgrade initiated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeBeginNotify ",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeBeginNotify",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.1.24.3.1"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeResultNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification occurs when ap has updated successfully or failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : (($v1 == 0 || $v1 == 10) ? 3 : 2)"
+				},
+				"EventType" : "hwSysWlanApUpgradeResultNotify",
+				"ExpireTime" : {
+					"eval" : "($v1 == 0 || $v1 == 10 || $v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 0) ? 2 : (($v1 == 10) ? 1 : (($v1 == 2 || $v1 == 4) ? 4 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "WLAN AP upgrade status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeResultNotify HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeProgressStatus i 2",
+				"$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeResultNotify HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeProgressStatus i 1",
+				"$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeResultNotify HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeProgressStatus i 0"
+			],
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeResultNotify",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.1.24.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the status of the upgrade or the last result of the upgrade.",
+							"The value ranges from 0 to 10."
+						],
+						"enums" : {
+							"0" : "updating",
+							"1" : "updateSuccessful",
+							"2" : "updateFailed",
+							"4" : "failToDownloadFile",
+							"5" : "efsAndVersionMismatched",
+							"6" : "invalidFileName",
+							"7" : "efsAndApTypeMismatched",
+							"8" : "fileContentError",
+							"9" : "writingMemoryError",
+							"10" : "noUpdateResult"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeProgressStatus",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.24.2.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeUbootNotMatchNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification occurs when ap uboot not match version."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysWlanApUpgradeUbootNotMatchNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "WLAN AP U-Boot version mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeUbootNotMatchNotify ",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeUbootNotMatchNotify",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.1.24.3.3"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeAssistantPackageNotMatchNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification occurs when ap upgrade-assistant-package not match version."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysWlanApUpgradeAssistantPackageNotMatchNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Upgrade assistant package version mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeAssistantPackageNotMatchNotify ",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysWlanApUpgradeAssistantPackageNotMatchNotify",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.1.24.3.4"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysClockChangedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object indicates the notification sent when the system clock changes. ",
+				"When the system clock changes, this trap is triggered. For example, ",
+				"the system clock is changed through command lines."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysClockChangedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System clock changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysClockChangedNotification HUAWEI-SYS-MAN-MIB::hwSysLocalClock s EXAMPLEE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysClockChangedNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the local time of the device."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysLocalClock",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysReloadNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object indicates the restart notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysReloadNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System restarted due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysReloadNotification HUAWEI-SYS-MAN-MIB::hwSysReloadImage i 9999 HUAWEI-SYS-MAN-MIB::hwSysReloadCfgFile i 9999 HUAWEI-SYS-MAN-MIB::hwSysReloadReason s EXAMPLE HUAWEI-SYS-MAN-MIB::hwSysReloadScheduleTime s EXAMPLEE HUAWEI-SYS-MAN-MIB::hwSysReloadAction i 1 HUAWEI-SYS-MAN-MIB::hwSysReloadPafFile i 9999 HUAWEI-SYS-MAN-MIB::hwSysReloadLicenseFile i 9999 HUAWEI-SYS-MAN-MIB::hwSysReloadPatchFile i 9999 HUAWEI-SYS-MAN-MIB::hwSysReloadAndroidFile i 9999",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the image file used after the restart.",
+							"The value is limited by hwSysImageTable.",
+							"The value ranges from 1 to 2147483647."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadImage",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the configuration file used after the restart.",
+							"The value is limited by hwSysCFGFileTable. ",
+							"The value ranges from 0 to 2147483647.",
+							"The default value is 0, which means the configuration file remains unchanged."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadCfgFile",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the cause of the restart.",
+							"The value is a string of 0 to 255 characters.",
+							"After the system restarts, the character string is deleted."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the time of the restart.",
+							"The only valid value of this object is an 8-byte string which indicates the local time of the switch.",
+							"The maximum scheduled time is 30 days from the current system clock time. If the value set is earlier ",
+							"than the value of hwSysLocalClock or beyond the maximum scheduled time limit, a bad value error occurred.",
+							"The value of all-zero octet strings indicates system restart at once if the reload action is reloadOnSchedule(1)."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadScheduleTime",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object identifies restart types.",
+							"1: reloadUnavailable",
+							"2: reloadOnSchedule, indicating periodical restart",
+							"3: reloadAtOnce, indicating immediate restart without considering hwSysReloadScheduleTime",
+							"4: reloadCancel, indicating that all the planned restart activities are cancelled. If hwSysReloadSchedule ",
+							"is invalid or the rows that hwSysReloadScheduleEntry and hwSysReloadSchedule point to are not activated, ",
+							"all the restart activities are ignored and an inconsistent value is returned.",
+							"When the restart of the system is complete or no restart activities exist, the value of this object is reloadUnavailable(1)."
+						],
+						"enums" : {
+							"1" : "reloadUnavailable",
+							"2" : "reloadOnSchedule",
+							"3" : "reloadAtOnce",
+							"4" : "reloadCancel"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadAction",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the PAF file used after the restart."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadPafFile",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the license file used after the restart."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadLicenseFile",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the patch file used after the restart."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadPatchFile",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the android file used after the restart.",
+							"The value is limited by hwSysAndroidFileTable. ",
+							"The value ranges from 0 to 2147483647.",
+							"The default value is 0, which means the android file remains unchanged."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadAndroidFile",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysMasterHDError",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the hard disk on master board cannot be read and written because of a certain error, ",
+				"the hard disk on master board is unregistered and the notification is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysMasterHDError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Error detected in system master hard disk"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysMasterHDError ",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysMasterHDError",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.3"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveHDError",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the hard disk on slave board cannot be read and written because of a certain error, ",
+				"the hard disk on slave board is unregistered and the notification is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysSlaveHDError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Error detected in system slave hard disk"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysSlaveHDError ",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveHDError",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.4"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwPatchErrorTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification about a patch operation failure. This trap is reported when patch installation or patch status configuration fails. ",
+				"The trap contents include hwPatchErrorSlot, hwPatchErrorPatchIndex, hwPatchErrorCode, and hwPatchErrorPatchFileName."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwPatchStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Patch installation or patch status configuration failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwPatchErrorTrap HUAWEI-SYS-MAN-MIB::hwPatchErrorSlot u 9999 HUAWEI-SYS-MAN-MIB::hwPatchErrorPatchIndex u 9999 HUAWEI-SYS-MAN-MIB::hwPatchErrorCode i 1 HUAWEI-SYS-MAN-MIB::hwPatchErrorPatchFileName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwPatchErrorTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.5.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the number of the slot related to a patch error."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchErrorSlot",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.4.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the index of the patch when the patch has an error."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchErrorPatchIndex",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.4.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the flag of the patch error."
+						],
+						"enums" : {
+							"1" : "initNoMemory",
+							"2" : "initMemProtectFail",
+							"5" : "fetchInputIsNull",
+							"6" : "fetchFlagNotSame",
+							"7" : "fetchProgVerInvalid",
+							"8" : "fetchProgCrcInvalid",
+							"9" : "fetchPatNoInvalid",
+							"10" : "fetchTotalNumInvalid",
+							"11" : "fetchUnitCrcInvalid",
+							"12" : "fetchFuncNumTooMany",
+							"13" : "fetchTypeInvalid",
+							"14" : "fetchCommonAfterTemp",
+							"15" : "fetchLengthNotSuited",
+							"16" : "fetchCodeAddrNotSuited",
+							"17" : "fetchDataAddrNotSuited",
+							"18" : "fetchBaseAddrNotSuited",
+							"19" : "fetchCodeLenOverflow",
+							"20" : "fetchDataLenOverflow",
+							"30" : "chgproChangeModeFailed",
+							"40" : "activeNumInvalid",
+							"41" : "activeHasBeenActived",
+							"42" : "activeNotExist",
+							"43" : "activeStateInvalid",
+							"44" : "activeCodeAddrNotSuited",
+							"45" : "activeDataAddrNotSuited",
+							"46" : "activeBaseAddrNotSuited",
+							"47" : "activeFormatUnknown",
+							"55" : "runNumInvalid",
+							"56" : "runHasInRunning",
+							"57" : "runNotActive",
+							"58" : "runIdleState",
+							"59" : "runBadState",
+							"70" : "deactNumInvalid",
+							"71" : "deactRunOrActive",
+							"72" : "deactRunningState",
+							"73" : "deactBadState",
+							"80" : "removeNumInvalid",
+							"81" : "removeHasInIdle",
+							"82" : "removeBadStatus",
+							"90" : "caclcrcFileCrcInvalid",
+							"91" : "caclcrcUnitCrcInvalid",
+							"92" : "caclcrcOutputIsNull",
+							"93" : "caclcrcNumInvalid",
+							"95" : "caclcrcBadUnitCrc",
+							"100" : "showNumInvalid",
+							"101" : "showCodeLenIsZero",
+							"102" : "showDataLenIsZero",
+							"103" : "fetchOldAfterIndependent",
+							"104" : "fetchUpdateDependency",
+							"105" : "addlistBadParam",
+							"106" : "addlistMemAllocFail",
+							"107" : "depToListBadParamDep",
+							"108" : "depToListBadParamList",
+							"109" : "depToListMemFreeFail",
+							"110" : "depToListAddItemFail",
+							"111" : "listToDepBadParamDep",
+							"112" : "listToDepBadParamList",
+							"113" : "listToDepBadParamDepCount",
+							"114" : "updateDepBadParam",
+							"115" : "updateDepMemAllocFail",
+							"116" : "updateDepDepToListFail",
+							"117" : "updateDepToInterFail",
+							"118" : "updateDepFromInterFail",
+							"119" : "updateDepListToDepFail",
+							"120" : "depToInterBadParam",
+							"121" : "depToInterInvalidNo",
+							"122" : "depToInterAddFail",
+							"123" : "interToDepBadParam",
+							"124" : "interToDepAppendFail",
+							"125" : "appendListBadParam",
+							"126" : "appendListAddFail",
+							"127" : "indActiveBadParam",
+							"128" : "indActiveAlreadyActive",
+							"129" : "indActiveListFail",
+							"130" : "indActiveListGenFail",
+							"131" : "indActiveListAppendFail",
+							"132" : "indActiveMemFreeFail",
+							"133" : "indActiveDepIdle",
+							"134" : "indActiveDepInvalid",
+							"135" : "indActiveCodeAddrNotSuited",
+							"136" : "indActiveDataAddrNotSuited",
+							"137" : "indActiveBaseAddrNotSuited",
+							"138" : "indActiveNotLoaded",
+							"139" : "indActiveFuncFail",
+							"140" : "indPatchFileNoInd",
+							"141" : "indRunFail",
+							"142" : "indDeactiveFail",
+							"143" : "indRemoveFail",
+							"144" : "indGetDepOfPara",
+							"145" : "indGetDepOnPara",
+							"146" : "indGetDepOnFail",
+							"147" : "fetchBufferPara",
+							"148" : "fetchBufferFail",
+							"149" : "getStatePara",
+							"150" : "indActiveAlreadyRunning",
+							"151" : "indFreeListInputNull",
+							"152" : "indFreeListMemFreeErr",
+							"153" : "indBitTblToArrayInputNull",
+							"154" : "indBitTblToArrayFreeFail",
+							"155" : "indBitTblToArrayAllocFail",
+							"156" : "indBitTblToArrayBitsetMore",
+							"157" : "indBitTblToArrayBitsetLess",
+							"158" : "listToDepBadParamAllocFail",
+							"159" : "listToDepBadParamFreeFail",
+							"160" : "indDeactiveFreeNull",
+							"161" : "indRemoveFreeFail",
+							"162" : "getInfoBufNull",
+							"163" : "getInfoOutputNull",
+							"164" : "getInfoFlagNotSame",
+							"165" : "getInfoProgCrcInvalid",
+							"166" : "getInfoFileCrcInvalid",
+							"167" : "getInfoUnitCrcInvalid",
+							"169" : "indPatchOpNotconfig",
+							"170" : "normalOpNotconfig",
+							"171" : "indActiveIdle",
+							"172" : "indActiveInvalid",
+							"173" : "indDeactiveDeative",
+							"174" : "indDeactiveRunning",
+							"176" : "indDeactiveInvalid",
+							"177" : "indRunDeactive",
+							"178" : "indRunRunning",
+							"179" : "indRunIdle",
+							"180" : "indRunInvalid",
+							"181" : "indRemoveIdle",
+							"182" : "indRemoveInvalid",
+							"183" : "indFetchActive",
+							"184" : "indFetchDeactive",
+							"185" : "indFetchRunning",
+							"186" : "indFetchInvalid",
+							"187" : "patchFileNotExist",
+							"188" : "patchRestoreFailed",
+							"189" : "patchPackageError",
+							"190" : "patchMisoperation",
+							"191" : "patchSystemUnstable",
+							"65535" : "unknown"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchErrorCode",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the index of the patch file when the patch has an error."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchErrorPatchFileName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.4.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwPatchActiveOverTimeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The patch is not run within 24 hours after it is activated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwPatchActiveOverTimeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Patch activated but not run within 24 hours"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwPatchActiveOverTimeTrap HUAWEI-SYS-MAN-MIB::hwPatchOperateState i 1",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwPatchActiveOverTimeTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.5.2",
+				"variables" : [
+					{
+						"description" : [
+							"status of the patch.",
+							"patchRunning(1): indicates that current status of the patch is Run.",
+							"patchActive(2): indicates that current status of the patch is Active.",
+							"patchDeactive(3): indicates that current status of the patch is Deactive."
+						],
+						"enums" : {
+							"1" : "patchRunning",
+							"2" : "patchActive",
+							"3" : "patchDeactive",
+							"4" : "patchDeleting"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchOperateState",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwPatchMalfunctionComebackTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The patch operation is restored."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : (($v1 == 1) ? 3 : 2)"
+				},
+				"EventType" : "hwPatchMalfunctionComebackTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1 || $v1 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : (($v1 == 1) ? 2 : (($v1 == 3) ? 4 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Patch operate state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwPatchMalfunctionComebackTrap HUAWEI-SYS-MAN-MIB::hwPatchOperateState i 3",
+				"$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwPatchMalfunctionComebackTrap HUAWEI-SYS-MAN-MIB::hwPatchOperateState i 2",
+				"$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwPatchMalfunctionComebackTrap HUAWEI-SYS-MAN-MIB::hwPatchOperateState i 1"
+			],
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwPatchMalfunctionComebackTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.5.3",
+				"variables" : [
+					{
+						"description" : [
+							"status of the patch.",
+							"patchRunning(1): indicates that current status of the patch is Run.",
+							"patchActive(2): indicates that current status of the patch is Active.",
+							"patchDeactive(3): indicates that current status of the patch is Deactive."
+						],
+						"enums" : {
+							"1" : "patchRunning",
+							"2" : "patchActive",
+							"3" : "patchDeactive",
+							"4" : "patchDeleting"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchOperateState",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwPatchUpdateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification about a trap status change. This trap is reported when patch installation or patch status configuration succeeds."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwPatchStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Patch installation or patch status configuration succeeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwPatchUpdateTrap HUAWEI-SYS-MAN-MIB::hwPatchVersion s EXAMPLE HUAWEI-SYS-MAN-MIB::hwPatchType i 1 HUAWEI-SYS-MAN-MIB::hwPatchOperateState i 1",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwPatchUpdateTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.5.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the version of the patch file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchVersion",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the patch type.",
+							"hotCommon(1): indicates the common hot patch.",
+							"hotTemporary(2): indicates the temporary hot patch.",
+							"coolCommon(3): indicates the common cool patch.",
+							"coolTemporary(4): indicates the temporary cool patch."
+						],
+						"enums" : {
+							"1" : "hotCommon",
+							"2" : "hotTemporary",
+							"3" : "coolCommon",
+							"4" : "coolTemporary"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"status of the patch.",
+							"patchRunning(1): indicates that current status of the patch is Run.",
+							"patchActive(2): indicates that current status of the patch is Active.",
+							"patchDeactive(3): indicates that current status of the patch is Deactive."
+						],
+						"enums" : {
+							"1" : "patchRunning",
+							"2" : "patchActive",
+							"3" : "patchDeactive",
+							"4" : "patchDeleting"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchOperateState",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysMasterCfcardError",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the cfcard on master board can't be read and written because",
+				"of some error, the Cfcard on master board will be unregistered and ",
+				"the notification is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysMasterCfcardError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Error detected in CF card on master board"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysMasterCfcardError ",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysMasterCfcardError",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.6"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveCfcardError",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the cfcard on slave board can't be read and written because",
+				"of some error, the Cfcard on slave board will be unregistered and ",
+				"the notification is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysSlaveCfcardError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Error detected in CF card on slave board"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysSlaveCfcardError ",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveCfcardError",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.7"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchSuccessNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object indicates that the hwSysSlaveSwitchChassisNum ",
+				"chassis is successfully switched."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwSysSlaveSwitchNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ChassisNum:$v1",
+				"Summary" : "Chassis $v1 switched successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchSuccessNotification HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchChassisNum s EXAMPLE HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchSrc s EXAMPLE HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchDst s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchSuccessNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.8",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object identifies the chassis number."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchChassisNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.7.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The source slot for slave switchover."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchSrc",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.7.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The destination slot for slave switchover."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchDst",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.7.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchFailNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object indicates that the hwSysSlaveSwitchChassisNum ",
+				"chassis fails to be switched."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwSysSlaveSwitchNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ChassisNum:$v1",
+				"Summary" : "Chassis $v1 failed to switch"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchFailNotification HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchChassisNum s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchFailNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.9",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object identifies the chassis number."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysSlaveSwitchChassisNum",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.7.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysIssuNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the ISSU upgrade over, it will send success or failed message."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysIssuNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 2 : (($v1 == 1 || $v1 == 4) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System ISSU upgrade state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysIssuNotification HUAWEI-SYS-MAN-MIB::hwIssuState i 1 HUAWEI-SYS-MAN-MIB::hwIssuConditionCheck i 1",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysIssuNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.10",
+				"variables" : [
+					{
+						"description" : [
+							"System issu upgrade state."
+						],
+						"enums" : {
+							"1" : "noIssuUpgrading",
+							"2" : "issuUpgrading",
+							"3" : "issuExceptional",
+							"4" : "issuRollBackByUserCancel",
+							"5" : "issuRollBackByExceptional"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwIssuState",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.12.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"System issu upgrade condition check.",
+							"The default check result is normal."
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "notRealtimeBackup",
+							"3" : "slotAbnormal",
+							"4" : "configurationChange",
+							"5" : "otherAbnormal"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwIssuConditionCheck",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.12.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwPatchInstallFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The patch package install fail notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwPatchInstall",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Patch package installaton failed due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwPatchInstallFail HUAWEI-SYS-MAN-MIB::hwPatchUsedFileName s EXAMPLE HUAWEI-SYS-MAN-MIB::hwPatchVersion s EXAMPLE HUAWEI-SYS-MAN-MIB::hwPatchFailReason i 1",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwPatchInstallFail",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.11",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the name of the patch file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchUsedFileName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the version of the patch file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchVersion",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is an index that specifies patch fail reason."
+						],
+						"enums" : {
+							"1" : "patchOpenErr",
+							"2" : "getPatchErr",
+							"3" : "patchSpaceShortage",
+							"4" : "patchConflict",
+							"5" : "versionErr",
+							"8" : "synchronizePatchPackageError",
+							"9" : "patchConfigInconsistError"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchFailReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwPatchInstallFailClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The patch package install fail clear notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwPatchInstall",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Patch package installation failure alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwPatchInstallFailClear HUAWEI-SYS-MAN-MIB::hwPatchUsedFileName s EXAMPLE HUAWEI-SYS-MAN-MIB::hwPatchVersion s EXAMPLE HUAWEI-SYS-MAN-MIB::hwPatchFailReason i 1",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwPatchInstallFailClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.12",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the name of the patch file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchUsedFileName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the version of the patch file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchVersion",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is an index that specifies patch fail reason."
+						],
+						"enums" : {
+							"1" : "patchOpenErr",
+							"2" : "getPatchErr",
+							"3" : "patchSpaceShortage",
+							"4" : "patchConflict",
+							"5" : "versionErr",
+							"8" : "synchronizePatchPackageError",
+							"9" : "patchConfigInconsistError"
+						},
+						"name" : "HUAWEI-SYS-MAN-MIB::hwPatchFailReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.8.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSumUpgradeSuccess",
+			"certification" : "STANDARD",
+			"description" : [
+				"The patch package upgrade success notification"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSumUpgradeSuccess",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Patch package upgraded successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSumUpgradeSuccess HUAWEI-SYS-MAN-MIB::hwSysImageVersion s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSumUpgradeSuccess",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.13",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the version of the image file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysImageVersion",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.4.2.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysCfgFileErrorNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object notifies that some error occurs when the configuration file is specified as the next startup configuration file."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysCfgFileErrorNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "System configuration file ($v1) error detected due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysCfgFileErrorNotification HUAWEI-SYS-MAN-MIB::hwSysCFGFileName s EXAMPLE HUAWEI-SYS-MAN-MIB::hwSysCFGFileReason s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysCfgFileErrorNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.14",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the name of the configuration file.",
+							"Currently, Huawei products support two formats of configuration files, namely, .CFG and .ZIP.",
+							"A file name containing path and suffix is a string of 5 to 64 characters."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysCFGFileName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.5.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the error cause of the configuration file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysCFGFileReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.5.2.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysImageErrorNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The image file upgrade fail notification. The first hwSysImageName indicates the current image file",
+				"and the second hwSysImageName indicates the next startup image file."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysImageErrorNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Image file ($v1) upgradation failed due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysImageErrorNotification HUAWEI-SYS-MAN-MIB::hwSysImageName s EXAMPLE HUAWEI-SYS-MAN-MIB::hwSysImageName s EXAMPLE HUAWEI-SYS-MAN-MIB::hwSysImageReason s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysImageErrorNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.15",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the name of the image file.",
+							"A file name containing path and suffix is a string of 4 to 64 characters."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysImageName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.4.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the name of the image file.",
+							"A file name containing path and suffix is a string of 4 to 64 characters."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysImageName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.4.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object identifies the error cause of the image file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysImageReason",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.4.2.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysPafChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object indicates the notification sent when the system PAF file changes.The hwSysPafFileName indicates system PAF file",
+				"and the hwSysReloadEntity indicates the board type(1 means main board,2 means slave main board)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysPafChangeNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System PAF file ($v2) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysPafChangeNotification HUAWEI-SYS-MAN-MIB::hwSysReloadEntity i 9999 HUAWEI-SYS-MAN-MIB::hwSysPafFileName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysPafChangeNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.16",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the index of the restarting entity.",
+							"The value is referred to from entPhysicalTable.",
+							"1. When get/get-next, 1 means active main board, 2 means slave main board",
+							"65535 means other board.",
+							"2. When set, 2 means slave main board, other values mean active main board."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadEntity",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the name of the PAF file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysPafFileName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.6.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSysLicenseChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object indicates the notification sent when the system license file changes.The hwSysLicenseFileName indicates the system license file",
+				"and the hwSysReloadEntity indicates the board type(1 means main board,2 means slave main board)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwSysLicenseChangeNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System license file ($v2) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSysLicenseChangeNotification HUAWEI-SYS-MAN-MIB::hwSysReloadEntity i 9999 HUAWEI-SYS-MAN-MIB::hwSysLicenseFileName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSysLicenseChangeNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.17",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the index of the restarting entity.",
+							"The value is referred to from entPhysicalTable.",
+							"1. When get/get-next, 1 means active main board, 2 means slave main board",
+							"65535 means other board.",
+							"2. When set, 2 means slave main board, other values mean active main board."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysReloadEntity",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.3.3.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the name of the license file."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysLicenseFileName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.7.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSystemBoardExclude",
+			"certification" : "STANDARD",
+			"description" : [
+				"The board(s) excluded during software upgrading"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwSystemBoardExclude",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "PhysicalIndex:$v1",
+				"Summary" : "System board excluded during software upgrade"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSystemBoardExclude ENTITY-MIB::entPhysicalIndex i 9999 ENTITY-MIB::entPhysicalName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSystemBoardExclude",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.18",
+				"variables" : [
+					{
+						"description" : [
+							"The index for this entry."
+						],
+						"name" : "ENTITY-MIB::entPhysicalIndex",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The textual name of the physical entity. The value of this",
+							"object should be the name of the component as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name (e.g., `console') or a simple component number (e.g.",
+							"port or module number, such as `1'), depending on the",
+							"physical component naming syntax of the device.",
+							"If there is no local name, or if this object is otherwise",
+							"not applicable, then this object contains a zero-length",
+							"string.",
+							"Note that the value of entPhysicalName for two physical",
+							"entities will be the same in the event that the console",
+							"interface does not distinguish between them, e.g., slot-1",
+							"and the card in slot-1."
+						],
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwSystemBoardExcludeClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The board(s) excluded retrieved during software upgrading"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwSystemBoardExclude",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PhysicalIndex:$v1",
+				"Summary" : "System board exclude alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwSystemBoardExcludeClear ENTITY-MIB::entPhysicalIndex i 9999 ENTITY-MIB::entPhysicalName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwSystemBoardExcludeClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.19",
+				"variables" : [
+					{
+						"description" : [
+							"The index for this entry."
+						],
+						"name" : "ENTITY-MIB::entPhysicalIndex",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The textual name of the physical entity. The value of this",
+							"object should be the name of the component as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name (e.g., `console') or a simple component number (e.g.",
+							"port or module number, such as `1'), depending on the",
+							"physical component naming syntax of the device.",
+							"If there is no local name, or if this object is otherwise",
+							"not applicable, then this object contains a zero-length",
+							"string.",
+							"Note that the value of entPhysicalName for two physical",
+							"entities will be the same in the event that the console",
+							"interface does not distinguish between them, e.g., slot-1",
+							"and the card in slot-1."
+						],
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwEvmVmAbnormalRunNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The board(s) excluded retrieved during software upgrading"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwEvmVmAbnormalRunNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "EVM VM abnormal run detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwEvmVmAbnormalRunNotification HUAWEI-SYS-MAN-MIB::hwSysEvmRoleName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwEvmVmAbnormalRunNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the number of Android files.",
+							"The object calculates the number of android files given by hwSysAndroidFileTable.",
+							"The value ranges from 0 to 2147483647."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysEvmRoleName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwEvmVmNotRunningNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The board(s) excluded retrieved during software upgrading"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwEvmVmNotRunningNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "EVM VM not running"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwEvmVmNotRunningNotification HUAWEI-SYS-MAN-MIB::hwSysEvmRoleName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwEvmVmNotRunningNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the number of Android files.",
+							"The object calculates the number of android files given by hwSysAndroidFileTable.",
+							"The value ranges from 0 to 2147483647."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysEvmRoleName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwEvmVmAbnormalRestartNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The board(s) excluded retrieved during software upgrading"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwEvmVmAbnormalRestartNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "EVM VM abnormal restart detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwEvmVmAbnormalRestartNotification HUAWEI-SYS-MAN-MIB::hwSysEvmRoleName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwEvmVmAbnormalRestartNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the number of Android files.",
+							"The object calculates the number of android files given by hwSysAndroidFileTable.",
+							"The value ranges from 0 to 2147483647."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysEvmRoleName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwEvmDownloadFailedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The board(s) excluded retrieved during software upgrading"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwEvmDownloadFailedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "EVM download failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwEvmDownloadFailedNotification HUAWEI-SYS-MAN-MIB::hwSysEvmDownloadFileName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwEvmDownloadFailedNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.2.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the number of Android files.",
+							"The object calculates the number of android files given by hwSysAndroidFileTable.",
+							"The value ranges from 0 to 2147483647."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysEvmDownloadFileName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwEvmInstallFailedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The board(s) excluded retrieved during software upgrading"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwEvmInstallFailedNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "EVM installation failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwEvmInstallFailedNotification HUAWEI-SYS-MAN-MIB::hwSysEvmInstallFileName s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwEvmInstallFailedNotification",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of this object identifies the number of Android files.",
+							"The object calculates the number of android files given by hwSysAndroidFileTable.",
+							"The value ranges from 0 to 2147483647."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwSysEvmInstallFileName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.2.20.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwTpmStaticMeasureAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Results of static integrity measurement mismatch during a boot"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwTpmStaticMeasureStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Static integrity measurement mismatched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwTpmStaticMeasureAlarm HUAWEI-SYS-MAN-MIB::hwTrustPhysicalName s EXAMPLE HUAWEI-SYS-MAN-MIB::hwTrustStartupReportItem s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwTpmStaticMeasureAlarm",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.21",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the physical entity."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwTrustPhysicalName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.26.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Report item of hwTrustStartupReportTable."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwTrustStartupReportItem",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.26.2.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-SYS-MAN-MIB::hwTpmStaticMeasureAlarmClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"Results of static integrity measurement resume matching during a boot"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwTpmStaticMeasureStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Static integrity measurement mismatch alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-SYS-MAN-MIB::hwTpmStaticMeasureAlarmClear HUAWEI-SYS-MAN-MIB::hwTrustPhysicalName s EXAMPLE HUAWEI-SYS-MAN-MIB::hwTrustStartupReportItem s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-SYS-MAN-MIB::hwTpmStaticMeasureAlarmClear",
+				"oid" : "1.3.6.1.4.1.2011.5.25.19.2.22",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the physical entity."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwTrustPhysicalName",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.26.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Report item of hwTrustStartupReportTable."
+						],
+						"name" : "HUAWEI-SYS-MAN-MIB::hwTrustStartupReportItem",
+						"oid" : "1.3.6.1.4.1.2011.5.25.19.1.26.2.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

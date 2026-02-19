@@ -1,0 +1,673 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202205061200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "EATON-SENSOR-MIB::notifySensorCount",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the sensor count changes after a discovery or removing ",
+				"from the UI."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "notifySensorCount",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Sensor count changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EATON-SENSOR-MIB::notifySensorCount EATON-SENSOR-MIB::sensorCount i 9999",
+			"trap" : {
+				"name" : "EATON-SENSOR-MIB::notifySensorCount",
+				"oid" : "1.3.6.1.4.1.534.6.8.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Number of sensor managed on this device."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorCount",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EATON-SENSOR-MIB::notifySensorStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the sensor status changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : (($v3==0) ? 3 : 2)"
+				},
+				"EventType" : "notifySensorStatus",
+				"ExpireTime" : {
+					"eval" : "($v3==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : (($v3==0) ? 1 : 4)"
+				},
+				"SubNode" : "sensorUuid:$v2",
+				"Summary" : {
+					"eval" : "($v3==2) ? 'Sensor $v1 communication is OK' : (($v3==0) ? 'Sensor $v1 status is unknown' : 'Communication lost with sensor $v1')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifySensorStatus EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::sensorUuid s EXAMPLE EATON-SENSOR-MIB::sensorStatus i 2 EATON-SENSOR-MIB::sensorStatusSince c 9999",
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifySensorStatus EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::sensorUuid s EXAMPLE EATON-SENSOR-MIB::sensorStatus i 3 EATON-SENSOR-MIB::sensorStatusSince c 9999"
+			],
+			"trap" : {
+				"name" : "EATON-SENSOR-MIB::notifySensorStatus",
+				"oid" : "1.3.6.1.4.1.534.6.8.1.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each sensor device. Its value",
+							"ranges from 1 to sensorCount."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique uuid value for each sensor device."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorUuid",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates how the sensor is communicating or not."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"2" : "communicationOK",
+							"3" : "communicationLost"
+						},
+						"name" : "EATON-SENSOR-MIB::sensorStatus",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"UTC time in seconds since 1970/01/01 dating the sensor status last change."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorStatusSince",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.4.1.2",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EATON-SENSOR-MIB::notifyTemperatureAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the temperature alarm changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==0) ? 1 : 2"
+				},
+				"EventType" : "notifyTemperatureAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==0) ? 0 : (($v4==1 || $v4==3) ? 4 : 5)"
+				},
+				"SubNode" : "temperatureUuid:$v3",
+				"Summary" : {
+					"eval" : "($v4==0) ? 'Temperature in normal range on sensor $v1' : (($v4==1 || $v4==2) ? 'Low temperature on sensor $v1' : 'High temperature on sensor $v1')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyTemperatureAlarm EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::temperatureIndex i 1 EATON-SENSOR-MIB::temperatureUuid s EXAMPLE EATON-SENSOR-MIB::temperatureAlarm i 0 EATON-SENSOR-MIB::temperatureAlarmChangeSince c 9999 EATON-SENSOR-MIB::temperatureValue i 9999",
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyTemperatureAlarm EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::temperatureIndex i 1 EATON-SENSOR-MIB::temperatureUuid s EXAMPLE EATON-SENSOR-MIB::temperatureAlarm i 2 EATON-SENSOR-MIB::temperatureAlarmChangeSince c 9999 EATON-SENSOR-MIB::temperatureValue i 9999"
+			],
+			"trap" : {
+				"name" : "EATON-SENSOR-MIB::notifyTemperatureAlarm",
+				"oid" : "1.3.6.1.4.1.534.6.8.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each sensor device. Its value",
+							"ranges from 1 to sensorCount."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique value for each temperature probe measurement. Its value",
+							"ranges from 1 to sensorTemperatureCount."
+						],
+						"name" : "EATON-SENSOR-MIB::temperatureIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique uuid value for each temperature."
+						],
+						"name" : "EATON-SENSOR-MIB::temperatureUuid",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm set according to the realtime measure compared to the thresholds."
+						],
+						"enums" : {
+							"0" : "good",
+							"1" : "lowWarning",
+							"2" : "lowCritical",
+							"3" : "highWarning",
+							"4" : "highCritical"
+						},
+						"name" : "EATON-SENSOR-MIB::temperatureAlarm",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"UTC time in seconds since 1970/01/01 dating the temperature alarm last change."
+						],
+						"name" : "EATON-SENSOR-MIB::temperatureAlarmChangeSince",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.3.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Realtime measured value after correction with the offset.",
+							"See temperatureUnit data for the units."
+						],
+						"name" : "EATON-SENSOR-MIB::temperatureValue",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.3.1.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EATON-SENSOR-MIB::notifyTemperatureCommunicationStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the temperature communication status changes.",
+				"Is not implemented when the probe is internal (see temperatureConnectionType)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : (($v4==0) ? 3 : 2)"
+				},
+				"EventType" : "notifyTemperatureCommunicationStatus",
+				"ExpireTime" : {
+					"eval" : "($v4==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : (($v4==0) ? 1 : 4)"
+				},
+				"SubNode" : "temperatureUuid:$v3",
+				"Summary" : {
+					"eval" : "($v4==2) ? 'Temperature sensor $v1 communication is OK' : (($v4==0) ? 'Temperature sensor $v1 status is unknown' : 'Communication lost with temperature sensor $v1')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyTemperatureCommunicationStatus EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::temperatureIndex i 1 EATON-SENSOR-MIB::temperatureUuid s EXAMPLE EATON-SENSOR-MIB::temperatureCommunicationStatus i 2 EATON-SENSOR-MIB::temperatureCommunicationStatusSince c 9999",
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyTemperatureCommunicationStatus EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::temperatureIndex i 1 EATON-SENSOR-MIB::temperatureUuid s EXAMPLE EATON-SENSOR-MIB::temperatureCommunicationStatus i 3 EATON-SENSOR-MIB::temperatureCommunicationStatusSince c 9999"
+			],
+			"trap" : {
+				"name" : "EATON-SENSOR-MIB::notifyTemperatureCommunicationStatus",
+				"oid" : "1.3.6.1.4.1.534.6.8.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each sensor device. Its value",
+							"ranges from 1 to sensorCount."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique value for each temperature probe measurement. Its value",
+							"ranges from 1 to sensorTemperatureCount."
+						],
+						"name" : "EATON-SENSOR-MIB::temperatureIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique uuid value for each temperature."
+						],
+						"name" : "EATON-SENSOR-MIB::temperatureUuid",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates how the temperature probe is communicating or not."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"2" : "communicationOK",
+							"3" : "communicationLost"
+						},
+						"name" : "EATON-SENSOR-MIB::temperatureCommunicationStatus",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"UTC time in seconds since 1970/01/01 dating the temperature communication status last change."
+						],
+						"name" : "EATON-SENSOR-MIB::temperatureCommunicationStatusSince",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.2.3.1.5",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EATON-SENSOR-MIB::notifyHumidityAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the humidity alarm changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==0) ? 1 : 2"
+				},
+				"EventType" : "notifyHumidityAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==0) ? 0 : (($v4==1 || $v4==3) ? 4 : 5)"
+				},
+				"SubNode" : "humidityUuid:$v3",
+				"Summary" : {
+					"eval" : "($v4==0) ? 'Humidity in normal range on sensor $v1' : (($v4==1 || $v4==2) ? 'Low humidity on sensor $v1' : 'High humidity on sensor $v1')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyHumidityAlarm EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::humidityIndex i 1 EATON-SENSOR-MIB::humidityUuid s EXAMPLE EATON-SENSOR-MIB::humidityAlarm i 0 EATON-SENSOR-MIB::humidityAlarmChangeSince c 9999 EATON-SENSOR-MIB::humidityValue i 9999",
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyHumidityAlarm EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::humidityIndex i 1 EATON-SENSOR-MIB::humidityUuid s EXAMPLE EATON-SENSOR-MIB::humidityAlarm i 2 EATON-SENSOR-MIB::humidityAlarmChangeSince c 9999 EATON-SENSOR-MIB::humidityValue i 9999"
+			],
+			"trap" : {
+				"name" : "EATON-SENSOR-MIB::notifyHumidityAlarm",
+				"oid" : "1.3.6.1.4.1.534.6.8.1.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each sensor device. Its value",
+							"ranges from 1 to sensorCount."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique value for each humidity probe measurement. Its value",
+							"ranges from 1 to sensorhumidityCount."
+						],
+						"name" : "EATON-SENSOR-MIB::humidityIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique uuid value for each humidity."
+						],
+						"name" : "EATON-SENSOR-MIB::humidityUuid",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm set according to the realtime measure compared to the thresholds."
+						],
+						"enums" : {
+							"0" : "good",
+							"1" : "lowWarning",
+							"2" : "lowCritical",
+							"3" : "highWarning",
+							"4" : "highCritical"
+						},
+						"name" : "EATON-SENSOR-MIB::humidityAlarm",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"UTC time in seconds since 1970/01/01 dating the humidity alarm last change."
+						],
+						"name" : "EATON-SENSOR-MIB::humidityAlarmChangeSince",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.3.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Realtime measured value after correction with the offset. in tenth of % units."
+						],
+						"name" : "EATON-SENSOR-MIB::humidityValue",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.3.1.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EATON-SENSOR-MIB::notifyHumidityCommunicationStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the humidity communication status changes.",
+				"Is not implemented when the probe is internal (see humidityConnectionType)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : (($v4==0) ? 3 : 2)"
+				},
+				"EventType" : "notifyHumidityCommunicationStatus",
+				"ExpireTime" : {
+					"eval" : "($v4==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : (($v4==0) ? 1 : 4)"
+				},
+				"SubNode" : "humidityUuid:$v3",
+				"Summary" : {
+					"eval" : "($v4==2) ? 'Humidity sensor $v1 communication is OK' : (($v4==0) ? 'Humidity sensor $v1 status is unknown' : 'Communication lost with humidity sensor $v1')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyHumidityCommunicationStatus EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::humidityIndex i 1 EATON-SENSOR-MIB::humidityUuid s EXAMPLE EATON-SENSOR-MIB::humidityCommunicationStatus i 1 EATON-SENSOR-MIB::humidityCommunicationStatusSince c 9999",
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyHumidityCommunicationStatus EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::humidityIndex i 1 EATON-SENSOR-MIB::humidityUuid s EXAMPLE EATON-SENSOR-MIB::humidityCommunicationStatus i 3 EATON-SENSOR-MIB::humidityCommunicationStatusSince c 9999"
+			],
+			"trap" : {
+				"name" : "EATON-SENSOR-MIB::notifyHumidityCommunicationStatus",
+				"oid" : "1.3.6.1.4.1.534.6.8.1.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each sensor device. Its value",
+							"ranges from 1 to sensorCount."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique value for each humidity probe measurement. Its value",
+							"ranges from 1 to sensorhumidityCount."
+						],
+						"name" : "EATON-SENSOR-MIB::humidityIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique uuid value for each humidity."
+						],
+						"name" : "EATON-SENSOR-MIB::humidityUuid",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates how the humidity probe is communicating or not."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"2" : "communicationOK",
+							"3" : "communicationLost"
+						},
+						"name" : "EATON-SENSOR-MIB::humidityCommunicationStatus",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"UTC time in seconds since 1970/01/01 dating the humidity communication status last change."
+						],
+						"name" : "EATON-SENSOR-MIB::humidityCommunicationStatusSince",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.3.3.1.5",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EATON-SENSOR-MIB::notifyDigitalInputAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the digital input alarm changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==0) ? 1 : (($v4==1) ? 3 : 2)"
+				},
+				"EventType" : "notifyDigitalInputAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==0 || $v4==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==0) ? 0 : (($v4==1) ? 2 : (($v4==2) ? 3 : 5))"
+				},
+				"SubNode" : "digitalInputUuid:$v3",
+				"Summary" : "Digital input $v1 is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyDigitalInputAlarm EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::digitalInputIndex i 1 EATON-SENSOR-MIB::digitalInputUuid s EXAMPLE EATON-SENSOR-MIB::digitalInputAlarm i 0 EATON-SENSOR-MIB::digitalInputAlarmChangeSince c 9999 EATON-SENSOR-MIB::digitalInputState i 0 EATON-SENSOR-MIB::digitalInputStateSince c 9999",
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifyDigitalInputAlarm EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::digitalInputIndex i 1 EATON-SENSOR-MIB::digitalInputUuid s EXAMPLE EATON-SENSOR-MIB::digitalInputAlarm i 2 EATON-SENSOR-MIB::digitalInputAlarmChangeSince c 9999 EATON-SENSOR-MIB::digitalInputState i 0 EATON-SENSOR-MIB::digitalInputStateSince c 9999"
+			],
+			"trap" : {
+				"name" : "EATON-SENSOR-MIB::notifyDigitalInputAlarm",
+				"oid" : "1.3.6.1.4.1.534.6.8.1.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each sensor device. Its value",
+							"ranges from 1 to sensorCount."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique value for each digital input probe measurement. Its value",
+							"ranges from 1 to sensorDigitalInputCount."
+						],
+						"name" : "EATON-SENSOR-MIB::digitalInputIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique uuid value for each digital Input."
+						],
+						"name" : "EATON-SENSOR-MIB::digitalInputUuid",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm set according to the polarity and alarm severity configuration."
+						],
+						"enums" : {
+							"0" : "good",
+							"1" : "informational",
+							"2" : "warning",
+							"3" : "critical"
+						},
+						"name" : "EATON-SENSOR-MIB::digitalInputAlarm",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"UTC time in seconds since 1970/01/01 dating the digital input alarm last change."
+						],
+						"name" : "EATON-SENSOR-MIB::digitalInputAlarmChangeSince",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.3.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Measure of the digital input after applying the polarity configured.",
+							"0 : Inactive, 1 : Active"
+						],
+						"enums" : {
+							"0" : "inactive",
+							"1" : "active"
+						},
+						"name" : "EATON-SENSOR-MIB::digitalInputState",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"UTC time in seconds since 1970/01/01 dating the digital input state last change."
+						],
+						"name" : "EATON-SENSOR-MIB::digitalInputStateSince",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.3.1.4",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EATON-SENSOR-MIB::notifydigitalInputCommunicationStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent whenever the digital input communication status changes.",
+				"Is not implemented when the probe is internal (see digitalInputConnectionType)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : (($v4==0) ? 3 : 2)"
+				},
+				"EventType" : "notifydigitalInputCommunicationStatus",
+				"ExpireTime" : {
+					"eval" : "($v4==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : (($v4==0) ? 1 : 4)"
+				},
+				"SubNode" : "digitalInputUuid:$v3",
+				"Summary" : {
+					"eval" : "($v4==2) ? 'Digital input $v1 communication is OK' : (($v4==0) ? 'Digital input $v1 status is unknown' : 'Communication lost with digital input $v1')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifydigitalInputCommunicationStatus EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::digitalInputIndex i 1 EATON-SENSOR-MIB::digitalInputUuid s EXAMPLE EATON-SENSOR-MIB::digitalInputCommunicationStatus i 2 EATON-SENSOR-MIB::digitalInputCommunicationStatusSince c 9999",
+				"$SNMPTRAPCMD EATON-SENSOR-MIB::notifydigitalInputCommunicationStatus EATON-SENSOR-MIB::sensorIndex i 1 EATON-SENSOR-MIB::digitalInputIndex i 1 EATON-SENSOR-MIB::digitalInputUuid s EXAMPLE EATON-SENSOR-MIB::digitalInputCommunicationStatus i 3 EATON-SENSOR-MIB::digitalInputCommunicationStatusSince c 9999"
+			],
+			"trap" : {
+				"name" : "EATON-SENSOR-MIB::notifydigitalInputCommunicationStatus",
+				"oid" : "1.3.6.1.4.1.534.6.8.1.4.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for each sensor device. Its value",
+							"ranges from 1 to sensorCount."
+						],
+						"name" : "EATON-SENSOR-MIB::sensorIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.1.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique value for each digital input probe measurement. Its value",
+							"ranges from 1 to sensorDigitalInputCount."
+						],
+						"name" : "EATON-SENSOR-MIB::digitalInputIndex",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique uuid value for each digital Input."
+						],
+						"name" : "EATON-SENSOR-MIB::digitalInputUuid",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates how the digital input is communicating or not."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"2" : "communicationOK",
+							"3" : "communicationLost"
+						},
+						"name" : "EATON-SENSOR-MIB::digitalInputCommunicationStatus",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"UTC time in seconds since 1970/01/01 dating the digital input communication status last change."
+						],
+						"name" : "EATON-SENSOR-MIB::digitalInputCommunicationStatusSince",
+						"oid" : "1.3.6.1.4.1.534.6.8.1.4.3.1.6",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		}
+	]
+}

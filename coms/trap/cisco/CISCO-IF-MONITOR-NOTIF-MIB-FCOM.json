@@ -1,0 +1,90 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200210110000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The agent generates this notification when ",
+				"certain errors over an interval have reached/exceeded ",
+				"a threshold, causing a severe condition.",
+				"The SNMP Notifications can be logged using the",
+				"NOTIFICATION-LOG-MIB."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cIfMonNotifEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 5 : 3"
+				},
+				"SubNode" : "ifIndex: $v1",
+				"Summary" : "$v5 $v4 in $v7 seconds exceeds threshold of $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifEvent IF-MIB::ifIndex i 9999 CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifCount u 9999 CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifSeverity i 1 CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifCause i 1 CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifValue u 9999 CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifThreshold u 9999 CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifInterval u 9999",
+			"trap" : {
+				"name" : "CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifEvent",
+				"oid" : "1.3.6.1.4.1.9.10.999.0.1",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifCount",
+						"oid" : "1.3.6.1.4.1.9.10.999.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "red",
+							"2" : "yellow"
+						},
+						"name" : "CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.10.999.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "aborts",
+							"2" : "crc",
+							"3" : "drops",
+							"4" : "flaps",
+							"5" : "frame-reject",
+							"6" : "runts",
+							"7" : "sabm",
+							"8" : "frmr",
+							"9" : "disc"
+						},
+						"name" : "CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifCause",
+						"oid" : "1.3.6.1.4.1.9.10.999.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifValue",
+						"oid" : "1.3.6.1.4.1.9.10.999.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifThreshold",
+						"oid" : "1.3.6.1.4.1.9.10.999.1.2.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IF-MONITOR-NOTIF-MIB::cIfMonNotifInterval",
+						"oid" : "1.3.6.1.4.1.9.10.999.1.2.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

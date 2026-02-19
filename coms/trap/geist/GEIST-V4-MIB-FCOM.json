@@ -1,0 +1,3110 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "GEIST-V4-MIB::internalTestNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Test SNMP Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "internalTest",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "internalTestNOTIFY: Test SNMP Trap"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalTestNOTIFY ",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalTestNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10101"
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::internalAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "internalAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'Device unavailable' : (($v1 == 2) ? 'Device partially unavailable' : 'Device available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalAvailNOTIFY GEIST-V4-MIB::internalAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10204",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::internalAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.2.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::internalTempNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Internal Temperature Sensor Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "internalTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Internal temperature : $v1 d&deg;F (decidegrees)' : 'Internal temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalTempNOTIFY GEIST-V4-MIB::internalTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalTempNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10205",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::internalTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.2.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::internalHumidityNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Humidity reading Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "internalHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Internal humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalHumidityNOTIFY GEIST-V4-MIB::internalHumidity i 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalHumidityNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10206",
+				"variables" : [
+					{
+						"description" : [
+							"Humidity reading"
+						],
+						"name" : "GEIST-V4-MIB::internalHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.2.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::internalDewPointNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Internal Dew Point Sensor Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "internalDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Internal dew point : $v1 d&deg;F (decidegrees)' : 'Internal dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalDewPointNOTIFY GEIST-V4-MIB::internalDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalDewPointNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10207",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Dew-point in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::internalDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.2.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::tempSensorAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "tempSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "tempSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'Remote temperature sensor unavailable' : (($v1 == 2) ? 'Remote temperature sensor partially unavailable' : 'Remote temperature sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::tempSensorAvailNOTIFY GEIST-V4-MIB::tempSensorAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::tempSensorAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10404",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::tempSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.4.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::tempSensorTempNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Remote Temperature Sensor Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tempSensorTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "tempSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Remote temperature : $v1 d&deg;F (decidegrees)' : 'Remote temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::tempSensorTempNOTIFY GEIST-V4-MIB::tempSensorTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::tempSensorTempNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10405",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::tempSensorTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.4.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "airFlowSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "airFlowSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'AFHT3 sensor unavailable' : (($v1 == 2) ? 'AFHT3 sensor partially unavailable' : 'AFHT3 sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorAvailNOTIFY GEIST-V4-MIB::airFlowSensorAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10504",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorTempNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"AFHT3 Sensor Temperature Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "airFlowSensorTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "airFlowSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'AFHT3 sensor temperature : $v1 d&deg;F (decidegrees)' : 'AFHT3 sensor temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorTempNOTIFY GEIST-V4-MIB::airFlowSensorTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorTempNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10505",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorFlowNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"AFHT3 Airflow reading Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "airFlowSensorFlow",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "airFlowSensor",
+				"Summary" : "AFHT3 airflow reading : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorFlowNOTIFY GEIST-V4-MIB::airFlowSensorFlow i 99",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorFlowNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10506",
+				"variables" : [
+					{
+						"description" : [
+							"AFHT3 Airflow reading"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorFlow",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorHumidityNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"AFHT3 Humidity reading Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "airFlowSensorHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "airFlowSensor",
+				"Summary" : "AFHT3 humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorHumidityNOTIFY GEIST-V4-MIB::airFlowSensorHumidity i 12",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorHumidityNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10507",
+				"variables" : [
+					{
+						"description" : [
+							"AFHT3 Humidity reading"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorDewPointNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"AFHT3 Sensor Dew Point Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "airFlowSensorDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "airFlowSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'AFHT3 sensor dew point : $v1 d&deg;F (decidegrees)' : 'AFHT3 sensor dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorDewPointNOTIFY GEIST-V4-MIB::airFlowSensorDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorDewPointNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10508",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Dew Point in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::dewPointSensorAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "dewPointSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "dewPointSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'Remote dew point sensor unavailable' : (($v1 == 2) ? 'Remote dew point sensor partially unavailable' : 'Remote dew point sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::dewPointSensorAvailNOTIFY GEIST-V4-MIB::dewPointSensorAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::dewPointSensorAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10604",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::dewPointSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.6.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::dewPointSensorTempNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Remote Dew Point Sensor Temperature Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "dewPointSensorTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "dewPointSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Remote dew point sensor temperature : $v1 d&deg;F (decidegrees)' : 'Remote dew point sensor temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::dewPointSensorTempNOTIFY GEIST-V4-MIB::dewPointSensorTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::dewPointSensorTempNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10605",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::dewPointSensorTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.6.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::dewPointSensorHumidityNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Humidity reading Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "dewPointSensorHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "dewPointSensor",
+				"Summary" : "Dew point sensor humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::dewPointSensorHumidityNOTIFY GEIST-V4-MIB::dewPointSensorHumidity i 6",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::dewPointSensorHumidityNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10606",
+				"variables" : [
+					{
+						"description" : [
+							"Humidity reading"
+						],
+						"name" : "GEIST-V4-MIB::dewPointSensorHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.6.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::dewPointSensorDewPointNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Remote Dew Point Sensor Dew Point Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "dewPointSensorDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "dewPointSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Remote dew point sensor dew point : $v1 d&deg;F (decidegrees)' : 'Remote dew point sensor dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::dewPointSensorDewPointNOTIFY GEIST-V4-MIB::dewPointSensorDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::dewPointSensorDewPointNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10607",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Dew-point in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::dewPointSensorDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.6.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::ccatSensorAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "ccatSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "ccatSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'CCAT sensor unavailable' : (($v1 == 2) ? 'CCAT sensor partially unavailable' : 'CCAT sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::ccatSensorAvailNOTIFY GEIST-V4-MIB::ccatSensorAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::ccatSensorAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10704",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::ccatSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.7.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::ccatSensorValueNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"CCAT sensor reading Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ccatSensorValue",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "ccatSensor",
+				"Summary" : "CCAT $v2 sensor reading : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::ccatSensorValueNOTIFY GEIST-V4-MIB::ccatSensorValue i 999 GEIST-V4-MIB::ccatSensorType s 'EXAMPLE'",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::ccatSensorValueNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10705",
+				"variables" : [
+					{
+						"description" : [
+							"CCAT sensor reading"
+						],
+						"name" : "GEIST-V4-MIB::ccatSensorValue",
+						"oid" : "1.3.6.1.4.1.21239.5.1.7.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"CCAT sensor type"
+						],
+						"name" : "GEIST-V4-MIB::ccatSensorType",
+						"oid" : "1.3.6.1.4.1.21239.5.1.7.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "t3hdSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'T3HD sensor unavailable' : (($v1 == 2) ? 'T3HD sensor partially unavailable' : 'T3HD sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorAvailNOTIFY GEIST-V4-MIB::t3hdSensorAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10804",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorIntTempNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor Temperature Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "t3hdSensorIntTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'T3HD sensor internal temperature : $v1 d&deg;F (decidegrees)' : 'T3HD sensor internal temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorIntTempNOTIFY GEIST-V4-MIB::t3hdSensorIntTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorIntTempNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10806",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Internal Temperature in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorIntTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorIntHumidityNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor Internal Humidity Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "t3hdSensorIntHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "t3hdSensor",
+				"Summary" : "T3HD sensor internal humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorIntHumidityNOTIFY GEIST-V4-MIB::t3hdSensorIntHumidity i 5",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorIntHumidityNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10807",
+				"variables" : [
+					{
+						"description" : [
+							"T3HD Sensor Internal Humidity"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorIntHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorIntDewPointNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor Dew Point Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "t3hdSensorIntDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'T3HD sensor dew point : $v1 d&deg;F (decidegrees)' : 'T3HD sensor dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorIntDewPointNOTIFY GEIST-V4-MIB::t3hdSensorIntDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorIntDewPointNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10808",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Internal DewPoint in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorIntDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorExtATempNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor External A Temperature Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "t3hdSensorExtATemp",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'T3HD sensor external A temperature : $v1 d&deg;F (decidegrees)' : 'T3HD sensor external A temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorExtATempNOTIFY GEIST-V4-MIB::t3hdSensorExtATemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorExtATempNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10811",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for External Temperature A in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorExtATemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.11",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorExtBTempNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor External B Temperature Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "t3hdSensorExtBTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'T3HD sensor external B temperature : $v1 d&deg;F (decidegrees)' : 'T3HD sensor external B temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorExtBTempNOTIFY GEIST-V4-MIB::t3hdSensorExtBTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorExtBTempNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10814",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for External Temperature B in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorExtBTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::thdSensorAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "thdSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "thdSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'THD sensor unavailable' : (($v1 == 2) ? 'THD sensor partially unavailable' : 'THD sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::thdSensorAvailNOTIFY GEIST-V4-MIB::thdSensorAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::thdSensorAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10904",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::thdSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.9.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::thdSensorTempNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"THD Sensor Temperature Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "thdSensorTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "thdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'THD sensor temperature : $v1 d&deg;F (decidegrees)' : 'THD sensor temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::thdSensorTempNOTIFY GEIST-V4-MIB::thdSensorTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::thdSensorTempNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10905",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::thdSensorTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.9.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::thdSensorHumidityNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"THD Sensor Humidity Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "thdSensorHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "thdSensor",
+				"Summary" : "THD sensor humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::thdSensorHumidityNOTIFY GEIST-V4-MIB::thdSensorHumidity i 6",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::thdSensorHumidityNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10906",
+				"variables" : [
+					{
+						"description" : [
+							"THD Sensor Humidity"
+						],
+						"name" : "GEIST-V4-MIB::thdSensorHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.9.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::thdSensorDewPointNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"THD Sensor Dew Point Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "thdSensorDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "thdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'THD sensor dew point : $v1 d&deg;F (decidegrees)' : 'THD sensor dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::thdSensorDewPointNOTIFY GEIST-V4-MIB::thdSensorDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::thdSensorDewPointNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.10907",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for DewPoint in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::thdSensorDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.9.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "rpmSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "rpmSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'RPM sensor unavailable' : (($v1 == 2) ? 'RPM sensor partially unavailable' : 'RPM sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorAvailNOTIFY GEIST-V4-MIB::rpmSensorAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11004",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorEnergyNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Accumulated Energy Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorEnergy",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor accumulated energy : $v1 kWh"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorEnergyNOTIFY GEIST-V4-MIB::rpmSensorEnergy u 12",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorEnergyNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11005",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Accumulated Energy"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorEnergy",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.5",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorVoltageNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Voltage Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorVoltage",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor voltage : $v1 V"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorVoltageNOTIFY GEIST-V4-MIB::rpmSensorVoltage u 6",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorVoltageNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11006",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Voltage"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorVoltage",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.6",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorVoltageMaxNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Voltage (Max) Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorVoltageMax",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor voltage (Max) : $v1 V"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorVoltageMaxNOTIFY GEIST-V4-MIB::rpmSensorVoltageMax u 99",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorVoltageMaxNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11007",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Voltage (Max)"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorVoltageMax",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.7",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorVoltageMinNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Voltage (Min) Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorVoltageMin",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor voltage (Min) : $v1 V"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorVoltageMinNOTIFY GEIST-V4-MIB::rpmSensorVoltageMin u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorVoltageMinNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11008",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Voltage (Min)"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorVoltageMin",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.8",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorVoltagePeakNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Voltage (Peak) Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorVoltagePeak",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor voltage (Peak) : $v1 V"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorVoltagePeakNOTIFY GEIST-V4-MIB::rpmSensorVoltagePeak u 999",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorVoltagePeakNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11009",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Voltage (Peak)"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorVoltagePeak",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.9",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorCurrentNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Current Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorCurrent",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor current : $v1 dA"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorCurrentNOTIFY GEIST-V4-MIB::rpmSensorCurrent u 9",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorCurrentNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11010",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Current reading in deciAmps"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorCurrent",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.10",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorRealPowerNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Real Power Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorRealPower",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor real power : $v1 W"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorRealPowerNOTIFY GEIST-V4-MIB::rpmSensorRealPower u 9",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorRealPowerNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11011",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Real Power"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorRealPower",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.11",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorApparentPowerNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Apparent Power Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorApparentPower",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor apparent power : $v1 VA"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorApparentPowerNOTIFY GEIST-V4-MIB::rpmSensorApparentPower u 99",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorApparentPowerNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11012",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Apparent Power"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorApparentPower",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.12",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorPowerFactorNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Power Factor Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "rpmSensorPowerFactor",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor power factor : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorPowerFactorNOTIFY GEIST-V4-MIB::rpmSensorPowerFactor u 99",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorPowerFactorNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11013",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Power Factor"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorPowerFactor",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.13",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::a2dSensorAvailNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "a2dSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 0) ? 4 : (($v1 == 2) ? 3 : 0)"
+				},
+				"SubNode" : "a2dSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'A2D analog sensor unavailable' : (($v1 == 2) ? 'A2D analog sensor partially unavailable' : 'A2D analog sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::a2dSensorAvailNOTIFY GEIST-V4-MIB::a2dSensorAvail u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::a2dSensorAvailNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11104",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::a2dSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.11.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::a2dSensorValueNOTIFY",
+			"certification" : "STANDARD",
+			"description" : [
+				"A2D Analog Sensor Measurement Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "a2dSensorValue",
+				"ExpireTime" : 86400,
+				"Severity" : 2,
+				"SubNode" : "a2dSensor",
+				"Summary" : "A2D analog sensor measurement : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::a2dSensorValueNOTIFY GEIST-V4-MIB::a2dSensorValue i 9999",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::a2dSensorValueNOTIFY",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.11105",
+				"variables" : [
+					{
+						"description" : [
+							"Current analog measurement reading within either a user defined or preset range depending on device mode."
+						],
+						"name" : "GEIST-V4-MIB::a2dSensorValue",
+						"oid" : "1.3.6.1.4.1.21239.5.1.11.1.5",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::internalAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "internalAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'Device unavailable' : (($v1 == 2) ? 'Device partially unavailable' : 'Device available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalAvailCLEAR GEIST-V4-MIB::internalAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20204",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::internalAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.2.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::internalTempCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Internal Temperature Sensor Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "internalTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Internal temperature : $v1 d&deg;F (decidegrees)' : 'Internal temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalTempCLEAR GEIST-V4-MIB::internalTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalTempCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20205",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::internalTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.2.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::internalHumidityCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Humidity reading Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "internalHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Internal humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalHumidityCLEAR GEIST-V4-MIB::internalHumidity i 2",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalHumidityCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20206",
+				"variables" : [
+					{
+						"description" : [
+							"Humidity reading"
+						],
+						"name" : "GEIST-V4-MIB::internalHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.2.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::internalDewPointCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Internal Dew Point Sensor Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "internalDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Internal dew point : $v1 d&deg;F (decidegrees)' : 'Internal dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::internalDewPointCLEAR GEIST-V4-MIB::internalDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::internalDewPointCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20207",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Dew-point in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::internalDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.2.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::tempSensorAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tempSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "tempSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'Remote temperature sensor unavailable' : (($v1 == 2) ? 'Remote temperature sensor partially unavailable' : 'Remote temperature sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::tempSensorAvailCLEAR GEIST-V4-MIB::tempSensorAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::tempSensorAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20404",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::tempSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.4.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::tempSensorTempCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Remote Temperature Sensor Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tempSensorTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "tempSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Remote temperature : $v1 d&deg;F (decidegrees)' : 'Remote temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::tempSensorTempCLEAR GEIST-V4-MIB::tempSensorTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::tempSensorTempCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20405",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::tempSensorTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.4.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "airFlowSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "airFlowSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'AFHT3 sensor unavailable' : (($v1 == 2) ? 'AFHT3 sensor partially unavailable' : 'AFHT3 sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorAvailCLEAR GEIST-V4-MIB::airFlowSensorAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20504",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorTempCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"AFHT3 Sensor Temperature Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "airFlowSensorTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "airFlowSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'AFHT3 sensor temperature : $v1 d&deg;F (decidegrees)' : 'AFHT3 sensor temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorTempCLEAR GEIST-V4-MIB::airFlowSensorTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorTempCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20505",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorFlowCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"AFHT3 Airflow reading Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "airFlowSensorFlow",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "airFlowSensor",
+				"Summary" : "AFHT3 airflow reading : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorFlowCLEAR GEIST-V4-MIB::airFlowSensorFlow i 9",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorFlowCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20506",
+				"variables" : [
+					{
+						"description" : [
+							"AFHT3 Airflow reading"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorFlow",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorHumidityCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"AFHT3 Humidity reading Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "airFlowSensorHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "airFlowSensor",
+				"Summary" : "AFHT3 humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorHumidityCLEAR GEIST-V4-MIB::airFlowSensorHumidity i 3",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorHumidityCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20507",
+				"variables" : [
+					{
+						"description" : [
+							"AFHT3 Humidity reading"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::airFlowSensorDewPointCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"AFHT3 Sensor Dew Point Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "airFlowSensorDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "airFlowSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'AFHT3 sensor dew point : $v1 d&deg;F (decidegrees)' : 'AFHT3 sensor dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::airFlowSensorDewPointCLEAR GEIST-V4-MIB::airFlowSensorDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::airFlowSensorDewPointCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20508",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Dew Point in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::airFlowSensorDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.5.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::dewPointSensorAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "dewPointSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "dewPointSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'Remote dew point sensor unavailable' : (($v1 == 2) ? 'Remote dew point sensor partially unavailable' : 'Remote dew point sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::dewPointSensorAvailCLEAR GEIST-V4-MIB::dewPointSensorAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::dewPointSensorAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20604",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::dewPointSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.6.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::dewPointSensorTempCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Remote Dew Point Sensor Temperature Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "dewPointSensorTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "dewPointSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Remote dew point sensor temperature : $v1 d&deg;F (decidegrees)' : 'Remote dew point sensor temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::dewPointSensorTempCLEAR GEIST-V4-MIB::dewPointSensorTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::dewPointSensorTempCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20605",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::dewPointSensorTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.6.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::dewPointSensorHumidityCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Humidity reading Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "dewPointSensorHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "dewPointSensor",
+				"Summary" : "Remote dew point sensor humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::dewPointSensorHumidityCLEAR GEIST-V4-MIB::dewPointSensorHumidity i 3",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::dewPointSensorHumidityCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20606",
+				"variables" : [
+					{
+						"description" : [
+							"Humidity reading"
+						],
+						"name" : "GEIST-V4-MIB::dewPointSensorHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.6.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::dewPointSensorDewPointCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Remote Dew Point Sensor Dew Point Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "dewPointSensorDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "dewPointSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Remote dew point sensor dew point : $v1 d&deg;F (decidegrees)' : 'Remote dew point sensor dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::dewPointSensorDewPointCLEAR GEIST-V4-MIB::dewPointSensorDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::dewPointSensorDewPointCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20607",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Dew-point in tenths of degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::dewPointSensorDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.6.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::ccatSensorAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ccatSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "ccatSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'CCAT sensor unavailable' : (($v1 == 2) ? 'CCAT sensor partially unavailable' : 'CCAT sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::ccatSensorAvailCLEAR GEIST-V4-MIB::ccatSensorAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::ccatSensorAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20704",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::ccatSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.7.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::ccatSensorValueCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"CCAT sensor reading Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ccatSensorValue",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "ccatSensor",
+				"Summary" : "CCAT $v2 sensor reading : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::ccatSensorValueCLEAR GEIST-V4-MIB::ccatSensorValue i 0 GEIST-V4-MIB::ccatSensorType s 'EXAMPLE'",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::ccatSensorValueCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20705",
+				"variables" : [
+					{
+						"description" : [
+							"CCAT sensor reading"
+						],
+						"name" : "GEIST-V4-MIB::ccatSensorValue",
+						"oid" : "1.3.6.1.4.1.21239.5.1.7.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"CCAT sensor type"
+						],
+						"name" : "GEIST-V4-MIB::ccatSensorType",
+						"oid" : "1.3.6.1.4.1.21239.5.1.7.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "t3hdSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'T3HD sensor unavailable' : (($v1 == 2) ? 'T3HD sensor partially unavailable' : 'T3HD sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorAvailCLEAR GEIST-V4-MIB::t3hdSensorAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20804",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorIntTempCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor Temperature Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "t3hdSensorIntTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'T3HD sensor internal temperature : $v1 d&deg;F (decidegrees)' : 'T3HD sensor internal temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorIntTempCLEAR GEIST-V4-MIB::t3hdSensorIntTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorIntTempCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20806",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Internal Temperature in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorIntTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorIntHumidityCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor Internal Humidity Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "t3hdSensorIntHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "t3hdSensor",
+				"Summary" : "T3HD sensor internal humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorIntHumidityCLEAR GEIST-V4-MIB::t3hdSensorIntHumidity i 2",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorIntHumidityCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20807",
+				"variables" : [
+					{
+						"description" : [
+							"T3HD Sensor Internal Humidity"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorIntHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorIntDewPointCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor Dew Point Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "t3hdSensorIntDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'T3HD sensor dew point : $v1 d&deg;F (decidegrees)' : 'T3HD sensor dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorIntDewPointCLEAR GEIST-V4-MIB::t3hdSensorIntDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorIntDewPointCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20808",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Internal DewPoint in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorIntDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorExtATempCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor External A Temperature Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "t3hdSensorExtATemp",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'T3HD sensor external A temperature : $v1 d&deg;F (decidegrees)' : 'T3HD sensor external A temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorExtATempCLEAR GEIST-V4-MIB::t3hdSensorExtATemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorExtATempCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20811",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for External Temperature A in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorExtATemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.11",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::t3hdSensorExtBTempCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"T3HD Sensor External B Temperature Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "t3hdSensorExtBTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "t3hdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'T3HD sensor external B temperature : $v1 d&deg;F (decidegrees)' : 'T3HD sensor external B temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::t3hdSensorExtBTempCLEAR GEIST-V4-MIB::t3hdSensorExtBTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::t3hdSensorExtBTempCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20814",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for External Temperature B in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::t3hdSensorExtBTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.8.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::thdSensorAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "thdSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "thdSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'THD sensor unavailable' : (($v1 == 2) ? 'THD sensor partially unavailable' : 'THD sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::thdSensorAvailCLEAR GEIST-V4-MIB::thdSensorAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::thdSensorAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20904",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::thdSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.9.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::thdSensorTempCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"THD Sensor Temperature Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "thdSensorTemp",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "thdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'THD sensor temperature : $v1 d&deg;F (decidegrees)' : 'THD sensor temperature : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::thdSensorTempCLEAR GEIST-V4-MIB::thdSensorTemp i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::thdSensorTempCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20905",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for Temperature in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::thdSensorTemp",
+						"oid" : "1.3.6.1.4.1.21239.5.1.9.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::thdSensorHumidityCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"THD Sensor Humidity Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "thdSensorHumidity",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "thdSensor",
+				"Summary" : "THD sensor humidity : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::thdSensorHumidityCLEAR GEIST-V4-MIB::thdSensorHumidity i 4",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::thdSensorHumidityCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20906",
+				"variables" : [
+					{
+						"description" : [
+							"THD Sensor Humidity"
+						],
+						"name" : "GEIST-V4-MIB::thdSensorHumidity",
+						"oid" : "1.3.6.1.4.1.21239.5.1.9.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::thdSensorDewPointCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"THD Sensor Dew Point Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "thdSensorDewPoint",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "thdSensor",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'THD sensor dew point : $v1 d&deg;F (decidegrees)' : 'THD sensor dew point : $v1 d&deg;C (decidegrees)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::thdSensorDewPointCLEAR GEIST-V4-MIB::thdSensorDewPoint i 200 GEIST-V4-MIB::temperatureUnits i 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::thdSensorDewPointCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.20907",
+				"variables" : [
+					{
+						"description" : [
+							"Current reading for DewPoint in 0.1 degrees. Units are given by temperatureUnits field in deviceInfo"
+						],
+						"name" : "GEIST-V4-MIB::thdSensorDewPoint",
+						"oid" : "1.3.6.1.4.1.21239.5.1.9.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current units for temperature values. 0 = Degrees Fahrenheit, 1 = Degrees Celsius"
+						],
+						"name" : "GEIST-V4-MIB::temperatureUnits",
+						"oid" : "1.3.6.1.4.1.21239.5.1.1.7",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'RPM sensor unavailable' : (($v1 == 2) ? 'RPM sensor partially unavailable' : 'RPM sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorAvailCLEAR GEIST-V4-MIB::rpmSensorAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21004",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorEnergyCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Accumulated Energy Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorEnergy",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor accumulated energy : $v1 kWh"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorEnergyCLEAR GEIST-V4-MIB::rpmSensorEnergy u 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorEnergyCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21005",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Accumulated Energy"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorEnergy",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.5",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorVoltageCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Voltage Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorVoltage",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor voltage : $v1 V"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorVoltageCLEAR GEIST-V4-MIB::rpmSensorVoltage u 9",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorVoltageCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21006",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Voltage"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorVoltage",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.6",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorVoltageMaxCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Voltage (Max) Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorVoltageMax",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor voltage (Max) : $v1 V"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorVoltageMaxCLEAR GEIST-V4-MIB::rpmSensorVoltageMax u 99",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorVoltageMaxCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21007",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Voltage (Max)"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorVoltageMax",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.7",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorVoltageMinCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Voltage (Min) Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorVoltageMin",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor voltage (Min) : $v1 V"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorVoltageMinCLEAR GEIST-V4-MIB::rpmSensorVoltageMin u 9",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorVoltageMinCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21008",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Voltage (Min)"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorVoltageMin",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.8",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorVoltagePeakCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Voltage (Peak) Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorVoltagePeak",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor voltage (Peak) : $v1 V"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorVoltagePeakCLEAR GEIST-V4-MIB::rpmSensorVoltagePeak u 999",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorVoltagePeakCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21009",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Voltage (Peak)"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorVoltagePeak",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.9",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorCurrentCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Current Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorCurrent",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor current : $v1 dA"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorCurrentCLEAR GEIST-V4-MIB::rpmSensorCurrent u 99",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorCurrentCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21010",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Current reading in deciAmps"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorCurrent",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.10",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorRealPowerCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Real Power Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorRealPower",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor real power : $v1 W"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorRealPowerCLEAR GEIST-V4-MIB::rpmSensorRealPower u 99",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorRealPowerCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21011",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Real Power"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorRealPower",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.11",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorApparentPowerCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Apparent Power Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorApparentPower",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor apparent power : $v1 VA"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorApparentPowerCLEAR GEIST-V4-MIB::rpmSensorApparentPower u 99",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorApparentPowerCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21012",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Apparent Power"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorApparentPower",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.12",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::rpmSensorPowerFactorCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"RPM Sensor Power Factor Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "rpmSensorPowerFactor",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "rpmSensor",
+				"Summary" : "RPM sensor power factor : $v1%"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::rpmSensorPowerFactorCLEAR GEIST-V4-MIB::rpmSensorPowerFactor u 9",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::rpmSensorPowerFactorCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21013",
+				"variables" : [
+					{
+						"description" : [
+							"RPM Sensor Power Factor"
+						],
+						"name" : "GEIST-V4-MIB::rpmSensorPowerFactor",
+						"oid" : "1.3.6.1.4.1.21239.5.1.10.1.13",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::a2dSensorAvailCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "a2dSensorAvail",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "a2dSensor",
+				"Summary" : {
+					"eval" : "($v1 == 0) ? 'A2D analog sensor unavailable' : (($v1 == 2) ? 'A2D analog sensor partially unavailable' : 'A2D analog sensor available')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::a2dSensorAvailCLEAR GEIST-V4-MIB::a2dSensorAvail u 1",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::a2dSensorAvailCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21104",
+				"variables" : [
+					{
+						"description" : [
+							"Device availability. 0 = Unavailable, 1 = Available, 2 = Partially Unavailable"
+						],
+						"name" : "GEIST-V4-MIB::a2dSensorAvail",
+						"oid" : "1.3.6.1.4.1.21239.5.1.11.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "GEIST-V4-MIB::a2dSensorValueCLEAR",
+			"certification" : "STANDARD",
+			"description" : [
+				"A2D Analog Sensor Measurement Clear Trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "a2dSensorValue",
+				"ExpireTime" : 86400,
+				"Severity" : 0,
+				"SubNode" : "a2dSensor",
+				"Summary" : "A2D analog sensor measurement : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD GEIST-V4-MIB::a2dSensorValueCLEAR GEIST-V4-MIB::a2dSensorValue i 0",
+			"trap" : {
+				"name" : "GEIST-V4-MIB::a2dSensorValueCLEAR",
+				"oid" : "1.3.6.1.4.1.21239.5.1.32767.0.21105",
+				"variables" : [
+					{
+						"description" : [
+							"Current analog measurement reading within either a user defined or preset range depending on device mode."
+						],
+						"name" : "GEIST-V4-MIB::a2dSensorValue",
+						"oid" : "1.3.6.1.4.1.21239.5.1.11.1.5",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,132 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200409090000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ALARM-MIB::alarmActiveState",
+			"certification" : "STANDARD",
+			"description" : [
+				"An instance of the alarm indicated by",
+				"alarmActiveModelPointer has been raised",
+				"against the entity indicated by",
+				"alarmActiveResourceId.",
+				"The agent must throttle the generation of",
+				"consecutive alarmActiveState traps so that there is at",
+				"least a two-second gap between traps of this",
+				"type against the same alarmActiveModelPointer and",
+				"alarmActiveResourceId. When traps are throttled",
+				"they are dropped, not queued for sending at a future time.",
+				"A management application should periodically check",
+				"the value of alarmActiveLastChanged to detect any",
+				"missed alarmActiveState notification-events, e.g.",
+				"due to throttling or transmission loss."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "alarmState",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "alarmActiveResourceId:$v2",
+				"Summary" : "$v1 alarm was raised against the resource: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALARM-MIB::alarmActiveState ALARM-MIB::alarmActiveModelPointer o 1.3.6.1.4.1.8072.2.1.1 ALARM-MIB::alarmActiveResourceId o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "ALARM-MIB::alarmActiveState",
+				"oid" : "1.3.6.1.2.1.118.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A pointer to the corresponding row in the",
+							"alarmModelTable for this active alarm. This",
+							"points not only to the alarm model being",
+							"instantiated, but also to the specific alarm",
+							"state that is active."
+						],
+						"name" : "ALARM-MIB::alarmActiveModelPointer",
+						"oid" : "1.3.6.1.2.1.118.1.2.2.1.13",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"This object identifies the resource under alarm.",
+							"",
+							"If there is no corresponding resource, then",
+							"the value of this object MUST be 0.0."
+						],
+						"name" : "ALARM-MIB::alarmActiveResourceId",
+						"oid" : "1.3.6.1.2.1.118.1.2.2.1.10",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALARM-MIB::alarmClearState",
+			"certification" : "STANDARD",
+			"description" : [
+				"An instance of the alarm indicated by",
+				"alarmActiveModelPointer has been cleared against",
+				"the entity indicated by alarmActiveResourceId.",
+				"The agent must throttle the generation of",
+				"consecutive alarmActiveClear traps so that there is at",
+				"least a two-second gap between traps of this",
+				"type against the same alarmActiveModelPointer and",
+				"alarmActiveResourceId. When traps are throttled",
+				"they are dropped, not queued for sending at a future time.",
+				"A management application should periodically check",
+				"the value of alarmActiveLastChanged to detect any",
+				"missed alarmClearState notification-events, e.g.",
+				"due to throttling or transmission loss."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "alarmState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "alarmActiveResourceId:$v2",
+				"Summary" : "$v1 alarm is cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALARM-MIB::alarmClearState ALARM-MIB::alarmActiveModelPointer o 1.3.6.1.4.1.8072.2.1.1 ALARM-MIB::alarmActiveResourceId o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "ALARM-MIB::alarmClearState",
+				"oid" : "1.3.6.1.2.1.118.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A pointer to the corresponding row in the",
+							"alarmModelTable for this active alarm. This",
+							"points not only to the alarm model being",
+							"instantiated, but also to the specific alarm",
+							"state that is active."
+						],
+						"name" : "ALARM-MIB::alarmActiveModelPointer",
+						"oid" : "1.3.6.1.2.1.118.1.2.2.1.13",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"This object identifies the resource under alarm.",
+							"",
+							"If there is no corresponding resource, then",
+							"the value of this object MUST be 0.0."
+						],
+						"name" : "ALARM-MIB::alarmActiveResourceId",
+						"oid" : "1.3.6.1.2.1.118.1.2.2.1.10",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		}
+	]
+}

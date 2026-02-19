@@ -1,0 +1,403 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201309160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarSwBusStatusChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cc6kxbarSwBusStatusChangeNotif notification",
+				"is sent by the device when there is change",
+				"in switching status of the switching bus as ",
+				"monitored by cc6kxbarSwBusSwitchingStatus."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cc6kxbarSwBusStatusChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 1 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Switching status of the switching bus has changed status to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarSwBusStatusChangeNotif CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarSwBusSwitchingStatus i 1 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarSwBusFailureDuration u 9999",
+			"trap" : {
+				"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarSwBusStatusChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.217.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "stalled",
+							"3" : "isolated"
+						},
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarSwBusSwitchingStatus",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarSwBusFailureDuration",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.4.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarIntBusCRCErrExcdNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cc6kxbarIntBusCRCThreshExcdNotif notification",
+				"is sent by the system when the system has",
+				"detected that the internal bus CRC error on",
+				"a physical entity (such as a module) as specified",
+				"by entPhysicalName has exceeded the fatal threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cc6kxbarIntBusCRCErrNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "$v1",
+				"Summary" : "The internal bus CRC error for $v1 (vendor $v2) has exceeded the fatal threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarIntBusCRCErrExcdNotif ENTITY-MIB::entPhysicalName s EXAMPLE ENTITY-MIB::entPhysicalVendorType o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarIntBusCRCErrExcdNotif",
+				"oid" : "1.3.6.1.4.1.9.9.217.0.2",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalVendorType",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.3",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarIntBusCRCErrRcvrdNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cc6kxbarIntBusCRCErrRcvrdNotif notification",
+				"is sent by the system when the system has",
+				"recovered as the internal bus CRC error on",
+				"a physical entity (such as a module) as",
+				"specified by entPhysicalName has fallen below",
+				"the normal threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cc6kxbarIntBusCRCErrNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v1",
+				"Summary" : "The internal bus CRC error for $v1 (vendor $v2) has recovered to below the normal threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarIntBusCRCErrRcvrdNotif ENTITY-MIB::entPhysicalName s EXAMPLE ENTITY-MIB::entPhysicalVendorType o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarIntBusCRCErrRcvrdNotif",
+				"oid" : "1.3.6.1.4.1.9.9.217.0.3",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalVendorType",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.3",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarFlowCtrlBusThrExcdNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cc6kxbarFlowCtrlBusThrExcdNotif notification",
+				"is sent by the system when the system detects the",
+				"first occurrence of the system bus flow control FIFO",
+				"threshold exceeding on a physical entity",
+				"(such as a module) over the system allowed limit",
+				"when the object value of",
+				"cc6kxbarFlowCtrlBusFIFOThrMode is 'auto'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cc6kxbarFlowCtrlBusThrExcdNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "The system bus flow control FIFO has exceeded the threshold for $v1 over the system allowed limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarFlowCtrlBusThrExcdNotif ENTITY-MIB::entPhysicalName s EXAMPLE ENTITY-MIB::entPhysicalVendorType o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarFlowCtrlBusThrExcdNotif",
+				"oid" : "1.3.6.1.4.1.9.9.217.0.4",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalVendorType",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.3",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilAboveNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the switching bus",
+				"traffic utilization has risen above the configured ",
+				"threshold (as specified by ",
+				"cc6kxbarTMSwBusUtilThreshold), or has kept staying",
+				"above the configured threshold at a logging interval ",
+				"(as specified by cc6kxbarTMSwBusUtilLogInterval).",
+				"The varbind entPhysicalDescr specifies the physical ",
+				"entity (such as chassis) for which the ",
+				"cc6kxbarTMSwBusUtilAboveNotif is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cc6kxbarTMSwBusUtilNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v4",
+				"Summary" : "The switching bus traffic utilization $v1 on $v4 has either exceeded the threshold $v2, or has stayed above the configured threshold for an interval greater than $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilAboveNotif CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilUtilization i 99 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilThreshold i 99 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilInterval u 9999 ENTITY-MIB::entPhysicalDescr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilAboveNotif",
+				"oid" : "1.3.6.1.4.1.9.9.217.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilUtilization",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilInterval",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilBelowNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the switching bus",
+				"traffic utilization has fallen below the configured ",
+				"threshold (as specified by ",
+				"cc6kxbarTMSwBusUtilThreshold). The varbind ",
+				"entPhysicalDescr specifies the physical entity ",
+				"(such as chassis) for which the ",
+				"cc6kxbarTMSwBusUtilBelowNotif is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cc6kxbarTMSwBusUtilNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v4",
+				"Summary" : "The system bus traffic utilization $v1 on $v4 has fallen below the threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilBelowNotif CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilUtilization i 99 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilThreshold i 99 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilInterval u 9999 ENTITY-MIB::entPhysicalDescr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilBelowNotif",
+				"oid" : "1.3.6.1.4.1.9.9.217.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilUtilization",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMSwBusUtilInterval",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilAboveNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the traffic",
+				"utilization on a fabric channel for a given ",
+				"traffic direction has risen above its ",
+				"corresponding configured threshold (as ",
+				"specified by cc6kxbarTMChUtilThreshold), or has ",
+				"kept staying above the configured threshold at a ",
+				"logging interval (as specified by ",
+				"cc6kxbarTMChUtilLogInterval). The varbind ",
+				"entPhysicalDescr specifies the physical entity ",
+				"(such as chassis) for which the ",
+				"cc6kxbarTMChUtilAboveNotif is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cc6kxbarTMChUtilNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v4",
+				"Summary" : "The traffic utilization $v1 on a fabric channel for $v4 has either exceeded the threshold $v2, or has stayed above the configured threshold for an interval greater than $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilAboveNotif CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilUtilization i 99 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilThreshold i 99 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilInterval u 9999 ENTITY-MIB::entPhysicalDescr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilAboveNotif",
+				"oid" : "1.3.6.1.4.1.9.9.217.0.7",
+				"variables" : [
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilUtilization",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.2.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilInterval",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.2.1.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilBelowNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the traffic",
+				"utilization on a fabric channel for a given ",
+				"traffic direction has fallen below its ",
+				"corresponding configured threshold (as ",
+				"specified by cc6kxbarTMChUtilThreshold). The ",
+				"varbind entPhysicalDescr specifies the ",
+				"physical entity (such as chassis) for which",
+				"the cc6kxbarTMChUtilBelowNotif is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cc6kxbarTMChUtilNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v4",
+				"Summary" : "The traffic utilization $v1 on a fabric channel for $v4 has fallen below the threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilBelowNotif CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilUtilization i 99 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilThreshold i 99 CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilInterval u 9999 ENTITY-MIB::entPhysicalDescr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilBelowNotif",
+				"oid" : "1.3.6.1.4.1.9.9.217.0.8",
+				"variables" : [
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilUtilization",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.2.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CAT6K-CROSSBAR-MIB::cc6kxbarTMChUtilInterval",
+						"oid" : "1.3.6.1.4.1.9.9.217.1.9.2.1.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

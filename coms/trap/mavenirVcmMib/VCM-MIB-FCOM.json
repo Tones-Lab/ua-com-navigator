@@ -1,0 +1,222 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "VCM-MIB::vcmTraps",
+			"certification" : "STANDARD",
+			"description" : [
+				"all VCM Alarms are to be send through this object"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : " ($v7 == 0) ? 1 : 2"
+				},
+				"EventType" : "$v1;$v5",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v7 == 2) ? 3 : $v7"
+				},
+				"SubNode" : "vcmNotificationObject:$v2",
+				"Summary" : "$v5 : $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VCM-MIB::vcmTraps VCM-MIB::vcmEventType i 16389 VCM-MIB::vcmNotificationObject s EXAMPLE VCM-MIB::vcmNotifyingObject s EXAMPLE VCM-MIB::vcmEventTime t 31536000 VCM-MIB::vcmAlarmProbableCause i 35 VCM-MIB::vcmAdditionalText s EXAMPLE VCM-MIB::vcmAlarmSeverity i 4 VCM-MIB::vcmSpecificProblems s EXAMPLE",
+			"trap" : {
+				"name" : "VCM-MIB::vcmTraps",
+				"oid" : "1.3.6.1.4.1.42286.1.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"Event type(alarm, security, object state change, attribute change, object creation deletion )..mandatory parameter for notification"
+						],
+						"enums" : {
+							"4096" : "saNtfObjectNotificationStart",
+							"4097" : "saNtfObjectCreation",
+							"4098" : "saNtfObjectDeletion",
+							"8192" : "saNtfAttributeChangeNotificationStart",
+							"8193" : "saNtfAttributeAdded",
+							"8194" : "saNtfAttributeRemoved",
+							"8195" : "saNtfAttributeChanged",
+							"8196" : "saNtfAttributeReset",
+							"12288" : "saNtfStateChangNotificationStart",
+							"12289" : "saNtfObjectStateChange",
+							"16384" : "saNtfAlarmNotificationStart",
+							"16385" : "saNtfAlarmCommunication",
+							"16386" : "saNtfAlarmQOS",
+							"16387" : "saNtfAlarmProcessing",
+							"16388" : "saNtfAlarmEquipment",
+							"16389" : "saNtfAlarmEnvironment",
+							"20480" : "saNtfSecurityAlarmNotificationStart",
+							"20481" : "saNtfIntegrityViolation",
+							"20482" : "saNtfOperaionViolation",
+							"20483" : "saNtfPhysicalViolation",
+							"20484" : "saNtfSecurityServiceViolation",
+							"20485" : "saNtfTimeViolation"
+						},
+						"name" : "VCM-MIB::vcmEventType",
+						"oid" : "1.3.6.1.4.1.42286.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The notification object is a logical entity about which the notification is generated.(Mandatory)"
+						],
+						"name" : "VCM-MIB::vcmNotificationObject",
+						"oid" : "1.3.6.1.4.1.42286.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The notifying object is a logical entity that is sending the notification."
+						],
+						"name" : "VCM-MIB::vcmNotifyingObject",
+						"oid" : "1.3.6.1.4.1.42286.1.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The event time field contains the time at which an event is detected and this time may not be same as the time at which it is reported. (Mandatory)"
+						],
+						"name" : "VCM-MIB::vcmEventTime",
+						"oid" : "1.3.6.1.4.1.42286.1.3.1.4",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"augments the information provided by the event type field and further qualifies the actual cause of alarms.",
+							"most specific probable causes shall be chosen for a logical entity.",
+							"A list of generic probable causes is given in the X.733 standard.",
+							"(Mandatory Parameter)"
+						],
+						"enums" : {
+							"0" : "saNtfAdapterError",
+							"1" : "saNtfApplicationSubsystemFailure",
+							"2" : "saNtfBandwidthReduced",
+							"3" : "saNtfCallEstablishmentError",
+							"4" : "saNtfCommunicationsProtocolError",
+							"5" : "saNtfCommunicationsSubsystemFailure",
+							"6" : "saNtfConfigurationOrCustomizationError",
+							"7" : "saNtfCongestion",
+							"8" : "saNtfCorruptData",
+							"9" : "saNtfCpuCyclesLimitExceeded",
+							"10" : "saNtfDataSetOrModemError",
+							"11" : "saNtfDegradedSignal",
+							"12" : "saNtfDTE",
+							"13" : "saNtfEnclosureDoorOpen",
+							"14" : "saNtfEquipmentMalfunction",
+							"15" : "saNtfExcessiveVibration",
+							"16" : "saNtfFileError",
+							"17" : "saNtfFireDetected",
+							"18" : "saNtfFloodDetected",
+							"19" : "saNtfFramingError",
+							"20" : "saNtfHeatingOrVentilationOrCoolingSystemProblem",
+							"21" : "saNtfHumidityUnacceptable",
+							"22" : "saNtfInputOutputDeviceError",
+							"23" : "saNtfInputDeviceError",
+							"24" : "saNtfLANError",
+							"25" : "saNtfLeakDetected",
+							"26" : "saNtfLocalNodeTransmissionError",
+							"27" : "saNtfLossOfFrame",
+							"28" : "saNtfLossOfSignal",
+							"29" : "saNtfMaterialSupplyExhausted",
+							"30" : "saNtfMultiplexerProblem",
+							"31" : "saNtfOutOfMemory",
+							"32" : "saNtfOutputDeviceError",
+							"33" : "saNtfPerformanceDegraded",
+							"34" : "saNtfPowerProblem",
+							"35" : "saNtfPressureUnacceptable",
+							"36" : "saNtfProcessorProblem",
+							"37" : "saNtfPumpFailure",
+							"38" : "saNtfQueueSizeExceeded",
+							"39" : "saNtfReceiveFailure",
+							"40" : "saNtfReceiverFailure",
+							"41" : "saNtfRemoteNodeTransmissionError",
+							"42" : "saNtfResourceAtOrNearingCapacity",
+							"43" : "saNtfResponseTimeExcessive",
+							"44" : "saNtfRetransmissionRateExcessive",
+							"45" : "saNtfSofwareError",
+							"46" : "saNtfSofwareProgramAbnormallyTerminated",
+							"47" : "saNtfSoftwareProgramError",
+							"48" : "saNtfStorageCapacityProblem",
+							"49" : "saNtfTemperatureUnacceptable",
+							"50" : "saNtfThresholdCrossed",
+							"51" : "saNtfTimingProblem",
+							"52" : "saNtfToxicLeakDetected",
+							"53" : "saNtfTransmitFailure",
+							"54" : "saNtfTransmitterFailure",
+							"55" : "saNtfUnderlyingResourceUnavailable",
+							"56" : "saNtfVersionMismatch",
+							"57" : "saNtfAuthenticationFailure",
+							"58" : "saNtfBreachOfConfidentiality",
+							"59" : "saNtfCableTamper",
+							"60" : "saNtfDelayedInformation",
+							"61" : "saNtfDenialOfService",
+							"62" : "saNtfDuplicateInformation",
+							"63" : "saNtfInformationMissing",
+							"64" : "saNtfInformationModificationDetected",
+							"65" : "saNtfInformationOutOfSequence",
+							"66" : "saNtfIntrusionDetection",
+							"67" : "saNtfKeyExpired",
+							"68" : "saNtfNonRepudiationFailure",
+							"69" : "saNtfOutOfHoursActivity",
+							"70" : "saNtfOutOfService",
+							"71" : "saNtfProceduralError",
+							"72" : "saNtfUnauthorizedAccessAttempt",
+							"73" : "saNtfUnexpectedInformation",
+							"74" : "saNtfUnspecifiedReason",
+							"75" : "vcmScalingDetected",
+							"76" : "vcmReserved1",
+							"77" : "vcmReserved2",
+							"78" : "vcmReserved3",
+							"79" : "vcmReserved4",
+							"80" : "vcmReserved5"
+						},
+						"name" : "VCM-MIB::vcmAlarmProbableCause",
+						"oid" : "1.3.6.1.4.1.42286.1.3.2.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The additional text field allows a free form text description to be reported.(Optional parameter)",
+							"The type SaStringT is used for the additional text. A string consists of UTF-8 encoded",
+							"characters and is terminated by the backslash zero character."
+						],
+						"name" : "VCM-MIB::vcmAdditionalText",
+						"oid" : "1.3.6.1.4.1.42286.1.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"it is the severity of the notification, as seen by the entity reporting it. saNtfSeverityCleared is to be use for alarm type notifications (Mandatory Parameter)"
+						],
+						"enums" : {
+							"0" : "saNtfSeverityCleared",
+							"1" : "saNtfSeverityIndeterminate",
+							"2" : "saNtfSeverityWarning",
+							"3" : "saNtfSeverityMinor",
+							"4" : "saNtfSeverityMajor",
+							"5" : "saNtfSeverityCritical"
+						},
+						"name" : "VCM-MIB::vcmAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.42286.1.3.2.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"it is a further refinement to the probable cause field.(Optional Parameter)"
+						],
+						"name" : "VCM-MIB::vcmSpecificProblems",
+						"oid" : "1.3.6.1.4.1.42286.1.3.2.4.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

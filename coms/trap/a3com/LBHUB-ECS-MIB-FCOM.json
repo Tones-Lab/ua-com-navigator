@@ -1,0 +1,517 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "LBHUB-ECS-MIB::powerSupplyFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"One of the PSUs has failed, the value of ecsPSUStatus is",
+				"returned to indicate which PSU has failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "powerSupplyFailure",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PSU status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::powerSupplyFailure LBHUB-ECS-MIB::ecsPSUStatus i 1",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::powerSupplyFailure",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.0",
+				"variables" : [
+					{
+						"description" : [
+							"The status of the PSUs in the LinkBuilder ECS."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "psu1failed",
+							"3" : "psu2failed"
+						},
+						"name" : "LBHUB-ECS-MIB::ecsPSUStatus",
+						"oid" : "1.3.6.1.4.1.43.9.2.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LBHUB-ECS-MIB::fanFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"A LinkBuilder ECS Fan has failed, requiring",
+				"immediate attenstion."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fanFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Fan failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::fanFailure ",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::fanFailure",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.1"
+			}
+		},
+		{
+			"@objectName" : "LBHUB-ECS-MIB::configurationChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The LinkBuilder ECS configuartion has changed. Either a card has",
+				"been added or removed, a port disabled or enabled from the front",
+				"panel or a AUI port has been selected/deselected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "configurationChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "LinkBuilder ECS configuration changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::configurationChanged ",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::configurationChanged",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.2"
+			}
+		},
+		{
+			"@objectName" : "LBHUB-ECS-MIB::portTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A port has partitioned/unpartitioned or has changed link state. The",
+				"values of ecsInfoSlotIndex and ecsInfoPortIndex are returned to",
+				"indicate the slot and port, the ecsPortErrorState is returned to",
+				"indicate the type or port error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2 || $v3==4 || $v3==11) ? 1 : (($v3==1 || $v3==255) ? 3 : 2)"
+				},
+				"EventType" : "portTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==2 || $v3==4 || $v3==11) ? 3600 : (($v3==1 || $v3==255) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==2 || $v3==4 || $v3==11) ? 0 : (($v3==1 || $v3==255) ? 2 : 4)"
+				},
+				"SubNode" : "ecsInfoSlotIndex:$v1;ecsInfoPortIndex:$v1",
+				"Summary" : "Port error : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::portTrap LBHUB-ECS-MIB::ecsInfoSlotIndex i 9999 LBHUB-ECS-MIB::ecsInfoPortIndex i 9999 LBHUB-ECS-MIB::ecsPortErrorState i 1",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::portTrap",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The repeater slot index"
+						],
+						"name" : "LBHUB-ECS-MIB::ecsInfoSlotIndex",
+						"oid" : "1.3.6.1.4.1.43.9.5.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The repeater port index"
+						],
+						"name" : "LBHUB-ECS-MIB::ecsInfoPortIndex",
+						"oid" : "1.3.6.1.4.1.43.9.5.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The error status of the specified port. Under normal conditions this takes",
+							"the value 'normal' specifying that no error condition has been detected."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "normal",
+							"3" : "hi-collision",
+							"4" : "partition",
+							"5" : "high-crc-errorrate",
+							"6" : "high-alignment-errorrate",
+							"7" : "high-traffic-rate",
+							"8" : "high-jabber-errorrate",
+							"9" : "high-carriersense-errorrate",
+							"10" : "unpartitioned",
+							"11" : "linkstatechange-up",
+							"12" : "linkstatechange-down",
+							"255" : "acknowledged"
+						},
+						"name" : "LBHUB-ECS-MIB::ecsPortErrorState",
+						"oid" : "1.3.6.1.4.1.43.9.5.3.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LBHUB-ECS-MIB::resilientLinkTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The LinkBuilder ECS Resilient Link system has operated.",
+				"The resilient link is returned to determine the action taken."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "resilientLinkTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ecsInfoSlotIndex:$v1;ecsInfoPortIndex:$v2",
+				"Summary" : "LinkBuilder ECS resilient link system is operational"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::resilientLinkTrap LBHUB-ECS-MIB::ecsRLMainLinkSlot i 9999 LBHUB-ECS-MIB::ecsRLMainLinkPort i 9999 LBHUB-ECS-MIB::ecsRLStandbySlot i 9999 LBHUB-ECS-MIB::ecsRLStandbyPort i 9999 LBHUB-ECS-MIB::ecsRLActiveLink i 1 LBHUB-ECS-MIB::ecsResLinkState i 1",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::resilientLinkTrap",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The Slot Number for the main link of this resilient link."
+						],
+						"name" : "LBHUB-ECS-MIB::ecsRLMainLinkSlot",
+						"oid" : "1.3.6.1.4.1.43.9.3.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Port Number for the main link of this resilient link."
+						],
+						"name" : "LBHUB-ECS-MIB::ecsRLMainLinkPort",
+						"oid" : "1.3.6.1.4.1.43.9.3.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Slot Number for the standby link of this resilient link."
+						],
+						"name" : "LBHUB-ECS-MIB::ecsRLStandbySlot",
+						"oid" : "1.3.6.1.4.1.43.9.3.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Port Number for the standby link of this resilient link."
+						],
+						"name" : "LBHUB-ECS-MIB::ecsRLStandbyPort",
+						"oid" : "1.3.6.1.4.1.43.9.3.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The resilient link currently in use for traffic transmission. For",
+							"a read the attribute indicates which link is active. ",
+							"A new link will always be configured with the main",
+							"link being the active link. If the link status cannot be determined",
+							"the value unknown(1) is returned."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "none",
+							"3" : "main",
+							"4" : "standby",
+							"5" : "both"
+						},
+						"name" : "LBHUB-ECS-MIB::ecsRLActiveLink",
+						"oid" : "1.3.6.1.4.1.43.9.3.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "invalid",
+							"2" : "operational",
+							"3" : "non-operational",
+							"4" : "switchlink",
+							"5" : "standby-jumperfault",
+							"6" : "main-absent",
+							"7" : "standby-absent",
+							"8" : "main-failed",
+							"9" : "standby-failed",
+							"10" : "both-failed"
+						},
+						"name" : "LBHUB-ECS-MIB::ecsResLinkState",
+						"oid" : "1.3.6.1.4.1.43.9.3.3.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LBHUB-ECS-MIB::rateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Guage threshold has been exceeded. The slot and port number",
+				"are given by the vakues if ecsInfoSlotIndex and ecsInfoPortIndex ",
+				"and the guage that has been exceeded is given by the value of ",
+				"ecsPortErrorState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "rateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ecsInfoSlotIndex:$v1;ecsInfoPortIndex:$v2",
+				"Summary" : "Guage threshold exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::rateTrap LBHUB-ECS-MIB::ecsInfoSlotIndex i 9999 LBHUB-ECS-MIB::ecsInfoPortIndex i 9999 LBHUB-ECS-MIB::ecsPortErrorState i 1",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::rateTrap",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The repeater slot index"
+						],
+						"name" : "LBHUB-ECS-MIB::ecsInfoSlotIndex",
+						"oid" : "1.3.6.1.4.1.43.9.5.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The repeater port index"
+						],
+						"name" : "LBHUB-ECS-MIB::ecsInfoPortIndex",
+						"oid" : "1.3.6.1.4.1.43.9.5.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The error status of the specified port. Under normal conditions this takes",
+							"the value 'normal' specifying that no error condition has been detected."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "normal",
+							"3" : "hi-collision",
+							"4" : "partition",
+							"5" : "high-crc-errorrate",
+							"6" : "high-alignment-errorrate",
+							"7" : "high-traffic-rate",
+							"8" : "high-jabber-errorrate",
+							"9" : "high-carriersense-errorrate",
+							"10" : "unpartitioned",
+							"11" : "linkstatechange-up",
+							"12" : "linkstatechange-down",
+							"255" : "acknowledged"
+						},
+						"name" : "LBHUB-ECS-MIB::ecsPortErrorState",
+						"oid" : "1.3.6.1.4.1.43.9.5.3.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LBHUB-ECS-MIB::stationlocateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Station Locate databse has either changed or has become",
+				"full. The particular condition is shown by the value of",
+				"ecsRLCSLDataBAseStatus returned."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1 || $v1 == 2) ? 3 : (($v1 == 3) ? 1 : 2)"
+				},
+				"EventType" : "stationlocateTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1 || $v1 == 2) ? 3600 : (($v1 == 3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1 || $v1 == 2) ? 2 : (($v1 == 3) ? 0 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Station Locate database status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::stationlocateTrap LBHUB-ECS-MIB::ecsRLCSLDataBaseStatus i 1",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::stationlocateTrap",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "changed",
+							"2" : "unchanged",
+							"3" : "clear",
+							"4" : "full"
+						},
+						"name" : "LBHUB-ECS-MIB::ecsRLCSLDataBaseStatus",
+						"oid" : "1.3.6.1.4.1.43.9.6.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LBHUB-ECS-MIB::secureRLCTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"There has been access to the security menus from the front panel",
+				"menus. The value of ecsAgentSecureManagementStatus reports",
+				"whether the trap was generated beacuse the security menus were",
+				"entered, the secure password was violated or the security",
+				"configuration has been changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "secureRLCTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Security menus are accessed from the front panel"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::secureRLCTrap LBHUB-ECS-MIB::ecsAgentSecureManagementStatus i 1",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::secureRLCTrap",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates whether the remote management of the security features",
+							"of the ECS are enabled or not."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled",
+							"3" : "secure-menu-entered",
+							"4" : "secure-password-violation",
+							"5" : "secure-config-update"
+						},
+						"name" : "LBHUB-ECS-MIB::ecsAgentSecureManagementStatus",
+						"oid" : "1.3.6.1.4.1.43.9.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LBHUB-ECS-MIB::secureRLCportTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A secure port has either detected an authorised port and taken",
+				"appropriate action or has learnt an authorised station on the",
+				"slot and port indicated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==3) ? 1 : (($v3==1 || $v3==6) ? 3 : 2)"
+				},
+				"EventType" : "secureRLCportTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==3) ? 3600 : (($v3==1 || $v3==6) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==3) ? 0 : (($v3==1 || $v3==6) ? 2 : (($v3==2) ? 4 : 3))"
+				},
+				"SubNode" : "ecsSecRLCSlotIndex:$v1;ecsSecRLCPortIndex:$v2",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LBHUB-ECS-MIB::secureRLCportTrap LBHUB-ECS-MIB::ecsSecRLCSlotIndex i 9999 LBHUB-ECS-MIB::ecsSecRLCPortIndex i 9999 LBHUB-ECS-MIB::ecsSecRLCPortState i 1 LBHUB-ECS-MIB::ecsSecRLCMACAddress s EXAMPLE",
+			"trap" : {
+				"name" : "LBHUB-ECS-MIB::secureRLCportTrap",
+				"oid" : "1.3.6.1.4.1.43.1.8.3.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The secure repeater line card slot index"
+						],
+						"name" : "LBHUB-ECS-MIB::ecsSecRLCSlotIndex",
+						"oid" : "1.3.6.1.4.1.43.9.4.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The secure repeater line card port index"
+						],
+						"name" : "LBHUB-ECS-MIB::ecsSecRLCPortIndex",
+						"oid" : "1.3.6.1.4.1.43.9.4.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Attribute to determine whether the port can be normally enabled."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "disabled",
+							"3" : "enabled",
+							"4" : "unauthorised-station-seen",
+							"5" : "unauthorised-station-port-disabled",
+							"6" : "authorised-station-learnt"
+						},
+						"name" : "LBHUB-ECS-MIB::ecsSecRLCPortState",
+						"oid" : "1.3.6.1.4.1.43.9.4.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The MAC address in use by the secure repeater line card."
+						],
+						"name" : "LBHUB-ECS-MIB::ecsSecRLCMACAddress",
+						"oid" : "1.3.6.1.4.1.43.9.4.3.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

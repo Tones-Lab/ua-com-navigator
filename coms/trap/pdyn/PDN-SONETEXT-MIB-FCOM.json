@@ -1,0 +1,121 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PDN-SONETEXT-MIB::devSonetStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A devSonetStatusChange trap is sent when the",
+				"value of an instance of sonetSectionCurrentStatus",
+				"or sonetLineCurrentStatus or sonetPathCurrentStatus changes.",
+				"It can be utilized by an NMS to trigger polls. When",
+				"the line status change results in a lower level",
+				"line status change (i.e. sonet), then no traps for",
+				"the lower level are sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "devSonetStatusChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "SONET status changed; Section: $v2; Line: $v3; Path: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-SONETEXT-MIB::devSonetStatusChange PDN-SONETEXT-MIB::devSonetStatusLastChange t 31536000 SONET-MIB::sonetSectionCurrentStatus i 1 SONET-MIB::sonetLineCurrentStatus i 1 SONET-MIB::sonetPathCurrentStatus i 1",
+			"trap" : {
+				"name" : "PDN-SONETEXT-MIB::devSonetStatusChange",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.6.13.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of MIB II's sysUpTime object at the",
+							"time this Sonet entered its current line status",
+							"state. If the current state was entered prior to",
+							"the last re-initialization of the proxy-agent",
+							"then this object contains a zero value."
+						],
+						"name" : "PDN-SONETEXT-MIB::devSonetStatusLastChange",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.6.13.1.1.1.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"This variable indicates the",
+							"status of the interface.",
+							"The sonetSectionCurrentStatus",
+							"is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple defects",
+							"simultaneously.",
+							"The sonetSectionNoDefect should be",
+							"set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetSectionNoDefect",
+							"2 sonetSectionLOS",
+							"4 sonetSectionLOF"
+						],
+						"name" : "SONET-MIB::sonetSectionCurrentStatus",
+						"oid" : "1.3.6.1.2.1.10.39.1.2.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This variable indicates the",
+							"status of the interface.",
+							"The sonetLineCurrentStatus",
+							"is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple defects",
+							"simultaneously.",
+							"The sonetLineNoDefect should be",
+							"set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetLineNoDefect",
+							"2 sonetLineAIS",
+							"4 sonetLineRDI"
+						],
+						"name" : "SONET-MIB::sonetLineCurrentStatus",
+						"oid" : "1.3.6.1.2.1.10.39.1.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This variable indicates the",
+							"status of the interface.",
+							"The sonetPathCurrentStatus",
+							"is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple defects",
+							"simultaneously.",
+							"The sonetPathNoDefect should be",
+							"set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetPathNoDefect",
+							"2 sonetPathSTSLOP",
+							"4 sonetPathSTSAIS",
+							"8 sonetPathSTSRDI",
+							"16 sonetPathUnequipped",
+							"32 sonetPathSignalLabelMismatch"
+						],
+						"name" : "SONET-MIB::sonetPathCurrentStatus",
+						"oid" : "1.3.6.1.2.1.10.39.2.1.1.1.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

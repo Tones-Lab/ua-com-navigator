@@ -1,0 +1,451 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201605310000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::pfeMemoryErrors",
+			"certification" : "STANDARD",
+			"description" : [
+				"A pfeMemoryErrors notification is sent when the value",
+				"of jnxPfeParityErrors or jnxPfeEccErrors increases. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pfeMemoryErrors",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "PFE memory errors: Parity errors: $v1; ECC errors: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::pfeMemoryErrors JUNIPER-PFE-MIB::jnxPfeParityErrors C 9999 JUNIPER-PFE-MIB::jnxPfeEccErrors C 9999",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::pfeMemoryErrors",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The parity error count"
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeParityErrors",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.1.3.1.3",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The ECC error count"
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeEccErrors",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.1.3.1.4",
+						"valueType" : "COUNTER64"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::jnxPfeHeapMemoryThresholdExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the Heap Memory utilization has crossed the",
+				"configured watermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "jnxPfeHeapMemoryThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Slot:$v1",
+				"Summary" : "PFE heap memory utilization exceeded threshold ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::jnxPfeHeapMemoryThresholdExceeded JUNIPER-PFE-MIB::jnxPfeGlSlot u 0 JUNIPER-PFE-MIB::jnxPfeMemoryThreshold u 0",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::jnxPfeHeapMemoryThresholdExceeded",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.2.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Global slot number for line card resource monitoring."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeGlSlot",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Configured high memory utilization threshold."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeMemoryThreshold",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::jnxPfeHeapMemoryThresholdAbated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the Heap Memory utilization has fallen below the",
+				"configured watermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "jnxPfeHeapMemoryThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Slot:$v1",
+				"Summary" : "PFE heap memory utilization is within threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::jnxPfeHeapMemoryThresholdAbated JUNIPER-PFE-MIB::jnxPfeGlSlot u 0 JUNIPER-PFE-MIB::jnxPfeMemoryThreshold u 0",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::jnxPfeHeapMemoryThresholdAbated",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.2.4.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Global slot number for line card resource monitoring."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeGlSlot",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Configured high memory utilization threshold."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeMemoryThreshold",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::jnxPfeNextHopMemoryThresholdExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the Next Hop Memory utilization has crossed the",
+				"configured watermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "jnxPfeNextHopMemoryThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Slot:$v1;InstanceNumber:$v2",
+				"Summary" : "PFE next hop memory utilization exceeded threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::jnxPfeNextHopMemoryThresholdExceeded JUNIPER-PFE-MIB::jnxPfeGlSlot u 0 JUNIPER-PFE-MIB::jnxPfeInstanceNumber i 0 JUNIPER-PFE-MIB::jnxPfeMemoryThreshold u 0",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::jnxPfeNextHopMemoryThresholdExceeded",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.2.4.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Global slot number for line card resource monitoring."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeGlSlot",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"PFE instance number in pfe complex."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeInstanceNumber",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Configured high memory utilization threshold."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeMemoryThreshold",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::jnxPfeNextHopMemoryThresholdAbated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the Next Hop Memory utilization has fallen below the",
+				"configured watermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "jnxPfeNextHopMemoryThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Slot:$v1;InstanceNumber:$v2",
+				"Summary" : "PFE next hop memory utilization is below high threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::jnxPfeNextHopMemoryThresholdAbated JUNIPER-PFE-MIB::jnxPfeGlSlot u 0 JUNIPER-PFE-MIB::jnxPfeInstanceNumber i 0 JUNIPER-PFE-MIB::jnxPfeMemoryThreshold u 0",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::jnxPfeNextHopMemoryThresholdAbated",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.2.4.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Global slot number for line card resource monitoring."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeGlSlot",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"PFE instance number in pfe complex."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeInstanceNumber",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Configured high memory utilization threshold."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeMemoryThreshold",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::jnxPfeFilterMemoryThresholdExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the Filter Memory utilization has crossed the",
+				"configured watermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "jnxPfeFilterMemoryThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Slot:$v1;InstanceNumber:$v2",
+				"Summary" : "PFE filter memory utilization exceeded the threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::jnxPfeFilterMemoryThresholdExceeded JUNIPER-PFE-MIB::jnxPfeGlSlot u 0 JUNIPER-PFE-MIB::jnxPfeInstanceNumber i 0 JUNIPER-PFE-MIB::jnxPfeMemoryThreshold u 0",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::jnxPfeFilterMemoryThresholdExceeded",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.2.4.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Global slot number for line card resource monitoring."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeGlSlot",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"PFE instance number in pfe complex."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeInstanceNumber",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Configured high memory utilization threshold."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeMemoryThreshold",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::jnxPfeFilterMemoryThresholdAbated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the Filter Memory utilization has fallen below the",
+				"configured watermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "jnxPfeFilterMemoryThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Slot:$v1;InstanceNumber:$v2",
+				"Summary" : "PFE filter memory utilization is below high threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::jnxPfeFilterMemoryThresholdAbated JUNIPER-PFE-MIB::jnxPfeGlSlot u 0 JUNIPER-PFE-MIB::jnxPfeInstanceNumber i 0 JUNIPER-PFE-MIB::jnxPfeMemoryThreshold u 0",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::jnxPfeFilterMemoryThresholdAbated",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.2.4.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Global slot number for line card resource monitoring."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeGlSlot",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"PFE instance number in pfe complex."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeInstanceNumber",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Configured high memory utilization threshold."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeMemoryThreshold",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::jnxPfeEncapMemoryThresholdExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the ENCAP Memory utilization has crossed the",
+				"configured watermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "jnxPfeEncapMemoryThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Slot:$v1;InstanceNumber:$v2",
+				"Summary" : "PFE ENCAP memory utilization exceeded threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::jnxPfeEncapMemoryThresholdExceeded JUNIPER-PFE-MIB::jnxPfeGlSlot u 0 JUNIPER-PFE-MIB::jnxPfeInstanceNumber i 0 JUNIPER-PFE-MIB::jnxPfeMemoryThreshold u 0",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::jnxPfeEncapMemoryThresholdExceeded",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.2.4.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Global slot number for line card resource monitoring."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeGlSlot",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"PFE instance number in pfe complex."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeInstanceNumber",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Configured high memory utilization threshold."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeMemoryThreshold",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-PFE-MIB::jnxPfeEncapMemoryThresholdAbated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the ENCAP Memory utilization has fallen below the",
+				"configured watermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "jnxPfeEncapMemoryThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Slot:$v1;InstanceNumber:$v2",
+				"Summary" : "PFE ENCAP memory utilization is below high threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-PFE-MIB::jnxPfeEncapMemoryThresholdAbated JUNIPER-PFE-MIB::jnxPfeGlSlot u 0 JUNIPER-PFE-MIB::jnxPfeInstanceNumber i 0 JUNIPER-PFE-MIB::jnxPfeMemoryThreshold u 0",
+			"trap" : {
+				"name" : "JUNIPER-PFE-MIB::jnxPfeEncapMemoryThresholdAbated",
+				"oid" : "1.3.6.1.4.1.2636.3.44.1.2.4.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Global slot number for line card resource monitoring."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeGlSlot",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"PFE instance number in pfe complex."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeInstanceNumber",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Configured high memory utilization threshold."
+						],
+						"name" : "JUNIPER-PFE-MIB::jnxPfeMemoryThreshold",
+						"oid" : "1.3.6.1.4.1.2636.3.44.1.2.3.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

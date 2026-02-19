@@ -1,0 +1,90 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200902270000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CONFIG-COPY-MIB::ccCopyCompletion",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ccCopyCompletion trap is sent at the completion",
+				"of a config-copy request. The ccCopyFailCause is not",
+				"instantiated, and hence not included in a trap, when ",
+				"the ccCopyState is success."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 <= 2) ? 3 : (($v3 == 3) ? 1 : 2)"
+				},
+				"EventType" : "ccCopyCompletion",
+				"ExpireTime" : {
+					"eval" : "($v3 <= 2) ? 3600 : (($v3 == 3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3 <= 2) ? 2 : (($v3 == 3) ? 0 : 3)"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "A config-copy request for the file $v2 on $v1 has a copy state of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CONFIG-COPY-MIB::ccCopyCompletion CISCO-CONFIG-COPY-MIB::ccCopyServerAddress a 192.0.2.1 CISCO-CONFIG-COPY-MIB::ccCopyFileName s EXAMPLE CISCO-CONFIG-COPY-MIB::ccCopyState i 1 CISCO-CONFIG-COPY-MIB::ccCopyTimeStarted t 31536000 CISCO-CONFIG-COPY-MIB::ccCopyTimeCompleted t 31536000 CISCO-CONFIG-COPY-MIB::ccCopyFailCause i 1",
+			"trap" : {
+				"name" : "CISCO-CONFIG-COPY-MIB::ccCopyCompletion",
+				"oid" : "1.3.6.1.4.1.9.9.96.2.1.1",
+				"variables" : [
+					{
+						"name" : "CISCO-CONFIG-COPY-MIB::ccCopyServerAddress",
+						"oid" : "1.3.6.1.4.1.9.9.96.1.1.1.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"name" : "CISCO-CONFIG-COPY-MIB::ccCopyFileName",
+						"oid" : "1.3.6.1.4.1.9.9.96.1.1.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "waiting",
+							"2" : "running",
+							"3" : "successful",
+							"4" : "failed"
+						},
+						"name" : "CISCO-CONFIG-COPY-MIB::ccCopyState",
+						"oid" : "1.3.6.1.4.1.9.9.96.1.1.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CONFIG-COPY-MIB::ccCopyTimeStarted",
+						"oid" : "1.3.6.1.4.1.9.9.96.1.1.1.1.11",
+						"valueType" : "TICKS"
+					},
+					{
+						"name" : "CISCO-CONFIG-COPY-MIB::ccCopyTimeCompleted",
+						"oid" : "1.3.6.1.4.1.9.9.96.1.1.1.1.12",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "badFileName",
+							"3" : "timeout",
+							"4" : "noMem",
+							"5" : "noConfig",
+							"6" : "unsupportedProtocol",
+							"7" : "someConfigApplyFailed",
+							"8" : "systemNotReady",
+							"9" : "requestAborted"
+						},
+						"name" : "CISCO-CONFIG-COPY-MIB::ccCopyFailCause",
+						"oid" : "1.3.6.1.4.1.9.9.96.1.1.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

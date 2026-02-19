@@ -1,0 +1,93 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201408150000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ARISTA-ENTITY-SENSOR-MIB::aristaEntSensorAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated under 2 conditions:",
+				"a) When the value of the sensor value crosses a supported",
+				"low or high threshold into warning or critical status.",
+				"b) If previously the sensor value was in a warning or",
+				"critical status but returns back to a normal status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aristaEntSensorAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Arista entity sensor alarm on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ARISTA-ENTITY-SENSOR-MIB::aristaEntSensorAlarm ENTITY-MIB::entPhysicalDescr s EXAMPLE ENTITY-SENSOR-MIB::entPhySensorValue i 9999 ENTITY-STATE-MIB::entStateAlarm b 0",
+			"trap" : {
+				"name" : "ARISTA-ENTITY-SENSOR-MIB::aristaEntSensorAlarm",
+				"oid" : "1.3.6.1.4.1.30065.3.12.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A textual description of physical entity. This object",
+							"should contain a string that identifies the manufacturer's",
+							"name for the physical entity, and should be set to a",
+							"distinct value for each version or model of the physical",
+							"entity."
+						],
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The most recent measurement obtained by the agent for this",
+							"sensor.",
+							"",
+							"To correctly interpret the value of this object, the",
+							"associated entPhySensorType, entPhySensorScale, and",
+							"entPhySensorPrecision objects must also be examined."
+						],
+						"name" : "ENTITY-SENSOR-MIB::entPhySensorValue",
+						"oid" : "1.3.6.1.2.1.99.1.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The alarm status for this entity. It does not include",
+							"the alarms raised on child components within its",
+							"containment hierarchy.",
+							"",
+							"A value of 'unknown' means that this entity is",
+							"",
+							"unable to report alarm state. Note that this differs",
+							"from 'indeterminate', which means that alarm state",
+							"is supported and there are alarms against this entity",
+							"but the severity of some of the alarms is not known.",
+							"",
+							"If no bits are set, then this entity supports reporting",
+							"of alarms, but there are currently no active alarms",
+							"against this entity."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "underRepair",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning",
+							"6" : "indeterminate"
+						},
+						"name" : "ENTITY-STATE-MIB::entStateAlarm",
+						"oid" : "1.3.6.1.2.1.131.1.1.1.5",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		}
+	]
+}

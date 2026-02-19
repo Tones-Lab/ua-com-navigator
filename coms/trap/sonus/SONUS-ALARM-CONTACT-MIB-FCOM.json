@@ -1,0 +1,111 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200008280000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-ALARM-CONTACT-MIB::sonusAlarmManagerInboundNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a change of state has occured on the inbound alarm port"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : (($v6==1 || $v6==2 || $v6==3) ? 2 : 3)"
+				},
+				"EventType" : "sonusAlarmManagerInboundNotification",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : (($v6==1 || $v6==2 || $v6==3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : (($v6==1) ? 5 : (($v6==2) ? 4 : (($v6==3) ? 3 : 2)))"
+				},
+				"SubNode" : "ShelfIndex:$v1;PortIndex:$v2",
+				"Summary" : "$v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SONUS-ALARM-CONTACT-MIB::sonusAlarmManagerInboundNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-ALARM-CONTACT-MIB::sonusAlarmPortIndex i 9999 SONUS-ALARM-CONTACT-MIB::sonusAlarmPortState i 2 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+				"$SNMPTRAPCMD SONUS-ALARM-CONTACT-MIB::sonusAlarmManagerInboundNotification SONUS-COMMON-MIB::sonusShelfIndex i 1 SONUS-ALARM-CONTACT-MIB::sonusAlarmPortIndex i 9999 SONUS-ALARM-CONTACT-MIB::sonusAlarmPortState i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4"
+			],
+			"trap" : {
+				"name" : "SONUS-ALARM-CONTACT-MIB::sonusAlarmManagerInboundNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.1.6.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The shelf index of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusShelfIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Alarm IN port which has changed state."
+						],
+						"name" : "SONUS-ALARM-CONTACT-MIB::sonusAlarmPortIndex",
+						"oid" : "1.3.6.1.4.1.2879.2.1.6.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The current state of the inbound alarm port. "
+						],
+						"enums" : {
+							"1" : "open",
+							"2" : "closed"
+						},
+						"name" : "SONUS-ALARM-CONTACT-MIB::sonusAlarmPortState",
+						"oid" : "1.3.6.1.4.1.2879.2.1.6.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

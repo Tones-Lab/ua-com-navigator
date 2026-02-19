@@ -1,0 +1,111 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200803120000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleAutoShutdown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the module auto",
+				"shutdown feature shuts down a module."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cmasModuleAutoShutdown",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Module $v1 has shutdown due to $v4 and is reset number $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleAutoShutdown ENTITY-MIB::entPhysicalName s EXAMPLE ENTITY-MIB::entPhysicalModelName s EXAMPLE CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleNumResets u 9999 CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleLastResetReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleAutoShutdown",
+				"oid" : "1.3.6.1.4.1.9.9.386.0.1",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalModelName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleNumResets",
+						"oid" : "1.3.6.1.4.1.9.9.386.1.3.1.1.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleLastResetReason",
+						"oid" : "1.3.6.1.4.1.9.9.386.1.3.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleSysActionNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a system initiated",
+				"action occurs on a module."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cmasModuleSysActionNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'System has performed unknown action.' : 'System has performed a $v3 due to $v4.'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleSysActionNotif ENTITY-MIB::entPhysicalName s EXAMPLE ENTITY-MIB::entPhysicalModelName s EXAMPLE CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleSysAction i 1 CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleSysActionReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleSysActionNotif",
+				"oid" : "1.3.6.1.4.1.9.9.386.0.2",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "ENTITY-MIB::entPhysicalModelName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "reset",
+							"3" : "powerCycle",
+							"4" : "powerDown"
+						},
+						"name" : "CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleSysAction",
+						"oid" : "1.3.6.1.4.1.9.9.386.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-MODULE-AUTO-SHUTDOWN-MIB::cmasModuleSysActionReason",
+						"oid" : "1.3.6.1.4.1.9.9.386.1.4.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

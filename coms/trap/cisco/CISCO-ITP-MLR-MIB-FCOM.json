@@ -1,0 +1,72 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200409220000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ITP-MLR-MIB::ciscoMlrTableLoad",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever a load ",
+				"operation is started or completed. Route table",
+				"configurations can be loaded by CLI requests. ",
+				"In addition, route tables can loaded using",
+				"configuration statements. This allows mlr",
+				"tables to be reloaded whenever a device restarts."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 3) ? 1 : (($v3 == 5) ? 2 : 3)"
+				},
+				"EventType" : "ciscoMlrTableLoad",
+				"ExpireTime" : {
+					"eval" : "($v3 == 3) ? 3600 : (($v3 == 5) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 3) ? 0 : (($v3 == 5) ? 5 :(($v3 == 4) ? 3 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "mlr table load operation $v1 status $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ITP-MLR-MIB::ciscoMlrTableLoad CISCO-ITP-GSP-MIB::cgspEventSequenceNumber c 9999 CISCO-ITP-GSP-MIB::cgspCLLICode s EXAMPLE CISCO-ITP-MLR-MIB::cmlrInstLoadStatus i 1 CISCO-ITP-MLR-MIB::cmlrInstLastURL s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ITP-MLR-MIB::ciscoMlrTableLoad",
+				"oid" : "1.3.6.1.4.1.9.9.396.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ITP-GSP-MIB::cgspEventSequenceNumber",
+						"oid" : "1.3.6.1.4.1.9.9.336.1.1.6",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-ITP-GSP-MIB::cgspCLLICode",
+						"oid" : "1.3.6.1.4.1.9.9.336.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "loadNotRequested",
+							"2" : "loadInProgress",
+							"3" : "loadComplete",
+							"4" : "loadCompleteWithErrors",
+							"5" : "loadFailed"
+						},
+						"name" : "CISCO-ITP-MLR-MIB::cmlrInstLoadStatus",
+						"oid" : "1.3.6.1.4.1.9.9.396.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ITP-MLR-MIB::cmlrInstLastURL",
+						"oid" : "1.3.6.1.4.1.9.9.396.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

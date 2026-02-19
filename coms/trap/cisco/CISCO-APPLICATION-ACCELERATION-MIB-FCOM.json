@@ -1,0 +1,52 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200610300000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-APPLICATION-ACCELERATION-MIB::caaStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object represents the notification to be generated",
+				"when a condenser undergoes a state change. caaState represents",
+				"the new state of the condenser."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "caaStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 2) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Condenser state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-APPLICATION-ACCELERATION-MIB::caaStateChange CISCO-APPLICATION-ACCELERATION-MIB::caaState i 1",
+			"trap" : {
+				"name" : "CISCO-APPLICATION-ACCELERATION-MIB::caaStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.594.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "impaired",
+							"3" : "down"
+						},
+						"name" : "CISCO-APPLICATION-ACCELERATION-MIB::caaState",
+						"oid" : "1.3.6.1.4.1.9.9.594.1.1.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

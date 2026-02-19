@@ -1,0 +1,101 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0501240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TN-CLEAR-MIB::tnClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tnClear notification is generated to report the results",
+				"of the clear function that was run as a result of setting",
+				"tnClearAction to 'doAction'. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 1 : 2"
+				},
+				"EventType" : "tnClear",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v4==1) ? 'Clear $v1 function success' : 'Clear $v1 function failed. $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD TN-CLEAR-MIB::tnClear TN-CLEAR-MIB::tnClearName s EXAMPLE TN-CLEAR-MIB::tnClearParams s EXAMPLE TN-CLEAR-MIB::tnClearLastClearedTime t 31536000 TN-CLEAR-MIB::tnClearResult i 2 TN-CLEAR-MIB::tnClearErrorText s EXAMPLE",
+				"$SNMPTRAPCMD TN-CLEAR-MIB::tnClear TN-CLEAR-MIB::tnClearName s EXAMPLE TN-CLEAR-MIB::tnClearParams s EXAMPLE TN-CLEAR-MIB::tnClearLastClearedTime t 31536000 TN-CLEAR-MIB::tnClearResult i 1 TN-CLEAR-MIB::tnClearErrorText s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "TN-CLEAR-MIB::tnClear",
+				"oid" : "1.3.6.1.4.1.7483.6.1.3.13.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the application clear function associated with this",
+							"row entry."
+						],
+						"name" : "TN-CLEAR-MIB::tnClearName",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.13.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The tnClearParams string is a sequence of parameter name",
+							"value pairs to be used to determine the managed object to",
+							"which to apply the application clear function associated with",
+							"this row entry."
+						],
+						"name" : "TN-CLEAR-MIB::tnClearParams",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.13.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The tnClearLastClearedTime variable contains the sysUpTime",
+							"value when tnClearAction was last set to 'doAction (1)' to ",
+							"run the application clear function associated with this row entry."
+						],
+						"name" : "TN-CLEAR-MIB::tnClearLastClearedTime",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.13.1.1.5",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The result of the last attempt to enact the application clear",
+							"function associated with this row entry."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failure"
+						},
+						"name" : "TN-CLEAR-MIB::tnClearResult",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.13.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"If the result of the last attempt to enact the application clear",
+							"function associated with this row entry failed, tnClearResult is",
+							"'failure (2)', tnClearErrorText contains a text string to further",
+							"explain the cause of the failure."
+						],
+						"name" : "TN-CLEAR-MIB::tnClearErrorText",
+						"oid" : "1.3.6.1.4.1.7483.6.1.2.13.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,132 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201603140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HPICF-IPSLA-MIB::hpicfIpSlaThresholdexceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the metric calculated",
+				"from the SLA result exceeds the configured threshold value.",
+				"The hpicfIpSlaThrUpper is not applicable when ",
+				"hpicfIpSlaThrMetricType is set to packetLoss or ",
+				"testCompletion."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpicfIpSlaThresholdexceeded",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "SLA threshold $v1 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPICF-IPSLA-MIB::hpicfIpSlaThresholdexceeded HPICF-IPSLA-MIB::hpicfIpSlaThrUpper i 9999",
+			"trap" : {
+				"name" : "HPICF-IPSLA-MIB::hpicfIpSlaThresholdexceeded",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.127.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Acceptable upper-limit of threshold value for SLA. This ",
+							"value is not applicable when hpicfIpSlaThrMetricType",
+							"is set to packetLoss and testCompletion."
+						],
+						"name" : "HPICF-IPSLA-MIB::hpicfIpSlaThrUpper",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.127.1.3.1.2",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPICF-IPSLA-MIB::hpicfIpSlaTestCompletion",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the SLA test is",
+				"completed either by reaching stopTime or ",
+				"hpicfIpSlaAttrNumPkts. This notification is sent only ",
+				"when the action type is set to trap or trap-log."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpicfIpSlaTestCompletion",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "SLA test completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPICF-IPSLA-MIB::hpicfIpSlaTestCompletion HPICF-IPSLA-MIB::hpicfIpSlaThrType i 1",
+			"trap" : {
+				"name" : "HPICF-IPSLA-MIB::hpicfIpSlaTestCompletion",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.127.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Configure threshold type to trigger action. This value is",
+							"not applicable when hpicfIpSlaThrMetricType is set to",
+							"testCompletion."
+						],
+						"enums" : {
+							"1" : "immediate",
+							"2" : "consecutive"
+						},
+						"name" : "HPICF-IPSLA-MIB::hpicfIpSlaThrType",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.127.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPICF-IPSLA-MIB::hpicfIpSlaThresholdPktLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when SLA test probe reply",
+				"packets are lost consecutively for the configured number",
+				"of hpicfIpSlaThrCount. This notification is sent only when",
+				"the action type is set to trap or trap-log."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpicfIpSlaThresholdPktLoss",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "SLA test probe reply packets loss detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPICF-IPSLA-MIB::hpicfIpSlaThresholdPktLoss HPICF-IPSLA-MIB::hpicfIpSlaThrCount u 9999",
+			"trap" : {
+				"name" : "HPICF-IPSLA-MIB::hpicfIpSlaThresholdPktLoss",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.127.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Configure the count of the number of times the threshold",
+							"value can cross the upper/lower limits. This value is ",
+							"applicable only if hpicfIpSlaThrType is set to consecutive."
+						],
+						"name" : "HPICF-IPSLA-MIB::hpicfIpSlaThrCount",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.127.1.3.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,215 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200102030000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusCallAccountingInServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is Generated when a change is made to the Accounting ",
+				"Configuration for the Node, and the resultant configuration",
+				"state of accounting for the node is that it is enabled/in-service"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sonusCallAccountingStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ACCOUNTING-SERVICES-MIB::sonusCallAccountingInServiceNotification SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctGenerationMode i 1 SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctLogDestination i 1 SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctIntAcctState i 1 SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctIntAcctInterval i 9999 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 4",
+			"trap" : {
+				"name" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusCallAccountingInServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.5.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This configures the accounting generation mode for the node"
+						],
+						"enums" : {
+							"1" : "origination",
+							"2" : "destination",
+							"3" : "allcalls",
+							"4" : "none"
+						},
+						"name" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctGenerationMode",
+						"oid" : "1.3.6.1.4.1.2879.2.5.5.1.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This configures the destination of the accounting files for the node"
+						],
+						"enums" : {
+							"1" : "eventlog"
+						},
+						"name" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctLogDestination",
+						"oid" : "1.3.6.1.4.1.2879.2.5.5.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This configures whether Intermediate Accounting is Enabled or ",
+							"Disabled for the Node"
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "enabled"
+						},
+						"name" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctIntAcctState",
+						"oid" : "1.3.6.1.4.1.2879.2.5.5.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This configures the Intermediate Accounting Interval in seconds"
+						],
+						"name" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctIntAcctInterval",
+						"oid" : "1.3.6.1.4.1.2879.2.5.5.1.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusCallAccountingOutOfServiceNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is Generated when Accounting Records are no",
+				"longer being generated on the Node. It could be either",
+				"because of a change to the Accounting Configuration",
+				"or because of errors in the logging mechanism such as file logging",
+				"errors. When the reason specified for accounting outofservice",
+				"is event logging error, then the SYS event logs on the Node",
+				"should be examined to obtain further information about the",
+				"event logging failure"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1 || $v4==2 || $v4==3) ? 2 : 3"
+				},
+				"EventType" : "sonusCallAccountingStatus",
+				"ExpireTime" : {
+					"eval" : "($v4==1 || $v4==2 || $v4==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 5 : (($v4 == 2) ? 4 : (($v4 == 3) ? 3 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v2. Reason: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-ACCOUNTING-SERVICES-MIB::sonusCallAccountingOutOfServiceNotification SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctOutOfServiceReason i 1 SONUS-COMMON-MIB::sonusEventDescription s EXAMPLE SONUS-COMMON-MIB::sonusEventClass i 1 SONUS-COMMON-MIB::sonusEventLevel i 1",
+			"trap" : {
+				"name" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusCallAccountingOutOfServiceNotification",
+				"oid" : "1.3.6.1.4.1.2879.2.5.5.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The Reason for Call Accounting for the Node being",
+							"Out-of-Service."
+						],
+						"enums" : {
+							"1" : "configChange",
+							"2" : "eventLoggingError"
+						},
+						"name" : "SONUS-ACCOUNTING-SERVICES-MIB::sonusAcctOutOfServiceReason",
+						"oid" : "1.3.6.1.4.1.2879.2.5.5.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A description of the event that generated the trap."
+						],
+						"name" : "SONUS-COMMON-MIB::sonusEventDescription",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The category of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "sysmgmt",
+							"2" : "callproc",
+							"3" : "resmgmt",
+							"4" : "directory",
+							"5" : "netmgmt",
+							"6" : "signaling",
+							"7" : "routing",
+							"8" : "trace"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventClass",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity level of the event that generated the trap."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "info"
+						},
+						"name" : "SONUS-COMMON-MIB::sonusEventLevel",
+						"oid" : "1.3.6.1.4.1.2879.2.1.5.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

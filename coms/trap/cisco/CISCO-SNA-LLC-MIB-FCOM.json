@@ -1,0 +1,89 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9505100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SNA-LLC-MIB::llcCcStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the state of an LLC",
+				"connection component has transitioned to",
+				"normal(3) or aDM(1)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 3) ? 1 : (($v1 == 2) ? 2 : 3)"
+				},
+				"EventType" : "llcCcStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 3) ? 3600 : (($v1 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 3) ? 0 : (($v1 == 1) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'LLC connection is currently in the $v1 state due to $v3' : (($v4 ne '') ? 'LLC connection is currently in the $v1 state due to invalid frame: $v4' : (($v1 == 1) ? 'LLC connection is currently disabled' : (($v1 == 3) ? 'LLC connection is opperating in normal state.' : 'LLC connection is in $v1 state')))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SNA-LLC-MIB::llcCcStatusChange CISCO-SNA-LLC-MIB::llcCcOperState i 1 CISCO-SNA-LLC-MIB::llcCcOperLastFailTime t 9999 CISCO-SNA-LLC-MIB::llcCcOperLastFailCause i 1 CISCO-SNA-LLC-MIB::llcCcOperLastFailFRMRInfo s EXA",
+			"trap" : {
+				"name" : "CISCO-SNA-LLC-MIB::llcCcStatusChange",
+				"oid" : "1.3.6.1.4.1.9.10.8.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "aDM",
+							"2" : "setup",
+							"3" : "normal",
+							"4" : "busy",
+							"5" : "reject",
+							"6" : "await",
+							"7" : "awaitBusy",
+							"8" : "awaitReject",
+							"9" : "dConn",
+							"10" : "reset",
+							"11" : "error",
+							"12" : "conn",
+							"13" : "resetCheck",
+							"14" : "resetWait"
+						},
+						"name" : "CISCO-SNA-LLC-MIB::llcCcOperState",
+						"oid" : "1.3.6.1.4.1.9.10.8.1.3.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SNA-LLC-MIB::llcCcOperLastFailTime",
+						"oid" : "1.3.6.1.4.1.9.10.8.1.3.2.1.18",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "undefined",
+							"2" : "rxFRMR",
+							"3" : "txFRMR",
+							"4" : "discReceived",
+							"5" : "discSent",
+							"6" : "retriesExpired",
+							"7" : "forcedShutdown"
+						},
+						"name" : "CISCO-SNA-LLC-MIB::llcCcOperLastFailCause",
+						"oid" : "1.3.6.1.4.1.9.10.8.1.3.2.1.19",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SNA-LLC-MIB::llcCcOperLastFailFRMRInfo",
+						"oid" : "1.3.6.1.4.1.9.10.8.1.3.2.1.20",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

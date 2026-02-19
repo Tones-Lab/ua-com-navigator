@@ -1,0 +1,474 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201608050000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreempt",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a MPLS TE tunnel is",
+				"preempted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : ($v2==4 || $v2==3 || $v2==5) ? 3 : 2"
+				},
+				"EventType" : "cmplsTunnelPreempt",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : ($v2==4 || $v2==3 || $v2==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==4) ? 1 : ($v2==6) ? 3 : ($v2==2 || $v2==7) ? 4 : 2"
+				},
+				"SubNode" : "PreemptionLinkAddress:$v6",
+				"Summary" : "MPLS TE tunnel $v3 operational status changed to $v2 because of $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreempt MPLS-TE-STD-MIB::mplsTunnelAdminStatus i 1 MPLS-TE-STD-MIB::mplsTunnelOperStatus i 1 MPLS-TE-STD-MIB::mplsTunnelName s EXAMPLE CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreemptionType i 1 CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreemptionLinkAddrType i 0 CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreemptionLinkAddr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreempt",
+				"oid" : "1.3.6.1.4.1.9.9.738.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the desired operational status of this",
+							"tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelAdminStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.34",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the actual operational status of this",
+							"tunnel, which is typically but not limited to, a",
+							"function of the state of individual segments of",
+							"this tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelOperStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.35",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The canonical name assigned to the tunnel. This name",
+							"can be used to refer to the tunnel on the LSR's",
+							"console port. If mplsTunnelIsIf is set to true",
+							"then the ifName of the interface corresponding to",
+							"this tunnel should have a value equal to",
+							"mplsTunnelName. Also see the description of ifName",
+							"in RFC 2863."
+						],
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelName",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates LSP Preemption type of this LSP:",
+							"- unknown: the type is not known",
+							"- hardPreemption: the preempted LSP resources are",
+							"freed immediately; the LSP is broken immediately ",
+							"and the traffic is disrupted.",
+							"- softPreemption: the resources release pending on the",
+							"reoptimization of this LSP. The head of the LSP ",
+							"reroutes the traffic before the LSP is broken.",
+							"- frrSoftPreemption: similar to softPreemption. In this ",
+							"case the traffic of the soft preempted LSP is switched to ",
+							"the backup.",
+							"See: Farrel, A., Interim Report on MPLS Pre-emption",
+							"draft-farrel-mpls-preemption-interim-00.txt, work in progress"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "hardPreemption",
+							"3" : "softPreemption",
+							"4" : "frrSoftPreemption"
+						},
+						"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreemptionType",
+						"oid" : "1.3.6.1.4.1.9.9.738.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the address type of the link where the",
+							"preemption occurs - another, higher priority LSP is being ",
+							"admitted on this link and there is not enough bandwidth for it",
+							"causing this LSP to be preempted (removed) from this link:",
+							"- unknown: the object cmplsTunnelPreemptionLinkAddr does not",
+							"contain any address",
+							"- ipv4: the object cmplsTunnelPreemptionLinkAddr contains ",
+							"the IPv4 address",
+							"- ipv6: the object cmplsTunnelPreemptionLinkAddr contains ",
+							"the IPv6 address"
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreemptionLinkAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.738.1.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the address of the link where the",
+							"preemption occurs - another, higher priority LSP is being ",
+							"admitted on this link and there is not enough bandwidth for it",
+							"causing this LSP to be preempted (removed) from this link."
+						],
+						"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelPreemptionLinkAddr",
+						"oid" : "1.3.6.1.4.1.9.9.738.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelInsuffBW",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a MPLS TE tunnel could not",
+				"be setup or reoptimized."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cmplsTunnelInsuffBW",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "TunnelName:$v3",
+				"Summary" : {
+					"eval" : "($v4==2) ? 'MPLS TE tunnel $v3 failed to be set up due to insufficient bandwidth' : (($v4==3) ? 'MPLS TE tunnel $v3 failed to be reoptimized due to insufficient bandwidth' : 'MPLS TE tunnel $v3 has insufficient bandwidth')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelInsuffBW MPLS-TE-STD-MIB::mplsTunnelAdminStatus i 1 MPLS-TE-STD-MIB::mplsTunnelOperStatus i 1 MPLS-TE-STD-MIB::mplsTunnelName s EXAMPLE CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelInsuffBWFailedOperation i 1",
+			"trap" : {
+				"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelInsuffBW",
+				"oid" : "1.3.6.1.4.1.9.9.738.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the desired operational status of this",
+							"tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelAdminStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.34",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the actual operational status of this",
+							"tunnel, which is typically but not limited to, a",
+							"function of the state of individual segments of",
+							"this tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelOperStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.35",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The canonical name assigned to the tunnel. This name",
+							"can be used to refer to the tunnel on the LSR's",
+							"console port. If mplsTunnelIsIf is set to true",
+							"then the ifName of the interface corresponding to",
+							"this tunnel should have a value equal to",
+							"mplsTunnelName. Also see the description of ifName",
+							"in RFC 2863."
+						],
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelName",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates whether the tunnel could not be setup or",
+							"reoptimized because of insufficient bandwidth:",
+							"- unknown: the reason is not known",
+							"- failedToSetup: insufficient bandwidth during ",
+							"initial setup",
+							"- failedToReoptimize: insufficient bandwidth during",
+							"reoptimization"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "failedToSetup",
+							"3" : "failedToReoptimize"
+						},
+						"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelInsuffBWFailedOperation",
+						"oid" : "1.3.6.1.4.1.9.9.738.1.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelReRoutePending",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when re-route is required",
+				"for the tunnel."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cmplsTunnelReRoutePendingStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "TunnelName:$v3",
+				"Summary" : "Tunnel $v3 requires re-route. Current operational state: $v2; Admin state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelReRoutePending MPLS-TE-STD-MIB::mplsTunnelAdminStatus i 1 MPLS-TE-STD-MIB::mplsTunnelOperStatus i 1 MPLS-TE-STD-MIB::mplsTunnelName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelReRoutePending",
+				"oid" : "1.3.6.1.4.1.9.9.738.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the desired operational status of this",
+							"tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelAdminStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.34",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the actual operational status of this",
+							"tunnel, which is typically but not limited to, a",
+							"function of the state of individual segments of",
+							"this tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelOperStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.35",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The canonical name assigned to the tunnel. This name",
+							"can be used to refer to the tunnel on the LSR's",
+							"console port. If mplsTunnelIsIf is set to true",
+							"then the ifName of the interface corresponding to",
+							"this tunnel should have a value equal to",
+							"mplsTunnelName. Also see the description of ifName",
+							"in RFC 2863."
+						],
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelName",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelReRoutePendingClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when tunnel no longer needs to",
+				"be re-routed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cmplsTunnelReRoutePendingStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "TunnelName:$v3",
+				"Summary" : {
+					"eval" : "($v4==2) ? 'Tunnel $v3 is reoptimized and no longer needs to be re-routed' : (($v4==3) ? 'Tunnel $v3 is reinstated and no longer needs to be re-routed' : 'Tunnel $v3 no longer needs to be re-routed')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelReRoutePendingClear MPLS-TE-STD-MIB::mplsTunnelAdminStatus i 1 MPLS-TE-STD-MIB::mplsTunnelOperStatus i 1 MPLS-TE-STD-MIB::mplsTunnelName s EXAMPLE CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelReRoutePendingClearReason i 1",
+			"trap" : {
+				"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelReRoutePendingClear",
+				"oid" : "1.3.6.1.4.1.9.9.738.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the desired operational status of this",
+							"tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelAdminStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.34",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the actual operational status of this",
+							"tunnel, which is typically but not limited to, a",
+							"function of the state of individual segments of",
+							"this tunnel."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelOperStatus",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.35",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The canonical name assigned to the tunnel. This name",
+							"can be used to refer to the tunnel on the LSR's",
+							"console port. If mplsTunnelIsIf is set to true",
+							"then the ifName of the interface corresponding to",
+							"this tunnel should have a value equal to",
+							"mplsTunnelName. Also see the description of ifName",
+							"in RFC 2863."
+						],
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelName",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the reason why the tunnel",
+							"is not longer in the reroute pending state:",
+							"- unknown: the reason is unknown",
+							"- reoptimized: the tunnel has been reoptimized",
+							"- reinstated: the tunnel has been reinstated"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "reoptimized",
+							"3" : "reinstated"
+						},
+						"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelReRoutePendingClearReason",
+						"oid" : "1.3.6.1.4.1.9.9.738.1.2.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelBringupFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when MPLS TE tunnel failed to",
+				"come up"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cmplsTunnelBringupFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "TunnelName:$v1",
+				"Summary" : "MPLS tunnel $v1 failed to come up. Fail reason type: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelBringupFail MPLS-TE-STD-MIB::mplsTunnelName s EXAMPLE CISCO-MPLS-TE-STD-EXT-MIB::cmplsTeFailReasonType i 1",
+			"trap" : {
+				"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTunnelBringupFail",
+				"oid" : "1.3.6.1.4.1.9.9.738.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The canonical name assigned to the tunnel. This name",
+							"can be used to refer to the tunnel on the LSR's",
+							"console port. If mplsTunnelIsIf is set to true",
+							"then the ifName of the interface corresponding to",
+							"this tunnel should have a value equal to",
+							"mplsTunnelName. Also see the description of ifName",
+							"in RFC 2863."
+						],
+						"name" : "MPLS-TE-STD-MIB::mplsTunnelName",
+						"oid" : "1.3.6.1.2.1.10.166.3.2.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the type (category) of fail reason."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "bfd",
+							"3" : "generalTe"
+						},
+						"name" : "CISCO-MPLS-TE-STD-EXT-MIB::cmplsTeFailReasonType",
+						"oid" : "1.3.6.1.4.1.9.9.738.1.3.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

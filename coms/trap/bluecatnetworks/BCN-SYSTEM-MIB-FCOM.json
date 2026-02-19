@@ -1,0 +1,82 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201812271200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "BCN-SYSTEM-MIB::bcnSysAlarmNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the system starts, reboots or shuts down"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "bcnSysAlarmNotif",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : ($v1==2) ? 3 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System operational state: $v1; $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BCN-SYSTEM-MIB::bcnSysAlarmNotif BCN-SYSTEM-MIB::bcnSysSerOperState i 1 BCN-SYSTEM-MIB::bcnSysAlarmSeverity i 1 BCN-SYSTEM-MIB::bcnSysAlarmInfo s EXAMPLE",
+			"trap" : {
+				"name" : "BCN-SYSTEM-MIB::bcnSysAlarmNotif",
+				"oid" : "1.3.6.1.4.1.13315.3.2.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"System operational states. The possible states are:",
+							"start(1) The system started.",
+							"reboot(2) The system is rebooting.",
+							"shutdown(3) The system is shutting down.",
+							""
+						],
+						"enums" : {
+							"1" : "start",
+							"2" : "reboot",
+							"3" : "shutdown"
+						},
+						"name" : "BCN-SYSTEM-MIB::bcnSysSerOperState",
+						"oid" : "1.3.6.1.4.1.13315.3.2.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Severity classification for the alarm."
+						],
+						"enums" : {
+							"1" : "ok",
+							"10" : "other",
+							"20" : "inform",
+							"30" : "minor",
+							"40" : "warning",
+							"50" : "major",
+							"60" : "critical"
+						},
+						"name" : "BCN-SYSTEM-MIB::bcnSysAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.13315.3.2.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Descriptive information about the alarm event."
+						],
+						"name" : "BCN-SYSTEM-MIB::bcnSysAlarmInfo",
+						"oid" : "1.3.6.1.4.1.13315.3.2.3.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

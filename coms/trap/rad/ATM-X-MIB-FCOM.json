@@ -1,0 +1,103 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ATM-X-MIB::radHdsl2ShdslLoopBackTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that a remote loopback ",
+				"has been activated on the Embedded Operations Channel (EOC) of the SHDSL",
+				"link."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v1==3) ? 3 : 2"
+				},
+				"EventType" : "radHdsl2ShdslLoopBackTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v1==3) ? 2 : (($v1==4 || $v1==6) ? 3 : (($v1==5) ? 4 : 5)))"
+				},
+				"SubNode" : "ifAlias:$v3",
+				"Summary" : {
+					"eval" : "($v2==2) ? 'Remote loopback deactivated on EOC of the SHDSL' : 'Remote loopback activated on EOC of the SHDSL'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ATM-X-MIB::radHdsl2ShdslLoopBackTrap RAD-MIB::alarmSeverity i 3 RAD-MIB::alarmState i 2 IF-MIB::ifAlias s EXAMPLE",
+			"trap" : {
+				"name" : "ATM-X-MIB::radHdsl2ShdslLoopBackTrap",
+				"oid" : "1.3.6.1.4.1.164.3.1.6.12.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the severity of the alarms."
+						],
+						"enums" : {
+							"3" : "event",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "warning",
+							"7" : "critical"
+						},
+						"name" : "RAD-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.164.6.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"."
+						],
+						"enums" : {
+							"2" : "off",
+							"3" : "on"
+						},
+						"name" : "RAD-MIB::alarmState",
+						"oid" : "1.3.6.1.4.1.164.6.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is an 'alias' name for the interface as",
+							"specified by a network manager, and provides a non-volatile",
+							"'handle' for the interface.",
+							"",
+							"On the first instantiation of an interface, the value of",
+							"ifAlias associated with that interface is the zero-length",
+							"string. As and when a value is written into an instance of",
+							"ifAlias through a network management set operation, then the",
+							"agent must retain the supplied value in the ifAlias instance",
+							"associated with the same interface for as long as that",
+							"interface remains instantiated, including across all re-",
+							"initializations/reboots of the network management system",
+							"including those which result in a change of the interface's",
+							"ifIndex value.",
+							"",
+							"An example of the value which a network manager might store",
+							"in this object for a WAN interface is the (Telco's) circuit",
+							"number/identifier of the interface.",
+							"",
+							"Some agents may support write-access only for interfaces",
+							"having particular values of ifType. An agent which supports",
+							"write access to this object is required to keep the value in",
+							"non-volatile storage, but it may limit the length of new",
+							"values depending on how much storage is already occupied by",
+							"the current values for other interfaces."
+						],
+						"name" : "IF-MIB::ifAlias",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

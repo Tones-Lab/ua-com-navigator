@@ -1,0 +1,465 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200105242300Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "APS-MIB-JUNI::junidApsEventSwitchover",
+			"certification" : "STANDARD",
+			"description" : [
+				"An junidApsEventSwitchover notification is sent when the",
+				"value of an instance of junidApsChanStatusSwitchovers increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "junidApsEventSwitchover",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Switchover events occured. Count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB-JUNI::junidApsEventSwitchover APS-MIB-JUNI::junidApsChanStatusSwitchovers c 9999 APS-MIB-JUNI::junidApsChanStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB-JUNI::junidApsEventSwitchover",
+				"oid" : "1.3.6.1.4.1.4874.3.2.2.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The number of times this channel has switched to the protection",
+							"line. When queried with index value junidApsChanConfigNumber set to 0",
+							"which is the protection line, this object will return 0."
+						],
+						"name" : "APS-MIB-JUNI::junidApsChanStatusSwitchovers",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.6.1.4",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Indicates the current state of the port.",
+							"",
+							"lockedOut",
+							"",
+							"This bit, when applied to a working channel, indicates that",
+							"the channel is prevented from switching to the protection line.",
+							"When applied to the null channel, this bit indicates that no",
+							"working channel may switch to the protection line.",
+							"",
+							"sd",
+							"",
+							"A signal degrade condition is in effect.",
+							"",
+							"sf",
+							"",
+							"A signal failure condition is in effect.",
+							"",
+							"switched",
+							"",
+							"The switched bit is applied to a working channel if that",
+							"channel is currently switched to the protection line.",
+							""
+						],
+						"enums" : {
+							"0" : "lockedOut",
+							"1" : "sd",
+							"2" : "sf",
+							"3" : "switched"
+						},
+						"name" : "APS-MIB-JUNI::junidApsChanStatusCurrent",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.6.1.1",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APS-MIB-JUNI::junidApsEventModeMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"An junidApsEventModeMismatch notification is sent when the",
+				"value of an instance of junidApsStatusModeMismatches increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "junidApsEventModeMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Mode mismatch detected. Count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB-JUNI::junidApsEventModeMismatch APS-MIB-JUNI::junidApsStatusModeMismatches c 9999 APS-MIB-JUNI::junidApsStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB-JUNI::junidApsEventModeMismatch",
+				"oid" : "1.3.6.1.4.1.4874.3.2.2.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Mode Mismatch conditions."
+						],
+						"name" : "APS-MIB-JUNI::junidApsStatusModeMismatches",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.2.1.4",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"modeMismatch",
+							"",
+							"Modes other than 1+1 unidirectional monitor protection line",
+							"K2 bit 5, which indicates the architecture and K2 bits",
+							"6-8, which indicate if the mode is unidirectional or",
+							"bidirectional. A conflict between the current local mode",
+							"and the received K2 mode information constitutes a",
+							"mode mismatch.",
+							"",
+							"channelMismatch",
+							"",
+							"This bit indicates a mismatch between the transmitted K1 channel",
+							"and the received K2 channel has been detected.",
+							"",
+							"psbf",
+							"",
+							"This bit indicates a Protection Switch Byte Failure (PSBF) is",
+							"in effect. This condition occurs when either an inconsistent",
+							"APS byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last 12",
+							"successive frames are identical, starting with the last frame",
+							"containing a previously consistent byte. An invalid code occurs",
+							"when the incoming K1 byte contains an unused code or a code",
+							"irrelevant for the specific switching operation (e.g., Reverse",
+							"Request while no switching request is outstanding) in three",
+							"consecutive frames. An invalid code also occurs when the incoming",
+							"K1 byte contains an invalid channel number in three consecutive",
+							"frames.",
+							"",
+							"feplf",
+							"",
+							"Modes other than 1+1 unidirectional monitor the K1 byte",
+							"for Far-End Protection-Line failures. A Far-End",
+							"Protection-Line defect is declared based on receiving",
+							"SF on the protection line.",
+							"",
+							"extraTraffic",
+							"",
+							"This bit indicates whether extra traffic is currently being",
+							"accepted on the protection line.",
+							""
+						],
+						"enums" : {
+							"0" : "modeMismatch",
+							"1" : "channelMismatch",
+							"2" : "psbf",
+							"3" : "feplf",
+							"4" : "extraTraffic"
+						},
+						"name" : "APS-MIB-JUNI::junidApsStatusCurrent",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.2.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APS-MIB-JUNI::junidApsEventChannelMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"An junidApsEventChannelMismatch notification is sent when the",
+				"value of an instance of junidApsStatusChannelMismatches increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "junidApsEventChannelMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Channel mismatch detected. Count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB-JUNI::junidApsEventChannelMismatch APS-MIB-JUNI::junidApsStatusChannelMismatches c 9999 APS-MIB-JUNI::junidApsStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB-JUNI::junidApsEventChannelMismatch",
+				"oid" : "1.3.6.1.4.1.4874.3.2.2.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Channel Mismatch conditions."
+						],
+						"name" : "APS-MIB-JUNI::junidApsStatusChannelMismatches",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.2.1.5",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"modeMismatch",
+							"",
+							"Modes other than 1+1 unidirectional monitor protection line",
+							"K2 bit 5, which indicates the architecture and K2 bits",
+							"6-8, which indicate if the mode is unidirectional or",
+							"bidirectional. A conflict between the current local mode",
+							"and the received K2 mode information constitutes a",
+							"mode mismatch.",
+							"",
+							"channelMismatch",
+							"",
+							"This bit indicates a mismatch between the transmitted K1 channel",
+							"and the received K2 channel has been detected.",
+							"",
+							"psbf",
+							"",
+							"This bit indicates a Protection Switch Byte Failure (PSBF) is",
+							"in effect. This condition occurs when either an inconsistent",
+							"APS byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last 12",
+							"successive frames are identical, starting with the last frame",
+							"containing a previously consistent byte. An invalid code occurs",
+							"when the incoming K1 byte contains an unused code or a code",
+							"irrelevant for the specific switching operation (e.g., Reverse",
+							"Request while no switching request is outstanding) in three",
+							"consecutive frames. An invalid code also occurs when the incoming",
+							"K1 byte contains an invalid channel number in three consecutive",
+							"frames.",
+							"",
+							"feplf",
+							"",
+							"Modes other than 1+1 unidirectional monitor the K1 byte",
+							"for Far-End Protection-Line failures. A Far-End",
+							"Protection-Line defect is declared based on receiving",
+							"SF on the protection line.",
+							"",
+							"extraTraffic",
+							"",
+							"This bit indicates whether extra traffic is currently being",
+							"accepted on the protection line.",
+							""
+						],
+						"enums" : {
+							"0" : "modeMismatch",
+							"1" : "channelMismatch",
+							"2" : "psbf",
+							"3" : "feplf",
+							"4" : "extraTraffic"
+						},
+						"name" : "APS-MIB-JUNI::junidApsStatusCurrent",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.2.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APS-MIB-JUNI::junidApsEventPSBF",
+			"certification" : "STANDARD",
+			"description" : [
+				"An junidApsEventPSBF notification is sent when the",
+				"value of an instance of junidApsStatusPSBFs increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "junidApsEventPSBF",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Protection switch byte failure. Count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB-JUNI::junidApsEventPSBF APS-MIB-JUNI::junidApsStatusPSBFs c 9999 APS-MIB-JUNI::junidApsStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB-JUNI::junidApsEventPSBF",
+				"oid" : "1.3.6.1.4.1.4874.3.2.2.1.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Protection Switch Byte Failure conditions.",
+							"This condition occurs when either an inconsistent APS",
+							"byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last",
+							"12 successive frames are identical, starting with the last",
+							"frame containing a previously consistent byte. An invalid",
+							"code occurs when the incoming K1 byte contains an unused",
+							"code or a code irrelevant for the specific switching operation",
+							"(e.g., Reverse Request while no switching request is outstanding)",
+							"in three consecutive frames. An invalid code also occurs",
+							"when the incoming K1 byte contains an invalid channel number",
+							"in three consecutive frames."
+						],
+						"name" : "APS-MIB-JUNI::junidApsStatusPSBFs",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.2.1.6",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"modeMismatch",
+							"",
+							"Modes other than 1+1 unidirectional monitor protection line",
+							"K2 bit 5, which indicates the architecture and K2 bits",
+							"6-8, which indicate if the mode is unidirectional or",
+							"bidirectional. A conflict between the current local mode",
+							"and the received K2 mode information constitutes a",
+							"mode mismatch.",
+							"",
+							"channelMismatch",
+							"",
+							"This bit indicates a mismatch between the transmitted K1 channel",
+							"and the received K2 channel has been detected.",
+							"",
+							"psbf",
+							"",
+							"This bit indicates a Protection Switch Byte Failure (PSBF) is",
+							"in effect. This condition occurs when either an inconsistent",
+							"APS byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last 12",
+							"successive frames are identical, starting with the last frame",
+							"containing a previously consistent byte. An invalid code occurs",
+							"when the incoming K1 byte contains an unused code or a code",
+							"irrelevant for the specific switching operation (e.g., Reverse",
+							"Request while no switching request is outstanding) in three",
+							"consecutive frames. An invalid code also occurs when the incoming",
+							"K1 byte contains an invalid channel number in three consecutive",
+							"frames.",
+							"",
+							"feplf",
+							"",
+							"Modes other than 1+1 unidirectional monitor the K1 byte",
+							"for Far-End Protection-Line failures. A Far-End",
+							"Protection-Line defect is declared based on receiving",
+							"SF on the protection line.",
+							"",
+							"extraTraffic",
+							"",
+							"This bit indicates whether extra traffic is currently being",
+							"accepted on the protection line.",
+							""
+						],
+						"enums" : {
+							"0" : "modeMismatch",
+							"1" : "channelMismatch",
+							"2" : "psbf",
+							"3" : "feplf",
+							"4" : "extraTraffic"
+						},
+						"name" : "APS-MIB-JUNI::junidApsStatusCurrent",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.2.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APS-MIB-JUNI::junidApsEventFEPLF",
+			"certification" : "STANDARD",
+			"description" : [
+				"An junidApsEventFEPLFs notification is sent when the",
+				"value of an instance of junidApsStatusFEPLFs increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "junidApsEventFEPLF",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Far end protection line failure. Count: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APS-MIB-JUNI::junidApsEventFEPLF APS-MIB-JUNI::junidApsStatusFEPLFs c 9999 APS-MIB-JUNI::junidApsStatusCurrent b 0",
+			"trap" : {
+				"name" : "APS-MIB-JUNI::junidApsEventFEPLF",
+				"oid" : "1.3.6.1.4.1.4874.3.2.2.1.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Far-End Protection-Line Failure conditions.",
+							"This condition is declared based on receiving SF on",
+							"the protection line in the K1 byte."
+						],
+						"name" : "APS-MIB-JUNI::junidApsStatusFEPLFs",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.2.1.7",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"modeMismatch",
+							"",
+							"Modes other than 1+1 unidirectional monitor protection line",
+							"K2 bit 5, which indicates the architecture and K2 bits",
+							"6-8, which indicate if the mode is unidirectional or",
+							"bidirectional. A conflict between the current local mode",
+							"and the received K2 mode information constitutes a",
+							"mode mismatch.",
+							"",
+							"channelMismatch",
+							"",
+							"This bit indicates a mismatch between the transmitted K1 channel",
+							"and the received K2 channel has been detected.",
+							"",
+							"psbf",
+							"",
+							"This bit indicates a Protection Switch Byte Failure (PSBF) is",
+							"in effect. This condition occurs when either an inconsistent",
+							"APS byte or an invalid code is detected. An inconsistent APS",
+							"byte occurs when no three consecutive K1 bytes of the last 12",
+							"successive frames are identical, starting with the last frame",
+							"containing a previously consistent byte. An invalid code occurs",
+							"when the incoming K1 byte contains an unused code or a code",
+							"irrelevant for the specific switching operation (e.g., Reverse",
+							"Request while no switching request is outstanding) in three",
+							"consecutive frames. An invalid code also occurs when the incoming",
+							"K1 byte contains an invalid channel number in three consecutive",
+							"frames.",
+							"",
+							"feplf",
+							"",
+							"Modes other than 1+1 unidirectional monitor the K1 byte",
+							"for Far-End Protection-Line failures. A Far-End",
+							"Protection-Line defect is declared based on receiving",
+							"SF on the protection line.",
+							"",
+							"extraTraffic",
+							"",
+							"This bit indicates whether extra traffic is currently being",
+							"accepted on the protection line.",
+							""
+						],
+						"enums" : {
+							"0" : "modeMismatch",
+							"1" : "channelMismatch",
+							"2" : "psbf",
+							"3" : "feplf",
+							"4" : "extraTraffic"
+						},
+						"name" : "APS-MIB-JUNI::junidApsStatusCurrent",
+						"oid" : "1.3.6.1.4.1.4874.3.2.2.1.1.2.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,66 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201108250847Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HP-ICF-CHASSIS::hpicfSensorTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An hpicfSensorTrap indicates that there has been a",
+				"change of state on one of the sensors in this",
+				"chassis. The hpicfSensorStatus indicates the new",
+				"status value for the changed sensor."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : ($v1==4) ? 1 : 2"
+				},
+				"EventType" : "hpicfSensorTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : ($v1==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==4) ? 0 : ($v1==2) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Chassis sensor ($v2) state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF-CHASSIS::hpicfSensorTrap HP-ICF-CHASSIS::hpicfSensorStatus i 1 HP-ICF-CHASSIS::hpicfSensorDescr s EXAMPLE",
+			"trap" : {
+				"name" : "HP-ICF-CHASSIS::hpicfSensorTrap",
+				"oid" : "1.3.6.1.4.1.11.2.14.12.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Actual status indicated by the sensor."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "bad",
+							"3" : "warning",
+							"4" : "good",
+							"5" : "notPresent"
+						},
+						"name" : "HP-ICF-CHASSIS::hpicfSensorStatus",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.1.2.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A textual description of the sensor."
+						],
+						"name" : "HP-ICF-CHASSIS::hpicfSensorDescr",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.1.2.6.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

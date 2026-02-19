@@ -1,0 +1,141 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200305040000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-C8500-REDUNDANCY-MIB::ccrCpuStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"ccrCpuStatus changes for a CPU card.",
+				"The varbind indicates the current status of the",
+				"affected card."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : (($v1 == 3) ? 2 : 3)"
+				},
+				"EventType" : "ccrCpuStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2) ? 3600 : (($v1 == 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : (($v1 == 3) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CPU card has changed status to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-C8500-REDUNDANCY-MIB::ccrCpuStatusChange CISCO-C8500-REDUNDANCY-MIB::ccrCpuStatus i 1",
+			"trap" : {
+				"name" : "CISCO-C8500-REDUNDANCY-MIB::ccrCpuStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.105.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "notPresent",
+							"2" : "ok",
+							"3" : "fault"
+						},
+						"name" : "CISCO-C8500-REDUNDANCY-MIB::ccrCpuStatus",
+						"oid" : "1.3.6.1.4.1.9.9.105.1.1.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-C8500-REDUNDANCY-MIB::ccrSwitchStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"ccrSwitchStatus changes for a switch card.",
+				"The varbind indicates the current status of the",
+				"affected card."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : (($v1 == 3) ? 2 : 3)"
+				},
+				"EventType" : "ccrSwitchStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2) ? 3600 : (($v1 == 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : (($v1 == 3) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Switch card has changed status to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-C8500-REDUNDANCY-MIB::ccrSwitchStatusChange CISCO-C8500-REDUNDANCY-MIB::ccrSwitchStatus i 1",
+			"trap" : {
+				"name" : "CISCO-C8500-REDUNDANCY-MIB::ccrSwitchStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.105.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "notPresent",
+							"2" : "ok",
+							"3" : "fault"
+						},
+						"name" : "CISCO-C8500-REDUNDANCY-MIB::ccrSwitchStatus",
+						"oid" : "1.3.6.1.4.1.9.9.105.1.2.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-C8500-REDUNDANCY-MIB::ccrSwitchModeChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the value of",
+				"ccrSwitchMode changes from active(1) to either",
+				"standby(2) or unused(3) or notPresent(4).",
+				"The varbind indicates the current mode of the ",
+				"affected card."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ccrSwitchModeChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "CCR Switch Mode has changed status to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-C8500-REDUNDANCY-MIB::ccrSwitchModeChange CISCO-C8500-REDUNDANCY-MIB::ccrSwitchMode i 1",
+			"trap" : {
+				"name" : "CISCO-C8500-REDUNDANCY-MIB::ccrSwitchModeChange",
+				"oid" : "1.3.6.1.4.1.9.9.105.2.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "standby",
+							"3" : "unused",
+							"4" : "notPresent"
+						},
+						"name" : "CISCO-C8500-REDUNDANCY-MIB::ccrSwitchMode",
+						"oid" : "1.3.6.1.4.1.9.9.105.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

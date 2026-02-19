@@ -1,0 +1,1213 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CityLight-MIB::localFibreRxTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Rx alarm has been reported on fibre on the local card.",
+				"This trap is sent only if the teFiberWrap value is set to enabled.",
+				"This trap is sent to every management entity specified in the ",
+				"TrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "localFibreRxTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "Slot:$v1",
+				"Summary" : "Local fiber RX port state: $v2; Slot: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::localFibreRxTrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceFiberPortState i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::localFibreRxTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.40",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the fiber port, values are inserted, device correctly",
+							"attached, wrapped, device incorrectly attached and data is looped back",
+							"within the port,or remoteFault the port is wrapped but the far end device",
+							"has been recognised on the receive fiber."
+						],
+						"enums" : {
+							"1" : "localNetworkPortUp",
+							"2" : "localNetworkPortDown",
+							"3" : "localNetworkPortRemoteFault"
+						},
+						"name" : "CityLight-MIB::ifaceFiberPortState",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::localUserPortTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The user wrap state for a port has changed. ",
+				"This trap is sent only if the teUserWrap value is set to enabled for that slot.",
+				"This trap is sent to every management entity specified in the ",
+				"CLIGHTSystemTrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "localUserPortTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==4) ? 3 : 4)"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "User wrap state on port changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::localUserPortTrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceUserPortState i 3",
+				"$SNMPTRAPCMD CityLight-MIB::localUserPortTrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceUserPortState i 2"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::localUserPortTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.42",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the user port, values are active, device correctly attached",
+							"inactive, device incorrectly attached."
+						],
+						"enums" : {
+							"2" : "localCustomerPortUp",
+							"3" : "localCustomerPortDown",
+							"4" : "localCustomerPortRemoteFault",
+							"5" : "localCUstomerPortDownAndRemoteFault"
+						},
+						"name" : "CityLight-MIB::ifaceUserPortState",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::localEOLTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The laser has reached its end of live. ",
+				"This trap is sent to every management entity specified in the ",
+				"CLIGHTSystemTrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "localEOLTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Local laser reached its end of life"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::localEOLTrap CityLight-MIB::localSlotIndex i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::localEOLTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::localCardRemovedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The card has been removed from the Management Chassis."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "localCardRemovedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Card removed from management chassis"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::localCardRemovedTrap CityLight-MIB::localSlotIndex i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::localCardRemovedTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::localUserPort2Trap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The user wrap state for a port has changed. ",
+				"This trap is sent only if the teUserWrap value is set to enabled for that slot.",
+				"This trap is sent to every management entity specified in the ",
+				"CLIGHTSystemTrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "localUserPort2Trap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==4) ? 3 : 4)"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "User wrap state on port 2 changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::localUserPort2Trap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceUserPort2State i 5",
+				"$SNMPTRAPCMD CityLight-MIB::localUserPort2Trap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceUserPort2State i 2"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::localUserPort2Trap",
+				"oid" : "1.3.6.1.4.1.1671.0.45",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the second user port, if applicable. Values are active, device",
+							"correctly attached, inactive, device incorrectly attached."
+						],
+						"enums" : {
+							"2" : "localCustomerPort2Up",
+							"3" : "localCustomerPort2Down",
+							"4" : "localCustomerPort2RemoteFault",
+							"5" : "localCUstomerPort2DownAndRemoteFault"
+						},
+						"name" : "CityLight-MIB::ifaceUserPort2State",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::localFibreATrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A alarm has been reported on fibre A of the local card.",
+				"This trap is sent only if the teFiberWrap value is set to enabled.",
+				"This trap is sent to every management entity specified in the ",
+				"TrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "localFibreATrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Fiber A alarm on card in slot $v1. Port state is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::localFibreATrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceFiberPortState i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::localFibreATrap",
+				"oid" : "1.3.6.1.4.1.1671.0.46",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the fiber port, values are inserted, device correctly",
+							"attached, wrapped, device incorrectly attached and data is looped back",
+							"within the port,or remoteFault the port is wrapped but the far end device",
+							"has been recognised on the receive fiber."
+						],
+						"enums" : {
+							"1" : "localNetworkPortUp",
+							"2" : "localNetworkPortDown",
+							"3" : "localNetworkPortRemoteFault"
+						},
+						"name" : "CityLight-MIB::ifaceFiberPortState",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::localFibreBTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A alarm has been reported on fibre B of the local card.",
+				"This trap is sent only if the teFiberWrap value is set to enabled.",
+				"This trap is sent to every management entity specified in the ",
+				"TrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "localFibreBTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Fiber B alarm on card in slot $v1. Port state is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::localFibreBTrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceFiberPortBState i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::localFibreBTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.47",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the secondary fiber port, values are inserted, device correctly",
+							"attached, wrapped, device incorrectly attached and data is looped back",
+							"within the port,or remoteFault the port is wrapped but the far end device",
+							"has been recognised on the receive fiber."
+						],
+						"enums" : {
+							"1" : "localNetworkPortBUp",
+							"2" : "localNetworkPortBDown",
+							"3" : "localNetworkPortBRemoteFault"
+						},
+						"name" : "CityLight-MIB::ifaceFiberPortBState",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::localModuleFanTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A alarm has been reported on fan of a module.",
+				"This trap is available for the 2.5Gbps card."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "localModuleFanTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==255) ? 3 : 4)"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Local module fan state is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::localModuleFanTrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceModuleFanStatus i 2",
+				"$SNMPTRAPCMD CityLight-MIB::localModuleFanTrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::ifaceModuleFanStatus i 1"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::localModuleFanTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.48",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of the module fan."
+						],
+						"enums" : {
+							"1" : "localModuleFanOk",
+							"2" : "localModuleFanFailed",
+							"255" : "localModuleFanNotFitted"
+						},
+						"name" : "CityLight-MIB::ifaceModuleFanStatus",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.28",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::localCardInsertedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The card has been inserted into the Management Chassis."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "localCardInsertedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Card inserted into management chassis"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::localCardInsertedTrap CityLight-MIB::localSlotIndex i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::localCardInsertedTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.49",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteUserRxTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The user wrapstate for a port has changed. ",
+				"This trap is sent only if the teUserWrap value is set to enabled for that slot.",
+				"This trap is sent to every management entity specified in the ",
+				"CLIGHTSystemTrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "remoteUserRxTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==4) ? 3 : 4)"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "User wrap state on remote port changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::remoteUserRxTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceUserPortState i 3",
+				"$SNMPTRAPCMD CityLight-MIB::remoteUserRxTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceUserPortState i 2"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::remoteUserRxTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.50",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the remote user port. This is either active (carrying LAN",
+							"frequency data) or inactive, not carrying LAN frequency data."
+						],
+						"enums" : {
+							"2" : "remoteCustomerPortUp",
+							"3" : "remoteCustomerPortDown",
+							"4" : "remoteCustomerPortRemoteFault",
+							"5" : "remoteCUstomerPortDownAndRemoteFault"
+						},
+						"name" : "CityLight-MIB::remoteIfaceUserPortState",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remotePsuTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The PSU state has changed. This trap is sent only if the tePSUstate",
+				"value is set to enabled. This trap is sent to every management entity ",
+				"specified in the TrapTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "remotePsuTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==4) ? 3 : 4)"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Remote PSU state changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::remotePsuTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfacePSUStatus i 3",
+				"$SNMPTRAPCMD CityLight-MIB::remotePsuTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfacePSUStatus i 1"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::remotePsuTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.51",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicate the state of the PSUs in the remote chassis.",
+							"Possible messages are:",
+							"remotePSUsGood(1)",
+							"PSUs work normally; ",
+							"remotePSUsGood(2)",
+							"Main PSU has failed;",
+							"remoteSecondaryPSUFailed(3)",
+							"Secondary PSU has failed;",
+							"remotePSUGoodButRedunantPSUnotFitted(4)",
+							"PSU good but no secondary PSU is fitted."
+						],
+						"enums" : {
+							"1" : "remotePSUsGood",
+							"2" : "remotePrimaryPSUFailed",
+							"3" : "remoteSecondaryPSUFailed",
+							"4" : "remotePSUGoodButRedunantPSUnotFitted"
+						},
+						"name" : "CityLight-MIB::remoteIfacePSUStatus",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteTempTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The remote PSU status has changed. This trap is sent only if",
+				"the teTempenable is set in the TrapTable for that",
+				"slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "remoteTempTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Remote temperature status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::remoteTempTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceTempStatus i 2",
+				"$SNMPTRAPCMD CityLight-MIB::remoteTempTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceTempStatus i 1"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::remoteTempTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.52",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This indicate the state of the remote chassis.",
+							"Possible messages are:",
+							"remoteTemperatureNormal(1)",
+							"Temperature is acceptable; ",
+							"remoteTemperatureHot(2)",
+							"The operating temperature within the chassis is too high;",
+							"remoteTemperatureCold(3)",
+							"The operating temperature within the chassis is too low."
+						],
+						"enums" : {
+							"1" : "remoteTemperatureNormal",
+							"2" : "remoteTemperatureHot",
+							"3" : "remoteTemperatureCold"
+						},
+						"name" : "CityLight-MIB::remoteIfaceTempStatus",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteFanFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fan fail reported on local card. This trap is sent to every",
+				"management entity specified in the TrapTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "remoteFanFailTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Remote fan failed on local card"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::remoteFanFailTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceFanStatus i 2",
+			"trap" : {
+				"name" : "CityLight-MIB::remoteFanFailTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.53",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of the remote fan."
+						],
+						"enums" : {
+							"1" : "remoteFanOk",
+							"2" : "remoteFanFailed"
+						},
+						"name" : "CityLight-MIB::remoteIfaceFanStatus",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteEOLTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The laser has reached its end of live. ",
+				"This trap is sent to every management entity specified in the ",
+				"CLIGHTSystemTrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "remoteEOLTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Remote laser reached its end of life"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::remoteEOLTrap CityLight-MIB::remoteSlotIndex i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::remoteEOLTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.54",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteFibreTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The local card has reported a fault with the remote card. ",
+				"This trap is sent to every management entity specified in the ",
+				"CLIGHTSystemTrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "remoteFibreTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Remote fiber port state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::remoteFibreTrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::remoteIfaceFiberPortState i 2",
+				"$SNMPTRAPCMD CityLight-MIB::remoteFibreTrap CityLight-MIB::localSlotIndex i 1 CityLight-MIB::remoteIfaceFiberPortState i 1"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::remoteFibreTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.55",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number within the chassis."
+						],
+						"name" : "CityLight-MIB::localSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the fiber port, values are inserted, device correctly",
+							"attached or device not correctly attached at far end."
+						],
+						"enums" : {
+							"1" : "remoteNetworkPortUp",
+							"2" : "remoteNetworkPortDown",
+							"3" : "remoteNetworkPortRemoteFault"
+						},
+						"name" : "CityLight-MIB::remoteIfaceFiberPortState",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteUser2RxTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The user wrapstate for the second user port has changed. ",
+				"This trap is sent only if the teUserWrap value is set to enabled for that slot.",
+				"This trap is sent to every management entity specified in the ",
+				"CLIGHTSystemTrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "remoteUser2RxTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==4) ? 3 : 4)"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "User wrap state on second remote port changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::remoteUser2RxTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceUserPort2State i 4",
+				"$SNMPTRAPCMD CityLight-MIB::remoteUser2RxTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceUserPort2State i 2"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::remoteUser2RxTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.56",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the remote second user port. This is either active",
+							"(carrying LAN frequency data) or inactive, not carrying LAN frequency data."
+						],
+						"enums" : {
+							"2" : "remoteCustomerPort2Up",
+							"3" : "remoteCustomerPort2Down",
+							"4" : "remoteCustomerPort2RemoteFault",
+							"5" : "remoteCUstomerPort2DownAndRemoteFault"
+						},
+						"name" : "CityLight-MIB::remoteIfaceUserPort2State",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteFibreATrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A alarm has been reported on fibre A of the remote card.",
+				"This trap is sent only if the teFiberWrap value is set to enabled.",
+				"This trap is sent to every management entity specified in the ",
+				"TrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "remoteFibreATrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Fiber A alarm on remote card. Port state is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::remoteFibreATrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceFiberPortState i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::remoteFibreATrap",
+				"oid" : "1.3.6.1.4.1.1671.0.57",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the fiber port, values are inserted, device correctly",
+							"attached or device not correctly attached at far end."
+						],
+						"enums" : {
+							"1" : "remoteNetworkPortUp",
+							"2" : "remoteNetworkPortDown",
+							"3" : "remoteNetworkPortRemoteFault"
+						},
+						"name" : "CityLight-MIB::remoteIfaceFiberPortState",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteFibreBTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A alarm has been reported on fibre B of the remote card.",
+				"This trap is sent only if the teFiberWrap value is set to enabled.",
+				"This trap is sent to every management entity specified in the ",
+				"TrapTable for that slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "remoteFibreBTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Fiber B alarm on remote card. Port state is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::remoteFibreBTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceFiberPortBState i 1",
+			"trap" : {
+				"name" : "CityLight-MIB::remoteFibreBTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.58",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the secondary fiber port, values are inserted, device correctly",
+							"attached or device not correctly attached at far end."
+						],
+						"enums" : {
+							"1" : "remoteNetworkPortBUp",
+							"3" : "remoteNetworkPortBDown",
+							"4" : "remoteNetworkPortBRemoteFault"
+						},
+						"name" : "CityLight-MIB::remoteIfaceFiberPortBState",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::remoteModuleFanTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A alarm has been reported on fan of a module.",
+				"This trap is available for the 2.5Gbps card."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "remoteModuleFanTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==255) ? 3 : 4)"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Remote module fan status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::remoteModuleFanTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceModuleFanStatus i 2",
+				"$SNMPTRAPCMD CityLight-MIB::remoteModuleFanTrap CityLight-MIB::remoteSlotIndex i 1 CityLight-MIB::remoteIfaceModuleFanStatus i 1"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::remoteModuleFanTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.59",
+				"variables" : [
+					{
+						"description" : [
+							"The index used to reference this element. This is effectively the",
+							"slot number in the chassis that this unit connects to."
+						],
+						"name" : "CityLight-MIB::remoteSlotIndex",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of the module fan."
+						],
+						"enums" : {
+							"1" : "remoteModuleFanOk",
+							"2" : "remoteModuleFanFailed",
+							"255" : "remoteModuleFanNotFitted"
+						},
+						"name" : "CityLight-MIB::remoteIfaceModuleFanStatus",
+						"oid" : "1.3.6.1.4.1.1671.2.3.1.1.30",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::systemPsuTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The PSU state has changed. This trap is sent only if the tePSUstate",
+				"value is set to enabled. This trap is sent to every management entity ",
+				"specified in the CLIGHTSystemTrapTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "systemPsuTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==4) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System PSU state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::systemPsuTrap CityLight-MIB::cLIGHTSystemPSUState i 3",
+				"$SNMPTRAPCMD CityLight-MIB::systemPsuTrap CityLight-MIB::cLIGHTSystemPSUState i 1"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::systemPsuTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.60",
+				"variables" : [
+					{
+						"description" : [
+							"This indicate the state of the redundant PSU.",
+							"Possible messages are:",
+							"localPSUsGood(1)",
+							"PSUs work normally; ",
+							"localPrimaryPSUFailed(2)",
+							"Main PSU has failed;",
+							"localSecondaryPSUFailed(3)",
+							"Secondary PSU has failed;",
+							"noLocalSecondaryPSUFitted(4)",
+							"No redundant PSU is fitted."
+						],
+						"enums" : {
+							"1" : "localPSUsGood",
+							"2" : "localPrimaryPSUFailed",
+							"3" : "localSecondaryPSUFailed",
+							"4" : "noLocalSecondaryPSUFitted"
+						},
+						"name" : "CityLight-MIB::cLIGHTSystemPSUState",
+						"oid" : "1.3.6.1.4.1.1671.2.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::systemTempTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Temperature state has changed. This trap is sent only if the",
+				"tePSUstate value is set to enabled. This trap is sent to every ",
+				"management entity specified in the CLIGHTSystemTrapTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "systemTempTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System temperature state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CityLight-MIB::systemTempTrap CityLight-MIB::cLIGHTSystemTemperature i 3",
+				"$SNMPTRAPCMD CityLight-MIB::systemTempTrap CityLight-MIB::cLIGHTSystemTemperature i 1"
+			],
+			"trap" : {
+				"name" : "CityLight-MIB::systemTempTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.61",
+				"variables" : [
+					{
+						"description" : [
+							"This indicate the temperature of the management chassis.",
+							"Possible messages are:",
+							"localTemperatureNormal(1)",
+							"Temperature is acceptable; ",
+							"localTemperatureHot(2)",
+							"The operating temperature within the chassis is too high;",
+							"localTemperatureCold(3)",
+							"The operating temperature within the chassis is too low."
+						],
+						"enums" : {
+							"1" : "localTemperatureNormal",
+							"2" : "localTemperatureHot",
+							"3" : "localTemperatureCold"
+						},
+						"name" : "CityLight-MIB::cLIGHTSystemTemperature",
+						"oid" : "1.3.6.1.4.1.1671.2.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CityLight-MIB::systemFanFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Fan fail reported. This trap is sent to every",
+				"management entity specified in the TrapTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "systemFanFailTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "System fan failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CityLight-MIB::systemFanFailTrap CityLight-MIB::cLIGHTSystemFanState i 2",
+			"trap" : {
+				"name" : "CityLight-MIB::systemFanFailTrap",
+				"oid" : "1.3.6.1.4.1.1671.0.62",
+				"variables" : [
+					{
+						"description" : [
+							"This indicate the state of the FAN.",
+							"Possible messages are:",
+							"localFanOk(1)",
+							"Fans work normally; ",
+							"localFanFailed(2)",
+							"Fan has failed."
+						],
+						"enums" : {
+							"1" : "localFanOk",
+							"2" : "localFanFailed"
+						},
+						"name" : "CityLight-MIB::cLIGHTSystemFanState",
+						"oid" : "1.3.6.1.4.1.1671.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

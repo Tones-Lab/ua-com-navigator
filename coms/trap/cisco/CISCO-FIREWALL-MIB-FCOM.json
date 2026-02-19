@@ -1,0 +1,376 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200512060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-FIREWALL-MIB::cfwSecurityNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is used for events involving security",
+				"events. The included objects provide more detailed ",
+				"information about the event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cfwSecurityNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'Fw security has detected $v2 : $v3' : 'Generic Fw security notification type $v2 has occured'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FIREWALL-MIB::cfwSecurityNotification CISCO-FIREWALL-MIB::cfwBasicEventTime s EXAMPLES CISCO-FIREWALL-MIB::cfwBasicSecurityEventType i 1 CISCO-FIREWALL-MIB::cfwBasicEventDescription s EXAMPLE CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-FIREWALL-MIB::cfwSecurityNotification",
+				"oid" : "1.3.6.1.4.1.9.9.147.2.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventTime",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "none",
+							"3" : "dos",
+							"4" : "recon",
+							"5" : "pakFwd",
+							"6" : "addrSpoof",
+							"7" : "svcSpoof",
+							"8" : "thirdParty",
+							"9" : "complete",
+							"10" : "invalPak",
+							"11" : "illegCom",
+							"12" : "policy"
+						},
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicSecurityEventType",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDescription",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.10",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-FIREWALL-MIB::cfwContentInspectNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is used to notify the NMS of content",
+				"inspection events. The included objects provide more",
+				"detailed information about the event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cfwContentInspectNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 == 2 || $v2 == 5) ? 0 : (($v2 == 3 || $v2 == 6) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'Fw content inspection indicated $v2 : $v3' : 'Fw content inspection indicated $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FIREWALL-MIB::cfwContentInspectNotification CISCO-FIREWALL-MIB::cfwBasicEventTime s EXAMPLES CISCO-FIREWALL-MIB::cfwBasicContentInspEventType i 1 CISCO-FIREWALL-MIB::cfwBasicEventDescription s EXAMPLE CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-FIREWALL-MIB::cfwContentInspectNotification",
+				"oid" : "1.3.6.1.4.1.9.9.147.2.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventTime",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "okay",
+							"3" : "error",
+							"4" : "found",
+							"5" : "clean",
+							"6" : "reject",
+							"7" : "saved"
+						},
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicContentInspEventType",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDescription",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.10",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-FIREWALL-MIB::cfwConnNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is used to notify the NMS of ",
+				"connection-oriented events. The included objects provide ",
+				"more detailed information about the event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cfwConnNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 == 2) ? 0 : (($v2 >= 3) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'Fw connection-oriented event $v2 has occured : $v3' : 'Fw connection-oriented event $v2 has occured'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FIREWALL-MIB::cfwConnNotification CISCO-FIREWALL-MIB::cfwBasicEventTime s EXAMPLES CISCO-FIREWALL-MIB::cfwBasicConnectionEventType i 1 CISCO-FIREWALL-MIB::cfwBasicEventDescription s EXAMPLE CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-FIREWALL-MIB::cfwConnNotification",
+				"oid" : "1.3.6.1.4.1.9.9.147.2.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventTime",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "accept",
+							"3" : "error",
+							"4" : "drop",
+							"5" : "close",
+							"6" : "timeout",
+							"7" : "refused",
+							"8" : "reset",
+							"9" : "noResp"
+						},
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicConnectionEventType",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDescription",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.10",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-FIREWALL-MIB::cfwAccessNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is used to notify the NMS of access ",
+				"events. The included objects provide more detailed ",
+				"information about the event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cfwAccessNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'Fw access notification $v2 has occured : $v3' : 'Fw access notification $v2 has occured'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FIREWALL-MIB::cfwAccessNotification CISCO-FIREWALL-MIB::cfwBasicEventTime s EXAMPLES CISCO-FIREWALL-MIB::cfwBasicAccessEventType i 1 CISCO-FIREWALL-MIB::cfwBasicEventDescription s EXAMPLE CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-FIREWALL-MIB::cfwAccessNotification",
+				"oid" : "1.3.6.1.4.1.9.9.147.2.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventTime",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "grant",
+							"3" : "deny",
+							"4" : "denyMult",
+							"5" : "error"
+						},
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicAccessEventType",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDescription",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.10",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-FIREWALL-MIB::cfwAuthNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is used to notify the NMS of ",
+				"authentication events. The included objects provide ",
+				"more detailed information about the event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cfwAuthNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 == 2) ? 0 : (($v2 >= 3) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'Fw authentication event type $v2 has occured : $v3' : 'Fw authentication event type $v2 has occured'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FIREWALL-MIB::cfwAuthNotification CISCO-FIREWALL-MIB::cfwBasicEventTime s EXAMPLES CISCO-FIREWALL-MIB::cfwBasicAuthenticationEventType i 1 CISCO-FIREWALL-MIB::cfwBasicEventDescription s EXAMPLE CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-FIREWALL-MIB::cfwAuthNotification",
+				"oid" : "1.3.6.1.4.1.9.9.147.2.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventTime",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "succ",
+							"3" : "error",
+							"4" : "fail",
+							"5" : "succPriv",
+							"6" : "failPriv",
+							"7" : "failMult"
+						},
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicAuthenticationEventType",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDescription",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.10",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-FIREWALL-MIB::cfwGenericNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is used to notify the NMS of events",
+				"that do not fall into the other categories. The included ",
+				"objects provide more detailed information about the event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cfwGenericNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 == 2) ? 0 : (($v2 == 3) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? 'Generic fw notification of $v2 has occured : $v3' : 'Generic fw notification of $v2 has occured'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-FIREWALL-MIB::cfwGenericNotification CISCO-FIREWALL-MIB::cfwBasicEventTime s EXAMPLES CISCO-FIREWALL-MIB::cfwBasicGenericEventType i 1 CISCO-FIREWALL-MIB::cfwBasicEventDescription s EXAMPLE CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "CISCO-FIREWALL-MIB::cfwGenericNotification",
+				"oid" : "1.3.6.1.4.1.9.9.147.2.0.7",
+				"variables" : [
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventTime",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "abnormal",
+							"2" : "okay",
+							"3" : "error"
+						},
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicGenericEventType",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDescription",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-FIREWALL-MIB::cfwBasicEventDetailsTableRow",
+						"oid" : "1.3.6.1.4.1.9.9.147.1.1.1.2.1.10",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		}
+	]
+}

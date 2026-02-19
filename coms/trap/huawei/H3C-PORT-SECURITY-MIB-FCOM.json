@@ -1,0 +1,675 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200411240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "H3C-PORT-SECURITY-MIB::h3cSecureAddressLearned",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a new station has been learned. The",
+				"port on which the address was received is the first object",
+				"and the MAC address of the learned station is in the second object."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSecureAddressLearned",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "New secure MAC address learned on port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-PORT-SECURITY-MIB::h3cSecureAddressLearned RFC1213-MIB::ifIndex i 9999 H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC s EXAMPL",
+			"trap" : {
+				"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddressLearned",
+				"oid" : "1.3.6.1.4.1.2011.10.2.26.1.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of a station assigned to this port.",
+							"This is the second index into the h3cSecureAddressTable."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "H3C-PORT-SECURITY-MIB::h3cSecureViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever a security violation has occurred.",
+				"The port on which the violation occured is the first object",
+				"and the MAC address of the offending station is in the second object.",
+				"ifAdminStatus indicates if the port has been disabled because of the violation.",
+				"The implementation may not send violation traps from the same port",
+				"at intervals of less than 5 seconds."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSecureViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Security violation detected on port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-PORT-SECURITY-MIB::h3cSecureViolation RFC1213-MIB::ifIndex i 9999 H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC s EXAMPL RFC1213-MIB::ifAdminStatus i 1",
+			"trap" : {
+				"name" : "H3C-PORT-SECURITY-MIB::h3cSecureViolation",
+				"oid" : "1.3.6.1.4.1.2011.10.2.26.1.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of a station assigned to this port.",
+							"This is the second index into the h3cSecureAddressTable."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The desired state of the interface. The testing(3) state",
+							"indicates that no operational packets can be passed. When a",
+							"managed system initializes, all interfaces start with",
+							"ifAdminStatus in the down(2) state. As a result of either",
+							"explicit management action or per configuration information",
+							"retained by the managed system, ifAdminStatus is then",
+							"changed to either the up(1) or testing(3) states (or remains",
+							"in the down(2) state)."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing"
+						},
+						"name" : "RFC1213-MIB::ifAdminStatus",
+						"oid" : "1.3.6.1.2.1.2.2.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "H3C-PORT-SECURITY-MIB::h3cSecureLoginFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever a user network access",
+				"authentication has failed. The port on which the violation occured is",
+				"the first object, and the MAC address of the offending station is in",
+				"the second object. The dot1xAuthSessionUserName is the identity supplied",
+				"during the user authentication."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSecureLoginFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "User $v3 dot1x authentication failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-PORT-SECURITY-MIB::h3cSecureLoginFailure RFC1213-MIB::ifIndex i 9999 H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC s EXAMPL IEEE8021-PAE-MIB::dot1xAuthSessionUserName s EXAMPLE",
+			"trap" : {
+				"name" : "H3C-PORT-SECURITY-MIB::h3cSecureLoginFailure",
+				"oid" : "1.3.6.1.4.1.2011.10.2.26.1.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of a station assigned to this port.",
+							"This is the second index into the h3cSecureAddressTable."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The User-Name representing the identity of the",
+							"Supplicant PAE."
+						],
+						"name" : "IEEE8021-PAE-MIB::dot1xAuthSessionUserName",
+						"oid" : "1.0.8802.1.1.1.1.2.4.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "H3C-PORT-SECURITY-MIB::h3cSecureLogon",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a new session is started for",
+				"an authorised port user. The port on which the violation occured is",
+				"the first object, and the MAC address of the offending station is in",
+				"the second object.",
+				"The dot1xAuthSessionUserName is the identity supplied during the user",
+				"authentication. The dot1xAuthSessionAuthenticMethod indicates how the",
+				"user was authorised. The h3cSecurePortVlanMembershipList object",
+				"identifies the VLAN membership assigned to the port on session",
+				"activation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSecureLogon",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "New session started for authorised port user $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-PORT-SECURITY-MIB::h3cSecureLogon RFC1213-MIB::ifIndex i 9999 H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC s EXAMPL IEEE8021-PAE-MIB::dot1xAuthSessionUserName s EXAMPLE IEEE8021-PAE-MIB::dot1xAuthSessionAuthenticMethod i 1 H3C-PORT-SECURITY-MIB::h3cSecurePortVlanMembershipList s EXAMPLE",
+			"trap" : {
+				"name" : "H3C-PORT-SECURITY-MIB::h3cSecureLogon",
+				"oid" : "1.3.6.1.4.1.2011.10.2.26.1.3.4",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of a station assigned to this port.",
+							"This is the second index into the h3cSecureAddressTable."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The User-Name representing the identity of the",
+							"Supplicant PAE."
+						],
+						"name" : "IEEE8021-PAE-MIB::dot1xAuthSessionUserName",
+						"oid" : "1.0.8802.1.1.1.1.2.4.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The authentication method used to establish the",
+							"session."
+						],
+						"enums" : {
+							"1" : "remoteAuthServer",
+							"2" : "localAuthServer"
+						},
+						"name" : "IEEE8021-PAE-MIB::dot1xAuthSessionAuthenticMethod",
+						"oid" : "1.0.8802.1.1.1.1.2.4.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a dummy MIB object referenced by the h3csecureLogon and",
+							"h3csecureLogoff traps. This object contains a comma separated list of",
+							"the VLAN identifiers (0-4095) assigned to a port. A tagged VLAN has a",
+							"'T' suffix after the VLAN number and an untagged VLAN may have an",
+							"optional 'U' suffix."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecurePortVlanMembershipList",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "H3C-PORT-SECURITY-MIB::h3cSecureLogoff",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a user session is terminated.",
+				"The port on which the violation occured is the first object",
+				"and the MAC address of the offending station is in the second object.",
+				"The dot1xAuthSessionUserName is the identity supplied during the user",
+				"authentication. The dot1xAuthSessionTerminateCause indicates the",
+				"reason why the session was terminated.",
+				"The h3cSecurePortVlanMembershipList object identifies the VLAN",
+				"membership assigned to the port on session termination."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSecureLogoff",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "User $v3 session terminated due to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-PORT-SECURITY-MIB::h3cSecureLogoff RFC1213-MIB::ifIndex i 9999 H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC s EXAMPL IEEE8021-PAE-MIB::dot1xAuthSessionUserName s EXAMPLE IEEE8021-PAE-MIB::dot1xAuthSessionTerminateCause i 1 H3C-PORT-SECURITY-MIB::h3cSecurePortVlanMembershipList s EXAMPLE",
+			"trap" : {
+				"name" : "H3C-PORT-SECURITY-MIB::h3cSecureLogoff",
+				"oid" : "1.3.6.1.4.1.2011.10.2.26.1.3.5",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of a station assigned to this port.",
+							"This is the second index into the h3cSecureAddressTable."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The User-Name representing the identity of the",
+							"Supplicant PAE."
+						],
+						"name" : "IEEE8021-PAE-MIB::dot1xAuthSessionUserName",
+						"oid" : "1.0.8802.1.1.1.1.2.4.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The reason for the session termination."
+						],
+						"enums" : {
+							"1" : "supplicantLogoff",
+							"2" : "portFailure",
+							"3" : "supplicantRestart",
+							"4" : "reauthFailed",
+							"5" : "authControlForceUnauth",
+							"6" : "portReInit",
+							"7" : "portAdminDisabled",
+							"999" : "notTerminatedYet"
+						},
+						"name" : "IEEE8021-PAE-MIB::dot1xAuthSessionTerminateCause",
+						"oid" : "1.0.8802.1.1.1.1.2.4.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a dummy MIB object referenced by the h3csecureLogon and",
+							"h3csecureLogoff traps. This object contains a comma separated list of",
+							"the VLAN identifiers (0-4095) assigned to a port. A tagged VLAN has a",
+							"'T' suffix after the VLAN number and an untagged VLAN may have an",
+							"optional 'U' suffix."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecurePortVlanMembershipList",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmLoginFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever a user network access",
+				"authentication has failed. The port on which the violation",
+				"occured is the first object, and the MAC address of the",
+				"offending station is in the second object. The authentication mode",
+				"indicates how the user was authorised. The h3cSecureRalmAuthUsername",
+				"is the identity supplied during the user authentication."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSecureRalmLoginFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "User $v4 realm-based authentication failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-PORT-SECURITY-MIB::h3cSecureRalmLoginFailure RFC1213-MIB::ifIndex i 9999 H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC s EXAMPL H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthMode i 1 H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthUsername s EXAMPLE",
+			"trap" : {
+				"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmLoginFailure",
+				"oid" : "1.3.6.1.4.1.2011.10.2.26.1.3.6",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of a station assigned to this port.",
+							"This is the second index into the h3cSecureAddressTable."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This controls how MAC addresses are authenticated.",
+							"papUsernameAsMacAddress(1)",
+							"Authentication uses the RADIUS server by",
+							"sending a PAP request with Username and",
+							"Password both equal to the MAC address being",
+							"authenticated. This is the default.",
+							"papUsernameFixed(2)",
+							"Authentication uses the RADIUS server by",
+							"sending a PAP request with Username and",
+							"Password coming from the h3cSecureRalmAuthUsername and",
+							"h3cSecureRalmAuthPassword MIB objects. In this mode",
+							"the RADIUS server would normally take into account",
+							"the request's calling-station-id attribute, which is",
+							"the MAC address of the host being authenticated."
+						],
+						"enums" : {
+							"1" : "papUsernameAsMacAddress",
+							"2" : "papUsernameFixed"
+						},
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthMode",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.4.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the username used for authentication requests",
+							"where h3cSecureRalmAuthMode is papUsernameFixed.",
+							"Default shall be 'mac'."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthUsername",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.4.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmLogon",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a new session is started for",
+				"an authorised port user. The port on which the violation",
+				"occured is the first object, and the MAC address of",
+				"the offending station is in the second object. The authentication mode",
+				"indicates how the user was authorised. The h3cSecureRalmAuthUsername is",
+				"the identity supplied during the user authentication. The",
+				"h3cSecurePortVlanMembershipList object identifies the VLAN",
+				"membership assigned to the port on session activation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSecureRalmLogon",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "New session started for authorised port user $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-PORT-SECURITY-MIB::h3cSecureRalmLogon RFC1213-MIB::ifIndex i 9999 H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC s EXAMPL H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthMode i 1 H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthUsername s EXAMPLE H3C-PORT-SECURITY-MIB::h3cSecurePortVlanMembershipList s EXAMPLE",
+			"trap" : {
+				"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmLogon",
+				"oid" : "1.3.6.1.4.1.2011.10.2.26.1.3.7",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of a station assigned to this port.",
+							"This is the second index into the h3cSecureAddressTable."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This controls how MAC addresses are authenticated.",
+							"papUsernameAsMacAddress(1)",
+							"Authentication uses the RADIUS server by",
+							"sending a PAP request with Username and",
+							"Password both equal to the MAC address being",
+							"authenticated. This is the default.",
+							"papUsernameFixed(2)",
+							"Authentication uses the RADIUS server by",
+							"sending a PAP request with Username and",
+							"Password coming from the h3cSecureRalmAuthUsername and",
+							"h3cSecureRalmAuthPassword MIB objects. In this mode",
+							"the RADIUS server would normally take into account",
+							"the request's calling-station-id attribute, which is",
+							"the MAC address of the host being authenticated."
+						],
+						"enums" : {
+							"1" : "papUsernameAsMacAddress",
+							"2" : "papUsernameFixed"
+						},
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthMode",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.4.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the username used for authentication requests",
+							"where h3cSecureRalmAuthMode is papUsernameFixed.",
+							"Default shall be 'mac'."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthUsername",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.4.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is a dummy MIB object referenced by the h3csecureLogon and",
+							"h3csecureLogoff traps. This object contains a comma separated list of",
+							"the VLAN identifiers (0-4095) assigned to a port. A tagged VLAN has a",
+							"'T' suffix after the VLAN number and an untagged VLAN may have an",
+							"optional 'U' suffix."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecurePortVlanMembershipList",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmLogoff",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a new session is started for",
+				"an authorised port user. The port on which the violation",
+				"occured is the first object, and the MAC address of the",
+				"offending station is in the second object. The authentication mode",
+				"indicates how the user was authorised. The h3cSecureRalmAuthUsername is",
+				"the identity supplied during the user authentication. The",
+				"h3cSecurePortVlanMembershipList object identifies the VLAN",
+				"membership assigned to the port on session activation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cSecureRalmLogoff",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "User $v4 session terminated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-PORT-SECURITY-MIB::h3cSecureRalmLogoff RFC1213-MIB::ifIndex i 9999 H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC s EXAMPL H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthMode i 1 H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthUsername s EXAMPLE H3C-PORT-SECURITY-MIB::h3cSecurePortVlanMembershipList s EXAMPLE",
+			"trap" : {
+				"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmLogoff",
+				"oid" : "1.3.6.1.4.1.2011.10.2.26.1.3.8",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "RFC1213-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of a station assigned to this port.",
+							"This is the second index into the h3cSecureAddressTable."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureAddrMAC",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This controls how MAC addresses are authenticated.",
+							"papUsernameAsMacAddress(1)",
+							"Authentication uses the RADIUS server by",
+							"sending a PAP request with Username and",
+							"Password both equal to the MAC address being",
+							"authenticated. This is the default.",
+							"papUsernameFixed(2)",
+							"Authentication uses the RADIUS server by",
+							"sending a PAP request with Username and",
+							"Password coming from the h3cSecureRalmAuthUsername and",
+							"h3cSecureRalmAuthPassword MIB objects. In this mode",
+							"the RADIUS server would normally take into account",
+							"the request's calling-station-id attribute, which is",
+							"the MAC address of the host being authenticated."
+						],
+						"enums" : {
+							"1" : "papUsernameAsMacAddress",
+							"2" : "papUsernameFixed"
+						},
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthMode",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.4.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the username used for authentication requests",
+							"where h3cSecureRalmAuthMode is papUsernameFixed.",
+							"Default shall be 'mac'."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecureRalmAuthUsername",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.4.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is a dummy MIB object referenced by the h3csecureLogon and",
+							"h3csecureLogoff traps. This object contains a comma separated list of",
+							"the VLAN identifiers (0-4095) assigned to a port. A tagged VLAN has a",
+							"'T' suffix after the VLAN number and an untagged VLAN may have an",
+							"optional 'U' suffix."
+						],
+						"name" : "H3C-PORT-SECURITY-MIB::h3cSecurePortVlanMembershipList",
+						"oid" : "1.3.6.1.4.1.2011.10.2.26.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

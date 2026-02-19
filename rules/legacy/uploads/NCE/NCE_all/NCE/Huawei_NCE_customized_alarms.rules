@@ -1,0 +1,149 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝
+#
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+# 2025-11-27: Martin Aigner, Initial deployment
+#
+# ------------------------------------------------------------------------------------------------------------- #
+#---------------------------------------------------------------------------------------------------------
+# Description: Customized Event rules for Rules which can't be covered by GPL or are general for this EMS
+#---------------------------------------------------------------------------------------------------------
+
+my $rulesfile = "Huawei_NCE_customized_alarms.rules";
+$Log->Message('DEBUG', "Executing: " . $rulesfile);
+
+
+# https://jira.three.com/browse/OSST1-1079, implemented by majewsma on 13.11.2018
+# 16.02.2021 aignerma: OSS-1718 update default MsgGroup and added Link UP alarms (in order to set right MsgGroup)
+# Link Down alarm (alarmID 3) 
+# Overlow Output Power of Optical Module (ID: 3067695)
+# Overlow Input Power of Optical Module (ID: 3067697)
+# Input rate alarm notification (ID: 1103104)
+# Output rate alarm notification (ID: 1103106)
+
+# 06.10.2022 aignerma WO0000000091264 rule updated
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 3067697	Overlow Input Power of Optical Module
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 1103104	Input rate alarm notification
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 1103106	Output rate alarm notification
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 3067695	Overlow Output Power of Optical Module
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 3		Link Down
+
+if ($Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 3067697" or
+    $Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 1103104" or
+    $Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 1103106" or
+    $Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 3067695" or
+    $Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 3" ) {
+    
+    $Event->{MsgGroup} = "PSCoreIP";
+    $Event->{Severity} = 3;
+
+	if ($hwNmNorthboundObjectInstance =~ /If\sAlias=#(\S+)#/) {
+        my $if_alias = $1;
+        if (exists $huawei_nce_lookup_interface{$if_alias}) {
+            $Event->{'MsgGroup'} = $huawei_nce_lookup_interface{$if_alias}{'MsgGroup'};
+            $Event->{'Severity'} = $huawei_nce_lookup_interface{$if_alias}{'Severity'};
+            if ($huawei_nce_lookup_interface{$if_alias}{'Suppress'} eq 'yes')
+            {
+                LibUtil_AddSuppression($Event,"Hidden from NOC","Rules", 0,"huawei_nce_lookup_interface", $rulesfile);
+            }
+		}
+
+	}
+
+	if ($Event->{EventCategory} eq "1") {
+		$Event->{Severity} = 0;
+	}
+}
+
+# as the backoffice team has no test system for Huawei NCE
+# test nodes are implemented in the live system and need to get suppressed for NOC
+if (($hwNmNorthboundObjectInstance =~ /TEST/) || ($hwNmNorthboundObjectInstance =~ /TestBed|TEST|test|Test|LAB/)) {
+	LibUtil_AddSuppression($Event,"Hidden from NOC","Rules", 0,"TestBed|TEST|test|Test|LAB", $rulesfile);  #@SuppressEscl = 20
+}
+
+# WO0000000070525, Tomanec Martin, 2020-08-11
+# Suppress specific Alarms from specific NEs
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 333 	CLK_NO_TRACE_MODE
+if($Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 333") {
+    if ($hwNmNorthboundNEName !~ /^(18|98)H/) {
+		LibUtil_AddSuppression($Event,"Hidden from NOC","Rules", 0,"WO0000000070525 CLK_NO_TRACE_MODE on ^(18|98)H", $rulesfile);  #@SuppressEscl = 20
+	}
+}
+
+#16.02.2021 aignerma: OSS-1718 Change MsgGroup for Core Devices
+if (exists $huawei_nce_lookup_IP_Core_Devices{$Event->{Node}}) {
+    $tmp_IP = $huawei_nce_lookup_IP_Core_Devices{$Event->{Node}}{'IP'};
+    $tmp_Type 		 = $huawei_nce_lookup_IP_Core_Devices{$Event->{Node}}{'Type'};
+    $tmp_found = $huawei_nce_lookup_IP_Core_Devices{$Event->{Node}}{'Found'};
+    if ( $tmp_found eq "yes" ) {
+        $Event->{MsgGroup} = "PSCoreIP";
+        $Event->{Severity} = 4;
+        if ($Event->{EventCategory} eq "1") {
+            $Event->{Severity} = 0;
+        }
+	}
+}
+
+
+#--------------------------------------------------------------------------------------------
+# https://jira.three.com/browse/OSS-2378
+# 2022-01-12, lavickm2, assign BNGs/NE40 to OPS-CIMT so the alarms are not visible for NOC
+#--------------------------------------------------------------------------------------------
+if($hwNmNorthboundNEName eq "40H190132A99" ||
+	$hwNmNorthboundNEName eq "40H400069B99" ||
+	$hwNmNorthboundNEName eq "40H700156A99" ||
+	$hwNmNorthboundNEName eq "40H800059A99" ||
+	$hwNmNorthboundAdditionalInfo =~ /_CIMT/ ) {
+	$Event->{MsgGroup} = "OPS-CIMT";
+    LibUtil_SetAdditionalInfo($Event,"MsgGroup NE40", "Assigned to MsgGroup OPS-CIMT due to JiraStory OSS-2378 & CRQ000000109031");
+}
+
+# 2024-12-06, lavickm2, Extension of _CIMT rule, Mail conversation "NCE: Device Status Down ... mh91", confirmed by Bauer Wolfgang 2024-12-06
+# All "Device Down" Alarms from EMS	$Event->{HelpKey} = .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 7
+# and $hwNmNorthboundNEType like ATN910%
+# and $hwNmNorthboundNEName like mh91%
+if($Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 7" &&
+	$hwNmNorthboundNEType =~ /^ATN910.*/ &&
+	$hwNmNorthboundNEName =~ /^mh91.*/) {
+
+	$Event->{MsgGroup} = "OPS-CIMT";
+    LibUtil_SetAdditionalInfo($Event,"MsgGroup Update", "All 'Device Down' from ATN910/mh91* devices are assigned to OPS-CIMT");
+}
+
+# 19.10.2022 Suppress "Link Down","Bgp Peer Backward Transition" and "BGP Status Changed" alarms due to high amount of alarms - see email
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 3		Link Down
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 2500872	Interface Flow Down
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 104 - 1100476	BGP Status Changed
+# .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 104 - 2600148	Bgp Peer Backward Transition
+if ($Event->{MsgGroup} eq "OPS-CIMT" and int($Event->{EventCategory}) == 2 and
+      (
+	$Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 3" or
+	$Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 101 - 2500872" or
+	$Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 104 - 1100476" or
+	$Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 104 - 2600148"
+      )
+    ) {
+    	LibUtil_AddSuppression($Event,"LogOnly","Rules", 0,"Huawei_NCE_hwNmNorthboundEventTrap", $rulesfile);  #@SuppressEscl = 23
+}
+
+# 2024-06-19, lavickm2, A6J6-1976, Assigne ETH_LOS alarms with %K200% information to OPS-AN-Transmission
+# HelpKey       .1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 235      ETH_LOS
+if($Event->{HelpKey} eq "1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 235" and $Event->{AlarmCategorization2} =~ /K200/) {
+	$Event->{MsgGroup} = "OPS-AN-Transmission";
+    LibUtil_SetAdditionalInfo($Event,"Info2", "Assigned to MsgGroup OPS-AN-Transmission due to JiraStory A6J6-1976");
+}
+$Log->Message('DEBUG', $rulesfile . " ...done");

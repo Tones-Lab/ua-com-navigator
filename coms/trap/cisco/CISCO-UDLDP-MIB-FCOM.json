@@ -1,0 +1,184 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200911090900Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-UDLDP-MIB::cudldpFastHelloLinkFailRptNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when UDLDP detects",
+				"a link failure on a fast hello UDLD link and the value of",
+				"cudldpFastHelloErrorReportEnable is 'true'. ifName ",
+				"identifies the interface where the link failure is ",
+				"detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cudldpFastHelloLinkFailRptNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifName:$v1",
+				"Summary" : "UDLD fast hello link failed on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-UDLDP-MIB::cudldpFastHelloLinkFailRptNotification IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-UDLDP-MIB::cudldpFastHelloLinkFailRptNotification",
+				"oid" : "1.3.6.1.4.1.9.9.118.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-UDLDP-MIB::cudldpFastHelloStatusChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when there is a change",
+				"in the value of cudldpIfFastHelloOperStatus object.",
+				"cudldpHelloInterval provides the hello interval configured",
+				"at the device level. cudldpIfFastHelloInterval provides",
+				"the fast hello interval configured at the interface level.",
+				"cudldpIfOperHelloInterval indicates the hello interval",
+				"that is currently operational at this interface.",
+				"cudldpIfFastHelloOperStatus indicates the operational",
+				"status of UDLD fast hello at this interface. ifName ",
+				"identifies the interface that trigger the generation of",
+				"this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 1 : 2"
+				},
+				"EventType" : "cudldpFastHelloStatusChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 0 : 4"
+				},
+				"SubNode" : "ifName:$v5",
+				"Summary" : "UDLDP fast hello is $v4 on $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-UDLDP-MIB::cudldpFastHelloStatusChangeNotification CISCO-UDLDP-MIB::cudldpHelloInterval i 7 CISCO-UDLDP-MIB::cudldpIfFastHelloInterval u 9999 CISCO-UDLDP-MIB::cudldpIfOperHelloInterval u 9999 CISCO-UDLDP-MIB::cudldpIfFastHelloOperStatus i 1 IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-UDLDP-MIB::cudldpFastHelloStatusChangeNotification",
+				"oid" : "1.3.6.1.4.1.9.9.118.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates interval in seconds at which each port",
+							"sends a hello packet to all of its neighbors at",
+							"steady state when the link has been identified as",
+							"bidirectional.",
+							"",
+							"For platforms which support cudldpHelloIntervalExt, when ",
+							"cudldpHelloIntervalExt reports a value less than the ",
+							"minimum value reportable by cudldpHelloInterval, then ",
+							"cudldpHelloInterval should report its minimum value of 7."
+						],
+						"name" : "CISCO-UDLDP-MIB::cudldpHelloInterval",
+						"oid" : "1.3.6.1.4.1.9.9.118.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies the fast hello interval at ",
+							"which each port sends a hello packet to all of its ",
+							"neighbors at steady state. By setting this object to ",
+							"a positive value, this interface is enabled to send",
+							"UDLD hello packet at a fast interval as specified by",
+							"this object value. ",
+							"",
+							"Setting this object to zero value, this interface is ",
+							"disabled to send UDLD hello packet at fast interval.",
+							"Instead, the interface will send the UDLD hello packet",
+							"at the interval as specified by cudldpHelloInterval object",
+							"(or cudldpHelloIntervalExt if a platform supports",
+							"cudldpHelloIntervalExt)."
+						],
+						"name" : "CISCO-UDLDP-MIB::cudldpIfFastHelloInterval",
+						"oid" : "1.3.6.1.4.1.9.9.118.1.2.1.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the operational interval value",
+							"at which each port sends a hello packet to all of its ",
+							"neighbors at steady state."
+						],
+						"name" : "CISCO-UDLDP-MIB::cudldpIfOperHelloInterval",
+						"oid" : "1.3.6.1.4.1.9.9.118.1.2.1.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object indicates the operational status of",
+							"fast hello UDLD at this interface."
+						],
+						"enums" : {
+							"1" : "operational",
+							"2" : "notOperational"
+						},
+						"name" : "CISCO-UDLDP-MIB::cudldpIfFastHelloOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.118.1.2.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The textual name of the interface. The value of this",
+							"object should be the name of the interface as assigned by",
+							"the local device and should be suitable for use in commands",
+							"entered at the device's `console'. This might be a text",
+							"name, such as `le0' or a simple port number, such as `1'",
+							"depending on the interface naming syntax of the device. If",
+							"several entries in the ifTable together represent a single",
+							"interface as named by the device, then each will have the",
+							"same value of ifName. Note that for an agent which responds",
+							"to SNMP queries concerning an interface on some other",
+							"(proxied) device, then the value of ifName for such an",
+							"interface is the proxied device's local name for it.",
+							"",
+							"If there is no local name, or this object is otherwise not",
+							"applicable, then this object contains a zero-length string."
+						],
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

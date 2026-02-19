@@ -1,0 +1,209 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "LUM-SOFTWARE-MIB::softwareResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Sent when the software upgrade",
+				"operation changes state.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : ($v3==3) ? 2 : 3"
+				},
+				"EventType" : "softwareResultTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==2 || $v3==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : ($v3==3) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3==2 || $v3==3) ? 'Software upgrade state: $v1. Result: $v3. $v4' : 'Software upgrade state: $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LUM-SOFTWARE-MIB::softwareResultTrap LUM-SOFTWARE-MIB::softwareCommandOperationState i 1 LUM-SOFTWARE-MIB::softwareCommandProgressMax u 9999 LUM-SOFTWARE-MIB::softwareCommandResult i 1 LUM-SOFTWARE-MIB::softwareCommandEnmState i 1 LUM-SOFTWARE-MIB::softwareCommandErrorCount u 9999 LUM-SOFTWARE-MIB::softwareCommandProgressCounter u 9999 LUM-SOFTWARE-MIB::softwareCommandNewPassword u 0 LUM-SOFTWARE-MIB::softwareCommandClientOperationId u 0",
+			"trap" : {
+				"name" : "LUM-SOFTWARE-MIB::softwareResultTrap",
+				"oid" : "1.3.6.1.4.1.8708.2.28.2.5.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"State to show the progress of the operation.",
+							"",
+							"idle - when no operation is in progress.",
+							"",
+							"pending - operation is ordered but will start later",
+							"",
+							"cleaning - cleaning all boards.",
+							"",
+							"checking - checking which SW packages that need to be",
+							"downloaded.",
+							"",
+							"downloading - downloading SW packages from server.",
+							"",
+							"installing - distributing and unpacking packages within",
+							"the node.",
+							"",
+							"preparing - performing a test activate",
+							"",
+							"activating - activating all SW packages.",
+							"",
+							"installingFs - distributing and unpacking filesystem.",
+							"",
+							"reverting - reverting to executing",
+							"",
+							"rebooting - ordering reboot to all nodes."
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "pending",
+							"3" : "cleaning",
+							"4" : "checking",
+							"5" : "downloading",
+							"6" : "installing",
+							"7" : "preparing",
+							"8" : "activating",
+							"9" : "installingFs",
+							"10" : "reverting",
+							"11" : "rebooting"
+						},
+						"name" : "LUM-SOFTWARE-MIB::softwareCommandOperationState",
+						"oid" : "1.3.6.1.4.1.8708.2.28.2.3.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Show the maximum value of the progressCounter"
+						],
+						"name" : "LUM-SOFTWARE-MIB::softwareCommandProgressMax",
+						"oid" : "1.3.6.1.4.1.8708.2.28.2.3.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The result of the operation",
+							"",
+							"none - no result",
+							"",
+							"success - the latest operation was successful.",
+							"",
+							"failed - the latest operation failed."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "success",
+							"3" : "failed"
+						},
+						"name" : "LUM-SOFTWARE-MIB::softwareCommandResult",
+						"oid" : "1.3.6.1.4.1.8708.2.28.2.3.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"",
+							"Only applicable if result != none.",
+							"",
+							"none - no state",
+							"",
+							"upToDate - no upgrade needed",
+							"",
+							"rebootNeeded - all software is activated, but reboot of",
+							"some boards are required",
+							"",
+							"activateNeeded - all software is installed, but activation of",
+							"new software required",
+							"",
+							"upgradeNeeded - installation of new software required",
+							"",
+							"done - the new software is installed and activated",
+							"and, the updated board are rebooted.",
+							"",
+							"filesNeeded - Software for all boards currently installed",
+							"in the node is up to date. filesNeeded",
+							"indicates that a software download might be",
+							"needed for a board that is added or",
+							"replaced.",
+							"",
+							"upgradeWithoutRebootNeeded - This state shows that the node already runs on",
+							"on the software stated in enm-spec. To update",
+							"the enm-spec although, an upgrade without reboot",
+							"is needed.",
+							"",
+							"removeBoardNeeded - This state shows that the node contains a board",
+							"that is too old to upgrade. The board must be",
+							"removed."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "upToDate",
+							"3" : "rebootNeeded",
+							"4" : "activateNeeded",
+							"5" : "upgradeNeeded",
+							"6" : "done",
+							"7" : "filesNeeded",
+							"8" : "upgradeWithoutRebootNeeded",
+							"9" : "removeBoardNeeded"
+						},
+						"name" : "LUM-SOFTWARE-MIB::softwareCommandEnmState",
+						"oid" : "1.3.6.1.4.1.8708.2.28.2.3.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Shows the number of minor erros encountered."
+						],
+						"name" : "LUM-SOFTWARE-MIB::softwareCommandErrorCount",
+						"oid" : "1.3.6.1.4.1.8708.2.28.2.3.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Shows the progress of the ongoing",
+							"ENM upgrade."
+						],
+						"name" : "LUM-SOFTWARE-MIB::softwareCommandProgressCounter",
+						"oid" : "1.3.6.1.4.1.8708.2.28.2.3.15",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This is a secret, write-only, parameter.",
+							"",
+							"This is set in the same multi-set as testAndIncr",
+							"and will be used as the client password to the",
+							"transaction.",
+							"",
+							"It must be supplied in all operations in",
+							"'passwd'."
+						],
+						"name" : "LUM-SOFTWARE-MIB::softwareCommandNewPassword",
+						"oid" : "1.3.6.1.4.1.8708.2.28.2.3.16",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This value is set by the SNMP client",
+							"for each operation. The value is",
+							"sent back in the traps generated",
+							"by the operation."
+						],
+						"name" : "LUM-SOFTWARE-MIB::softwareCommandClientOperationId",
+						"oid" : "1.3.6.1.4.1.8708.2.28.2.3.20",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

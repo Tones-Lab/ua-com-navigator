@@ -1,0 +1,104 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200901060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ADTRAN-AOS-VQM::adVQMEndOfCallTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the severity level has been met at the",
+				"end of a call to generate a trap. Enable this trap using",
+				"adVqmTrapState. The severity level, by default, is set to warning.",
+				"Use adVqmTrapCfgSeverityLevel to change the severity level setting."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "adVQMEndOfCallTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "VQM threshold(s) exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ADTRAN-AOS-VQM::adVQMEndOfCallTrap ADTRAN-AOS-VQM::adVqmTrapEventType b 0 ADTRAN-AOS-VQM::adVqmCallHistMosLq i 100 ADTRAN-AOS-VQM::adVqmCallHistMosPq i 100 ADTRAN-AOS-VQM::adVqmCallHistPktsLostTotal c 9999 ADTRAN-AOS-VQM::adVqmCallHistOutOfOrder c 9999 ADTRAN-AOS-VQM::adVqmCallHistPdvAverageMs u 9999",
+			"trap" : {
+				"name" : "ADTRAN-AOS-VQM::adVQMEndOfCallTrap",
+				"oid" : "1.3.6.1.4.1.664.5.53.5.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the event that generated the most",
+							"recent trap. The vqmTrapEventType is a bitmap and can represent",
+							"multiple failures simultaneously.",
+							"The various bit positions are:",
+							"BIT EVENT DESCRIPTION",
+							"0 LQMos LQ-MOS threshold exceeded",
+							"1 PQMos PQ-MOS threshold exceeded",
+							"2 Loss Loss threshold exceeded",
+							"3 OutOfOrder Out-of-Order threshold exceeded",
+							"4 Jitter Jitter threshold exceeded",
+							""
+						],
+						"enums" : {
+							"0" : "lQMos",
+							"1" : "pQMos",
+							"2" : "loss",
+							"3" : "outOfOrder",
+							"4" : "jitter"
+						},
+						"name" : "ADTRAN-AOS-VQM::adVqmTrapEventType",
+						"oid" : "1.3.6.1.4.1.664.5.53.5.3.1.3",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"Listening quality MOS score."
+						],
+						"name" : "ADTRAN-AOS-VQM::adVqmCallHistMosLq",
+						"oid" : "1.3.6.1.4.1.664.5.53.5.3.7.1.1.42",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Listening quality MOS score normalized to the PESQ scale."
+						],
+						"name" : "ADTRAN-AOS-VQM::adVqmCallHistMosPq",
+						"oid" : "1.3.6.1.4.1.664.5.53.5.3.7.1.1.44",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Total packets determined to be lost in network by simulated jitter",
+							"buffer."
+						],
+						"name" : "ADTRAN-AOS-VQM::adVqmCallHistPktsLostTotal",
+						"oid" : "1.3.6.1.4.1.664.5.53.5.3.7.1.1.21",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Total packets received out of order at simulated jitter buffer."
+						],
+						"name" : "ADTRAN-AOS-VQM::adVqmCallHistOutOfOrder",
+						"oid" : "1.3.6.1.4.1.664.5.53.5.3.7.1.1.23",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Average Packet Delay Variation (PDV) in RTP stream in",
+							"milliseconds."
+						],
+						"name" : "ADTRAN-AOS-VQM::adVqmCallHistPdvAverageMs",
+						"oid" : "1.3.6.1.4.1.664.5.53.5.3.7.1.1.24",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

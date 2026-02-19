@@ -1,0 +1,406 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200102030000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SONUS-SONET-APS-MIB::sonusApsTrapProtectionSwitchingByteFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusApsTrapProtectionSwitchingByteFailure notification is sent",
+				"when the value of an instance of",
+				"sonusApsGroupProtectionSwitchingByteFailures increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusApsTrapProtectionSwitchingByteFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "APS protection switching byte failure (Count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-SONET-APS-MIB::sonusApsTrapProtectionSwitchingByteFailure SONUS-SONET-APS-MIB::sonusApsGroupProtectionSwitchingByteFailures c 9999 SONUS-SONET-APS-MIB::sonusApsGroupOperStatus b 1",
+			"trap" : {
+				"name" : "SONUS-SONET-APS-MIB::sonusApsTrapProtectionSwitchingByteFailure",
+				"oid" : "1.3.6.1.4.1.2879.2.5.9.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A count of APS Protection Switching Byte failures. A",
+							"Protection Switching Byte defect occurs when either an",
+							"inconsistent APS byte or an invalid code is detected. An",
+							"inconsistent APS byte occurs when no three consecutive K1 bytes",
+							"of the last 12 successive frames are identical, starting with",
+							"the last frame containing a previously consistent byte. An",
+							"invalid code occurs when the incoming K1 byte contains an unused",
+							"code, or a code irrelevant for the specific switching operation",
+							"(e.g., Reverse Request while no switching request is",
+							"outstanding) in three consecutive frames. An invalid code also",
+							"occurs when the incoming K1 byte contains an invalid channel",
+							"number in three consecutive frames."
+						],
+						"name" : "SONUS-SONET-APS-MIB::sonusApsGroupProtectionSwitchingByteFailures",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.2.1.15",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"Bit 0 - Extra Traffic. Indicates that extra traffic is",
+							"currently being accepted on the protection line.",
+							"",
+							"Bit 1 - Protection Switching Byte Defect. Indicates that either",
+							"an inconsistent APS byte or an invalid code has been detected.",
+							"",
+							"Bit 2 - Channel Mismatch. Indicates that a mismatch between the",
+							"transmitted K1 channel and the received K2 channel has been",
+							"detected.",
+							"",
+							"Bit 3 - APS Mode Mismatch. Indicates a conflict between the",
+							"current local mode and the received K2 mode information. Modes",
+							"other than 1+1 unidirectional monitor protection line: K2 bit 5",
+							"indicates the architecture; K2 bits 6-8 indicate if the mode is",
+							"unidirectional or bidirectional.",
+							"",
+							"Bit 4 - Far-End Protection-Line Defect. Indicates the LTE",
+							"received an SF code for the protection line, which means that",
+							"the far-end LTE is no longer receiving its request, or (in",
+							"bidirectional operation) the far-end LTE considers the near-end",
+							"LTE's request to be invalid."
+						],
+						"enums" : {
+							"0" : "extraTraffic",
+							"1" : "protectionSwitchingByteDefect",
+							"2" : "channelMismatch",
+							"3" : "apsModeMismatch",
+							"4" : "farEndProtectionLineDefect"
+						},
+						"name" : "SONUS-SONET-APS-MIB::sonusApsGroupOperStatus",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.2.1.12",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-SONET-APS-MIB::sonusApsTrapChannelMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusApsTrapChannelMismatch notification is sent when the value",
+				"of an instance of sonusApsStatusChannelMismatches increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusApsTrapChannelMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "APS channel mismatch (Count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-SONET-APS-MIB::sonusApsTrapChannelMismatch SONUS-SONET-APS-MIB::sonusApsGroupChannelMismatches c 9999 SONUS-SONET-APS-MIB::sonusApsGroupOperStatus b 2",
+			"trap" : {
+				"name" : "SONUS-SONET-APS-MIB::sonusApsTrapChannelMismatch",
+				"oid" : "1.3.6.1.4.1.2879.2.5.9.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A count of Channel Mismatch failures. A Channel Mismatch",
+							"indicates that a mismatch between the transmitted K1 channel and",
+							"the received K2 channel has been detected. Under normal",
+							"conditions, a mismatch will occure each time the LTE changes the",
+							"channel number on its transmitted K1 byte (i.e., when the",
+							"channel with the highest priority switch request changes). A",
+							"mismatch could also occur if the channel number on the incoming",
+							"K2 byte changes (e.g., due to a failure at the far-end LTE)."
+						],
+						"name" : "SONUS-SONET-APS-MIB::sonusApsGroupChannelMismatches",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.2.1.16",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"Bit 0 - Extra Traffic. Indicates that extra traffic is",
+							"currently being accepted on the protection line.",
+							"",
+							"Bit 1 - Protection Switching Byte Defect. Indicates that either",
+							"an inconsistent APS byte or an invalid code has been detected.",
+							"",
+							"Bit 2 - Channel Mismatch. Indicates that a mismatch between the",
+							"transmitted K1 channel and the received K2 channel has been",
+							"detected.",
+							"",
+							"Bit 3 - APS Mode Mismatch. Indicates a conflict between the",
+							"current local mode and the received K2 mode information. Modes",
+							"other than 1+1 unidirectional monitor protection line: K2 bit 5",
+							"indicates the architecture; K2 bits 6-8 indicate if the mode is",
+							"unidirectional or bidirectional.",
+							"",
+							"Bit 4 - Far-End Protection-Line Defect. Indicates the LTE",
+							"received an SF code for the protection line, which means that",
+							"the far-end LTE is no longer receiving its request, or (in",
+							"bidirectional operation) the far-end LTE considers the near-end",
+							"LTE's request to be invalid."
+						],
+						"enums" : {
+							"0" : "extraTraffic",
+							"1" : "protectionSwitchingByteDefect",
+							"2" : "channelMismatch",
+							"3" : "apsModeMismatch",
+							"4" : "farEndProtectionLineDefect"
+						},
+						"name" : "SONUS-SONET-APS-MIB::sonusApsGroupOperStatus",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.2.1.12",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-SONET-APS-MIB::sonusApsTrapModeMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusApsTrapModeMismatch notification is sent when the value of",
+				"an instance of sonusApsStatusModeMismatches increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusApsTrapModeMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "APS mode mismatch (Count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-SONET-APS-MIB::sonusApsTrapModeMismatch SONUS-SONET-APS-MIB::sonusApsGroupModeMismatches c 9999 SONUS-SONET-APS-MIB::sonusApsGroupOperStatus b 3",
+			"trap" : {
+				"name" : "SONUS-SONET-APS-MIB::sonusApsTrapModeMismatch",
+				"oid" : "1.3.6.1.4.1.2879.2.5.9.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A count of APS Mode Mismatch failures. An APS Mode Mismatch is",
+							"a conflict between the current local mode and the received K2",
+							"mode information. An LTE in a mode other than 1+1",
+							"unidirectional must monitor the mode of operation indicators in",
+							"the incoming K2 byte of the protection line for APS Mode",
+							"Mismatch failures. K2 bit 5 indicates the architecture; K2 bits",
+							"6-8 indicate if the mode is unidirectional or bidirectional."
+						],
+						"name" : "SONUS-SONET-APS-MIB::sonusApsGroupModeMismatches",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.2.1.17",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"Bit 0 - Extra Traffic. Indicates that extra traffic is",
+							"currently being accepted on the protection line.",
+							"",
+							"Bit 1 - Protection Switching Byte Defect. Indicates that either",
+							"an inconsistent APS byte or an invalid code has been detected.",
+							"",
+							"Bit 2 - Channel Mismatch. Indicates that a mismatch between the",
+							"transmitted K1 channel and the received K2 channel has been",
+							"detected.",
+							"",
+							"Bit 3 - APS Mode Mismatch. Indicates a conflict between the",
+							"current local mode and the received K2 mode information. Modes",
+							"other than 1+1 unidirectional monitor protection line: K2 bit 5",
+							"indicates the architecture; K2 bits 6-8 indicate if the mode is",
+							"unidirectional or bidirectional.",
+							"",
+							"Bit 4 - Far-End Protection-Line Defect. Indicates the LTE",
+							"received an SF code for the protection line, which means that",
+							"the far-end LTE is no longer receiving its request, or (in",
+							"bidirectional operation) the far-end LTE considers the near-end",
+							"LTE's request to be invalid."
+						],
+						"enums" : {
+							"0" : "extraTraffic",
+							"1" : "protectionSwitchingByteDefect",
+							"2" : "channelMismatch",
+							"3" : "apsModeMismatch",
+							"4" : "farEndProtectionLineDefect"
+						},
+						"name" : "SONUS-SONET-APS-MIB::sonusApsGroupOperStatus",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.2.1.12",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-SONET-APS-MIB::sonusApsTrapFarEndProtectionLineFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusApsTrapFarEndProtectionLineFailure notification is sent when",
+				"the value of an instance of sonusApsGroupFarEndProtectionLineFailures",
+				"increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusApsTrapFarEndProtectionLineFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "APS far-end protection line failure (Count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-SONET-APS-MIB::sonusApsTrapFarEndProtectionLineFailure SONUS-SONET-APS-MIB::sonusApsGroupFarEndProtectionLineFailures c 9999 SONUS-SONET-APS-MIB::sonusApsGroupOperStatus b 4",
+			"trap" : {
+				"name" : "SONUS-SONET-APS-MIB::sonusApsTrapFarEndProtectionLineFailure",
+				"oid" : "1.3.6.1.4.1.2879.2.5.9.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A count of APS Far-End Protection-Line failures. Unless it is",
+							"operating in the 1+1 unidirectional mode, the LTE must monitor",
+							"the K1 byte for Far-End Protection-Line failures."
+						],
+						"name" : "SONUS-SONET-APS-MIB::sonusApsGroupFarEndProtectionLineFailures",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.2.1.18",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the APS group.",
+							"",
+							"Bit 0 - Extra Traffic. Indicates that extra traffic is",
+							"currently being accepted on the protection line.",
+							"",
+							"Bit 1 - Protection Switching Byte Defect. Indicates that either",
+							"an inconsistent APS byte or an invalid code has been detected.",
+							"",
+							"Bit 2 - Channel Mismatch. Indicates that a mismatch between the",
+							"transmitted K1 channel and the received K2 channel has been",
+							"detected.",
+							"",
+							"Bit 3 - APS Mode Mismatch. Indicates a conflict between the",
+							"current local mode and the received K2 mode information. Modes",
+							"other than 1+1 unidirectional monitor protection line: K2 bit 5",
+							"indicates the architecture; K2 bits 6-8 indicate if the mode is",
+							"unidirectional or bidirectional.",
+							"",
+							"Bit 4 - Far-End Protection-Line Defect. Indicates the LTE",
+							"received an SF code for the protection line, which means that",
+							"the far-end LTE is no longer receiving its request, or (in",
+							"bidirectional operation) the far-end LTE considers the near-end",
+							"LTE's request to be invalid."
+						],
+						"enums" : {
+							"0" : "extraTraffic",
+							"1" : "protectionSwitchingByteDefect",
+							"2" : "channelMismatch",
+							"3" : "apsModeMismatch",
+							"4" : "farEndProtectionLineDefect"
+						},
+						"name" : "SONUS-SONET-APS-MIB::sonusApsGroupOperStatus",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.2.1.12",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SONUS-SONET-APS-MIB::sonusApsTrapSwitchover",
+			"certification" : "STANDARD",
+			"description" : [
+				"A sonusApsTrapSwitchover notification is sent when the value of an",
+				"instance of sonusApsChanSwitchovers for a working channel",
+				"increments."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sonusApsTrapSwitchover",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "APS channel switchovers occured (Count: $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SONUS-SONET-APS-MIB::sonusApsTrapSwitchover SONUS-SONET-APS-MIB::sonusApsChannelSwitchovers c 9999 SONUS-SONET-APS-MIB::sonusApsChannelStatus b 3",
+			"trap" : {
+				"name" : "SONUS-SONET-APS-MIB::sonusApsTrapSwitchover",
+				"oid" : "1.3.6.1.4.1.2879.2.5.9.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The number of switchovers that have occurred on this channel."
+						],
+						"name" : "SONUS-SONET-APS-MIB::sonusApsChannelSwitchovers",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.3.1.10",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Indicates the current state of the channel.",
+							"",
+							"Bit 0 - Signal Degrade (SD) Condition. Indicates a 'soft",
+							"failure' condition resulting from the Line BER exceeding a",
+							"pre-selected threshold.",
+							"",
+							"Bit 1 - Signal Fail (SF) Condition. Indicates a 'hard failure'",
+							"condition detected on the incoming OC-N signal.",
+							"",
+							"Bit 2 - Locked Out. This bit, when applied to a working",
+							"channel, indicates that the channel is prevented from switching",
+							"to the protection line. When applied to the null channel, this",
+							"bit indicates that no working channel may switch to the",
+							"protection line.",
+							"",
+							"The remaining states only apply to working channels which have",
+							"attempted to initiate an automatic protection switch.",
+							"",
+							"Bit 3 - Switched. Indictes that the working channel is",
+							"currently switched to the protection line.",
+							"",
+							"Bit 4 - Both Lines Failed. Indictes that both the working line",
+							"and the protection line are currently in a failure state.",
+							"",
+							"Bit 5 - Protection Line Busy. Indictes that the protection line",
+							"is busy servicing a different working channel. (This condition",
+							"can only occur in the 1:n architecture.)"
+						],
+						"enums" : {
+							"0" : "sdCondition",
+							"1" : "sfCondition",
+							"2" : "lockedOut",
+							"3" : "switched",
+							"4" : "bothLinesFailed",
+							"5" : "protectionLineBusy"
+						},
+						"name" : "SONUS-SONET-APS-MIB::sonusApsChannelStatus",
+						"oid" : "1.3.6.1.4.1.2879.2.5.9.1.3.1.6",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		}
+	]
+}

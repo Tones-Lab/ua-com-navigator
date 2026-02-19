@@ -1,0 +1,68 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200505170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ITP-DSMR-MIB::ciscoItpDsmrTableLoad",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated whenever a load ",
+				"operation is started or completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 3) ? 1 : (($v3 == 5) ? 2 : 3)"
+				},
+				"EventType" : "ciscoItpDsmrTableLoad",
+				"ExpireTime" : {
+					"eval" : "($v3 == 3) ? 3600 : (($v3 == 5) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 3) ? 0 : (($v3 == 5) ? 5 : (($v3 == 4) ? 3 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Load operation $v4 status $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ITP-DSMR-MIB::ciscoItpDsmrTableLoad CISCO-ITP-GSP-MIB::cgspEventSequenceNumber c 9999 CISCO-ITP-GSP-MIB::cgspCLLICode s EXAMPLE CISCO-ITP-DSMR-MIB::cdsmrInstLoadStatus i 1 CISCO-ITP-DSMR-MIB::cdsmrInstLastURL s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ITP-DSMR-MIB::ciscoItpDsmrTableLoad",
+				"oid" : "1.3.6.1.4.1.9.9.1300.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ITP-GSP-MIB::cgspEventSequenceNumber",
+						"oid" : "1.3.6.1.4.1.9.9.336.1.1.6",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-ITP-GSP-MIB::cgspCLLICode",
+						"oid" : "1.3.6.1.4.1.9.9.336.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "loadNotRequested",
+							"2" : "loadInProgress",
+							"3" : "loadComplete",
+							"4" : "loadCompleteWithErrors",
+							"5" : "loadFailed"
+						},
+						"name" : "CISCO-ITP-DSMR-MIB::cdsmrInstLoadStatus",
+						"oid" : "1.3.6.1.4.1.9.9.1300.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ITP-DSMR-MIB::cdsmrInstLastURL",
+						"oid" : "1.3.6.1.4.1.9.9.1300.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

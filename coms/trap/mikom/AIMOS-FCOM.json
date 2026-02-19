@@ -1,0 +1,1479 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201901151316Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "AIMOS::aimosAgentAnnouncement",
+			"certification" : "STANDARD",
+			"description" : [
+				"A aimosAgentAnnouncement notification is emitted by the agent if it is put in or",
+				"out of operation. aimosAgentState of type AgentState indicates what actually",
+				"happens. aimosAgentAnnouncement notification has no aimosAlarmCleared",
+				"notification.",
+				"Cold Start",
+				"==========",
+				"A aimosAgentState of snmpColdStart(1) indicates, that the agent has been started.",
+				"Already existing Sessions are invalid; requests will be responded by",
+				"authorisation errors.",
+				"The relevant alarm list entry contains aimosAlarmListAlarmID set to alarmOMC(62)",
+				"and aimosAlarmListSpecificProblem set to 8880.",
+				"Pause",
+				"=====",
+				"A aimosAgentState of snmpPause(2) signifies that the AIMOS SNMP Agent is",
+				"proceed to pause its activity. Even though the AIMOS SNMP Agent's process",
+				"will remain active, requests will result in time outs until aimosAgentAnnouncement",
+				"with aimosAgentState set to snmpResume(3) is forwarded.",
+				"The relevant alarm list entry contains aimosAlarmListAlarmID set to alarmOMC(62)",
+				"and aimosAlarmListSpecificProblem set to 8887.",
+				"The agent is waiting a certain period of time for acknowledgements before going",
+				"in pause mode. If the agent comes back in operation, it will recognise missing",
+				"acknowledgements and continue sending out aimosAgentAnnouncement notifications",
+				"regarding the AgentState of snmpPause(2) additional to the aimosAgentAnnouncement",
+				"notifications regarding the AgentState of snmpResume(3). This may prevent the",
+				"manager from requesting a synchronisation of the alarm list due to the gap in the",
+				"sequence of notification ID's.",
+				"Resume",
+				"======",
+				"A aimosAgentState of snmpResume(3) signifies that the AIMOS SNMP Agent is",
+				"resuming its activity. Already existing Sessions remain valid, except they were",
+				"not used for a period longer than the one specified in aimosSessionTimeout.",
+				"The relevant alarm list entry contains aimosAlarmListAlarmID set to alarmOMC(62)",
+				"and aimosAlarmListSpecificProblem set to 8881.",
+				"Shut Down",
+				"=========",
+				"A aimosAgentState of snmpShutDown(4) signifies that the AIMOS SNMP Agent is",
+				"about to shut down. The AIMOS SNMP Agent waits a certain time for the SNMP",
+				"Managers to be able to acknowledge this notification before actually shutting down.",
+				"If the process terminates, all Sessions are invalidated. The agent doesn't",
+				"respond to requests until aimosAgentAnnouncement with aimosAgentState set to",
+				"snmpColdStart(1) is forwarded.",
+				"The relevant alarm list entry contains aimosAlarmListAlarmID set to alarmOMC(62)",
+				"and aimosAlarmListSpecificProblem set to 8889.",
+				"If the AIMOS SNMP Agent comes back in operation, it will recognise missing",
+				"acknowledgements and continue sending out aimosAgentAnnouncement notifications",
+				"regarding the AgentState of snmpShutDown(4) additional to the",
+				"aimosAgentAnnouncement notifications regarding the AgentState of",
+				"snmpColdStart(1). This may prevent the manager from requesting a synchronisation",
+				"of the alarm list due to the gapin the sequence of notification ID's."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==3) ? 1 : (($v7==2) ? 3 : 2)"
+				},
+				"EventType" : "aimosAgentAnnouncement",
+				"ExpireTime" : {
+					"eval" : "($v7==2 || $v7==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7==3) ? 0 : (($v7==2) ? 2 : (($v7==1) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Agent announcement state is $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIMOS::aimosAgentAnnouncement AIMOS::aimosOMCSDN s EXAMPLE AIMOS::aimosOrgID u 200000 AIMOS::aimosAlarmTrapID u 9999 AIMOS::aimosAlarmTrapNotificationID u 9999 AIMOS::aimosAlarmListID u 9999 AIMOS::aimosAlarmListAlarmEventID u 9999 AIMOS::aimosAgentState i 1 AIMOS::aimosAcknowledgementOID o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "AIMOS::aimosAgentAnnouncement",
+				"oid" : "1.3.6.1.4.1.6408.201.4.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object of type SDN is the system distinguished name of the OMC which is",
+							"designated to uniquely identify this OMC within an organisation.",
+							"E.g.: The third OMC in the network supervision may have an SDN of OMC=3.",
+							"",
+							"Changing the class name (preceding the equality mark) affect only the current",
+							"organisation, while changing the instance number (after the equality mark) will",
+							"affect each organisation. That's the reason, why TelCo's must not change the",
+							"instance number."
+						],
+						"name" : "AIMOS::aimosOMCSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a Mikom provided world-wide unique identification number of an",
+							"organisation of type OrgID."
+						],
+						"name" : "AIMOS::aimosOrgID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is an unique identifier for a trap on SNMP Agent side and is used in",
+							"alarm acknowledgement.",
+							"",
+							"Even if its value is consecutive numbered on agent side, it could seem to the",
+							"SNMP Manager in such a way as if the values may be gappy. This will be regularly",
+							"the case if more than one alarm receiver is present.",
+							"",
+							"This value is reset to 0 on alarm list rebuild.",
+							"",
+							"The wrap value is 2^32-1. "
+						],
+						"name" : "AIMOS::aimosAlarmTrapID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is incremented consecutively for each notification sent out to a",
+							"particular SNMP Manager. Thus every SNMP Manager (identified by its phone book",
+							"entry) will have consecutively numbered values in all received notifications and",
+							"therefore its value can be used in order to recognise missing notifications.",
+							"",
+							"The wrap value is 2^32-1.",
+							"",
+							"An Alarm List Resync will reset the current SNMP Managers notification ID",
+							"whereas an alarm list rebuild will reset the corresponding notification ID",
+							"of each SNMP Manager.",
+							""
+						],
+						"name" : "AIMOS::aimosAlarmTrapNotificationID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is the consecutive numbering of all alarm notifications of the",
+							"AIMOS SNMP Agent forwarded to any manager. A notification forwarded to more",
+							"than one SNMP Manager will contain identical aimosAlarmListID's.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm list ID is reset.",
+							"The alarm list ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object's Unsigned32 value is incremented by one for each alarm notification",
+							"except aimosAlarmChanged and aimosAlarmCleared. Alarm changed notifications and",
+							"alarm clear notifications are correlated with alarm new notifications by the",
+							"aimosAlarmListAlarmEventID.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm event ID is reset.",
+							"The alarm event ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmEventID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This value indicates what the agent is about to do.",
+							"",
+							"Please refer also to the DESCRIPTION clause for aimosAgentAnnouncement."
+						],
+						"name" : "AIMOS::aimosAgentState",
+						"oid" : "1.3.6.1.4.1.6408.201.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object comprises the OID, the value of which must be set to acknowledged(2)",
+							"in order to confirm the alarm reception (i.e. perform the acknowledgement).",
+							"",
+							"If a SNMP Manager is not able to perform an acknowledgement, it should set",
+							"aimosPhoneBookAckCapability to false."
+						],
+						"name" : "AIMOS::aimosAcknowledgementOID",
+						"oid" : "1.3.6.1.4.1.6408.201.4.2",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIMOS::aimosAlarmNew",
+			"certification" : "STANDARD",
+			"description" : [
+				"The aimosAlarmNew notification is used when a new alarm appears. It contains",
+				"a new aimosAlarmListAlarmEventID.",
+				"The aimosAlarmNew notification causes the AIMOS SNMP Agent to create",
+				"- one alarm list entry per affected organisation and",
+				"- one alarm trap list entry per affected SNMP Manager",
+				"containing the values of the notification objects."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "aimosAlarmStatus:$v8",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v12==1) ? 5 : (($v12==2) ? 4 : 3)"
+				},
+				"SubNode" : "SystemID:$v19",
+				"Summary" : {
+					"eval" : "($v16 ne '') ? '$v16' : 'Alarm ($v7) notification occurred due to $v10. $v14'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIMOS::aimosAlarmNew AIMOS::aimosOMCSDN s EXAMPLE AIMOS::aimosOrgID u 200000 AIMOS::aimosAlarmTrapID u 9999 AIMOS::aimosAlarmTrapNotificationID u 9999 AIMOS::aimosAlarmListID u 9999 AIMOS::aimosAlarmListAlarmEventID u 9999 AIMOS::aimosAlarmListAlarmID i 1 AIMOS::aimosAlarmListEventType i 1 AIMOS::aimosAlarmListEventTime s EXAMPLE AIMOS::aimosAlarmListProbableCause i 0 AIMOS::aimosAlarmListSpecificProblem u 9999 AIMOS::aimosAlarmListSeverity i 0 AIMOS::aimosAlarmListTrendIndication i 0 AIMOS::aimosAlarmListAdditionalText s EXAMPLE AIMOS::aimosAlarmListSDN s EXAMPLE AIMOS::aimosAlarmListTrapInfo s EXAMPLE AIMOS::aimosAlarmListComponentName s EXAMPLE AIMOS::aimosAlarmListLocation s EXAMPLE AIMOS::aimosAlarmListUniqueSystemID s EXAMPLE AIMOS::aimosAcknowledgementOID o 1.3.6.1.4.1.8072.2.1.1 AIMOS::aimosAlarmListRaiseLatitude s EXAMPLE AIMOS::aimosAlarmListRaiseLongitude s EXAMPLE",
+			"trap" : {
+				"name" : "AIMOS::aimosAlarmNew",
+				"oid" : "1.3.6.1.4.1.6408.201.4.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object of type SDN is the system distinguished name of the OMC which is",
+							"designated to uniquely identify this OMC within an organisation.",
+							"E.g.: The third OMC in the network supervision may have an SDN of OMC=3.",
+							"",
+							"Changing the class name (preceding the equality mark) affect only the current",
+							"organisation, while changing the instance number (after the equality mark) will",
+							"affect each organisation. That's the reason, why TelCo's must not change the",
+							"instance number."
+						],
+						"name" : "AIMOS::aimosOMCSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a Mikom provided world-wide unique identification number of an",
+							"organisation of type OrgID."
+						],
+						"name" : "AIMOS::aimosOrgID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is an unique identifier for a trap on SNMP Agent side and is used in",
+							"alarm acknowledgement.",
+							"",
+							"Even if its value is consecutive numbered on agent side, it could seem to the",
+							"SNMP Manager in such a way as if the values may be gappy. This will be regularly",
+							"the case if more than one alarm receiver is present.",
+							"",
+							"This value is reset to 0 on alarm list rebuild.",
+							"",
+							"The wrap value is 2^32-1. "
+						],
+						"name" : "AIMOS::aimosAlarmTrapID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is incremented consecutively for each notification sent out to a",
+							"particular SNMP Manager. Thus every SNMP Manager (identified by its phone book",
+							"entry) will have consecutively numbered values in all received notifications and",
+							"therefore its value can be used in order to recognise missing notifications.",
+							"",
+							"The wrap value is 2^32-1.",
+							"",
+							"An Alarm List Resync will reset the current SNMP Managers notification ID",
+							"whereas an alarm list rebuild will reset the corresponding notification ID",
+							"of each SNMP Manager.",
+							""
+						],
+						"name" : "AIMOS::aimosAlarmTrapNotificationID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is the consecutive numbering of all alarm notifications of the",
+							"AIMOS SNMP Agent forwarded to any manager. A notification forwarded to more",
+							"than one SNMP Manager will contain identical aimosAlarmListID's.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm list ID is reset.",
+							"The alarm list ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object's Unsigned32 value is incremented by one for each alarm notification",
+							"except aimosAlarmChanged and aimosAlarmCleared. Alarm changed notifications and",
+							"alarm clear notifications are correlated with alarm new notifications by the",
+							"aimosAlarmListAlarmEventID.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm event ID is reset.",
+							"The alarm event ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmEventID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object of type AlarmID designates the alarm kind."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Event Type categorises the alarm."
+						],
+						"name" : "AIMOS::aimosAlarmListEventType",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type VariableTime states when the alarm condition appeared or (in",
+							"the case of an aimosAlarmCleared notification) when the alarm condition is gone."
+						],
+						"name" : "AIMOS::aimosAlarmListEventTime",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object of type ProbableCause defines further qualification of an alarm than",
+							"aimosAlarmListEventType."
+						],
+						"name" : "AIMOS::aimosAlarmListProbableCause",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type SpecificProblem is a fault specific value used in order to",
+							"classify the fault situation. It provides further qualification of the alarm",
+							"than probable cause and is defined in accordance with definitions given in",
+							"ITU-T Recommendation X.733 clause 8.1.2.2."
+						],
+						"name" : "AIMOS::aimosAlarmListSpecificProblem",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object of type Severity defines severity levels, which provide an",
+							"indication of how it is perceived that the capability of the managed",
+							"object has been affected."
+						],
+						"name" : "AIMOS::aimosAlarmListSeverity",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type TrendIndication specifies the current severity trend",
+							"of the managed object."
+						],
+						"name" : "AIMOS::aimosAlarmListTrendIndication",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object allows a free form text description to be reported.",
+							"It contains a formatted description of the alarm and, should the",
+							"occasion arise, includes alarm values."
+						],
+						"name" : "AIMOS::aimosAlarmListAdditionalText",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The System Distinguished Name uniquely identifies the unit within the system",
+							"controlled by the OMC."
+						],
+						"name" : "AIMOS::aimosAlarmListSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's TrapInfo"
+						],
+						"name" : "AIMOS::aimosAlarmListTrapInfo",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Component Name"
+						],
+						"name" : "AIMOS::aimosAlarmListComponentName",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Location"
+						],
+						"name" : "AIMOS::aimosAlarmListLocation",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Unique System ID"
+						],
+						"name" : "AIMOS::aimosAlarmListUniqueSystemID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object comprises the OID, the value of which must be set to acknowledged(2)",
+							"in order to confirm the alarm reception (i.e. perform the acknowledgement).",
+							"",
+							"If a SNMP Manager is not able to perform an acknowledgement, it should set",
+							"aimosPhoneBookAckCapability to false."
+						],
+						"name" : "AIMOS::aimosAcknowledgementOID",
+						"oid" : "1.3.6.1.4.1.6408.201.4.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"this object was introduced in V 2.6.0 and states the Network Elements Latitude ",
+							"to the time the alarm was raised."
+						],
+						"name" : "AIMOS::aimosAlarmListRaiseLatitude",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"this object was introduced in V 2.6.0 and states the Network Elements Longitude",
+							"to the time the alarm was raised."
+						],
+						"name" : "AIMOS::aimosAlarmListRaiseLongitude",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIMOS::aimosAlarmChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The aimosAlarmChanged notification is used when the severity of an uncleared",
+				"alarm has changed. The alarm is correlated with the aimosAlarmNew notification",
+				"by identical values in aimosAlarmListAlarmEventID.",
+				"The aimosAlarmChanged notification causes the AIMOS SNMP Agent to create",
+				"- one alarm list entry per affected organisation and",
+				"- one alarm trap list entry per affected SNMP Manager",
+				"containing the values of the notifications objects."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v12==5) ? 1 : (($v12==0 || $v12==6) ? 3 : 2)"
+				},
+				"EventType" : "aimosAlarmChanged:$v8",
+				"ExpireTime" : {
+					"eval" : "($v12==0 || $v12==5 || $v12==6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v12==5) ? 0 : (($v12==0) ? 1 : (($v12==6) ? 2 : (($v12==1) ? 5 : (($v12==2) ? 4 : 3))))"
+				},
+				"SubNode" : "SystemID:$v19",
+				"Summary" : {
+					"eval" : "($v16 ne '') ? '$v16' : 'Alarm ($v7) state changed to $v12. $v14'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIMOS::aimosAlarmChanged AIMOS::aimosOMCSDN s EXAMPLE AIMOS::aimosOrgID u 200000 AIMOS::aimosAlarmTrapID u 9999 AIMOS::aimosAlarmTrapNotificationID u 9999 AIMOS::aimosAlarmListID u 9999 AIMOS::aimosAlarmListAlarmEventID u 9999 AIMOS::aimosAlarmListAlarmID i 1 AIMOS::aimosAlarmListEventType i 1 AIMOS::aimosAlarmListEventTime s EXAMPLE AIMOS::aimosAlarmListProbableCause i 0 AIMOS::aimosAlarmListSpecificProblem u 9999 AIMOS::aimosAlarmListSeverity i 0 AIMOS::aimosAlarmListTrendIndication i 0 AIMOS::aimosAlarmListAdditionalText s EXAMPLE AIMOS::aimosAlarmListSDN s EXAMPLE AIMOS::aimosAlarmListTrapInfo s EXAMPLE AIMOS::aimosAlarmListComponentName s EXAMPLE AIMOS::aimosAlarmListLocation s EXAMPLE AIMOS::aimosAlarmListUniqueSystemID s EXAMPLE AIMOS::aimosAcknowledgementOID o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "AIMOS::aimosAlarmChanged",
+				"oid" : "1.3.6.1.4.1.6408.201.4.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object of type SDN is the system distinguished name of the OMC which is",
+							"designated to uniquely identify this OMC within an organisation.",
+							"E.g.: The third OMC in the network supervision may have an SDN of OMC=3.",
+							"",
+							"Changing the class name (preceding the equality mark) affect only the current",
+							"organisation, while changing the instance number (after the equality mark) will",
+							"affect each organisation. That's the reason, why TelCo's must not change the",
+							"instance number."
+						],
+						"name" : "AIMOS::aimosOMCSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a Mikom provided world-wide unique identification number of an",
+							"organisation of type OrgID."
+						],
+						"name" : "AIMOS::aimosOrgID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is an unique identifier for a trap on SNMP Agent side and is used in",
+							"alarm acknowledgement.",
+							"",
+							"Even if its value is consecutive numbered on agent side, it could seem to the",
+							"SNMP Manager in such a way as if the values may be gappy. This will be regularly",
+							"the case if more than one alarm receiver is present.",
+							"",
+							"This value is reset to 0 on alarm list rebuild.",
+							"",
+							"The wrap value is 2^32-1. "
+						],
+						"name" : "AIMOS::aimosAlarmTrapID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is incremented consecutively for each notification sent out to a",
+							"particular SNMP Manager. Thus every SNMP Manager (identified by its phone book",
+							"entry) will have consecutively numbered values in all received notifications and",
+							"therefore its value can be used in order to recognise missing notifications.",
+							"",
+							"The wrap value is 2^32-1.",
+							"",
+							"An Alarm List Resync will reset the current SNMP Managers notification ID",
+							"whereas an alarm list rebuild will reset the corresponding notification ID",
+							"of each SNMP Manager.",
+							""
+						],
+						"name" : "AIMOS::aimosAlarmTrapNotificationID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is the consecutive numbering of all alarm notifications of the",
+							"AIMOS SNMP Agent forwarded to any manager. A notification forwarded to more",
+							"than one SNMP Manager will contain identical aimosAlarmListID's.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm list ID is reset.",
+							"The alarm list ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object's Unsigned32 value is incremented by one for each alarm notification",
+							"except aimosAlarmChanged and aimosAlarmCleared. Alarm changed notifications and",
+							"alarm clear notifications are correlated with alarm new notifications by the",
+							"aimosAlarmListAlarmEventID.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm event ID is reset.",
+							"The alarm event ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmEventID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object of type AlarmID designates the alarm kind."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Event Type categorises the alarm."
+						],
+						"name" : "AIMOS::aimosAlarmListEventType",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type VariableTime states when the alarm condition appeared or (in",
+							"the case of an aimosAlarmCleared notification) when the alarm condition is gone."
+						],
+						"name" : "AIMOS::aimosAlarmListEventTime",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object of type ProbableCause defines further qualification of an alarm than",
+							"aimosAlarmListEventType."
+						],
+						"name" : "AIMOS::aimosAlarmListProbableCause",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type SpecificProblem is a fault specific value used in order to",
+							"classify the fault situation. It provides further qualification of the alarm",
+							"than probable cause and is defined in accordance with definitions given in",
+							"ITU-T Recommendation X.733 clause 8.1.2.2."
+						],
+						"name" : "AIMOS::aimosAlarmListSpecificProblem",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object of type Severity defines severity levels, which provide an",
+							"indication of how it is perceived that the capability of the managed",
+							"object has been affected."
+						],
+						"name" : "AIMOS::aimosAlarmListSeverity",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type TrendIndication specifies the current severity trend",
+							"of the managed object."
+						],
+						"name" : "AIMOS::aimosAlarmListTrendIndication",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object allows a free form text description to be reported.",
+							"It contains a formatted description of the alarm and, should the",
+							"occasion arise, includes alarm values."
+						],
+						"name" : "AIMOS::aimosAlarmListAdditionalText",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The System Distinguished Name uniquely identifies the unit within the system",
+							"controlled by the OMC."
+						],
+						"name" : "AIMOS::aimosAlarmListSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's TrapInfo"
+						],
+						"name" : "AIMOS::aimosAlarmListTrapInfo",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Component Name"
+						],
+						"name" : "AIMOS::aimosAlarmListComponentName",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Location"
+						],
+						"name" : "AIMOS::aimosAlarmListLocation",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Unique System ID"
+						],
+						"name" : "AIMOS::aimosAlarmListUniqueSystemID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object comprises the OID, the value of which must be set to acknowledged(2)",
+							"in order to confirm the alarm reception (i.e. perform the acknowledgement).",
+							"",
+							"If a SNMP Manager is not able to perform an acknowledgement, it should set",
+							"aimosPhoneBookAckCapability to false."
+						],
+						"name" : "AIMOS::aimosAcknowledgementOID",
+						"oid" : "1.3.6.1.4.1.6408.201.4.2",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIMOS::aimosAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The aimosAlarmCleared notification is used when an alarm gets cleared. The alarm",
+				"is correlated with the aimosAlarmNew and aimosAlarmCleared notification by",
+				"identical values in aimosAlarmListAlarmEventID.",
+				"It has an additional object aimosAlarmListClearReason. In contrast to",
+				"aimosAlarmNew and aimosAlarmCleared the alarm notification object",
+				"aimosAlarmListEventTime contains the time when the alarm condition is cleared.",
+				"The aimosAlarmCleared notification causes the AIMOS SNMP Agent to",
+				"- create a new alarm trap list entry containing the values of the notification",
+				"objects",
+				"- but not to create a new alarm list entry.",
+				"Instead, the agent makes some amendments to the alarm list. Its entries created",
+				"for the aimosAlarmNew and if applicable aimosAlarmChanged notifications",
+				"(correlated with the aimosAlarmCleared notification by identical values in",
+				"aimosAlarmListAlarmEventID) are modified in the following manner:",
+				"- the notifications value of aimosAlarmListClearReason is assigned to the alarm",
+				"lists value of aimosAlarmListClearReason",
+				"- the notifications value of aimosAlarmListEventTime is assigned to the alarm",
+				"lists value of aimosAlarmListClearTime",
+				"After a aimosAlarmCleared notification was acknowledged all information of the",
+				"alarm trap table entries and the alarm list entries are combined and filed in a",
+				"new alarm log table entry. In this process, the entry from the alarm trap table",
+				"is always deleted. The alarm list entry is also deleted, if no acknowledgement",
+				"of another SNMP Manager of the according organisation is missing."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "aimosAlarmStatus:$v8",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "SystemID:$v19",
+				"Summary" : {
+					"eval" : "($v16 ne '') ? '$v16' : 'Alarm ($v7) cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIMOS::aimosAlarmCleared AIMOS::aimosOMCSDN s EXAMPLE AIMOS::aimosOrgID u 200000 AIMOS::aimosAlarmTrapID u 9999 AIMOS::aimosAlarmTrapNotificationID u 9999 AIMOS::aimosAlarmListID u 9999 AIMOS::aimosAlarmListAlarmEventID u 9999 AIMOS::aimosAlarmListAlarmID i 1 AIMOS::aimosAlarmListEventType i 1 AIMOS::aimosAlarmListEventTime s EXAMPLE AIMOS::aimosAlarmListProbableCause i 0 AIMOS::aimosAlarmListSpecificProblem u 9999 AIMOS::aimosAlarmListSeverity i 0 AIMOS::aimosAlarmListTrendIndication i 0 AIMOS::aimosAlarmListAdditionalText s EXAMPLE AIMOS::aimosAlarmListSDN s EXAMPLE AIMOS::aimosAlarmLogTrapInfo s EXAMPLE AIMOS::aimosAlarmLogComponentName s EXAMPLE AIMOS::aimosAlarmLogLocation s EXAMPLE AIMOS::aimosAlarmLogUniqueSystemID s EXAMPLE AIMOS::aimosAlarmListClearReason i 0 AIMOS::aimosAcknowledgementOID o 1.3.6.1.4.1.8072.2.1.1 AIMOS::aimosAlarmLogRaiseLatitude s EXAMPLE AIMOS::aimosAlarmLogRaiseLongitude s EXAMPLE AIMOS::aimosAlarmLogClearLatitude s EXAMPLE AIMOS::aimosAlarmLogClearLongitude s EXAMPLE",
+			"trap" : {
+				"name" : "AIMOS::aimosAlarmCleared",
+				"oid" : "1.3.6.1.4.1.6408.201.4.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object of type SDN is the system distinguished name of the OMC which is",
+							"designated to uniquely identify this OMC within an organisation.",
+							"E.g.: The third OMC in the network supervision may have an SDN of OMC=3.",
+							"",
+							"Changing the class name (preceding the equality mark) affect only the current",
+							"organisation, while changing the instance number (after the equality mark) will",
+							"affect each organisation. That's the reason, why TelCo's must not change the",
+							"instance number."
+						],
+						"name" : "AIMOS::aimosOMCSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a Mikom provided world-wide unique identification number of an",
+							"organisation of type OrgID."
+						],
+						"name" : "AIMOS::aimosOrgID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is an unique identifier for a trap on SNMP Agent side and is used in",
+							"alarm acknowledgement.",
+							"",
+							"Even if its value is consecutive numbered on agent side, it could seem to the",
+							"SNMP Manager in such a way as if the values may be gappy. This will be regularly",
+							"the case if more than one alarm receiver is present.",
+							"",
+							"This value is reset to 0 on alarm list rebuild.",
+							"",
+							"The wrap value is 2^32-1. "
+						],
+						"name" : "AIMOS::aimosAlarmTrapID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is incremented consecutively for each notification sent out to a",
+							"particular SNMP Manager. Thus every SNMP Manager (identified by its phone book",
+							"entry) will have consecutively numbered values in all received notifications and",
+							"therefore its value can be used in order to recognise missing notifications.",
+							"",
+							"The wrap value is 2^32-1.",
+							"",
+							"An Alarm List Resync will reset the current SNMP Managers notification ID",
+							"whereas an alarm list rebuild will reset the corresponding notification ID",
+							"of each SNMP Manager.",
+							""
+						],
+						"name" : "AIMOS::aimosAlarmTrapNotificationID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is the consecutive numbering of all alarm notifications of the",
+							"AIMOS SNMP Agent forwarded to any manager. A notification forwarded to more",
+							"than one SNMP Manager will contain identical aimosAlarmListID's.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm list ID is reset.",
+							"The alarm list ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object's Unsigned32 value is incremented by one for each alarm notification",
+							"except aimosAlarmChanged and aimosAlarmCleared. Alarm changed notifications and",
+							"alarm clear notifications are correlated with alarm new notifications by the",
+							"aimosAlarmListAlarmEventID.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm event ID is reset.",
+							"The alarm event ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmEventID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object of type AlarmID designates the alarm kind."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Event Type categorises the alarm."
+						],
+						"name" : "AIMOS::aimosAlarmListEventType",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type VariableTime states when the alarm condition appeared or (in",
+							"the case of an aimosAlarmCleared notification) when the alarm condition is gone."
+						],
+						"name" : "AIMOS::aimosAlarmListEventTime",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object of type ProbableCause defines further qualification of an alarm than",
+							"aimosAlarmListEventType."
+						],
+						"name" : "AIMOS::aimosAlarmListProbableCause",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type SpecificProblem is a fault specific value used in order to",
+							"classify the fault situation. It provides further qualification of the alarm",
+							"than probable cause and is defined in accordance with definitions given in",
+							"ITU-T Recommendation X.733 clause 8.1.2.2."
+						],
+						"name" : "AIMOS::aimosAlarmListSpecificProblem",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object of type Severity defines severity levels, which provide an",
+							"indication of how it is perceived that the capability of the managed",
+							"object has been affected."
+						],
+						"name" : "AIMOS::aimosAlarmListSeverity",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type TrendIndication specifies the current severity trend",
+							"of the managed object."
+						],
+						"name" : "AIMOS::aimosAlarmListTrendIndication",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object allows a free form text description to be reported.",
+							"It contains a formatted description of the alarm and, should the",
+							"occasion arise, includes alarm values."
+						],
+						"name" : "AIMOS::aimosAlarmListAdditionalText",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The System Distinguished Name uniquely identifies the unit within the system",
+							"controlled by the OMC."
+						],
+						"name" : "AIMOS::aimosAlarmListSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See corresponding description in aimosAlarmListTable."
+						],
+						"name" : "AIMOS::aimosAlarmLogTrapInfo",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.15.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See corresponding description in aimosAlarmListTable."
+						],
+						"name" : "AIMOS::aimosAlarmLogComponentName",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.15.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See corresponding description in aimosAlarmListTable."
+						],
+						"name" : "AIMOS::aimosAlarmLogLocation",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.15.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See corresponding description in aimosAlarmListTable."
+						],
+						"name" : "AIMOS::aimosAlarmLogUniqueSystemID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.15.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID gives information weather the alarm was cleared or not. ",
+							"If an alarm does not become automatically cleared (aimosAlarmClearMode ",
+							"is set to manualClear), manualCleared is the only writeable value ",
+							"(besides aimosAlarmListRecognitionState)."
+						],
+						"name" : "AIMOS::aimosAlarmListClearReason",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object comprises the OID, the value of which must be set to acknowledged(2)",
+							"in order to confirm the alarm reception (i.e. perform the acknowledgement).",
+							"",
+							"If a SNMP Manager is not able to perform an acknowledgement, it should set",
+							"aimosPhoneBookAckCapability to false."
+						],
+						"name" : "AIMOS::aimosAcknowledgementOID",
+						"oid" : "1.3.6.1.4.1.6408.201.4.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"See corresponding description in aimosAlarmListTable."
+						],
+						"name" : "AIMOS::aimosAlarmLogRaiseLatitude",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.15.1.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See corresponding description in aimosAlarmListTable."
+						],
+						"name" : "AIMOS::aimosAlarmLogRaiseLongitude",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.15.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See corresponding description in aimosAlarmListTable."
+						],
+						"name" : "AIMOS::aimosAlarmLogClearLatitude",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.15.1.27",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See corresponding description in aimosAlarmListTable."
+						],
+						"name" : "AIMOS::aimosAlarmLogClearLongitude",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.15.1.28",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIMOS::aimosAlarmListRebuildInitiated",
+			"certification" : "STANDARD",
+			"description" : [
+				"The aimosAlarmListRebuildInitiated notification is sent, when an alarm list",
+				"rebuild process was triggered. The notification will be emitted prior to the",
+				"rebuild, immediately after dropping the content of the alarm table.",
+				"On reception of this notification, the SNMP Manager shall clean the internal",
+				"alarm table to be synchronised with the agent prior to acknowledge this",
+				"notification. Before acknowledgement the agent will not send any notification",
+				"(expect of re-send this notification by the AIMOS SNMP Agent until",
+				"acknowledgement is received by the AIMOS SNMP Agent).",
+				"The alarm list contains one entry with",
+				"- aimosAlarmListID and aimosAlarmListAlarmEventID set to 1",
+				"- aimosAlarmListAlarmID set to alarmOMC(62)",
+				"- aimosAlarmListSpecificProblem set to 8885.",
+				"The alarm trap list contains one entry per affected SNMP Manager (alarm",
+				"recipient) with",
+				"- aimosAlarmTrapNotificationID set to 1 for each SNMP Manager",
+				"- aimosAlarmTrapID set to 1 for the first SNMP Manager, 2 for the second, ...",
+				"There is no aimosAlarmCleared-notification for this alarm. It is cleared by",
+				"acknowledgement."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimosAlarmListRebuildInitiated",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Alarm list ($v5) rebuild initiated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIMOS::aimosAlarmListRebuildInitiated AIMOS::aimosOMCSDN s EXAMPLE AIMOS::aimosOrgID u 200000 AIMOS::aimosAlarmTrapID u 9999 AIMOS::aimosAlarmTrapNotificationID u 9999 AIMOS::aimosAlarmListID u 9999 AIMOS::aimosAlarmListAlarmEventID u 9999 AIMOS::aimosAcknowledgementOID o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "AIMOS::aimosAlarmListRebuildInitiated",
+				"oid" : "1.3.6.1.4.1.6408.201.4.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object of type SDN is the system distinguished name of the OMC which is",
+							"designated to uniquely identify this OMC within an organisation.",
+							"E.g.: The third OMC in the network supervision may have an SDN of OMC=3.",
+							"",
+							"Changing the class name (preceding the equality mark) affect only the current",
+							"organisation, while changing the instance number (after the equality mark) will",
+							"affect each organisation. That's the reason, why TelCo's must not change the",
+							"instance number."
+						],
+						"name" : "AIMOS::aimosOMCSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a Mikom provided world-wide unique identification number of an",
+							"organisation of type OrgID."
+						],
+						"name" : "AIMOS::aimosOrgID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is an unique identifier for a trap on SNMP Agent side and is used in",
+							"alarm acknowledgement.",
+							"",
+							"Even if its value is consecutive numbered on agent side, it could seem to the",
+							"SNMP Manager in such a way as if the values may be gappy. This will be regularly",
+							"the case if more than one alarm receiver is present.",
+							"",
+							"This value is reset to 0 on alarm list rebuild.",
+							"",
+							"The wrap value is 2^32-1. "
+						],
+						"name" : "AIMOS::aimosAlarmTrapID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is incremented consecutively for each notification sent out to a",
+							"particular SNMP Manager. Thus every SNMP Manager (identified by its phone book",
+							"entry) will have consecutively numbered values in all received notifications and",
+							"therefore its value can be used in order to recognise missing notifications.",
+							"",
+							"The wrap value is 2^32-1.",
+							"",
+							"An Alarm List Resync will reset the current SNMP Managers notification ID",
+							"whereas an alarm list rebuild will reset the corresponding notification ID",
+							"of each SNMP Manager.",
+							""
+						],
+						"name" : "AIMOS::aimosAlarmTrapNotificationID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is the consecutive numbering of all alarm notifications of the",
+							"AIMOS SNMP Agent forwarded to any manager. A notification forwarded to more",
+							"than one SNMP Manager will contain identical aimosAlarmListID's.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm list ID is reset.",
+							"The alarm list ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object's Unsigned32 value is incremented by one for each alarm notification",
+							"except aimosAlarmChanged and aimosAlarmCleared. Alarm changed notifications and",
+							"alarm clear notifications are correlated with alarm new notifications by the",
+							"aimosAlarmListAlarmEventID.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm event ID is reset.",
+							"The alarm event ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmEventID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object comprises the OID, the value of which must be set to acknowledged(2)",
+							"in order to confirm the alarm reception (i.e. perform the acknowledgement).",
+							"",
+							"If a SNMP Manager is not able to perform an acknowledgement, it should set",
+							"aimosPhoneBookAckCapability to false."
+						],
+						"name" : "AIMOS::aimosAcknowledgementOID",
+						"oid" : "1.3.6.1.4.1.6408.201.4.2",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIMOS::aimosHeartbeat",
+			"certification" : "STANDARD",
+			"description" : [
+				"The aimosHeartbeat notification is sent out each [aimosWorkShiftHeartbeatInterval]",
+				"minutes to the members of the Alarm Recipient List specified by the object",
+				"[aimosWorkShiftHeartbeatRecipientList]. This notification must not be acknowledged",
+				"even if the SNMP Manager performs acknowledgement to all other notifications.",
+				"Additionally, this notifications are neither inserted to the Alarm Table nor to",
+				"the Alarm Log. Therefore this notification contains no continuous numbering."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimosHeartbeat",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Heartbeat notification occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIMOS::aimosHeartbeat AIMOS::aimosOMCSDN s EXAMPLE AIMOS::aimosCurrentTime s EXAMPLE",
+			"trap" : {
+				"name" : "AIMOS::aimosHeartbeat",
+				"oid" : "1.3.6.1.4.1.6408.201.4.9",
+				"variables" : [
+					{
+						"description" : [
+							"This object of type SDN is the system distinguished name of the OMC which is",
+							"designated to uniquely identify this OMC within an organisation.",
+							"E.g.: The third OMC in the network supervision may have an SDN of OMC=3.",
+							"",
+							"Changing the class name (preceding the equality mark) affect only the current",
+							"organisation, while changing the instance number (after the equality mark) will",
+							"affect each organisation. That's the reason, why TelCo's must not change the",
+							"instance number."
+						],
+						"name" : "AIMOS::aimosOMCSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object of type VariableTime is used in heartbeat notifications and states",
+							"the heartbeat notifications event time.",
+							"This object also states the current time of the AIMOS SNMP Agent."
+						],
+						"name" : "AIMOS::aimosCurrentTime",
+						"oid" : "1.3.6.1.4.1.6408.201.3.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AIMOS::aimosAlarmRecognized",
+			"certification" : "STANDARD",
+			"description" : [
+				"The aimosAlarmRecognized alarm is raised in case an alarm is recognized ",
+				"- either via aimosAlarmListRecognitionState",
+				"- by means of the AIMOS_VIsu program",
+				"The description for aimosAlarmListRecognitionState provides more ",
+				"information about this notification.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimosAlarmRecognized",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SystemID:$v14",
+				"Summary" : {
+					"eval" : "($v11 ne '') ? '$v11' : 'Alarm ($v7) recognized. $v9'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AIMOS::aimosAlarmRecognized AIMOS::aimosOMCSDN s EXAMPLE AIMOS::aimosOrgID u 200000 AIMOS::aimosAlarmTrapID u 9999 AIMOS::aimosAlarmTrapNotificationID u 9999 AIMOS::aimosAlarmListID u 9999 AIMOS::aimosAlarmListAlarmEventID u 9999 AIMOS::aimosAlarmListAlarmID i 1 AIMOS::aimosAlarmListSpecificProblem u 9999 AIMOS::aimosAlarmListAdditionalText s EXAMPLE AIMOS::aimosAlarmListSDN s EXAMPLE AIMOS::aimosAlarmListTrapInfo s EXAMPLE AIMOS::aimosAlarmListComponentName s EXAMPLE AIMOS::aimosAlarmListLocation s EXAMPLE AIMOS::aimosAlarmListUniqueSystemID s EXAMPLE AIMOS::aimosAlarmListRecognitionUser s EXAMPLE AIMOS::aimosAlarmListRecognitionTime s EXAMPLE AIMOS::aimosAcknowledgementOID o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "AIMOS::aimosAlarmRecognized",
+				"oid" : "1.3.6.1.4.1.6408.201.4.10",
+				"variables" : [
+					{
+						"description" : [
+							"This object of type SDN is the system distinguished name of the OMC which is",
+							"designated to uniquely identify this OMC within an organisation.",
+							"E.g.: The third OMC in the network supervision may have an SDN of OMC=3.",
+							"",
+							"Changing the class name (preceding the equality mark) affect only the current",
+							"organisation, while changing the instance number (after the equality mark) will",
+							"affect each organisation. That's the reason, why TelCo's must not change the",
+							"instance number."
+						],
+						"name" : "AIMOS::aimosOMCSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a Mikom provided world-wide unique identification number of an",
+							"organisation of type OrgID."
+						],
+						"name" : "AIMOS::aimosOrgID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is an unique identifier for a trap on SNMP Agent side and is used in",
+							"alarm acknowledgement.",
+							"",
+							"Even if its value is consecutive numbered on agent side, it could seem to the",
+							"SNMP Manager in such a way as if the values may be gappy. This will be regularly",
+							"the case if more than one alarm receiver is present.",
+							"",
+							"This value is reset to 0 on alarm list rebuild.",
+							"",
+							"The wrap value is 2^32-1. "
+						],
+						"name" : "AIMOS::aimosAlarmTrapID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is incremented consecutively for each notification sent out to a",
+							"particular SNMP Manager. Thus every SNMP Manager (identified by its phone book",
+							"entry) will have consecutively numbered values in all received notifications and",
+							"therefore its value can be used in order to recognise missing notifications.",
+							"",
+							"The wrap value is 2^32-1.",
+							"",
+							"An Alarm List Resync will reset the current SNMP Managers notification ID",
+							"whereas an alarm list rebuild will reset the corresponding notification ID",
+							"of each SNMP Manager.",
+							""
+						],
+						"name" : "AIMOS::aimosAlarmTrapNotificationID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.13.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object is the consecutive numbering of all alarm notifications of the",
+							"AIMOS SNMP Agent forwarded to any manager. A notification forwarded to more",
+							"than one SNMP Manager will contain identical aimosAlarmListID's.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm list ID is reset.",
+							"The alarm list ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object's Unsigned32 value is incremented by one for each alarm notification",
+							"except aimosAlarmChanged and aimosAlarmCleared. Alarm changed notifications and",
+							"alarm clear notifications are correlated with alarm new notifications by the",
+							"aimosAlarmListAlarmEventID.",
+							"",
+							"When an alarm list rebuild is initiated by a SNMP Manager then the",
+							"alarm event ID is reset.",
+							"The alarm event ID is not reset, if a SNMP Manager starts an Alarm List Resync.",
+							"",
+							"The wrap value is 2^32-1."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmEventID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object of type AlarmID designates the alarm kind."
+						],
+						"name" : "AIMOS::aimosAlarmListAlarmID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object of type SpecificProblem is a fault specific value used in order to",
+							"classify the fault situation. It provides further qualification of the alarm",
+							"than probable cause and is defined in accordance with definitions given in",
+							"ITU-T Recommendation X.733 clause 8.1.2.2."
+						],
+						"name" : "AIMOS::aimosAlarmListSpecificProblem",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object allows a free form text description to be reported.",
+							"It contains a formatted description of the alarm and, should the",
+							"occasion arise, includes alarm values."
+						],
+						"name" : "AIMOS::aimosAlarmListAdditionalText",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The System Distinguished Name uniquely identifies the unit within the system",
+							"controlled by the OMC."
+						],
+						"name" : "AIMOS::aimosAlarmListSDN",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's TrapInfo"
+						],
+						"name" : "AIMOS::aimosAlarmListTrapInfo",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Component Name"
+						],
+						"name" : "AIMOS::aimosAlarmListComponentName",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Location"
+						],
+						"name" : "AIMOS::aimosAlarmListLocation",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID contains the Network Elements's Unique System ID"
+						],
+						"name" : "AIMOS::aimosAlarmListUniqueSystemID",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the user who has recognized the alarm.",
+							"This object is empty if the alarm is not recognized at all."
+						],
+						"name" : "AIMOS::aimosAlarmListRecognitionUser",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object of type VariableTime holds the time of recognition.",
+							"This object is empty if the alarm is not recognized at all."
+						],
+						"name" : "AIMOS::aimosAlarmListRecognitionTime",
+						"oid" : "1.3.6.1.4.1.6408.201.3.4.14.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object comprises the OID, the value of which must be set to acknowledged(2)",
+							"in order to confirm the alarm reception (i.e. perform the acknowledgement).",
+							"",
+							"If a SNMP Manager is not able to perform an acknowledgement, it should set",
+							"aimosPhoneBookAckCapability to false."
+						],
+						"name" : "AIMOS::aimosAcknowledgementOID",
+						"oid" : "1.3.6.1.4.1.6408.201.4.2",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		}
+	]
+}

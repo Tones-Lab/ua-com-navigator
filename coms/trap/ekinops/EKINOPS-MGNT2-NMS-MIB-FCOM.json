@@ -1,0 +1,418 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202003200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "EKINOPS-MGNT2-NMS-MIB::mgnt2TrapNMSAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification reports Alarm event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v8==6) ? 1 : (($v8==5) ? 3 : 2)"
+				},
+				"EventType" : "mgnt2TrapNMSAlarm",
+				"ExpireTime" : {
+					"eval" : "($v8==6 || $v8==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v8==6) ? 0 : (($v8==1) ? 5 : (($v8==2) ? 4 : (($v8==5) ? 1 : 3)))"
+				},
+				"SubNode" : "PortNumber:$v6",
+				"Summary" : {
+					"eval" : "($v8==6) ? 'Network management system alarm cleared' : 'Network management system alarm occurred due to $v7. $v10'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EKINOPS-MGNT2-NMS-MIB::mgnt2TrapNMSAlarm EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogNotificationId c 9999 EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogObjectClassIdentifier i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSourcePm s EXAMPLE EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogBoardNumber i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSourcePortType s EXAMPLE EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSourcePortNumber i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogProbableCause i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSeverity i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSpecificProblem s EXAMPLE EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogAdditionalText s EXAMPLE EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogAlarmType i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogTime s EXAMPLEE EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogNodeControllerIpAddress a 192.0.2.1 EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogChassisId s EXAMPLE",
+			"trap" : {
+				"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2TrapNMSAlarm",
+				"oid" : "1.3.6.1.4.1.20044.1000.1.11",
+				"variables" : [
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogNotificationId",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "powerSupply",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack",
+							"12" : "cpu",
+							"13" : "mgnt"
+						},
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogObjectClassIdentifier",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSourcePm",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogBoardNumber",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This OID gives the type of the port who sent a trap"
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSourcePortType",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID gives the port number of the PM that sent the last trap"
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSourcePortNumber",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "adapterError",
+							"3" : "applicationSubsystemFailure",
+							"4" : "bandwidthReduced",
+							"5" : "callEstablishmentError",
+							"6" : "communicationsProtocolError",
+							"7" : "communicationsSubsystemFailure",
+							"8" : "configurationOrCustomizationError",
+							"9" : "congestion",
+							"10" : "corruptData",
+							"11" : "cpuCyclesLimitExceeded",
+							"12" : "dataSetOrModemError",
+							"13" : "degradedSignal",
+							"14" : "dteDceInterfaceError",
+							"15" : "enclosureDoorOpen",
+							"16" : "equipmentMalfunction",
+							"17" : "excessiveVibration",
+							"18" : "fileError",
+							"19" : "fireDetected",
+							"20" : "floodDetected",
+							"21" : "framingError",
+							"22" : "heatingVentCoolingSystemProblem",
+							"23" : "humidityUnacceptable",
+							"24" : "inputOutputDeviceError",
+							"25" : "inputDeviceError",
+							"26" : "lanError",
+							"27" : "leakDetected",
+							"28" : "localNodeTransmissionError",
+							"29" : "lossOfFrame",
+							"30" : "lossOfSignal",
+							"31" : "materialSupplyExhausted",
+							"32" : "multiplexerProblem",
+							"33" : "outOfMemory",
+							"34" : "ouputDeviceError",
+							"35" : "performanceDegraded",
+							"36" : "powerProblem",
+							"37" : "pressureUnacceptable",
+							"38" : "processorProblem",
+							"39" : "pumpFailure",
+							"40" : "queueSizeExceeded",
+							"41" : "receiveFailure",
+							"42" : "receiverFailure",
+							"43" : "remoteNodeTransmissionError",
+							"44" : "resourceAtOrNearingCapacity",
+							"45" : "responseTimeExecessive",
+							"46" : "retransmissionRateExcessive",
+							"47" : "softwareError",
+							"48" : "softwareProgramAbnormallyTerminated",
+							"49" : "softwareProgramError",
+							"50" : "storageCapacityProblem",
+							"51" : "temperatureUnacceptable",
+							"52" : "thresholdCrossed",
+							"53" : "timingProblem",
+							"54" : "toxicLeakDetected",
+							"55" : "transmitFailure",
+							"56" : "transmitterFailure",
+							"57" : "underlyingResourceUnavailable",
+							"58" : "versionMismatch",
+							"59" : "authenticationFailure",
+							"60" : "breachOfConfidentiality",
+							"61" : "cableTamper",
+							"62" : "delayedInformation",
+							"63" : "denialOfService",
+							"64" : "duplicateInformation",
+							"65" : "informationMissing",
+							"66" : "informationModificationDetected",
+							"67" : "informationOutOfSequence",
+							"68" : "intrusionDetection",
+							"69" : "keyExpired",
+							"70" : "nonRepudiationFailure",
+							"71" : "outOfHoursActivity",
+							"72" : "outOfService",
+							"73" : "proceduralError",
+							"74" : "unauthorizedAccessAttempt",
+							"75" : "unexpectedInformation",
+							"1000" : "informationalStatus"
+						},
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogProbableCause",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The perceived severity of the alarm, as specified by",
+							"the agent that generated it."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "indeterminate",
+							"6" : "cleared"
+						},
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSeverity",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"See textual conventions.",
+							"This object is only present if it was included in the",
+							"alarm trap corresponding to this AlarmLog entry."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogSpecificProblem",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogAdditionalText",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "other",
+							"2" : "communicationsAlarm",
+							"3" : "qualityOfServiceAlarm",
+							"4" : "processingErrorAlarm",
+							"5" : "equipmentAlarm",
+							"6" : "environmentalAlarm",
+							"7" : "integrityViolation",
+							"8" : "operationalViolation",
+							"9" : "physicalViolation",
+							"10" : "securityServiceOrMechanismViolation",
+							"11" : "timeDomainViolation",
+							"12" : "synthesisAlarm"
+						},
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogAlarmType",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates when the alarm has been generated."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogTime",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID gives the IP address of the Node Controller"
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogNodeControllerIpAddress",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.14",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"This OID gives the chassis ID "
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2AlmLogChassisId",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.2.1.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EKINOPS-MGNT2-NMS-MIB::mgnt2TrapNMSEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification reports an Event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mgnt2TrapNMSEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PortNumber:$v6",
+				"Summary" : "Network management system $v7 event occurred due to $v9. $v10"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EKINOPS-MGNT2-NMS-MIB::mgnt2TrapNMSEvent EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogNotificationId c 9999 EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogObjectClassIdentifier i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogSourcePm s EXAMPLE EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogBoardNumber i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogSourcePortType s EXAMPLE EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogSourcePortNumber i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogEventType i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogSourceType i 1 EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogReason s EXAMPLE EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogAdditionalText s EXAMPLE EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogTime s EXAMPLEE EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogNodeControllerIpAddress a 192.0.2.1 EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogChassisId s EXAMPLE",
+			"trap" : {
+				"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2TrapNMSEvent",
+				"oid" : "1.3.6.1.4.1.20044.1000.1.12",
+				"variables" : [
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogNotificationId",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "chassis",
+							"4" : "backplane",
+							"5" : "container",
+							"6" : "powerSupply",
+							"7" : "fan",
+							"8" : "sensor",
+							"9" : "module",
+							"10" : "port",
+							"11" : "stack",
+							"12" : "cpu",
+							"13" : "mgnt"
+						},
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogObjectClassIdentifier",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogSourcePm",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"See textual conventions."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogBoardNumber",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This OID gives the type of the port who sent a trap"
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogSourcePortType",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID gives the port number of the PM that sent the last trap"
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogSourcePortNumber",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object describes the type of the event logged."
+						],
+						"enums" : {
+							"1" : "objectCreation",
+							"2" : "objectDeletion",
+							"3" : "attributeValueChange",
+							"4" : "stateChange",
+							"5" : "activityLog"
+						},
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogEventType",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object describes the source type of the event logged."
+						],
+						"enums" : {
+							"1" : "event",
+							"2" : "control",
+							"3" : "config"
+						},
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogSourceType",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogReason",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogAdditionalText",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates when the event has been generated."
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogTime",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This OID gives the IP address of the Node Controller"
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogNodeControllerIpAddress",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.13",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"This OID gives the chassis ID "
+						],
+						"name" : "EKINOPS-MGNT2-NMS-MIB::mgnt2EventLogChassisId",
+						"oid" : "1.3.6.1.4.1.20044.1000.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

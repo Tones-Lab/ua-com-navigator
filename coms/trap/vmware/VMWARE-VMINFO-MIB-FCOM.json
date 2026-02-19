@@ -1,0 +1,294 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201109170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "VMWARE-VMINFO-MIB::vmwVmPoweredOn",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a virtual machine is powered on from a suspended ",
+				"or a powered off state. The origin of this event can be several:",
+				"for instance may be operator initiated, existing vmx process reconnects to control subsystem. ",
+				"NOTE: vms powered up due to VMotion are not reported. Upon receiving this notification client applications should",
+				"poll the vmwVmTable to obtain current status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vmwVmState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "VmID:$v1",
+				"Summary" : "Virtual machine $v3 is powered on"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VMWARE-VMINFO-MIB::vmwVmPoweredOn VMWARE-VMINFO-MIB::vmwVmID i 9999 VMWARE-VMINFO-MIB::vmwVmConfigFilePath s EXAMPLE VMWARE-VMINFO-MIB::vmwVmDisplayName s EXAMPLE",
+			"trap" : {
+				"name" : "VMWARE-VMINFO-MIB::vmwVmPoweredOn",
+				"oid" : "1.3.6.1.4.1.6876.4.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This holds the same value as vmwVmVMID of the affected vm generating the trap.",
+							"to allow polling of the affected vm in vmwVmTable."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmID",
+						"oid" : "1.3.6.1.4.1.6876.50.101",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is the path to the config file of the affected vm generating the trap ",
+							"and is same as vmwVmTable vmwVmConfigFile. It is expressed as POSIX pathname."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmConfigFilePath",
+						"oid" : "1.3.6.1.4.1.6876.50.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name by which this vm is displayed. It is not guaranteed to be unique.",
+							"MOB: https://esx.example.com/mob/?moid=vmwVmIdx&doPath=summary%2eguest"
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmDisplayName",
+						"oid" : "1.3.6.1.4.1.6876.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VMWARE-VMINFO-MIB::vmwVmPoweredOff",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a virtual machine is powered off. The origin of this event can be several:",
+				"for instance may be operator initiated, vmx process terminating abnormally. NOTE: vms powered down due",
+				"to VMotion are not reported. Upon receiving this notification client applications should",
+				"poll the vmwVmTable to obtain current status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vmwVmState",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "VmID:$v1",
+				"Summary" : "Virtual machine $v3 is powered off"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VMWARE-VMINFO-MIB::vmwVmPoweredOff VMWARE-VMINFO-MIB::vmwVmID i 9999 VMWARE-VMINFO-MIB::vmwVmConfigFilePath s EXAMPLE VMWARE-VMINFO-MIB::vmwVmDisplayName s EXAMPLE",
+			"trap" : {
+				"name" : "VMWARE-VMINFO-MIB::vmwVmPoweredOff",
+				"oid" : "1.3.6.1.4.1.6876.4.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This holds the same value as vmwVmVMID of the affected vm generating the trap.",
+							"to allow polling of the affected vm in vmwVmTable."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmID",
+						"oid" : "1.3.6.1.4.1.6876.50.101",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is the path to the config file of the affected vm generating the trap ",
+							"and is same as vmwVmTable vmwVmConfigFile. It is expressed as POSIX pathname."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmConfigFilePath",
+						"oid" : "1.3.6.1.4.1.6876.50.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name by which this vm is displayed. It is not guaranteed to be unique.",
+							"MOB: https://esx.example.com/mob/?moid=vmwVmIdx&doPath=summary%2eguest"
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmDisplayName",
+						"oid" : "1.3.6.1.4.1.6876.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VMWARE-VMINFO-MIB::vmwVmHBLost",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a virtual machine detects a loss in guest heartbeat. The Guest heartbeat",
+				"is only sent if VMware Tools are installed in the Guest OS. Control process will send this event whenever it ",
+				"determines the number of guest heartbeats for a given period of time have not been received. ",
+				"Upon receiving this notification client applications should",
+				"poll the vmwVmTable to obtain current status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vmwVmHBStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "VmID:$v1",
+				"Summary" : "Virtual machine $v3 detected a loss in guest heartbeat"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VMWARE-VMINFO-MIB::vmwVmHBLost VMWARE-VMINFO-MIB::vmwVmID i 9999 VMWARE-VMINFO-MIB::vmwVmConfigFilePath s EXAMPLE VMWARE-VMINFO-MIB::vmwVmDisplayName s EXAMPLE",
+			"trap" : {
+				"name" : "VMWARE-VMINFO-MIB::vmwVmHBLost",
+				"oid" : "1.3.6.1.4.1.6876.4.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This holds the same value as vmwVmVMID of the affected vm generating the trap.",
+							"to allow polling of the affected vm in vmwVmTable."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmID",
+						"oid" : "1.3.6.1.4.1.6876.50.101",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is the path to the config file of the affected vm generating the trap ",
+							"and is same as vmwVmTable vmwVmConfigFile. It is expressed as POSIX pathname."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmConfigFilePath",
+						"oid" : "1.3.6.1.4.1.6876.50.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name by which this vm is displayed. It is not guaranteed to be unique.",
+							"MOB: https://esx.example.com/mob/?moid=vmwVmIdx&doPath=summary%2eguest"
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmDisplayName",
+						"oid" : "1.3.6.1.4.1.6876.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VMWARE-VMINFO-MIB::vmwVmHBDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a virtual machine detects or regains the required number of guest heartbeats",
+				"for a given period of time. This is only sent if VMware tools are installed in the Guest OS.",
+				"Upon receiving this notification client applications should",
+				"poll the vmwVmTable to obtain current status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vmwVmHBStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "VmID:$v1",
+				"Summary" : "Virtual machine $v3 regained required number of guest heartbeats"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VMWARE-VMINFO-MIB::vmwVmHBDetected VMWARE-VMINFO-MIB::vmwVmID i 9999 VMWARE-VMINFO-MIB::vmwVmConfigFilePath s EXAMPLE VMWARE-VMINFO-MIB::vmwVmDisplayName s EXAMPLE",
+			"trap" : {
+				"name" : "VMWARE-VMINFO-MIB::vmwVmHBDetected",
+				"oid" : "1.3.6.1.4.1.6876.4.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This holds the same value as vmwVmVMID of the affected vm generating the trap.",
+							"to allow polling of the affected vm in vmwVmTable."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmID",
+						"oid" : "1.3.6.1.4.1.6876.50.101",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is the path to the config file of the affected vm generating the trap ",
+							"and is same as vmwVmTable vmwVmConfigFile. It is expressed as POSIX pathname."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmConfigFilePath",
+						"oid" : "1.3.6.1.4.1.6876.50.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name by which this vm is displayed. It is not guaranteed to be unique.",
+							"MOB: https://esx.example.com/mob/?moid=vmwVmIdx&doPath=summary%2eguest"
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmDisplayName",
+						"oid" : "1.3.6.1.4.1.6876.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "VMWARE-VMINFO-MIB::vmwVmSuspended",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a virtual machine is suspended. The origin of this event may be several: operator",
+				"initiated, by software api clients, and by other means.",
+				"Upon receiving this notification client applications should",
+				"poll the vmwVmTable to obtain current status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vmwVmSuspended",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "VmID:$v1",
+				"Summary" : "Virtual machine $v3 is suspended"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD VMWARE-VMINFO-MIB::vmwVmSuspended VMWARE-VMINFO-MIB::vmwVmID i 9999 VMWARE-VMINFO-MIB::vmwVmConfigFilePath s EXAMPLE VMWARE-VMINFO-MIB::vmwVmDisplayName s EXAMPLE",
+			"trap" : {
+				"name" : "VMWARE-VMINFO-MIB::vmwVmSuspended",
+				"oid" : "1.3.6.1.4.1.6876.4.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This holds the same value as vmwVmVMID of the affected vm generating the trap.",
+							"to allow polling of the affected vm in vmwVmTable."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmID",
+						"oid" : "1.3.6.1.4.1.6876.50.101",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is the path to the config file of the affected vm generating the trap ",
+							"and is same as vmwVmTable vmwVmConfigFile. It is expressed as POSIX pathname."
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmConfigFilePath",
+						"oid" : "1.3.6.1.4.1.6876.50.102",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name by which this vm is displayed. It is not guaranteed to be unique.",
+							"MOB: https://esx.example.com/mob/?moid=vmwVmIdx&doPath=summary%2eguest"
+						],
+						"name" : "VMWARE-VMINFO-MIB::vmwVmDisplayName",
+						"oid" : "1.3.6.1.4.1.6876.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,180 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TRIDIUMR3-MIB::stationAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The stationAlarm trap is generated when a Niagara alarm is received",
+				"by an snmp recipient which has routing alarms to a network manager",
+				"enabled. It contains useful information from the alarm record."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==0) ? 1 : 2"
+				},
+				"EventType" : "stationAlarm",
+				"ExpireTime" : {
+					"eval" : "($v3==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==1) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3==0) ? 'Station alarm cleared' : 'Station alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TRIDIUMR3-MIB::stationAlarm TRIDIUMR3-MIB::timestamp s EXAMPLE TRIDIUMR3-MIB::uuid s EXAMPLE TRIDIUMR3-MIB::sourceState i 0 TRIDIUMR3-MIB::ackState i 0 TRIDIUMR3-MIB::ackRequired i 0 TRIDIUMR3-MIB::source s EXAMPLE TRIDIUMR3-MIB::alarmClass s EXAMPLE TRIDIUMR3-MIB::priority i 0 TRIDIUMR3-MIB::normalTime s EXAMPLE TRIDIUMR3-MIB::ackTime s EXAMPLE TRIDIUMR3-MIB::user s EXAMPLE TRIDIUMR3-MIB::alarmData s EXAMPLE TRIDIUMR3-MIB::alarmTransition i 0 TRIDIUMR3-MIB::lastUpdate s EXAMPLE",
+			"trap" : {
+				"name" : "TRIDIUMR3-MIB::stationAlarm",
+				"oid" : "1.3.6.1.4.1.4131.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time when the alarm occurred."
+						],
+						"name" : "TRIDIUMR3-MIB::timestamp",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique universal identifier of the alarm."
+						],
+						"name" : "TRIDIUMR3-MIB::uuid",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state of the source. normal(0), offnormal(1), fault(2), or alert(3)."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "offnormal",
+							"2" : "fault",
+							"3" : "alert"
+						},
+						"name" : "TRIDIUMR3-MIB::sourceState",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates if the alarm has been acknowledged. acked(0), unacked(1), or ackPending(2). ",
+							"Alarm can be acknowledged by setting ackState to 'acked'(0)"
+						],
+						"enums" : {
+							"0" : "acked",
+							"1" : "unacked",
+							"2" : "ackPending"
+						},
+						"name" : "TRIDIUMR3-MIB::ackState",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates if an acknowledgement is required for the alarm. false(0), or true(1)."
+						],
+						"enums" : {
+							"0" : "false",
+							"1" : "true"
+						},
+						"name" : "TRIDIUMR3-MIB::ackRequired",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the path to the station object which generated the alarm."
+						],
+						"name" : "TRIDIUMR3-MIB::source",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The alarm class for the alarm."
+						],
+						"name" : "TRIDIUMR3-MIB::alarmClass",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The priority of the alarm (0=high, 255=low)."
+						],
+						"name" : "TRIDIUMR3-MIB::priority",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time at which the alarm goes back to normal state."
+						],
+						"name" : "TRIDIUMR3-MIB::normalTime",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The time at which the alarm is acked. Note that ",
+							"interpretation of this value depends upon the state of the alarm."
+						],
+						"name" : "TRIDIUMR3-MIB::ackTime",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the user who acknowledged the alarm."
+						],
+						"name" : "TRIDIUMR3-MIB::user",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A string containing dynamic alarm data, in key-value pairs."
+						],
+						"name" : "TRIDIUMR3-MIB::alarmData",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The initial state of the source. normal(0), offnormal(1), fault(2), or alert(3)."
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "offnormal",
+							"2" : "fault",
+							"3" : "alert"
+						},
+						"name" : "TRIDIUMR3-MIB::alarmTransition",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time at which the alarm was last updated. Updates occur ",
+							"at creation, acknowlegement, and changes to alarmData such as notes."
+						],
+						"name" : "TRIDIUMR3-MIB::lastUpdate",
+						"oid" : "1.3.6.1.4.1.4131.1.3.1.14",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,72 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "XYLAN-SOFT-PVC-MIB::atmxSoftPvcCallFailuresTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification indicating that one or more series of",
+				"call attempts in trying to establish a Soft PVPC or",
+				"Soft PVCC have failed since the last",
+				"atmSoftPvcCallFailureTrap was sent. If this trap has",
+				"not been sent for the last atmSoftPvcNotificationInterval",
+				"then it will be sent on the next increment of",
+				"atmSoftPvcCallFailures."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "atmxSoftPvcCallFailuresTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "$v1 call attempts failed while establishing Soft PVPC or Soft PVCC"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD XYLAN-SOFT-PVC-MIB::atmxSoftPvcCallFailuresTrap XYLAN-SOFT-PVC-MIB::atmxSoftPvcCallFailures c 9999 XYLAN-SOFT-PVC-MIB::atmxSoftPvcCurrentlyFailingSoftPVccs u 9999 XYLAN-SOFT-PVC-MIB::atmxSoftPvcCurrentlyFailingSoftPVpcs u 9999",
+			"trap" : {
+				"name" : "XYLAN-SOFT-PVC-MIB::atmxSoftPvcCallFailuresTrap",
+				"oid" : "1.3.6.1.4.1.800.2.9.2.2.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The number of times a series of call attempts has failed to",
+							"establish a Soft PVCC or Soft PVPC. The number of call",
+							"attempts in a series is determined by",
+							"atmSoftPVccRetryThreshold or atmSoftPVpcRetryThreshold",
+							"respectively."
+						],
+						"name" : "XYLAN-SOFT-PVC-MIB::atmxSoftPvcCallFailures",
+						"oid" : "1.3.6.1.4.1.800.2.9.2.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current number of Soft PVCCs for which there is",
+							"an active row in the atmSoftPVccTable having an",
+							"atmSoftPVccOperStatus with a value other than 'connected'."
+						],
+						"name" : "XYLAN-SOFT-PVC-MIB::atmxSoftPvcCurrentlyFailingSoftPVccs",
+						"oid" : "1.3.6.1.4.1.800.2.9.2.1.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The current number of Soft PVPCs for which there is an",
+							"active row in the atmSoftPVpcTable having an ",
+							"atmSoftPVpcOperStatus with a value other than 'connected'."
+						],
+						"name" : "XYLAN-SOFT-PVC-MIB::atmxSoftPvcCurrentlyFailingSoftPVpcs",
+						"oid" : "1.3.6.1.4.1.800.2.9.2.1.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

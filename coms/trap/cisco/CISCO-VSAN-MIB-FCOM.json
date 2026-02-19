@@ -1,0 +1,113 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200602060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-VSAN-MIB::vsanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A state change notification is generated whenever",
+				"vsanOperState is changed. The index and both states of ",
+				"the VSAN after the change, are included as variables ",
+				"in the notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : 2"
+				},
+				"EventType" : "vsanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 0 : 3"
+				},
+				"SubNode" : "VsanIndex: $v1",
+				"Summary" : "VsanIndex $v1 is now Admin $v2 and Oper $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-VSAN-MIB::vsanStatusChange CISCO-VSAN-MIB::notifyVsanIndex i 999 CISCO-VSAN-MIB::vsanAdminState i 1 CISCO-VSAN-MIB::vsanOperState i 1",
+			"trap" : {
+				"name" : "CISCO-VSAN-MIB::vsanStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.282.1.3.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-VSAN-MIB::notifyVsanIndex",
+						"oid" : "1.3.6.1.4.1.9.9.282.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "suspended"
+						},
+						"name" : "CISCO-VSAN-MIB::vsanAdminState",
+						"oid" : "1.3.6.1.4.1.9.9.282.1.1.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-VSAN-MIB::vsanOperState",
+						"oid" : "1.3.6.1.4.1.9.9.282.1.1.3.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-VSAN-MIB::vsanPortMembershipChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A membership change notification is generated whenever",
+				"port-vsan membership of a port is changed. The switch ",
+				"wwn, interface index and new port-vsan after the change",
+				"are included as variables in the notification. Change in",
+				"vsanIfEntry object of vsanIfTable triggers this ",
+				"notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vsanPortMembershipChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "Port-vsan membership of a port $v2 on $v1 has changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-VSAN-MIB::vsanPortMembershipChange CISCO-VSAN-MIB::vsanFcFeElementName s EXAMPLES IF-MIB::ifIndex i 9999 CISCO-VSAN-MIB::notifyVsanIndex i 999",
+			"trap" : {
+				"name" : "CISCO-VSAN-MIB::vsanPortMembershipChange",
+				"oid" : "1.3.6.1.4.1.9.9.282.1.3.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-VSAN-MIB::vsanFcFeElementName",
+						"oid" : "1.3.6.1.4.1.9.9.282.1.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-VSAN-MIB::notifyVsanIndex",
+						"oid" : "1.3.6.1.4.1.9.9.282.1.1.4",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,168 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝
+#
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+# 2025-11-27: Martin Aigner, Initial deployment
+#
+# ------------------------------------------------------------------------------------------------------------- #
+#---------------------------------------------------------------------------------------------------------
+# Descpription: Here are only hwNmNorthboundEventTrap trap:
+# OID:            .1.3.6.1.4.1.2011.2.15.1.7.1
+# Name:           hwNmNorthboundEventTrap
+# Reference:	  Netcool: Huawei_NCE_hwNmNorthboundEventTrap.rules
+#---------------------------------------------------------------------------------------------------------
+my $rulesfile = "NCE_hwNmNorthboundEventTrap.rules";
+$Log->Message('DEBUG', "Executing: " . $rulesfile);
+$Event->{SubMethod} = $rulesfile;
+
+# @HelpKey used for customized rules therefore needs to be the same for hwNmNorthboundEventTraps and hwNmNorthboundEventSynchronizationQueryResults	
+if ($enterprise eq "1.3.6.1.4.1.2011.2.15.1.7.7.2") 
+{
+	$Event->{'HelpKey'}			= "1.3.6.1.4.1.2011.2.15.1.7.1" . "|" . $generic . "|1"; # hardcoded to specific 1 so rules for event & syncEvent are the same
+}
+
+##################################################################################################################
+# Token Split
+##################################################################################################################
+
+#$enterprise - Huawei traps, hwNmNorthboundEventTrap
+# OID      .1.3.6.1.4.1.2011.2.15.1.7.1
+# case 1:  hwNmNorthboundEventNotify
+# case 3:  hwNmNorthboundEventNotifyCritical
+# case 4:  hwNmNorthboundEventNotifyMajor
+# case 5:  hwNmNorthboundEventNotifyMinor
+# case 6:  hwNmNorthboundEventNotifyWarning
+# case 7:  hwNmNorthboundEventNotifyIndefinitely
+# case 8:  hwNmNorthboundEventNotifyUnknownSeverity
+
+#$enterprise - Huawei synchronized traps, hwNmNorthboundEventSynchronizationQueryResult
+# OID      .1.3.6.1.4.1.2011.2.15.1.7.7.2
+# case 10: hwNmNorthboundEventSynchronizationQueryResultNotify
+if ( ( $enterprise eq "1.3.6.1.4.1.2011.2.15.1.7.1"   && $specific =~ /^[1345678]$/ ) ||
+     ( $enterprise eq "1.3.6.1.4.1.2011.2.15.1.7.7.2" && $specific == 10 ) ) { 
+    
+	#Token Split
+	my $hwNmNorthboundNEName = $v1;
+	my $hwNmNorthboundNEType = $v2;
+	my $hwNmNorthboundObjectInstance = $v3;
+	my $hwNmNorthboundEventType = $v4;
+	my $hwNmNorthboundEventTime = $v5;
+	my $hwNmNorthboundProbableCause = $v6;
+	my $hwNmNorthboundSeverity = $v7;
+	my $hwNmNorthboundEventDetail = $v8;
+	my $hwNmNorthboundAdditionalInfo = $v9;
+	my $hwNmNorthboundFaultFlag = $v10;
+	my $hwNmNorthboundFaultFunction = $v11;
+	my $hwNmNorthboundDeviceIP = $v12;
+	my $hwNmNorthboundSerialNo = $v13;
+	my $hwNmNorthboundProbableRepair = $v14;
+	my $hwNmNorthboundResourceIDs = $v15;
+	my $hwNmNorthboundEventName = $v16;
+	my $hwNmNorthboundReasonID = $v17;
+	my $hwNmNorthboundFaultID = $v18;
+	my $hwNmNorthboundDeviceType = $v19;
+	my $hwNmNorthboundTrailName = $v20;
+	my $hwNmNorthboundRootAlarm = $v21;
+	my $hwNmNorthboundGroupID = $v22;
+	my $hwNmNorthboundMaintainStatus = $v23;
+	my $hwNmNorthboundConfirmStatus = $v24;
+	my $hwNmNorthboundRestoreStatus = $v25;
+	my $hwNmNorthboundRootAlarmSerialNo = $v26;
+	
+    #$Log->Message('DEBUG', "$hwNmNorthboundNEName --- $hwNmNorthboundNEType ---	$hwNmNorthboundObjectInstance --- 	$hwNmNorthboundEventType ---	$hwNmNorthboundEventTime ---	$hwNmNorthboundProbableCause ---	$hwNmNorthboundSeverity ---	$hwNmNorthboundEventDetail ---	$hwNmNorthboundAdditionalInfo ---	$hwNmNorthboundFaultFlag ---	$hwNmNorthboundFaultFunction ---	$hwNmNorthboundDeviceIP ---	$hwNmNorthboundSerialNo ---	$hwNmNorthboundProbableRepair ---	$hwNmNorthboundResourceIDs ---	$hwNmNorthboundEventName ---	$hwNmNorthboundReasonID ---	$hwNmNorthboundFaultID ---	$hwNmNorthboundDeviceType ---	$hwNmNorthboundTrailName ---	$hwNmNorthboundRootAlarm ---	$hwNmNorthboundGroupID ---	$hwNmNorthboundMaintainStatus ---	$hwNmNorthboundRootAlarmSerialNo ---	$hwNmNorthboundConfirmStatus ---	$hwNmNorthboundRestoreStatus ---");
+    ##############################################################################################################
+    # Field Mapping
+    ##############################################################################################################    
+    $Event->{'Node'}					= $hwNmNorthboundNEName;
+    $Event->{'NodeAlias'}				= $hwNmNorthboundNEName;
+    $Event->{'IPAddress'}				= $hwNmNorthboundDeviceIP;
+    $Event->{'AlarmCategorization2'}	= $hwNmNorthboundObjectInstance;
+    $Event->{'EventType'}				= $hwNmNorthboundObjectInstance;
+    $Event->{'SubNode'}					= $hwNmNorthboundFaultID;
+    $Event->{'DeviceType'}				= $hwNmNorthboundNEType;
+    if($hwNmNorthboundTrailName eq "")
+    {
+    	$Event->{'Summary'}				= $hwNmNorthboundEventName;
+    }
+    else
+    {
+    	$Event->{'Summary'}				= $hwNmNorthboundEventName . " - " . $hwNmNorthboundTrailName;
+    }
+    $Event->{'HelpKey'}					= $Event->{'HelpKey'} . " - " . $hwNmNorthboundFaultID;
+    $Event->{'EMSAlarmID'}				= $hwNmNorthboundSerialNo;
+    $Event->{'AlarmCode'} = $hwNmNorthboundFaultID;
+    LibUtil_SetAdditionalInfo($Event,"NEType", $hwNmNorthboundNEType);
+    $Log->Message('DEBUG', "AdditionalInfo set to: $Event->{'AdditionalInfo'}");
+    LibUtil_SetAdditionalInfo($Event,"EventDetail", $hwNmNorthboundEventDetail);
+    $Log->Message('DEBUG', "AdditionalInfo set to: $Event->{'AdditionalInfo'}");
+    LibUtil_SetAdditionalInfo($Event,"AdditionalInfo", $hwNmNorthboundAdditionalInfo);
+    $Log->Message('DEBUG', "AdditionalInfo set to: $Event->{'AdditionalInfo'}");
+    LibUtil_SetAdditionalInfo($Event,"ProbableCause", $hwNmNorthboundProbableCause);
+    $Log->Message('DEBUG', "AdditionalInfo set to: $Event->{'AdditionalInfo'}");
+
+    #----------------------------------------------------------------------------------------------
+    # Location Extract:     added 2021-01-04, Lavicka Markus, OSS-609
+    #                       Example $hwNmNorthboundNEName: 40H400069B01
+    #                                                Site:    400069B
+    #----------------------------------------------------------------------------------------------
+    if ($hwNmNorthboundNEName =~ /^.{3}(\d{6}[A-Z])\d{2}/) {
+    	$Event->{Location} = $1;
+    	$Event->{CMDBCIID} = $Event->{Location};
+    } elsif ($hwNmNorthboundNEName =~ /^([A-Z]?\d{6}[A-Z])\/(\d+)/) {
+    	$Event->{Location} = $1;
+    	$Event->{CMDBCIID} = $Event->{Location};
+	}
+
+    # Example of Timestamp: hwNmNorthboundEventTime : 2015/11/30 - 21:11:39Z
+    # 2019/12/13 - 14:34:19z
+    if ($hwNmNorthboundEventTime =~ /[0-9]{4}\/[0-9]{2}\/[0-9]{2} - [0-9]{2}:[0-9]{2}:[0-9]{2}/) {
+    	$Log->Message('DEBUG', "hwNmNorthboundEventTime Pattern FOUND: [". $hwNmNorthboundEventTime ."]");
+        $Event->{'NEFirstReported'}	=Time::Piece->strptime($hwNmNorthboundEventTime, "%Y/%m/%d - %H:%M:%SZ")->epoch;
+		$Event->{'NELastReported'}=Time::Piece->strptime($hwNmNorthboundEventTime, "%Y/%m/%d - %H:%M:%SZ")->epoch;
+    } else {
+    	$Log->Message('DEBUG', "hwNmNorthboundEventTime Pattern NOT FOUND: [". $hwNmNorthboundEventTime ."]");
+    }
+
+    if (exists $huawei_nce_lookup_hwNmNorthboundEventTrap_severities{$hwNmNorthboundSeverity}) {
+        $Event->{Severity}      = $huawei_nce_lookup_hwNmNorthboundEventTrap_severities{$hwNmNorthboundSeverity}{Severity};
+        $Event->{EventCategory} = $huawei_nce_lookup_hwNmNorthboundEventTrap_severities{$hwNmNorthboundSeverity}{EventCategory};
+    }
+    $Log->Message('DEBUG', "Severity received: $hwNmNorthboundSeverity and translated to $Event->{'Severity'}");
+
+    #WO0000000068945 18.5.2020 passive WDM - Update Summary. 
+    #source=18H500004A01 location=0-subrack-9-F5EM20-11(*ACCESS* AVDM48/2/41 NodeB 4G 500063)-MAC:1
+    $Log->Message('DEBUG',"hwNmNorthboundObjectInstance: $hwNmNorthboundObjectInstance");
+	if ($hwNmNorthboundObjectInstance =~ /AVDM48\/\d+\/\d+/) {
+        # Extract Strecke (the first number after AVDM48/)
+        my $tmpStrecke = $hwNmNorthboundObjectInstance =~ /AVDM48\/(\d+)\/\d+/;
+        # Extract Kanal (the second number after AVDM48/)
+        my $tmpKanal   = $hwNmNorthboundObjectInstance =~ /AVDM48\/\d+\/(\d+)/;
+    	$Event->{Summary} = "PASSIVE WDM  - Strecke " . $tmpStrecke . " Kanal " . $tmpKanal . " " . $Event->{Summary};
+	}
+    
+    # 2022-09-16 tomanema OSS-2634 - START
+    if ($Event->{'AlarmCategorization1'} eq '' )
+    {
+    	$Event->{'AlarmCategorization1'}	= $Event->{'DeviceType'};
+    }
+    
+    #3.6.2020 aignerma CRQ000000054587 - rule for Object
+    $Event->{AlarmCategorization2} =~ s/.*location=//;
+
+    $Log->Message('DEBUG',"EventNode: $Event->{'Node'} EventSummary: $Event->{'Summary'} EventKey: $Event->{'EventKey'}");
+} 
+$Log->Message('DEBUG', $rulesfile . " ...done");

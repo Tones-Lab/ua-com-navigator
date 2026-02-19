@@ -1,0 +1,104 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9808012130Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DS3-MIB::dsx3LineStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A dsx3LineStatusChange trap is sent when the",
+				"value of an instance of dsx3LineStatus changes. It",
+				"can be utilized by an NMS to trigger polls. When",
+				"the line status change results in a lower level",
+				"line status change (i.e. ds1), then no traps for",
+				"the lower level are sent."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<IfIndex>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "dsx3LineStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2 || $v1 == 4 || $v1 == 8 || $v1 == 32 || $v1 == 64 || $v1 == 1024 || $v1 == 2048) ? 3 : (($v1 == 128 || $v1 == 256 || $v1 == 512) ? 2 : (($v1 eq '') ? 4 : 1))"
+				},
+				"SubNode" : "dsx3ConfigEntry.$IfIndex",
+				"Summary" : {
+					"eval" : "($v1 == 2048) ? 'DS3(OOS) Carrier Equipment Out of Service, $IfIndex' : (($v1 == 8) ? 'DS3 (AIS) Far End Alarm Indication Signal, $IfIndex' : (($v1 == 16) ? 'DS3 (AIS) Alarm Indication Signal, $IfIndex' : (($v1 == 32) ? 'DS3 (LOF) Loss of Frame, $IfIndex' : (($v1 == 64) ? 'DS3 (LOS) Loss of Signal, $IfIndex' : (($v1 == 256) ? 'DS3 (TestCode) Test Pattern Detected, $IfIndex' : (($v1 == 512)? 'DS3 (Other Failure): Unknown Alarm, $IfIndex' : (($v1 == 2) ? 'DS3 (Receive) Far End Remote Alarm Indication, $IfIndex' : (($v1 == 4) ? 'DS3 (Transmit Remote Alarm Indication, $IfIndex' : (($v1 == 1) ? 'DS3 Line Normal, $IfIndex' : (($v1 == 1024) ? 'DS3 Unavailable Signal State, $IfIndex' : 'DS3 Multiple Alarms, dsx3LineStatus: $v1, $IfIndex'))))))))))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DS3-MIB::dsx3LineStatusChange DS3-MIB::dsx3LineStatus i 8 DS3-MIB::dsx3LineStatusLastChange.12 t 31536000",
+			"trap" : {
+				"name" : "DS3-MIB::dsx3LineStatusChange",
+				"oid" : "1.3.6.1.2.1.10.30.15.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback state information",
+							"and failure state information. The dsx3LineStatus",
+							"is a bit map represented as a sum, therefore, it",
+							"can represent multiple failures and a loopback",
+							"(see dsx3LoopbackConfig object for the type of",
+							"loopback) simultaneously. The dsx3NoAlarm must be",
+							"set if and only if no other flag is set.",
+							"",
+							"If the dsx3loopbackState bit is set, the loopback",
+							"in effect can be determined from the",
+							"dsx3loopbackConfig object.",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"8 dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here",
+							"1024 dsx3UnavailSigState Near End in Unavailable Signal",
+							"State",
+							"2048 dsx3NetEquipOOS Carrier Equipment Out of Service"
+						],
+						"name" : "DS3-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of MIB II's sysUpTime object at the",
+							"time this DS3/E3 entered its current line status",
+							"state. If the current state was entered prior to",
+							"the last re-initialization of the proxy-agent",
+							"then this object contains a zero value."
+						],
+						"name" : "DS3-MIB::dsx3LineStatusLastChange",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.14",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		}
+	]
+}

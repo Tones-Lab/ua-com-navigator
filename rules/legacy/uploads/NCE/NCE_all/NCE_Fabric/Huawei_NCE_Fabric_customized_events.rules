@@ -1,0 +1,38 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗ 
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝ 
+#  
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+#---------------------------------------------------------------------------------------------------------
+# Descpription: Customized Event rules for Rules which can't be covered by GPL or are general for this EMS
+#---------------------------------------------------------------------------------------------------------
+
+my $rulesfile = "Huawei_NCE_Fabric_customized_events.rules";
+$Log->Message('DEBUG', "Executing: " . $rulesfile);
+
+# Only Critical and Major should be visible to NOC
+if(int($Event->{Severity}) <= 3 and int($Event->{EventCategory}) != 1) {
+	LibUtil_AddSuppression($Event,"Hidden from NOC","Rules", 0,"iMaster_NCE_Customized_Event", $rulesfile);
+}
+
+# 03.05.2023 A6J6-909 Downgrade Critical to Major - No OnCall until further notice from BO
+if ( int($Event->{Severity}) == 5 ) {
+	$Event->{Summary} = $Event->{Summary} . " (Severity downgraded Critical --> Major)";
+    LibUtil_SetAdditionalInfo($Event,"OSSComment", "Critical alarms downgraded to Major. Waiting on full golive from BO.");
+	$Event->{Severity} = 4;
+}
+
+$Log->Message('DEBUG', $rulesfile . " ...done");

@@ -1,0 +1,175 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201004060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PRVT-SPANNING-TREE-MIB::stTopologyChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"A topologyChange trap is sent by a bridge when any of",
+				"its configured ports transitions from the Learning state",
+				"to the Forwarding state, or from the Forwarding state to",
+				"the Blocking state. The trap is not sent if a newRoot",
+				"trap is sent for the same transition. Implementation of",
+				"this trap is optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "stTopologyChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Spanning tree topology changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-SPANNING-TREE-MIB::stTopologyChange ",
+			"trap" : {
+				"name" : "PRVT-SPANNING-TREE-MIB::stTopologyChange",
+				"oid" : "1.3.6.1.4.1.738.10.5.107.0.1"
+			}
+		},
+		{
+			"@objectName" : "PRVT-SPANNING-TREE-MIB::stNewRoot",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The newRoot trap indicates that the sending agent has",
+				"become the new root of the Spanning Tree; the trap is",
+				"sent by a bridge soon after its election as the new",
+				"root, e.g., upon expiration of the Topology Change Timer",
+				"immediately subsequent to its election. Implementation",
+				"of this trap is optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "stNewRoot",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New spanning tree root detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-SPANNING-TREE-MIB::stNewRoot ",
+			"trap" : {
+				"name" : "PRVT-SPANNING-TREE-MIB::stNewRoot",
+				"oid" : "1.3.6.1.4.1.738.10.5.107.0.2"
+			}
+		},
+		{
+			"@objectName" : "PRVT-SPANNING-TREE-MIB::mstTopologyChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"A topologyChange trap is sent by a bridge when any of",
+				"its configured ports transitions from the Learning state",
+				"to the Forwarding state, or from the Forwarding state to",
+				"the Blocking state. The trap is not sent if a newRoot",
+				"trap is sent for the same transition. Implementation of",
+				"this trap is optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mstTopologyChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Topology change event occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-SPANNING-TREE-MIB::mstTopologyChange PRVT-SPANNING-TREE-MIB::prvtStMInstPortStatRole i 1 PRVT-SPANNING-TREE-MIB::prvtStTimeSinceTopologyChange u 9999",
+			"trap" : {
+				"name" : "PRVT-SPANNING-TREE-MIB::mstTopologyChange",
+				"oid" : "1.3.6.1.4.1.738.10.5.107.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The current role for this MST instance port."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "root",
+							"3" : "designated",
+							"4" : "alternate",
+							"5" : "backup",
+							"6" : "master"
+						},
+						"name" : "PRVT-SPANNING-TREE-MIB::prvtStMInstPortStatRole",
+						"oid" : "1.3.6.1.4.1.738.10.5.107.1.4.12.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time, in seconds, since last topology change."
+						],
+						"name" : "PRVT-SPANNING-TREE-MIB::prvtStTimeSinceTopologyChange",
+						"oid" : "1.3.6.1.4.1.738.10.5.107.1.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-SPANNING-TREE-MIB::mstNewRoot",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The newRoot trap indicates that the sending agent has",
+				"become the new root of the MSTP; the trap is",
+				"sent by a bridge soon after its election as the new",
+				"root, e.g., upon expiration of the Topology Change Timer",
+				"immediately subsequent to its election. Implementation",
+				"of this trap is optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mstNewRoot",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New MSTP root detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-SPANNING-TREE-MIB::mstNewRoot PRVT-SPANNING-TREE-MIB::prvtStMInstPortStatRole i 1",
+			"trap" : {
+				"name" : "PRVT-SPANNING-TREE-MIB::mstNewRoot",
+				"oid" : "1.3.6.1.4.1.738.10.5.107.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The current role for this MST instance port."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "root",
+							"3" : "designated",
+							"4" : "alternate",
+							"5" : "backup",
+							"6" : "master"
+						},
+						"name" : "PRVT-SPANNING-TREE-MIB::prvtStMInstPortStatRole",
+						"oid" : "1.3.6.1.4.1.738.10.5.107.1.4.12.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

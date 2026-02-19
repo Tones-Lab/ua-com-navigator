@@ -1,0 +1,334 @@
+######################################################################################################
+# Description: Rules funtions which are used by each Aggregator to define/support default Event-Field-Sets
+#
+# ChangeLog: 	2023-11-21	v001	lavickm2	initial development
+#				2024-07-08	v002	mathewel	Added code to update ZoneID
+#				2024-12-19	v003	mathewel	Updated code to calculate eventProcessingTime
+#               2025-08-12  v004    tomanema    encap EMS Severity Suppression with another exists $ems_lookup_defaults{$ip}
+#
+######################################################################################################
+######################################################################################################
+# INCLUDES
+######################################################################################################
+use Assure1::Graph;
+use Data::Dumper;
+
+######################################################################################################
+
+
+#-----------------------------------------------------------------------------------------------------
+# Name: 		LibEventDefault_setDefaultEventFields
+# Parameters: 	a reference to the Event
+# Description:	Each Aggregator must set this Fields in every Event (SNMP Aggregator, Webhook, TCP Aggregator)
+#-----------------------------------------------------------------------------------------------------
+sub LibEventDefault_setDefaultEventFields {
+
+	use Digest::MD5 qw(md5_hex);		# Needed for TCPServerd-EventKey
+
+	my $eventRef = shift;
+    my $trace = "EventDefault::setDefaultEventFields";
+	$Log->Message('DEBUG', $trace . " started... ip: " . $ip);
+    $Log->Message('DEBUG', $trace . " AppConfig: " . Dumper($AppConfig));
+
+	# BEGIN Check if the trap/webhook is a simulation.
+	# If the varbind `1.3.6.1.4.1.24683.1704.13.0` is present, use its value to replace `$ip`. 
+	# This ensures that all rules behave as if the trap was received directly from the original EMS
+	if ( $vars->{'1.3.6.1.4.1.24683.1704.13.0'} ) {
+    	LibUtil_AddDetails($eventRef,"OrigIP", $ip . "changed to " . $vars->{'1.3.6.1.4.1.24683.1704.13.0'} . " as varbind 1.3.6.1.4.1.24683.1704.13.0 was found." );
+		$ip = $vars->{'1.3.6.1.4.1.24683.1704.13.0'};
+        $Log->Message('DEBUG', $trace . " DBG-001: ip changed to: " . $ip);
+	}
+    if ( $headers->{'Source-IP'} ) {
+        LibUtil_AddDetails($eventRef,"OrigIP", $ip . "changed to " . $headers->{'Source-IP'} . " as header 'Source-IP' was found." );
+        $ip = $headers->{'Source-IP'};
+        $Log->Message('DEBUG', $trace . " DBG-002: ip changed to: " . $ip);
+    }
+    # END Check if the trap/webhook is a simulation.
+
+	use Time::HiRes qw (time);
+    our $eventProcStartTime = time();
+    $eventRef->{'Action'}					= "Insert";					# Default, will be updated by H3A_InsertSQLFile.sql or by User-Action or by Cape-Action
+    $eventRef->{'Actor'}					= $AppConfig->{'Name'};		# Aggregator Name who is doing the Action "Insert"
+    $eventRef->{'AdditionalInfo'}			= "{}";
+    $eventRef->{'AlarmCategorization1'}		= "";
+    $eventRef->{'AlarmCategorization2'}		= "";
+    $eventRef->{'CAPEFlag'}					= 0;						# no CAPE required
+    $eventRef->{'CMDBCIID'}					= "";
+    $eventRef->{'Company'}					= "";		                # will/can be overwritten by Rules and/or MsgGrp mapping
+    $eventRef->{'EMSName'}					= "";
+    $eventRef->{'DeviceType'}			    = "";
+	$eventRef->{'EventCategory'}			= 12;            			# NAC
+	$eventRef->{'EventType'}				= "";
+    $eventRef->{'ExpireTime'}				= 0;						# Overwrite the defautl Aggregator Exprietime (which doesn't make sense)
+	$eventRef->{'FirstReported'}			= time();
+	$eventRef->{'LastReported'}				= time();
+    $eventRef->{'IPAddress'}				= "";
+    $eventRef->{'Location'}					= "";
+	$eventRef->{'Method'}					= $AppConfig->{'Name'};		# Aggregator Name
+    $eventRef->{'MsgGroup'}					= "";
+    $eventRef->{'NECluster'}				= "";			# checked by LibEnrichOsiris_SiteData if empty.
+    $eventRef->{'NEName'}					= "";
+    $eventRef->{'NEPort'}					= "";
+    $eventRef->{'NESlot'}					= "";
+	$eventRef->{'Severity'}					= 4;						# Major
+	$eventRef->{'SubDeviceType'}			= "";
+	$eventRef->{'Suppression'}				= 0;			# Default: not Suppressed
+	$eventRef->{'SuppressionList'}			= "{}";			# Default: no Suppression
+    $eventRef->{'TicketCustomerService'}	= "{}";
+    $eventRef->{'TicketID'}					= "";
+    $eventRef->{'TicketUrgency'}			= 3000;
+
+	# Default per Aggregator Type
+    #	EMSHost
+    #	EMSIPAddress
+    #	HelpKey
+    #	Summary
+    if(defined($enterprise) && length($enterprise) > 0) {
+    	# Trap-Aggregator
+        $Log->Message('DEBUG', $trace . " TrapAggregator identified");
+		$eventRef->{'EMSHost'}			= $node;
+		$eventRef->{'EMSIPAddress'}		= $ip;
+        $eventRef->{'Node'}				= $ip;
+		$eventRef->{'HelpKey'}			= $enterprise . "|" . $generic . "|" . $specific;
+		$eventRef->{'ClearOrderKey'}    = $count;
+        $eventRef->{'Summary'}			= "Unknown Trap Received from " . $eventRef->{'EMSHost'} . "/" . $ip . " (HelpKey: " . $eventRef->{'HelpKey'} .").";
+
+	} elsif(defined($uri) && length($uri) > 0) {
+		# WebHook-Aggregator
+        $Log->Message('DEBUG', $trace . " WebHookd-Aggregator identified");
+		$eventRef->{'EMSHost'}			= $node;
+		$eventRef->{'EMSIPAddress'}		= $ip;
+		$eventRef->{'Node'}				= $ip;
+        $eventRef->{'HelpKey'}			= "Webhook;source=" . $ip . ";uri=" . $uri;
+        $eventRef->{'Summary'}			= "Unknown Event Received on Webhook Aggregator '" . $AppConfig->{'Name'} . "' from '" . $ip . "' on '" . $uri . "'";
+
+	} elsif(%Packet) {
+    	# TCP-Aggregator
+        $Log->Message('DEBUG', $trace . " TCPServerd-Aggregator identified");
+		$eventRef->{'EMSHost'}			= $Packet->{Host};
+		$eventRef->{'EMSIPAddress'}		= $Packet->{IP};
+        $eventRef->{'IPAddress'}		= $Packet->{IP};
+		$eventRef->{'Node'}				= $Packet->{IP};
+
+        # Remove Digits from message so the default HelpKey/EventKey is working for deduplication (e.g. Timestamps within the message are removed)
+        my $packet_message 				= $Packet->{Message};
+        $packet_message	=~ s/\d/?/g;
+
+        $eventRef->{'HelpKey'}			= "TCPAggregator;source=" . $Packet->{IP} . ";md5_hex_message=" . md5_hex($packet_message);
+        $eventRef->{'Summary'}			= "Unknown Event Received on TCPServerd Aggregator '" . $AppConfig->{'Name'} . "' from '" . $Packet->{IP} . "'";
+
+	} else {
+    	# Unknown Protocol
+        $Log->Message('DEBUG', $trace . " Unknown-Aggregator !!!!");
+        $eventRef->{'HelpKey'}			= "UnknownAggregatorType";
+        $eventRef->{'Summary'}			= "Unknown Event Received on Unknown Aggregator Protocol '" . $AppConfig->{'Name'} . "' from '" . $ip . "'";
+        $eventRef->{'Node'}				= "UnknownAggregatorType";
+    }
+
+
+    $eventRef->{'EventKey'}			= $AppConfig->{'Name'} . ";EK-Default;" . $eventRef->{'EMSHost'} .";". $eventRef->{'HelpKey'};
+	$Log->Message('DEBUG', $trace . " Default EventKey defined: '" . $eventRef->{'EventKey'} . "'");
+
+	# EMS lookup Defaults
+	# Check for IP (EMS_Lookup_Defaults)
+    # elsif Check for uri (EMS_Lookup_Defaults)... the path in the Webhook request
+    if (defined($ems_lookup_defaults{$ip})) {
+        my $txt = $trace . "  'EMS' found for " . $ip . " in \$ems_lookup_defaults HASH: " . $ems_lookup_defaults{$ip}{'EMSName'};
+        $Log->Message('INFO', $txt);
+        #$Log->Message('DEBUG', 'Full %ems_lookup_defaults: ' . Dumper(\%ems_lookup_defaults));
+
+        $eventRef->{'EMSName'}    = $ems_lookup_defaults{$ip}{'EMSName'}    if ($ems_lookup_defaults{$ip}{'EMSName'});
+        $eventRef->{'CMDBCIID'}   = $ems_lookup_defaults{$ip}{'CMDBCIID'}   if ($ems_lookup_defaults{$ip}{'CMDBCIID'});
+        $eventRef->{'MsgGroup'}   = $ems_lookup_defaults{$ip}{'MsgGroup'}   if ($ems_lookup_defaults{$ip}{'MsgGroup'});
+        $eventRef->{'ZoneID'}     = $ems_lookup_defaults{$ip}{'ZoneID'}     if ($ems_lookup_defaults{$ip}{'ZoneID'});
+    } elsif (defined($uri) && $uri ne '' && defined($ems_lookup_defaults{$uri})) {
+        my $txt = $trace . "  'EMS' found for URI '" . $uri . "' in \$ems_lookup_defaults HASH: " . $ems_lookup_defaults{$uri}{'EMSName'};
+        $Log->Message('INFO', $txt);
+        #$Log->Message('DEBUG', 'Full %ems_lookup_defaults: ' . Dumper(\%ems_lookup_defaults));
+
+        $eventRef->{'EMSName'}    = $ems_lookup_defaults{$uri}{'EMSName'}    if ($ems_lookup_defaults{$uri}{'EMSName'});
+        $eventRef->{'CMDBCIID'}   = $ems_lookup_defaults{$uri}{'CMDBCIID'}   if ($ems_lookup_defaults{$uri}{'CMDBCIID'});
+        $eventRef->{'MsgGroup'}   = $ems_lookup_defaults{$uri}{'MsgGroup'}   if ($ems_lookup_defaults{$uri}{'MsgGroup'});
+        $eventRef->{'ZoneID'}     = $ems_lookup_defaults{$uri}{'ZoneID'}     if ($ems_lookup_defaults{$uri}{'ZoneID'});
+    } else {
+        my $txt = $trace . " No 'EMS' found for " . $ip . " or " . $uri . " in \$ems_lookup_defaults HASH.";
+        $Log->Message('WARN', $txt);
+        LibUtil_AddDetails($eventRef, 'EnrichmentLog', $txt);
+    }
+
+	# EMSKey
+    # Used for different functions. Possible suffix needs to be removed so e.g. "UME AN Test" and "UME AN Prod" are processed as "UME AN"
+	$EMSKey = $eventRef->{'EMSName'};
+	$EMSKey=~s/\b\s+(?:test|prod|int|sit|preprod|pilot)\b$//ig;
+
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+#-----------------------------------------------------------------------------------------------------
+# Name: 		LibEventDefault_PostRules
+# Parameters: 	a reference to the Event
+# Description:	This functions process various global post steps.
+#				-) adds a Suppression in case the Severity is lower then the EMS maxSeverity  (Defined in EMS_lookup_Defaults.pl)
+#				-) Appends the String "[delayed]" in case a delay suppression is found.
+#-----------------------------------------------------------------------------------------------------
+sub LibEventDefault_PostRules {
+	my $eventRef = shift;
+
+	my $trace = "  LibEventDefault_PostRules";
+	$Log->Message('DEBUG', $trace . " started...");
+
+    # Set EMS Severity Suppression
+    if (exists $ems_lookup_defaults{$ip} ) {
+        if (exists $ems_lookup_defaults{$ip}{'maxSeverity'} ) {
+           if ( $ems_lookup_defaults{$ip}{'maxSeverity'} <= 5 ) {
+                if ($eventRef->{'Severity'} < $ems_lookup_defaults{$ip}{'maxSeverity'} ) {
+                    # NOTE: Suppression Name and Key is checked in insert.sql
+                    LibUtil_AddSuppression($eventRef,'Hidden from NOC', 'Rules EMS Severity', 0, 'Severity < ' . $ems_lookup_defaults{$ip}{'maxSeverity'}, $trace);
+                }
+            } else {
+                my $txt = $trace . " Invalid 'maxSeverity' value (".$ems_lookup_defaults{$ip}{'maxSeverity'}.") for ". $ip . " in \$ems_lookup_defaults HASH.";
+                $Log->Message('WARN', $txt);
+                LibUtil_AddDetails($eventRef,'EnrichmentLog',$txt);
+            }
+        } else {
+            my $txt = $trace . " No 'maxSuppSev' found for ". $ip . " in \$ems_lookup_defaults HASH.";
+            $Log->Message('WARN', $txt);
+            LibUtil_AddDetails($eventRef,'EnrichmentLog',$txt);
+        }
+	} else {
+        my $txt = $trace . " No value found for ". $ip . " in \$ems_lookup_defaults HASH.";
+        $Log->Message('WARN', $txt);
+    }
+    $eventRef->{'OrigSeverity'} = $eventRef->{'Severity'};
+
+	# Extend Summary if delayed
+	if ($eventRef->{'SuppressionList'}=~/"Delay":/ ) {
+	    $eventRef->{'Summary'} .= ' [delayed]';
+	}
+
+	# If the event is a simulation, ensure the correct ZoneID is used.
+	if ( ($vars->{'1.3.6.1.4.1.24683.1704.13.0'} || $headers->{'Source-IP'}) && $eventRef->{'ZoneID'} >= 1000 && $eventRef->{'ZoneID'} < 2000 ) {
+		$eventRef->{'ZoneID'} += 1000;
+	}
+
+	# Check if no undefined fields are written to the DB. This would cause an insert failure due to NOT NULL constraints.
+    # BEGIN - undef fields check
+    my %NotNullFieldsWithDBDefaults = (
+        EventKey	    => '',      EventCategory	=> 0,       EventType	    => '',
+        Ack	            => 0,       Action	        => '',      Actor	        => '',
+        Count	        => 1,       Customer	    => '',      Department	    => '',
+        DeviceType	    => '',      Duration	    => 0.000,   EscalationFlag	=> 0,
+        ExpireTime	    => 0,       FirstReported	=> 0.000,   IPAddress	    => '',
+        LastChanged	    => 0.000,   LastReported	=> 0.000,   Location	    => '',
+        Method	        => '',      Node	        => '',      OrigSeverity	=> 1,
+        OwnerName	    => '',      RootCauseFlag	=> 0,       RootCauseID	    => 0,
+        Score	        => 1,       Service	    => '',          ServiceImpact	=> 0,
+        Severity	    => 1,       SubDeviceType	=> '',      SubMethod	    => '',
+        SubNode	        => '',      TicketFlag	    => 0,       TicketID	    => '',
+        ZoneID	        => 0
+    );
+
+    foreach my $field (keys %NotNullFieldsWithDBDefaults) {
+            if (exists $eventRef->{$field} && not defined $eventRef->{$field}) {
+                    $eventRef->{$field} = $NotNullFieldsWithDBDefaults{$field};
+                    my $txt = "Undefined field '$field' received. (Set to DB default.).";
+                    $Log->Message('WARN', $txt);
+                    LibUtil_AddDetails($eventRef, $trace, $txt);
+            };
+    }
+
+    if (exists $eventRef->{Summary} && not defined $eventRef->{Summary}) {
+            $eventRef->{Summary} = $trace . " Undefined field 'Summary' received. (Insert stmt would fail due to not null constraint).";
+            $Log->Message('WARN', $eventRef->{Summary});
+    };
+
+    if (exists $eventRef->{Details} && not defined $eventRef->{Details}) {
+            $eventRef->{Details} = "{}";
+            my $txt = $trace . " undefined field 'Details' received.";
+            $Log->Message('WARN', $txt);
+            LibUtil_AddDetails($eventRef, $trace, $txt);
+    };
+    # END - undef fields check
+
+	my $eventProcEndTime = time();
+    my $eventProcessingTime = $eventProcEndTime - $eventProcStartTime;
+    my $rounded_value = sprintf("%.3f", $eventProcessingTime);
+    #LibUtil_SetAdditionalInfo($eventRef,"EventProcessingTime", $rounded_value);
+    LibUtil_AddDetails($eventRef,"EventProcessingTime", $rounded_value);
+    $Log->Message('DEBUG', $trace . " Event Processing Start Time: ".$eventProcStartTime ." EndTime: ". $eventProcEndTime." Event Processing total Time (secs) :". $rounded_value);
+	$Log->Message('DEBUG', $trace . " ...done");
+}
+
+
+
+
+sub LibEventDefault_EnrichTopologyProperties {
+	my $eventRef = shift;
+	my $trace = "  LibEventDefault_EnrichTopologyProperties";
+	$Log->Message('DEBUG', $trace . " started...");
+	#Establish Graph DB connection
+	my $expire   = 300;   #changed to 5 mins #86400;    # Default to 1 day for the JWT token to access Neo4j
+	my $graphDBH = GetNDBConnection(undef, $expire);
+	my $nodeName = $eventRef->{'Node'};
+	if (defined($graphDBH)) {
+	$Log->Message('DEBUG', "$trace Connect to graphDBH database success");
+	my $VNF_Query = "MATCH (b) WHERE b.Name='$nodeName' return b;";
+	#my $VNF_Query = " MATCH (b) WHERE b.Name='710006A' return b;";
+	$Log->Message('DEBUG', "$trace VNF_Query: $VNF_Query") ;
+    my ($error, @records_VNF_Group) = ExecuteCypherQuery({ 'CypherQuery' => $VNF_Query, 'NDB' => $graphDBH });
+	my $num = @records_VNF_Group ;
+	if ($error) {
+        $Log->Message('ERROR', "$trace Failed: query [$VNF_Query]: $error");
+		} elsif ($num) {
+    $Log->Message('DEBUG', "$trace VNF_Query Query returned $num records.");
+	my %new_EventDetails = %{$eventRef->{'Details'}};
+	my %properties=();
+	foreach my $row (@records_VNF_Group) {
+		%properties= %{$row->{'row'}[0]};
+		$Log->Message('DEBUG', "$trace Topology_Enrichment_Properties: ". Dumper(\%properties));
+		}
+
+	$new_EventDetails{"Topology_Enrichment_Properties"} = \%properties;
+	$eventRef->{'Details'} = \%new_EventDetails;
+	}
+	else {
+		$Log->Message('DEBUG', "$trace Query $VNF_Query returned no results.");
+	}
+        } else
+		{ $Log->Message('DEBUG', "$trace Connect to graphDBH database unsuccessful");	}
+}
+
+sub LibEventDefault_UnknownSpecific {
+    my $eventRef = shift;
+    my $trace = "  LibEventDefault_UnknownSpecific";
+    $Log->Message('DEBUG', $trace . " started...");
+
+    $eventRef->{'Summary'} = "Unknown Specific Trap Received: " . $specific . " for enterprise: " . $enterprise;
+    $Log->Message('WARN', $trace . " WRN-07-001: " . $eventRef->{'Summary'});
+
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEventDefault_UnknownEnterprise {
+    my $eventRef = shift;
+    my $trace = "  LibEventDefault_UnknownEnterprise";
+    $Log->Message('DEBUG', $trace . " started...");
+
+    $eventRef->{'Summary'} = "Unknown Enterprise Trap Received: " . $enterprise . " specific: " . $specific;
+    $Log->Message('WARN', $trace . " WRN-08-001: " . $eventRef->{'Summary'});
+
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEventDefault_UnknownURI {
+    my $eventRef = shift;
+    my $trace = "  LibEventDefault_UnknownURI";
+    $Log->Message('DEBUG', $trace . " started...");
+
+    $eventRef->{'Summary'} = "Unknown URI Received: " . $uri;
+    $Log->Message('WARN', $trace . " WRN-09-001: " . $eventRef->{'Summary'});
+
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+1;

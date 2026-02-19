@@ -1,0 +1,65 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "RAD-IMA-MIB::atmImaGroupStatusChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates IMA Group status change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2 || $v1==3) ? 3 : 2"
+				},
+				"EventType" : "atmImaGroupStatusChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : ($v1==2 || $v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==2 || $v1==3) ? 2 : (($v1==6 || $v1==7 || $v1==10 || $v1==11 || $v1==12) ? 4 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "IMA group status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD RAD-IMA-MIB::atmImaGroupStatusChangeTrap IMA-MIB::imaGroupFailureStatus i 1",
+			"trap" : {
+				"name" : "RAD-IMA-MIB::atmImaGroupStatusChangeTrap",
+				"oid" : "1.3.6.1.4.1.164.6.1.12.0.80",
+				"variables" : [
+					{
+						"description" : [
+							"The current failure status of the IMA group (the reason why",
+							"the GTSM is in the down state)."
+						],
+						"enums" : {
+							"1" : "noFailure",
+							"2" : "startUpNe",
+							"3" : "startUpFe",
+							"4" : "invalidMValueNe",
+							"5" : "invalidMValueFe",
+							"6" : "failedAssymetricNe",
+							"7" : "failedAssymetricFe",
+							"8" : "insufficientLinksNe",
+							"9" : "insufficientLinksFe",
+							"10" : "blockedNe",
+							"11" : "blockedFe",
+							"12" : "otherFailure",
+							"13" : "invalidImaVersionNe",
+							"14" : "invalidImaVersionFe"
+						},
+						"name" : "IMA-MIB::imaGroupFailureStatus",
+						"oid" : "1.3.6.1.4.1.353.5.7.1.1.2.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

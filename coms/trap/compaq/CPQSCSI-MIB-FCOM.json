@@ -1,0 +1,3616 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsi2CntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"SCSI Controller Status Change.",
+				"The agent has detected a change in the controller",
+				"status of a SCSI Controller. The variable",
+				"cpqScsiCntlrStatus indicates the current controller status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : (($v1==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqScsi2CntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : (($v1==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==3) ? 4 : 1)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SCSI2 controller status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsi2CntlrStatusChange CPQSCSI-MIB::cpqScsiCntlrStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsi2CntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5001",
+				"variables" : [
+					{
+						"description" : [
+							"SCSI Controller Status.",
+							"",
+							"This is the current status of the controller. The following",
+							"values are currently defined:",
+							"",
+							"other(1)",
+							"The controller is not operational due to reasons other than",
+							"hardware failure. The controller may be intentionally disabled.",
+							"The controller configuration may be in conflict with the",
+							"configuration of other hardware or software in the system.",
+							"The controller may have failed initialization. Corrective",
+							"action is Operating System dependent. Check for diagnostic",
+							"messages which may have occurred at system boot time.",
+							"",
+							"ok(2)",
+							"The controller is operating normally.",
+							"",
+							"failed(3)",
+							"The controller has failed and is no longer operating.",
+							"Please run diagnostics on the computer system to help",
+							"identify the problem."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.2.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsi2LogDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Logical Drive Status Change.",
+				"The agent has detected a change in the Logical Drive",
+				"Status of a SCSI logical drive. The current logical",
+				"drive status is indicated by the cpqScsiLogDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==1 || $v1==5 || $v1==6 || $v1==7) ? 3 : 2)"
+				},
+				"EventType" : "cpqScsi2LogDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : (($v1==1 || $v1==5 || $v1==6 || $v1==7) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 0 : (($v1==3) ? 4 : (($v1==5 || $v1==6 || $v1==7) ? 2 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SCSI2 logical drive status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsi2LogDrvStatusChange CPQSCSI-MIB::cpqScsiLogDrvStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsi2LogDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5002",
+				"variables" : [
+					{
+						"description" : [
+							"SCSI Logical Drive Status.",
+							"",
+							"The logical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The management agent does not recognize the status.",
+							"You may need to upgrade your software.",
+							"",
+							"ok(2)",
+							"Indicates that the logical drive is in normal operation mode.",
+							"No user action is required.",
+							"",
+							"failed(3)",
+							"Indicates that more physical drives have failed than the fault",
+							"tolerance mode of the logical drive can handle without data loss.",
+							"",
+							"unconfigured(4)",
+							"Indicates that the logical drive is not configured. Insure all",
+							"of the drive switches are properly set and run the configuration",
+							"utility.",
+							"",
+							"recovering(5)",
+							"Indicates that the logical drive is using Interim Recovery Mode.",
+							"In Interim Recovery Mode, at least one physical drive has",
+							"failed, but the logical drive's fault tolerance mode lets the",
+							"logical drive continue to operate with no data loss.",
+							"You should replace the failed drive as soon as possible.",
+							"",
+							"readyRebuild(6)",
+							"Indicates that the logical drive is ready for Automatic Data",
+							"Recovery. The physical drive that failed has been replaced",
+							"but the logical drive is still operating in Interim Recovery",
+							"Mode.",
+							"",
+							"rebuilding(7)",
+							"Indicates that the logical drive is currently resynchronizing",
+							"the data accross the physical drives in the logical drive.",
+							"",
+							"wrongDrive(8)",
+							"Indicates that the wrong physical drive was replaced after a",
+							"physical drive failure. You need to return the drive",
+							"incorrectly replaced and replace the failed drive.",
+							"",
+							"badConnect(9)",
+							"Indicates that a physical drive is not responding. Check the",
+							"cables connected to it.",
+							"",
+							"degraded(10)",
+							"Indicates that the logical drive is in a degraded state.",
+							"",
+							"disabled(11)",
+							"Indicates that the logical drive is disabled. The logical drive",
+							"configuration utility can enable or disable the logical drive.",
+							"You should enable the logical drive using the configuration",
+							"utility."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "unconfigured",
+							"5" : "recovering",
+							"6" : "readyForRebuild",
+							"7" : "rebuilding",
+							"8" : "wrongDrive",
+							"9" : "badConnect",
+							"10" : "degraded",
+							"11" : "disabled"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiLogDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.3.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsi2PhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Physical Drive Status Change.",
+				"The agent has detected a change in the status of a",
+				"SCSI physical drive. The current physical drive",
+				"status is indicated in the cpqScsiPhyDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqScsi2PhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : (($v1==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 0 : (($v1==3 || $v1==7 || $v1==12) ? 4 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SCSI2 physical drive status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsi2PhyDrvStatusChange CPQSCSI-MIB::cpqScsiPhyDrvStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsi2PhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5003",
+				"variables" : [
+					{
+						"description" : [
+							"SCSI Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"failed(3)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced.",
+							"",
+							"notConfigured(4)",
+							"Indicates that the physical drive is not configured. You",
+							"need to insure all of the drive's switches are properly set",
+							"and that the configuration utility has been run.",
+							"",
+							"badCable(5)",
+							"Indicates that a physical drive is not responding.",
+							"You should check the cables connected to it. You can bring",
+							"down the server and run diagnostics to help identify",
+							"the problem.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a physical drive had a status of OK and is no",
+							"longer present. The drive has been removed.",
+							"",
+							"missingWasFailed(7)",
+							"Indicates that a physical drive had a status of FAILED and is",
+							"no longer present. The drive has been removed.",
+							"",
+							"predictiveFailure(8)",
+							"Indicates that the physical drive has exceeded a threshold",
+							"value for one of it's predictive indicators. When convenient",
+							"you should bring down the server and run diagnostics to",
+							"help identify the problem. The drive may need to be replaced.",
+							"",
+							"missingWasPredictiveFailure(9)",
+							"Indicates that a physical drive had a status of PREDICTIVE",
+							"FAILURE and is no longer present. The drive has been removed.",
+							"",
+							"offline(10)",
+							"Indicates that the physical drive is offline and can no longer",
+							"return data. No further status is available.",
+							"",
+							"missingWasOffline(11)",
+							"Indicates that a physical drive had a status of OFFLINE",
+							"and is no longer present. The drive has been removed.",
+							"",
+							"hardError(12)",
+							"Indicates that a hard error occurred for this physical drive."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "notConfigured",
+							"5" : "badCable",
+							"6" : "missingWasOk",
+							"7" : "missingWasFailed",
+							"8" : "predictiveFailure",
+							"9" : "missingWasPredictiveFailure",
+							"10" : "offline",
+							"11" : "missingWasOffline",
+							"12" : "hardError"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTapePhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Drive Status Change.",
+				"The agent has detected a change in the status of a",
+				"Tape drive. The current physical drive status is",
+				"indicated in the cpqTapePhyDrvCondition variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : (($v1==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqTapePhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : (($v1==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==3) ? 3 : (($v1==4) ? 4 : 1))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Tape drive status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTapePhyDrvStatusChange CPQSCSI-MIB::cpqTapePhyDrvCondition i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTapePhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5004",
+				"variables" : [
+					{
+						"description" : [
+							"Tape Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the physical drive has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed"
+						},
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvCondition",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsi3CntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"SCSI Controller Status Change.",
+				"The agent has detected a change in the controller",
+				"status of a SCSI Controller. The variable",
+				"cpqScsiCntlrStatus indicates the current controller status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 3 : (($v3==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqScsi3CntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : (($v3==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : (($v3==3) ? 4 : 1)"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "SCSI3 controller status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsi3CntlrStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqScsiCntlrStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsi3CntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5005",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Controller Status.",
+							"",
+							"This is the current status of the controller. The following",
+							"values are currently defined:",
+							"",
+							"other(1)",
+							"The controller is not operational due to reasons other than",
+							"hardware failure. The controller may be intentionally disabled.",
+							"The controller configuration may be in conflict with the",
+							"configuration of other hardware or software in the system.",
+							"The controller may have failed initialization. Corrective",
+							"action is Operating System dependent. Check for diagnostic",
+							"messages which may have occurred at system boot time.",
+							"",
+							"ok(2)",
+							"The controller is operating normally.",
+							"",
+							"failed(3)",
+							"The controller has failed and is no longer operating.",
+							"Please run diagnostics on the computer system to help",
+							"identify the problem."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.2.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsi3PhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Physical Drive Status Change.",
+				"The agent has detected a change in the status of a",
+				"SCSI physical drive. The current physical drive",
+				"status is indicated in the cpqScsiPhyDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : (($v3==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqScsi3PhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : (($v3==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 0 : (($v3==3 || $v3==7 || $v3==12) ? 4 : 3))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "SCSI3 physical drive status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsi3PhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqScsiPhyDrvStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsi3PhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5006",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"failed(3)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced.",
+							"",
+							"notConfigured(4)",
+							"Indicates that the physical drive is not configured. You",
+							"need to insure all of the drive's switches are properly set",
+							"and that the configuration utility has been run.",
+							"",
+							"badCable(5)",
+							"Indicates that a physical drive is not responding.",
+							"You should check the cables connected to it. You can bring",
+							"down the server and run diagnostics to help identify",
+							"the problem.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a physical drive had a status of OK and is no",
+							"longer present. The drive has been removed.",
+							"",
+							"missingWasFailed(7)",
+							"Indicates that a physical drive had a status of FAILED and is",
+							"no longer present. The drive has been removed.",
+							"",
+							"predictiveFailure(8)",
+							"Indicates that the physical drive has exceeded a threshold",
+							"value for one of it's predictive indicators. When convenient",
+							"you should bring down the server and run diagnostics to",
+							"help identify the problem. The drive may need to be replaced.",
+							"",
+							"missingWasPredictiveFailure(9)",
+							"Indicates that a physical drive had a status of PREDICTIVE",
+							"FAILURE and is no longer present. The drive has been removed.",
+							"",
+							"offline(10)",
+							"Indicates that the physical drive is offline and can no longer",
+							"return data. No further status is available.",
+							"",
+							"missingWasOffline(11)",
+							"Indicates that a physical drive had a status of OFFLINE",
+							"and is no longer present. The drive has been removed.",
+							"",
+							"hardError(12)",
+							"Indicates that a hard error occurred for this physical drive."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "notConfigured",
+							"5" : "badCable",
+							"6" : "missingWasOk",
+							"7" : "missingWasFailed",
+							"8" : "predictiveFailure",
+							"9" : "missingWasPredictiveFailure",
+							"10" : "offline",
+							"11" : "missingWasOffline",
+							"12" : "hardError"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape3PhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Drive Status Change.",
+				"The agent has detected a change in the status of a",
+				"Tape drive. The current physical drive status is",
+				"indicated in the cpqTapePhyDrvCondition variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 3 : (($v3==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqTape3PhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : (($v3==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 0 : (($v3==3) ? 3 : 4))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Tape3 physical drive status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape3PhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapePhyDrvCondition i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape3PhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5007",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the physical drive has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed"
+						},
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvCondition",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape3PhyDrvCleaningRequired",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Drive Cleaning Required trap.",
+				"The agent has detected a tape drive that needs to have",
+				"a cleaning tape inserted and run. This will cause the tape drive",
+				"heads to be cleaned."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqTape3PhyDrvCleaningRequired",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Tape3 drive cleaning required"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape3PhyDrvCleaningRequired RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapePhyDrvCondition i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape3PhyDrvCleaningRequired",
+				"oid" : "1.3.6.1.4.1.232.0.5008",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the physical drive has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed"
+						},
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvCondition",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape3PhyDrvCleanTapeReplace",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Drive Cleaning Tape Needs Replacing.",
+				"The agent has detected that an autoloader tape unit has",
+				"a cleaning tape that has been fully used and therefore needs to",
+				"be replaced with a new cleaning tape."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqTape3PhyDrvCleanTapeReplace",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Tape3 drive cleaning tape need to replace"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape3PhyDrvCleanTapeReplace RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapePhyDrvCondition i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape3PhyDrvCleanTapeReplace",
+				"oid" : "1.3.6.1.4.1.232.0.5009",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the physical drive has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed"
+						},
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvCondition",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape3LibraryFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Library Error",
+				"The agent has detected that an autoloader unit has",
+				"an encountered an error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqTape3LibraryStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "LibrarySerialNo:$v3",
+				"Summary" : "Tape3 library $v3 failed on node $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape3LibraryFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapeLibrarySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape3LibraryFailed",
+				"oid" : "1.3.6.1.4.1.232.0.5010",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Library Serial Number.",
+							"",
+							"This is the unit serial number for the library. It",
+							"can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibrarySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape3LibraryOkay",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Library Okay",
+				"The agent has detected that an autoloader unit has",
+				"recovered from errors."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqTape3LibraryStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "LibrarySerialNo:$v3",
+				"Summary" : "Tape3 library $v3 recovered on node $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape3LibraryOkay RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapeLibrarySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape3LibraryOkay",
+				"oid" : "1.3.6.1.4.1.232.0.5011",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Library Serial Number.",
+							"",
+							"This is the unit serial number for the library. It",
+							"can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibrarySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape3LibraryDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Library Degraded",
+				"The agent has detected that an autoloader unit is",
+				"in a degraded condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqTape3LibraryStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "LibrarySerialNo:$v3",
+				"Summary" : "Tape3 library $v3 is degraded on node $v1."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape3LibraryDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapeLibrarySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape3LibraryDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.5012",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Library Serial Number.",
+							"",
+							"This is the unit serial number for the library. It",
+							"can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibrarySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape3LibraryDoorOpen",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Library Door Open",
+				"The agent has detected that the door on an autoloader",
+				"is open so the unit is not operational."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqTape3LibraryDoorOpen",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "LibrarySerialNo:$v3",
+				"Summary" : "Tape3 library $v3 door opened"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape3LibraryDoorOpen RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapeLibrarySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape3LibraryDoorOpen",
+				"oid" : "1.3.6.1.4.1.232.0.5013",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Library Serial Number.",
+							"",
+							"This is the unit serial number for the library. It",
+							"can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibrarySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape3LibraryDoorClosed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Library Door Closed",
+				"The agent has detected that the door on a an autoloader",
+				"has closed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqTape3LibraryDoorClosed",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "LibrarySerialNo:$v3",
+				"Summary" : "Tape3 library $v3 door closed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape3LibraryDoorClosed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapeLibrarySerialNumber s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape3LibraryDoorClosed",
+				"oid" : "1.3.6.1.4.1.232.0.5014",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Library Serial Number.",
+							"",
+							"This is the unit serial number for the library. It",
+							"can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibrarySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsiCdLibraryStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"CD Library Status Change.",
+				"The agent has detected a change in the status of a",
+				"CD Library device. The current CD Library status is",
+				"indicated in the cpqScsiCdLibraryCondition variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqScsiCdLibraryStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==2) ? 0 : (($v6==3) ? 3 : 4))"
+				},
+				"SubNode" : "CDLibraryDeviceIndex:$v5",
+				"Summary" : "SCSI CD library status changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsiCdLibraryStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqCdLibraryCntlrIndex i 9999 CPQSCSI-MIB::cpqCdLibraryBusIndex i 0 CPQSCSI-MIB::cpqCdLibraryScsiIdIndex i 0 CPQSCSI-MIB::cpqCdLibraryStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsiCdLibraryStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5015",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI CD Library Controller Index.",
+							"",
+							"The controller index indicates to which SCSI adapter instance",
+							"this table entry belongs. The controller index is the physical",
+							"slot in the computer system where the adapter is located."
+						],
+						"name" : "CPQSCSI-MIB::cpqCdLibraryCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.6.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI CD Library Bus Index.",
+							"",
+							"The bus index indicates to which SCSI bus instance on an",
+							"adapter card this table entry belongs. The instances start",
+							"at one and increment for each SCSI bus on a card."
+						],
+						"name" : "CPQSCSI-MIB::cpqCdLibraryBusIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.6.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI CD Library Device Index.",
+							"",
+							"The device index indicates to which device instance on a",
+							"SCSI bus this table entry belongs. The device index",
+							"is the SCSI ID being used by that device."
+						],
+						"name" : "CPQSCSI-MIB::cpqCdLibraryScsiIdIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.6.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"CD Library Status.",
+							"",
+							"This value represents the status of this CD Library.",
+							"",
+							"The library can be in one of the following states:",
+							"",
+							"other(1)",
+							"The library is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the CD library fault light is in an 'ok' state.",
+							"",
+							"failed(3)",
+							"Indicates that the CD library fault light is in a 'failed' state.",
+							"The fault light is activated for hardware errors (Sense Code 04h)",
+							"with additional Sense codes: 40h-4fh except the parity error.",
+							"The LED will remain on until is powered cycled.",
+							"",
+							"offline(4)",
+							"Indicates that the agents can no longer communicate with",
+							"the CD library. This could be caused by a cabling problem or the",
+							"CD library may be powered off."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "offline"
+						},
+						"name" : "CPQSCSI-MIB::cpqCdLibraryStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.6.2.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape4PhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Drive Status Change.",
+				"The Storage Agent has detected a change in the status of a",
+				"Tape drive. The current physical drive status is",
+				"indicated in the cpqTapePhyDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqTape4PhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==2) ? 0 : (($v6==3 || $v6==7) ? 4 : 3))"
+				},
+				"SubNode" : "DriveIndex:$v5",
+				"Summary" : "Tape4 physical drive status changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape4PhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapePhyDrvCntlrIndex i 9999 CPQSCSI-MIB::cpqTapePhyDrvBusIndex i 0 CPQSCSI-MIB::cpqTapePhyDrvScsiIdIndex i 0 CPQSCSI-MIB::cpqTapePhyDrvStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape4PhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5016",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Controller Index.",
+							"",
+							"The controller index indicates to which SCSI adapter instance",
+							"this tape table entry belongs. The controller index is the",
+							"physical slot in the computer where the adapter is located."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Bus Index.",
+							"",
+							"The bus index indicates to which SCSI bus instance on an",
+							"adapter this table entry belongs. The instances start",
+							"at one and increment for each SCSI bus on a card."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvBusIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Index.",
+							"",
+							"The physical drive index indicates to which physical drive",
+							"instance on a SCSI bus this table entry belongs. The physical",
+							"drive index is the SCSI ID being used by that tape drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvScsiIdIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Status.",
+							"",
+							"The tape physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The tape drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the tape physical drive is in normal operation",
+							"mode. No user action is necessary.",
+							"",
+							"failed(4)",
+							"Indicates that the tape physical drive has failed and can no",
+							"longer return data. The drive may need to be replaced.",
+							"",
+							"offline(5)",
+							"Indicates that the tape physical drive is offline and can no",
+							"longer return data. No further status is available.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a tape physical drive had a status of OK and",
+							"is no longer present. The drive has been removed.",
+							"",
+							"missingWasFailed(7)",
+							"Indicates that a tape physical drive had a status of FAILED",
+							"and is no longer present. The drive has been removed.",
+							"",
+							"missingWasOffline(8)",
+							"Indicates that a tape physical drive had a status of OFFLINE",
+							"and is no longer present. The drive has been removed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"4" : "failed",
+							"5" : "offline",
+							"6" : "missingWasOk",
+							"7" : "missingWasFailed",
+							"8" : "missingWasOffline"
+						},
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsi4PhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Physical Drive Status Change.",
+				"The Storage Agent has detected a change in the status of a",
+				"SCSI physical drive. The current physical drive",
+				"status is indicated in the cpqScsiPhyDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : (($v3==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqScsi4PhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : (($v3==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 0 : (($v3==3 || $v3==7 || $v3==12) ? 4 : 3))"
+				},
+				"SubNode" : "DriveIndex:$v6;DriveSerialNo:$v10",
+				"Summary" : "SCSI4 physical drive status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsi4PhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqScsiPhyDrvStatus i 3 CPQSCSI-MIB::cpqScsiPhyDrvCntlrIndex i 9999 CPQSCSI-MIB::cpqScsiPhyDrvBusIndex i 0 CPQSCSI-MIB::cpqScsiPhyDrvIndex i 0 CPQSCSI-MIB::cpqScsiPhyDrvVendor s EXAMPLE CPQSCSI-MIB::cpqScsiPhyDrvModel s EXAMPLE CPQSCSI-MIB::cpqScsiPhyDrvFWRev s EXAMPLE CPQSCSI-MIB::cpqScsiPhyDrvSerialNum s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsi4PhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5017",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"failed(3)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced.",
+							"",
+							"notConfigured(4)",
+							"Indicates that the physical drive is not configured. You",
+							"need to insure all of the drive's switches are properly set",
+							"and that the configuration utility has been run.",
+							"",
+							"badCable(5)",
+							"Indicates that a physical drive is not responding.",
+							"You should check the cables connected to it. You can bring",
+							"down the server and run diagnostics to help identify",
+							"the problem.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a physical drive had a status of OK and is no",
+							"longer present. The drive has been removed.",
+							"",
+							"missingWasFailed(7)",
+							"Indicates that a physical drive had a status of FAILED and is",
+							"no longer present. The drive has been removed.",
+							"",
+							"predictiveFailure(8)",
+							"Indicates that the physical drive has exceeded a threshold",
+							"value for one of it's predictive indicators. When convenient",
+							"you should bring down the server and run diagnostics to",
+							"help identify the problem. The drive may need to be replaced.",
+							"",
+							"missingWasPredictiveFailure(9)",
+							"Indicates that a physical drive had a status of PREDICTIVE",
+							"FAILURE and is no longer present. The drive has been removed.",
+							"",
+							"offline(10)",
+							"Indicates that the physical drive is offline and can no longer",
+							"return data. No further status is available.",
+							"",
+							"missingWasOffline(11)",
+							"Indicates that a physical drive had a status of OFFLINE",
+							"and is no longer present. The drive has been removed.",
+							"",
+							"hardError(12)",
+							"Indicates that a hard error occurred for this physical drive."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "notConfigured",
+							"5" : "badCable",
+							"6" : "missingWasOk",
+							"7" : "missingWasFailed",
+							"8" : "predictiveFailure",
+							"9" : "missingWasPredictiveFailure",
+							"10" : "offline",
+							"11" : "missingWasOffline",
+							"12" : "hardError"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Controller Index.",
+							"",
+							"The controller index indicates to which SCSI adapter instance",
+							"this table entry belongs. The controller index is the physical",
+							"slot in the computer where the adapter is located."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Bus Index.",
+							"",
+							"The bus index indicates to which SCSI bus instance on an",
+							"adapter this table entry belongs. The instances start",
+							"at one and increment for each SCSI bus on a card."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvBusIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Index.",
+							"",
+							"The physical drive index indicates to which physical drive",
+							"instance on a SCSI bus this table entry belongs. The physical",
+							"drive index is the SCSI ID being used by that drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Vendor.",
+							"",
+							"This is the physical drive vendor's name as returned by",
+							"the SCSI inquiry command. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvVendor",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Model.",
+							"",
+							"This is a description of the physical drive's model as returned",
+							"by the SCSI inquiry command. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvModel",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Firmware Revision.",
+							"",
+							"This is the revision level of the physical drive as returned by",
+							"the SCSI inquiry command. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvFWRev",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Serial Number.",
+							"",
+							"This is the serial number assigned to the physical drive.",
+							"This value is based upon the serial number as returned by the",
+							"SCSI inquiry command but may have been modified due to space",
+							"limitations. This can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvSerialNum",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.30",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTapeLibraryStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Library Status Change",
+				"The Storage Agent has detected a change in the status of a",
+				"tape library. The current tape library status is",
+				"indicated in the cpqTapeLibraryState variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==1) ? 3 : (($v10==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqTapeLibraryStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v10==1) ? 3600 : (($v10==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v10==1) ? 1 : (($v10==2) ? 0 : (($v10==4) ? 4 : 3))"
+				},
+				"SubNode" : "LibrarySerialNo:$v9;LibraryDeviceIndex:$v5",
+				"Summary" : "Tape library $v7 status changed to $v10"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTapeLibraryStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapeLibraryCntlrIndex i 9999 CPQSCSI-MIB::cpqTapeLibraryBusIndex i 0 CPQSCSI-MIB::cpqTapeLibraryScsiIdIndex i 0 CPQSCSI-MIB::cpqTapeLibraryLunIndex i 0 CPQSCSI-MIB::cpqTapeLibraryName s EXAMPLE CPQSCSI-MIB::cpqTapeLibraryFwRev s EXAMPLE CPQSCSI-MIB::cpqTapeLibrarySerialNumber s EXAMPLE CPQSCSI-MIB::cpqTapeLibraryState i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTapeLibraryStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5018",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Library Controller Index.",
+							"",
+							"The controller index indicates to which SCSI adapter instance",
+							"this table entry belongs. The controller index is the physical",
+							"slot in the computer system where the adapter is located."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibraryCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Library Bus Index.",
+							"",
+							"The bus index indicates to which SCSI bus instance on an",
+							"adapter card this table entry belongs. The instances start",
+							"at one and increment for each SCSI bus on a card."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibraryBusIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Library Device Index.",
+							"",
+							"The device index indicates to which device instance on a",
+							"SCSI bus this table entry belongs. The device index",
+							"is the SCSI ID being used by that device."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibraryScsiIdIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Library Logical Unit Index.",
+							"",
+							"The logical unit index indicates to which Lun device instance",
+							"on a SCSI bus this table entry belongs. The logical unit",
+							"index is the Lun being used by that device."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibraryLunIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Library Name."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibraryName",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tape Library Firmware Revision.",
+							"",
+							"This is the revision level of the tape library firmware as",
+							"returned by the SCSI inquiry command. This can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibraryFwRev",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tape Library Serial Number.",
+							"",
+							"This is the unit serial number for the library. It",
+							"can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapeLibrarySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tape Library Status.",
+							"",
+							"The library can be in one of the following states:",
+							"",
+							"other(1)",
+							"The library is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the library is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"degraded(3)",
+							"Indicates that the library has degraded in some manner.",
+							"",
+							"failed(4)",
+							"Indicates that the library has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The library may need to be replaced.",
+							"",
+							"offline(5)",
+							"Indicates that the agents can no longer communicate with",
+							"the library. This could be caused by a cabling problem or the",
+							"library may be powered off."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "offline"
+						},
+						"name" : "CPQSCSI-MIB::cpqTapeLibraryState",
+						"oid" : "1.3.6.1.4.1.232.5.4.3.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqTape5PhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tape Drive Status Change.",
+				"The Storage Agent has detected a change in the status of a",
+				"tape drive. The current physical drive status is",
+				"indicated in the cpqTapePhyDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v10==1) ? 3 : (($v10==2) ? 0 : 2)"
+				},
+				"EventType" : "cpqTape5PhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v10==1) ? 3600 : (($v10==2) ? 0 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v10==10) ? 1 : (($v10==2) ? 0 : (($v10==4 || $v10==7) ? 4 : 3))"
+				},
+				"SubNode" : "DriveIndex:$v5;DriveSerialNo:$v9",
+				"Summary" : "Tape5 physical drive $v7 status changed to $v10"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqTape5PhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqTapePhyDrvCntlrIndex i 9999 CPQSCSI-MIB::cpqTapePhyDrvBusIndex i 0 CPQSCSI-MIB::cpqTapePhyDrvScsiIdIndex i 0 CPQSCSI-MIB::cpqTapePhyDrvLunIndex i 0 CPQSCSI-MIB::cpqTapePhyDrvName s EXAMPLE CPQSCSI-MIB::cpqTapePhyDrvFwRev s EXAMPLE CPQSCSI-MIB::cpqTapePhyDrvSerialNumber s EXAMPLE CPQSCSI-MIB::cpqTapePhyDrvStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqTape5PhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5019",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Controller Index.",
+							"",
+							"The controller index indicates to which SCSI adapter instance",
+							"this tape table entry belongs. The controller index is the",
+							"physical slot in the computer where the adapter is located."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Bus Index.",
+							"",
+							"The bus index indicates to which SCSI bus instance on an",
+							"adapter this table entry belongs. The instances start",
+							"at one and increment for each SCSI bus on a card."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvBusIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Index.",
+							"",
+							"The physical drive index indicates to which physical drive",
+							"instance on a SCSI bus this table entry belongs. The physical",
+							"drive index is the SCSI ID being used by that tape drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvScsiIdIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Logical Unit Index.",
+							"",
+							"The physical drive logical unit index indicates to which",
+							"physical drive logical unit on a SCSI ID instance on a SCSI",
+							"bus this table entry belongs. The physical drive Lun index",
+							"is the logical unit number being used by that tape drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvLunIndex",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Name.",
+							"",
+							"This is a combination of the vendor ID and the product ID as",
+							"returned by the SCSI inquiry command. This can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvName",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Firmware Revision.",
+							"",
+							"This is the revision level of the physical drive as returned by",
+							"the SCSI inquiry command. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvFwRev",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Serial Number.",
+							"",
+							"This is the unit serial number for the tape drive. It",
+							"can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Tape Physical Drive Status.",
+							"",
+							"The tape physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The tape drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the tape physical drive is in normal operation",
+							"mode. No user action is necessary.",
+							"",
+							"failed(4)",
+							"Indicates that the tape physical drive has failed and can no",
+							"longer return data. The drive may need to be replaced.",
+							"",
+							"offline(5)",
+							"Indicates that the tape physical drive is offline and can no",
+							"longer return data. No further status is available.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a tape physical drive had a status of OK and",
+							"is no longer present. The drive has been removed.",
+							"",
+							"missingWasFailed(7)",
+							"Indicates that a tape physical drive had a status of FAILED",
+							"and is no longer present. The drive has been removed.",
+							"",
+							"missingWasOffline(8)",
+							"Indicates that a tape physical drive had a status of OFFLINE",
+							"and is no longer present. The drive has been removed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"4" : "failed",
+							"5" : "offline",
+							"6" : "missingWasOk",
+							"7" : "missingWasFailed",
+							"8" : "missingWasOffline"
+						},
+						"name" : "CPQSCSI-MIB::cpqTapePhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.4.1.1.1.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsi5PhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Physical Drive Status Change.",
+				"The Storage Agent has detected a change in the status of a",
+				"SCSI physical drive. The current physical drive",
+				"status is indicated in the cpqScsiPhyDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : (($v3==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqScsi5PhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : (($v3==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 0 : (($v3==3 || $v3==7 || $v3==12) ? 4 : 3))"
+				},
+				"SubNode" : "DriveIndex:$v6;DriveSerialNo:$v10",
+				"Summary" : "SCSI5 physical drive status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsi5PhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqScsiPhyDrvStatus i 3 CPQSCSI-MIB::cpqScsiPhyDrvCntlrIndex i 9999 CPQSCSI-MIB::cpqScsiPhyDrvBusIndex i 0 CPQSCSI-MIB::cpqScsiPhyDrvIndex i 0 CPQSCSI-MIB::cpqScsiPhyDrvVendor s EXAMPLE CPQSCSI-MIB::cpqScsiPhyDrvModel s EXAMPLE CPQSCSI-MIB::cpqScsiPhyDrvFWRev s EXAMPLE CPQSCSI-MIB::cpqScsiPhyDrvSerialNum s EXAMPLE CPQSCSI-MIB::cpqScsiPhyDrvOsName s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsi5PhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5020",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"failed(3)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced.",
+							"",
+							"notConfigured(4)",
+							"Indicates that the physical drive is not configured. You",
+							"need to insure all of the drive's switches are properly set",
+							"and that the configuration utility has been run.",
+							"",
+							"badCable(5)",
+							"Indicates that a physical drive is not responding.",
+							"You should check the cables connected to it. You can bring",
+							"down the server and run diagnostics to help identify",
+							"the problem.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a physical drive had a status of OK and is no",
+							"longer present. The drive has been removed.",
+							"",
+							"missingWasFailed(7)",
+							"Indicates that a physical drive had a status of FAILED and is",
+							"no longer present. The drive has been removed.",
+							"",
+							"predictiveFailure(8)",
+							"Indicates that the physical drive has exceeded a threshold",
+							"value for one of it's predictive indicators. When convenient",
+							"you should bring down the server and run diagnostics to",
+							"help identify the problem. The drive may need to be replaced.",
+							"",
+							"missingWasPredictiveFailure(9)",
+							"Indicates that a physical drive had a status of PREDICTIVE",
+							"FAILURE and is no longer present. The drive has been removed.",
+							"",
+							"offline(10)",
+							"Indicates that the physical drive is offline and can no longer",
+							"return data. No further status is available.",
+							"",
+							"missingWasOffline(11)",
+							"Indicates that a physical drive had a status of OFFLINE",
+							"and is no longer present. The drive has been removed.",
+							"",
+							"hardError(12)",
+							"Indicates that a hard error occurred for this physical drive."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "notConfigured",
+							"5" : "badCable",
+							"6" : "missingWasOk",
+							"7" : "missingWasFailed",
+							"8" : "predictiveFailure",
+							"9" : "missingWasPredictiveFailure",
+							"10" : "offline",
+							"11" : "missingWasOffline",
+							"12" : "hardError"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Controller Index.",
+							"",
+							"The controller index indicates to which SCSI adapter instance",
+							"this table entry belongs. The controller index is the physical",
+							"slot in the computer where the adapter is located."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Bus Index.",
+							"",
+							"The bus index indicates to which SCSI bus instance on an",
+							"adapter this table entry belongs. The instances start",
+							"at one and increment for each SCSI bus on a card."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvBusIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Index.",
+							"",
+							"The physical drive index indicates to which physical drive",
+							"instance on a SCSI bus this table entry belongs. The physical",
+							"drive index is the SCSI ID being used by that drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Vendor.",
+							"",
+							"This is the physical drive vendor's name as returned by",
+							"the SCSI inquiry command. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvVendor",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Model.",
+							"",
+							"This is a description of the physical drive's model as returned",
+							"by the SCSI inquiry command. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvModel",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Firmware Revision.",
+							"",
+							"This is the revision level of the physical drive as returned by",
+							"the SCSI inquiry command. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvFWRev",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SCSI Physical Drive Serial Number.",
+							"",
+							"This is the serial number assigned to the physical drive.",
+							"This value is based upon the serial number as returned by the",
+							"SCSI inquiry command but may have been modified due to space",
+							"limitations. This can be used for identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvSerialNum",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.30",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Physical Drive OS Name.",
+							"",
+							"The OS name for this SCSI physical drive. This field will be",
+							"a null (size 0) string if the agent does not support OS name."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvOsName",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.37",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsi3LogDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Logical Drive Status Change.",
+				"The Storage Agent has detected a change in the status of a",
+				"SCSI logical drive. The current logical drive status is",
+				"indicated in the cpqScsiLogDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : (($v3==1 || $v3==5 || $v3==6 || $v3==7) ? 3 : 2)"
+				},
+				"EventType" : "cpqScsi3LogDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : (($v3==1 || $v3==5 || $v3==6 || $v3==7) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 0 : (($v3==3) ? 4 : (($v3==5 || $v3==6 || $v3==7) ? 2 : 3)))"
+				},
+				"SubNode" : "DriveIndex:$v6",
+				"Summary" : "SCSI3 logical drive status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsi3LogDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqScsiLogDrvStatus i 3 CPQSCSI-MIB::cpqScsiLogDrvCntlrIndex i 9999 CPQSCSI-MIB::cpqScsiLogDrvBusIndex i 0 CPQSCSI-MIB::cpqScsiLogDrvIndex i 0 CPQSCSI-MIB::cpqScsiLogDrvOsName s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsi3LogDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5021",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Logical Drive Status.",
+							"",
+							"The logical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The management agent does not recognize the status.",
+							"You may need to upgrade your software.",
+							"",
+							"ok(2)",
+							"Indicates that the logical drive is in normal operation mode.",
+							"No user action is required.",
+							"",
+							"failed(3)",
+							"Indicates that more physical drives have failed than the fault",
+							"tolerance mode of the logical drive can handle without data loss.",
+							"",
+							"unconfigured(4)",
+							"Indicates that the logical drive is not configured. Insure all",
+							"of the drive switches are properly set and run the configuration",
+							"utility.",
+							"",
+							"recovering(5)",
+							"Indicates that the logical drive is using Interim Recovery Mode.",
+							"In Interim Recovery Mode, at least one physical drive has",
+							"failed, but the logical drive's fault tolerance mode lets the",
+							"logical drive continue to operate with no data loss.",
+							"You should replace the failed drive as soon as possible.",
+							"",
+							"readyRebuild(6)",
+							"Indicates that the logical drive is ready for Automatic Data",
+							"Recovery. The physical drive that failed has been replaced",
+							"but the logical drive is still operating in Interim Recovery",
+							"Mode.",
+							"",
+							"rebuilding(7)",
+							"Indicates that the logical drive is currently resynchronizing",
+							"the data accross the physical drives in the logical drive.",
+							"",
+							"wrongDrive(8)",
+							"Indicates that the wrong physical drive was replaced after a",
+							"physical drive failure. You need to return the drive",
+							"incorrectly replaced and replace the failed drive.",
+							"",
+							"badConnect(9)",
+							"Indicates that a physical drive is not responding. Check the",
+							"cables connected to it.",
+							"",
+							"degraded(10)",
+							"Indicates that the logical drive is in a degraded state.",
+							"",
+							"disabled(11)",
+							"Indicates that the logical drive is disabled. The logical drive",
+							"configuration utility can enable or disable the logical drive.",
+							"You should enable the logical drive using the configuration",
+							"utility."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "unconfigured",
+							"5" : "recovering",
+							"6" : "readyForRebuild",
+							"7" : "rebuilding",
+							"8" : "wrongDrive",
+							"9" : "badConnect",
+							"10" : "degraded",
+							"11" : "disabled"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiLogDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.3.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Logical Drive Controller Index.",
+							"",
+							"The controller index indicates to which SCSI adapter instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiLogDrvCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Logical Drive Bus Index.",
+							"",
+							"The bus index indicates to which SCSI bus instance on an",
+							"adapter this table entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiLogDrvBusIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SCSI Logical Drive Index.",
+							"",
+							"The logical drive index indicates to which logical drive instance",
+							"on a SCSI bus this table entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiLogDrvIndex",
+						"oid" : "1.3.6.1.4.1.232.5.2.3.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Logical Drive OS Name.",
+							"",
+							"The OS name for this array logical drive. This field will be",
+							"a null (size 0) string if the agent does not support OS name."
+						],
+						"name" : "CPQSCSI-MIB::cpqScsiLogDrvOsName",
+						"oid" : "1.3.6.1.4.1.232.5.2.3.1.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqSasPhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Physical Drive Status Change.",
+				"The Storage Agent has detected a change in the status of a",
+				"SAS or SATA physical drive. The current physical drive status",
+				"is indicated in the cpqSasPhyDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 3 : (($v7==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSasPhyDrvStatusChange:$v8",
+				"ExpireTime" : {
+					"eval" : "($v7==1) ? 3600 : (($v7==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 1 : (($v7==2) ? 0 : (($v7==5 || $v7==9) ? 4 : 3))"
+				},
+				"SubNode" : "DriveIndex:$v6;DriveSerialNo:$v11",
+				"Summary" : "$v8 SAS physical drive status changed to $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqSasPhyDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqSasHbaHwLocation s EXAMPLE CPQSCSI-MIB::cpqSasPhyDrvLocationString s EXAMPLE CPQSCSI-MIB::cpqSasPhyDrvHbaIndex i 9999 CPQSCSI-MIB::cpqSasPhyDrvIndex i 9999 CPQSCSI-MIB::cpqSasPhyDrvStatus i 3 CPQSCSI-MIB::cpqSasPhyDrvType i 1 CPQSCSI-MIB::cpqSasPhyDrvModel s EXAMPLE CPQSCSI-MIB::cpqSasPhyDrvFWRev s EXAMPLE CPQSCSI-MIB::cpqSasPhyDrvSerialNumber s EXAMPLE CPQSCSI-MIB::cpqSasPhyDrvSasAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqSasPhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5022",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Host Bus Adapter Hardware Location.",
+							"",
+							"A text description of the hardware location of the HBA.",
+							"A NULL string indicates that the hardware location could not",
+							"be determined or is irrelevant."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasHbaHwLocation",
+						"oid" : "1.3.6.1.4.1.232.5.5.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive Location String.",
+							"",
+							"This string describes the location of the drive in relation to",
+							"the HBA. If the location string cannot be determined, the agent",
+							"will return a NULL string."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvLocationString",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive HBA Index.",
+							"",
+							"The HBA index indicates to which SAS adapter instance this table",
+							"entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvHbaIndex",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive Index.",
+							"",
+							"The physical drive index indicates to which physical drive",
+							"instance this table entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvIndex",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"predictiveFailure(3)",
+							"Indicates that the physical drive has exceeded a threshold",
+							"value for one of it's predictive indicators.",
+							"",
+							"offline(4)",
+							"Indicates that the physical drive is offline and can no longer",
+							"return data. No further status is available.",
+							"",
+							"failed(5)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a physical drive had a status of ok(2) and is",
+							"no longer present. The drive has been removed.",
+							"",
+							"missingWasPredictiveFailure(7)",
+							"Indicates that a physical drive had a status of",
+							"predictiveFailure(3) and is no longer present. The drive has",
+							"been removed.",
+							"",
+							"missingWasOffline(8)",
+							"Indicates that a physical drive had a status of offline(4) and",
+							"is no longer present. The drive has been removed.",
+							"",
+							"missingWasFailed(9)",
+							"Indicates that a physical drive had a status of failed(5) and",
+							"is no longer present. The drive has been removed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "predictiveFailure",
+							"4" : "offline",
+							"5" : "failed",
+							"6" : "missingWasOk",
+							"7" : "missingWasPredictiveFailure",
+							"8" : "missingWasOffline",
+							"9" : "missingWasFailed"
+						},
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive Type.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine the type for this drive.",
+							"",
+							"sas(2)",
+							"The drive type is Serial Attached SCSI.",
+							"",
+							"sata(3)",
+							"The drive type is Serial ATA."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "sas",
+							"3" : "sata"
+						},
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvType",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive Model.",
+							"",
+							"This is a physical drive's model name. It can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvModel",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive Firmware Revision.",
+							"",
+							"This is the firmware revision of the physical drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvFWRev",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive Serial Number.",
+							"",
+							"This is the serial number assigned to the physical drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive SAS Address.",
+							"",
+							"The SAS address this SAS physical drive. A null (size 0) string",
+							"will be returned if the value cannot be determined."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasPhyDrvSasAddress",
+						"oid" : "1.3.6.1.4.1.232.5.5.2.1.1.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqSasLogDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Logical Drive Status Change.",
+				"The Storage Agent has detected a change in the status of a",
+				"SAS or SATA logical drive. The current logical drive status is",
+				"indicated in the cpqSasLogDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==2) ? 1 : (($v6==1 || $v6==4) ? 3 : 2)"
+				},
+				"EventType" : "cpqSasLogDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==2) ? 3600 : (($v6==1 || $v6==4) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==2) ? 2 : (($v6==4) ? 2 : (($v6==5) ? 4 : 3)))"
+				},
+				"SubNode" : "DriveIndex:$v5",
+				"Summary" : "SAS logical drive status changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqSasLogDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqSasHbaHwLocation s EXAMPLE CPQSCSI-MIB::cpqSasLogDrvHbaIndex i 9999 CPQSCSI-MIB::cpqSasLogDrvIndex i 9999 CPQSCSI-MIB::cpqSasLogDrvStatus i 3 CPQSCSI-MIB::cpqSasLogDrvOsName s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqSasLogDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5023",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Host Bus Adapter Hardware Location.",
+							"",
+							"A text description of the hardware location of the HBA.",
+							"A NULL string indicates that the hardware location could not",
+							"be determined or is irrelevant."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasHbaHwLocation",
+						"oid" : "1.3.6.1.4.1.232.5.5.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Logical Drive HBA Index.",
+							"",
+							"The controller index indicates to which SAS adapter instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasLogDrvHbaIndex",
+						"oid" : "1.3.6.1.4.1.232.5.5.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Logical Drive Index.",
+							"",
+							"The logical drive index indicates to which logical drive instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasLogDrvIndex",
+						"oid" : "1.3.6.1.4.1.232.5.5.3.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Logical Drive Status.",
+							"",
+							"The logical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The management agent does not recognize the status.",
+							"You may need to upgrade your software.",
+							"",
+							"ok(2)",
+							"Indicates that the logical drive is in normal operation mode.",
+							"No user action is required.",
+							"",
+							"degraded(3)",
+							"Indicates that the logical drive is in a degraded state.",
+							"",
+							"rebuilding(4)",
+							"Indicates that the logical drive is currently resynchronizing",
+							"the data accross the physical drives in the logical drive.",
+							"",
+							"failed(5)",
+							"Indicates that more physical drives have failed than the",
+							"fault tolerance mode of the logical drive can handle without",
+							"data loss.",
+							"",
+							"offline(6)",
+							"Indicates that the logical drive is offline from the operating",
+							"system. User action may be required to bring the logical",
+							"drive online."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "rebuilding",
+							"5" : "failed",
+							"6" : "offline"
+						},
+						"name" : "CPQSCSI-MIB::cpqSasLogDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.5.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Logical Drive OS Name.",
+							"",
+							"This is the OS name for the logical drive. This field will be",
+							"a null (size 0) string if the agent does not support OS name."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasLogDrvOsName",
+						"oid" : "1.3.6.1.4.1.232.5.5.3.1.1.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqSas2TapeDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"SAS Tape Drive Status Change.",
+				"The Storage Agent has detected a change in the status of a",
+				"SAS tape drive. The current tape drive status is",
+				"indicated in the cpqSasTapeDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==1) ? 3 : (($v11==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSas2TapeDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v11==1) ? 3600 : (($v11==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v11==1) ? 1 : (($v11==2) ? 0 : 3)"
+				},
+				"SubNode" : "DriveIndex:$v6;DriveSerialNo:$v9",
+				"Summary" : "SAS2 tape drive $v7 status changed to $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqSas2TapeDrvStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSCSI-MIB::cpqSasHbaHwLocation s EXAMPLE CPQSCSI-MIB::cpqSasTapeDrvLocationString s EXAMPLE CPQSCSI-MIB::cpqSasTapeDrvHbaIndex i 9999 CPQSCSI-MIB::cpqSasTapeDrvIndex i 9999 CPQSCSI-MIB::cpqSasTapeDrvName s EXAMPLE CPQSCSI-MIB::cpqSasTapeDrvFWRev s EXAMPLE CPQSCSI-MIB::cpqSasTapeDrvSerialNumber s EXAMPLE CPQSCSI-MIB::cpqSasTapeDrvSasAddress s EXAMPLE CPQSCSI-MIB::cpqSasTapeDrvStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqSas2TapeDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.5025",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Host Bus Adapter Hardware Location.",
+							"",
+							"A text description of the hardware location of the HBA.",
+							"A NULL string indicates that the hardware location could not",
+							"be determined or is irrelevant."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasHbaHwLocation",
+						"oid" : "1.3.6.1.4.1.232.5.5.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Tape Drive Location String.",
+							"",
+							"This string describes the location of the drive in relation to",
+							"the HBA. If the location string cannot be determined, the agent",
+							"will return a NULL string."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasTapeDrvLocationString",
+						"oid" : "1.3.6.1.4.1.232.5.5.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Tape Drive HBA Index.",
+							"",
+							"The HBA index indicates to which SAS adapter instance this table",
+							"entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasTapeDrvHbaIndex",
+						"oid" : "1.3.6.1.4.1.232.5.5.4.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Tape Drive Index.",
+							"",
+							"The tape drive index indicates to which tape drive instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasTapeDrvIndex",
+						"oid" : "1.3.6.1.4.1.232.5.5.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SAS Tape Drive Name.",
+							"",
+							"This is a combination of the vendor ID and the product ID as",
+							"returned by the SCSI inquiry command. This can be used for",
+							"identification purposes."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasTapeDrvName",
+						"oid" : "1.3.6.1.4.1.232.5.5.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Tape Drive Firmware Revision.",
+							"",
+							"This is the firmware revision of the tape drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasTapeDrvFWRev",
+						"oid" : "1.3.6.1.4.1.232.5.5.4.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Tape Drive Serial Number.",
+							"",
+							"This is the serial number assigned to the tape drive."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasTapeDrvSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.5.5.4.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Tape Drive SAS Address.",
+							"",
+							"The SAS address of this SAS tape drive. A null (size 0) string",
+							"will be returned if the value cannot be determined."
+						],
+						"name" : "CPQSCSI-MIB::cpqSasTapeDrvSasAddress",
+						"oid" : "1.3.6.1.4.1.232.5.5.4.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"SAS Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The tape drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the tape drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"offline(3)",
+							"Indicates that the tape drive is offline and can no longer",
+							"return data. No further status is available."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "offline"
+						},
+						"name" : "CPQSCSI-MIB::cpqSasTapeDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.5.4.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsiCntlrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"SCSI Controller Status Change.",
+				"The agent has detected a change in the controller",
+				"status of a SCSI Controller. The variable",
+				"cpqScsiCntlrStatus indicates the current controller status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : (($v1==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqScsiCntlrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : (($v1==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 0 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SCSI controller status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsiCntlrStatusChange CPQSCSI-MIB::cpqScsiCntlrStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsiCntlrStatusChange",
+				"oid" : "1.3.6.1.4.1.232.5.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"SCSI Controller Status.",
+							"",
+							"This is the current status of the controller. The following",
+							"values are currently defined:",
+							"",
+							"other(1)",
+							"The controller is not operational due to reasons other than",
+							"hardware failure. The controller may be intentionally disabled.",
+							"The controller configuration may be in conflict with the",
+							"configuration of other hardware or software in the system.",
+							"The controller may have failed initialization. Corrective",
+							"action is Operating System dependent. Check for diagnostic",
+							"messages which may have occurred at system boot time.",
+							"",
+							"ok(2)",
+							"The controller is operating normally.",
+							"",
+							"failed(3)",
+							"The controller has failed and is no longer operating.",
+							"Please run diagnostics on the computer system to help",
+							"identify the problem."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiCntlrStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.2.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsiLogDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Logical Drive Status Change.",
+				"The agent has detected a change in the Logical Drive",
+				"Status of a SCSI logical drive. The current logical",
+				"drive status is indicated by the cpqScsiLogDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==1 || $v1==5 || $v1==6 || $v1==7) ? 3 : 2)"
+				},
+				"EventType" : "cpqScsiLogDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : (($v1==1 || $v1==5 || $v1==6 || $v1==7) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 0 : (($v1==3) ? 4 : (($v1==5 || $v1==6 || $v1==7) ? 2 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SCSI logical drive status changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsiLogDrvStatusChange CPQSCSI-MIB::cpqScsiLogDrvStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsiLogDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.5.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"SCSI Logical Drive Status.",
+							"",
+							"The logical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The management agent does not recognize the status.",
+							"You may need to upgrade your software.",
+							"",
+							"ok(2)",
+							"Indicates that the logical drive is in normal operation mode.",
+							"No user action is required.",
+							"",
+							"failed(3)",
+							"Indicates that more physical drives have failed than the fault",
+							"tolerance mode of the logical drive can handle without data loss.",
+							"",
+							"unconfigured(4)",
+							"Indicates that the logical drive is not configured. Insure all",
+							"of the drive switches are properly set and run the configuration",
+							"utility.",
+							"",
+							"recovering(5)",
+							"Indicates that the logical drive is using Interim Recovery Mode.",
+							"In Interim Recovery Mode, at least one physical drive has",
+							"failed, but the logical drive's fault tolerance mode lets the",
+							"logical drive continue to operate with no data loss.",
+							"You should replace the failed drive as soon as possible.",
+							"",
+							"readyRebuild(6)",
+							"Indicates that the logical drive is ready for Automatic Data",
+							"Recovery. The physical drive that failed has been replaced",
+							"but the logical drive is still operating in Interim Recovery",
+							"Mode.",
+							"",
+							"rebuilding(7)",
+							"Indicates that the logical drive is currently resynchronizing",
+							"the data accross the physical drives in the logical drive.",
+							"",
+							"wrongDrive(8)",
+							"Indicates that the wrong physical drive was replaced after a",
+							"physical drive failure. You need to return the drive",
+							"incorrectly replaced and replace the failed drive.",
+							"",
+							"badConnect(9)",
+							"Indicates that a physical drive is not responding. Check the",
+							"cables connected to it.",
+							"",
+							"degraded(10)",
+							"Indicates that the logical drive is in a degraded state.",
+							"",
+							"disabled(11)",
+							"Indicates that the logical drive is disabled. The logical drive",
+							"configuration utility can enable or disable the logical drive.",
+							"You should enable the logical drive using the configuration",
+							"utility."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "unconfigured",
+							"5" : "recovering",
+							"6" : "readyForRebuild",
+							"7" : "rebuilding",
+							"8" : "wrongDrive",
+							"9" : "badConnect",
+							"10" : "degraded",
+							"11" : "disabled"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiLogDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.3.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSCSI-MIB::cpqScsiPhyDrvStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Physical Drive Status Change.",
+				"The agent has detected a change in the status of a",
+				"SCSI physical drive. The current physical drive",
+				"status is indicated in the cpqScsiPhyDrvStatus variable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqScsiPhyDrvStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : (($v1==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 0 : (($v1==3 || $v1==7 || $v1==12) ? 4 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SCSI physical drive index changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSCSI-MIB::cpqScsiPhyDrvStatusChange CPQSCSI-MIB::cpqScsiPhyDrvStatus i 3",
+			"trap" : {
+				"name" : "CPQSCSI-MIB::cpqScsiPhyDrvStatusChange",
+				"oid" : "1.3.6.1.4.1.232.5.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"SCSI Physical Drive Status.",
+							"",
+							"The physical drive can be in one of the following states:",
+							"",
+							"other(1)",
+							"The drive is in a state other than one of those listed",
+							"below.",
+							"",
+							"ok(2)",
+							"Indicates that the physical drive is in normal operation mode.",
+							"No user action is necessary.",
+							"",
+							"failed(3)",
+							"Indicates that the physical drive has failed and can no longer",
+							"return data. When convenient, you should bring down the server",
+							"and run diagnostics to help identify the problem.",
+							"The drive may need to be replaced.",
+							"",
+							"notConfigured(4)",
+							"Indicates that the physical drive is not configured. You",
+							"need to insure all of the drive's switches are properly set",
+							"and that the configuration utility has been run.",
+							"",
+							"badCable(5)",
+							"Indicates that a physical drive is not responding.",
+							"You should check the cables connected to it. You can bring",
+							"down the server and run diagnostics to help identify",
+							"the problem.",
+							"",
+							"missingWasOk(6)",
+							"Indicates that a physical drive had a status of OK and is no",
+							"longer present. The drive has been removed.",
+							"",
+							"missingWasFailed(7)",
+							"Indicates that a physical drive had a status of FAILED and is",
+							"no longer present. The drive has been removed.",
+							"",
+							"predictiveFailure(8)",
+							"Indicates that the physical drive has exceeded a threshold",
+							"value for one of it's predictive indicators. When convenient",
+							"you should bring down the server and run diagnostics to",
+							"help identify the problem. The drive may need to be replaced.",
+							"",
+							"missingWasPredictiveFailure(9)",
+							"Indicates that a physical drive had a status of PREDICTIVE",
+							"FAILURE and is no longer present. The drive has been removed.",
+							"",
+							"offline(10)",
+							"Indicates that the physical drive is offline and can no longer",
+							"return data. No further status is available.",
+							"",
+							"missingWasOffline(11)",
+							"Indicates that a physical drive had a status of OFFLINE",
+							"and is no longer present. The drive has been removed.",
+							"",
+							"hardError(12)",
+							"Indicates that a hard error occurred for this physical drive."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "notConfigured",
+							"5" : "badCable",
+							"6" : "missingWasOk",
+							"7" : "missingWasFailed",
+							"8" : "predictiveFailure",
+							"9" : "missingWasPredictiveFailure",
+							"10" : "offline",
+							"11" : "missingWasOffline",
+							"12" : "hardError"
+						},
+						"name" : "CPQSCSI-MIB::cpqScsiPhyDrvStatus",
+						"oid" : "1.3.6.1.4.1.232.5.2.4.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

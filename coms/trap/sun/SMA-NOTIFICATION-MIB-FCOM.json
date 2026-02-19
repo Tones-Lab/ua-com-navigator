@@ -1,0 +1,146 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9808040000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SMA-NOTIFICATION-MIB::statusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A statusChange trap signifies that the status of an object has changed. ::= { traps 1 }",
+				"hostName OBJECT-TYPE ",
+				"SYNTAX DisplayString (SIZE (0..255))",
+				"MAX-ACCESS accessible-for-notify ",
+				"STATUS current ",
+				"DESCRIPTION The name of the host on which the event occurred. "
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v5",
+						"pattern" : "(?P<status>OK|WARNING|INFO|ERROR)",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($status eq 'OK') ? 1 : (($status eq 'WARNING' || $status eq 'ERROR') ? 2 : 3)"
+				},
+				"EventType" : "statusChange",
+				"ExpireTime" : {
+					"eval" : "($status eq 'OK') ? 3600 : (($status eq 'WARNING' || $status eq 'ERROR') ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($status eq 'OK') ? 0 : (($status eq 'WARNING') ? 3 : (($status eq 'ERROR') ? 3 : 2))"
+				},
+				"SubNode" : "Host:$v1;Module:$v2",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SMA-NOTIFICATION-MIB::statusChange SMA-NOTIFICATION-MIB::hostName s EXAMPLE SMA-NOTIFICATION-MIB::moduleName s EXAMPLE SMA-NOTIFICATION-MIB::statusOID o 1.3.6.1.4.1.8072.2.1.1 SMA-NOTIFICATION-MIB::statusOIDContext s EXAMPLE SMA-NOTIFICATION-MIB::status s EXAMPLE SMA-NOTIFICATION-MIB::description s EXAMPLE SMA-NOTIFICATION-MIB::dataValue s EXAMPLE SMA-NOTIFICATION-MIB::dataValueType i 0",
+			"trap" : {
+				"name" : "SMA-NOTIFICATION-MIB::statusChange",
+				"oid" : "1.3.6.1.4.1.42.2.2.4.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the host on which the event occurred."
+						],
+						"name" : "SMA-NOTIFICATION-MIB::hostName",
+						"oid" : "1.3.6.1.4.1.42.2.2.4.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the module on which the event has occured."
+						],
+						"name" : "SMA-NOTIFICATION-MIB::moduleName",
+						"oid" : "1.3.6.1.4.1.42.2.2.4.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The identification of the object for which the status changed."
+						],
+						"name" : "SMA-NOTIFICATION-MIB::statusOID",
+						"oid" : "1.3.6.1.4.1.42.2.2.4.3.1.3",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The name of context incase the status OID is registered under a particular",
+							"context. If there is no special context, the value for this field will be null."
+						],
+						"name" : "SMA-NOTIFICATION-MIB::statusOIDContext",
+						"oid" : "1.3.6.1.4.1.42.2.2.4.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current status of the object. One of OK, INFO, WARNING, ERROR."
+						],
+						"name" : "SMA-NOTIFICATION-MIB::status",
+						"oid" : "1.3.6.1.4.1.42.2.2.4.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The detailed description of the event."
+						],
+						"name" : "SMA-NOTIFICATION-MIB::description",
+						"oid" : "1.3.6.1.4.1.42.2.2.4.3.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current value of the object, that generates the event."
+						],
+						"name" : "SMA-NOTIFICATION-MIB::dataValue",
+						"oid" : "1.3.6.1.4.1.42.2.2.4.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The data type of the value that is present in dataValue varbind"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "integer",
+							"2" : "octetString",
+							"3" : "objectIdentifier",
+							"4" : "integer32",
+							"5" : "ipAddress",
+							"6" : "counter32",
+							"7" : "gauge32",
+							"8" : "unsigned32",
+							"9" : "timeTicks",
+							"10" : "opaque",
+							"11" : "counter64",
+							"12" : "displayString",
+							"13" : "physAddress",
+							"14" : "macAddress",
+							"15" : "truthValue",
+							"16" : "testAndIncr",
+							"17" : "autonomousType",
+							"18" : "variablePointer",
+							"19" : "rowPointer",
+							"20" : "rowStatus",
+							"21" : "storageType",
+							"22" : "tDomain",
+							"23" : "tAddress",
+							"100" : "other"
+						},
+						"name" : "SMA-NOTIFICATION-MIB::dataValueType",
+						"oid" : "1.3.6.1.4.1.42.2.2.4.3.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

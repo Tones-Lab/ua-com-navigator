@@ -1,0 +1,4423 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapChasPwrSupply",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a power supply fails",
+				"to operate normally. The value is a packed bit string;",
+				"the 2 power supplies status are encoded into 4 bits",
+				"(a nibble). ",
+				"The following shows the meaning of each bit:",
+				"(bit 0 is the least significant bit).",
+				"bit position meaning",
+				"------------ -------",
+				"4-31 reserved",
+				"3 Power Supply 2 DC (0=bad, 1=good).",
+				"2 Power Supply 1 DC (0=bad, 1=good).",
+				"1 Power Supply 2 present status (0=present, 1=not-present).",
+				"0 Power Supply 1 present status (0=present, 1=not-present)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapChasPwrSupply",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Power supply fails, error status $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapChasPwrSupply FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyStatus i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapChasPwrSupply",
+				"oid" : "1.3.6.1.4.1.1991.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object is being deprecated, please use snChasPwrSupplyTable instead.",
+							"",
+							"A bit array that contains the value of the",
+							"Chassis Power Supplies. This is a packed bit string;",
+							"the 2 power supplies status are encoded into 4 bits",
+							"(a nibble). ",
+							"",
+							"There are multiple power supplies per chassis in this release.",
+							"The following shows the meaning of each bit:",
+							"(bit 0 is the least significant bit).",
+							"",
+							"bit position meaning",
+							"------------ -------",
+							"20-31 reserved",
+							"19 Power Supply 8 DC (0=bad, 1=good).",
+							"18 Power Supply 7 DC (0=bad, 1=good).",
+							"17 Power Supply 8 present status (0=present, 1=not-present).",
+							"16 Power Supply 7 present status (0=present, 1=not-present).",
+							"15 Power Supply 6 DC (0=bad, 1=good).",
+							"14 Power Supply 5 DC (0=bad, 1=good).",
+							"13 Power Supply 6 present status (0=present, 1=not-present).",
+							"12 Power Supply 5 present status (0=present, 1=not-present).",
+							"11 Power Supply 4 DC (0=bad, 1=good).",
+							"10 Power Supply 3 DC (0=bad, 1=good).",
+							"9 Power Supply 4 present status (0=present, 1=not-present).",
+							"8 Power Supply 3 present status (0=present, 1=not-present).",
+							"4-7 reserved",
+							"3 Power Supply 2 DC (0=bad, 1=good).",
+							"2 Power Supply 1 DC (0=bad, 1=good).",
+							"1 Power Supply 2 present status (0=present, 1=not-present).",
+							"0 Power Supply 1 present status (0=present, 1=not-present)."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyStatus",
+						"oid" : "1.3.6.1.4.1.1991.1.1.1.1.3",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapLockedAddressViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when more source MAC addresses",
+				"are received from a port than the maximum number of addresses",
+				"configured to that port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapLockedAddressViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 $v2",
+				"Summary" : "Lock address violation on Port $v1 with MAC Address $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapLockedAddressViolation FOUNDRY-SN-SWITCH-GROUP-MIB::snSwViolatorPortNumber i 9999 FOUNDRY-SN-SWITCH-GROUP-MIB::snSwViolatorMacAddress x 000eaa12ddff",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapLockedAddressViolation",
+				"oid" : "1.3.6.1.4.1.1991.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The port number of the switch or router that received",
+							"a violator packet. It is included in the locked",
+							"address violation trap.",
+							"The bit 0 to bit 7: port number.",
+							"The bit 8 to bit 11: slot number (slot for chassis only)."
+						],
+						"name" : "FOUNDRY-SN-SWITCH-GROUP-MIB::snSwViolatorPortNumber",
+						"oid" : "1.3.6.1.4.1.1991.1.1.3.1.17",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The source address of the violator packet received",
+							"by the switch or router. It is included in the locked",
+							"address violation trap."
+						],
+						"name" : "FOUNDRY-SN-SWITCH-GROUP-MIB::snSwViolatorMacAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.1.3.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapOspfIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfStateChange trap signifies that there",
+				"has been a change in the state of a non-virtual",
+				"OSPF interface. This trap should be generated",
+				"when the interface state regresses (e.g., goes",
+				"from Dr to Down) or progresses to a terminal",
+				"state (i.e., Point-to-Point, DR Other, Dr, or",
+				"Backup)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1 || $v3==2 || $v3==3) ? 2 : 1"
+				},
+				"EventType" : "snTrapOspfIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1 || $v3==2 || $v3==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 4 : ($v3==2 || $v3==3) ? 3 : 0"
+				},
+				"SubNode" : "$v1 $v2",
+				"Summary" : "OSPF router id $v1, interface $v2 state changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapOspfIfStateChange FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusState i 1",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapOspfIfStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The OSPF Interface State."
+						],
+						"enums" : {
+							"1" : "down",
+							"2" : "loopback",
+							"3" : "waiting",
+							"4" : "pointToPoint",
+							"5" : "designatedRouter",
+							"6" : "backupDesignatedRouter",
+							"7" : "otherDesignatedRouter"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusState",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapOspfVirtIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfStateChange trap signifies that there",
+				"has been a change in the state of an OSPF vir-",
+				"tual interface.",
+				"This trap should be generated when the inter-",
+				"face state regresses (e.g., goes from Point-",
+				"to-Point to Down) or progresses to a terminal",
+				"state (i.e., Point-to-Point)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 2 : 1"
+				},
+				"EventType" : "snTrapOspfVirtIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 4 : 0"
+				},
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF router id $v1, virtual interface area id $v2 neighbor $v3 state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapOspfVirtIfStateChange FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusState i 1",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapOspfVirtIfStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The OSPF virtual interfaces states."
+						],
+						"enums" : {
+							"1" : "down",
+							"4" : "pointToPoint"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusState",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfNbrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfNbrStateChange trap signifies that",
+				"there has been a change in the state of a non-",
+				"virtual OSPF neighbor. This trap should be",
+				"generated when the neighbor state regresses",
+				"(e.g., goes from Attempt or Full to 1-Way or",
+				"Down) or progresses to a terminal state (e.g.",
+				"2-Way or Full). When an neighbor transitions",
+				"from or to Full on non-broadcast multi-access",
+				"and broadcast networks, the trap should be gen-",
+				"erated by the designated router. A designated",
+				"router transitioning to Down will be noted by",
+				"ospfIfStateChange."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==8) ? 1 : 2"
+				},
+				"EventType" : "snOspfNbrStateChange",
+				"ExpireTime" : {
+					"eval" : "($v4==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 4 : ($v4==8) ? 0 : 3"
+				},
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF router id $v1 neighbor area $v2, neighbor router id $v3 state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfNbrStateChange FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrIpAddr a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrRtrId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrState i 1",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfNbrStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrIpAddr",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.7.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"A 32-bit integer (represented as a type IpAddress)",
+							"uniquely identifying the neighboring router in the",
+							"Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrRtrId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.7.1.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The State of the relationship with this Neigh-",
+							"bor."
+						],
+						"enums" : {
+							"1" : "down",
+							"2" : "attempt",
+							"3" : "init",
+							"4" : "twoWay",
+							"5" : "exchangeStart",
+							"6" : "exchange",
+							"7" : "loading",
+							"8" : "full"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrState",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.7.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfVirtNbrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfStateChange trap signifies that there",
+				"has been a change in the state of an OSPF vir-",
+				"tual neighbor. This trap should be generated",
+				"when the neighbor state regresses (e.g., goes",
+				"from Attempt or Full to 1-Way or Down) or",
+				"progresses to a terminal state (e.g., Full)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==8) ? 1 : 2"
+				},
+				"EventType" : "snOspfVirtNbrStateChange",
+				"ExpireTime" : {
+					"eval" : "($v4==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 4 : ($v4==8) ? 0 : 3"
+				},
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF router id $v1 virtual neighbor area $v2, virtual neighbor router id $v3 state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfVirtNbrStateChange FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrArea a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrRtrId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrState i 1",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfVirtNbrStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area Identifier."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrArea",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.8.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the neighboring",
+							"router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrRtrId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.8.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The state of the Virtual Neighbor Relationship."
+						],
+						"enums" : {
+							"1" : "down",
+							"2" : "attempt",
+							"3" : "init",
+							"4" : "twoWay",
+							"5" : "exchangeStart",
+							"6" : "exchange",
+							"7" : "loading",
+							"8" : "full"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtNbrState",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.8.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfIfConfigError",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfConfigError trap signifies that a",
+				"packet has been received on a non-virtual in-",
+				"terface from a router whose configuration",
+				"parameters conflict with this router's confi-",
+				"guration parameters. Note that the event op-",
+				"tionMismatch should cause a trap only if it",
+				"prevents an adjacency from forming."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfIfConfigError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "$v1 $v2 $v3 $v4 $v5",
+				"Summary" : "configuration error type $v4 with packet type $v5 has been received on interface $v2, router id $v1 from $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfIfConfigError FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfIfConfigError",
+				"oid" : "1.3.6.1.4.1.1991.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of an inbound packet that can-",
+							"not be identified by a neighbor instance."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and ospfConfigVir-",
+							"tError traps."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfVirtIfConfigError",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfConfigError trap signifies that a pack-",
+				"et has been received on a virtual interface",
+				"from a router whose configuration parameters",
+				"conflict with this router's configuration",
+				"parameters. Note that the event optionMismatch",
+				"should cause a trap only if it prevents an ad-",
+				"jacency from forming."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfVirtIfConfigError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "$v1 $v2 $v3 $v4 $v5",
+				"Summary" : "configuration error type $v4 with packet type $v5 has been received on virtual interface area id $v2, router id $v1 from neighbor $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfVirtIfConfigError FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfVirtIfConfigError",
+				"oid" : "1.3.6.1.4.1.1991.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and ospfConfigVir-",
+							"tError traps."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfIfAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfAuthFailure trap signifies that a",
+				"packet has been received on a non-virtual in-",
+				"terface from a router whose authentication key",
+				"or authentication type conflicts with this",
+				"router's authentication key or authentication",
+				"type."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfIfAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF authentication failed. Router ID $v1,Interface $v2, packet src $v3, error type $v4 and packet type $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfIfAuthFailure FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfIfAuthFailure",
+				"oid" : "1.3.6.1.4.1.1991.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of an inbound packet that can-",
+							"not be identified by a neighbor instance."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and ospfConfigVir-",
+							"tError traps."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfVirtIfAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfVirtIfAuthFailure trap signifies that a",
+				"packet has been received on a virtual interface",
+				"from a router whose authentication key or au-",
+				"thentication type conflicts with this router's",
+				"authentication key or authentication type."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfVirtIfAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF authentication failed. Router ID $v1,virtual interface $v2, Neigbor $v3, Error type $v4 and packet type $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfVirtIfAuthFailure FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfVirtIfAuthFailure",
+				"oid" : "1.3.6.1.4.1.1991.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and ospfConfigVir-",
+							"tError traps."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfConfigErrorType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfIfRxBadPacket",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfIfRxBadPacket trap signifies that an",
+				"OSPF packet has been received on a non-virtual",
+				"interface that cannot be parsed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfIfRxBadPacket",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF Router Id $v1, interface $v2 receive bad packet (type $v4) from $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfIfRxBadPacket FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfIfRxBadPacket",
+				"oid" : "1.3.6.1.4.1.1991.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of an inbound packet that can-",
+							"not be identified by a neighbor instance."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketSrc",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfVirtIfRxBadPacket",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfRxBadPacket trap signifies that an OSPF",
+				"packet has been received on a virtual interface",
+				"that cannot be parsed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfVirtIfRxBadPacket",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF router id $v1, virtual interface $v2 received bad packet (type $v4) from neighbor $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfVirtIfRxBadPacket FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfVirtIfRxBadPacket",
+				"oid" : "1.3.6.1.4.1.1991.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfTxRetransmit",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfTxRetransmit trap signifies than an",
+				"OSPF packet has been retransmitted on a non-",
+				"virtual interface. All packets that may be re-",
+				"transmitted are associated with an LSDB entry.",
+				"The LS type, LS ID, and Router ID are used to",
+				"identify the LSDB entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfTxRetransmit",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF router id $v1, interface $v2 retransmited packet type $v4,LSDB type $v5, LSDB LS ID $v6 and LSDB router id $v7 to neightbor router id $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfTxRetransmit FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrRtrId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType i 1 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId a 192.0.1.2",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfTxRetransmit",
+				"oid" : "1.3.6.1.4.1.1991.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The IP address of this OSPF interface."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfIfStatusIpAddress",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.12.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"A 32-bit integer (represented as a type IpAddress)",
+							"uniquely identifying the neighboring router in the",
+							"Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfNbrRtrId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.7.1.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the link state advertisement. Each link",
+							"state type has a separate advertisement format."
+						],
+						"enums" : {
+							"1" : "routerLink",
+							"2" : "networkLink",
+							"3" : "summaryLink",
+							"4" : "asSummaryLink",
+							"5" : "asExternalLink",
+							"6" : "multicastLink",
+							"7" : "nssaExternalLink",
+							"9" : "opaqueLink",
+							"10" : "opaqueAreaLink",
+							"11" : "opaqueAsLink"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Link State ID is an LS Type Specific field",
+							"containing either a Router ID or an IP Address; it",
+							"identifies the piece of the routing domain that is",
+							"being described by the advertisement."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit number that uniquely identifies the",
+							"originating router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::ospfVirtIfTxRetransmit",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfTxRetransmit trap signifies than an",
+				"OSPF packet has been retransmitted on a virtual",
+				"interface. All packets that may be retransmit-",
+				"ted are associated with an LSDB entry. The LS",
+				"type, LS ID, and Router ID are used to identify",
+				"the LSDB entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfVirtIfTxRetransmit",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 $v2 $v3",
+				"Summary" : "OSPF router id $v1, virtual interface area id $v2 retransmited packet type $v4,LSDB type $v5, LSDB LS ID $v6 and LSDB router id $v7 to neightbor $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::ospfVirtIfTxRetransmit FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType i 0 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType i 1 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId a 192.0.1.2",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::ospfVirtIfTxRetransmit",
+				"oid" : "1.3.6.1.4.1.1991.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Transit Area that the Virtual Link traverses. By",
+							"definition, this is not 0.0.0.0 "
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusAreaID",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The Router ID of the Virtual Neighbor."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfVirtIfStatusNeighbor",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.13.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF packet types."
+						],
+						"enums" : {
+							"0" : "unUsed",
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfPacketType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.15.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the link state advertisement. Each link",
+							"state type has a separate advertisement format."
+						],
+						"enums" : {
+							"1" : "routerLink",
+							"2" : "networkLink",
+							"3" : "summaryLink",
+							"4" : "asSummaryLink",
+							"5" : "asExternalLink",
+							"6" : "multicastLink",
+							"7" : "nssaExternalLink",
+							"9" : "opaqueLink",
+							"10" : "opaqueAreaLink",
+							"11" : "opaqueAsLink"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Link State ID is an LS Type Specific field",
+							"containing either a Router ID or an IP Address; it",
+							"identifies the piece of the routing domain that is",
+							"being described by the advertisement."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit number that uniquely identifies the",
+							"originating router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfOriginateLsa",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfOriginateLsa trap signifies that a new",
+				"LSA has been originated by this router. This",
+				"trap should not be invoked for simple refreshes",
+				"of LSAs (which happesn every 30 minutes), but",
+				"instead will only be invoked when an LSA is",
+				"(re)originated due to a topology change. Addi-",
+				"tionally, this trap does not include LSAs that",
+				"are being flushed because they have reached",
+				"MaxAge."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfOriginateLsa",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1 $v2 $v4 $v5",
+				"Summary" : "New LSA (area id $v2, type $v3, LS Id $v4 and router id $v5) has been originated by router id $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfOriginateLsa FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbAreaId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType i 1 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId a 192.0.1.2",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfOriginateLsa",
+				"oid" : "1.3.6.1.4.1.1991.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit identifier of the Area from which the LSA",
+							"was received."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbAreaId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The type of the link state advertisement. Each link",
+							"state type has a separate advertisement format."
+						],
+						"enums" : {
+							"1" : "routerLink",
+							"2" : "networkLink",
+							"3" : "summaryLink",
+							"4" : "asSummaryLink",
+							"5" : "asExternalLink",
+							"6" : "multicastLink",
+							"7" : "nssaExternalLink",
+							"9" : "opaqueLink",
+							"10" : "opaqueAreaLink",
+							"11" : "opaqueAsLink"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Link State ID is an LS Type Specific field",
+							"containing either a Router ID or an IP Address; it",
+							"identifies the piece of the routing domain that is",
+							"being described by the advertisement."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit number that uniquely identifies the",
+							"originating router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfMaxAgeLsa",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfMaxAgeLsa trap signifies that one of",
+				"the LSA in the router's link-state database has",
+				"aged to MaxAge."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfMaxAgeLsa",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 $v2 $v4 $v5",
+				"Summary" : "The LSA (area id $v2, type $v3, LS Id $v4 and router id $v5) in router id $v1 link-state database has aged to maximum age"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfMaxAgeLsa FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbAreaId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType i 1 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId a 192.0.1.2",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfMaxAgeLsa",
+				"oid" : "1.3.6.1.4.1.1991.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit identifier of the Area from which the LSA",
+							"was received."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbAreaId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The type of the link state advertisement. Each link",
+							"state type has a separate advertisement format."
+						],
+						"enums" : {
+							"1" : "routerLink",
+							"2" : "networkLink",
+							"3" : "summaryLink",
+							"4" : "asSummaryLink",
+							"5" : "asExternalLink",
+							"6" : "multicastLink",
+							"7" : "nssaExternalLink",
+							"9" : "opaqueLink",
+							"10" : "opaqueAreaLink",
+							"11" : "opaqueAsLink"
+						},
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbType",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Link State ID is an LS Type Specific field",
+							"containing either a Router ID or an IP Address; it",
+							"identifies the piece of the routing domain that is",
+							"being described by the advertisement."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbLsId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The 32 bit number that uniquely identifies the",
+							"originating router in the Autonomous System."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfLsdbRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.9.1.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfLsdbOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfLsdbOverflow trap signifies that the",
+				"number of LSAs in the router's link-state data-",
+				"base has exceeded ospfExtLsdbLimit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfLsdbOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "The number of LSAs in the OSPF router id $v1 link-state database has exceeded $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfLsdbOverflow FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfExtLsdbLimit i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfLsdbOverflow",
+				"oid" : "1.3.6.1.4.1.1991.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The maximum number of non-default AS-",
+							"external-LSAs entries that can be stored in the",
+							"link-state database. If the value is -1, then",
+							"there is no limit.",
+							"",
+							"When the number of non-default AS-external-LSAs",
+							"in a router's link-state database reaches",
+							"ospfExtLsdbLimit, the router enters Overflow-",
+							"State. The router never holds more than",
+							"ospfExtLsdbLimit non-default AS-external-LSAs",
+							"in its database. OspfExtLsdbLimit MUST be set",
+							"identically in all routers attached to the OSPF",
+							"backbone and/or any regular OSPF area. (i.e.",
+							"OSPF stub areas and NSSAs are excluded)."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfExtLsdbLimit",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snOspfLsdbApproachingOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"An ospfLsdbApproachingOverflow trap signifies",
+				"that the number of LSAs in the router's link-",
+				"state database has exceeded ninety percent of",
+				"ospfExtLsdbLimit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snOspfLsdbApproachingOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "The number of LSAs in the OSPF router id $v1 link-state database has exceeded ninety percent of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snOspfLsdbApproachingOverflow FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId a 192.0.1.2 FOUNDRY-SN-OSPF-GROUP-MIB::snOspfExtLsdbLimit i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snOspfLsdbApproachingOverflow",
+				"oid" : "1.3.6.1.4.1.1991.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"A 32-bit integer uniquely identifying the router in",
+							"the Autonomous System.",
+							"",
+							"By convention, to ensure uniqueness, this should",
+							"default to the value of one of the router's IP",
+							"interface addresses."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfRouterId",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The maximum number of non-default AS-",
+							"external-LSAs entries that can be stored in the",
+							"link-state database. If the value is -1, then",
+							"there is no limit.",
+							"",
+							"When the number of non-default AS-external-LSAs",
+							"in a router's link-state database reaches",
+							"ospfExtLsdbLimit, the router enters Overflow-",
+							"State. The router never holds more than",
+							"ospfExtLsdbLimit non-default AS-external-LSAs",
+							"in its database. OspfExtLsdbLimit MUST be set",
+							"identically in all routers attached to the OSPF",
+							"backbone and/or any regular OSPF area. (i.e.",
+							"OSPF stub areas and NSSAs are excluded)."
+						],
+						"name" : "FOUNDRY-SN-OSPF-GROUP-MIB::snOspfExtLsdbLimit",
+						"oid" : "1.3.6.1.4.1.1991.1.2.4.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4MaxSessionLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the maximum number",
+				"of connections reached."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4MaxSessionLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SLB maximum number of connections $v1 has been reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4MaxSessionLimitReached FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4MaxSessionLimit i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4MaxSessionLimitReached",
+				"oid" : "1.3.6.1.4.1.1991.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"numbers of maximum session (L4 cache) entries"
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4MaxSessionLimit",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4TcpSynLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the number of TCP",
+				"SYN limits reached."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4TcpSynLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SLB TCP Syn limits $v1 has been reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4TcpSynLimitReached FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TcpSynLimit i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4TcpSynLimitReached",
+				"oid" : "1.3.6.1.4.1.1991.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"Numbers of connection per second"
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TcpSynLimit",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the load balancing",
+				"real server is up."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4RealServerStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Server IP: $v1, Name: $v2",
+				"Summary" : "SLB real server $v1 $v2 is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerUp FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP a 192.0.1.2 FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerUp",
+				"oid" : "1.3.6.1.4.1.1991.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"Real server IP address."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Real server name."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the load balancing",
+				"real server is down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4RealServerStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Server IP: $v1, Name: $v2",
+				"Summary" : "SLB real server $v1 $v2 is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerDown FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP a 192.0.1.2 FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerDown",
+				"oid" : "1.3.6.1.4.1.1991.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"Real server IP address."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Real server name."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerPortUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the load balancing",
+				"real server TCP port is up."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4RealServerPortStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Server IP: $v1, Name: $v2, Port: $v3",
+				"Summary" : "SLB real server port $v1 $v2 $v3 is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerPortUp FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP a 192.0.1.2 FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName s EXAMPLE FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerPort i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerPortUp",
+				"oid" : "1.3.6.1.4.1.1991.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"Real server IP address."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Real server name."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Transport protocol port number of the real server."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerPort",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerPortDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the load balancing",
+				"real server TCP port is down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4RealServerPortStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Server IP: $v1, Name: $v2, Port: $v3",
+				"Summary" : "SLB real server port $v1 $v2 $v3 is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerPortDown FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP a 192.0.1.2 FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName s EXAMPLE FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerPort i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerPortDown",
+				"oid" : "1.3.6.1.4.1.1991.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"Real server IP address."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Real server name."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Transport protocol port number of the real server."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerPort",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerMaxConnectionLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the real server reaches",
+				"maximum number of connections."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4RealServerMaxConnectionLimitReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Server IP: $v1, Name: $v2",
+				"Summary" : "SLB real server $v1 $v2 maximum connection $v3 has been reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerMaxConnectionLimitReached FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP a 192.0.1.2 FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName s EXAMPLE FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerCurConnections i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerMaxConnectionLimitReached",
+				"oid" : "1.3.6.1.4.1.1991.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"Real server IP address."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerIP",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Real server name."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerName",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Real Server current connections."
+						],
+						"name" : "FOUNDRY-SN-SW-L4-SWITCH-GROUP-MIB::snL4TrapRealServerCurConnections",
+						"oid" : "1.3.6.1.4.1.1991.1.1.4.13.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4BecomeStandby",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the server load",
+				"balancing switch changes state from active to standby."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4BecomeStandbyActive",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SLB changes state from active to standby"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4BecomeStandby ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4BecomeStandby",
+				"oid" : "1.3.6.1.4.1.1991.0.26"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4BecomeActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the server load",
+				"balancing switch changes state from standby to active."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4BecomeStandbyActive",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "SLB changes state from standby to active"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4BecomeActive ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4BecomeActive",
+				"oid" : "1.3.6.1.4.1.1991.0.27"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapModuleInserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a module was inserted",
+				"to the chassis during system running."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapModuleStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "snAgentBrdEntry.$v1",
+				"Summary" : "Module $v1 was inserted to the chassis during system running"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapModuleInserted FOUNDRY-SN-AGENT-MIB::snAgentBrdIndex i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapModuleInserted",
+				"oid" : "1.3.6.1.4.1.1991.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"The index to the Agent Interface Table."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgentBrdIndex",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.2.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapModuleRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a module was removed",
+				"from the chassis during system running."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapModuleStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "snAgentBrdEntry.$v1",
+				"Summary" : "Module $v1 was removed from the chassis during system running"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapModuleRemoved FOUNDRY-SN-AGENT-MIB::snAgentBrdIndex i 9999",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapModuleRemoved",
+				"oid" : "1.3.6.1.4.1.1991.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"The index to the Agent Interface Table."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgentBrdIndex",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.2.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapChasPwrSupplyFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a power supply fails",
+				"to operate normally."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapChasPwrSupplyStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "snChasPwrSupplyEntry.$v1",
+				"Summary" : "Power supply $v1 ($v2) failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapChasPwrSupplyFailed FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyIndex i 9999 FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyDescription s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapChasPwrSupplyFailed",
+				"oid" : "1.3.6.1.4.1.1991.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"The index to power supply table."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyIndex",
+						"oid" : "1.3.6.1.4.1.1991.1.1.1.2.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The power supply description string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snChasPwrSupplyDescription",
+						"oid" : "1.3.6.1.4.1.1991.1.1.1.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapChasFanFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a fan fails",
+				"to operate normally."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapChasFanFailed",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "snChasFanEntry.$v1",
+				"Summary" : "Fan $v1 ($v2) failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapChasFanFailed FOUNDRY-SN-AGENT-MIB::snChasFanIndex i 9999 FOUNDRY-SN-AGENT-MIB::snChasFanDescription s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapChasFanFailed",
+				"oid" : "1.3.6.1.4.1.1991.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"The index to fan table."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snChasFanIndex",
+						"oid" : "1.3.6.1.4.1.1991.1.1.1.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The fan description string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snChasFanDescription",
+						"oid" : "1.3.6.1.4.1.1991.1.1.1.3.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapLockedAddressViolation2",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when more source MAC addresses",
+				"are received from a port than the maximum number of addresses",
+				"configured to that port."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Ethernet (?P<interfacePort>.*), address",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "address (?P<macAddress>.*)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapLockedAddressViolation2",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Port: $interfacePort, Mac: $macAddress",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapLockedAddressViolation2 FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapLockedAddressViolation2",
+				"oid" : "1.3.6.1.4.1.1991.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapFsrpIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a FSRP routing device",
+				"changed state from active to standby or vice-versa."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "intf state changed, intf (?P<interface>.*), addr",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "addr (?P<ip>.*) state",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "state (?P<fsrpState>.*)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($fsrpState eq 'init' || $fsrpState eq 'negociating' || $fsrpState eq 'standby' || $fsrpState eq 'active') ? 3 : 2"
+				},
+				"EventType" : "snTrapFsrpIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($fsrpState eq 'init' || $fsrpState eq 'negociating' || $fsrpState eq 'standby' || $fsrpState eq 'active') ? 3600 : 86400"
+				},
+				"Severity" : 2,
+				"SubNode" : "Interface: $interface, IP: $ip",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapFsrpIfStateChange FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapFsrpIfStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapVrrpIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a VRRP routing device",
+				"changed state from master to backup or vice-versa."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "changed.*intf (?P<interfacePort>.*), vrid",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "vrid (?P<vrid>.*), state",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "changed.*state (?P<newState>.*)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$newState",
+						"pattern" : "(?P<newStateMatch>.*)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$newState",
+						"pattern" : "(?P<newState1>.*).*",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($newStateMatch ne '' && $newState1 eq 'INITIALIZE') ? 1 : ($newStateMatch ne '' && ($newState1 eq 'BACKUP' || $newState1 eq 'UNUSED' || $newState1 eq 'MASTER' || $newState1 eq 'BROKEN' || $newState1 eq 'unknown')) ? 2 : ($newState eq 'BACKUP' || $newState eq 'UNUSED' || $newState eq 'MASTER' || $newState eq 'BROKEN' || $newState eq 'unknown') ? 2 : ($newState eq 'INITIALIZE') ? 1 : 2"
+				},
+				"EventType" : "snTrapVrrpIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($newStateMatch ne '' && $newState1 eq 'INITIALIZE') ? 3600 : ($newStateMatch ne '' && ($newState1 eq 'BACKUP' || $newState1 eq 'UNUSED' || $newState1 eq 'MASTER' || $newState1 eq 'BROKEN' || $newState1 eq 'unknown')) ? 86400 : ($newState eq 'BACKUP' || $newState eq 'UNUSED' || $newState eq 'MASTER' || $newState eq 'BROKEN' || $newState eq 'unknown') ? 86400 : ($newState eq 'INITIALIZE') ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($newStateMatch ne '' && $newState1 eq 'INITIALIZE') ? 0 : ($newStateMatch ne '' && $newState1 eq 'BROKEN') ? 4 : ($newStateMatch ne '' && ($newState1 eq 'BACKUP' || $newState1 eq 'UNUSED' || $newState1 eq 'MASTER' || $newState1 eq 'unknown')) ? 3 : ($newState eq 'BACKUP' || $newState eq 'UNUSED' || $newState eq 'MASTER' || $newState eq 'unknown') ? 3 : ($newState eq 'INITIALIZE') ? 0 : ($newState eq 'BROKEN') ? 4 : 2"
+				},
+				"SubNode" : "Port: $interfacePort, VrId: $vrid",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapVrrpIfStateChange FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapVrrpIfStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapMgmtModuleRedunStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the management module",
+				"changes redundancy state."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "slot (?P<slot>.*) state",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "from (?P<oldState>[^ ]+) to",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "to (?P<newState>.*)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$newState",
+						"pattern" : "(?P<newStateMatch>.*)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$newState",
+						"pattern" : "(?P<newState1>.*).*",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($newStateMatch ne '' && $newState1 eq 'active') ? 1 : ($newStateMatch ne '' && ($newState1 eq 'standby' || $newState1 eq 'crashed' || $newState1 eq 'coming-up' || $newState1 eq 'unknown')) ? 2 : ($newState eq 'standby' || $newState eq 'crashed' || $newState eq 'coming-up' || $newState eq 'unknown') ? 2 : ($newState eq 'active') ? 1 : 2"
+				},
+				"EventType" : "snTrapMgmtModuleRedunStateChange",
+				"ExpireTime" : {
+					"eval" : "($newStateMatch ne '' && $newState1 eq 'active') ? 3600 : ($newStateMatch ne '' && ($newState1 eq 'standby' || $newState1 eq 'crashed' || $newState1 eq 'coming-up' || $newState1 eq 'unknown')) ? 86400 : ($newState eq 'standby' || $newState eq 'crashed' || $newState eq 'coming-up' || $newState eq 'unknown') ? 86400 : ($newState eq 'active') ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($newStateMatch ne '' && $newState1 eq 'active') ? 0 : ($newStateMatch ne '' && $newState1 eq 'crashed') ? 4 : ($newStateMatch ne '' && ($newState1 eq 'standby' || $newState1 eq 'coming-up' || $newState1 eq 'unknown')) ? 3 : ($newState eq 'standby' || $newState eq 'coming-up' || $newState eq 'unknown') ? 3 : ($newState eq 'active') ? 0 : ($newState eq 'crashed') ? 4 : 2"
+				},
+				"SubNode" : "Slot: $slot",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapMgmtModuleRedunStateChange FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapMgmtModuleRedunStateChange",
+				"oid" : "1.3.6.1.4.1.1991.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapTemperatureWarning",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the actual temperature",
+				"reading is above the warning temperature threshold."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<switchFabricMatch>System: Switch Fabric [^ ]+ temperature)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Switch Fabric (?P<switchFabric>[^ ]+) temperature",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapTemperatureWarning",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : {
+					"eval" : "($switchFabricMatch ne '') ? 'Switch Fabric: $switchFabric' : 'Device'"
+				},
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapTemperatureWarning FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapTemperatureWarning",
+				"oid" : "1.3.6.1.4.1.1991.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapAccessListDeny",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a packet was denied",
+				"by an access list."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "list (?P<listId>.*) in rip",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "denied (?P<ip>w+)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapAccessListDeny",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "List ID: $listId, IP: $ip",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapAccessListDeny FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapAccessListDeny",
+				"oid" : "1.3.6.1.4.1.1991.0.37",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapMacFilterDeny",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a packet was denied",
+				"by a MAC address filter."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "port (?P<port>.*) src",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "src macaddr (?P<srcMacAddress>[^ ]+)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapMacFilterDeny",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Port: $port, Src Mac: $srcMacAddress",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapMacFilterDeny FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapMacFilterDeny",
+				"oid" : "1.3.6.1.4.1.1991.0.38",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the connection to the remote SI is established."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "site (?P<siteName>.*) SI",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "SI (?P<agentIp>w+)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "SI w+ (?P<SIname>.*) is up",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4GslbRemoteStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Site: $siteName, IP: $agentIp, SI: $SIname",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteUp FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteUp",
+				"oid" : "1.3.6.1.4.1.1991.0.39",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the connection to the remote SI is down."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "site (?P<siteName>.*) SI",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "SI (?P<agentIp>w+)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "SI w+ (?P<SIname>.*) is down",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4GslbRemoteStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Site: $siteName, IP: $agentIp, SI: $SIname",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteDown FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteDown",
+				"oid" : "1.3.6.1.4.1.1991.0.40",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteControllerUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the connection to the GSLB SI is established."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "SI (?P<ip>w+) is",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4GslbRemoteControllerStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "SI IP: $ip",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteControllerUp FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteControllerUp",
+				"oid" : "1.3.6.1.4.1.1991.0.41",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteControllerDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the connection to the GSLB SI is down."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "SI (?P<ip>w+) is",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4GslbRemoteControllerStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "SI IP: $ip",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteControllerDown FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbRemoteControllerDown",
+				"oid" : "1.3.6.1.4.1.1991.0.42",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when GSLB health check for an address transitions",
+				"from down to active state."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "check (?P<ip>w+) of",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "of (?P<subZoneNames>w+) status",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4GslbHealthCheckIpStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IP: $ip, Name: $subZoneNames",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpUp FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpUp",
+				"oid" : "1.3.6.1.4.1.1991.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when GSLB health check for an address transitions",
+				"from active to down state."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "check (?P<ip>w+) of",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "of (?P<subZoneNames>w+) status",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4GslbHealthCheckIpStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "IP: $ip, Name: $subZoneNames",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpDown FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpDown",
+				"oid" : "1.3.6.1.4.1.1991.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpPortUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a given port for a health check address is up."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "check (?P<ip>w+) of",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "of (?P<subZoneNames>w+) port",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "port (?P<port>.*) is",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4GslbHealthCheckIpPortStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IP: $ip, Name: $subZoneNames, Port: $port",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpPortUp FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpPortUp",
+				"oid" : "1.3.6.1.4.1.1991.0.45",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpPortDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when a given port for a health check address is down."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "check (?P<ip>w+) of",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "of (?P<subZoneNames>w+) port",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "port (?P<port>.*) is",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4GslbHealthCheckIpPortStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "IP: $ip, Name: $subZoneNames, Port: $port",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpPortDown FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4GslbHealthCheckIpPortDown",
+				"oid" : "1.3.6.1.4.1.1991.0.46",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallBecomeStandby",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the server load",
+				"balancing switch Firewall changes state from active to standby."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "group (?P<group>.*) become",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4FirewallBecomeStandbyActive",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Group: $group",
+				"Summary" : "Server Load Balancing Switch Firewall changed state from Active to Standby"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallBecomeStandby ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallBecomeStandby",
+				"oid" : "1.3.6.1.4.1.1991.0.47"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallBecomeActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the server load",
+				"balancing switch Firewall changes state from standby to active."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "group (?P<group>.*) become",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4FirewallBecomeStandbyActive",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Group: $group",
+				"Summary" : "Server Load Balancing Switch Firewall changed state from Standby to Active"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallBecomeActive ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallBecomeActive",
+				"oid" : "1.3.6.1.4.1.1991.0.48"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallPathUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the server load",
+				"balancing switch Firewall path is up."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "target (?P<targetIp>.*) nexthop",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "nexthop (?P<nexthopIp>.*) path",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "path (?P<path>.*) port",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "port (?P<port>.*)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapL4FirewallPathStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IP: $targetIp, nexthop: $nexthopIp, Path: $path, Port: $port",
+				"Summary" : "Firewall path is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallPathUp ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallPathUp",
+				"oid" : "1.3.6.1.4.1.1991.0.49"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallPathDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the server load",
+				"balancing switch Firewall path is down."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "target (?P<targetIp>.*) nexthop",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "nexthop (?P<nexthopIp>.*) path",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "path (?P<path>.*) port",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "port (?P<port>.*)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapL4FirewallPathStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "IP: $targetIp, nexthop: $nexthopIp, Path: $path, Port: $port",
+				"Summary" : "Firewall path is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallPathDown ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4FirewallPathDown",
+				"oid" : "1.3.6.1.4.1.1991.0.50"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapIcmpLocalExceedBurst",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when incoming ICMP exceeds burst-MAX."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapIcmpLocalExceedBurst",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapIcmpLocalExceedBurst FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapIcmpLocalExceedBurst",
+				"oid" : "1.3.6.1.4.1.1991.0.51",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapIcmpTransitExceedBurst",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when transit ICMP exceeds burst-MAX."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "interface (?P<port>.*) exceeds",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapIcmpTransitExceedBurst",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Port: $port",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapIcmpTransitExceedBurst FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapIcmpTransitExceedBurst",
+				"oid" : "1.3.6.1.4.1.1991.0.52",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapTcpLocalExceedBurst",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when incoming TCP SYN exceeds burst-MAX."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapTcpLocalExceedBurst",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapTcpLocalExceedBurst FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapTcpLocalExceedBurst",
+				"oid" : "1.3.6.1.4.1.1991.0.53",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapTcpTransitExceedBurst",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when transit TCP exceeds burst-MAX."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "interface (?P<port>.*) exceeds",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapTcpTransitExceedBurst",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Port: $port",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapTcpTransitExceedBurst FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapTcpTransitExceedBurst",
+				"oid" : "1.3.6.1.4.1.1991.0.54",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4ContentVerification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the HTTP match-list pattern",
+				"is found."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4ContentVerification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "HTTP Content Verification, HTTP match-list pattern is found"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4ContentVerification ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4ContentVerification",
+				"oid" : "1.3.6.1.4.1.1991.0.55"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapDuplicateIp",
+			"certification" : "STANDARD",
+			"description" : [
+				"Duplicate IP address detected."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "IP address (?P<ip>.*) detected",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "MAC address (?P<macAddress>.*) interface",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "interface (?P<interface>.*) w+",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapDuplicateIp",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IP: $ip, Mac: $macAddress, Interface: $interface",
+				"Summary" : "Duplicate IP address detect"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapDuplicateIp ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapDuplicateIp",
+				"oid" : "1.3.6.1.4.1.1991.0.56"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapMplsProblem",
+			"certification" : "STANDARD",
+			"description" : [
+				"MPLS Problem Detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapMplsProblem",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "MPLS Problem detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapMplsProblem ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapMplsProblem",
+				"oid" : "1.3.6.1.4.1.1991.0.57"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapMplsException",
+			"certification" : "STANDARD",
+			"description" : [
+				"MPLS Exception Detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapMplsException",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "MPLS Exception detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapMplsException ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapMplsException",
+				"oid" : "1.3.6.1.4.1.1991.0.58"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapMplsAudit",
+			"certification" : "STANDARD",
+			"description" : [
+				"MPLS Audit Trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapMplsAudit",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "MPLS Audit Trap"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapMplsAudit ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapMplsAudit",
+				"oid" : "1.3.6.1.4.1.1991.0.59"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapMplsDeveloper",
+			"certification" : "STANDARD",
+			"description" : [
+				"MPLS Developer Trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapMplsDeveloper",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "MPLS Developer Trap"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapMplsDeveloper ",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapMplsDeveloper",
+				"oid" : "1.3.6.1.4.1.1991.0.60"
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapNoBmFreeQueue",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when no free queue is available in buffer manager."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Slot (?P<slot>d+)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<slotMatch>Slot w+ M.* Free Queue)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Slot d+ (?P<module>M.*) Free Queue",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapNoBmFreeQueue",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : {
+					"eval" : "($slotMatch ne '' && $module ne '') ? 'Slot: $slot, Module: $module' : 'Slot: $slot'"
+				},
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapNoBmFreeQueue FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapNoBmFreeQueue",
+				"oid" : "1.3.6.1.4.1.1991.0.61",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapSmcDmaDrop",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when SMC DMA packet is dropped."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Slot (?P<slot>.*) SMC",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "SMC (?P<dmaId>.*) DMA",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Counter is (?P<count>d+)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapSmcDmaDrop",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Slot: $slot, DMA ID: $dmaId",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapSmcDmaDrop FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapSmcDmaDrop",
+				"oid" : "1.3.6.1.4.1.1991.0.62",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapSmcBpDrop",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when SMC BackPlane packet is dropped."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Slot (?P<slot>.*) BP",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "BP (?P<dmaId>.*) Drop",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Counter is (?P<count>d+)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapSmcBpDrop",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Slot: $slot, DMA ID: $dmaId",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapSmcBpDrop FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapSmcBpDrop",
+				"oid" : "1.3.6.1.4.1.1991.0.63",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapBmWriteSeqDrop",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when BM write sequence packet is dropped."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Slot (?P<slot>.*) Write",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapBmWriteSeqDrop",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Slot: $slot",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapBmWriteSeqDrop FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapBmWriteSeqDrop",
+				"oid" : "1.3.6.1.4.1.1991.0.64",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapBgpPeerUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the bgp peer is up."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Peer (?P<ip>.*) UP",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "snTrapBgpPeerStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IP: $ip",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapBgpPeerUp FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapBgpPeerUp",
+				"oid" : "1.3.6.1.4.1.1991.0.65",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapBgpPeerDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the bgp peer is down."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Peer (?P<ip>.*) DOWN",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "snTrapBgpPeerStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "IP: $ip",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapBgpPeerDown FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapBgpPeerDown",
+				"oid" : "1.3.6.1.4.1.1991.0.66",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerResponseTimeLowerLimit",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the real server average response time exceeds lower threshold."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Port (?P<port>.*) on server",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "on server (?P<server>.*):",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : ":(?P<ip>.*): Avg",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4RealServerResponseTimeLowerLimit",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Server: $server, IP: $ip, Port: $port",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerResponseTimeLowerLimit FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerResponseTimeLowerLimit",
+				"oid" : "1.3.6.1.4.1.1991.0.67",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerResponseTimeUpperLimit",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the real server average response time exceeds upper threshold."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Port (?P<port>.*) on server",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "on server (?P<server>.*):",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : ":(?P<ip>.*): Avg",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4RealServerResponseTimeUpperLimit",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Server: $server, IP: $ip, Port: $port",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerResponseTimeUpperLimit FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4RealServerResponseTimeUpperLimit",
+				"oid" : "1.3.6.1.4.1.1991.0.68",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4TcpAttackRateExceedMax",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the TCP attack rate exceeds configured maximum."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4TcpAttackRateStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4TcpAttackRateExceedMax FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4TcpAttackRateExceedMax",
+				"oid" : "1.3.6.1.4.1.1991.0.69",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4TcpAttackRateExceedThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the TCP attack rate exceeds 80% of configured maximum."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4TcpAttackRateStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4TcpAttackRateExceedThreshold FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4TcpAttackRateExceedThreshold",
+				"oid" : "1.3.6.1.4.1.1991.0.70",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4ConnectionRateExceedMax",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the L4 connection rate exceeds configured maximum."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4ConnectionRateStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4ConnectionRateExceedMax FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4ConnectionRateExceedMax",
+				"oid" : "1.3.6.1.4.1.1991.0.71",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapL4ConnectionRateExceedThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the L4 connection rate exceeds 80% of configured maximum"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapL4ConnectionRateStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapL4ConnectionRateExceedThreshold FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapL4ConnectionRateExceedThreshold",
+				"oid" : "1.3.6.1.4.1.1991.0.72",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapRunningConfigChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the running configuration",
+				"was changed."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<clientMatch>from.*client)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<UserMatch>by.*from)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "changed by (?P<user>.*) from",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapRunningConfigChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($clientMatch ne '' && $UserMatch ne '') ? 'User: $user' : 'Device'"
+				},
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapRunningConfigChanged FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapRunningConfigChanged",
+				"oid" : "1.3.6.1.4.1.1991.0.73",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapStartupConfigChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when the startup configuration",
+				"was changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapStartupConfigChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapStartupConfigChanged FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapStartupConfigChanged",
+				"oid" : "1.3.6.1.4.1.1991.0.74",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapUserLogin",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when user login."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<loginMatch>login by)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "login by (?P<user>.*) from src",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<srcIpMatch>IPv6)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "src IPv6 (?P<srcIp>d+)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "src IP (?P<srcIp1>d+)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<macMatch>src MAC)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "src MAC (?P<srcMacAddress>[^ ]+)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapUserLogin",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($loginMatch ne '' && $user ne '' && $srcIpMatch ne '') ? 'IP: $srcIp, User: $user' : ($loginMatch ne '' && $user ne '' && $srcIpMatch eq '') ? 'IP: $srcIp1, User: $user' : ($macMatch ne '' && $loginMatch ne '' && $srcIpMatch ne '') ? 'IP: $srcIp, Mac: $srcMacAddress' : ($macMatch ne '' && $loginMatch ne '' && $srcIpMatch eq '') ? 'IP: $srcIp1, Mac: $srcMacAddress' : ($srcIpMatch ne '') ? 'IP: $srcIp' : 'IP: $srcIp1'"
+				},
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapUserLogin FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapUserLogin",
+				"oid" : "1.3.6.1.4.1.1991.0.75",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapUserLogout",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when user logout."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<loginMatch>logout by)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "logout by (?P<user>.*) from src",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<srcIpMatch>IPv6)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "src IPv6 (?P<srcIp>d+)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "src IP (?P<srcIp1>d+)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "(?P<macMatch>src MAC)",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "src MAC (?P<srcMacAddress>[^ ]+)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapUserLogout",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : {
+					"eval" : "($loginMatch ne '' && $user ne '' && $srcIpMatch ne '') ? 'IP: $srcIp, User: $user' : ($loginMatch ne '' && $user ne '' && $srcIpMatch eq '') ? 'IP: $srcIp1, User: $user' : ($macMatch ne '' && $loginMatch ne '' && $srcIpMatch ne '') ? 'IP: $srcIp, Mac: $srcMacAddress' : ($macMatch ne '' && $loginMatch ne '' && $srcIpMatch eq '') ? 'IP: $srcIp1, Mac: $srcMacAddress' : ($srcIpMatch ne '') ? 'IP: $srcIp' : 'IP: $srcIp1'"
+				},
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapUserLogout FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapUserLogout",
+				"oid" : "1.3.6.1.4.1.1991.0.76",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapPortSecurityViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when insecure MAC addresses",
+				"are received from a port with MAC security feature enabled."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Ethernet (?P<interface>.*) address",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "address (?P<macAddress>.*) vlan",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "vlan (?P<vlanId>d+)",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapPortSecurityStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Interface: $interface, Mac: $macAddress , VLAN ID: $vlanId",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapPortSecurityViolation FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapPortSecurityViolation",
+				"oid" : "1.3.6.1.4.1.1991.0.77",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "FOUNDRY-SN-TRAP-MIB::snTrapPortSecurityShutdown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP trap that is generated when insecure MAC addresses",
+				"are received from a port caused the port to shutdown."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "Ethernet (?P<interface>.*) shutdown",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snTrapPortSecurityStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Interface: $interface",
+				"Summary" : "$v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD FOUNDRY-SN-TRAP-MIB::snTrapPortSecurityShutdown FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage s EXAMPLE",
+			"trap" : {
+				"name" : "FOUNDRY-SN-TRAP-MIB::snTrapPortSecurityShutdown",
+				"oid" : "1.3.6.1.4.1.1991.0.78",
+				"variables" : [
+					{
+						"description" : [
+							"A generic trap message string."
+						],
+						"name" : "FOUNDRY-SN-AGENT-MIB::snAgGblTrapMessage",
+						"oid" : "1.3.6.1.4.1.1991.1.1.2.1.44",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

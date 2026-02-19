@@ -1,0 +1,83 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201106060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-GSLB-SYSTEM-MIB::ciscoGslbSystemPeerEventStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the value of",
+				"cgsPeerStatus changes from one state to another.",
+				"This notification is reported only by a GSLB device",
+				"with cgsNodeService value of 'primary'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 3) ? 1 : (($v5 == 2) ? 2 : 3)"
+				},
+				"EventType" : "ciscoGslbSystemPeerEventStatus",
+				"ExpireTime" : {
+					"eval" : "($v5 == 3) ? 3600 : (($v5 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v5 == 3) ? 0 : (($v5 == 2) ? 4 : 2)"
+				},
+				"SubNode" : "$v2",
+				"Summary" : "Peer Status for $v2 has changed state from $v4 to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GSLB-SYSTEM-MIB::ciscoGslbSystemPeerEventStatus SNMPv2-MIB::sysName s EXAMPLE CISCO-GSLB-SYSTEM-MIB::cgsPeerDnsName s EXAMPLE CISCO-GSLB-SYSTEM-MIB::cgsPeerService i 1 CISCO-GSLB-SYSTEM-MIB::cgsPeerPrevStatus i 1 CISCO-GSLB-SYSTEM-MIB::cgsPeerStatus i 1",
+			"trap" : {
+				"name" : "CISCO-GSLB-SYSTEM-MIB::ciscoGslbSystemPeerEventStatus",
+				"oid" : "1.3.6.1.4.1.9.9.589.0.1",
+				"variables" : [
+					{
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GSLB-SYSTEM-MIB::cgsPeerDnsName",
+						"oid" : "1.3.6.1.4.1.9.9.589.1.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "primary",
+							"2" : "standby",
+							"3" : "secondary"
+						},
+						"name" : "CISCO-GSLB-SYSTEM-MIB::cgsPeerService",
+						"oid" : "1.3.6.1.4.1.9.9.589.1.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "inactive",
+							"2" : "offline",
+							"3" : "online"
+						},
+						"name" : "CISCO-GSLB-SYSTEM-MIB::cgsPeerPrevStatus",
+						"oid" : "1.3.6.1.4.1.9.9.589.1.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "inactive",
+							"2" : "offline",
+							"3" : "online"
+						},
+						"name" : "CISCO-GSLB-SYSTEM-MIB::cgsPeerStatus",
+						"oid" : "1.3.6.1.4.1.9.9.589.1.4.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

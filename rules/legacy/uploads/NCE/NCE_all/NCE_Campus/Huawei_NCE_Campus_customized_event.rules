@@ -1,0 +1,41 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗ 
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝ 
+#  
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+#---------------------------------------------------------------------------------------------------------
+# Descpription: Customized Event rules for Rules which can't be covered by GPL or are general for this EMS
+#---------------------------------------------------------------------------------------------------------
+
+my $rulesfile = "Huawei_NCE_Campus_customized_event.rules";
+$Log->Message('DEBUG', $rulesfile . " started.");
+
+# as the backoffice team has no test system for Huawei NCE
+# test nodes are implemented in the live system and need to get suppressed for NOC	
+
+if (($hwNmNorthboundObjectInstance =~ /TEST/) or ($hwNmNorthboundObjectInstance =~ /TestBed|TEST|test|Test|LAB/))
+{
+    $Log->Message('DEBUG',"Alarm from test node. ");
+	LibUtil_AddSuppression($Event,"Hidden from NOC","Rules", 0,"Huawei_NCE_hwNmNorthboundEventTrap from test node", $rulesfile);  #@SuppressEscl = 20
+}
+
+
+# 21.09.2022 only Critical and Major should be visible to NOC
+if (int($Event->{Severity}) <= 3 and int($Event->{EventCategory}) != 1) {
+	LibUtil_AddSuppression($Event,"Hidden from NOC","Rules", 0,"Huawei_NCE_Campus_customized_event", $rulesfile);
+}
+
+$Log->Message('DEBUG', $rulesfile . " ...done");

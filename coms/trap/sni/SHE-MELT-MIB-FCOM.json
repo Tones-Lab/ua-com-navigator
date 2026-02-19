@@ -1,0 +1,1334 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201602291745Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltTestRequestParametersModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"The MELT test parameters were modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheMeltTestRequestParametersModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "MELT test parameters modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-MELT-MIB::sheMeltTestRequestParametersModified SHE-MELT-MIB::sheMeltTestRequestControlReqTimeStamp u 9999 SHE-MELT-MIB::sheMeltTestParameterFreq1 u 25",
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltTestRequestParametersModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestRequestControlReqTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.3.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Defines the frequency #1 (Hz) for MELT impedance/admittance ",
+							"test. ",
+							"(Default: 25 Hz)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestParameterFreq1",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltTestRequestStateModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"The MELT state of an interface was modified by command ",
+				"or by NE."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheMeltTestRequestStateModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "MELT state of interface set to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-MELT-MIB::sheMeltTestRequestStateModified SHE-MELT-MIB::sheMeltTestRequestControlReqTimeStamp u 9999 SHE-MELT-MIB::sheMeltTestRequestIfState i 1 SHE-MELT-MIB::sheMeltTestRequestIuState i 1 SHE-MELT-MIB::sheMeltTestRequestTestToneRemainingTime u 0 SHE-MELT-MIB::sheMeltTestRequestLastResultState i 1",
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltTestRequestStateModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestRequestControlReqTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.3.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The MELT status of this port.",
+							"",
+							"A MELT test or test tone insertion may only be performed on ",
+							"one port on a given IU at any one time. This restriction does ",
+							"not apply to ports on different IUs, for which MELT/test tone ",
+							"insertion may be performed at the same time.",
+							"",
+							"The columnar object sheMeltTestRequestIuState reports the ",
+							"test status for the IU card on which the port is located. ",
+							"A MELT test (startMeltTest(2)) or test tone insertion ",
+							"(activateTestTone(4)) may be performed, only if no other port ",
+							"is being tested, i.e., only when ",
+							"sheMeltTestRequestIuState = idle(1).",
+							"",
+							"Whenever a port on the IU is under test, the columnar object ",
+							"sheMeltTestRequestCurrentTestedPort reports the ifIndex of ",
+							"the port on the IU currently under test.",
+							"",
+							"NOTES",
+							"Wetting current injection at the port will be automatically ",
+							"interrupted for the duration of the test (MELT or test tone).",
+							"(Configuration of wetting current injection is made via the ",
+							"sheXdslMib or sheShdslMib):",
+							"Insertion of a test tone will be terminated automatically ",
+							"after timeout.",
+							"",
+							"VALUES",
+							"- Up to and including R4.7M:",
+							"idle(1) : no test running and no test has been ",
+							"started since the last reset of the ",
+							"IU",
+							"beingTested(2) : test is running ",
+							"applyingTestTone(3) : test tone activated on line ",
+							"idleTestSucceeded(5): line idle and the last MELT ",
+							"performed was successful ",
+							"idleTestAborted(6) : line idle and the last MELT ",
+							"performed was aborted by operator ",
+							"or there was an internal failure",
+							"or timeout.",
+							"",
+							"- From R4.7.1M:",
+							"idle(1) : no test activity",
+							"beingTested(2) : test is running ",
+							"applyingTestTone(3) : test tone activated on line"
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "beingTested",
+							"3" : "applyingTestTone",
+							"5" : "idleTestSucceeded",
+							"6" : "idleTestAborted"
+						},
+						"name" : "SHE-MELT-MIB::sheMeltTestRequestIfState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The MELT status of IU on which the port represented by the ",
+							"table entry is located.",
+							"",
+							"Each table entry reports the test status of the",
+							"IU on which the associated port is located, so that it can ",
+							"easily been determined, whether a MELT test or test tone ",
+							"insertion for this port may be started.",
+							"",
+							"If a port on the IU is already under test, the columnar ",
+							"object sheMeltTestRequestCurrentTestedPort reports which ",
+							"port this is.",
+							"",
+							"NOTE",
+							"MELT/test tone insertion may be performed on ports ",
+							"located on different IUs at the same time.",
+							"",
+							"VALUES",
+							"idle(1) : no port located on this IU is ",
+							"currently under test ",
+							"-> new test may be started",
+							"beingTested(2) : a port located on this IU is already ",
+							"currently under test",
+							"-> no new test may be started",
+							"applyingTestTone(3) : a test tone is currently activated on ",
+							"a port located on this IU",
+							"-> no new test may be started"
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "beingTested",
+							"3" : "applyingTestTone"
+						},
+						"name" : "SHE-MELT-MIB::sheMeltTestRequestIuState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Reports the time remaining for an active test tone insertion ",
+							"test on this line.",
+							"",
+							"VALUES",
+							"0 : no test running.",
+							">0 : time remaining in seconds"
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestRequestTestToneRemainingTime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The result for the last MELT command invoked on the port ",
+							"(copy of sheMeltTestRequestControlReqResult for that ",
+							"command).",
+							"",
+							"If no MELT command has yet been invoked on the port, the ",
+							"value will be notTested(1). ",
+							"",
+							"REVISION HISTORY",
+							"R4.7M : New."
+						],
+						"enums" : {
+							"1" : "notTested",
+							"2" : "meltRequestControlReqNotSupported",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"38" : "commandNotSupportedbyRelease",
+							"40" : "featureNotSupportedByCard",
+							"41" : "featureNotSupportedbyRelease",
+							"51" : "errTestToneRunningOnThisIu",
+							"52" : "errMeltTestRunningOnThisIu",
+							"53" : "errHwFault",
+							"54" : "errIuPulledOut",
+							"55" : "errProfileInUse"
+						},
+						"name" : "SHE-MELT-MIB::sheMeltTestRequestLastResultState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.2.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltTestRequestIfTestToneIndexModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration trap indicating that the assignement of a ",
+				"MELT test tone profile to an interface has been modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheMeltTestRequestIfTestToneIndexModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Interface will now use test tone $v2 for MELT testing"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-MELT-MIB::sheMeltTestRequestIfTestToneIndexModified SHE-MELT-MIB::sheMeltTestRequestControlReqTimeStamp u 9999 SHE-MELT-MIB::sheMeltTestRequestTestToneIndex u 1",
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltTestRequestIfTestToneIndexModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestRequestControlReqTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.3.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The test tone profile to be used when inserting test tones ",
+							"on to the line.",
+							"",
+							"This columnar object must reference an existing entry in ",
+							"the sheMeltTestToneTable.",
+							"",
+							"NOTES",
+							"Only profiles with a sheMeltTestToneProfileType compatible ",
+							"with the type of line may be assigned.",
+							"Two default profiles with index 1 and 2 are provided by the ",
+							"system and assigned per default depending on the type of line ",
+							"(xDSL or SHDSL)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestRequestTestToneIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.1.2.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltTestToneEntryCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration trap indicating that a MELT test tone profile ",
+				"has been created."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheMeltTestToneEntryCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v2",
+				"Summary" : "New MELT test tone set created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-MELT-MIB::sheMeltTestToneEntryCreated SHE-MELT-MIB::sheMeltTestToneControlIndex u 1 SHE-MELT-MIB::sheMeltTestToneControlReqTimeStamp u 9999 SHE-MELT-MIB::sheMeltTestToneControlFreq1 u 0 SHE-MELT-MIB::sheMeltTestToneControlFreq2 u 0 SHE-MELT-MIB::sheMeltTestToneControlLevel i -158 SHE-MELT-MIB::sheMeltTestToneControlTimeoutValue u 1 SHE-MELT-MIB::sheMeltTestToneControlProfileType i 0 SHE-MELT-MIB::sheMeltTestToneControlDescription s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltTestToneEntryCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value for sheMeltTestToneIndex of the entry in the ",
+							"sheMeltTestToneTable to be modified. ",
+							"",
+							"NOTE",
+							"Restrictions apply to the 2 default system profiles that ",
+							"exist for xDSL and SHDSL line types (sheMeltTestToneIndex=1, ",
+							"sheMeltTestToneIndex=2):",
+							"- Prior to R4.7.3M V1.553 and in SR5.1 prior to V1.566:",
+							"These profiles may neither be modified nor deleted by ",
+							"user configuration.",
+							"- From R4.7.3M V1.553 and SR5.1 V1.566:",
+							"These profiles may not be deleted, but may be modified ",
+							"by user configuration; they may be restored to their ",
+							"factory default values at any time through the new ",
+							"command restoreMeltTestToneEntryFactoryDefaults(13)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlReqTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneFreq1 for more details.",
+							"",
+							"Setting will be ignored, if ",
+							"sheMeltTestToneControlProfileType = shdsl(1)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlFreq1",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneFreq2 for more details.",
+							"",
+							"NOTE:",
+							"Configuration not supported by NE."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlFreq2",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneLevel for more details.",
+							"",
+							"Fixed value depending on profile type.",
+							"",
+							"NOTE:",
+							"Configuration not supported by NE."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlLevel",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneTimeoutValue for more details."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlTimeoutValue",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneProfileType for more details.",
+							"",
+							"REVISION HISTORY",
+							"R3.8M/R4.7M : New."
+						],
+						"enums" : {
+							"0" : "xdsl",
+							"1" : "shdsl"
+						},
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlProfileType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneDescription for more details.",
+							"",
+							"REVISION HISTORY",
+							"R3.8M/R4.7M : New."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlDescription",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltTestToneEntryModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration trap indicating that a MELT test tone profile ",
+				"has been modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheMeltTestToneEntryModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v2",
+				"Summary" : "MELT test tone entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-MELT-MIB::sheMeltTestToneEntryModified SHE-MELT-MIB::sheMeltTestToneControlIndex u 1 SHE-MELT-MIB::sheMeltTestToneControlReqTimeStamp u 9999 SHE-MELT-MIB::sheMeltTestToneControlFreq1 u 0 SHE-MELT-MIB::sheMeltTestToneControlFreq2 u 0 SHE-MELT-MIB::sheMeltTestToneControlLevel i -158 SHE-MELT-MIB::sheMeltTestToneControlTimeoutValue u 1 SHE-MELT-MIB::sheMeltTestToneControlDescription s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltTestToneEntryModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value for sheMeltTestToneIndex of the entry in the ",
+							"sheMeltTestToneTable to be modified. ",
+							"",
+							"NOTE",
+							"Restrictions apply to the 2 default system profiles that ",
+							"exist for xDSL and SHDSL line types (sheMeltTestToneIndex=1, ",
+							"sheMeltTestToneIndex=2):",
+							"- Prior to R4.7.3M V1.553 and in SR5.1 prior to V1.566:",
+							"These profiles may neither be modified nor deleted by ",
+							"user configuration.",
+							"- From R4.7.3M V1.553 and SR5.1 V1.566:",
+							"These profiles may not be deleted, but may be modified ",
+							"by user configuration; they may be restored to their ",
+							"factory default values at any time through the new ",
+							"command restoreMeltTestToneEntryFactoryDefaults(13)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlReqTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneFreq1 for more details.",
+							"",
+							"Setting will be ignored, if ",
+							"sheMeltTestToneControlProfileType = shdsl(1)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlFreq1",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneFreq2 for more details.",
+							"",
+							"NOTE:",
+							"Configuration not supported by NE."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlFreq2",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneLevel for more details.",
+							"",
+							"Fixed value depending on profile type.",
+							"",
+							"NOTE:",
+							"Configuration not supported by NE."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlLevel",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneTimeoutValue for more details."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlTimeoutValue",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Look at sheMeltTestToneDescription for more details.",
+							"",
+							"REVISION HISTORY",
+							"R3.8M/R4.7M : New."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlDescription",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltTestToneEntryDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration trap indicating that a MELT test tone profile ",
+				"has been deleted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheMeltTestToneEntryDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v2",
+				"Summary" : "MELT test tone entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-MELT-MIB::sheMeltTestToneEntryDeleted SHE-MELT-MIB::sheMeltTestToneControlIndex u 1 SHE-MELT-MIB::sheMeltTestToneControlReqTimeStamp u 9999",
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltTestToneEntryDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.6",
+				"variables" : [
+					{
+						"description" : [
+							"The value for sheMeltTestToneIndex of the entry in the ",
+							"sheMeltTestToneTable to be modified. ",
+							"",
+							"NOTE",
+							"Restrictions apply to the 2 default system profiles that ",
+							"exist for xDSL and SHDSL line types (sheMeltTestToneIndex=1, ",
+							"sheMeltTestToneIndex=2):",
+							"- Prior to R4.7.3M V1.553 and in SR5.1 prior to V1.566:",
+							"These profiles may neither be modified nor deleted by ",
+							"user configuration.",
+							"- From R4.7.3M V1.553 and SR5.1 V1.566:",
+							"These profiles may not be deleted, but may be modified ",
+							"by user configuration; they may be restored to their ",
+							"factory default values at any time through the new ",
+							"command restoreMeltTestToneEntryFactoryDefaults(13)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-MELT-MIB::sheMeltTestToneControlReqTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.2.2.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltCardHwFaultAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised when the MELT subsystem detects a ",
+				"general hardware fault on the MELT card as a result of the ",
+				"execution of a self-test.",
+				"MELT self-tests are performed:",
+				"- during initialization of the line card ",
+				"- periodically every 24 hours ",
+				"- on demand via SNMP (startMeltCardSelfTest(20)) or CLI",
+				"- at the execution of each MELT test ",
+				"VALUES",
+				"sheAlarmReportingSourceType = physicalEntity(1)",
+				"sheAlarmReportingSource = entPhysicalIndex",
+				"sheAlarmSeverity = shePhysCardAlarmSeverityIndex.",
+				"NOTE",
+				"This alarm may be raised in addition to a ",
+				"sheMeltPortHwFaultAlarm and a sheMeltCardCalibrationAlarm or ",
+				"a sheMeltPortCalibrationAlarm.",
+				"REVISION HISTORY",
+				"R4.7.3M V1.552/SR5.1 V1.560: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheMeltCardHwFaultAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 6400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'MELT card hardware fault cleared' : 'MELT card hardware fault'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-MELT-MIB::sheMeltCardHwFaultAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-MELT-MIB::sheMeltCardHwFaultAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltCardHwFaultAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.20.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltCardCalibrationAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm is raised when the MELT subsystem detects that ",
+				"calibration data is not available on a MELT card. ",
+				"Calibration data is generated for all ports during card ",
+				"production to compensate for the variations of internal ",
+				"board components.",
+				"The availability of calibration data is checked",
+				"- during initialization of the line card",
+				"- at the execution of each MELT test ",
+				"VALUES",
+				"sheAlarmReportingSourceType = physicalEntity(1)",
+				"sheAlarmReportingSource = entPhysicalIndex",
+				"sheAlarmSeverity = shePhysCardAlarmSeverityIndex.",
+				"NOTES",
+				"- This alarm may be raised in addition to ",
+				"sheMeltCardHwFaultAlarm and sheMeltPortHwFaultAlarm",
+				"- Only sheMeltCardCalibrationAlarm or ",
+				"sheMeltPortCalibrationAlarm may be raised at the same time ",
+				"for a given card (sheMeltCardCalibrationAlarm and ",
+				"sheMeltPortCalibrationAlarm are mutually exclusive on a ",
+				"card).",
+				"REVISION HISTORY",
+				"R4.7.3M V1.552/SR5.1 V1.560: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheMeltCardCalibrationAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 6400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'MELT card calibration data is available' : 'MELT card calibration data is not available'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-MELT-MIB::sheMeltCardCalibrationAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-MELT-MIB::sheMeltCardCalibrationAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltCardCalibrationAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.20.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltPortHwFaultAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"This alarm is raised when the MELT subsystem detects a ",
+				"general hardware fault on a specific port as referenced by ",
+				"the ifIndex value reported in sheAlarmReportingSource.",
+				"VALUES",
+				"sheAlarmReportingSourceType = interface(2)",
+				"sheAlarmReportingSource = ifIndex.",
+				"sheAlarmSeverity = shePhysPortAlarmSeverityIndex",
+				"REVISION HISTORY",
+				"R4.7.3M V1.552/SR5.1 V1.560: Added, but reserved for future ",
+				"use only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheMeltPortHwFaultAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 6400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'MELT port hardware fault cleared' : 'MELT port hardware fault'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-MELT-MIB::sheMeltPortHwFaultAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-MELT-MIB::sheMeltPortHwFaultAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltPortHwFaultAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.20.3",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-MELT-MIB::sheMeltPortCalibrationAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"RESERVED FOR FUTURE USE ONLY",
+				"This alarm is raised when the MELT subsystem detects that ",
+				"calibaration data is missing for the port as referenced by ",
+				"the ifIndex value reported in sheAlarmReportingSource.",
+				"VALUES",
+				"sheAlarmReportingSourceType = interface(2)",
+				"sheAlarmReportingSource = ifIndex.",
+				"sheAlarmSeverity = shePhysPortAlarmSeverityIndex",
+				"REVISION HISTORY",
+				"R4.7.3M V1.552/SR5.1 V1.560: Added, but reserved for future ",
+				"use only."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheMeltPortCalibrationAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 6400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'MELT port calibration data is available' : 'MELT port calibration data is not available'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-MELT-MIB::sheMeltPortCalibrationAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-MELT-MIB::sheMeltPortCalibrationAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-MELT-MIB::sheMeltPortCalibrationAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.24.10.20.4",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

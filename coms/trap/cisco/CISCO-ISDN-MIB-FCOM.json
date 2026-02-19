@@ -1,0 +1,233 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200102090000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ISDN-MIB::demandNbrCallInformation",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap/inform is sent to the manager whenever a successful ",
+				"call clears, or a failed call attempt is determined to have ",
+				"ultimately failed. In the event that call retry is active, ",
+				"then this is after all retry attempts have failed. However, ",
+				"only one such trap is sent in between successful call",
+				"attempts; subsequent call attempts result in no trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "demandNbrCallInformation",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v2",
+				"Summary" : "A call to $v2 has cleared or failed for reason $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ISDN-MIB::demandNbrCallInformation CISCO-ISDN-MIB::demandNbrLogIf i 9999 CISCO-ISDN-MIB::demandNbrName s EXAMPLE CISCO-ISDN-MIB::demandNbrAddress s EXAMPLE CISCO-ISDN-MIB::demandNbrLastDuration i 9999 CISCO-ISDN-MIB::demandNbrClearReason s EXAMPLE CISCO-ISDN-MIB::demandNbrClearCode s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ISDN-MIB::demandNbrCallInformation",
+				"oid" : "1.3.6.1.4.1.9.9.26.2.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrLogIf",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrName",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrAddress",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrLastDuration",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrClearReason",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrClearCode",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ISDN-MIB::demandNbrCallDetails",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap/inform is sent to the manager whenever a call ",
+				"connects, or clears, or a failed call attempt is determined to ",
+				"have ultimately failed. In the event that call retry is active, ",
+				"then this is after all retry attempts have failed. However, ",
+				"only one such trap is sent in between successful call",
+				"attempts; subsequent call attempts result in no trap.",
+				"Whenever a call connects, demandNbrLastDuration, ",
+				"demandNbrClearReason, and demandNbrClearCode objects are not",
+				"included in the trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "demandNbrCallDetails",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? 'A call to $v2 has cleared or failed for reason $v5' : 'A call has connected to $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ISDN-MIB::demandNbrCallDetails CISCO-ISDN-MIB::demandNbrLogIf i 9999 CISCO-ISDN-MIB::demandNbrName s EXAMPLE CISCO-ISDN-MIB::demandNbrAddress s EXAMPLE CISCO-ISDN-MIB::demandNbrLastDuration i 9999 CISCO-ISDN-MIB::demandNbrClearReason s EXAMPLE CISCO-ISDN-MIB::demandNbrClearCode s EXAMPLE CISCO-ISDN-MIB::demandNbrCallOrigin i 1",
+			"trap" : {
+				"name" : "CISCO-ISDN-MIB::demandNbrCallDetails",
+				"oid" : "1.3.6.1.4.1.9.9.26.2.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrLogIf",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrName",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrAddress",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrLastDuration",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrClearReason",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ISDN-MIB::demandNbrClearCode",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "originate",
+							"2" : "answer",
+							"3" : "callback"
+						},
+						"name" : "CISCO-ISDN-MIB::demandNbrCallOrigin",
+						"oid" : "1.3.6.1.4.1.9.9.26.1.1.1.1.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ISDN-MIB::demandNbrLayer2Change",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap/inform is sent to the manager whenever the",
+				"D-channel of an interface changes state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "demandNbrLayer2Change",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v1",
+				"Summary" : "D-channel of ifIndex $v1 changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ISDN-MIB::demandNbrLayer2Change IF-MIB::ifIndex i 9999 ISDN-MIB::isdnLapdOperStatus i 1",
+			"trap" : {
+				"name" : "CISCO-ISDN-MIB::demandNbrLayer2Change",
+				"oid" : "1.3.6.1.4.1.9.9.26.2.0.3",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "inactive",
+							"2" : "l1Active",
+							"3" : "l2Active"
+						},
+						"name" : "ISDN-MIB::isdnLapdOperStatus",
+						"oid" : "1.3.6.1.2.1.10.20.1.3.4.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ISDN-MIB::demandNbrCNANotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap/inform is sent to the manager whenever the",
+				"an incoming call request is rejected with cause",
+				"'requested circuit/channel not available' (CNA)",
+				"code number 44.",
+				"isdnSignalingIfIndex is the ifIndex value of the interface",
+				"associated with this signaling channel.",
+				"ifIndex is the interface index of the requested bearer channel ",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "demandNbrCNANotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Signal/BearerIfIndex: $v1/$v2",
+				"Summary" : "Incoming call with signal channel $v1 and bearer channel $v2 has been rejected with cause: requested circuit/channel not available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ISDN-MIB::demandNbrCNANotification ISDN-MIB::isdnSignalingIfIndex i 9999 IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "CISCO-ISDN-MIB::demandNbrCNANotification",
+				"oid" : "1.3.6.1.4.1.9.9.26.2.0.4",
+				"variables" : [
+					{
+						"name" : "ISDN-MIB::isdnSignalingIfIndex",
+						"oid" : "1.3.6.1.2.1.10.20.1.3.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

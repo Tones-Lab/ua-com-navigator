@@ -1,0 +1,291 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ATM-SWITCHING-NODE-MIB::change",
+			"certification" : "STANDARD",
+			"description" : [
+				" A change trap is sent when one of the following MIB variables or",
+				"group of variables is changed:",
+				"- Date and Time reset",
+				"- System Parameters (name, contact, location) changed",
+				"- Interface changed:",
+				"-- Administrative State (enabled/disabled)",
+				"- Module changed:",
+				"-- Administrative State (isolate/attach)",
+				"When one of this variable is changed, the lastChange MIB object is",
+				"also updated with the current date and time.",
+				"When the Date and Time or the System Parameters changed",
+				"the interface number of the hub virtual interface is returned.",
+				"This trap may be disabled."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "change",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Ifindex:$v2;Slot:$v1",
+				"Summary" : "MIB variables for module $v1 is changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ATM-SWITCHING-NODE-MIB::change ATM-SWITCHING-NODE-MIB::moduleSlotIndex i 1 IF-MIB::ifIndex i 1",
+			"trap" : {
+				"name" : "ATM-SWITCHING-NODE-MIB::change",
+				"oid" : "1.3.6.1.4.1.2.6.33.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for this module."
+						],
+						"name" : "ATM-SWITCHING-NODE-MIB::moduleSlotIndex",
+						"oid" : "1.3.6.1.4.1.2.6.33.1.3.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ATM-SWITCHING-NODE-MIB::pvcFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				" A PVC failure trap is sent when a PVC becomes inoperational."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pvcFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "atmPvcIndex:$v1",
+				"Summary" : "PVC $v2 inoperational due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ATM-SWITCHING-NODE-MIB::pvcFailure ATM-SWITCHING-NODE-MIB::atmPvcIndex i 9999 ATM-SWITCHING-NODE-MIB::atmPvcIdentifier i 9999 ATM-SWITCHING-NODE-MIB::atmPvcEpQ2931Cause i 9999",
+			"trap" : {
+				"name" : "ATM-SWITCHING-NODE-MIB::pvcFailure",
+				"oid" : "1.3.6.1.4.1.2.6.33.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The ifIndex value of the ATM interface used by this PVC."
+						],
+						"name" : "ATM-SWITCHING-NODE-MIB::atmPvcIndex",
+						"oid" : "1.3.6.1.4.1.2.6.33.1.10.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A value used to uniquely identify this PVC on this",
+							"interface.",
+							"",
+							"To create a new PVC on a given interface, an unused PVC",
+							"identifier must be found."
+						],
+						"name" : "ATM-SWITCHING-NODE-MIB::atmPvcIdentifier",
+						"oid" : "1.3.6.1.4.1.2.6.33.1.10.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cause of the failure as defined by Q2931."
+						],
+						"name" : "ATM-SWITCHING-NODE-MIB::atmPvcEpQ2931Cause",
+						"oid" : "1.3.6.1.4.1.2.6.33.1.10.3.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ATM-SWITCHING-NODE-MIB::callLoggingOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				" A callLoggingOverflow trap is sent when the call logging table",
+				"is about to wrap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "callLoggingOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Call logging table is about to wrap"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ATM-SWITCHING-NODE-MIB::callLoggingOverflow ",
+			"trap" : {
+				"name" : "ATM-SWITCHING-NODE-MIB::callLoggingOverflow",
+				"oid" : "1.3.6.1.4.1.2.6.33.1.0.6"
+			}
+		},
+		{
+			"@objectName" : "ATM-SWITCHING-NODE-MIB::moduleInstalled",
+			"certification" : "STANDARD",
+			"description" : [
+				" An ATM module has been detected in the hub."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "moduleInstalled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "moduleSlotIndex:$v1",
+				"Summary" : "An ATM module has been detected in slot number $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ATM-SWITCHING-NODE-MIB::moduleInstalled ATM-SWITCHING-NODE-MIB::moduleSlotIndex i 1",
+			"trap" : {
+				"name" : "ATM-SWITCHING-NODE-MIB::moduleInstalled",
+				"oid" : "1.3.6.1.4.1.2.6.33.1.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for this module."
+						],
+						"name" : "ATM-SWITCHING-NODE-MIB::moduleSlotIndex",
+						"oid" : "1.3.6.1.4.1.2.6.33.1.3.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ATM-SWITCHING-NODE-MIB::moduleRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				" An ATM module is no longer detected in the hub."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "moduleRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "moduleSlotIndex:$v1",
+				"Summary" : "ATM module is removed from slot $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ATM-SWITCHING-NODE-MIB::moduleRemoved ATM-SWITCHING-NODE-MIB::moduleSlotIndex i 1",
+			"trap" : {
+				"name" : "ATM-SWITCHING-NODE-MIB::moduleRemoved",
+				"oid" : "1.3.6.1.4.1.2.6.33.1.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for this module."
+						],
+						"name" : "ATM-SWITCHING-NODE-MIB::moduleSlotIndex",
+						"oid" : "1.3.6.1.4.1.2.6.33.1.3.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ATM-SWITCHING-NODE-MIB::lock",
+			"certification" : "STANDARD",
+			"description" : [
+				" A lock trap is sent when a set request is rejected because it is",
+				"suspected that this may cause to break the link between the agent",
+				"and the manager. This may occur when:",
+				"- isolating a slot",
+				"- disabling a port",
+				"if the request is received through this specific port/module/slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lock",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "moduleSlotIndex:$v1",
+				"Summary" : "lock is set for module $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ATM-SWITCHING-NODE-MIB::lock ATM-SWITCHING-NODE-MIB::moduleSlotIndex i 1",
+			"trap" : {
+				"name" : "ATM-SWITCHING-NODE-MIB::lock",
+				"oid" : "1.3.6.1.4.1.2.6.33.1.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for this module."
+						],
+						"name" : "ATM-SWITCHING-NODE-MIB::moduleSlotIndex",
+						"oid" : "1.3.6.1.4.1.2.6.33.1.3.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ATM-SWITCHING-NODE-MIB::hello",
+			"certification" : "STANDARD",
+			"description" : [
+				" A hello trap is sent:",
+				"- when the system re-initializes: it is sent every minutes until",
+				"an SNMP request is received or until 255 minutes have passed.",
+				"- when one of the following parameters is changed:",
+				"-- agent IP address(es)",
+				"-- agent subnet mask(s)",
+				"-- ATM address of the IP ARP server",
+				"-- IP address of the default gateway",
+				"The value of ifPhysAddress is the ATM address of the hub.",
+				"The hello trap may be disabled."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hello",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Hello is sent from $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ATM-SWITCHING-NODE-MIB::hello IF-MIB::ifPhysAddress s EXAMPLE",
+			"trap" : {
+				"name" : "ATM-SWITCHING-NODE-MIB::hello",
+				"oid" : "1.3.6.1.4.1.2.6.33.1.2.1",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,2701 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201701010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when the MPLS module changes state"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : ($v3==1 && $v3==4) ? 3 : 2"
+				},
+				"EventType" : "vRtrMplsStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : ($v3==1 && $v3==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : ($v3==1) ? 1 : ($v3==3) ? 4 : 2"
+				},
+				"SubNode" : "RouterID:$v1",
+				"Summary" : "Router MPLS state changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsStateChange TIMETRA-VRTR-MIB::vRtrID i 999 TIMETRA-MPLS-MIB::vRtrMplsGeneralAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsGeneralOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"When vRtrMplsGeneralAdminState is set to 'inService', the agent",
+							"attempts to enable the MPLS protocol instance on this router.",
+							"",
+							"When vRtrMplsGeneralAdminState is set to 'outOfService', the agent",
+							"attempts to disable the MPLS protocol instance on this router."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsGeneralAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.7.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"vRtrMplsGeneralOperState indicates the current operating state of this",
+							"MPLS protocol instance on this router."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsGeneralOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.7.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when the MPLS interface changes state"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : ($v4==1 && $v4==4) ? 3 : 2"
+				},
+				"EventType" : "vRtrMplsIfStateChange",
+				"ExpireTime" : {
+					"eval" : "($v4==2) ? 3600 : ($v4==1 && $v4==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : ($v4==1) ? 1 : ($v4==3) ? 4 : 2"
+				},
+				"SubNode" : "RouterID:$v1;IfIndex:$v2",
+				"Summary" : "MPLS interface ($v2) state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsIfStateChange TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-MPLS-MIB::vRtrMplsIfAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsIfOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsIfStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The desired administrative state for the MPLS protocol running on this",
+							"MPLS interface."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsIfAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.9.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the current status of the MPLS protocol",
+							"running on this MPLS interface. When the",
+							"TIMETRA-VRTR-MIB::vRtrIfPortID object of this interface is set to a",
+							"loopback port identifier, the operational state is not relevant and an",
+							"SNMP GET request on this object will return 'unknown'."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsIfOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.9.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a LSP transitions to the",
+				"'inService' state from any other state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrMplsLspStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RouterID:$v1;LSPIndex:$v2",
+				"Summary" : "Router MPLS LSP ($v2) is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspUp TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsLspAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspUp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The desired administrative state for this LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when an LSP transitions out of",
+				"'inService' state to any other state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrMplsLspStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "RouterID:$v1;LSPIndex:$v2",
+				"Summary" : "Router MPLS LSP ($v2) is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspDown TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsLspAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspOperState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspNotificationReasonCode i 0",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspDown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The desired administrative state for this LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used by vRtrMplsLspDown, the value indicates the reason for the LSP",
+							"going down."
+						],
+						"enums" : {
+							"0" : "noError",
+							"1" : "noPathIsOperational"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspNotificationReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a LSP Path transitions to the",
+				"'inService' state from any other state."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<mplsTunnelEgressLSRId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrMplsLspPathStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RouterID:$v1;LSPIndex:$v2;TunnelIndex:$v3;TunnelEgressLSRId:$mplsTunnelEgressLSRId",
+				"Summary" : "Router MPLS LSP ($v2) path up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspPathUp TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 MPLS-TE-MIB::mplsTunnelIndex.21 i 9999 MPLS-TE-MIB::mplsTunnelInstance i 999 MPLS-TE-MIB::mplsTunnelIngressLSRId u 9999 TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathUp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Uniquely identifies this row."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelIndex",
+						"oid" : "1.3.6.1.3.95.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Uniquely identifies an instance of a tunnel. It is",
+							"useful to identify multiple instances of tunnels",
+							"for the purposes of backup and parallel tunnels."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelInstance",
+						"oid" : "1.3.6.1.3.95.2.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to uniquely identity",
+							"a tunnel within a network. When the MPLS",
+							"signalling protoocol is rsvp(2) this value should",
+							"mimic the Extended Tunnel Id field in the Session",
+							"object. When the MPLS signalling protoocol is",
+							"crldp(3) this value should mimic the Ingress LSR",
+							"Router ID field in the LSPID TLV object."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelIngressLSRId",
+						"oid" : "1.3.6.1.3.95.2.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The desired administrative state for this LSP path."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP path."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a LSP Path transitions out of",
+				"'inService' state to any other state."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<mplsTunnelEgressLSRId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrMplsLspPathStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "RouterID:$v1;LSPIndex:$v2;TunnelIndex:$v3;TunnelEgressLSRId:$mplsTunnelEgressLSRId",
+				"Summary" : "Router MPLS LSP ($v2) path down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspPathDown TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 MPLS-TE-MIB::mplsTunnelIndex.21 i 9999 MPLS-TE-MIB::mplsTunnelInstance i 9999 MPLS-TE-MIB::mplsTunnelIngressLSRId u 9999 TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathNotificationReasonCode i 0",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathDown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Uniquely identifies this row."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelIndex",
+						"oid" : "1.3.6.1.3.95.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Uniquely identifies an instance of a tunnel. It is",
+							"useful to identify multiple instances of tunnels",
+							"for the purposes of backup and parallel tunnels."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelInstance",
+						"oid" : "1.3.6.1.3.95.2.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to uniquely identity",
+							"a tunnel within a network. When the MPLS",
+							"signalling protoocol is rsvp(2) this value should",
+							"mimic the Extended Tunnel Id field in the Session",
+							"object. When the MPLS signalling protoocol is",
+							"crldp(3) this value should mimic the Ingress LSR",
+							"Router ID field in the LSPID TLV object."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelIngressLSRId",
+						"oid" : "1.3.6.1.3.95.2.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The desired administrative state for this LSP path."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP path."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used by vRtrMplsLspPathDown, the value indicates the reason for the",
+							"LSP path going down."
+						],
+						"enums" : {
+							"0" : "noError",
+							"1" : "admissionControlError",
+							"2" : "noRouteToDestination",
+							"3" : "trafficControlSystemError",
+							"4" : "routingError",
+							"5" : "noResourcesAvailable",
+							"6" : "badNode",
+							"7" : "routingLoop",
+							"8" : "labelAllocationError",
+							"9" : "badL3PID",
+							"10" : "tunnelLocallyRepaired",
+							"11" : "unknownObjectClass",
+							"12" : "unknownCType",
+							"13" : "noEgressMplsInterface",
+							"14" : "noEgressRsvpInterface",
+							"15" : "looseHopsInFRRLsp",
+							"16" : "unknown",
+							"17" : "retryExceeded",
+							"18" : "noCspfRouteOwner",
+							"19" : "noCspfRouteToDestination",
+							"20" : "hopLimitExceeded",
+							"21" : "looseHopsInManualBypassLsp",
+							"22" : "emptyPathInManualBypassLsp",
+							"23" : "lspFlowControlled",
+							"24" : "srlgSecondaryNotDisjoint",
+							"25" : "srlgPrimaryCspfDisabled",
+							"26" : "srlgPrimaryPathDown",
+							"27" : "localLinkMaintenance",
+							"28" : "unexpectedCtObject",
+							"29" : "unsupportedCt",
+							"30" : "invalidCt",
+							"31" : "invCtAndSetupPri",
+							"32" : "invCtAndHoldPri",
+							"33" : "invCtAndSetupAndHoldPri",
+							"34" : "localNodeMaintenance",
+							"35" : "softPreemption",
+							"36" : "p2mpNotSupported",
+							"37" : "badXro",
+							"38" : "localNodeInXro",
+							"39" : "routeBlockedByXro",
+							"40" : "xroTooComplex",
+							"41" : "rsvpNotSupported",
+							"42" : "conflictingAdminGroups",
+							"43" : "nodeInIgpOverload",
+							"44" : "srTunnelDown",
+							"45" : "fibAddFailed",
+							"46" : "labelStackExceeded",
+							"47" : "pccDown",
+							"48" : "pccError",
+							"49" : "pceDown",
+							"50" : "pceError",
+							"51" : "pceUpdateWithEmptyEro",
+							"52" : "pceInitLspDisabled",
+							"53" : "adminDown",
+							"54" : "sidHopsInRsvpLsp",
+							"55" : "ipv6HopsInRsvpLsp",
+							"56" : "ipv4HopsInIpv6Lsp",
+							"57" : "ipv6HopsInIpv4Lsp",
+							"58" : "sidHopsInIpv6Lsp",
+							"59" : "srlgPathWithSidHops"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathNotificationReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathRerouted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrMplsLspPathRerouted notification is generated when an LSP Path",
+				"is rerouted."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrMplsLspIndex>\\d+)\\.(?P<mplsTunnelIndex>\\d+)\\.(?P<mplsTunnelInstance>\\d+)\\.(?P<mplsTunnelIngressLSRId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsLspPathRerouted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RouterID:$vRtrID;LSPIndex:$vRtrMplsLspIndex;TunnelIndex:$mplsTunnelIndex;TunnelInstance:$mplsTunnelInstance;TunnelIngressLSRID:$mplsTunnelIngressLSRId",
+				"Summary" : "LSP path is rerouted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspPathRerouted TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState.1.2.3.4.5 i 2 TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState i 2",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathRerouted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The desired administrative state for this LSP path."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP path."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathResignaled",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrMplsLspPathResignaled notification is generated when an LSP",
+				"Path is resignalled. The vRtrMplsLspPathLastMBBType indicates the",
+				"reason why the LSP Path was resignalled."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrMplsLspIndex>\\d+)\\.(?P<mplsTunnelIndex>\\d+)\\.(?P<mplsTunnelInstance>\\d+)\\.(?P<mplsTunnelIngressLSRId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsLspPathResignaled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RouterID:$vRtrID;LSPIndex:$vRtrMplsLspIndex;TunnelIndex:$mplsTunnelIndex;TunnelInstance:$mplsTunnelInstance;TunnelIngressLSRID:$mplsTunnelIngressLSRId",
+				"Summary" : "LSP path is resignalled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspPathResignaled TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState.1.2.3.4.5 i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathLastMBBType i 6",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathResignaled",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The desired administrative state for this LSP path."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP path."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspPathLastMBBType indicates the type of",
+							"last Make-before-break (MBB). If 'none', then no MBB has been",
+							"attempted."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "configChange",
+							"2" : "timerBasedResignal",
+							"3" : "manualResignal",
+							"4" : "globalRevert",
+							"5" : "delayedRetry",
+							"6" : "gracefulShutdown",
+							"7" : "softPreemption",
+							"8" : "pathChange",
+							"9" : "autoBandwidth",
+							"10" : "pceLspUpdate"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathLastMBBType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.41",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a P2MP instance transitions to the",
+				"'inService' state from any other state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrMplsP2mpInstanceStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RouterID:$v1;IfIndex:$v3",
+				"Summary" : "Router MPLS P2MP instance ($v3) is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceUp TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceUp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this Point to Multipoint Labeled",
+							"Switch Path (P2MP LSP) for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsP2mpInstAdminState specifies desired",
+							"administrative state for this P2MP LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.25.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsP2mpInstOperState indicates the current",
+							"operational state of this P2MP LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.25.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a P2MP instance transitions out of",
+				"'inService' state to any other state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrMplsP2mpInstanceStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "RouterID:$v1;IfIndex:$v3",
+				"Summary" : "Router MPLS P2MP instance ($v3) is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceDown TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstOperState i 1 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifReasonCode i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceDown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this Point to Multipoint Labeled",
+							"Switch Path (P2MP LSP) for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsP2mpInstAdminState specifies desired",
+							"administrative state for this P2MP LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.25.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsP2mpInstOperState indicates the current",
+							"operational state of this P2MP LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.25.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used by vRtrMplsP2mpInstanceDown, the value indicates the reason for",
+							"the P2MP instance going down."
+						],
+						"enums" : {
+							"0" : "noError",
+							"1" : "noS2LOperational"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a S2l sub LSP transitions to the",
+				"'inService' state from any other state."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid4",
+						"pattern" : "\\.(?P<mplsTunnelEgressLSRId>\\d+)$",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$oid9",
+						"pattern" : "\\.(?P<vRtrMplsP2mpInstIndex>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrMplsS2lSubLspStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RouterID:$v1;IfIndex:$v3;TunnelIndex:$v4;TunnelEngressLSRID:$mplsTunnelEgressLSRId;vRtrMplsS2lSubLspEntry:$vRtrMplsP2mpInstIndex",
+				"Summary" : "Router MPLS S2l sub LSP ($v2) up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspUp TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex u 9999 MPLS-TE-MIB::mplsTunnelIndex.12 i 9999 MPLS-TE-MIB::mplsTunnelInstance i 999 MPLS-TE-MIB::mplsTunnelIngressLSRId u 9999 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspNtDstAddrType i 0 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspNtDstAddr x 0x7f000001 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspAdminState.3 i 1 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspUp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this Point to Multipoint Labeled",
+							"Switch Path (P2MP LSP) for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Uniquely identifies this row."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelIndex",
+						"oid" : "1.3.6.1.3.95.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Uniquely identifies an instance of a tunnel. It is",
+							"useful to identify multiple instances of tunnels",
+							"for the purposes of backup and parallel tunnels."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelInstance",
+						"oid" : "1.3.6.1.3.95.2.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to uniquely identity",
+							"a tunnel within a network. When the MPLS",
+							"signalling protoocol is rsvp(2) this value should",
+							"mimic the Extended Tunnel Id field in the Session",
+							"object. When the MPLS signalling protoocol is",
+							"crldp(3) this value should mimic the Ingress LSR",
+							"Router ID field in the LSPID TLV object."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelIngressLSRId",
+						"oid" : "1.3.6.1.3.95.2.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspNtDstAddrType indicates the type of",
+							"vRtrMplsS2lSubLspNtDstAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspNtDstAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspNtDstAddr indicates the IP address of",
+							"the destination address of the S2L sub LSP. "
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspNtDstAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspAdminState specifies the desired",
+							"administrative state for this P2MP S2L sub LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspOperState indicates the current",
+							"operational state of this P2MP S2L sub LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a S2l sub LSP transitions out of",
+				"'inService' state to any other state."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid4",
+						"pattern" : "\\.(?P<mplsTunnelEgressLSRId>\\d+)$",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$oid9",
+						"pattern" : "\\.(?P<vRtrMplsP2mpInstIndex>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrMplsS2lSubLspStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "RouterID:$v1;IfIndex:$v3;TunnelIndex:$v4;TunnelEngressLSRID:$mplsTunnelEgressLSRId;vRtrMplsS2lSubLspEntry:$vRtrMplsP2mpInstIndex",
+				"Summary" : "Router MPLS S2l sub LSP ($v2) down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspDown TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex u 9999 MPLS-TE-MIB::mplsTunnelIndex.12 i 9999 MPLS-TE-MIB::mplsTunnelInstance i 999 MPLS-TE-MIB::mplsTunnelIngressLSRId u 9999 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspNtDstAddrType i 0 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspNtDstAddr x 0x7f000001 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspAdminState.4 i 1 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspOperState i 1 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifReasonCode i 0",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspDown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this Point to Multipoint Labeled",
+							"Switch Path (P2MP LSP) for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Uniquely identifies this row."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelIndex",
+						"oid" : "1.3.6.1.3.95.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Uniquely identifies an instance of a tunnel. It is",
+							"useful to identify multiple instances of tunnels",
+							"for the purposes of backup and parallel tunnels."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelInstance",
+						"oid" : "1.3.6.1.3.95.2.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The purpose of this object is to uniquely identity",
+							"a tunnel within a network. When the MPLS",
+							"signalling protoocol is rsvp(2) this value should",
+							"mimic the Extended Tunnel Id field in the Session",
+							"object. When the MPLS signalling protoocol is",
+							"crldp(3) this value should mimic the Ingress LSR",
+							"Router ID field in the LSPID TLV object."
+						],
+						"name" : "MPLS-TE-MIB::mplsTunnelIngressLSRId",
+						"oid" : "1.3.6.1.3.95.2.2.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspNtDstAddrType indicates the type of",
+							"vRtrMplsS2lSubLspNtDstAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspNtDstAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspNtDstAddr indicates the IP address of",
+							"the destination address of the S2L sub LSP. "
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspNtDstAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspAdminState specifies the desired",
+							"administrative state for this P2MP S2L sub LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspOperState indicates the current",
+							"operational state of this P2MP S2L sub LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used by vRtrMplsP2mpInstanceDown, the value indicates the reason for",
+							"the P2MP instance going down."
+						],
+						"enums" : {
+							"0" : "noError",
+							"1" : "noS2LOperational"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspRerouted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrMplsS2lSubLspRerouted notification is generated when an S2l",
+				"sub LSP is rerouted."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrMplsLspIndex>\\d+)\\.(?P<vRtrMplsP2mpInstIndex>\\d+)\\.(?P<mplsTunnelIndex>\\d+)\\.(?P<mplsTunnelInstance>\\d+)\\.(?P<mplsTunnelIngressLSRId>\\d+)\\.(?P<vRtrMplsS2lSubLspDstAddrType>\\d+)\\.(?P<vRtrMplsS2lSubLspDstAddr>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsS2lSubLspRerouted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RouterID:$vRtrID;LSPIndex:$vRtrMplsLspIndex;TunnelIndex:$mplsTunnelIndex;TunnelInstance:$mplsTunnelInstance;TunnelIngressLSRID:$mplsTunnelIngressLSRId;AddressType:$vRtrMplsS2lSubLspDstAddrType;Address:$vRtrMplsS2lSubLspDstAddr",
+				"Summary" : "S2L sub LSP is rerouted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspRerouted TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspAdminState.1.2.3.4.5.6.1.10.168.233.221 i 3 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspOperState i 3",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspRerouted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspAdminState specifies the desired",
+							"administrative state for this P2MP S2L sub LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspOperState indicates the current",
+							"operational state of this P2MP S2L sub LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspResignaled",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrMplsS2lSubLspResignaled notification is generated when an S2l",
+				"sub LSP is resignalled. The vRtrMplsS2lSubLspLastMBBType indicates the",
+				"reason why the S2l sub LSP was resignalled."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrMplsLspIndex>\\d+)\\.(?P<vRtrMplsP2mpInstIndex>\\d+)\\.(?P<mplsTunnelIndex>\\d+)\\.(?P<mplsTunnelInstance>\\d+)\\.(?P<mplsTunnelIngressLSRId>\\d+)\\.(?P<vRtrMplsS2lSubLspDstAddrType>\\d+)\\.(?P<vRtrMplsS2lSubLspDstAddr>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsS2lSubLspResignaled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RouterID:$vRtrID;LSPIndex:$vRtrMplsLspIndex;TunnelIndex:$mplsTunnelIndex;TunnelInstance:$mplsTunnelInstance;TunnelIngressLSRID:$mplsTunnelIngressLSRId;AddressType:$vRtrMplsS2lSubLspDstAddrType;Address:$vRtrMplsS2lSubLspDstAddr",
+				"Summary" : "S2L sub LSP is resignaled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspResignaled TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspAdminState.1.2.3.4.5.6.1.10.168.154.1 i 2 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspOperState i 2 TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspLastMBBType i 3",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspResignaled",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspAdminState specifies the desired",
+							"administrative state for this P2MP S2L sub LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspOperState indicates the current",
+							"operational state of this P2MP S2L sub LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsS2lSubLspLastMBBType indicates the type of",
+							"last Make-before-break (MBB). If 'none', then no MBB has been",
+							"attempted."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "configChange",
+							"2" : "timerBasedResignal",
+							"3" : "manualResignal",
+							"4" : "globalRevert",
+							"5" : "delayedRetry",
+							"6" : "gracefulShutdown",
+							"7" : "softPreemption",
+							"8" : "pathChange",
+							"9" : "autoBandwidth",
+							"10" : "pceLspUpdate"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsS2lSubLspLastMBBType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.28.1.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathSoftPreempted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrMplsLspPathSoftPreempted notification is generated when an LSP",
+				"Path is soft-preempted."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrMplsLspIndex>\\d+)\\.(?P<mplsTunnelIndex>\\d+)\\.(?P<mplsTunnelInstance>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RouterID:$vRtrID;LSPIndex:$vRtrMplsLspIndex;TunnelIndex:$mplsTunnelIndex;TunnelInstance:$mplsTunnelInstance",
+				"Summary" : "LSP path is soft-preempted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspPathSoftPreempted TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState.1.2.3.4 i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathSoftPreempted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"The desired administrative state for this LSP path."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP path."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathLstFillReoptElig",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrMplsLspPathLstFillReoptElig notification is set/reset based on",
+				"when a timer based resignal found/did not find a path with the same",
+				"cost but which has a better least-fill metric."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrMplsLspIndex>\\d+)\\.(?P<mplsTunnelIndex>\\d+)\\.(?P<mplsTunnelInstance>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "vRtrMplsLspPathLstFillReoptElig",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 3"
+				},
+				"SubNode" : "RouterID:$vRtrID;LSPIndex:$vRtrMplsLspIndex;TunnelIndex:$mplsTunnelIndex;TunnelInstance:$mplsTunnelInstance",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'LSP path is eligible for resignaling' : 'LSP path is not eligible for resignaling'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspPathLstFillReoptElig TIMETRA-MPLS-MIB::vRtrMplsLspPathResignalEligible.1.2.3.4 i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathCongChgPercent u 9999",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathLstFillReoptElig",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrMplsLspPathResignalEligible indicates that the LSP",
+							"path is eligible for resignaling on the basis of available bandwidth."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathResignalEligible",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.54",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspPathCongChgPercent indicates the percentage",
+							"change in congestion. "
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathCongChgPercent",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceResignaled",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Notification is generated when a P2MP instance is resignalled.",
+				"The vRtrMplsP2mpInstLastMBBType indicates the reason why the P2MP",
+				"instance was resignalled."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid4",
+						"pattern" : "\\.(?P<vRtrMplsP2mpInstIndex>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsP2mpInstanceResignaled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RouterID:$v1;LSPIndex:$v2;P2PInstIndex:$vRtrMplsP2mpInstIndex",
+				"Summary" : "P2MP instance is resignaled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceResignaled TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstAdminState.2 i 1 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstOperState i 1 TIMETRA-MPLS-MIB::vRtrMplsP2mpInstLastMBBType i 4",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstanceResignaled",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this Point to Multipoint Labeled",
+							"Switch Path (P2MP LSP) for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstNotifIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsP2mpInstAdminState specifies desired",
+							"administrative state for this P2MP LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.25.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsP2mpInstOperState indicates the current",
+							"operational state of this P2MP LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.25.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsP2mpInstLastMBBType indicates the type of",
+							"last Make-before-break (MBB). If 'none', then no MBB has been",
+							"attempted."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "configChange",
+							"2" : "timerBasedResignal",
+							"3" : "manualResignal",
+							"4" : "globalRevert",
+							"5" : "delayedRetry",
+							"6" : "gracefulShutdown",
+							"7" : "softPreemption",
+							"8" : "pathChange",
+							"9" : "autoBandwidth",
+							"10" : "pceLspUpdate"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsP2mpInstLastMBBType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.25.1.30",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsResignalTimerExpired",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrMplsResignalTimerExpired notification is generated when the",
+				"resignal timer expires for a MPLS instance. Make before break (MBB)",
+				"would be started only on those P2P LSP (Point to Point) paths that",
+				"need to be resignalled. vRtrMplsGeneralResignalTimer would be reset",
+				"once this notification is sent."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsResignalTimerExpired",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Resignal timer ($v1) expired"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsResignalTimerExpired TIMETRA-MPLS-MIB::vRtrMplsGeneralResignalTimer.12 u 9999",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsResignalTimerExpired",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrMplsGeneralResignalTimer specifies the value for the",
+							"P2P (point-to-point) LSP resignal timer, that is the time, in minutes",
+							"the software will wait before attempting to resignal the P2P LSPs.",
+							"",
+							"When the resignal timer expires, if the new recorded hop list (RRO)",
+							"for an P2P LSP has a better metric than the current recorded hop list",
+							"an attempt will be made to resignal that P2P LSP using the",
+							"make-before-break mechanism. If the attempt to resignal an P2P LSP",
+							"fails, the P2P LSP will continue to use the existing path and a",
+							"resignal will be attempted the next time the timer expires.",
+							"",
+							"A value of 0 for the resignal timer indicates that timer-based P2P LSP",
+							"resignalling has been disabled."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsGeneralResignalTimer",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.7.1.9",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathMbbStatusEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The vRtrMplsLspPathMbbStatusEvent notification is generated to report",
+				"the status of the make-before-break(MBB) operation for the LSP path."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)\\.(?P<vRtrMplsLspIndex>\\d+)\\.(?P<mplsTunnelIndex>\\d+)\\.(?P<mplsTunnelInstance>\\d+)\\.(?P<mplsTunnelIngressLSRId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==0) ? 1 : 2"
+				},
+				"EventType" : "vRtrMplsLspPathMbbStatusEvent",
+				"ExpireTime" : {
+					"eval" : "($v4==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==0) ? 0 : ($v4==3) ? 3 : 4"
+				},
+				"SubNode" : "RouterID:$vRtrID;LSPIndex:$vRtrMplsLspIndex;TunnelIndex:$mplsTunnelIndex;TunnelInstance:$mplsTunnelInstance;TunnelIngressLSRID:$mplsTunnelIngressLSRId",
+				"Summary" : "MBB operational status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspPathMbbStatusEvent TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState.1.2.3.4.5 i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathLastMBBType i 0 TIMETRA-MPLS-MIB::vRtrMplsLspPathMbbStatus i 0 TIMETRA-MPLS-MIB::vRtrMplsLspPathMbbReasonCode i 0",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathMbbStatusEvent",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"The desired administrative state for this LSP path."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP path."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspPathLastMBBType indicates the type of",
+							"last Make-before-break (MBB). If 'none', then no MBB has been",
+							"attempted."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "configChange",
+							"2" : "timerBasedResignal",
+							"3" : "manualResignal",
+							"4" : "globalRevert",
+							"5" : "delayedRetry",
+							"6" : "gracefulShutdown",
+							"7" : "softPreemption",
+							"8" : "pathChange",
+							"9" : "autoBandwidth",
+							"10" : "pceLspUpdate"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathLastMBBType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.41",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspPathMbbStatus indicates the status of the",
+							"make-before-break (MBB) operation for the LSP path."
+						],
+						"enums" : {
+							"0" : "successful",
+							"1" : "failed",
+							"2" : "aborted",
+							"3" : "ignored"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathMbbStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspPathMbbReasonCode indicates the reason code",
+							"for the make-before-break (MBB) operation of the LSP path. It",
+							"indicates whether the operation is failed, aborted or ignored."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "mbbRetryExceeded",
+							"2" : "lspPathGoingDown",
+							"3" : "startingHighPriMbb",
+							"4" : "restartingMbb",
+							"5" : "mbbAlreadyInProg",
+							"6" : "lspPceControlled",
+							"7" : "lspNotPceControlled",
+							"8" : "lspTypeNotSupported"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathMbbReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrMplsLspSwitchStbyFailure notification is generated to",
+				"report an unsuccessful switchover from the current active secondary",
+				"LSP path of an LSP to another secondary standby LSP path. The reason",
+				"for the failure is specified by vRtrMplsLspSwitchStbyReasonCode.",
+				"[EFFECT] The switchover to the new standby path failed for the LSP.",
+				"[RECOVERY] The vRtrMplsLspSwitchStbyReasonCode will help the user",
+				"troubleshoot the failure. The user can attempt to switchover to",
+				"another standby LSP path again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsLspSwitchStbyFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "RouterID:$v1;LSPIndex:$v2",
+				"Summary" : "Failed to switch a new standby path from the current active standby path due to $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyFailure TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspIndex u 9999 TIMETRA-MPLS-MIB::vRtrMplsLspAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspOperState i 1 TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyPathForce i 1 TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyPathIndex i 9999 TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyReasonCode i 0",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyFailure",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspIndex specifies the Labeled Switch",
+							"Path (LSP) index for this virtual router in the Nokia",
+							"SROS system. It is a unique value among entries with the",
+							"same value of vRtrID."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The desired administrative state for this LSP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current operational state of this LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspSwitchStbyPathForce specifies whether to force",
+							"a switch from an active LSP path to a new standby path as specified by",
+							"the values of vRtrMplsLspSwitchStbyPathIndex and",
+							"vRtrMplsLspSwitchStbyPath.",
+							"",
+							"When vRtrMplsLspSwitchStbyPathForce variable is specified",
+							"vRtrMplsLspSwitchStbyPathIndex and vRtrMplsLspSwitchStbyPath must be",
+							"also be specified.",
+							"",
+							"A value of 'true' for vRtrMplsLspSwitchStbyPathForce specifies",
+							"a forced switch. A value of 'false' specifies no forced switch."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyPathForce",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.57",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspSwitchStbyPathIndex specifies the index for",
+							"the new standby LSP path in mplsTunnelTable.",
+							"",
+							"vRtrMplsLspSwitchStbyPath must also be set to 'doAction' for the new",
+							"standby LSP path to be selected.",
+							"",
+							"A value of 0 specifies that the best active path will be selected."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyPathIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.1.1.56",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspSwitchStbyReasonCode indicates the reason for",
+							"the failure of switch to a new standby path from the current active",
+							"standby path."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "lspIsDown",
+							"2" : "lspIsNotDynamic",
+							"3" : "lspHasNoActivePath",
+							"4" : "lspActivePathIsNotStandby",
+							"5" : "pathSpecifiedIsNotLspPath",
+							"6" : "pathSpecifiedIsNotStandby",
+							"7" : "pathSpecifiedIsDown",
+							"8" : "pathHasDiffPrefThanActLspPath",
+							"9" : "lspHoldTimerIsRunning",
+							"10" : "currentLspPathActiveByForce",
+							"11" : "lspPathInPreemption",
+							"12" : "lspActivePathIsPrimary",
+							"13" : "currentActivePathIsBest",
+							"14" : "betterPathFound",
+							"15" : "currentActivePathWentDown"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspSwitchStbyReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLspActivePathChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrMplsLspActivePathChanged notification is generated",
+				"when the active path of an LSP successfully switches to an new path.",
+				"This notification will also be sent when the active LSP path does not",
+				"change but only the switch method changes on the path.",
+				"The old LSP path index is specified by vRtrMplsLspOldTunnelIndex.",
+				"The state and switch method of the current active LSP path are",
+				"specified by vRtrMplsLspPathState and vRtrMplsLspPathActiveByManual",
+				"respectively.",
+				"[EFFECT] The switchover to the new LSP path was successful",
+				"and/or the switch method of the current active LSP path changed.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "^(?P<vRtrID>\\d+)\\.(?P<vRtrMplsLspIndex>\\d+)\\.(?P<mplsTunnelIndex>\\d+)\\.(?P<mplsTunnelInstance>\\d+)\\.(?P<mplsTunnelIngressLSRId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1) ? 3 : 2"
+				},
+				"EventType" : "vRtrMplsLspActivePathChanged",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==1) ? 1 : 4"
+				},
+				"SubNode" : "RouterID:$vRtrID;LSPIndex:$vRtrMplsLspIndex;TunnelIndex:$mplsTunnelIndex;TunnelInstance:$mplsTunnelInstance;TunnelIngressLSRID:$mplsTunnelIngressLSRId",
+				"Summary" : "Working state of LSP path: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLspActivePathChanged TIMETRA-MPLS-MIB::vRtrMplsLspPathState.1.2.3.4.5 i 1 TIMETRA-MPLS-MIB::vRtrMplsLspPathActiveByManual i 0 TIMETRA-MPLS-MIB::vRtrMplsLspOldTunnelIndex i 9999",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspActivePathChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"The current working state of this path within this LSP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "active",
+							"3" : "inactive"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspPathActiveByManual indicates whether",
+							"a secondary standby path has become the active LSP path",
+							"due to manual intervention. When vRtrMplsLspSwitchStbyPath is set",
+							"to 'doAction' a manual switch is attempted. When",
+							"vRtrMplsLspSwitchStbyPathForce is set to 'true' the manual switch is",
+							"forced.",
+							"",
+							"When the value of vRtrMplsLspPathActiveByManual is set to",
+							"'notApplicable', the LSP path is active but not due to any manual",
+							"intervention.",
+							"",
+							"When the value of vRtrMplsLspPathActiveByManual is set to 'noForce'",
+							"the LSP path has become active by a manual switch specified by the",
+							"user.",
+							"",
+							"When the value of vRtrMplsLspPathActiveByManual is set to 'force', the",
+							"LSP path has become active by a forced manual switch executed by the",
+							"user."
+						],
+						"enums" : {
+							"0" : "notApplicable",
+							"1" : "noForce",
+							"2" : "force"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspPathActiveByManual",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.4.1.63",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLspOldTunnelIndex indicates the tunnel index of",
+							"of the old LSP path."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLspOldTunnelIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.14",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsXCBundleChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] vRtrMplsXCBundleChange is generated when one or more RSVP",
+				"sessions changed state and retained the changed state for an entire",
+				"quiet interval of 2 minutes or the maximum interval of 10 minutes if",
+				"the state of RSVP sessions kept on changing during this period of",
+				"multiple quiet intervals.",
+				"[EFFECT] RSVP sessions represented by bits in",
+				"vRtrMplsXCNotifRednIndicesBitMap changed state on this router",
+				"instance.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsXCBundleChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RouterID:$v1",
+				"Summary" : "Router ($v1) MPLS XC bundle changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsXCBundleChange TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsXCNotifRednIndicesBitMap s EXAMPLE TIMETRA-MPLS-MIB::vRtrMplsXCNotifyRednBundlingType i 1 TIMETRA-MPLS-MIB::vRtrMplsXCNotifyRednNumOfBitsSet u 9999 TIMETRA-MPLS-MIB::vRtrMplsXCNotifyRednStartIndex u 999 TIMETRA-MPLS-MIB::vRtrMplsXCNotifyRednEndIndex u 9999",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsXCBundleChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsXCNotifRednIndicesBitMap indicates the RSVP",
+							"sessions that either changed state and retained the changed state for",
+							"the entire quiet interval of 2 minutes or the RSVP sessions that",
+							"changed state during multiple intervals until a maximum interval of 10",
+							"minutes has elapsed.",
+							"",
+							"Each bit location in vRtrMplsXCNotifRednIndicesBitMap corresponds to a",
+							"created or deleted row entry in vRtrMplsXCTable as identified by the",
+							"value of vRtrMplsXCIndex. This index is same as the value of",
+							"TIMETRA-RSVP-MIB::vRtrRsvpSessionIndex which corresponds to a created",
+							"or deleted RSVP session entry in",
+							"TIMETRA-RSVP-MIB::vRtrRsvpSessionTable.",
+							"",
+							"The value of vRtrMplsXCNotifyRednStartIndex indicates the index value",
+							"of the first affected row entry Represented by bit 0, the most",
+							"significant bit.",
+							"",
+							"If the value of vRtrMplsXCNotifyRednBundlingType is set to 'create",
+							"(2)', all the bits set in vRtrMplsXCNotifRednIndicesBitMap represent",
+							"created RSVP sessions. If the value of",
+							"vRtrMplsXCNotifyRednBundlingType is set to 'delete (1)', all the bits",
+							"set in vRtrMplsXCNotifRednIndicesBitMap represent deleted RSVP",
+							"sessions."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsXCNotifRednIndicesBitMap",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsXCNotifyRednBundlingType indicates whether this",
+							"notification is generated for deletion or creation of RSVP sessions on",
+							"this ingress, transit or egress router instance."
+						],
+						"enums" : {
+							"1" : "delete",
+							"2" : "create"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsXCNotifyRednBundlingType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsXCNotifyRednNumOfBitsSet indicates the total",
+							"number of bits set in vRtrMplsXCNotifRednIndicesBitMap."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsXCNotifyRednNumOfBitsSet",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.17",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsXCNotifyRednStartIndex indicates which",
+							"vRtrMplsXCIndex is represented by the first bit in",
+							"vRtrMplsXCNotifRednIndicesBitMap."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsXCNotifyRednStartIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.18",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsXCNotifyRednEndIndex indicates which",
+							"vRtrMplsXCIndex is represented by the last bit in",
+							"vRtrMplsXCNotifRednIndicesBitMap.",
+							"",
+							"The value vRtrMplsXCNotifyRednEndIndex can be useful for a sanity",
+							"check of vRtrMplsXCNotifyRednNumOfBitsSet.",
+							"",
+							"vRtrMplsXCNotifyRednNumOfBitsSet. = (vRtrMplsXCNotifyRednEndIndex -",
+							"vRtrMplsXCNotifyRednStartIndex + 1)."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsXCNotifyRednEndIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.19",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsLblRangeModify",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] vRtrMplsLblRangeModify is generated when the values of",
+				"vRtrMplsLabelMaxStaticLspLabels or vRtrMplsLabelMaxStaticSvcLabels",
+				"have been modified.",
+				"[EFFECT] The maximum static labels are modified.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrMplsLblRangeModify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Router MPLS labels range modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsLblRangeModify TIMETRA-MPLS-MIB::vRtrMplsLabelMaxStaticLspLabels u 453 TIMETRA-MPLS-MIB::vRtrMplsLabelMaxStaticSvcLabels u 234",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsLblRangeModify",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrMplsLabelMaxStaticLspLabels specifies the maximum",
+							"number of Static LSP labels available on the system.",
+							"",
+							"vRtrMplsLabelMaxStaticLspLabels must be set along with",
+							"vRtrMplsLabelMaxStaticSvcLabels. The total of both values should equal",
+							"the maximum value allowed of 131040 or 262112 depending on the system.",
+							"",
+							"The maximum value of vRtrMplsLabelMaxStaticLspLabels value for most",
+							"systems is 113040 labels (128 * 1024 less 32 reserved labels).",
+							"",
+							"The maximum value of vRtrMplsLabelMaxStaticLspLabels value for chassis",
+							"mode D systems is 262112 labels (256 * 1024 less 32 reserved labels).",
+							"",
+							"vRtrMplsLabelMaxStaticLspLabels is obsoleted in 13.0, replaced by",
+							"vRtrMplsLabelStaticLabelRange."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLabelMaxStaticLspLabels",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.45.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsLabelMaxStaticSvcLabels specifies the maximum",
+							"number of Static SVC labels available on the system.",
+							"",
+							"vRtrMplsLabelMaxStaticSvcLabels must be set along with",
+							"vRtrMplsLabelMaxStaticLspLabels. The total of both values should equal",
+							"the maximum value allowed of 113040 or 262112 depending on the system.",
+							"",
+							"The maximum value of vRtrMplsLabelMaxStaticLspLabels value for most",
+							"systems is 113040 labels (128 * 1024 less 32 reserved labels).",
+							"",
+							"The maximum value of vRtrMplsLabelMaxStaticLspLabels value for chassis",
+							"mode D systems is 262112 labels (256 * 1024 less 32 reserved labels).",
+							"",
+							"vRtrMplsLabelMaxStaticSvcLabels is obsoleted in 13.0, replaced by",
+							"vRtrMplsLabelStaticLabelRange."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsLabelMaxStaticSvcLabels",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.45.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsNodeInIgpOverload",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrMplsNodeInIgpOverload notification is generated when",
+				"MPLS gets a notification that a node is in IGP overload state.",
+				"[EFFECT] The LSPs transiting through nodes that are in IGP overload",
+				"state are teardown.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : 1"
+				},
+				"EventType" : "vRtrMplsNodeInIgpOverload",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 3 : 0"
+				},
+				"SubNode" : "RouterID:$vRtrID",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Node is in IGP overload state' : 'Node is not in IGP overload state'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsNodeInIgpOverload TIMETRA-MPLS-MIB::vRtrMplsGenRetryOnIgpOverload.12 i 1 TIMETRA-MPLS-MIB::vRtrMplsIgpOverloadRtrAddrType i 0 TIMETRA-MPLS-MIB::vRtrMplsIgpOverloadRtrAddr x 0x7f000001 TIMETRA-MPLS-MIB::vRtrMplsIgpOverloadIgpType i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsNodeInIgpOverload",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrMplsGenRetryOnIgpOverload specifies whether or not to",
+							"teardown LSPs transiting through nodes that are in IGP overload state.",
+							"",
+							"When the value of vRtrMplsGenRetryOnIgpOverload is set to 'true' and a",
+							"node is reporting that it is in IGP overload state, MPLS will tear-",
+							"down and retry LSP paths that are transiting through the overloaded",
+							"node.",
+							"",
+							"When the value of vRtrMplsGenRetryOnIgpOverload is set to 'false' and",
+							"a node is reporting that it is in IGP overload state, MPLS will not",
+							"tear down LSP paths that are transiting through the overloaded node."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsGenRetryOnIgpOverload",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.7.1.41",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsIgpOverloadRtrAddrType indicates the address type",
+							"of vRtrMplsIgpOverloadRtrAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsIgpOverloadRtrAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsIgpOverloadRtrAddr indicates the IP address of",
+							"the router that is in IGP overload state."
+						],
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsIgpOverloadRtrAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of vRtrMplsIgpOverloadIgpType indicates IGP which is",
+							"notifying MPLS that a node is in the overload state."
+						],
+						"enums" : {
+							"1" : "isis",
+							"2" : "ospf"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsIgpOverloadIgpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.16.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsIPv6StateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrMplsIPv6StateChange notification is generated when",
+				"MPLS protocol instance changes state.",
+				"[EFFECT] The SR-TE LSPs with IPv6 addresses transition state.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : ($v3==1 && $v3==4) ? 3 : 2"
+				},
+				"EventType" : "vRtrMplsIPv6StateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : ($v3==1 && $v3==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : ($v3==1) ? 1 : ($v3==3) ? 4 : 2"
+				},
+				"SubNode" : "RouterID:$v1",
+				"Summary" : "MPLS IPv6 operational state: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsIPv6StateChange TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-MPLS-MIB::vRtrMplsGeneralAdminState i 1 TIMETRA-MPLS-MIB::vRtrMplsGeneralV6OperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsIPv6StateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"When vRtrMplsGeneralAdminState is set to 'inService', the agent",
+							"attempts to enable the MPLS protocol instance on this router.",
+							"",
+							"When vRtrMplsGeneralAdminState is set to 'outOfService', the agent",
+							"attempts to disable the MPLS protocol instance on this router."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsGeneralAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.7.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"vRtrMplsGeneralV6OperState indicates the current operating state of",
+							"MPLS protocol instance on this router for srte ipv6."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsGeneralV6OperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.7.1.56",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-MPLS-MIB::vRtrMplsIfIPv6StateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The vRtrMplsIPv6StateChange notification is generated when",
+				"MPLS interface changes state.",
+				"[EFFECT] The SR-TE LSPs with IPv6 addresses transition state.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : ($v4==1 && $v4==4) ? 3 : 2"
+				},
+				"EventType" : "vRtrMplsIfIPv6StateChange",
+				"ExpireTime" : {
+					"eval" : "($v4==2) ? 3600 : ($v4==1 && $v4==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : ($v4==1) ? 1 : ($v4==3) ? 4 : 2"
+				},
+				"SubNode" : "RouterID:$v1;IfIndex:$v2",
+				"Summary" : "MPLS interface IPv6 operational state: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-MPLS-MIB::vRtrMplsIfIPv6StateChange TIMETRA-VRTR-MIB::vRtrID i 9999 TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-MPLS-MIB::vRtrMplsIfAdminState i 2 TIMETRA-MPLS-MIB::vRtrMplsIfV6OperState i 2",
+			"trap" : {
+				"name" : "TIMETRA-MPLS-MIB::vRtrMplsIfIPv6StateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.6.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The desired administrative state for the MPLS protocol running on this",
+							"MPLS interface."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsIfAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.9.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable indicates the current status of the MPLS protocol",
+							"running on this MPLS interface for srte ipv6. When the",
+							"TIMETRA-VRTR-MIB::vRtrIfPortID object of this interface is set to a",
+							"loopback port identifier, the operational state is not relevant and an",
+							"SNMP GET request on this object will return 'unknown'."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-MPLS-MIB::vRtrMplsIfV6OperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.6.9.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

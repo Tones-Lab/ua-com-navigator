@@ -1,0 +1,255 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201103280000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpCompletionNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciuUpgradeOpCompletionNotify is sent at the",
+				"completion of upgrade operation denoted by ",
+				"ciuUpgradeOpCommand object if such a notification ",
+				"was requested when the operation was initiated.",
+				"ciuUpgradeOpCommand indicates the type of ",
+				"operation. ciuUpgradeOpStatus indicates the",
+				"result of the operation. ciuUpgradeOpTimeCompleted",
+				"indicates the time when the operation is",
+				"completed. ciuUpgradeopLastCommand indicates",
+				"the previous operation that was executed. ",
+				"ciuUpgradeOpLastStatus indicates the result of",
+				"previous operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciuUpgradeOpCompletionNotify",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 == 2 || $v2 == 3 || $v2 == 8) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Command $v1 has returned a status of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpCompletionNotify CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpCommand i 1 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatus i 1 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpTimeCompleted t 9999 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpLastCommand i 1 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpLastStatus i 1",
+			"trap" : {
+				"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpCompletionNotify",
+				"oid" : "1.3.6.1.4.1.9.9.360.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "done",
+							"3" : "install",
+							"4" : "check"
+						},
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpCommand",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "invalidOperation",
+							"3" : "failure",
+							"4" : "inProgress",
+							"5" : "success",
+							"6" : "abortInProgress",
+							"7" : "abortSuccess",
+							"8" : "abortFailed",
+							"9" : "successReset",
+							"10" : "fsUpgReset"
+						},
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatus",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpTimeCompleted",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.4.5",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "done",
+							"3" : "install",
+							"4" : "check"
+						},
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpLastCommand",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.4.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "invalidOperation",
+							"3" : "failure",
+							"4" : "inProgress",
+							"5" : "success",
+							"6" : "abortInProgress",
+							"7" : "abortSuccess",
+							"8" : "abortFailed",
+							"9" : "successReset",
+							"10" : "fsUpgReset"
+						},
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpLastStatus",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.4.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeJobStatusNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ciuUpgradeJobStatusNotify is sent when there",
+				"is status change in the upgrade process.",
+				"ciuUpgradeOpStatusOperation indicates the",
+				"operation to change the upgrade status. ",
+				"ciuUpgradeOpStatusModule indicates which module ",
+				"is affected. ciuUpgradeOpStatusSrcImageLoc ",
+				"indicates location of source image if applicable. ",
+				"ciuUpgradeOpStatusDestImageLoc indicates location",
+				"of destination image if applicable.",
+				"ciuUpgradeOpStatusJobStatus indicates the result",
+				"of this operation to change the status.",
+				"ciuUpgradeOpStatusPercentCompl indicates percentage",
+				"of the operation that has been completed.",
+				"ciuUpgradeOpStatusJobStatusReas gives explanation",
+				"of the faiure if there is a failure.",
+				"ciuUpgradeOpStatus indicates the result of the ",
+				"operation at higher level.",
+				"ciuUpgradeOpStatusReason gives detailed explanation ",
+				"if ciuUpgradeOpStatus is not successful."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciuUpgradeJobStatusNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v2",
+				"Summary" : "Operation $v1 has changed module status $v2 status to $v5 during upgrade ($v6 complete): $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeJobStatusNotify CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusOperation i 1 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusModule i 9999 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusSrcImageLoc s EXAMPLE CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusDestImageLoc s EXAMPLE CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusJobStatus i 1 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusPercentCompl i 9999 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusJobStatusReas s EXAMPLE CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatus i 1 CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeJobStatusNotify",
+				"oid" : "1.3.6.1.4.1.9.9.360.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "copy",
+							"4" : "verify",
+							"5" : "versionExtraction",
+							"6" : "imageSync",
+							"7" : "configSync",
+							"8" : "preUpgrade",
+							"9" : "forceDownload",
+							"10" : "moduleOnline",
+							"11" : "hitlessLCUpgrade",
+							"12" : "hitfulLCUpgrade",
+							"13" : "unusedBootvar",
+							"14" : "convertStartUp",
+							"15" : "looseIncompatibility",
+							"16" : "haSeqNumMismatch",
+							"17" : "unknownModuleOnline",
+							"18" : "recommendedAction",
+							"19" : "recoveryAction",
+							"20" : "remainingAction",
+							"21" : "additionalInfo",
+							"22" : "settingBootvars",
+							"23" : "informLcmFsUpg",
+							"24" : "sysmgrSaveRuntimeStateAndSuccessReset",
+							"25" : "kexecLoadUpgImages",
+							"26" : "fsUpgCleanup",
+							"27" : "saveMtsState",
+							"28" : "fsUpgBegin",
+							"29" : "lcWarmBootStatus",
+							"30" : "waitStateVerificationStatus",
+							"31" : "informLcmFsUpgExternalLc",
+							"32" : "externalLcWarmBootStatus",
+							"33" : "total",
+							"34" : "compactFlashTcamSanity",
+							"35" : "systemPreupgradeBegin"
+						},
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusOperation",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.9.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusModule",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.9.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusSrcImageLoc",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.9.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusDestImageLoc",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.9.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "failed",
+							"4" : "inProgress",
+							"5" : "success",
+							"6" : "planned"
+						},
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusJobStatus",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.9.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusPercentCompl",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.9.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusJobStatusReas",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.9.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "invalidOperation",
+							"3" : "failure",
+							"4" : "inProgress",
+							"5" : "success",
+							"6" : "abortInProgress",
+							"7" : "abortSuccess",
+							"8" : "abortFailed",
+							"9" : "successReset",
+							"10" : "fsUpgReset"
+						},
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatus",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.4.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IMAGE-UPGRADE-MIB::ciuUpgradeOpStatusReason",
+						"oid" : "1.3.6.1.4.1.9.9.360.1.1.4.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

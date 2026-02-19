@@ -1,0 +1,61 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202304060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-AAA-SERVER-MIB::casServerStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"An AAA server state change notification is generated",
+				"whenever casState changes value.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "casServerStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CAS state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-AAA-SERVER-MIB::casServerStateChange CISCO-AAA-SERVER-MIB::casState i 1 CISCO-AAA-SERVER-MIB::casPreviousStateDuration i 9999 CISCO-AAA-SERVER-MIB::casTotalDeadTime i 9999",
+			"trap" : {
+				"name" : "CISCO-AAA-SERVER-MIB::casServerStateChange",
+				"oid" : "1.3.6.1.4.1.9.10.56.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "dead"
+						},
+						"name" : "CISCO-AAA-SERVER-MIB::casState",
+						"oid" : "1.3.6.1.4.1.9.10.56.1.2.1.1.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-AAA-SERVER-MIB::casPreviousStateDuration",
+						"oid" : "1.3.6.1.4.1.9.10.56.1.2.1.1.27",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-AAA-SERVER-MIB::casTotalDeadTime",
+						"oid" : "1.3.6.1.4.1.9.10.56.1.2.1.1.28",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

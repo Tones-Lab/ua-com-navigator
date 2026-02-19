@@ -1,0 +1,2242 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202404300000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTunnelFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever IPSEC IKEV2 tunnel fails to ",
+				"establish. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 1) ? 1 : 2"
+				},
+				"EventType" : "apSecurityTunnelFailureNotification",
+				"ExpireTime" : {
+					"eval" : "($v6 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 1) ? 0 : 4"
+				},
+				"SubNode" : "SecuritySpi:$v1",
+				"Summary" : {
+					"eval" : "($v6 == 1) ? 'IPSEC IKEV2 tunnel established' : 'IPSEC IKEV2 tunnel establishment failed due to $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTunnelFailureNotification APSECURITY-MIB::apSecuritySpi u 9999 APSECURITY-MIB::apSecuritySrcIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityDstIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityFailureCause i 0 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 2",
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTunnelFailureNotification APSECURITY-MIB::apSecuritySpi u 9999 APSECURITY-MIB::apSecuritySrcIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityDstIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityFailureCause i 0 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 1"
+			],
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTunnelFailureNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Tunnel security-policy-index."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySpi",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Source IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcIpAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Destination IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstIpAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Reason for failure in the IKE, IPSec or RADIUS areas."
+						],
+						"enums" : {
+							"0" : "incorrect-id",
+							"1" : "incorrect-user-passwd",
+							"2" : "incorrect-shared-secret",
+							"3" : "incorrect-dh-group",
+							"4" : "incorrect-encryption-alg",
+							"5" : "incorrect-auth-alg",
+							"6" : "incorrect-sec-protocol",
+							"7" : "incorrect-hash",
+							"8" : "incorrect-mode",
+							"9" : "service-unavailable",
+							"10" : "access-reject",
+							"11" : "initiator-timeout",
+							"12" : "invalid-certificate",
+							"13" : "authentication-failure",
+							"14" : "authorization-failure",
+							"15" : "accounting-failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Where the failure happened."
+						],
+						"enums" : {
+							"0" : "ike",
+							"1" : "ipsec",
+							"2" : "radius",
+							"3" : "tacacs"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureArea",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityStatus",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityRadiusFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever Radius authentication request fails."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 1 : 2"
+				},
+				"EventType" : "apSecurityRadiusFailureNotification",
+				"ExpireTime" : {
+					"eval" : "($v4 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v4 == 1) ? 'Radius authentication request succeeded' : 'Radius authentication request failed due to $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityRadiusFailureNotification APSECURITY-MIB::apSecurityUser s EXAMPLE APSECURITY-MIB::apSecurityFailureCause i 0 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 2",
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityRadiusFailureNotification APSECURITY-MIB::apSecurityUser s EXAMPLE APSECURITY-MIB::apSecurityFailureCause i 0 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 1"
+			],
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityRadiusFailureNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"User name"
+						],
+						"name" : "APSECURITY-MIB::apSecurityUser",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Reason for failure in the IKE, IPSec or RADIUS areas."
+						],
+						"enums" : {
+							"0" : "incorrect-id",
+							"1" : "incorrect-user-passwd",
+							"2" : "incorrect-shared-secret",
+							"3" : "incorrect-dh-group",
+							"4" : "incorrect-encryption-alg",
+							"5" : "incorrect-auth-alg",
+							"6" : "incorrect-sec-protocol",
+							"7" : "incorrect-hash",
+							"8" : "incorrect-mode",
+							"9" : "service-unavailable",
+							"10" : "access-reject",
+							"11" : "initiator-timeout",
+							"12" : "invalid-certificate",
+							"13" : "authentication-failure",
+							"14" : "authorization-failure",
+							"15" : "accounting-failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Where the failure happened."
+						],
+						"enums" : {
+							"0" : "ike",
+							"1" : "ipsec",
+							"2" : "radius",
+							"3" : "tacacs"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureArea",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityStatus",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityAuthFailureThresholdNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when IKE DDos auth-failure-threshold is reached and",
+				"report mode includes SNMP trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecurityAuthFailureThresholdNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Port:$v3",
+				"Summary" : "IKE DDos auth-failure-threshold reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityAuthFailureThresholdNotification APSECURITY-MIB::apSecurityUser s EXAMPLE APSECURITY-MIB::apSecurityPeerIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityPeerPort u 9999",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityAuthFailureThresholdNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"User name"
+						],
+						"name" : "APSECURITY-MIB::apSecurityUser",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IKE peer IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityPeerIpAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.14",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"IKE peer port"
+						],
+						"name" : "APSECURITY-MIB::apSecurityPeerPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTacacsFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever TACACS authentication requests fail."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 1 : 2"
+				},
+				"EventType" : "apSecurityTacacsFailureNotification",
+				"ExpireTime" : {
+					"eval" : "($v4 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v4 == 1) ? 'TACACS authentication request succeeded' : 'TACACS authentication requests failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTacacsFailureNotification APSECURITY-MIB::apSecurityUser s EXAMPLE APSECURITY-MIB::apSecurityFailureCause i 0 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 2",
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTacacsFailureNotification APSECURITY-MIB::apSecurityUser s EXAMPLE APSECURITY-MIB::apSecurityFailureCause i 0 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 1"
+			],
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTacacsFailureNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"User name"
+						],
+						"name" : "APSECURITY-MIB::apSecurityUser",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Reason for failure in the IKE, IPSec or RADIUS areas."
+						],
+						"enums" : {
+							"0" : "incorrect-id",
+							"1" : "incorrect-user-passwd",
+							"2" : "incorrect-shared-secret",
+							"3" : "incorrect-dh-group",
+							"4" : "incorrect-encryption-alg",
+							"5" : "incorrect-auth-alg",
+							"6" : "incorrect-sec-protocol",
+							"7" : "incorrect-hash",
+							"8" : "incorrect-mode",
+							"9" : "service-unavailable",
+							"10" : "access-reject",
+							"11" : "initiator-timeout",
+							"12" : "invalid-certificate",
+							"13" : "authentication-failure",
+							"14" : "authorization-failure",
+							"15" : "accounting-failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Where the failure happened."
+						],
+						"enums" : {
+							"0" : "ike",
+							"1" : "ipsec",
+							"2" : "radius",
+							"3" : "tacacs"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureArea",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityStatus",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTunnelFailureInetNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever IPSEC IKEV2 tunnel fails to ",
+				"establish. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v8 == 1) ? 1 : 2"
+				},
+				"EventType" : "apSecurityTunnelFailureInetNotification",
+				"ExpireTime" : {
+					"eval" : "($v8 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v8 == 1) ? 0 : 5"
+				},
+				"SubNode" : "SecuritySpi:$v1",
+				"Summary" : {
+					"eval" : "($v8 == 1) ? 'IPSEC IKEV2 tunnel over internet established' : 'IPSEC IKEV2 tunnel over internet establishment failed due to $v6'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTunnelFailureInetNotification APSECURITY-MIB::apSecuritySpi u 9999 APSECURITY-MIB::apSecuritySrcAddressFamily i 0 APSECURITY-MIB::apSecuritySrcAddress s EXAMPLE APSECURITY-MIB::apSecurityDstAddressFamily i 0 APSECURITY-MIB::apSecurityDstAddress s EXAMPLE APSECURITY-MIB::apSecurityFailureCause i 0 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 2",
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTunnelFailureInetNotification APSECURITY-MIB::apSecuritySpi u 9999 APSECURITY-MIB::apSecuritySrcAddressFamily i 0 APSECURITY-MIB::apSecuritySrcAddress s EXAMPLE APSECURITY-MIB::apSecurityDstAddressFamily i 0 APSECURITY-MIB::apSecurityDstAddress s EXAMPLE APSECURITY-MIB::apSecurityFailureCause i 0 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 1"
+			],
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTunnelFailureInetNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Tunnel security-policy-index."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySpi",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Source IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrcAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Source IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecurityDstAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Destination IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Reason for failure in the IKE, IPSec or RADIUS areas."
+						],
+						"enums" : {
+							"0" : "incorrect-id",
+							"1" : "incorrect-user-passwd",
+							"2" : "incorrect-shared-secret",
+							"3" : "incorrect-dh-group",
+							"4" : "incorrect-encryption-alg",
+							"5" : "incorrect-auth-alg",
+							"6" : "incorrect-sec-protocol",
+							"7" : "incorrect-hash",
+							"8" : "incorrect-mode",
+							"9" : "service-unavailable",
+							"10" : "access-reject",
+							"11" : "initiator-timeout",
+							"12" : "invalid-certificate",
+							"13" : "authentication-failure",
+							"14" : "authorization-failure",
+							"15" : "accounting-failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Where the failure happened."
+						],
+						"enums" : {
+							"0" : "ike",
+							"1" : "ipsec",
+							"2" : "radius",
+							"3" : "tacacs"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureArea",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityStatus",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityAuthFailureThresholdInetNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when IKE DDos auth-failure-threshold is reached and",
+				"report mode includes SNMP trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecurityAuthFailureThresholdInetNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Port:$v4",
+				"Summary" : "IKE DDos auth-failure-threshold over internet reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityAuthFailureThresholdInetNotification APSECURITY-MIB::apSecurityUser s EXAMPLE APSECURITY-MIB::apSecurityPeerAddressFamily i 0 APSECURITY-MIB::apSecurityPeerAddress s EXAMPLE APSECURITY-MIB::apSecurityPeerPort u 9999",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityAuthFailureThresholdInetNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.1.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"User name"
+						],
+						"name" : "APSECURITY-MIB::apSecurityUser",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IKE peer IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecurityPeerAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.27",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IKE peer IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityPeerAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.28",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"IKE peer port"
+						],
+						"name" : "APSECURITY-MIB::apSecurityPeerPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTunnelDPDNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever IPSEC IKEV2 tunnel fails ",
+				"due to Dead Peer Detection(DPD). "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 1) ? 1 : 2"
+				},
+				"EventType" : "apSecurityTunnelDPDNotification",
+				"ExpireTime" : {
+					"eval" : "($v5 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v5 == 1) ? 0 : 5"
+				},
+				"SubNode" : "SecuritySpi:$v1",
+				"Summary" : {
+					"eval" : "($v5 == 1) ? 'IPSEC IKEV2 tunnel established' : 'IPSEC IKEV2 tunnel establishment failed due to dead peer detection'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTunnelDPDNotification APSECURITY-MIB::apSecuritySpi u 9999 APSECURITY-MIB::apSecuritySrcIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityDstIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 2",
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTunnelDPDNotification APSECURITY-MIB::apSecuritySpi u 9999 APSECURITY-MIB::apSecuritySrcIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityDstIpAddress a 192.0.2.1 APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 1"
+			],
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTunnelDPDNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Tunnel security-policy-index."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySpi",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Source IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcIpAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Destination IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstIpAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Where the failure happened."
+						],
+						"enums" : {
+							"0" : "ike",
+							"1" : "ipsec",
+							"2" : "radius",
+							"3" : "tacacs"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureArea",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityStatus",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityIPsecTunCapNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the percentage of licensed",
+				"IPsec tunnels exceeds an IPsec tunnel alarm threshold.",
+				"The apSecurityIPsecTunCapPct object indicates the current",
+				"percentage."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apSecurityIPsecTunCapStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Percentage of licensed IPsec tunnels exceeded threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityIPsecTunCapNotification APSECURITY-MIB::apSecurityIPsecTunCapPct u 99",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityIPsecTunCapNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The percentage of licensed IPsec tunnels currently in progress."
+						],
+						"name" : "APSECURITY-MIB::apSecurityIPsecTunCapPct",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityIPsecTunCapClearNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the percentage of licensed IPsec",
+				"tunnels no longer exceeds an IPsec tunnel alarm threshold.",
+				"The apSecurityIPsecTunCapPct object indicates the current",
+				"percentage."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apSecurityIPsecTunCapStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Percentage of licensed IPsec tunnels is within threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityIPsecTunCapClearNotification APSECURITY-MIB::apSecurityIPsecTunCapPct u 0",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityIPsecTunCapClearNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The percentage of licensed IPsec tunnels currently in progress."
+						],
+						"name" : "APSECURITY-MIB::apSecurityIPsecTunCapPct",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTunnelDPDInetNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated whenever IPSEC IKEV2 tunnel fails ",
+				"due to Dead Peer Detection(DPD). "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7 == 1) ? 1 : 2"
+				},
+				"EventType" : "apSecurityTunnelDPDInetNotification",
+				"ExpireTime" : {
+					"eval" : "($v7 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v7 == 1) ? 0 : 5"
+				},
+				"SubNode" : "SecuritySpi:$v1",
+				"Summary" : {
+					"eval" : "($v7 == 1) ? 'IPSEC IKEV2 tunnel over internet established' : 'IPSEC IKEV2 tunnel over internet establishment failed due to DPD'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTunnelDPDInetNotification APSECURITY-MIB::apSecuritySpi u 9999 APSECURITY-MIB::apSecuritySrcAddressFamily i 0 APSECURITY-MIB::apSecuritySrcAddress s EXAMPLE APSECURITY-MIB::apSecurityDstAddressFamily i 0 APSECURITY-MIB::apSecurityDstAddress s EXAMPLE APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 2",
+				"$SNMPTRAPCMD APSECURITY-MIB::apSecurityTunnelDPDInetNotification APSECURITY-MIB::apSecuritySpi u 9999 APSECURITY-MIB::apSecuritySrcAddressFamily i 0 APSECURITY-MIB::apSecuritySrcAddress s EXAMPLE APSECURITY-MIB::apSecurityDstAddressFamily i 0 APSECURITY-MIB::apSecurityDstAddress s EXAMPLE APSECURITY-MIB::apSecurityFailureArea i 0 APSECURITY-MIB::apSecurityStatus i 1"
+			],
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTunnelDPDInetNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Tunnel security-policy-index."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySpi",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Source IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrcAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Source IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecurityDstAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Destination IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Where the failure happened."
+						],
+						"enums" : {
+							"0" : "ike",
+							"1" : "ipsec",
+							"2" : "radius",
+							"3" : "tacacs"
+						},
+						"name" : "APSECURITY-MIB::apSecurityFailureArea",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status."
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityStatus",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityOCSRDownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when a Session Router server",
+				"becomes unreachable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apSecurityOCSRStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "IpAddress:$v2",
+				"Summary" : "Session Router server $v1 unreachable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityOCSRDownNotification APSECURITY-MIB::apSecurityOCSRHostname s EXAMPLE APSECURITY-MIB::apSecurityOCSRIpAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityOCSRDownNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Session Router server hostname."
+						],
+						"name" : "APSECURITY-MIB::apSecurityOCSRHostname",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Session Router server IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityOCSRIpAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityOCSRUpNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when a Session Router server",
+				"becomes reachable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apSecurityOCSRStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IpAddress:$v2",
+				"Summary" : "Session Router server $v1 reachable"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityOCSRUpNotification APSECURITY-MIB::apSecurityOCSRHostname s EXAMPLE APSECURITY-MIB::apSecurityOCSRIpAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityOCSRUpNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Session Router server hostname."
+						],
+						"name" : "APSECURITY-MIB::apSecurityOCSRHostname",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Session Router server IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityOCSRIpAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.5",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityCrlInvalidNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when an invalid CRL",
+				"is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecurityCrlInvalidNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Invalid CRL detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityCrlInvalidNotification APSECURITY-MIB::apSecurityCrlIssuer s EXAMPLE APSECURITY-MIB::apSecurityCspName s EXAMPLE",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityCrlInvalidNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"CRL issuer name."
+						],
+						"name" : "APSECURITY-MIB::apSecurityCrlIssuer",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Cert-status-profile object name for fetching the CRL. ",
+							"If the CRL is just loaded from local file, then it is ",
+							"specified as file"
+						],
+						"name" : "APSECURITY-MIB::apSecurityCspName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityCRLRetrievalFailNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when there is a ",
+				"failure in CRL retrieval. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apSecurityCRLRetrievalStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "CRL retrieval failed due to $v2 error"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityCRLRetrievalFailNotification APSECURITY-MIB::apSecurityCRLServer s EXAMPLE APSECURITY-MIB::apSecurityCRLRetrievalFailureCause i 2 APSECURITY-MIB::apSecurityLastSuccessfulCRLRetrieval i 9999 APSECURITY-MIB::apSecurityCRLServerIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityCRLRetrievalFailNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.5.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"CRL Server FQDN if configured."
+						],
+						"name" : "APSECURITY-MIB::apSecurityCRLServer",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Reason for failure in the CRL retrieval."
+						],
+						"enums" : {
+							"0" : "internal",
+							"1" : "incorrect-response",
+							"2" : "timeout"
+						},
+						"name" : "APSECURITY-MIB::apSecurityCRLRetrievalFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Last successful CRL retrieval."
+						],
+						"name" : "APSECURITY-MIB::apSecurityLastSuccessfulCRLRetrieval",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.17",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"CRL Server IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityCRLServerIPAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.18",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityCRLRetrievalClearNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when there is a ",
+				"success in CRL retrieval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apSecurityCRLRetrievalStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "CRL retrieval succeeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityCRLRetrievalClearNotification APSECURITY-MIB::apSecurityCRLServer s EXAMPLE APSECURITY-MIB::apSecurityCRLServerIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityCRLRetrievalClearNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.5.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"CRL Server FQDN if configured."
+						],
+						"name" : "APSECURITY-MIB::apSecurityCRLServer",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"CRL Server IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityCRLServerIPAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.18",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityCertExpiredNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated periodically if a locally installed",
+				"certificate has expired. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecurityCertExpiredNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Locally installed certificate $v1 expired"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityCertExpiredNotification APSECURITY-MIB::apSecurityCertificateRecordName s EXAMPLE APSECURITY-MIB::apSecurityCertificateCertSubject s EXAMPLE APSECURITY-MIB::apSecurityCertificateCertExpire s EXAMPLE APSECURITY-MIB::apSecurityCertificateCertIssuer s EXAMPLE",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityCertExpiredNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.6.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The SBC's configuration record name for the certificate. "
+						],
+						"name" : "APSECURITY-MIB::apSecurityCertificateRecordName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.10.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The certificate subject. "
+						],
+						"name" : "APSECURITY-MIB::apSecurityCertificateCertSubject",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.10.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The expiration time and date of the certificate. "
+						],
+						"name" : "APSECURITY-MIB::apSecurityCertificateCertExpire",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.10.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The issuer of the certificate."
+						],
+						"name" : "APSECURITY-MIB::apSecurityCertificateCertIssuer",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.10.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityCertExpireSoonNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated periodically if a locally installed",
+				"certificate will soon expire. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecurityCertExpireSoonNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Locally installed certificate $v1 expires soon"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityCertExpireSoonNotification APSECURITY-MIB::apSecurityCertificateRecordName s EXAMPLE APSECURITY-MIB::apSecurityCertificateCertSubject s EXAMPLE APSECURITY-MIB::apSecurityCertificateCertExpire s EXAMPLE APSECURITY-MIB::apSecurityCertificateCertIssuer s EXAMPLE",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityCertExpireSoonNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.6.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The SBC's configuration record name for the certificate. "
+						],
+						"name" : "APSECURITY-MIB::apSecurityCertificateRecordName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.10.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The certificate subject. "
+						],
+						"name" : "APSECURITY-MIB::apSecurityCertificateCertSubject",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.10.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The expiration time and date of the certificate. "
+						],
+						"name" : "APSECURITY-MIB::apSecurityCertificateCertExpire",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.10.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The issuer of the certificate."
+						],
+						"name" : "APSECURITY-MIB::apSecurityCertificateCertIssuer",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.10.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityGTPLinkFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when there is a link failure with GGSN/PGW on GTP Profile."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apSecurityGTPLinkStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "HostName:$v2",
+				"Summary" : "GTP profile $v1 link failed with GGSN/PGW due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityGTPLinkFailureNotification APSECURITY-MIB::apSecurityGTPProfileName s EXAMPLE APSECURITY-MIB::apSecurityGTPHostName s EXAMPLE APSECURITY-MIB::apSecurityGTPLinkFailureCause i 1 APSECURITY-MIB::apSecurityGTPIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityGTPLinkFailureNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.7.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"GTP Profile Name configured."
+						],
+						"name" : "APSECURITY-MIB::apSecurityGTPProfileName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GGSN/PGW Host Name if configured."
+						],
+						"name" : "APSECURITY-MIB::apSecurityGTPHostName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Reason for failure in the GTPCRL retrieval."
+						],
+						"enums" : {
+							"0" : "internal",
+							"1" : "timeout",
+							"2" : "versionError"
+						},
+						"name" : "APSECURITY-MIB::apSecurityGTPLinkFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"GGSN/PGW IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityGTPIPAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.22",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityGTPLinkClearNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the link is restored with GGSN/PGW on GTP Profile."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apSecurityGTPLinkStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "HostName:$v2",
+				"Summary" : "GTP profile $v1 link success with GGSN/PGW"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityGTPLinkClearNotification APSECURITY-MIB::apSecurityGTPProfileName s EXAMPLE APSECURITY-MIB::apSecurityGTPHostName s EXAMPLE APSECURITY-MIB::apSecurityGTPIPAddress a 192.0.2.1",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityGTPLinkClearNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.7.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"GTP Profile Name configured."
+						],
+						"name" : "APSECURITY-MIB::apSecurityGTPProfileName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GGSN/PGW Host Name if configured."
+						],
+						"name" : "APSECURITY-MIB::apSecurityGTPHostName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GGSN/PGW IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityGTPIPAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.22",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTscfAddressPoolUsageTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				" (no longer supported from SCZ9.0) This notification is sent when the available IP addresses",
+				"in TSCF address pool depletes below the ",
+				"threshold level."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apSecurityTscfAddressPoolUsageStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "TSCF address pool $v1 depletes below threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityTscfAddressPoolUsageTrap APSECURITY-MIB::apSecurityTscfAddressPoolName s EXAMPLE APSECURITY-MIB::apSecurityTscfInUseAddressCount u 9999 APSECURITY-MIB::apSecurityTscfTotalAddressCount u 9999 APSECURITY-MIB::apSecurityTscfAddrPoolThresholdLevel u 9999",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTscfAddressPoolUsageTrap",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.8.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the TSCF Address Pool (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfAddressPoolName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.15.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The number of addresses in use from the TSCF address pool (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfInUseAddressCount",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.15.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The total numbers of addresses in the TSCF address pool (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfTotalAddressCount",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.15.1.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"TSCF address pool threshold (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfAddrPoolThresholdLevel",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.29",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTscfAddressPoolUsageClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(no longer supported from SCZ9.0) This notification is sent when the available ",
+				"IP addresses in TSCF address pool ",
+				"are more than the threshold level."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apSecurityTscfAddressPoolUsageStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "TSCF address pool $v1 is within threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityTscfAddressPoolUsageClearTrap APSECURITY-MIB::apSecurityTscfAddressPoolName s EXAMPLE APSECURITY-MIB::apSecurityTscfInUseAddressCount u 9999 APSECURITY-MIB::apSecurityTscfTotalAddressCount u 9999 APSECURITY-MIB::apSecurityTscfAddrPoolThresholdLevel u 9999",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTscfAddressPoolUsageClearTrap",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.8.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the TSCF Address Pool (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfAddressPoolName",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.15.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The number of addresses in use from the TSCF address pool (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfInUseAddressCount",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.15.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The total numbers of addresses in the TSCF address pool (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfTotalAddressCount",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.15.1.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"TSCF address pool threshold (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfAddrPoolThresholdLevel",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.29",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTscfMaxTunnelTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(no longer supported from SCZ9.0) This notification is sent when the available",
+				"IP addresses in TSCF address pool ",
+				"depletes below the threshold level."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apSecurityTscfMaxTunnelStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "TSCF tunnel count reached limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityTscfMaxTunnelTrap APSECURITY-MIB::apTscfActiveTunnels u 9999 APSECURITY-MIB::apTscfLicenseTunnelCount u 9999 APSECURITY-MIB::apSecurityTscfMaxTunnelsThresholdLevel u 9999",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTscfMaxTunnelTrap",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.8.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Number of active TSCF tunnels (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apTscfActiveTunnels",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.14.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Number of Licensed/entitled tunnels (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apTscfLicenseTunnelCount",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.14.82",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"TSCF max tunnels threshold (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfMaxTunnelsThresholdLevel",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.30",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTscfClearMaxTunnelTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"(no longer supported from SCZ9.0) This notification is sent when the available",
+				"IP addresses in TSCF address pool ",
+				"depletes below the threshold level."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apSecurityTscfMaxTunnelStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "TSCF tunnel count is within limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityTscfClearMaxTunnelTrap APSECURITY-MIB::apTscfActiveTunnels u 9999 APSECURITY-MIB::apTscfLicenseTunnelCount u 9999 APSECURITY-MIB::apSecurityTscfMaxTunnelsThresholdLevel u 9999",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTscfClearMaxTunnelTrap",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.8.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Number of active TSCF tunnels (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apTscfActiveTunnels",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.14.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Number of Licensed/entitled tunnels (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apTscfLicenseTunnelCount",
+						"oid" : "1.3.6.1.4.1.9148.3.9.1.14.82",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"TSCF max tunnels threshold (no longer supported from SCZ9.0)"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTscfMaxTunnelsThresholdLevel",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.30",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTacacsDownLocalAuthUsedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap will be generated when a user remotely logs into a system configured for ",
+				"TACACS+ authentication and is authenticated locally by the system because all of ",
+				"the configured and enabled TACACS+ servers have become unreachable or unresponsive. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apSecurityTacacsDownLocalAuthUsed",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "TACACS server down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityTacacsDownLocalAuthUsedTrap APSECURITY-MIB::apSecurityTacacsDownLocalAuthUsed s EXAMPLE",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTacacsDownLocalAuthUsedTrap",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.9.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The username that was authenticated locally by the system."
+						],
+						"name" : "APSECURITY-MIB::apSecurityTacacsDownLocalAuthUsed",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.31",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTacacsDownLocalAuthUsedClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap will be generated when a user remotely logs into a system configured for ",
+				"TACACS+ authentication and is successfully authenticated (i.e., access accepted or ",
+				"denied) remotely by a configured and enabled TACACS+ server."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apSecurityTacacsDownLocalAuthUsed",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "TACACS server up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityTacacsDownLocalAuthUsedClearTrap ",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTacacsDownLocalAuthUsedClearTrap",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.9.0.2"
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTlsEncryptionFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when TLS fails to ",
+				"encrypt."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecurityTlsEncryptionFailureNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Port:$v3",
+				"Summary" : "TLS encryption failed due to $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityTlsEncryptionFailureNotification APSECURITY-MIB::apSecuritySrcAddressFamily i 0 APSECURITY-MIB::apSecuritySrcAddress s EXAMPLE APSECURITY-MIB::apSecuritySrcPort u 9999 APSECURITY-MIB::apSecurityDstAddressFamily i 0 APSECURITY-MIB::apSecurityDstAddress s EXAMPLE APSECURITY-MIB::apSecurityDstPort u 9999 APSECURITY-MIB::apSecurityTlsEncryptionFailureCause i 0 APSECURITY-MIB::apSecurityTlsCipherSuite i 0 APSECURITY-MIB::apSecurityTlsSessionId s EXAMPLE APSECURITY-MIB::apSecurityTlsPacketFailureCount c 9999",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTlsEncryptionFailureNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.10.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Source IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrcAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Source IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source/Client port of a secure connection"
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.32",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Destination IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecurityDstAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Destination IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination/Server port of a secure connection"
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.33",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Reason for failure in the TLS encryption."
+						],
+						"enums" : {
+							"0" : "bad-write-retry",
+							"1" : "write-bio-not-set",
+							"2" : "bad-length",
+							"3" : "memory-alloc-failure"
+						},
+						"name" : "APSECURITY-MIB::apSecurityTlsEncryptionFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.38",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"List of supported TLS cipher suites."
+						],
+						"enums" : {
+							"0" : "tls-DHE-RSA-WITH-AES-256-GCM-SHA384",
+							"1" : "tls-DHE-RSA-WITH-AES-256-CBC-SHA256",
+							"2" : "tls-DHE-RSA-WITH-AES-256-CBC-SHA",
+							"3" : "tls-RSA-WITH-AES-256-GCM-SHA384",
+							"4" : "tls-RSA-WITH-AES-256-CBC-SHA256",
+							"5" : "tls-RSA-WITH-AES-256-CBC-SHA",
+							"6" : "tls-DHE-RSA-WITH-AES-128-GCM-SHA256",
+							"7" : "tls-DHE-RSA-WITH-AES-128-CBC-SHA256",
+							"8" : "tls-DHE-RSA-WITH-AES-128-CBC-SHA",
+							"9" : "tls-RSA-WITH-AES-128-GCM-SHA256",
+							"10" : "tls-RSA-WITH-AES-128-CBC-SHA256",
+							"11" : "tls-RSA-WITH-AES-128-CBC-SHA",
+							"12" : "tls-DHE-RSA-WITH-3DES-EDE-CBC-SHA",
+							"13" : "tls-RSA-WITH-3DES-EDE-CBC-SHA",
+							"14" : "tls-RSA-WITH-NULL-SHA256",
+							"15" : "tls-RSA-WITH-NULL-SHA",
+							"16" : "tls-RSA-WITH-NULL-MD5",
+							"17" : "tls-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256",
+							"18" : "tls-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384",
+							"19" : "tls-ECDHE-RSA-WITH-AES-256-GCM-SHA384",
+							"20" : "tls-ECDHE-RSA-WITH-AES-128-GCM-SHA256",
+							"21" : "tls-ECDHE-RSA-WITH-AES-256-CBC-SHA384",
+							"22" : "tls-ECDHE-RSA-WITH-AES-128-CBC-SHA256"
+						},
+						"name" : "APSECURITY-MIB::apSecurityTlsCipherSuite",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.36",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"TLS session identifier octet string"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTlsSessionId",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.34",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of TLS packet failed to decrypt or encrypt"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTlsPacketFailureCount",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.35",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecurityTlsDecryptionFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when TLS fails to ",
+				"decrypt."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecurityTlsDecryptionFailureNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Port:$v3",
+				"Summary" : "TLS decryption failed due to $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecurityTlsDecryptionFailureNotification APSECURITY-MIB::apSecuritySrcAddressFamily i 0 APSECURITY-MIB::apSecuritySrcAddress s EXAMPLE APSECURITY-MIB::apSecuritySrcPort u 9999 APSECURITY-MIB::apSecurityDstAddressFamily i 0 APSECURITY-MIB::apSecurityDstAddress s EXAMPLE APSECURITY-MIB::apSecurityDstPort u 9999 APSECURITY-MIB::apSecurityTlsDecryptionFailureCause i 0 APSECURITY-MIB::apSecurityTlsCipherSuite i 0 APSECURITY-MIB::apSecurityTlsSessionId s EXAMPLE APSECURITY-MIB::apSecurityTlsPacketFailureCount c 9999",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecurityTlsDecryptionFailureNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.10.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Source IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrcAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Source IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source/Client port of a secure connection"
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.32",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Destination IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecurityDstAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Destination IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination/Server port of a secure connection"
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.33",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Reason for failure in the TLS decryption."
+						],
+						"enums" : {
+							"0" : "bad-mac-decode",
+							"1" : "bad-read-state",
+							"2" : "decryption-failed",
+							"3" : "decryption-failed-bad-record-mac",
+							"4" : "illegal-padding",
+							"5" : "packet-length-too-long",
+							"6" : "encrypted-length-too-long",
+							"7" : "record-too-small",
+							"8" : "record-length-too-short",
+							"9" : "block-cipher-pad-is-wrong"
+						},
+						"name" : "APSECURITY-MIB::apSecurityTlsDecryptionFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.37",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"List of supported TLS cipher suites."
+						],
+						"enums" : {
+							"0" : "tls-DHE-RSA-WITH-AES-256-GCM-SHA384",
+							"1" : "tls-DHE-RSA-WITH-AES-256-CBC-SHA256",
+							"2" : "tls-DHE-RSA-WITH-AES-256-CBC-SHA",
+							"3" : "tls-RSA-WITH-AES-256-GCM-SHA384",
+							"4" : "tls-RSA-WITH-AES-256-CBC-SHA256",
+							"5" : "tls-RSA-WITH-AES-256-CBC-SHA",
+							"6" : "tls-DHE-RSA-WITH-AES-128-GCM-SHA256",
+							"7" : "tls-DHE-RSA-WITH-AES-128-CBC-SHA256",
+							"8" : "tls-DHE-RSA-WITH-AES-128-CBC-SHA",
+							"9" : "tls-RSA-WITH-AES-128-GCM-SHA256",
+							"10" : "tls-RSA-WITH-AES-128-CBC-SHA256",
+							"11" : "tls-RSA-WITH-AES-128-CBC-SHA",
+							"12" : "tls-DHE-RSA-WITH-3DES-EDE-CBC-SHA",
+							"13" : "tls-RSA-WITH-3DES-EDE-CBC-SHA",
+							"14" : "tls-RSA-WITH-NULL-SHA256",
+							"15" : "tls-RSA-WITH-NULL-SHA",
+							"16" : "tls-RSA-WITH-NULL-MD5",
+							"17" : "tls-ECDHE-ECDSA-WITH-AES-128-GCM-SHA256",
+							"18" : "tls-ECDHE-ECDSA-WITH-AES-256-GCM-SHA384",
+							"19" : "tls-ECDHE-RSA-WITH-AES-256-GCM-SHA384",
+							"20" : "tls-ECDHE-RSA-WITH-AES-128-GCM-SHA256",
+							"21" : "tls-ECDHE-RSA-WITH-AES-256-CBC-SHA384",
+							"22" : "tls-ECDHE-RSA-WITH-AES-128-CBC-SHA256"
+						},
+						"name" : "APSECURITY-MIB::apSecurityTlsCipherSuite",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.36",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"TLS session identifier octet string"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTlsSessionId",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.34",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of TLS packet failed to decrypt or encrypt"
+						],
+						"name" : "APSECURITY-MIB::apSecurityTlsPacketFailureCount",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.35",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecuritySrtpEncryptionFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when SRTP fails to ",
+				"encrypt."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecuritySrtpEncryptionFailureNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Port:$v3",
+				"Summary" : "SRTP $v8 encryption failed due to $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecuritySrtpEncryptionFailureNotification APSECURITY-MIB::apSecuritySrcAddressFamily i 0 APSECURITY-MIB::apSecuritySrcAddress s EXAMPLE APSECURITY-MIB::apSecuritySrcPort u 9999 APSECURITY-MIB::apSecurityDstAddressFamily i 0 APSECURITY-MIB::apSecurityDstAddress s EXAMPLE APSECURITY-MIB::apSecurityDstPort u 9999 APSECURITY-MIB::apSecuritySrtpEncryptionFailureCause i 0 APSECURITY-MIB::apSecuritySrtpEncrAlgorithm i 1 APSECURITY-MIB::apSecuritySrtpAuthAlgorithm i 0",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecuritySrtpEncryptionFailureNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.11.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Source IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrcAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Source IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source/Client port of a secure connection"
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.32",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Destination IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecurityDstAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Destination IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination/Server port of a secure connection"
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.33",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Reason for failure in the SRTP encryption."
+						],
+						"enums" : {
+							"0" : "packet-too-small",
+							"1" : "stream-not-found",
+							"2" : "key-expired",
+							"3" : "replay-old",
+							"4" : "replay-failed",
+							"5" : "auth-init-failed",
+							"6" : "stream-alloc-failed",
+							"7" : "encrypt-parse-error",
+							"8" : "cipher-failed",
+							"9" : "auth-failed"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrtpEncryptionFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.39",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of the encryption algorithms supported by SRTP"
+						],
+						"enums" : {
+							"0" : "null",
+							"1" : "aes-icm",
+							"2" : "aes-cbc",
+							"3" : "aes-gcm",
+							"4" : "aes-f8",
+							"5" : "aria-cm",
+							"6" : "aria-cbc"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrtpEncrAlgorithm",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.41",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of the authentication algorithms supported by SRTP"
+						],
+						"enums" : {
+							"0" : "null",
+							"1" : "hmac-sha1",
+							"2" : "hmac-md5"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrtpAuthAlgorithm",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.42",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "APSECURITY-MIB::apSecuritySrtpDecryptionFailureNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when SRTP fails to ",
+				"decrypt."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apSecuritySrtpDecryptionFailureNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Port:$v3",
+				"Summary" : "SRTP decryption failed due to $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APSECURITY-MIB::apSecuritySrtpDecryptionFailureNotification APSECURITY-MIB::apSecuritySrcAddressFamily i 0 APSECURITY-MIB::apSecuritySrcAddress s EXAMPLE APSECURITY-MIB::apSecuritySrcPort u 9999 APSECURITY-MIB::apSecurityDstAddressFamily i 0 APSECURITY-MIB::apSecurityDstAddress s EXAMPLE APSECURITY-MIB::apSecurityDstPort u 9999 APSECURITY-MIB::apSecuritySrtpDecryptionFailureCause i 0 APSECURITY-MIB::apSecuritySrtpEncrAlgorithm i 0 APSECURITY-MIB::apSecuritySrtpAuthAlgorithm i 0",
+			"trap" : {
+				"name" : "APSECURITY-MIB::apSecuritySrtpDecryptionFailureNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.9.3.11.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Source IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrcAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Source IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Source/Client port of a secure connection"
+						],
+						"name" : "APSECURITY-MIB::apSecuritySrcPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.32",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Destination IP address family IPv4 or IPv6."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "APSECURITY-MIB::apSecurityDstAddressFamily",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Destination IP address."
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstAddress",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Destination/Server port of a secure connection"
+						],
+						"name" : "APSECURITY-MIB::apSecurityDstPort",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.33",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Reason for failure in the SRTP decryption."
+						],
+						"enums" : {
+							"0" : "packet-too-small",
+							"1" : "stream-not-found",
+							"2" : "key-expired",
+							"3" : "replay-old",
+							"4" : "replay-failed",
+							"5" : "mki-changed",
+							"6" : "cipher-failed",
+							"7" : "auth-tag-failed",
+							"8" : "invalid-rtp-packet",
+							"9" : "auth-init-failed",
+							"10" : "decrypt-parse-error"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrtpDecryptionFailureCause",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.40",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of the encryption algorithms supported by SRTP"
+						],
+						"enums" : {
+							"0" : "null",
+							"1" : "aes-icm",
+							"2" : "aes-cbc",
+							"3" : "aes-gcm",
+							"4" : "aes-f8",
+							"5" : "aria-cm",
+							"6" : "aria-cbc"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrtpEncrAlgorithm",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.41",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Type of the authentication algorithms supported by SRTP"
+						],
+						"enums" : {
+							"0" : "null",
+							"1" : "hmac-sha1",
+							"2" : "hmac-md5"
+						},
+						"name" : "APSECURITY-MIB::apSecuritySrtpAuthAlgorithm",
+						"oid" : "1.3.6.1.4.1.9148.3.9.2.42",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

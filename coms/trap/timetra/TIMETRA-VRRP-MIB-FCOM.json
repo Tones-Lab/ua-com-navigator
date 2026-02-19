@@ -1,0 +1,597 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201102010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tmnxVrrpIPListMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxVrrpIPListMismatch trap is generated when the IP address",
+				"list received in the advertisement messages received from the",
+				"current master did not match the configured IP address list.",
+				"This is an edge triggered notification. A second trap will not",
+				"be generated for a packet from the same master until this event ",
+				"has been cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxVrrpIPListMismatch",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "IP address list mismatched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tmnxVrrpIPListMismatch TIMETRA-VRRP-MIB::tmnxVrrpRouterMasterIPListMatch i 1",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tmnxVrrpIPListMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value for tmnxVrrpRouterMasterIPListMatch specifies whether or not",
+							"the IP address list in the advertisement messages received from ",
+							"the master matched the configured virtual router IP address list."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-VRRP-MIB::tmnxVrrpRouterMasterIPListMatch",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.1.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tmnxVrrpIPListMismatchClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxVrrpIPListMismatchClear trap is generated when a previously ",
+				"ocurring tmnxVrrpIPListMismatch trap has been cleared because",
+				"the IP address list in the advertisement messages received from",
+				"the current master now matches the configured IP address list.",
+				"This is an edge triggered notification. A second trap will not",
+				"be generated for a packet from the same master until this event ",
+				"has been set again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxVrrpIPListMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "IP address list mismatch cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tmnxVrrpIPListMismatchClear TIMETRA-VRRP-MIB::tmnxVrrpRouterMasterIPListMatch i 1",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tmnxVrrpIPListMismatchClear",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value for tmnxVrrpRouterMasterIPListMatch specifies whether or not",
+							"the IP address list in the advertisement messages received from ",
+							"the master matched the configured virtual router IP address list."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-VRRP-MIB::tmnxVrrpRouterMasterIPListMatch",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.1.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tmnxVrrpMultipleOwners",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxVrrpMultipleOwners trap is generated when a VRRP virtual",
+				"router instance that has been configured as an owner notices that",
+				"that another VRRP instance is also advertising itself as an owner."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxVrrpMultipleOwners",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Multiple owner detected on VRRP"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tmnxVrrpMultipleOwners TIMETRA-VRRP-MIB::tmnxVrrpRouterMasterLastSeen t 31536000",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tmnxVrrpMultipleOwners",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value for tmnxVrrpRouterMasterLastSeen specifies the sysUpTime",
+							"when the master was last seen by this virtual router instance. In ",
+							"other words it is the timestamp of the last advertisement message ",
+							"that was received from that master."
+						],
+						"name" : "TIMETRA-VRRP-MIB::tmnxVrrpRouterMasterLastSeen",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.1.3.1.2",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tmnxVrrpBecameBackup",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxVrrpBecameBackup trap is generated when the sending ",
+				"agent has transitioned to 'Backup' state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxVrrpBecameBackup",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "VRRP transitioned to backup state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tmnxVrrpBecameBackup VRRP-MIB::vrrpOperMasterIpAddr a 192.0.2.1",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tmnxVrrpBecameBackup",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The master router's real (primary) IP address. This is",
+							"the IP address listed as the source in VRRP advertisement",
+							"last received by this virtual router."
+						],
+						"name" : "VRRP-MIB::vrrpOperMasterIpAddr",
+						"oid" : "1.3.6.1.2.1.68.1.3.1.7",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tmnxVrrpBfdIntfSessStateChgd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification tmnxVrrpBfdIntfSessStateChgd is generated when the",
+				"operational state of BFD session of the VRRP instance changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==2) ? 1 : ($v5==1 || $v5==5) ? 3 : 2"
+				},
+				"EventType" : "tmnxVrrpBfdIntfSessStateChgd",
+				"ExpireTime" : {
+					"eval" : "($v5==2) ? 3600 : ($v5==1 || $v5==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v5==2) ? 0 : ($v5==1) ? 1 : ($v5==5) ? 2 : ($v5==4 || $v5==3) ? 4 : 3"
+				},
+				"SubNode" : "IfName:$v2",
+				"Summary" : "VRRP instance BFD session state changed to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tmnxVrrpBfdIntfSessStateChgd TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfSvcId u 9999 TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfIfName s EXAMPLE TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfDestIpType i 0 TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfDestIp s EXAM TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfSessState i 1",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tmnxVrrpBfdIntfSessStateChgd",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxVrrpNotifBfdIntfSvcId specifies the service",
+							"ID of the interface running BFD in the notification."
+						],
+						"name" : "TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfSvcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.3.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxVrrpNotifBfdIntfIfName specifies the name of the",
+							"interface running BFD in the notification."
+						],
+						"name" : "TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfIfName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxVrrpNotifBfdIntfDestIpType specifies the address type",
+							"of tmnxVrrpNotifBfdIntfDestIp object."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfDestIpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.3.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxVrrpNotifBfdIntfDestIp specifies the destination",
+							"IP address on the interface running BFD in the notification."
+						],
+						"name" : "TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfDestIp",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.3.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxVrrpNotifBfdIntfSessState indicates the operational",
+							"state of BFD session on the interface in the notification."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "connected",
+							"3" : "broken",
+							"4" : "peerDetectsDown",
+							"5" : "notConfigured",
+							"6" : "noResources"
+						},
+						"name" : "TIMETRA-VRRP-MIB::tmnxVrrpNotifBfdIntfSessState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.3.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tVrrpBecameBackup",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxVrrpBecameBackup trap is generated when the sending ",
+				"agent has transitioned to 'Backup' state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tVrrpBecameBackup",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "VRRP transitioned to backup state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tVrrpBecameBackup TIMETRA-VRRP-V3-MIB::vrrpOperationsMasterIpAddr s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tVrrpBecameBackup",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The master router's real IP address. Master router ",
+							"would set this address to vrrpOperationsPrimaryIpAddr ",
+							"while transitioning to master state. For backup ",
+							"routers, this is the IP address listed as the source in ",
+							"VRRP advertisement last received by this virtual ",
+							"router."
+						],
+						"name" : "TIMETRA-VRRP-V3-MIB::vrrpOperationsMasterIpAddr",
+						"oid" : "1.3.6.1.2.1.68.1.7.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tVrrpTrapNewMaster",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tVrrpTrapNewMaster trap indicates that the sending agent ",
+				"has transitioned to 'Master' state. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tVrrpTrapNewMaster",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "VRRP transitioned to master state due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tVrrpTrapNewMaster TIMETRA-VRRP-V3-MIB::vrrpOperationsMasterIpAddr s EXAMPLE TIMETRA-VRRP-V3-MIB::vrrpNewMasterReason i 0",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tVrrpTrapNewMaster",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The master router's real IP address. Master router ",
+							"would set this address to vrrpOperationsPrimaryIpAddr ",
+							"while transitioning to master state. For backup ",
+							"routers, this is the IP address listed as the source in ",
+							"VRRP advertisement last received by this virtual ",
+							"router."
+						],
+						"name" : "TIMETRA-VRRP-V3-MIB::vrrpOperationsMasterIpAddr",
+						"oid" : "1.3.6.1.2.1.68.1.7.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This indicates the reason for tVrrpTrapNewMaster trap. ",
+							"Used by tVrrpTrapNewMaster trap. The object can be ",
+							"polled if the tVrrpTrapNewMaster trap is lost to identify ",
+							"the reason for transmission. Backup router should ",
+							"return notmaster(0) when pooled. "
+						],
+						"enums" : {
+							"0" : "notmaster",
+							"1" : "priority",
+							"2" : "preempted",
+							"3" : "masterNoResponse"
+						},
+						"name" : "TIMETRA-VRRP-V3-MIB::vrrpNewMasterReason",
+						"oid" : "1.3.6.1.2.1.68.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tVrrpIPListMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tVrrpIPListMismatch trap is generated when the IPv6 address",
+				"list received in the advertisement messages received from the",
+				"current master did not match the configured IPv6 address list.",
+				"This is an edge triggered notification. A second trap will not",
+				"be generated for a packet from the same master until this event ",
+				"has been cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tVrrpIPListMismatch",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "IPv6 address list mismatched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tVrrpIPListMismatch TIMETRA-VRRP-MIB::tVrrpRtrMasterIPListMatch i 1",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tVrrpIPListMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The value for tVrrpRtrMasterIPListMatch indicates whether or not",
+							"the IP address list in the advertisement messages received from ",
+							"the master matched the configured virtual router IP address list."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-VRRP-MIB::tVrrpRtrMasterIPListMatch",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.1.9.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tVrrpIPListMismatchClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tVrrpIPListMismatchClear trap is generated when a previously ",
+				"ocurring tVrrpIPListMismatch trap has been cleared because",
+				"the IPv6 address list in the advertisement messages received from",
+				"the current master now matches the configured IPv6 address list.",
+				"This is an edge triggered notification. A second trap will not",
+				"be generated for a packet from the same master until this event ",
+				"has been set again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tVrrpIPListMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "IPv6 address list mismatch cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tVrrpIPListMismatchClear TIMETRA-VRRP-MIB::tVrrpRtrMasterIPListMatch i 1",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tVrrpIPListMismatchClear",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The value for tVrrpRtrMasterIPListMatch indicates whether or not",
+							"the IP address list in the advertisement messages received from ",
+							"the master matched the configured virtual router IP address list."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-VRRP-MIB::tVrrpRtrMasterIPListMatch",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.1.9.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tVrrpMultipleOwners",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tVrrpMultipleOwners trap is generated when a VRRP virtual",
+				"router instance that has been configured as an owner notices that",
+				"that another VRRP instance is also advertising itself as an owner."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tVrrpMultipleOwners",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Multiple owner detected on VRRP"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tVrrpMultipleOwners TIMETRA-VRRP-MIB::tVrrpRtrMasterLastSeen t 31536000",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tVrrpMultipleOwners",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The value for tVrrpRtrMasterLastSeen indicates the sysUpTime",
+							"when the master was last seen by this virtual router instance. In ",
+							"other words it is the timestamp of the last advertisement message ",
+							"that was received from that master."
+						],
+						"name" : "TIMETRA-VRRP-MIB::tVrrpRtrMasterLastSeen",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.1.9.1.3",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tVrrpRouterAdvNotActivated",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tVrrpRouterAdvNotActivated trap is generated when the parent",
+				"interface of the IPv6 virtual router instance is either not set",
+				"to send out Router Advertisement or the Router Advertisement is",
+				"not configured to use the virtual MAC address. The virtual router",
+				"instance is not allowed to become operationally 'up'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tVrrpRouterAdvNotActivated",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "VRRP router advertisement not activated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tVrrpRouterAdvNotActivated TIMETRA-VRRP-MIB::tVrrpOpState i 1",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tVrrpRouterAdvNotActivated",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tVrrpOpState indicates the operational state ",
+							"of the VRRP virtual router instance."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-VRRP-MIB::tVrrpOpState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.1.7.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-VRRP-MIB::tVrrpRouterAdvNotActivatedClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tVrrpRouterAdvNotActivatedClear trap is generated when a",
+				"previously occurring tVrrpRouterAdvNotActivated trap has been cleared.",
+				"The tVrrpRouterAdvNotActivatedClear trap is generated when either:",
+				"- the parent interface of the IPv6 virtual router instance is set to",
+				"send out Router Advertisement, and Router Advertisement is",
+				"configured to user virtual MAC, or",
+				"- the virtual router instance is no longer attempting to become active",
+				"(e.g. the virtual-router is administratively shutdown)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tVrrpRouterAdvNotActivated",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "VRRP router advertisement activated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-VRRP-MIB::tVrrpRouterAdvNotActivatedClear TIMETRA-VRRP-MIB::tVrrpOpState i 1",
+			"trap" : {
+				"name" : "TIMETRA-VRRP-MIB::tVrrpRouterAdvNotActivatedClear",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.20.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tVrrpOpState indicates the operational state ",
+							"of the VRRP virtual router instance."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-VRRP-MIB::tVrrpOpState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.20.1.7.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

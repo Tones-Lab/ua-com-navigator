@@ -1,0 +1,3541 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201512141710Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnL2PermanentButInactiveAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alarm raised when permanent layer 2 is switched on and the port has lost layer 2 synchron state (because of any reason)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnL2PermanentButInactiveAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'ISDN permanent layer 2 inactive alarm cleared' : 'ISDN permanent layer 2 inactive alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnL2PermanentButInactiveAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnL2PermanentButInactiveAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnL2PermanentButInactiveAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnRemotePowerFeedingFaultAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alarm raised when remote Power feeding fault is detect. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnRemotePowerFeedingFaultAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'ISDN remote power feeding fault cleared' : 'ISDN remote power feeding fault detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnRemotePowerFeedingFaultAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnRemotePowerFeedingFaultAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnRemotePowerFeedingFaultAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLineErrRate10E3Alarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"indicates that the threshold for BER 10-3 is crossed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnLineErrRate10E3Alarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'ISDN line error rate of 10^3 errors per second threshold alarm cleared' : 'ISDN line experiencing error rate of 10^3 errors per second threshold alarm'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineErrRate10E3Alarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineErrRate10E3Alarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLineErrRate10E3Alarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLineErrRate10E6Alarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"indicates that the threshold for BER 10-6 is crossed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnLineErrRate10E6Alarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'ISDN line error rate of 10^6 errors per second threshold alarm cleared' : 'ISDN line experiencing error rate of 10^6 errors per second threshold alarm'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineErrRate10E6Alarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineErrRate10E6Alarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLineErrRate10E6Alarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.1.5",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnActivationMissingAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"indicates that activation of access interface layer 1 can't be completed in 15 seconds due to some reason"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnActivationMissingAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'ISDN L1 activation missing alarm cleared' : 'ISDN L1 activation missing alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnActivationMissingAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnActivationMissingAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnActivationMissingAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.1.6",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnDeactivationMissingAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"indicates that dectivation of access interface layer 1 can't be completed in 1 seconds due to some reason."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnDeactivationMissingAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'ISDN L1 deactivation missing alarm cleared' : 'ISDN L1 deactivation missing alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnDeactivationMissingAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnDeactivationMissingAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnDeactivationMissingAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.1.7",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLostOfSigAndFrameInCoSideAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that access interface detects loss of framing alignment/signal level on the U-interface.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnLostOfSigAndFrameInCoSideAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'ISDN loss of signal and frame aligment alarm cleared' : 'ISDN loss of signal and frame alignment alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLostOfSigAndFrameInCoSideAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLostOfSigAndFrameInCoSideAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLostOfSigAndFrameInCoSideAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.1.8",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLostOfSigAndFrameOnTOrSTBusAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"indicates that NT1 detects loss of framing alignment/signal level on the S/T-interface.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnLostOfSigAndFrameOnTOrSTBusAlarm",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==2) ? 4 : (($v4==1) ? 5 : 3))"
+				},
+				"SubNode" : "Source:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'NT1 loss of frame or signal level on T/ST bus alarm cleared' : 'NT1 detects loss of frame or signal level on T/ST bus alarm'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLostOfSigAndFrameOnTOrSTBusAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLostOfSigAndFrameOnTOrSTBusAlarm SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLostOfSigAndFrameOnTOrSTBusAlarm",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.1.9",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnL1MaintenanceGlobalModifiedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the global error configuration modified successfully."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnL1MaintenanceGlobalModifiedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "ISDN global error configuration modified successfully on L1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnL1MaintenanceGlobalModifiedTrap SHE-ISDN-MIB::sheIsdnL1MaintenanceControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnL1Maintenanceber10e3Threshold u 8 SHE-ISDN-MIB::sheIsdnL1Maintenanceber10e6Threshold u 1",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnL1MaintenanceGlobalModifiedTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnL1MaintenanceControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.1.2.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold for BER 10-3 occurences in 1 second. ",
+							"BER=Bit Error Rate. BER is a unitless performance measure, expressed as a percentage number. ",
+							"BER 10-3 means that one bit error is detected in 1000 bits received.",
+							"",
+							"The treshold alarm will raise up if the configured number of occurences was reached during the 1 second intervall."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnL1Maintenanceber10e3Threshold",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The threshold for BER 10-6 occurences in 60 second. ",
+							"BER=Bit Error Rate. BER is a unitless performance measure, expressed as a percentage number. ",
+							"BER 10-6 means that one bit error is detected in 1000,000 bits received. ",
+							"",
+							"The treshold alarm will raise up if the configured number of occurences was reached during the 60 second intervall."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnL1Maintenanceber10e6Threshold",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.1.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLineTestForceActivatingTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that force activating is finished. ",
+				"REVISION HISTORY",
+				"R4.7.3M: Obsolete; replaced by sheIsdnLineTestForceActivatingResultAvailable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==0) ? 1 : (($v3==2 || $v3==3 || $v3==4) ? 3 : 2)"
+				},
+				"EventType" : "sheIsdnLineTestForceActivatingTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==0 || $v3==2 || $v3==3 || $v3==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==2) ? 2 : (($v3==4) ? 1 : (($v3==1) ? 4 : 3)))"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : {
+					"eval" : "($v3==0) ? 'ISDN line test force activation finished successfully' : 'ISDN line test force activation result: $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestForceActivatingTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnLineTestForceActivatingControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResult i 0",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestForceActivatingTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnLineTestForceActivatingControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResult i 1"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLineTestForceActivatingTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command).",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: Obsolete"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestForceActivatingControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.1.2.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Forced-activation result.",
+							"Forced-activation is a test for verifying the layer 1 functionality of the access to the subscriber network after subscriber network installation. ",
+							"The test will be done in several steps. Firstly, put the layer 1 inactive. Secondly, try to activate the layer 1. Finally, put layer 1 inactive again. ",
+							"If any step failed, the access layer 1 of the interface is regarded as malfunction. Otherwise, operational. "
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "failed",
+							"2" : "performing",
+							"3" : "canceled",
+							"4" : "none",
+							"5" : "activatingFail",
+							"6" : "deactivatingFail",
+							"7" : "sendPatternFail",
+							"8" : "receivePatternFail"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.1.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLineTestLoopTestTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that loop test is finished.",
+				"REVISION HISTORY",
+				"R4.7.3M: Obsolete; replaced by sheIsdnLineTestLoopTestResultAvailable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==0) ? 1 : (($v3==2 || $v3==3 || $v3==4) ? 3 : 2)"
+				},
+				"EventType" : "sheIsdnLineTestLoopTestTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==0 || $v3==2 || $v3==3 || $v3==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==2) ? 2 : (($v3==4) ? 1 : (($v3==1) ? 4 : 3)))"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : {
+					"eval" : "($v3==0) ? 'ISDN line test $v4 test finished successfully' : 'ISDN line test $v4 test result: $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestLoopTestTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnLineTestLoopTestControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnLineTestLoopResult i 0 SHE-ISDN-MIB::sheIsdnLineTestLoopMode i 0",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestLoopTestTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnLineTestLoopTestControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnLineTestLoopResult i 1 SHE-ISDN-MIB::sheIsdnLineTestLoopMode i 1"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLineTestLoopTestTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command).",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: Obsolete"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestLoopTestControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.2.2.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Loop test result."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "failed",
+							"2" : "performing",
+							"3" : "canceled",
+							"4" : "none",
+							"5" : "activatingFail",
+							"6" : "deactivatingFail",
+							"7" : "sendPatternFail",
+							"8" : "receivePatternFail"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestLoopResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Isdn line test loop mode. ",
+							"loop1: Internal loopback.",
+							"loop2: NT loopback. "
+						],
+						"enums" : {
+							"0" : "loop1",
+							"1" : "loop2"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestLoopMode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.2.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPortExternalTestModifiedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that external test mode is modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnPortExternalTestModifiedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : {
+					"eval" : "($v3==1) ? 'ISDN port external test mode deactivated' : 'ISDN port external test mode activated'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortExternalTestModifiedTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnLineTestExternalTestModeControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnLineTestExternalTestModeType i 0",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPortExternalTestModifiedTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.6.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command).",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: Obsolete"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestExternalTestModeControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.5.1.2.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The external test mode.",
+							"when switch the subscriber lines to the extern test bus, the external test mode will be active.",
+							"when switch the subscriber lines back from the external test bus, the external test mode is deactive. ",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: Obsolete"
+						],
+						"enums" : {
+							"0" : "active",
+							"1" : "deactive"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestExternalTestModeType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.5.1.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ISDN line test state of an interface has been modified by command or by NE.",
+				"REVISION HISTORY",
+				"R4.7.3M: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnLineTestRequestStateChanged",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "(($v1==0) ? 3 : 2)"
+				},
+				"SubNode" : "Port:$v6",
+				"Summary" : "ISDN line test request state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestRequestStateChanged SHE-ISDN-MIB::sheIsdnLineTestRequestStatePortTestState i 0 SHE-ISDN-MIB::sheIsdnLineTestRequestStatePortTestModeState i 1 SHE-ISDN-MIB::sheIsdnLineTestRequestStateCardTestState i 1 SHE-ISDN-MIB::sheIsdnLineTestRequestStateTestModeRemainingTime u 0 SHE-ISDN-MIB::sheIsdnLineTestRequestStateLastReqResultState i 0 SHE-ISDN-MIB::sheIsdnLineTestRequestStateCurrentTestedPort i 9999 SHE-ISDN-MIB::sheIsdnLineTestRequestStateLastInvokedTest i 0",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.7.1",
+				"variables" : [
+					{
+						"description" : [
+							"The ISDN line test state of this port.",
+							"",
+							"VALUES",
+							"noTestActivity(0) - no test activity. ",
+							"testRunning(2) - test running.",
+							"externalTestActive(3) - EXTERNAL TEST MODE has been activated on this port;",
+							"the subscriber line has been switched to the external ",
+							"test bus;",
+							"EXTERNAL TEST MODE may not be activated on any other ",
+							"port of the NE.",
+							"",
+							"Information about the previously run/requested test activities can be found in ",
+							"sheIsdnLineTestRequestStateLastReqResultState and result object for each test.",
+							"",
+							"RESTRICTIONS",
+							"The following restrictions apply:",
+							"1. Only a single port on each IU card can be under test at any one time.",
+							"Single ports on different IU cards may be under test at the same time.",
+							"Check the sheIsdnLineTestRequestStateCardTestState of the port ",
+							"to be tested for this pre-requisite. If this pre-requisite is not met, ",
+							"sheIsdnLineTestRequestStateCurrentTestedPort will deliver the ifIndex ",
+							"of the port on the same IU which is currently under test.",
+							"See also restriction 2) below.",
+							"2. Additionally only a single port can be configured to EXTERNAL TEST MODE on ",
+							"the NE at any one time. Ports on other IU cards may be under other tests",
+							"at the same time.",
+							"Check the sheIsdnLineTestRequestStateCurrentExternalTestPort of the port ",
+							"to be placed in EXTERNAL TEST MODE for this pre-requisite.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"enums" : {
+							"0" : "noTestActivity",
+							"2" : "testRunning",
+							"3" : "externalTestActive"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStatePortTestState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the state of the test mode for this port.",
+							"",
+							"VALUES",
+							"inactive(1) The port is currently not in test mode.",
+							"active(2) The port has been placed into test mode.",
+							"",
+							"NOTE:",
+							"A port can be optionally placed into 'test mode' that disables the port to allow the ",
+							"unconditional execution of one or more ISDN line tests.",
+							"The test mode state of a port can be activated and deactivate through invocation of the ",
+							"control requests activateTestMode (10) and deactivateTestMode (11) ",
+							"respectively.",
+							"",
+							"Test mode can be active on one port of an IU card only.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"enums" : {
+							"1" : "inactive",
+							"2" : "active"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStatePortTestModeState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The test status of IU card on which this port is located.",
+							"",
+							"Every port reports the state of ISDN line test on the card, on which it is located, ",
+							"to enable to test whether a ISDN line test request on this port can be accepted. ",
+							"",
+							"VALUES",
+							"noTestActivity(1) - no test is running on any port of this IU card;",
+							"test mode is not active on any port of this IU card ",
+							"and can therefore be activated on any port of this ",
+							"IU card.",
+							"",
+							"testModeActive(2) - test mode has been activated on one port of this IU ",
+							"card as reported by ",
+							"sheIsdnLineTestRequestStateCurrentTestedPort;",
+							"a test may be started on the port reported by",
+							"sheIsdnLineTestRequestStateCurrentTestedPort.",
+							"",
+							"testRunning(3) - a test is currently running on one port of this IU ",
+							"card as reported by ",
+							"sheIsdnLineTestRequestStateCurrentTestedPort;",
+							"no test can be started on this IU",
+							"",
+							"externalTestActive(4) - external test active.",
+							"",
+							"NOTE",
+							"Only a single port on each IU card can be under test at any one time.",
+							"Ports on different IU cards can be under test at the same time.",
+							"Check the corresponding sheIsdnLineTestRequestStateCardTestState of the port ",
+							"to be tested for this precondition.",
+							"If this precondition is not met, parameter sheIsdnLineTestRequestStateCurrentTestedPort ",
+							"will deliver the ifIndex of the port on the same IU which is currently under test.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"enums" : {
+							"1" : "noTestActivity",
+							"2" : "testModeActive",
+							"3" : "testRunning",
+							"4" : "externalTestActive"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateCardTestState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This parameter shows the remaining time the test mode is active on this port.",
+							"",
+							"SPECIAL VALUES",
+							"0 - test mode is not active ",
+							"either test mode has been deactivated or test mode has never been activated, ",
+							"since last restart.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateTestModeRemainingTime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The result for the last ISDN line test command invoked on the port (copy of ",
+							"sheIsdnLineTestRequestStateControlReqResult for that command).",
+							"",
+							"If no ISDN line test command has yet been invoked on the port the value will ",
+							"be isdnNoRequest(1). ",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"enums" : {
+							"0" : "isdnSuccess",
+							"1" : "isdnNoRequest",
+							"2" : "isdnFailed",
+							"3" : "isdnVoipNotInit",
+							"4" : "isdnMemAllocFailure",
+							"5" : "isdnDefProfileCreateFailure",
+							"6" : "isdnExceedMaxProfileNum",
+							"7" : "isdnExceedMaxVgwNum",
+							"8" : "isdnExceedMaxSlotNum",
+							"9" : "isdnInvalidParameter",
+							"10" : "isdnVgwMemberListNotEmpty",
+							"11" : "isdnProfileIsInUse",
+							"12" : "isdnDuplicatedIndex",
+							"13" : "isdnDuplicatedPort",
+							"14" : "isdnDuplicatedName",
+							"15" : "isdnTooLongName",
+							"16" : "isdnProfileEntryNotFound",
+							"17" : "isdnCannotDelDefProfile",
+							"18" : "isdnCannotModDefProfileName",
+							"19" : "isdnTableIsEmpty",
+							"20" : "isdnTableEntryNotFound",
+							"21" : "isdnMemberBelongsToOtherVgw",
+							"22" : "isdnTestOnGoing",
+							"23" : "isdnPortNotInTestStatus",
+							"24" : "isdnMaxLessThanMin",
+							"25" : "isdnDuplicatedIpAddress",
+							"26" : "isdnDuplicatedSlotIpHost",
+							"27" : "isdnIpHostGateWayFailed",
+							"28" : "isdnAdminNotInTestStatus",
+							"29" : "isdnDhcpNotSupported",
+							"30" : "isdnComExecStarted",
+							"31" : "isdnParaFaulty",
+							"32" : "isdnRequestBusy",
+							"33" : "isdnNull",
+							"34" : "isdnSetDataFailed",
+							"35" : "isdnAswTimeout",
+							"36" : "isdnCommandFailed",
+							"37" : "isdnCommandSuccessed",
+							"38" : "isdnResetPortnumInvalid",
+							"39" : "isdnResetPortOngoing",
+							"40" : "isdnOnlyOnePortCanBeExternal",
+							"41" : "isdnLineTestFailedNoAck",
+							"42" : "isdnLineTestFailedAckError",
+							"43" : "isdnLineTestPerforming",
+							"44" : "isdnLineTestCancelled",
+							"45" : "isdnLineTestNone",
+							"46" : "isdnLineTestStateSame",
+							"47" : "isdnLineTestExternalRelayIsActive",
+							"48" : "isdnPortIsAlreadyInReadyToTestStatus",
+							"49" : "isdnPortIsInBusyStatus",
+							"53" : "isdnLineTestHwFault",
+							"54" : "isdnLineTestFailedIuCardPulledOut",
+							"92" : "wrongIuOperState",
+							"93" : "wrongPortOperState",
+							"99" : "commandNotSupportedByRelease"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateLastReqResultState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This parameter will deliver the ifIndex of the port on the same IU card which ",
+							"is currently under test (test running or test mode active). ",
+							"",
+							"SPECIAL VALUES",
+							"0 - 'no port under test' (no test activity on this IU card).",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateCurrentTestedPort",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.2.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The last test invoked on this port.",
+							"",
+							"See sheIsdnLineTestRequestStatePortTestState for current test state.",
+							"",
+							"VALUES",
+							"none(0) - No test has been invoked",
+							"forceActivating(1) - The force activating test was the last test invoked on this port",
+							"loopTest(2) - The loop test was the last test invoked on this port",
+							"externalTest(3) - An external test was the last test invoked on this port",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "forceActivating",
+							"2" : "loopTest",
+							"3" : "externalTest"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateLastInvokedTest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.2.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateReqResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates the completion of a long running control request.",
+				"REVISION HISTORY",
+				"R4.7.3M: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==0 || $v4==37) ? 1 : (($v4==1 || $v4==3 || $v4==10 || $v4==11 || $v4==16 || $v4==17 || $v4==18 || $v4==20 || $v4==21 || $v4==22 || $v4==24 || $v4==28 || $v4==30 || $v4==32 || $v4==33 || $v4==39 || $v4==40 || $v4==43 || $v4==44 || $v4==45 || $v4==46 || $v4==47 || $v4==48 || $v4==49) ? 3 : 2)"
+				},
+				"EventType" : "sheIsdnLineTestRequestStateReqResult",
+				"ExpireTime" : {
+					"eval" : "($v4==0 || $v4==37 || $v4==1 || $v4==3 || $v4==10 || $v4==11 || $v4==16 || $v4==17 || $v4==18 || $v4==20 || $v4==21 || $v4==22 || $v4==24 || $v4==28 || $v4==30 || $v4==32 || $v4==33 || $v4==39 || $v4==40 || $v4==43 || $v4==44 || $v4==45 || $v4==46 || $v4==47 || $v4==48 || $v4==49) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==0 || $v4==37) ? 0 : (($v4==45) ? 1 : (($v4==1 || $v4==3 || $v4==10 || $v4==11 || $v4==16 || $v4==17 || $v4==18 || $v4==20 || $v4==21 || $v4==22 || $v4==24 || $v4==28 || $v4==30 || $v4==32 || $v4==33 || $v4==39 || $v4==40 || $v4==43 || $v4==44 || $v4==46 || $v4==47 || $v4==48 || $v4==49) ? 2 : (($v4==2 || $v4==4 || $v4==5 || $v4==6 || $v4==7 || $v4==8 || $v4==27 || $v4==31 || $v4==34 || $v4==36 || $v4==41 || $v4==42 || $v4==53) ? 4 : 3)))"
+				},
+				"SubNode" : "ifIndex:$v2",
+				"Summary" : "ISDN line test control request state result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestRequestStateReqResult SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlRequest i 1 SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlIndex i 9999 SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlStatus i 0 SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlReqResult i 0 SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlTimeStamp u 9999",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestRequestStateReqResult SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlRequest i 1 SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlIndex i 9999 SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlStatus i 0 SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlReqResult i 2 SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlTimeStamp u 9999"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateReqResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.8.1",
+				"variables" : [
+					{
+						"description" : [
+							"",
+							"startExternalTest (4): [NO_CONFIG-CHANGE]",
+							"-> To execute this command, the test mode must be activated for the chosen port",
+							"-> long-running command",
+							"NOTE: ONLY ONE PORT CAN BE SWITCHED TO EXTERNAL TEST MODE PER NE.",
+							"sheIsdnLineTestRequestStateControlIndex",
+							"NOTIFICATIONS",
+							"-> sheIsdnLineTestRequestStateReqResult",
+							"",
+							"stopExternalTest (5): [NO_CONFIG-CHANGE]",
+							"-> To execute this command, the test mode must be activated for the chosen port",
+							"-> long-running command",
+							"sheIsdnLineTestRequestStateControlIndex",
+							"NOTIFICATIONS",
+							"-> sheIsdnLineTestRequestStateReqResult",
+							"",
+							"startForceActivating (7): [NO_CONFIG-CHANGE]",
+							"-> To execute this command, the test mode must be activated for the chosen port",
+							"-> long-running command",
+							"sheIsdnLineTestRequestStateControlIndex",
+							"NOTIFICATIONS",
+							"-> sheIsdnLineTestRequestStateReqResult",
+							"-> sheIsdnLineTestForceActivatingResultAvailable",
+							"",
+							"startLoopTest (8): [NO_CONFIG-CHANGE]",
+							"-> To execute this command, the test mode must be activated for the chosen port",
+							"-> long-running command",
+							"sheIsdnLineTestRequestStateControlIndex",
+							"sheIsdnLineTestRequestStateControlLoopMode",
+							"NOTIFICATIONS",
+							"-> sheIsdnLineTestRequestStateReqResult",
+							"-> sheIsdnLineTestLoopTestResultAvailable",
+							"",
+							"activateTestMode (10): [NO_CONFIG-CHANGE]",
+							"-> To execute this command, the test mode must be activated for the chosen port",
+							"-> long-running command",
+							"sheIsdnLineTestRequestStateControlIndex",
+							"sheIsdnLineTestRequestStateControlForce",
+							"sheIsdnLineTestRequestStateControlTestModeTimeout",
+							"NOTIFICATIONS",
+							"-> sheIsdnLineTestRequestStateReqResult",
+							"",
+							"deactivateTestMode (11): [NO_CONFIG-CHANGE]",
+							"-> To execute this command, the test mode must be activated for the chosen port",
+							"-> long-running command",
+							"sheIsdnLineTestRequestStateControlIndex",
+							"NOTIFICATIONS",
+							"-> sheIsdnLineTestRequestStateReqResult",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New",
+							""
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"4" : "startExternalTest",
+							"5" : "stopExternalTest",
+							"7" : "startForceActivating",
+							"8" : "startLoopTest",
+							"10" : "activateTestMode",
+							"11" : "deactivateTestMode"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The interface index (ifIndex) of the ISDN port that is to be configured.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.3.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The status of a control request. ",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"enums" : {
+							"0" : "requestNone",
+							"1" : "requestIdle",
+							"2" : "requestBusy",
+							"3" : "requestPassed",
+							"4" : "requestFailed"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.3.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command. ",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"enums" : {
+							"0" : "isdnSuccess",
+							"1" : "isdnNoRequest",
+							"2" : "isdnFailed",
+							"3" : "isdnVoipNotInit",
+							"4" : "isdnMemAllocFailure",
+							"5" : "isdnDefProfileCreateFailure",
+							"6" : "isdnExceedMaxProfileNum",
+							"7" : "isdnExceedMaxVgwNum",
+							"8" : "isdnExceedMaxSlotNum",
+							"9" : "isdnInvalidParameter",
+							"10" : "isdnVgwMemberListNotEmpty",
+							"11" : "isdnProfileIsInUse",
+							"12" : "isdnDuplicatedIndex",
+							"13" : "isdnDuplicatedPort",
+							"14" : "isdnDuplicatedName",
+							"15" : "isdnTooLongName",
+							"16" : "isdnProfileEntryNotFound",
+							"17" : "isdnCannotDelDefProfile",
+							"18" : "isdnCannotModDefProfileName",
+							"19" : "isdnTableIsEmpty",
+							"20" : "isdnTableEntryNotFound",
+							"21" : "isdnMemberBelongsToOtherVgw",
+							"22" : "isdnTestOnGoing",
+							"23" : "isdnPortNotInTestStatus",
+							"24" : "isdnMaxLessThanMin",
+							"25" : "isdnDuplicatedIpAddress",
+							"26" : "isdnDuplicatedSlotIpHost",
+							"27" : "isdnIpHostGateWayFailed",
+							"28" : "isdnAdminNotInTestStatus",
+							"29" : "isdnDhcpNotSupported",
+							"30" : "isdnComExecStarted",
+							"31" : "isdnParaFaulty",
+							"32" : "isdnRequestBusy",
+							"33" : "isdnNull",
+							"34" : "isdnSetDataFailed",
+							"35" : "isdnAswTimeout",
+							"36" : "isdnCommandFailed",
+							"37" : "isdnCommandSuccessed",
+							"38" : "isdnResetPortnumInvalid",
+							"39" : "isdnResetPortOngoing",
+							"40" : "isdnOnlyOnePortCanBeExternal",
+							"41" : "isdnLineTestFailedNoAck",
+							"42" : "isdnLineTestFailedAckError",
+							"43" : "isdnLineTestPerforming",
+							"44" : "isdnLineTestCancelled",
+							"45" : "isdnLineTestNone",
+							"46" : "isdnLineTestStateSame",
+							"47" : "isdnLineTestExternalRelayIsActive",
+							"48" : "isdnPortIsAlreadyInReadyToTestStatus",
+							"49" : "isdnPortIsInBusyStatus",
+							"53" : "isdnLineTestHwFault",
+							"54" : "isdnLineTestFailedIuCardPulledOut",
+							"92" : "wrongIuOperState",
+							"93" : "wrongPortOperState",
+							"99" : "commandNotSupportedByRelease"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.3.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). ",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestRequestStateControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.2.3.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResultAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates the availability of an updated table entry.",
+				"REVISION HISTORY",
+				"R4.7.3M: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : (($v1==2 || $v1==3 || $v1==4) ? 3 : 2)"
+				},
+				"EventType" : "sheIsdnLineTestForceActivatingResultAvailable",
+				"ExpireTime" : {
+					"eval" : "($v1==0 || $v1==2 || $v1==3 || $v1==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : (($v1==2) ? 2 : (($v1==4) ? 1 : (($v1==1) ? 4 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'ISDN line test force activation successfull' : 'ISDN line test force activation result: $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResultAvailable SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResult i 0 SHE-ISDN-MIB::sheIsdnLineTestForceActivatingTimestamp u 9999",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResultAvailable SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResult i 1 SHE-ISDN-MIB::sheIsdnLineTestForceActivatingTimestamp u 9999"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResultAvailable",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.8.2",
+				"variables" : [
+					{
+						"description" : [
+							"Forced-activation result.",
+							"Forced-activation is a test for verifying the layer 1 functionality of the access to the subscriber network after subscriber network installation. ",
+							"The test will be done in several steps. Firstly, put the layer 1 inactive. Secondly, try to activate the layer 1. Finally, put layer 1 inactive again. ",
+							"If any step failed, the access layer 1 of the interface is regarded as malfunction. Otherwise, operational. "
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "failed",
+							"2" : "performing",
+							"3" : "canceled",
+							"4" : "none",
+							"5" : "activatingFail",
+							"6" : "deactivatingFail",
+							"7" : "sendPatternFail",
+							"8" : "receivePatternFail"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestForceActivatingResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.1.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Timestamp containing time when results of last ISDN line test force ",
+							"activating were written.",
+							"",
+							"NOTE:",
+							"Timestamp represents seconds since 1970-01-01T00:00:00+00:00.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestForceActivatingTimestamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.1.1.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnLineTestLoopTestResultAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates the availability of an updated table entry.",
+				"REVISION HISTORY",
+				"R4.7.3M: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : (($v1==2 || $v1==3 || $v1==4) ? 3 : 2)"
+				},
+				"EventType" : "sheIsdnLineTestLoopTestResultAvailable",
+				"ExpireTime" : {
+					"eval" : "($v1==0 || $v1==2 || $v1==3 || $v1==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : (($v1==2) ? 2 : (($v1==4) ? 1 : (($v1==1) ? 4 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'ISDN line test loop test successfull' : 'ISDN line test loop test result: $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestLoopTestResultAvailable SHE-ISDN-MIB::sheIsdnLineTestLoopResult i 0 SHE-ISDN-MIB::sheIsdnLineTestLoopTestTimestamp u 9999",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnLineTestLoopTestResultAvailable SHE-ISDN-MIB::sheIsdnLineTestLoopResult i 2 SHE-ISDN-MIB::sheIsdnLineTestLoopTestTimestamp u 9999"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnLineTestLoopTestResultAvailable",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.7.8.3",
+				"variables" : [
+					{
+						"description" : [
+							"Loop test result."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "failed",
+							"2" : "performing",
+							"3" : "canceled",
+							"4" : "none",
+							"5" : "activatingFail",
+							"6" : "deactivatingFail",
+							"7" : "sendPatternFail",
+							"8" : "receivePatternFail"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestLoopResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Timestamp containing time when results of last ISDN line loop test were written.",
+							"",
+							"NOTE:",
+							"Timestamp represents seconds since 1970-01-01T00:00:00+00:00.",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: New"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnLineTestLoopTestTimestamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.2.3.2.1.1.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPortConfigModifiedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that sheIsdnPortConfigEntry is modified successfully"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnPortConfigModifiedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "ISDN port configuration modified successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortConfigModifiedTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortConfigPptpProfileId u 1 SHE-ISDN-MIB::sheIsdnPortConfigPowerFeedingStatus i 0 SHE-ISDN-MIB::sheIsdnPortConfigPortType i 0 SHE-ISDN-MIB::sheIsdnPortConfigPortProfileId u 1 SHE-ISDN-MIB::sheIsdnPortConfigPortQuitMode i 1 SHE-ISDN-MIB::sheIsdnPortConfigControlIfindexBitMask s EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAM",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPortConfigModifiedTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.2.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The pptp profile id for a port."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigPptpProfileId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.1.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Actual port power feeding status."
+						],
+						"enums" : {
+							"0" : "okay",
+							"1" : "off",
+							"2" : "overload",
+							"3" : "openCircuit"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigPowerFeedingStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"ISDN Port Type(Bri/Pri) ",
+							"Bri = Basic rate interface.",
+							"Pri = Primary rate interface.",
+							"The default value is bri(1)."
+						],
+						"enums" : {
+							"0" : "bri",
+							"1" : "pri"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigPortType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The profile id for a port. ",
+							"When port type is bri, the port profile id is Bri profile id. ",
+							"When port type is pri, the port profile id is Pri profile id. ",
+							""
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigPortProfileId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.1.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Termination quitting mode, configured to either graceful or forced.",
+							"",
+							"New with R4.7M."
+						],
+						"enums" : {
+							"1" : "graceful",
+							"2" : "forced"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigPortQuitMode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A bit-mask indicating which ifIndices the control request is to apply to.",
+							"",
+							"The bit-mask is in the form of an Octet String of size 256 octets (2048 bits). ",
+							"Each bit represents a value of an ifIndex in the range 0..2047 beginning from ",
+							"bit 0 in Octet 1 (ifIndex=0) to bit 7 in Octet 256 (ifIndex=2047).",
+							"",
+							"The octet for a given ifIndex is given by use of integer division as follows:",
+							"(ifIndex\\8)+1",
+							"",
+							"The bit number within the octet calculated above is then given by ",
+							"ifIndex MOD 8",
+							"",
+							"E.g., for ifIndex = 101:",
+							"octet = 101+1\\8 = 13",
+							"bit = ifIndex MOD 8 = 5",
+							"",
+							"Valid values for ifIndex (and corresponding bits) depends on ",
+							"- number of slots supported by the NE",
+							"- which slots (IU cards) are applicable to the control request",
+							"- the number of supported ports on the card.",
+							"",
+							"For ISDN cards with 32 ports, only the following ifIndex values would be valid: ",
+							"(101..132), (201..232),..."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigControlIfindexBitMask",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPortResetTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates isdn port reset finished"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==0) ? 1 : (($v3==1) ? 2 : 3)"
+				},
+				"EventType" : "sheIsdnPortResetTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==1) ? 4 : 2)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "ISDN port reset result: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortResetTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortConfigResetResult i 0",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortResetTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortConfigResetResult i 1"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPortResetTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.2.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The reset result of resetting the ISDN line towards the NTBA. Only the value 0 is significative. "
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "failed",
+							"2" : "performing"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigResetResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPortPowerFeedChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send trap to indicate the port power feeding state changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==0) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnPortPowerFeedChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==3) ? 3 : 4)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "ISDN port power feeding state changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortPowerFeedChangeTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortConfigPowerFeedingStatus i 0",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortPowerFeedChangeTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortConfigPowerFeedingStatus i 1"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPortPowerFeedChangeTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.3",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.2.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Actual port power feeding status."
+						],
+						"enums" : {
+							"0" : "okay",
+							"1" : "off",
+							"2" : "overload",
+							"3" : "openCircuit"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigPowerFeedingStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPortLayer2Events",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send trap to indicate the port layer 2 events occur."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnPortLayer2Events:$v3",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "ISDN port layer 2 ($v3) event occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortLayer2Events IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnChannelL2EventsType i 0",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortLayer2Events IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnChannelL2EventsType i 1"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPortLayer2Events",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.4",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.2.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Values 3..17 represent the error codes A..O from ETS 300 125, appendix II, Table II-1/Q.921. ",
+							"These will be reported as events, i.e not alarms. In detail:",
+							"Value 3 means error code 'A'",
+							"Value 4 means error code 'B'",
+							"Value 5 means error code 'C'",
+							"Value 6 means error code 'D'",
+							"Value 7 means error code 'E'",
+							"Value 8 means error code 'F'",
+							"Value 9 means error code 'G'",
+							"Value 10 means error code 'H'",
+							"Value 11 means error code 'I'",
+							"Value 12 means error code 'J'",
+							"Value 13 means error code 'K'",
+							"Value 14 means error code 'L'",
+							"Value 15 means error code 'M'",
+							"Value 16 means error code 'N'",
+							"Value 17 means error code 'O'",
+							"Value 0 means no error code"
+						],
+						"enums" : {
+							"0" : "errorCodeNone",
+							"3" : "errorCodeA",
+							"4" : "errorCodeB",
+							"5" : "errorCodeC",
+							"6" : "errorCodeD",
+							"7" : "errorCodeE",
+							"8" : "errorCodeF",
+							"9" : "errorCodeG",
+							"10" : "errorCodeH",
+							"11" : "errorCodeI",
+							"12" : "errorCodeJ",
+							"13" : "errorCodeK",
+							"14" : "errorCodeL",
+							"15" : "errorCodeM",
+							"16" : "errorCodeN",
+							"17" : "errorCodeO"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnChannelL2EventsType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.4.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnBriProfileCreateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that a Bri profile is created. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnBriProfileCreateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BriProfileIndex:$v2",
+				"Summary" : "ISDN BRI profile $v3 created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnBriProfileCreateTrap SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortBriProfileIndex u 1 SHE-ISDN-MIB::sheIsdnPortBriProfileName s EXAMPLE SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateIfType i 75 SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateIfMode i 1 SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateLineTopology i 0 SHE-ISDN-MIB::sheIsdnPortBriProfileL1PermanentActive i 0 SHE-ISDN-MIB::sheIsdnPortBriProfileL2PermanentActive i 0 SHE-ISDN-MIB::sheIsdnPortBriProfileL2ReEstablishInterval u 9999 SHE-ISDN-MIB::sheIsdnPortBriProfilePowerFeedingConfig i 0",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnBriProfileCreateTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.5",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.2.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Index for Bri profile."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A descriptional name that uniquely identifies a profile entry of this table"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The physical interface type. For 'S/T' interfaces",
+							"also called 'Four-wire Basic Access Interface'",
+							"the value of this object is isdns(75).",
+							"For 'U' interfaces, also called 'Two-wire Basic",
+							"Access Interface', the value of this object is isdnu(76).",
+							"on MSAN, it must be isdnu"
+						],
+						"enums" : {
+							"75" : "isdns",
+							"76" : "isdnu"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateIfType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The physical interface mode. ",
+							"For TE mode, the value of this object is te(1).",
+							"For NT mode, the value of this object is nt(2) - MSAN will always use this mode. "
+						],
+						"enums" : {
+							"1" : "te",
+							"2" : "nt"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateIfMode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The line topology to be used for this interface.",
+							"Note that setting isdnBasicRateIfType to isdns(75)",
+							"does not necessarily mean a line topology of ",
+							"point-to-multipoint."
+						],
+						"enums" : {
+							"0" : "pointToPoint",
+							"1" : "pointToMultipoint"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateLineTopology",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of ISDN port Layer-1, If 'permanent layer1' is configured for a specific port, the deactivation Layer-1",
+							"primitive will be discarded."
+						],
+						"enums" : {
+							"0" : "nonPermanent",
+							"1" : "permanent"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileL1PermanentActive",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of the ISDN port Layer-2."
+						],
+						"enums" : {
+							"0" : "nonPermanent",
+							"1" : "permanent"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileL2PermanentActive",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Timer describing the time between two L2 reestablishment request, ",
+							"if in L2 permanent mode."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileL2ReEstablishInterval",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Config of port power feeding status."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfilePowerFeedingConfig",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnBriProfileModifyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that a Bri profile is modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnBriProfileModifyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BriProfileIndex:$v2",
+				"Summary" : "ISDN BRI profile $v3 modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnBriProfileModifyTrap SHE-ISDN-MIB::sheIsdnPortBriProfileCtrlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortBriProfileIndex u 1 SHE-ISDN-MIB::sheIsdnPortBriProfileName s EXAMPLE SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateIfType i 75 SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateIfMode i 1 SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateLineTopology i 0 SHE-ISDN-MIB::sheIsdnPortBriProfileL1PermanentActive i 0 SHE-ISDN-MIB::sheIsdnPortBriProfileL2PermanentActive i 0 SHE-ISDN-MIB::sheIsdnPortBriProfileL2ReEstablishInterval u 9999 SHE-ISDN-MIB::sheIsdnPortBriProfilePowerFeedingConfig i 0",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnBriProfileModifyTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.6",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileCtrlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.6.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Index for Bri profile."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A descriptional name that uniquely identifies a profile entry of this table"
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The physical interface type. For 'S/T' interfaces",
+							"also called 'Four-wire Basic Access Interface'",
+							"the value of this object is isdns(75).",
+							"For 'U' interfaces, also called 'Two-wire Basic",
+							"Access Interface', the value of this object is isdnu(76).",
+							"on MSAN, it must be isdnu"
+						],
+						"enums" : {
+							"75" : "isdns",
+							"76" : "isdnu"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateIfType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The physical interface mode. ",
+							"For TE mode, the value of this object is te(1).",
+							"For NT mode, the value of this object is nt(2) - MSAN will always use this mode. "
+						],
+						"enums" : {
+							"1" : "te",
+							"2" : "nt"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateIfMode",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The line topology to be used for this interface.",
+							"Note that setting isdnBasicRateIfType to isdns(75)",
+							"does not necessarily mean a line topology of ",
+							"point-to-multipoint."
+						],
+						"enums" : {
+							"0" : "pointToPoint",
+							"1" : "pointToMultipoint"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileBasicRateLineTopology",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of ISDN port Layer-1, If 'permanent layer1' is configured for a specific port, the deactivation Layer-1",
+							"primitive will be discarded."
+						],
+						"enums" : {
+							"0" : "nonPermanent",
+							"1" : "permanent"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileL1PermanentActive",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of the ISDN port Layer-2."
+						],
+						"enums" : {
+							"0" : "nonPermanent",
+							"1" : "permanent"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileL2PermanentActive",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Timer describing the time between two L2 reestablishment request, ",
+							"if in L2 permanent mode."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileL2ReEstablishInterval",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Config of port power feeding status."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfilePowerFeedingConfig",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnBriProfileDeleteTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that a Bri profile is deleted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnBriProfileDeleteTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "BriProfileIndex:$v2",
+				"Summary" : "ISDN BRI profile deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnBriProfileDeleteTrap SHE-ISDN-MIB::sheIsdnPortBriProfileCtrlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortBriProfileIndex u 1",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnBriProfileDeleteTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.7",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileCtrlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.6.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Index for Bri profile."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortBriProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.5.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPptpProfileCreateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that a pptp profile is created. ",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnPptpProfileCreateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PptpProfileIndex:$v2",
+				"Summary" : "ISDN PPTP profile $v3 created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPptpProfileCreateTrap SHE-ISDN-MIB::sheIsdnPortPptpProfileCtrlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortPptpProfileIndex u 1 SHE-ISDN-MIB::sheIsdnPortPptpProfileName s EXAMPLE SHE-ISDN-MIB::sheIsdnPortPptpProfilePortIGain i -140 SHE-ISDN-MIB::sheIsdnPortPptpProfilePortOGain i -140 SHE-ISDN-MIB::sheIsdnPortPptpProfilePortFaxlvl u 0 SHE-ISDN-MIB::sheIsdnPortPptpProfileEC i 0",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPptpProfileCreateTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.8",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileCtrlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.8.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Index for Pptp profile."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A descriptional name that uniquely identifies a profile entry of this table."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"ITUT: Gain control, or usage of signal level adaptation and ",
+							"noise level reduction is used to adapt the level of the signal. ",
+							"However, it is necessary, for example for modem calls, to turn ",
+							"off this function.",
+							"Input volume of AGLU port. Unit:0.1db",
+							"[value range] value =<-140 ~ 60> (default : 0)",
+							""
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfilePortIGain",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Output volume of AGLU port. Unit:0.1db",
+							"[value range]value =<-140 ~ 60> (default : 0)",
+							""
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfilePortOGain",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fax volume of AGLU port is used to set the transmit level in T.38 ",
+							"fax relay mode.The level is expressed in 1dBm steps, within the",
+							"range of 0.. 15. The default value is 10 , which corresponds to a",
+							"transmit level of 10dBm. ",
+							"[value range]NUM = Volume value : level 0 ~ level 15",
+							""
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfilePortFaxlvl",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Use of Echo Canceler and level, for modem/fax call, this attribute",
+							"must be set to 0.",
+							"[value index ] ",
+							"-off(0) : Echo Canceler is turned off. ",
+							"-on(1..16) : Echo Canceler is turned on when the ",
+							"echo cancellation is requested. ",
+							"(step: 8 msec, default:8) "
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileEC",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPptpProfileModifyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that a pptp profile is modified. ",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnPptpProfileModifyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PptpProfileIndex:$v2",
+				"Summary" : "ISDN PPTP profile $v3 modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPptpProfileModifyTrap SHE-ISDN-MIB::sheIsdnPortPptpProfileCtrlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortPptpProfileIndex u 1 SHE-ISDN-MIB::sheIsdnPortPptpProfileName s EXAMPLE SHE-ISDN-MIB::sheIsdnPortPptpProfilePortIGain i -140 SHE-ISDN-MIB::sheIsdnPortPptpProfilePortOGain i -140 SHE-ISDN-MIB::sheIsdnPortPptpProfilePortFaxlvl u 0 SHE-ISDN-MIB::sheIsdnPortPptpProfileEC i 0",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPptpProfileModifyTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.9",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileCtrlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.8.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Index for Pptp profile."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A descriptional name that uniquely identifies a profile entry of this table."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"ITUT: Gain control, or usage of signal level adaptation and ",
+							"noise level reduction is used to adapt the level of the signal. ",
+							"However, it is necessary, for example for modem calls, to turn ",
+							"off this function.",
+							"Input volume of AGLU port. Unit:0.1db",
+							"[value range] value =<-140 ~ 60> (default : 0)",
+							""
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfilePortIGain",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Output volume of AGLU port. Unit:0.1db",
+							"[value range]value =<-140 ~ 60> (default : 0)",
+							""
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfilePortOGain",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Fax volume of AGLU port is used to set the transmit level in T.38 ",
+							"fax relay mode.The level is expressed in 1dBm steps, within the",
+							"range of 0.. 15. The default value is 10 , which corresponds to a",
+							"transmit level of 10dBm. ",
+							"[value range]NUM = Volume value : level 0 ~ level 15",
+							""
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfilePortFaxlvl",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Use of Echo Canceler and level, for modem/fax call, this attribute",
+							"must be set to 0.",
+							"[value index ] ",
+							"-off(0) : Echo Canceler is turned off. ",
+							"-on(1..16) : Echo Canceler is turned on when the ",
+							"echo cancellation is requested. ",
+							"(step: 8 msec, default:8) "
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileEC",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPptpProfileDeleteTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that a pptp profile is deleted.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheIsdnPptpProfileDeleteTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PptpProfileIndex:$v2",
+				"Summary" : "ISDN PPTP profile deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPptpProfileDeleteTrap SHE-ISDN-MIB::sheIsdnPortPptpProfileCtrlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortPptpProfileIndex u 1",
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPptpProfileDeleteTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.10",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileCtrlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.8.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Index for Pptp profile."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortPptpProfileIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.7.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnChannelBearerTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates when Bearer Channel value changed. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : (($v3==0) ? 3 : 2)"
+				},
+				"EventType" : "sheIsdnChannelBearerTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : (($v3==0) ? 2 : 4)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "ISDN channel bearer operational status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnChannelBearerTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnChannelBearerChannelID u 1 SHE-ISDN-MIB::sheIsdnChannelBearerOperStatus i 0",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnChannelBearerTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnChannelBearerChannelID u 1 SHE-ISDN-MIB::sheIsdnChannelBearerOperStatus i 1"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnChannelBearerTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.12",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The channel ID specified each B channel in Isdn port.",
+							"Second table index.",
+							"For Bri the range should be 1 to 2. ",
+							"For Pri the range should be 1 to 30. "
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnChannelBearerChannelID",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"operational port status for each B channel."
+						],
+						"enums" : {
+							"0" : "released",
+							"1" : "disconnect",
+							"2" : "connect"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnChannelBearerOperStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnChannelLapdTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates when Lapd Channel value changed. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "sheIsdnChannelLapdTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==0) ? 4 : 3)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "LAPD channel operational status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnChannelLapdTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnChannelLapdOperStatus i 0",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnChannelLapdTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnChannelLapdOperStatus i 1"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnChannelLapdTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.13",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The operational status of this interface:",
+							"",
+							"inactive: all layers are inactive.",
+							"l1Active: layer 1 is activated,layer 2 datalink not established",
+							"l2Active: layer 1 is activated,layer 2 datalink established."
+						],
+						"enums" : {
+							"0" : "inactive",
+							"1" : "l1Active",
+							"2" : "l2Active"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnChannelLapdOperStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.4.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-ISDN-MIB::sheIsdnPortConfigStatusChangedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that sheIsdnPortConfigEntry teststatus is modified successfully"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 1 : (($v4==2) ? 3 : 2)"
+				},
+				"EventType" : "sheIsdnPortConfigStatusChangedTrap",
+				"ExpireTime" : {
+					"eval" : "($v4==1 || $v4==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 0 : (($v4==2) ? 2 : 4)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "ISDN port configuration operational status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortConfigStatusChangedTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlIfindexBitMask s EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAM SHE-ISDN-MIB::sheIsdnPortConfigOperStatus i 0",
+				"$SNMPTRAPCMD SHE-ISDN-MIB::sheIsdnPortConfigStatusChangedTrap IF-MIB::ifIndex i 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp u 9999 SHE-ISDN-MIB::sheIsdnPortConfigControlIfindexBitMask s EXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAMPLEEXAM SHE-ISDN-MIB::sheIsdnPortConfigOperStatus i 1"
+			],
+			"trap" : {
+				"name" : "SHE-ISDN-MIB::sheIsdnPortConfigStatusChangedTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.3.4.14",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.2.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A bit-mask indicating which ifIndices the control request is to apply to.",
+							"",
+							"The bit-mask is in the form of an Octet String of size 256 octets (2048 bits). ",
+							"Each bit represents a value of an ifIndex in the range 0..2047 beginning from ",
+							"bit 0 in Octet 1 (ifIndex=0) to bit 7 in Octet 256 (ifIndex=2047).",
+							"",
+							"The octet for a given ifIndex is given by use of integer division as follows:",
+							"(ifIndex\\8)+1",
+							"",
+							"The bit number within the octet calculated above is then given by ",
+							"ifIndex MOD 8",
+							"",
+							"E.g., for ifIndex = 101:",
+							"octet = 101+1\\8 = 13",
+							"bit = ifIndex MOD 8 = 5",
+							"",
+							"Valid values for ifIndex (and corresponding bits) depends on ",
+							"- number of slots supported by the NE",
+							"- which slots (IU cards) are applicable to the control request",
+							"- the number of supported ports on the card.",
+							"",
+							"For ISDN cards with 32 ports, only the following ifIndex values would be valid: ",
+							"(101..132), (201..232),..."
+						],
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigControlIfindexBitMask",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Operational status for an isdn port.",
+							""
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "up",
+							"2" : "testing",
+							"3" : "fault"
+						},
+						"name" : "SHE-ISDN-MIB::sheIsdnPortConfigOperStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.25.1.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

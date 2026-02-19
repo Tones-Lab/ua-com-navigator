@@ -1,0 +1,62 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201009080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-LWAPP-MESH-BATTERY-MIB::ciscoLwappMeshBatteryAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent by the agent when the value of",
+				"clMeshNodeBatteryStatus has been changed from 'normal' to",
+				"one of the abnormal values ('overloaded', 'low', 'acfail'",
+				"'replace', 'missing')."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 2) ? 1 : (($v2 == 3) ? 2 : 3)"
+				},
+				"EventType" : "ciscoLwappMeshBatteryAlarm",
+				"ExpireTime" : {
+					"eval" : "($v2 == 2) ? 3600 : (($v2 == 3) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 2) ? 0 : (($v2 == 3) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Mesh node battery has changed status to $v2."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-MESH-BATTERY-MIB::ciscoLwappMeshBatteryAlarm CISCO-LWAPP-AP-MIB::cLApName s EXAMPLE CISCO-LWAPP-MESH-BATTERY-MIB::clMeshNodeBatteryStatus i 1",
+			"trap" : {
+				"name" : "CISCO-LWAPP-MESH-BATTERY-MIB::ciscoLwappMeshBatteryAlarm",
+				"oid" : "1.3.6.1.4.1.9.9.620.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-LWAPP-AP-MIB::cLApName",
+						"oid" : "1.3.6.1.4.1.9.9.513.1.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "normal",
+							"3" : "overloaded",
+							"4" : "low",
+							"5" : "acfail",
+							"6" : "replace",
+							"7" : "missing"
+						},
+						"name" : "CISCO-LWAPP-MESH-BATTERY-MIB::clMeshNodeBatteryStatus",
+						"oid" : "1.3.6.1.4.1.9.9.620.1.1.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,193 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200212020000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ALU-POWER-ETHERNET-MIB::pethPsePortOnOffNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This Notification indicates if Pse Port is delivering or",
+				"not power to the PD. This Notification SHOULD be sent on",
+				"every status change except in the searching mode."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pethPsePortOnOffNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "PSE port status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALU-POWER-ETHERNET-MIB::pethPsePortOnOffNotification ALU-POWER-ETHERNET-MIB::pethPsePortDetectionStatus i 1",
+			"trap" : {
+				"name" : "ALU-POWER-ETHERNET-MIB::pethPsePortOnOffNotification",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.27.999.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Describes the operational status of the port PD detection.",
+							"A value of disabled(1)- indicates that the PSE State diagram is in",
+							"the state IDLE",
+							"A value of searching(2)- indicates that the PSE State diagram is in",
+							"the state DETECTION, CLASSIFICATION, SIGNATURE_INVALID or BACKOFF.",
+							"A value of deliveringPower(4) - indicates that the PSE State diagram",
+							"is in the state POWER_UP, POWER_ON or POWER_OFF.",
+							"A value of fault(5) - indicates that the PSE State diagram is in the",
+							"state TEST_ERROR or the state IDLE due to the variable error",
+							"condition.",
+							"Faults detected are vendor specific.",
+							"A value of test(7) - indicates that the PSE State diagram is in the",
+							"state TEST_MODE.",
+							"A value of denyLowPriority(8) indicates that the port was",
+							"disabled by the power management system, in order to keep",
+							"active higher priority ports.",
+							""
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "searching",
+							"4" : "deliveringPower",
+							"5" : "fault",
+							"7" : "test",
+							"8" : "denyLowPriority"
+						},
+						"name" : "ALU-POWER-ETHERNET-MIB::pethPsePortDetectionStatus",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.27.999.1.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALU-POWER-ETHERNET-MIB::pethPsePortPowerMaintenanceStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This Notification indicates a Port Change Status and it",
+				"SHOULD be sent on every status change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "pethPsePortPowerMaintenanceStatusNotification",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PSE status change is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALU-POWER-ETHERNET-MIB::pethPsePortPowerMaintenanceStatusNotification ALU-POWER-ETHERNET-MIB::pethPsePortPowerMaintenanceStatus i 1",
+			"trap" : {
+				"name" : "ALU-POWER-ETHERNET-MIB::pethPsePortPowerMaintenanceStatusNotification",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.27.999.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value ok(1) indicates the Power Maintenance",
+							"Signature is present and the overcurrent condition has not been",
+							"detected.",
+							"The value overCurrent (2) indicates an overcurrent condition",
+							"has been detected.",
+							"The value mPSAbsent(3) indicates that the Power Maintenance",
+							"Signature is absent."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "underCurrent",
+							"3" : "mPSAbsent"
+						},
+						"name" : "ALU-POWER-ETHERNET-MIB::pethPsePortPowerMaintenanceStatus",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.27.999.1.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALU-POWER-ETHERNET-MIB::pethMainPowerUsageOnNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This Notification indicate PSE Threshold usage indication is",
+				"on, the usage power is above the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "pethMainPowerUsageNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "PSE threshold usage is ON because usage power is above threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALU-POWER-ETHERNET-MIB::pethMainPowerUsageOnNotification ALU-POWER-ETHERNET-MIB::pethMainPseConsumptionPower u 9999",
+			"trap" : {
+				"name" : "ALU-POWER-ETHERNET-MIB::pethMainPowerUsageOnNotification",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.27.999.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Measured usage power expressed in Watts."
+						],
+						"name" : "ALU-POWER-ETHERNET-MIB::pethMainPseConsumptionPower",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.27.999.1.3.1.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALU-POWER-ETHERNET-MIB::pethMainPowerUsageOffNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				" This Notification indicate PSE Threshold usage indication",
+				"off, the usage power is below the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "pethMainPowerUsageNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "PSE threshold usage is OFF because usage power is below threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALU-POWER-ETHERNET-MIB::pethMainPowerUsageOffNotification ALU-POWER-ETHERNET-MIB::pethMainPseConsumptionPower u 9999",
+			"trap" : {
+				"name" : "ALU-POWER-ETHERNET-MIB::pethMainPowerUsageOffNotification",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.27.999.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Measured usage power expressed in Watts."
+						],
+						"name" : "ALU-POWER-ETHERNET-MIB::pethMainPseConsumptionPower",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.27.999.1.3.1.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

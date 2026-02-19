@@ -1,0 +1,83 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "Brcm-BASPTrap-MIB::failoverEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated to indicate that adapter Fail-Over ",
+				"event has occured"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : 2"
+				},
+				"EventType" : "failoverEvent",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : 3"
+				},
+				"SubNode" : "trapAdapterName:$v1",
+				"Summary" : {
+					"eval" : "($v3==1) ? 'Adapteris active' : 'Adapterfailover occured because of $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Brcm-BASPTrap-MIB::failoverEvent Brcm-BASPTrap-MIB::trapAdapterName s EXAMPLE Brcm-BASPTrap-MIB::trapTeamName s EXAMPLE Brcm-BASPTrap-MIB::trapCauseDirection i 1 Brcm-BASPTrap-MIB::trapAdapterActivityCause i 1",
+			"trap" : {
+				"name" : "Brcm-BASPTrap-MIB::failoverEvent",
+				"oid" : "1.3.6.1.4.1.4413.1.2.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The adapter name."
+						],
+						"name" : "Brcm-BASPTrap-MIB::trapAdapterName",
+						"oid" : "1.3.6.1.4.1.4413.1.2.3.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The team name."
+						],
+						"name" : "Brcm-BASPTrap-MIB::trapTeamName",
+						"oid" : "1.3.6.1.4.1.4413.1.2.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Event caused by failover condition."
+						],
+						"enums" : {
+							"1" : "adapterActive",
+							"2" : "adapterInactive"
+						},
+						"name" : "Brcm-BASPTrap-MIB::trapCauseDirection",
+						"oid" : "1.3.6.1.4.1.4413.1.2.3.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Addition explanation for the Event trapCauseDirection."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "linkChange",
+							"3" : "adapterEnabledOrDisabled",
+							"4" : "adapterAddedOrRemoved"
+						},
+						"name" : "Brcm-BASPTrap-MIB::trapAdapterActivityCause",
+						"oid" : "1.3.6.1.4.1.4413.1.2.3.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

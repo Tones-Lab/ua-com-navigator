@@ -1,0 +1,2114 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "EMPIRE::monitorTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Monitor event has occurred. Recall a",
+				"monitor event occurs when a Monitor Table row",
+				"expression evaluates to true. The expression",
+				"is: 'monCurrVal monOperator monValue'. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "monitorTrap",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "monIndex:$v7",
+				"Summary" : "Monitored value matches event trigger condition: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::monitorTrap EMPIRE::monDescr s EXAMPLE EMPIRE::monOID o 1.3.6.1.4.1.8072.2.1.1 EMPIRE::monCurrVal i 9999 EMPIRE::monValue i 9999 EMPIRE::monRowStatus i 1 EMPIRE::monOperator i 1 EMPIRE::monIndex i 9999 EMPIRE::monFlags i 9999",
+			"trap" : {
+				"name" : "EMPIRE::monitorTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A textual description of this entry possibly",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::monDescr",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object identifier (including properly",
+							"formed instance) of the variable being",
+							"monitoring by this monitorTable entry. For",
+							"example, if a manager wanted to monitor the",
+							"number of packets received on a particular",
+							"network interface, that manager would write",
+							"the object identifier corresponding to the",
+							"appropriate counter (e.g.",
+							"ifTable.ifEntry.ifInUCastPkts.1 for the first",
+							"interface). During row creation, the agent",
+							"ensures that the object identifier is valid.",
+							"If invalid, the agent returns BadValue. This",
+							"variable can represent both scalar and",
+							"tabular objects as well. If, at any point",
+							"during the row's lifetime, the variable no",
+							"longer exists in the agent's MIB, the row's",
+							"status is set to notInService(2)."
+						],
+						"name" : "EMPIRE::monOID",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"This variable represents the current value of",
+							"the object being monitored as last sampled by",
+							"the agent. If the monSampleType is",
+							"deltaValue(2), then this value represents the",
+							"difference between two successive samples.",
+							"If monSampleType is absoluteValue(1), then",
+							"this value represents the actual sampled value."
+						],
+						"name" : "EMPIRE::monCurrVal",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value against which the agent compares",
+							"the current value. This value represents a",
+							"threshold. Its semantics are not interpreted",
+							"by the agent; therefore, the manager is",
+							"responsible for determining if this value",
+							"'makes sense'."
+						],
+						"name" : "EMPIRE::monValue",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of this entry. This variable is",
+							"equivalent in semantics to the V2 SMI",
+							"RowStatus textual-convention (see RFC 1443).",
+							"A value of active(1) indicates that the agent",
+							"is currently monitoring and evaluating the",
+							"current row. A Value of notInService(2)",
+							"indicates that the agent has suspended",
+							"evaluation of the row. Setting this object",
+							"to destroy(2) causes the agent to suspend",
+							"evaluation of its row and free its resources.",
+							"For row creation to occur, the manager must",
+							"supply active(1), createAndGo(4)",
+							"createAndWait(5), or notInService(2) as the",
+							"value of this object. ",
+							"If an error occurs at any time during the",
+							"processing of a particular Monitor Table entry, its",
+							"monRowStatus column will be set to ",
+							"notReady(3)."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "EMPIRE::monRowStatus",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The boolean operator performed in the",
+							"expression: monCurrVal monOperator monValue.",
+							"For example, to monitor a value such that an",
+							"alarm is generated when its value rises about ",
+							"100, the expression:",
+							"",
+							"currValue gt 100",
+							"",
+							"could be used. Likewise, ",
+							"",
+							"currValue ge 101 ",
+							"",
+							"could also be used. The value of nop(1)",
+							"causes the agent to perform no boolean",
+							"comparison; it is useful when a manager",
+							"wishes that an agent track the value ",
+							"of some object but not perform any evaluation",
+							"of its value."
+						],
+						"enums" : {
+							"1" : "nop",
+							"2" : "gt",
+							"3" : "lt",
+							"4" : "ge",
+							"5" : "le",
+							"6" : "eq",
+							"7" : "ne"
+						},
+						"name" : "EMPIRE::monOperator",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A unique value for entry in the monitorTable.",
+							"The index values in the monitorTable may not",
+							"necessarily be contiguous, but are unique."
+						],
+						"name" : "EMPIRE::monIndex",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"Monitor Entry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont notReady Traps Send single notReady Trap",
+							"",
+							"0x100 Send Clear Traps Do not send Clear Traps",
+							"0x200 Threshold after X events Threshold after 1st",
+							"0x400 X consec Thresh Traps No limit",
+							"0xfff00000 Flags value specification Default is 0"
+						],
+						"name" : "EMPIRE::monFlags",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::kernelErrorTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A kernel error event has occurred; on V.4",
+				"derived operating systems, the kernel relays",
+				"errors and events via the system error",
+				"device. See the Empire errorTable objects."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "kernelErrorTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Kernel error $v2 of $v4 severity, caused by $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::kernelErrorTrap EMPIRE::seqNum i 9999 EMPIRE::type s EXAMPLE EMPIRE::cause s EXAMPLE EMPIRE::severity s EXAMPLE",
+			"trap" : {
+				"name" : "EMPIRE::kernelErrorTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The unique sequence number of the error",
+							"entry. The value of this object also",
+							"represents the instance of the errorEntry",
+							"object."
+						],
+						"name" : "EMPIRE::seqNum",
+						"oid" : "1.3.6.1.4.1.546.1.1.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of error."
+						],
+						"name" : "EMPIRE::type",
+						"oid" : "1.3.6.1.4.1.546.1.1.8.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The cause of the error."
+						],
+						"name" : "EMPIRE::cause",
+						"oid" : "1.3.6.1.4.1.546.1.1.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity of the error."
+						],
+						"name" : "EMPIRE::severity",
+						"oid" : "1.3.6.1.4.1.546.1.1.8.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::monitorEntryNotReadyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a Monitor Table entry's",
+				"monRowStatus is set to 'notReady(3)'. One reason",
+				"this may occur is that the object-instance",
+				"identifier being monitored by its corresponding",
+				"Monitor Table entry is no longer in existence.",
+				"For example, when a process is being monitored (via",
+				"the Empire processTable), and that process should",
+				"exit, its corresponding entry in the Empire",
+				"processTable would no longer exist. Consequently",
+				"the object-instance identifier (for that process)",
+				"being monitored would no longer exist and the",
+				"agent would send a monitorEntryNotReady trap to",
+				"all properly configured managers."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "monitorEntryNotReadyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "monIndex:$v7",
+				"Summary" : "Monitor $v7 is not ready"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::monitorEntryNotReadyTrap EMPIRE::monDescr s EXAMPLE EMPIRE::monOID o 1.3.6.1.4.1.8072.2.1.1 EMPIRE::monCurrVal i 9999 EMPIRE::monValue i 9999 EMPIRE::monRowStatus i 1 EMPIRE::monOperator i 1 EMPIRE::monIndex i 9999 EMPIRE::monFlags i 9999",
+			"trap" : {
+				"name" : "EMPIRE::monitorEntryNotReadyTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A textual description of this entry possibly",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::monDescr",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object identifier (including properly",
+							"formed instance) of the variable being",
+							"monitoring by this monitorTable entry. For",
+							"example, if a manager wanted to monitor the",
+							"number of packets received on a particular",
+							"network interface, that manager would write",
+							"the object identifier corresponding to the",
+							"appropriate counter (e.g.",
+							"ifTable.ifEntry.ifInUCastPkts.1 for the first",
+							"interface). During row creation, the agent",
+							"ensures that the object identifier is valid.",
+							"If invalid, the agent returns BadValue. This",
+							"variable can represent both scalar and",
+							"tabular objects as well. If, at any point",
+							"during the row's lifetime, the variable no",
+							"longer exists in the agent's MIB, the row's",
+							"status is set to notInService(2)."
+						],
+						"name" : "EMPIRE::monOID",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"This variable represents the current value of",
+							"the object being monitored as last sampled by",
+							"the agent. If the monSampleType is",
+							"deltaValue(2), then this value represents the",
+							"difference between two successive samples.",
+							"If monSampleType is absoluteValue(1), then",
+							"this value represents the actual sampled value."
+						],
+						"name" : "EMPIRE::monCurrVal",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value against which the agent compares",
+							"the current value. This value represents a",
+							"threshold. Its semantics are not interpreted",
+							"by the agent; therefore, the manager is",
+							"responsible for determining if this value",
+							"'makes sense'."
+						],
+						"name" : "EMPIRE::monValue",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of this entry. This variable is",
+							"equivalent in semantics to the V2 SMI",
+							"RowStatus textual-convention (see RFC 1443).",
+							"A value of active(1) indicates that the agent",
+							"is currently monitoring and evaluating the",
+							"current row. A Value of notInService(2)",
+							"indicates that the agent has suspended",
+							"evaluation of the row. Setting this object",
+							"to destroy(2) causes the agent to suspend",
+							"evaluation of its row and free its resources.",
+							"For row creation to occur, the manager must",
+							"supply active(1), createAndGo(4)",
+							"createAndWait(5), or notInService(2) as the",
+							"value of this object. ",
+							"If an error occurs at any time during the",
+							"processing of a particular Monitor Table entry, its",
+							"monRowStatus column will be set to ",
+							"notReady(3)."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "EMPIRE::monRowStatus",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The boolean operator performed in the",
+							"expression: monCurrVal monOperator monValue.",
+							"For example, to monitor a value such that an",
+							"alarm is generated when its value rises about ",
+							"100, the expression:",
+							"",
+							"currValue gt 100",
+							"",
+							"could be used. Likewise, ",
+							"",
+							"currValue ge 101 ",
+							"",
+							"could also be used. The value of nop(1)",
+							"causes the agent to perform no boolean",
+							"comparison; it is useful when a manager",
+							"wishes that an agent track the value ",
+							"of some object but not perform any evaluation",
+							"of its value."
+						],
+						"enums" : {
+							"1" : "nop",
+							"2" : "gt",
+							"3" : "lt",
+							"4" : "ge",
+							"5" : "le",
+							"6" : "eq",
+							"7" : "ne"
+						},
+						"name" : "EMPIRE::monOperator",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A unique value for entry in the monitorTable.",
+							"The index values in the monitorTable may not",
+							"necessarily be contiguous, but are unique."
+						],
+						"name" : "EMPIRE::monIndex",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"Monitor Entry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont notReady Traps Send single notReady Trap",
+							"",
+							"0x100 Send Clear Traps Do not send Clear Traps",
+							"0x200 Threshold after X events Threshold after 1st",
+							"0x400 X consec Thresh Traps No limit",
+							"0xfff00000 Flags value specification Default is 0"
+						],
+						"name" : "EMPIRE::monFlags",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::logMonMatchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the log monitoring",
+				"subsystem detects a match in a log file it is",
+				"currently monitoring. Periodically, the agent",
+				"stats each log file for changes; if any changes",
+				"have occurred, the agent scans only those changes",
+				"for a pattern match. Pattern matches result in",
+				"logMonMatch events. Changes to log files occur",
+				"when new entries are added by syslogd(1M) or other",
+				"logging daemons."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "logMonMatchTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "logMonitorIndex:$v6",
+				"Summary" : "Log monitoring subsystem detected a match in file $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::logMonMatchTrap EMPIRE::logMonitorLogFile s EXAMPLE EMPIRE::logMonitorRegularExpression s EXAMPLE EMPIRE::logMonitorLastTrap t 31536000 EMPIRE::logMonitorLastMatch s EXAMPLE EMPIRE::logMonitorDescr s EXAMPLE EMPIRE::logMonitorIndex i 9999 EMPIRE::logMonitorFlags i 9999",
+			"trap" : {
+				"name" : "EMPIRE::logMonMatchTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the log file to scan for pattern",
+							"matches. This variable must name a valid log",
+							"filename."
+						],
+						"name" : "EMPIRE::logMonitorLogFile",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The display string representation of the regular",
+							"expression to match in the corresponding log file.",
+							"Valid regular expressions are those as defined in",
+							"ed(1)."
+						],
+						"name" : "EMPIRE::logMonitorRegularExpression",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The time (based on sysUpTime) at which the agent",
+							"last sent a trap for this entry. Alternatively",
+							"it is the time at which the last pattern match",
+							"occurred."
+						],
+						"name" : "EMPIRE::logMonitorLastTrap",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.5",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The last log file entry that matched the",
+							"logMonitorRegularExpression. Each time a match",
+							"occurs, this variable is updated."
+						],
+						"name" : "EMPIRE::logMonitorLastMatch",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly ",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::logMonitorDescr",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An index that uniquely identifies an entry in the",
+							"logMonitorTable."
+						],
+						"name" : "EMPIRE::logMonitorIndex",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"logMonitorEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont notReady Traps Send single notReady Trap",
+							"",
+							"0x100 Apply logical NOT oper No additional operator"
+						],
+						"name" : "EMPIRE::logMonitorFlags",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::logMonNotReadyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the status of a log",
+				"monitoring entry becomes 'notReady(3)'. An entry",
+				"becomes 'notReady(3)' if an error occurs during log",
+				"file scaning, if the regular expression is",
+				"syntactically incorrect, or if the log file does",
+				"not exist. An entry that is 'notReady(3)' will",
+				"undergo no further evaluation until its status",
+				"becomes 'active(1)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "logMonNotReadyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "logMonitorIndex:$v6",
+				"Summary" : "Log monitor $v6 is not ready"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::logMonNotReadyTrap EMPIRE::logMonitorLogFile s EXAMPLE EMPIRE::logMonitorRegularExpression s EXAMPLE EMPIRE::logMonitorLastTrap t 31536000 EMPIRE::logMonitorLastMatch s EXAMPLE EMPIRE::logMonitorDescr s EXAMPLE EMPIRE::logMonitorIndex i 9999 EMPIRE::logMonitorFlags i 9999",
+			"trap" : {
+				"name" : "EMPIRE::logMonNotReadyTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the log file to scan for pattern",
+							"matches. This variable must name a valid log",
+							"filename."
+						],
+						"name" : "EMPIRE::logMonitorLogFile",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The display string representation of the regular",
+							"expression to match in the corresponding log file.",
+							"Valid regular expressions are those as defined in",
+							"ed(1)."
+						],
+						"name" : "EMPIRE::logMonitorRegularExpression",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The time (based on sysUpTime) at which the agent",
+							"last sent a trap for this entry. Alternatively",
+							"it is the time at which the last pattern match",
+							"occurred."
+						],
+						"name" : "EMPIRE::logMonitorLastTrap",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.5",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The last log file entry that matched the",
+							"logMonitorRegularExpression. Each time a match",
+							"occurs, this variable is updated."
+						],
+						"name" : "EMPIRE::logMonitorLastMatch",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly ",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::logMonitorDescr",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An index that uniquely identifies an entry in the",
+							"logMonitorTable."
+						],
+						"name" : "EMPIRE::logMonitorIndex",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"logMonitorEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont notReady Traps Send single notReady Trap",
+							"",
+							"0x100 Apply logical NOT oper No additional operator"
+						],
+						"name" : "EMPIRE::logMonitorFlags",
+						"oid" : "1.3.6.1.4.1.546.11.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::ntEventMonMatchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the event log monitoring",
+				"subsystem detects a match in a log it is",
+				"currently monitoring. Periodically, the agent",
+				"checks each event log for changes; if any changes",
+				"have occurred, the agent scans only those changes",
+				"for a pattern match. Pattern matches result in",
+				"ntEventMonMatch events. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ntEventMonMatchTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ntEventMonIndex:$v7",
+				"Summary" : "Event log monitoring subsystem detected a match in $v1 event log"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::ntEventMonMatchTrap EMPIRE::ntEventMonLog i 1 EMPIRE::ntEventMonTypeLastMatch i 1 EMPIRE::ntEventMonTime t 31536000 EMPIRE::ntEventMonSrcLastMatch s EXAMPLE EMPIRE::ntEventMonDescLastMatch s EXAMPLE EMPIRE::ntEventMonDescr s EXAMPLE EMPIRE::ntEventMonIndex i 9999 EMPIRE::ntEventMonFlags i 9999",
+			"trap" : {
+				"name" : "EMPIRE::ntEventMonMatchTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The number identifying the NT event log to ",
+							"scan for pattern matches. Possible values are ",
+							"Application(1), Security(2), and System(3). On",
+							"Win2k and higher, dnsServer(4), dirService(5), and",
+							"fileRepService(6) are also possibly valid. Not",
+							"all win2k+ systems have these event logs."
+						],
+						"enums" : {
+							"1" : "application",
+							"2" : "security",
+							"3" : "system",
+							"4" : "dnsServer",
+							"5" : "dirService",
+							"6" : "fileRepService"
+						},
+						"name" : "EMPIRE::ntEventMonLog",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number identifying the event type of the last",
+							"event that matched the search criteria. Types ",
+							"1 through 5 are defined by Windows NT. Type ",
+							"noMatch(6) indicates that there has not yet been",
+							"a matching event for this monitoring entry."
+						],
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "information",
+							"4" : "success",
+							"5" : "failure",
+							"6" : "noMatch"
+						},
+						"name" : "EMPIRE::ntEventMonTypeLastMatch",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time (based on sysUpTime) at which the event",
+							"occurred."
+						],
+						"name" : "EMPIRE::ntEventMonTime",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The source name of the last event log entry that ",
+							"matched this monitor entry. Each time a match occurs, ",
+							"this variable is updated."
+						],
+						"name" : "EMPIRE::ntEventMonSrcLastMatch",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The text description message from the last event log ",
+							"entry that matched this monitor entry. Each time a",
+							"match occurs, this variable is updated."
+						],
+						"name" : "EMPIRE::ntEventMonDescLastMatch",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly ",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::ntEventMonDescr",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An index that uniquely identifies an entry in the",
+							"ntEventMonTable."
+						],
+						"name" : "EMPIRE::ntEventMonIndex",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"ntEventMonEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont Stop Traps Send single Stop Trap",
+							"0x100 Prepend event-id to descr Do not pre-pend",
+							"0x200 Logical-not the entry No operator applied"
+						],
+						"name" : "EMPIRE::ntEventMonFlags",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::ntEventMonNotReadyTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when the status of an event log ",
+				"monitoring entry becomes 'notReady(3)'. An entry",
+				"becomes 'notReady(3)' if an error occurs during log",
+				"file scaning, if the regular expression is",
+				"syntactically incorrect, or if the log file does",
+				"not exist. An entry that is 'notReady(3)' will",
+				"undergo no further evaluation until its status",
+				"becomes 'active(1)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ntEventMonNotReadyTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ntEventMonIndex:$v1",
+				"Summary" : "$v1 event log monitor $v6 is not ready"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::ntEventMonNotReadyTrap EMPIRE::ntEventMonLog i 1 EMPIRE::ntEventMonTypeFilter i 1 EMPIRE::ntEventMonSrcFilter s EXAMPLE EMPIRE::ntEventMonDescFilter s EXAMPLE EMPIRE::ntEventMonDescr s EXAMPLE EMPIRE::ntEventMonIndex i 9999 EMPIRE::ntEventMonFlags i 9999",
+			"trap" : {
+				"name" : "EMPIRE::ntEventMonNotReadyTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The number identifying the NT event log to ",
+							"scan for pattern matches. Possible values are ",
+							"Application(1), Security(2), and System(3). On",
+							"Win2k and higher, dnsServer(4), dirService(5), and",
+							"fileRepService(6) are also possibly valid. Not",
+							"all win2k+ systems have these event logs."
+						],
+						"enums" : {
+							"1" : "application",
+							"2" : "security",
+							"3" : "system",
+							"4" : "dnsServer",
+							"5" : "dirService",
+							"6" : "fileRepService"
+						},
+						"name" : "EMPIRE::ntEventMonLog",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number identifying the event type to match.",
+							"Types 1 through 5 are defined by Windows NT.",
+							"Type all(6) indicates that all event types will match."
+						],
+						"enums" : {
+							"1" : "error",
+							"2" : "warning",
+							"3" : "information",
+							"4" : "success",
+							"5" : "failure",
+							"6" : "all"
+						},
+						"name" : "EMPIRE::ntEventMonTypeFilter",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The display string representation of the regular",
+							"expression to match the source name in the event log.",
+							"Valid regular expressions are those as defined in",
+							"ed(1)."
+						],
+						"name" : "EMPIRE::ntEventMonSrcFilter",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The display string representation of the regular",
+							"expression to match the description in the event log.",
+							"Valid regular expressions are those as defined in",
+							"ed(1)."
+						],
+						"name" : "EMPIRE::ntEventMonDescFilter",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly ",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::ntEventMonDescr",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An index that uniquely identifies an entry in the",
+							"ntEventMonTable."
+						],
+						"name" : "EMPIRE::ntEventMonIndex",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"ntEventMonEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont Stop Traps Send single Stop Trap",
+							"0x100 Prepend event-id to descr Do not pre-pend",
+							"0x200 Logical-not the entry No operator applied"
+						],
+						"name" : "EMPIRE::ntEventMonFlags",
+						"oid" : "1.3.6.1.4.1.546.5.6.4.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::monitorClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when a Monitor Table entry",
+				"transitions from True to False and has specified",
+				"the monitor clearTrap flag. This Trap represents",
+				"an indication that the condition that previously",
+				"had existed no longer does. This Trap provides",
+				"management software the ability to determine that",
+				"an alarm can be canceled or marked as corrected.",
+				"This event only occurs when a monitor table entry",
+				"evaluates to True and then evaluates to False.",
+				"This Trap is sent each time the entry transitions",
+				"from True to false. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "monitorTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "monIndex:$v7",
+				"Summary" : "Monitor condition cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::monitorClearTrap EMPIRE::monDescr s EXAMPLE EMPIRE::monOID o 1.3.6.1.4.1.8072.2.1.1 EMPIRE::monCurrVal i 9999 EMPIRE::monValue i 9999 EMPIRE::monRowStatus i 1 EMPIRE::monOperator i 1 EMPIRE::monIndex i 9999 EMPIRE::monFlags i 9999",
+			"trap" : {
+				"name" : "EMPIRE::monitorClearTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"A textual description of this entry possibly",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::monDescr",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object identifier (including properly",
+							"formed instance) of the variable being",
+							"monitoring by this monitorTable entry. For",
+							"example, if a manager wanted to monitor the",
+							"number of packets received on a particular",
+							"network interface, that manager would write",
+							"the object identifier corresponding to the",
+							"appropriate counter (e.g.",
+							"ifTable.ifEntry.ifInUCastPkts.1 for the first",
+							"interface). During row creation, the agent",
+							"ensures that the object identifier is valid.",
+							"If invalid, the agent returns BadValue. This",
+							"variable can represent both scalar and",
+							"tabular objects as well. If, at any point",
+							"during the row's lifetime, the variable no",
+							"longer exists in the agent's MIB, the row's",
+							"status is set to notInService(2)."
+						],
+						"name" : "EMPIRE::monOID",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"This variable represents the current value of",
+							"the object being monitored as last sampled by",
+							"the agent. If the monSampleType is",
+							"deltaValue(2), then this value represents the",
+							"difference between two successive samples.",
+							"If monSampleType is absoluteValue(1), then",
+							"this value represents the actual sampled value."
+						],
+						"name" : "EMPIRE::monCurrVal",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value against which the agent compares",
+							"the current value. This value represents a",
+							"threshold. Its semantics are not interpreted",
+							"by the agent; therefore, the manager is",
+							"responsible for determining if this value",
+							"'makes sense'."
+						],
+						"name" : "EMPIRE::monValue",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of this entry. This variable is",
+							"equivalent in semantics to the V2 SMI",
+							"RowStatus textual-convention (see RFC 1443).",
+							"A value of active(1) indicates that the agent",
+							"is currently monitoring and evaluating the",
+							"current row. A Value of notInService(2)",
+							"indicates that the agent has suspended",
+							"evaluation of the row. Setting this object",
+							"to destroy(2) causes the agent to suspend",
+							"evaluation of its row and free its resources.",
+							"For row creation to occur, the manager must",
+							"supply active(1), createAndGo(4)",
+							"createAndWait(5), or notInService(2) as the",
+							"value of this object. ",
+							"If an error occurs at any time during the",
+							"processing of a particular Monitor Table entry, its",
+							"monRowStatus column will be set to ",
+							"notReady(3)."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "EMPIRE::monRowStatus",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The boolean operator performed in the",
+							"expression: monCurrVal monOperator monValue.",
+							"For example, to monitor a value such that an",
+							"alarm is generated when its value rises about ",
+							"100, the expression:",
+							"",
+							"currValue gt 100",
+							"",
+							"could be used. Likewise, ",
+							"",
+							"currValue ge 101 ",
+							"",
+							"could also be used. The value of nop(1)",
+							"causes the agent to perform no boolean",
+							"comparison; it is useful when a manager",
+							"wishes that an agent track the value ",
+							"of some object but not perform any evaluation",
+							"of its value."
+						],
+						"enums" : {
+							"1" : "nop",
+							"2" : "gt",
+							"3" : "lt",
+							"4" : "ge",
+							"5" : "le",
+							"6" : "eq",
+							"7" : "ne"
+						},
+						"name" : "EMPIRE::monOperator",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A unique value for entry in the monitorTable.",
+							"The index values in the monitorTable may not",
+							"necessarily be contiguous, but are unique."
+						],
+						"name" : "EMPIRE::monIndex",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"Monitor Entry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont notReady Traps Send single notReady Trap",
+							"",
+							"0x100 Send Clear Traps Do not send Clear Traps",
+							"0x200 Threshold after X events Threshold after 1st",
+							"0x400 X consec Thresh Traps No limit",
+							"0xfff00000 Flags value specification Default is 0"
+						],
+						"name" : "EMPIRE::monFlags",
+						"oid" : "1.3.6.1.4.1.546.6.1.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::processStopTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when using a Process Monitor",
+				"Table entry to monitor the state of a process.",
+				"When the processing being monitored dies or",
+				"transitions into a Zombie (or not runnable state)",
+				"this Trap is sent. This Trap is sent if the value",
+				"of pmonFlags does not preclude sending Traps. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "processStop",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "pmonIndex:$v1",
+				"Summary" : "Process $v9 died or transitioned to Zombie state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::processStopTrap EMPIRE::pmonIndex i 9999 EMPIRE::pmonDescr s EXAMPLE EMPIRE::pmonAttribute i 1 EMPIRE::pmonCurrVal i 9999 EMPIRE::pmonOperator i 1 EMPIRE::pmonValue i 9999 EMPIRE::pmonFlags i 9999 EMPIRE::pmonRegExpr s EXAMPLE EMPIRE::pmonCurrentPID i 9999",
+			"trap" : {
+				"name" : "EMPIRE::processStopTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for entry in the processMonTable.",
+							"The index values in the processMonTable may not",
+							"necessarily be contiguous, but are unique."
+						],
+						"name" : "EMPIRE::pmonIndex",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::pmonDescr",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The process attribute being monitored. These",
+							"enumerated values map directly to columns in the",
+							"Empire Process table."
+						],
+						"enums" : {
+							"1" : "procAlive",
+							"2" : "procMemory",
+							"3" : "procSize",
+							"4" : "procRSS",
+							"5" : "procTime",
+							"6" : "procInBlks",
+							"7" : "procOutBlks",
+							"8" : "procMsgsSent",
+							"9" : "procMsgsRecv",
+							"10" : "procNice",
+							"11" : "procNumThreads",
+							"12" : "procNumSwaps",
+							"13" : "procSysCalls",
+							"14" : "procMinorPgFlts",
+							"15" : "procMajorPgFlts",
+							"16" : "procVolCtx",
+							"17" : "procInvolCtx"
+						},
+						"name" : "EMPIRE::pmonAttribute",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable represents the current value of",
+							"the object being monitored as last sampled by",
+							"the agent. If the pmonSampleType is",
+							"deltaValue(2), then this value represents the",
+							"difference between two successive samples.",
+							"If pmonSampleType is absoluteValue(1), then",
+							"this value represents the actual sampled value."
+						],
+						"name" : "EMPIRE::pmonCurrVal",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "nop",
+							"2" : "gt",
+							"3" : "lt",
+							"4" : "ge",
+							"5" : "le",
+							"6" : "eq",
+							"7" : "ne"
+						},
+						"name" : "EMPIRE::pmonOperator",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value against which the agent compares",
+							"the current value. This value represents a",
+							"threshold. Its semantics are not interpreted",
+							"by the agent; therefore, the manager is",
+							"responsible for determining if this value",
+							"'makes sense'."
+						],
+						"name" : "EMPIRE::pmonValue",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"processMonEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont Stop Traps Send single Stop Trap",
+							"",
+							"0x100 Monitor parent process Monitor first found",
+							"0x200 Do not send Start Trap Send Start Trap",
+							"0x400 Send Clear Traps Send Clear Traps",
+							"0x800 Match name and args Match process name only",
+							"0x1000 Threshold after X events Threshold after 1st",
+							"0x2000 X consec Thresh Traps No limit",
+							"0x4000 Monitor for X processes Monitor for single process",
+							"0xfff00000 Flags value specification Default is 0"
+						],
+						"name" : "EMPIRE::pmonFlags",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The regular expression to use for matching",
+							"processes by name or NT services by name"
+						],
+						"name" : "EMPIRE::pmonRegExpr",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PID of the process being monitored"
+						],
+						"name" : "EMPIRE::pmonCurrentPID",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::processStartTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when using a Process Monitor",
+				"Table entry to monitor the state of a process.",
+				"When a process is re-started, and subsequently",
+				"re-acquired by the SystemEDGE agent, this Trap is",
+				"sent. This Trap is sent if the value of pmonFlags",
+				"specifies that processStart Traps should be pay."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "processStart",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "pmonIndex:$v1",
+				"Summary" : "Process $v9 re-started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::processStartTrap EMPIRE::pmonIndex i 9999 EMPIRE::pmonDescr s EXAMPLE EMPIRE::pmonAttribute i 1 EMPIRE::pmonCurrVal i 9999 EMPIRE::pmonOperator i 1 EMPIRE::pmonValue i 9999 EMPIRE::pmonFlags i 9999 EMPIRE::pmonRegExpr s EXAMPLE EMPIRE::pmonCurrentPID i 9999",
+			"trap" : {
+				"name" : "EMPIRE::processStartTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for entry in the processMonTable.",
+							"The index values in the processMonTable may not",
+							"necessarily be contiguous, but are unique."
+						],
+						"name" : "EMPIRE::pmonIndex",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::pmonDescr",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The process attribute being monitored. These",
+							"enumerated values map directly to columns in the",
+							"Empire Process table."
+						],
+						"enums" : {
+							"1" : "procAlive",
+							"2" : "procMemory",
+							"3" : "procSize",
+							"4" : "procRSS",
+							"5" : "procTime",
+							"6" : "procInBlks",
+							"7" : "procOutBlks",
+							"8" : "procMsgsSent",
+							"9" : "procMsgsRecv",
+							"10" : "procNice",
+							"11" : "procNumThreads",
+							"12" : "procNumSwaps",
+							"13" : "procSysCalls",
+							"14" : "procMinorPgFlts",
+							"15" : "procMajorPgFlts",
+							"16" : "procVolCtx",
+							"17" : "procInvolCtx"
+						},
+						"name" : "EMPIRE::pmonAttribute",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable represents the current value of",
+							"the object being monitored as last sampled by",
+							"the agent. If the pmonSampleType is",
+							"deltaValue(2), then this value represents the",
+							"difference between two successive samples.",
+							"If pmonSampleType is absoluteValue(1), then",
+							"this value represents the actual sampled value."
+						],
+						"name" : "EMPIRE::pmonCurrVal",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "nop",
+							"2" : "gt",
+							"3" : "lt",
+							"4" : "ge",
+							"5" : "le",
+							"6" : "eq",
+							"7" : "ne"
+						},
+						"name" : "EMPIRE::pmonOperator",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value against which the agent compares",
+							"the current value. This value represents a",
+							"threshold. Its semantics are not interpreted",
+							"by the agent; therefore, the manager is",
+							"responsible for determining if this value",
+							"'makes sense'."
+						],
+						"name" : "EMPIRE::pmonValue",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"processMonEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont Stop Traps Send single Stop Trap",
+							"",
+							"0x100 Monitor parent process Monitor first found",
+							"0x200 Do not send Start Trap Send Start Trap",
+							"0x400 Send Clear Traps Send Clear Traps",
+							"0x800 Match name and args Match process name only",
+							"0x1000 Threshold after X events Threshold after 1st",
+							"0x2000 X consec Thresh Traps No limit",
+							"0x4000 Monitor for X processes Monitor for single process",
+							"0xfff00000 Flags value specification Default is 0"
+						],
+						"name" : "EMPIRE::pmonFlags",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The regular expression to use for matching",
+							"processes by name or NT services by name"
+						],
+						"name" : "EMPIRE::pmonRegExpr",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PID of the process being monitored"
+						],
+						"name" : "EMPIRE::pmonCurrentPID",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::processThresholdTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when using a Process Monitor",
+				"Table entry to monitor some attribute (e.g. memory",
+				"usage, process size) of a process for some",
+				"threshold. When a Process Monitor table",
+				"expression evaluates to True, this Trap is sent.",
+				"The expression is: 'pmonCurrVal pmonOperator pmonValue'.",
+				"This Trap is sent if the value of pmonFlags does",
+				"not preclude the sending of Traps."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "processThreshold:$v3",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "pmonIndex:$v1",
+				"Summary" : "Process $v9 exceeded $v3 threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::processThresholdTrap EMPIRE::pmonIndex i 9999 EMPIRE::pmonDescr s EXAMPLE EMPIRE::pmonAttribute i 1 EMPIRE::pmonCurrVal i 9999 EMPIRE::pmonOperator i 1 EMPIRE::pmonValue i 9999 EMPIRE::pmonFlags i 9999 EMPIRE::pmonRegExpr s EXAMPLE EMPIRE::pmonCurrentPID i 9999",
+			"trap" : {
+				"name" : "EMPIRE::processThresholdTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for entry in the processMonTable.",
+							"The index values in the processMonTable may not",
+							"necessarily be contiguous, but are unique."
+						],
+						"name" : "EMPIRE::pmonIndex",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::pmonDescr",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The process attribute being monitored. These",
+							"enumerated values map directly to columns in the",
+							"Empire Process table."
+						],
+						"enums" : {
+							"1" : "procAlive",
+							"2" : "procMemory",
+							"3" : "procSize",
+							"4" : "procRSS",
+							"5" : "procTime",
+							"6" : "procInBlks",
+							"7" : "procOutBlks",
+							"8" : "procMsgsSent",
+							"9" : "procMsgsRecv",
+							"10" : "procNice",
+							"11" : "procNumThreads",
+							"12" : "procNumSwaps",
+							"13" : "procSysCalls",
+							"14" : "procMinorPgFlts",
+							"15" : "procMajorPgFlts",
+							"16" : "procVolCtx",
+							"17" : "procInvolCtx"
+						},
+						"name" : "EMPIRE::pmonAttribute",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable represents the current value of",
+							"the object being monitored as last sampled by",
+							"the agent. If the pmonSampleType is",
+							"deltaValue(2), then this value represents the",
+							"difference between two successive samples.",
+							"If pmonSampleType is absoluteValue(1), then",
+							"this value represents the actual sampled value."
+						],
+						"name" : "EMPIRE::pmonCurrVal",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "nop",
+							"2" : "gt",
+							"3" : "lt",
+							"4" : "ge",
+							"5" : "le",
+							"6" : "eq",
+							"7" : "ne"
+						},
+						"name" : "EMPIRE::pmonOperator",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value against which the agent compares",
+							"the current value. This value represents a",
+							"threshold. Its semantics are not interpreted",
+							"by the agent; therefore, the manager is",
+							"responsible for determining if this value",
+							"'makes sense'."
+						],
+						"name" : "EMPIRE::pmonValue",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"processMonEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont Stop Traps Send single Stop Trap",
+							"",
+							"0x100 Monitor parent process Monitor first found",
+							"0x200 Do not send Start Trap Send Start Trap",
+							"0x400 Send Clear Traps Send Clear Traps",
+							"0x800 Match name and args Match process name only",
+							"0x1000 Threshold after X events Threshold after 1st",
+							"0x2000 X consec Thresh Traps No limit",
+							"0x4000 Monitor for X processes Monitor for single process",
+							"0xfff00000 Flags value specification Default is 0"
+						],
+						"name" : "EMPIRE::pmonFlags",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The regular expression to use for matching",
+							"processes by name or NT services by name"
+						],
+						"name" : "EMPIRE::pmonRegExpr",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PID of the process being monitored"
+						],
+						"name" : "EMPIRE::pmonCurrentPID",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::processClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when using a Process Monitor",
+				"Table entry to monitor some attribute (e.g. memory",
+				"usage, process size) of a process for some",
+				"threshold. When the threshold is crossed, a",
+				"processThreshold Trap is sent. When the attribute",
+				"threshold expression first transitions from True",
+				"to False, this Trap is sent. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "processThreshold:$v3",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "pmonIndex:$v1",
+				"Summary" : "Process $v9 no longer exceeds $v3 threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::processClearTrap EMPIRE::pmonIndex i 9999 EMPIRE::pmonDescr s EXAMPLE EMPIRE::pmonAttribute i 1 EMPIRE::pmonCurrVal i 9999 EMPIRE::pmonOperator i 1 EMPIRE::pmonValue i 9999 EMPIRE::pmonFlags i 9999 EMPIRE::pmonRegExpr s EXAMPLE EMPIRE::pmonCurrentPID i 9999",
+			"trap" : {
+				"name" : "EMPIRE::processClearTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for entry in the processMonTable.",
+							"The index values in the processMonTable may not",
+							"necessarily be contiguous, but are unique."
+						],
+						"name" : "EMPIRE::pmonIndex",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::pmonDescr",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The process attribute being monitored. These",
+							"enumerated values map directly to columns in the",
+							"Empire Process table."
+						],
+						"enums" : {
+							"1" : "procAlive",
+							"2" : "procMemory",
+							"3" : "procSize",
+							"4" : "procRSS",
+							"5" : "procTime",
+							"6" : "procInBlks",
+							"7" : "procOutBlks",
+							"8" : "procMsgsSent",
+							"9" : "procMsgsRecv",
+							"10" : "procNice",
+							"11" : "procNumThreads",
+							"12" : "procNumSwaps",
+							"13" : "procSysCalls",
+							"14" : "procMinorPgFlts",
+							"15" : "procMajorPgFlts",
+							"16" : "procVolCtx",
+							"17" : "procInvolCtx"
+						},
+						"name" : "EMPIRE::pmonAttribute",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable represents the current value of",
+							"the object being monitored as last sampled by",
+							"the agent. If the pmonSampleType is",
+							"deltaValue(2), then this value represents the",
+							"difference between two successive samples.",
+							"If pmonSampleType is absoluteValue(1), then",
+							"this value represents the actual sampled value."
+						],
+						"name" : "EMPIRE::pmonCurrVal",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "nop",
+							"2" : "gt",
+							"3" : "lt",
+							"4" : "ge",
+							"5" : "le",
+							"6" : "eq",
+							"7" : "ne"
+						},
+						"name" : "EMPIRE::pmonOperator",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value against which the agent compares",
+							"the current value. This value represents a",
+							"threshold. Its semantics are not interpreted",
+							"by the agent; therefore, the manager is",
+							"responsible for determining if this value",
+							"'makes sense'."
+						],
+						"name" : "EMPIRE::pmonValue",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"processMonEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"",
+							"0x01 Do not execute actions Execute actions",
+							"0x02 Do not send Traps Send Traps ",
+							"0x04 Do not re-initialize Re-initialize",
+							"0x08 Do not log events Log events",
+							"0x10 Send cont Stop Traps Send single Stop Trap",
+							"",
+							"0x100 Monitor parent process Monitor first found",
+							"0x200 Do not send Start Trap Send Start Trap",
+							"0x400 Send Clear Traps Send Clear Traps",
+							"0x800 Match name and args Match process name only",
+							"0x1000 Threshold after X events Threshold after 1st",
+							"0x2000 X consec Thresh Traps No limit",
+							"0x4000 Monitor for X processes Monitor for single process",
+							"0xfff00000 Flags value specification Default is 0"
+						],
+						"name" : "EMPIRE::pmonFlags",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The regular expression to use for matching",
+							"processes by name or NT services by name"
+						],
+						"name" : "EMPIRE::pmonRegExpr",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PID of the process being monitored"
+						],
+						"name" : "EMPIRE::pmonCurrentPID",
+						"oid" : "1.3.6.1.4.1.546.15.1.1.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::licenseTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when SystemEDGE or associated",
+				"modules failed to find a valid license. It can",
+				"be used in conjunction with auto-licensing or ",
+				"remote-licensing starting with SystemEDGE 4.0.",
+				"This Trap contains a single MIB object",
+				"denoting which product or module failed to",
+				"find a valid license and a string containing",
+				"the license information for that product or module."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "licenseTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Valid license not found: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::licenseTrap EMPIRE::sysedgeLicenseString s EXAMPLE",
+			"trap" : {
+				"name" : "EMPIRE::licenseTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"This object is used in conjunction Concord's",
+							"auto-licensing and remote licensing facility",
+							"starting in SystemEDGE 4.0."
+						],
+						"name" : "EMPIRE::sysedgeLicenseString",
+						"oid" : "1.3.6.1.4.1.546.1.1.1.14",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::addrChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This Trap is sent when SystemEDGE when it detects",
+				"that its underlying IP address has changed perhaps",
+				"due to DHCP or other administrative means. It",
+				"includes up to the last 5 IP addresses that it",
+				"this system was configured with. The addresses",
+				"are ordered with most recently used addresses",
+				"occuring first in the address list. This Trap may",
+				"be useless on multi-homed systems."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "addrChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "IP address changed for $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::addrChangeTrap EMPIRE::nodename s EXAMPLE EMPIRE::sysedgeAddressList s EXAMPLE",
+			"trap" : {
+				"name" : "EMPIRE::addrChangeTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the system that the agent is",
+							"running on as given by the login prompt."
+						],
+						"name" : "EMPIRE::nodename",
+						"oid" : "1.3.6.1.4.1.546.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The space-separated list of up to 5 past IP",
+							"addresses that this system was configured for.",
+							"This MIB object, when used with the",
+							"addrChangeTrap, is useful to pollers trying to poll",
+							"client machines whose addresses change due to DHCP or",
+							"with mobile systems or those whose configuration",
+							"changes over time. Addresses are ordered with",
+							"most-recently from most-recently used to",
+							"least-recently used (left to right)."
+						],
+						"name" : "EMPIRE::sysedgeAddressList",
+						"oid" : "1.3.6.1.4.1.546.1.1.1.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EMPIRE::procGroupChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Membership in a process group has changed",
+				"(e.g. members have joined, left, or changed)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "procGroupChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "pgmonIndex:$v1",
+				"Summary" : "Process group membership changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EMPIRE::procGroupChangeTrap EMPIRE::pgmonIndex i 9999 EMPIRE::pgmonDescr s EXAMPLE EMPIRE::pgmonFlags i 9999 EMPIRE::pgmonNumProcs u 9999 EMPIRE::pgmonProcRegExpr s EXAMPLE EMPIRE::pgmonRowStatus i 1 EMPIRE::pgmonPIDList s EXAMPLE EMPIRE::pgmonStatusList s EXAMPLE",
+			"trap" : {
+				"name" : "EMPIRE::procGroupChangeTrap",
+				"oid" : "1.3.6.1.4.1.546.1.1.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value for entry in the processGroupMonTable.",
+							"The index values in the processGroupMonTable may not",
+							"necessarily be contiguous, but are unique."
+						],
+						"name" : "EMPIRE::pgmonIndex",
+						"oid" : "1.3.6.1.4.1.546.15.10.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A textual description of this entry possibly",
+							"identifying the purpose of this entry and who",
+							"created it."
+						],
+						"name" : "EMPIRE::pgmonDescr",
+						"oid" : "1.3.6.1.4.1.546.15.10.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The flags field dictates the behavior of each",
+							"processGroupMonEntry. Each bit in the integer",
+							"represents the toggling of an option. The flags",
+							"field of 0x00 is enables default behavior.",
+							"Logical or'ing together of different bits allows",
+							"one to combine different options. SystemEDGE",
+							"common-table flags apply to this table.",
+							"Table-specific flags include are defined below.",
+							"",
+							"Hex Function Default (if not enabled)",
+							"0x100 Match name and args Match process name only",
+							""
+						],
+						"name" : "EMPIRE::pgmonFlags",
+						"oid" : "1.3.6.1.4.1.546.15.10.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current number of processes in the process",
+							"group being tracked by this table entry. A",
+							"process belongs to the process-group if its name",
+							"(and possibly args) match the regular expression",
+							"configured for this entry."
+						],
+						"name" : "EMPIRE::pgmonNumProcs",
+						"oid" : "1.3.6.1.4.1.546.15.10.1.6",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The regular expression to use for matching",
+							"processes by name"
+						],
+						"name" : "EMPIRE::pgmonProcRegExpr",
+						"oid" : "1.3.6.1.4.1.546.15.10.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status of this entry. This variable is",
+							"equivalent in semantics to the V2 SMI",
+							"RowStatus textual-convention (see RFC 1443).",
+							"A value of active(1) indicates that the agent",
+							"is currently monitoring and evaluating the",
+							"current row. A Value of notInService(2)",
+							"indicates that the agent has suspended",
+							"evaluation of the row. Setting this object",
+							"to destroy(2) causes the agent to suspend",
+							"evaluation of its row and free its resources.",
+							"For row creation to occur, the manager must",
+							"supply active(1), createAndGo(4)",
+							"createAndWait(5), or notInService(2) as the",
+							"value of this object. ",
+							"If an error occurs at any time during the",
+							"processing of a particular processGroupMonTable",
+							"entry, its pgmonRowStatus column will be set to ",
+							"notReady(3)."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "EMPIRE::pgmonRowStatus",
+						"oid" : "1.3.6.1.4.1.546.15.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A list of the numeric PIDs in this process group",
+							"separated by space character."
+						],
+						"name" : "EMPIRE::pgmonPIDList",
+						"oid" : "1.3.6.1.4.1.546.15.10.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A list of the process states in this process group",
+							"separated by space character. See",
+							"processStateInt for explanation of the state",
+							"of a process. Entries in the status list have a",
+							"one-to-one correspondence with entries in the PID",
+							"list."
+						],
+						"name" : "EMPIRE::pgmonStatusList",
+						"oid" : "1.3.6.1.4.1.546.15.10.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,73 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200702010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ITP-MSU-RATES-MIB::ciscoItpMsuRateState",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated once for the interval",
+				"specified by the cimrMsuRateNotifyInterval object when the",
+				"cimrMsuTrafficRateState object has the following state ",
+				"transitions.",
+				"'acceptable' -> 'warning'",
+				"'acceptable' -> 'overloaded'",
+				"'warning' -> 'overloaded'",
+				"At the end of the interval specified by the ",
+				"cimrMsuRateNotifyInterval object another notification",
+				"will be generated if the current state is ",
+				"different from state sent in last notification even if",
+				"the state transition is not one of the above transitions.",
+				"When the cimrMsuRateNotifyInterval is set to zero all",
+				"state changes will generate notifications."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "ciscoItpMsuRateState",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 2) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "MSU Traffic Rate $v2 has changed status to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ITP-MSU-RATES-MIB::ciscoItpMsuRateState CISCO-ITP-MSU-RATES-MIB::cimrMsuTrafficRateState i 1 CISCO-ITP-MSU-RATES-MIB::cimrMsuTrafficRate u 9999 CISCO-ITP-MSU-RATES-MIB::cimrMsuTrafficSize u 9999",
+			"trap" : {
+				"name" : "CISCO-ITP-MSU-RATES-MIB::ciscoItpMsuRateState",
+				"oid" : "1.3.6.1.4.1.9.9.529.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "acceptable",
+							"2" : "warning",
+							"3" : "overloaded"
+						},
+						"name" : "CISCO-ITP-MSU-RATES-MIB::cimrMsuTrafficRateState",
+						"oid" : "1.3.6.1.4.1.9.9.529.1.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ITP-MSU-RATES-MIB::cimrMsuTrafficRate",
+						"oid" : "1.3.6.1.4.1.9.9.529.1.2.2.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-ITP-MSU-RATES-MIB::cimrMsuTrafficSize",
+						"oid" : "1.3.6.1.4.1.9.9.529.1.2.2.1.4",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

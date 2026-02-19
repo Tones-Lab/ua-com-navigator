@@ -1,0 +1,164 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201207040000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-VOIP-SIP-MIB::hwIASSipResetTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the result of SIP media gateway reset operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 0) ? 1 : 2"
+				},
+				"EventType" : "hwIASSipResetTrap",
+				"ExpireTime" : {
+					"eval" : "($v3 == 0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 0) ? 0 : 4"
+				},
+				"SubNode" : "VgwId:$v2",
+				"Summary" : "SIP media gateway reset result: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-VOIP-SIP-MIB::hwIASSipResetTrap HUAWEI-VOIP-SIP-MIB::hwSipTrapRequestID u 0 HUAWEI-VOIP-SIP-MIB::hwSipVgwId i 9999 HUAWEI-VOIP-SIP-MIB::hwSipMgResetResult i 1",
+				"$SNMPTRAPCMD HUAWEI-VOIP-SIP-MIB::hwIASSipResetTrap HUAWEI-VOIP-SIP-MIB::hwSipTrapRequestID u 0 HUAWEI-VOIP-SIP-MIB::hwSipVgwId i 9999 HUAWEI-VOIP-SIP-MIB::hwSipMgResetResult i 0"
+			],
+			"trap" : {
+				"name" : "HUAWEI-VOIP-SIP-MIB::hwIASSipResetTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.36.8.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The SIP trap request ID."
+						],
+						"name" : "HUAWEI-VOIP-SIP-MIB::hwSipTrapRequestID",
+						"oid" : "1.3.6.1.4.1.2011.6.36.7.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SIP GateWay ID."
+						],
+						"name" : "HUAWEI-VOIP-SIP-MIB::hwSipVgwId",
+						"oid" : "1.3.6.1.4.1.2011.6.36.1.70.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The result of the SIP media gateway reset.",
+							"Options:",
+							"1. success(0) -reset succesful",
+							"2. failed(1) -reset failed"
+						],
+						"enums" : {
+							"0" : "success",
+							"1" : "failed"
+						},
+						"name" : "HUAWEI-VOIP-SIP-MIB::hwSipMgResetResult",
+						"oid" : "1.3.6.1.4.1.2011.6.36.7.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-VOIP-SIP-MIB::hwIASSipProxyFaultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the SIP proxy server is abnormal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwIASSipProxyFaultStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "VgwId:$v1",
+				"Summary" : "SIP proxy server is abnormal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-VOIP-SIP-MIB::hwIASSipProxyFaultTrap HUAWEI-VOIP-SIP-MIB::hwSipVgwId i 9999 HUAWEI-VOIP-SIP-MIB::hwSipProxySign u 0",
+			"trap" : {
+				"name" : "HUAWEI-VOIP-SIP-MIB::hwIASSipProxyFaultTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.36.8.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"SIP GateWay ID."
+						],
+						"name" : "HUAWEI-VOIP-SIP-MIB::hwSipVgwId",
+						"oid" : "1.3.6.1.4.1.2011.6.36.1.70.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The SIP proxy sign.",
+							"0 -main",
+							"1 -standby"
+						],
+						"name" : "HUAWEI-VOIP-SIP-MIB::hwSipProxySign",
+						"oid" : "1.3.6.1.4.1.2011.6.36.7.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-VOIP-SIP-MIB::hwIASSipProxyRestoreTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the SIP proxy server restores from abnormal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwIASSipProxyFaultStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "VgwId:$v1",
+				"Summary" : "SIP proxy server back to normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-VOIP-SIP-MIB::hwIASSipProxyRestoreTrap HUAWEI-VOIP-SIP-MIB::hwSipVgwId i 9999 HUAWEI-VOIP-SIP-MIB::hwSipProxySign u 0",
+			"trap" : {
+				"name" : "HUAWEI-VOIP-SIP-MIB::hwIASSipProxyRestoreTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.36.8.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"SIP GateWay ID."
+						],
+						"name" : "HUAWEI-VOIP-SIP-MIB::hwSipVgwId",
+						"oid" : "1.3.6.1.4.1.2011.6.36.1.70.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The SIP proxy sign.",
+							"0 -main",
+							"1 -standby"
+						],
+						"name" : "HUAWEI-VOIP-SIP-MIB::hwSipProxySign",
+						"oid" : "1.3.6.1.4.1.2011.6.36.7.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

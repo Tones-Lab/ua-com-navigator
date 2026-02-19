@@ -1,0 +1,341 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9711101200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MSSSERVER8210-MIB::mssServer8210ELSTrapV2",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap announces that an Event Logging System (ELS) event",
+				"occurred. The variable proElsSubSysEventMsg provides a textual",
+				"description of the event. The variable is in one of two",
+				"formats. If ELS timestamping is enabled, the format is",
+				"hr:min:sec subsys_name.event_num: message_text. An example",
+				"would be 09:32:56 IP.008: no rte 9.7.1.8 -> 9.7.4.3 dsc.",
+				"If ELS timestamping is disabled, the format is",
+				"subsys_name.event_num: message_text. An example would be",
+				"IP.008: no rte 9.7.1.8 -> 9.7.4.3 dsc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mssServer8210ELSTrapV2",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'Event Logging System (ELS) event occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MSSSERVER8210-MIB::mssServer8210ELSTrapV2 PROTEON-MIB::proElsSubSysEventMsg s EXAMPLE",
+			"trap" : {
+				"name" : "MSSSERVER8210-MIB::mssServer8210ELSTrapV2",
+				"oid" : "1.3.6.1.4.1.2.6.118.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The unformatted textual description for the message.",
+							"It provides the message text related to this event",
+							"and indiates where specific information will be",
+							"filled in when the message is displayed on the console",
+							"or sent in an SNMP trap.",
+							"",
+							"For example, the text for the IP.008 event is:",
+							"",
+							"no rte %I -> %I dsc",
+							"",
+							"When sent in an SNMP trap, the variable binding of the",
+							"trap has this text with the specific IP addresses fillled",
+							"in. The format of this string is one of the two",
+							"following formats:",
+							"",
+							"If ELS timestamping is enabled:",
+							"",
+							"hr:min:sec subsys_name.event_num: message_text",
+							"",
+							"For example - 09:32:56 IP.008: no rte 9.7.1.8 -> 9.7.4.3 dsc",
+							"",
+							"If ELS timestamping is disabled:",
+							"",
+							"subsys_name.event_num: message_text",
+							"",
+							"For example - IP.008: no rte 9.7.1.8 -> 9.7.4.3 dsc"
+						],
+						"name" : "PROTEON-MIB::proElsSubSysEventMsg",
+						"oid" : "1.3.6.1.4.1.1.6.2.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MSSSERVER8210-MIB::mss8210PCAdapTypeChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap announces a change in the type of PC card. It shall be",
+				"sent if the value of the mss8210PCAdapType changes and",
+				"mss8210NotifyStatus has a value of enabled(1)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mss8210PCAdapTypeChg",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Type of PC adapter inserted into slot is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MSSSERVER8210-MIB::mss8210PCAdapTypeChg MSSSERVER8210-MIB::mss8210PCAdapType i 1",
+			"trap" : {
+				"name" : "MSSSERVER8210-MIB::mss8210PCAdapTypeChg",
+				"oid" : "1.3.6.1.4.1.2.6.118.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The type of PC adapter that is inserted into this slot.",
+							"The variable shall assume a value of unknown(1) if the adapter",
+							"in the slot is not supported by this stand-alone. The variable",
+							"shall assume a value of harddrive(2) if the slot contains a PC disk",
+							"drive. The variable shall assume a value of modem(3) if the",
+							"slot contains a PC data/fax/voice modem. The variable shall",
+							"assume a value of flashcard(5) if the slot contains a PC flash card.",
+							"This variable shall assume a value of notPresent(4), when a",
+							"PC card is not plugged into the corrisponding slot.",
+							""
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "harddrive",
+							"3" : "modem",
+							"4" : "notPresent",
+							"5" : "flashcard"
+						},
+						"name" : "MSSSERVER8210-MIB::mss8210PCAdapType",
+						"oid" : "1.3.6.1.4.1.2.6.118.2.2.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MSSSERVER8210-MIB::mss8210TempThresholdChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap announces a change in the temperature of the stand-alone.",
+				"It shall be sent if the value of the mss8210TempThreshold changes",
+				"and mss8210NotifyStatus has a value of enabled(1)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mss8210TempThresholdChg",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Temperature status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MSSSERVER8210-MIB::mss8210TempThresholdChg MSSSERVER8210-MIB::mss8210TempThresholdStatus i 1",
+			"trap" : {
+				"name" : "MSSSERVER8210-MIB::mss8210TempThresholdChg",
+				"oid" : "1.3.6.1.4.1.2.6.118.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The status of the temperature in this stand-alone. This variable",
+							"shall assume a value of normal(1) if the temperature is within",
+							"proper operating range for this stand-alone. This variable shall",
+							"assume a value of warning(2) if the temperature becomes elevated",
+							"but this stand-alone can still operate. This variable shall assume",
+							"a value of shutdown(3) if the temperature is beyond the operating",
+							"limits of this stand-alone."
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "shutdown"
+						},
+						"name" : "MSSSERVER8210-MIB::mss8210TempThresholdStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.2.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MSSSERVER8210-MIB::mss8210PCIAdapStatusChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap announces a change in the status of the PCI adapter.",
+				"It shall be sent if the value of either mss8210PCIAdapConfigType",
+				"mss8210PCIAdapOperStatus, mss8210PCIAdapDiagStatus",
+				"mss8210PCIAdapNetworkStatus or mss8210PCIAdapFaultStatus changes",
+				"and mss8210NotifyStatus has a value of enabled(1)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "mss8210PCIAdapStatusChg",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==7) ? 2 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational status of PCI adapter is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MSSSERVER8210-MIB::mss8210PCIAdapStatusChg MSSSERVER8210-MIB::mss8210PCIAdapConfigType i 1 MSSSERVER8210-MIB::mss8210PCIAdapOperStatus i 1 MSSSERVER8210-MIB::mss8210PCIAdapDiagStatus i 1 MSSSERVER8210-MIB::mss8210PCIAdapNetworkStatus i 1 MSSSERVER8210-MIB::mss8210PCIAdapFaultStatus i 1",
+			"trap" : {
+				"name" : "MSSSERVER8210-MIB::mss8210PCIAdapStatusChg",
+				"oid" : "1.3.6.1.4.1.2.6.118.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The router configuration type for this slot. The configuration",
+							"type originates from the configuration tool used for this",
+							"stand-alone. The variable shall assume a value of",
+							"not-configured(1) if no configuration exist for this slot. The",
+							"variable shall assume a value of atm(2) if the slot is",
+							"configured for an ATM adapter. The variable shall assume a value",
+							"of fddi(3) if the slot is configured for an FDDI adapter."
+						],
+						"enums" : {
+							"1" : "not-configured",
+							"2" : "atm",
+							"3" : "fddi"
+						},
+						"name" : "MSSSERVER8210-MIB::mss8210PCIAdapConfigType",
+						"oid" : "1.3.6.1.4.1.2.6.118.2.3.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The operational status of this PCI adapter on this stand-alone.",
+							"The variable shall assume a value of unknown(1) if the adapter",
+							"inserted in the slot can not be recognized. The variable shall",
+							"assume a value of not-configured(2) if the adapter inserted in",
+							"the slot is recognized but no router configuration exists. The",
+							"variable shall assume a value of not-present(3) if the adapter",
+							"is not inserted in the slot but the router configuration exists.",
+							"The variable shall assume a value of unavailable(4) if adapter",
+							"inserted in the slot can not be used nor made ready to be used;",
+							"for example, a hardware error. The variable shall assume a value",
+							"of does-not-apply(5) if this adapter does not contain an",
+							"operational state. The variable shall assume a value of",
+							"enable-pending(6) if commands have been issued to enable the",
+							"adapter but have not been completed. The variable shall assume",
+							"a value of enabled(7) if commands have been successfully issued",
+							"to enable the adapter. The variable shall assume a value of",
+							"disable-pending(8) if commands have been issued to disable the",
+							"adapter but have not been completed. The variable shall assume",
+							"a value of disabled(9) if commands have been successfully issued",
+							"to disable the adapter. The variable shall assume a value of",
+							"miss-configured(10) if the adapter is inserted in the slot",
+							"but the router configuration is of a different type."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "not-configured",
+							"3" : "not-present",
+							"4" : "unavailable",
+							"5" : "does-not-apply",
+							"6" : "enable-pending",
+							"7" : "enabled",
+							"8" : "disable-pending",
+							"9" : "disabled",
+							"10" : "miss-configured"
+						},
+						"name" : "MSSSERVER8210-MIB::mss8210PCIAdapOperStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.2.3.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The diagnostic status of this PCI adapter on this stand-alone.",
+							"The variable shall assume a value of auto(1) if commands have",
+							"been issued by the system to determine the status of the",
+							"adapter; for example, at initialization. The variable shall",
+							"assume a value of inactive(2) if the adapter is not currently",
+							"running any diagnostics. The variable shall assume a value",
+							"of idle(3) if the adapter is in the disabled operational state",
+							"ready to run the diagnostics. The variable shall assume a value",
+							"of active(4) if commands have been issued by the user to",
+							"run the diagnostics."
+						],
+						"enums" : {
+							"1" : "auto",
+							"2" : "inactive",
+							"3" : "idle",
+							"4" : "active"
+						},
+						"name" : "MSSSERVER8210-MIB::mss8210PCIAdapDiagStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.2.3.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The network status of this PCI adapter on this stand-alone.",
+							"The variable shall assume a value of up(1) if the adapter",
+							"is connected to the network. The variable shall assume a value",
+							"of down(3) if the adapter can not verify a network connection.",
+							"The variable shall assume a value of testing(4) if the",
+							"adapter is running tests for the network connection. The",
+							"variable shall assume a value of unknown(1) if network status",
+							"can not be determined. The variable shall assume a value of",
+							"does-not-apply(5) if the adapter does not contain a network",
+							"state."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "up",
+							"3" : "down",
+							"4" : "testing",
+							"5" : "does-not-apply"
+						},
+						"name" : "MSSSERVER8210-MIB::mss8210PCIAdapNetworkStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.2.3.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The fault status of this PCI adapter on this stand-alone.",
+							"The variable shall assume a value of no-fault(2)",
+							"if no fault that is associated with this adapter has been",
+							"detected. The variable shall assume a value of isolated(3) if this",
+							"fault that can be isolated on the adapter itself. The variable",
+							"shall assume a value of non-isolated(4) if the fault",
+							"can not isolated on the adapter or in the network.",
+							"The variable shall assume a value of unknown(1) if the",
+							"fault status has not been determined; for example, at",
+							"initialization."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "no-fault",
+							"3" : "isolated",
+							"4" : "non-isolated"
+						},
+						"name" : "MSSSERVER8210-MIB::mss8210PCIAdapFaultStatus",
+						"oid" : "1.3.6.1.4.1.2.6.118.2.3.2.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

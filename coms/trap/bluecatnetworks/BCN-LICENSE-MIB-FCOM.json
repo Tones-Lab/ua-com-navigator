@@ -1,0 +1,114 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201011301200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "BCN-LICENSE-MIB::bcnLicenseExpiryNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A bcnLicenseAlarmNotif signifies that the License service has transitioned",
+				"state or a particular event has been detected on the service."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : ($v2==10 || $v2==20) ? 3 : 2"
+				},
+				"EventType" : "bcnLicenseExpiryNotif",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : ($v2==10 || $v2==20) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==10 || $v2==20) ? 2 : ($v2==30 || $v2==40) ? 3 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v5==1) ? '$v1 license is valid till $v3' : '$v1 license expired on $v3; Grace period: $v4 days'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD BCN-LICENSE-MIB::bcnLicenseExpiryNotif BCN-LICENSE-MIB::bcnLicenseType i 1 BCN-LICENSE-MIB::bcnLicenseAlarmSeverity i 1 BCN-LICENSE-MIB::bcnLicenseExpiry s EXAMPLEE BCN-LICENSE-MIB::bcnLicenseGracePeriod u 9999 BCN-LICENSE-MIB::bcnLicenseValid i 1",
+				"$SNMPTRAPCMD BCN-LICENSE-MIB::bcnLicenseExpiryNotif BCN-LICENSE-MIB::bcnLicenseType i 2 BCN-LICENSE-MIB::bcnLicenseAlarmSeverity i 1 BCN-LICENSE-MIB::bcnLicenseExpiry s EXAMPLEE BCN-LICENSE-MIB::bcnLicenseGracePeriod u 9999 BCN-LICENSE-MIB::bcnLicenseValid i 1",
+				"$SNMPTRAPCMD BCN-LICENSE-MIB::bcnLicenseExpiryNotif BCN-LICENSE-MIB::bcnLicenseType i 1 BCN-LICENSE-MIB::bcnLicenseAlarmSeverity i 1 BCN-LICENSE-MIB::bcnLicenseExpiry s EXAMPLEE BCN-LICENSE-MIB::bcnLicenseGracePeriod u 9999 BCN-LICENSE-MIB::bcnLicenseValid i 2",
+				"$SNMPTRAPCMD BCN-LICENSE-MIB::bcnLicenseExpiryNotif BCN-LICENSE-MIB::bcnLicenseType i 2 BCN-LICENSE-MIB::bcnLicenseAlarmSeverity i 1 BCN-LICENSE-MIB::bcnLicenseExpiry s EXAMPLEE BCN-LICENSE-MIB::bcnLicenseGracePeriod u 9999 BCN-LICENSE-MIB::bcnLicenseValid i 2"
+			],
+			"trap" : {
+				"name" : "BCN-LICENSE-MIB::bcnLicenseExpiryNotif",
+				"oid" : "1.3.6.1.4.1.13315.3.1.6.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Type of license. The possible states are:",
+							"singleServer(1) The license affects a single server, normally the",
+							"server in which it is installed.",
+							"multiServer(2) The license affects multiple servers. This is common",
+							"for licenses that limit managed units.",
+							""
+						],
+						"enums" : {
+							"1" : "singleServer",
+							"2" : "multiServer"
+						},
+						"name" : "BCN-LICENSE-MIB::bcnLicenseType",
+						"oid" : "1.3.6.1.4.1.13315.3.1.6.2.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Severity classification for the alarm."
+						],
+						"enums" : {
+							"1" : "ok",
+							"10" : "other",
+							"20" : "inform",
+							"30" : "minor",
+							"40" : "warning",
+							"50" : "major",
+							"60" : "critical"
+						},
+						"name" : "BCN-LICENSE-MIB::bcnLicenseAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.13315.3.1.6.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The expiration date for the license."
+						],
+						"name" : "BCN-LICENSE-MIB::bcnLicenseExpiry",
+						"oid" : "1.3.6.1.4.1.13315.3.1.6.2.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of days after the license has expired the functionality",
+							"will continue to work. In case this is not applicable the value",
+							"is 0."
+						],
+						"name" : "BCN-LICENSE-MIB::bcnLicenseGracePeriod",
+						"oid" : "1.3.6.1.4.1.13315.3.1.6.2.1.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Number of days after the license has expired the functionality",
+							"will continue to work. In case this is not applicable the value",
+							"is 0."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "BCN-LICENSE-MIB::bcnLicenseValid",
+						"oid" : "1.3.6.1.4.1.13315.3.1.6.2.1.2.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

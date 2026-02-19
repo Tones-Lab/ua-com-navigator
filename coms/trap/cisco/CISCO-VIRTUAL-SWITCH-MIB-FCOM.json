@@ -1,0 +1,88 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201503040000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-VIRTUAL-SWITCH-MIB::cvsVSLConnectionChangeNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when the state of the VSL",
+				"connection is changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "cvsVSLConnectionChangeNotif",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "VSL connection is now $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-VIRTUAL-SWITCH-MIB::cvsVSLConnectionChangeNotif CISCO-VIRTUAL-SWITCH-MIB::cvsVSLConnectOperStatus i 1",
+			"trap" : {
+				"name" : "CISCO-VIRTUAL-SWITCH-MIB::cvsVSLConnectionChangeNotif",
+				"oid" : "1.3.6.1.4.1.9.9.388.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "CISCO-VIRTUAL-SWITCH-MIB::cvsVSLConnectOperStatus",
+						"oid" : "1.3.6.1.4.1.9.9.388.1.3.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-VIRTUAL-SWITCH-MIB::cvsDualActiveDetectionNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification will be generated when dual-active",
+				"is detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cvsDualActiveDetectionNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "dual-active detected on $v1 $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-VIRTUAL-SWITCH-MIB::cvsDualActiveDetectionNotif CISCO-VIRTUAL-SWITCH-MIB::cvsSwitchID u 9999 CISCO-VIRTUAL-SWITCH-MIB::cvsDualActiveDetectionInformation s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-VIRTUAL-SWITCH-MIB::cvsDualActiveDetectionNotif",
+				"oid" : "1.3.6.1.4.1.9.9.388.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-VIRTUAL-SWITCH-MIB::cvsSwitchID",
+						"oid" : "1.3.6.1.4.1.9.9.388.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-VIRTUAL-SWITCH-MIB::cvsDualActiveDetectionInformation",
+						"oid" : "1.3.6.1.4.1.9.9.388.1.5.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

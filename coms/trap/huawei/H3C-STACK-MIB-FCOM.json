@@ -1,0 +1,124 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200804301650Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "H3C-STACK-MIB::h3cStackPortLinkStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The h3cStackPortLinkStatusChange trap indicates that the link status",
+				"of the stack port has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : 2"
+				},
+				"EventType" : "h3cStackPortLinkStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 0 : (($v3 == 3) ? 3 : 4)"
+				},
+				"SubNode" : "PortIndex:$v2",
+				"Summary" : "Stack port $v2 link status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD H3C-STACK-MIB::h3cStackPortLinkStatusChange H3C-STACK-MIB::h3cStackMemberID i 9999 H3C-STACK-MIB::h3cStackPortIndex i 9999 H3C-STACK-MIB::h3cStackPortStatus i 2",
+				"$SNMPTRAPCMD H3C-STACK-MIB::h3cStackPortLinkStatusChange H3C-STACK-MIB::h3cStackMemberID i 9999 H3C-STACK-MIB::h3cStackPortIndex i 9999 H3C-STACK-MIB::h3cStackPortStatus i 1"
+			],
+			"trap" : {
+				"name" : "H3C-STACK-MIB::h3cStackPortLinkStatusChange",
+				"oid" : "1.3.6.1.4.1.2011.10.2.91.6.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The member ID of the device in a stack."
+						],
+						"name" : "H3C-STACK-MIB::h3cStackMemberID",
+						"oid" : "1.3.6.1.4.1.2011.10.2.91.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The index of a stack port of the device in a stack."
+						],
+						"name" : "H3C-STACK-MIB::h3cStackPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.10.2.91.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The link status of the stack port of the device in a stack.",
+							"up: The link status of a stack port with reasonable physical connection",
+							"is up.",
+							"down: The link status of a stack port without physical connection is",
+							"down.",
+							"silent: The link status of a stack port which can not be used normally",
+							"is silent.",
+							"disabled: The link status of a stack port in disabled status is",
+							"disabled."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "silent",
+							"4" : "disabled"
+						},
+						"name" : "H3C-STACK-MIB::h3cStackPortStatus",
+						"oid" : "1.3.6.1.4.1.2011.10.2.91.4.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "H3C-STACK-MIB::h3cStackTopologyChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The h3cStackTopologyChange trap indicates that the topology type of",
+				"the stack has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "h3cStackTopologyChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Stack topology ($v1) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD H3C-STACK-MIB::h3cStackTopologyChange H3C-STACK-MIB::h3cStackTopology i 1",
+			"trap" : {
+				"name" : "H3C-STACK-MIB::h3cStackTopologyChange",
+				"oid" : "1.3.6.1.4.1.2011.10.2.91.6.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The topology of the stack.",
+							"chainConn: chain connection",
+							"ringConn: ring connection"
+						],
+						"enums" : {
+							"1" : "chainConn",
+							"2" : "ringConn"
+						},
+						"name" : "H3C-STACK-MIB::h3cStackTopology",
+						"oid" : "1.3.6.1.4.1.2011.10.2.91.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

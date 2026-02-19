@@ -1,0 +1,3833 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201701010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxSSHServerPreserveKeyFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSSHServerPreserveKeyFail notification is generated when the",
+				"saving of SSH server host key on the persistent drive fails by the CPM",
+				"module.",
+				"tmnxCpmFlashId identifies the failed compact flash.",
+				"tmnxCpmFlashOperStatus indicates the status of the compact flash",
+				"reported in tmnxCpmFlashId."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxCardSlotNum>[0-9]+)\\.(?P<tmnxCpmFlashId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3) ? 1 : ($v2==4 || $v2==5) ? 2 : 3"
+				},
+				"EventType" : "tmnxSSHServerPreserveKeyFail",
+				"ExpireTime" : {
+					"eval" : "($v2==3) ? 3600 : ($v2==4 || $v2==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 1 : ($v2==3) ? 0 : ($v2==4) ? 4 : ($v2==5) ? 3 : 2"
+				},
+				"SubNode" : "ChassisIndex:$tmnxChassisIndex;SlotNum:$tmnxCardSlotNum;FlashId:$tmnxCpmFlashId",
+				"Summary" : "SSH server host key saving failed on the persistent drive"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxSSHServerPreserveKeyFail TIMETRA-CHASSIS-MIB::tmnxCpmFlashHwIndex i 9999 TIMETRA-CHASSIS-MIB::tmnxCpmFlashOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxSSHServerPreserveKeyFail",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmFlashHwIndex indicates the tmnxHwIndex into the",
+							"tmnxHwTable for the row entry that represents the hardware component",
+							"information for this flash unit."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxCpmFlashHwIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.3.7.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Current status of this flash unit on this CPM card."
+						],
+						"enums" : {
+							"1" : "deviceStateUnknown",
+							"2" : "deviceNotEquipped",
+							"3" : "deviceStateOk",
+							"4" : "deviceStateFailed",
+							"5" : "deviceStateOutOfService",
+							"6" : "deviceNotProvisioned",
+							"7" : "deviceNotApplicable"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxCpmFlashOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.3.7.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxKeyChainAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxKeyChainAuthFailure notification is generated when the",
+				"incoming packet is dropped due to key chain authentication failure.",
+				"Failure could be due to the following reasons or more:",
+				"- Send packet had not auth keychain but recv side had keychain enabled.",
+				"- Keychain key id's did not match.",
+				"- Keychain key digest mismatch",
+				"- Received packet with invalid enhanced authentication option length.",
+				"- For other causes of failure refer to 'draft-bonica-tcp-auth-05.txt'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxKeyChainName>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxKeyChainAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$v5",
+				"Summary" : "Incoming packet dropped because of key chain ($tmnxKeyChainName) authentication failure: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxKeyChainAuthFailure TIMETRA-SECURITY-MIB::tmnxKeyChainReceiveTcpOptionNum i 1 TIMETRA-SECURITY-MIB::tmnxKeyChainAuthFailReason i 1 TIMETRA-SECURITY-MIB::tmnxKeyChainAuthAddrType i 0 TIMETRA-SECURITY-MIB::tmnxKeyChainAuthAddr s EXAMPLE TIMETRA-VRTR-MIB::vRtrID i 9999",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxKeyChainAuthFailure",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxKeyChainReceiveTcpOptionNum specifies the TCP option",
+							"value to check for in the TCP header of packets being received by the",
+							"router.",
+							"",
+							"The value of tmnxKeyChainReceiveTcpOptionNum is valid only when",
+							"tmnxKeyChainAuthenticationKey is used to sign and/or authenticate the",
+							"TCP protocol stream."
+						],
+						"enums" : {
+							"1" : "value253",
+							"2" : "value254",
+							"3" : "all",
+							"4" : "tcp-ao"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxKeyChainReceiveTcpOptionNum",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.14.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxKeyChainAuthFailReason is used by tmnxKeyChainAuthFailure to",
+							"notify the reason for the keychain authentication failure."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "noEnhAuthOptionRecvd",
+							"3" : "invalidOptionLen",
+							"4" : "mismatchRecvOption",
+							"5" : "invalidKeyId",
+							"6" : "digestMismatch",
+							"7" : "mismatchAlgId",
+							"9" : "notConfigured",
+							"10" : "noTcpAuthOptionRecvd"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxKeyChainAuthFailReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxKeyChainAuthAddrType indicates the address",
+							"type (ipv4 or ipv6) of the source address in the authentication",
+							"packet."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxKeyChainAuthAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxKeyChainAuthAddr indicates the source",
+							"address in the authentication packet."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxKeyChainAuthAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolPort",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxCpmProtViolPort notification is generated when a link-specific",
+				"packet arrival rate limit violation is detected for a port.",
+				"This notification is not supported on SR-1 and ESS-1, where the value",
+				"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the",
+				"value of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxPortPortID>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolPort",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortID:$tmnxPortPortID",
+				"Summary" : "Link-specific packet arrival rate limit violation on port $tmnxPortPortID; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolPort TIMETRA-SECURITY-MIB::tmnxCpmProtViolPortPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolPort",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolPortPeriods indicates the number of times",
+							"the link-specific rate limit violation was detected at this port.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolPortPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.18.1.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolPortAgg",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxCpmProtViolPortAgg notification is generated when a per-port",
+				"overall packet rate limit violation is detected for a port.",
+				"This notification is not supported on SR-1 and ESS-1, where the value",
+				"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the",
+				"value of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxPortPortID>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolPortAgg",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortID:$tmnxPortPortID",
+				"Summary" : "Per-port overall packet rate limit violation on port: $tmnxPortPortID; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolPortAgg TIMETRA-SECURITY-MIB::tmnxCpmProtViolPortAggPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolPortAgg",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolPortAggPeriods indicates the number of",
+							"times the per-port overall rate limit violation was detected at this",
+							"port."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolPortAggPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.18.1.4",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolIf",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxCpmProtViolIf notification is generated when a overall packet",
+				"arrival rate violation is detected for an interface, and this",
+				"notification is enabled.",
+				"This notification is not supported on SR-1 and ESS-1, where the value",
+				"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the",
+				"value of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<vRtrIfIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolIf",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "vRouterID:$vRtrID;vRouterIfIndex:$vRtrIfIndex",
+				"Summary" : "Overall packet arrival rate violation on interface: $vRtrIfIndex; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolIf TIMETRA-SECURITY-MIB::tmnxCpmProtViolIfPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolIf",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolIfPeriods indicates the number of times",
+							"the rate limit violation was detected at this router interface.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolIfPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.20.1.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxCpmProtViolSap notification is generated when a overall packet",
+				"arrival rate violation is detected for a SAP, and this notification is",
+				"enabled.",
+				"This notification is not supported on SR-1 and ESS-1, where the value",
+				"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the",
+				"value of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sapPortId>[0-9]+)\\.(?P<sapEncapValue>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolSap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;sapPortId:$sapPortId",
+				"Summary" : "Overall packet arrival rate violation on SAP Port: $sapPortId; svcId: $svcId; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolSap TIMETRA-SECURITY-MIB::tmnxCpmProtViolSapPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSap",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolSapPeriods indicates the number of times",
+							"the rate limit violation was detected at this SAP.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSapPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.22.1.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolMac",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxCpmProtViolMac notification is generated when a per-source",
+				"rate limit violation was detected for a source, and this notification",
+				"is enabled.",
+				"This notification is not supported on SR-1 and ESS-1, where the value",
+				"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the",
+				"value of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolMac",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$v1;sapPortId:$v2",
+				"Summary" : "Per-source rate limit violation on source (MAC: $v4)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolMac TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SAP-MIB::sapPortId u 9999 TIMETRA-SAP-MIB::sapEncapValue u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolMacAddress s EXAMPL TIMETRA-SECURITY-MIB::tmnxCpmProtViolMacPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolMac",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The ID of the access port where this SAP is defined."
+						],
+						"name" : "TIMETRA-SAP-MIB::sapPortId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.3.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the label used to identify this SAP on the access port",
+							"specified by sapPortId."
+						],
+						"name" : "TIMETRA-SAP-MIB::sapEncapValue",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.3.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolMacAddress indicates the MAC address of",
+							"the source.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolMacAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolMacPeriods indicates the number of times",
+							"the per-source rate limit violation was detected for this source.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolMacPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoSvcClient",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxCpmProtViolVdoSvcClient notification is generated when a",
+				"per-source rate limit violation was detected for a client address of a",
+				"RTCP control traffic in VPLS service."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<tmnxCpmProtViolVdoSvcCltAddrType>[0-9]+)\\.(?P<tmnxCpmProtViolVdoSvcCltAddr>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolVdoSvcClient",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;ClientAddress:$tmnxCpmProtViolVdoSvcCltAddr",
+				"Summary" : "Per-source rate limit violation on client address of RTCP control traffic in VPLS services; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoSvcClient TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoSvcPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoSvcClient",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolVdoSvcPeriods indicates the number of",
+							"times the per-source rate limit violation was detected for this",
+							"client.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoSvcPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.28.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoVrtrClient",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxCpmProtViolVdoVrtrClient notification is generated when a",
+				"per-source rate limit violation was detected for a client address of a",
+				"RTCP control traffic in router context."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxCpmProtViolVdoVrtrCltAdrType>[0-9]+)\\.(?P<tmnxCpmProtViolVdoVrtrCltAddr>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolVdoVrtrClient",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "vRouterID:$vRtrID;ClientAddress:$tmnxCpmProtViolVdoVrtrCltAddr",
+				"Summary" : "Per-source rate limit violation on router client; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoVrtrClient TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoVrtrPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoVrtrClient",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolVdoVrtrPeriods indicates the number of",
+							"times the per-source rate limit violation was detected for this",
+							"client.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolVdoVrtrPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.29.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxMD5AuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxMD5AuthFailure notification is generated when the incoming",
+				"packet is dropped due to MD5 authentication failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxMD5AuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "vRouterID:$v5",
+				"Summary" : "Incoming packet dropped because of MD5 authentication failure: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxMD5AuthFailure TIMETRA-SECURITY-MIB::tmnxMD5AuthKey s EXAMPLE TIMETRA-SECURITY-MIB::tmnxMD5AuthFailReason i 1 TIMETRA-SECURITY-MIB::tmnxMD5AuthAddrType i 0 TIMETRA-SECURITY-MIB::tmnxMD5AuthAddr s EXAMPLE TIMETRA-VRTR-MIB::vRtrID i 9999",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxMD5AuthFailure",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxMD5AuthKey indicates the MD5 key used for",
+							"authentication."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxMD5AuthKey",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxMD5AuthFailReason is used by tmnxMD5AuthFailure to notify the",
+							"reason for the MD5 authentication failure."
+						],
+						"enums" : {
+							"1" : "digestMismatch",
+							"2" : "noMD5OptionRcvd",
+							"3" : "invalidOptionLen",
+							"5" : "notConfigured"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxMD5AuthFailReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxMD5AuthAddrType indicates the address type",
+							"(ipv4 or ipv6) of the source address in the authentication packet."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxMD5AuthAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxMD5AuthAddr indicates the source address",
+							"in the authentication packet."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxMD5AuthAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. The vRtrID value for each virtual router must remain",
+							"constant at least from one re-initialization of the system",
+							"management processor (CPM) to the next. There will always be at",
+							"least one router entry defined by the agent with vRtrID=1 which",
+							"represents the transport router."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtDefPolModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxCpmProtDefPolModified notification is generated when the user",
+				"modifies a default access or default network policy."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtDefPolModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "CpmProtectionPolicyId:$v1",
+				"Summary" : "User modified CPM protection policy: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtDefPolModified TIMETRA-SECURITY-MIB::tmnxCpmProtPolId u 1",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtDefPolModified",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxCpmProtPolId indicates the policy index of",
+							"the cpm protection policy."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtPolId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSdpBind",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtViolSdpBind notification is generated when the",
+				"packet arrival rate at a mesh-sdp or spoke-sdp exceeds the SDP's",
+				"configured overall-rate.",
+				"[EFFECT] One or more packets arriving at the mesh-sdp or spoke-sdp was",
+				"discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, or",
+				"increase the locally configured overall-rate for the SDP."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sdpBindId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolSdpBind",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;sdpBindId:$sdpBindId",
+				"Summary" : "Overall rate limit violation on SDP binding: $sdpBindId; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolSdpBind TIMETRA-SECURITY-MIB::tmnxCpmProtViolSdpBindPeriods c 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSdpBind",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolSdpBindPeriods indicates the number of",
+							"times a rate limit violation was detected at this SDP binding.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSdpBindPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.33.1.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBind",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtExcdSdpBind notification is generated when a",
+				"source (identified by a MAC address) sends a packet stream to a local",
+				"mesh-sdp or spoke-sdp at a rate which exceeds the SDP's configured",
+				"per-source-rate.",
+				"[EFFECT] One or more packets arriving at the mesh-sdp or spoke-sdp was",
+				"discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, or",
+				"increase the locally configured per-source-rate for the SDP."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sdpBindId>[0-9]+)\\.(?P<tmnxCpmProtExcdSdpBindMac>([A-Fa-f0-9]+[:.-]){5}[A-Fa-f0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtExcdSdpBind",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;sdpBindId:$sdpBindId;Mac:$tmnxCpmProtExcdSdpBindMac",
+				"Summary" : "Per-source-rate limit violation on SDP binding: $sdpBindId; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBind TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindPeriods c 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBind",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtExcdSdpBindPeriods indicates the number of",
+							"times a per-source rate limit violation was detected for this source.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.35.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapEcm",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtExcdSapEcm notification is generated when an",
+				"Eth-CFM packet stream (identified by a source MAC address, domain",
+				"level, and Eth-CFM opcode) arrives at a local SAP at a rate which",
+				"exceeds the configured Eth-CFM rate limit for the stream.",
+				"[EFFECT] One or more Eth-CFM packets arriving at the SAP was",
+				"discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, or",
+				"increase the locally configured Eth-CFM rate limit for the stream."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sapPortId>[0-9]+)\\.(?P<sapEncapValue>[0-9]+)\\.(?P<tmnxCpmProtExcdSapEcmMac>([A-Fa-f0-9]+[:.-]){5}[A-Fa-f0-9]+)\\.(?P<tmnxCpmProtExcdSapEcmLevel>[0-9]+)\\.(?P<tmnxCpmProtExcdSapEcmOpCode>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtExcdSapEcm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;sapPortId:$sapPortId",
+				"Summary" : "Eth-CFM rate limit violation on SAP; Port ID: $sapPortId; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapEcm TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapEcmPeriods c 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapEcm",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtExcdSapEcmPeriods indicates the number of",
+							"times a rate limit violation was detected for this source.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapEcmPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.39.1.4",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindEcm",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtExcdSdpBindEcm notification is generated when",
+				"an Eth-CFM packet stream (identified by a source MAC address, domain",
+				"level, and Eth-CFM opcode) arrives at a local mesh-sdp or spoke-sdp at",
+				"a rate which exceeds the configured Eth-CFM rate limit for the stream.",
+				"[EFFECT] One or more Eth-CFM packets arriving at the mesh-sdp or",
+				"spoke-sdp was discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, or",
+				"increase the locally configured Eth-CFM rate limit for the stream."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sapPortId>[0-9]+)\\.(?P<tmnxCpmProtExcdSdpBindEcmMac>([A-Fa-f0-9]+[:.-]){5}[A-Fa-f0-9]+)\\.(?P<tmnxCpmProtExcdSdpBindEcmLevel>[0-9]+)\\.(?P<tmnxCpmProtExcdSdpBindEcmOpCode>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtExcdSdpBindEcm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;sapPortId:$sapPortId",
+				"Summary" : "Eth-CFM exceeded the configured rate limit $v1 times"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindEcm TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindEcmPeriods c 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindEcm",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtExcdSdpBindEcmPeriods indicates the number of",
+							"times a rate limit violation was detected for this source.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindEcmPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.37.1.4",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiFileReadFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiFileReadFailed notification is generated when an",
+				"attempt to read the file fails. The reason for the failure is",
+				"indicated by the tmnxSecNotifFailureReason object.",
+				"[EFFECT] Operational status of tunnels configured to use this",
+				"certificate will be set to 'down'.",
+				"[RECOVERY] Make sure the path specified in tmnxSecNotifFile is correct",
+				"and the file exists."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxPkiFileReadFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "File: $v1 read attempt failed because of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiFileReadFailed TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiFileReadFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCertVerificationFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCertVerificationFailed notification is generated",
+				"when an attempt to verify the certificate fails. This notification is",
+				"only used by the IPsec application.",
+				"[EFFECT] Authentication of the tunnel configured with the certificate",
+				"will start to fail.",
+				"[RECOVERY] Make sure the certificate specified in tmnxSecNotifCert is",
+				"a valid certificate and an appropriate trust anchor is configured."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxPkiCertVerificationFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "TunnelName:$v1",
+				"Summary" : "Certificate: $v2 verification failed because of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCertVerificationFailed TIMETRA-SECURITY-MIB::tmnxSecNotifTunnelName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifCert s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCertVerificationFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifTunnelName indicates the name of",
+							"tunnel associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifTunnelName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifCert indicates the certificate",
+							"name associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifCert",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCAProfileStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCAProfileStateChange notification is generated when",
+				"Certificate Authority profile changes state to 'down' due to",
+				"tmnxSecNotifFailureReason.",
+				"[EFFECT] Certificate Authority profile will remain in this state until",
+				"a corrective action is taken.",
+				"[RECOVERY] Depending on the reason indicated by",
+				"tmnxSecNotifFailureReason, corrective action should be taken."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxPkiCAProfile>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxCAProfileStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2) ? 0 : ($v1==3) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational status of CA profile: $tmnxPkiCAProfile is $v1; $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCAProfileStateChange TIMETRA-SECURITY-MIB::tmnxPkiCAProfileOperState i 1 TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCAProfileStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPkiCAProfileOperState indicates the current",
+							"operational status of this Certificate-Authority profile."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfileOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.3.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapIp",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtExcdSapIp notification is generated when a",
+				"source (identified by an IP address) sends a packet stream to a local",
+				"SAP at a rate which exceeds the SAP's configured per-source-rate.",
+				"[EFFECT] One or more packets arriving at the SAP was discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, OR",
+				"increase the locally configured per-source-rate for the SAP, OR",
+				"disable per-IP-source rate limiting on the SAP by setting",
+				"TIMETRA-SAP-MIB::sapCpmProtMonitorIP to 'false'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sapPortId>[0-9]+)\\.(?P<sapEncapValue>[0-9]+)\\.(?P<tmnxCpmProtExcdSapIpAddrType>[0-9]+)\\.(?P<tmnxCpmProtExcdSapIpAddr>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtExcdSapIp",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sapPortId:$sapPortId",
+				"Summary" : "Per-source-rate limit at SAP ($sapPortId) exceeded its configured limit; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapIp TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapIpPeriods c 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapIp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtExcdSapIpPeriods indicates the number of times",
+							"a per-source rate limit violation was detected for this source.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSapIpPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.44.1.3",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatusChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCAProfActnStatusChg notification is generated when",
+				"tmnxPkiCAProfActnStatus changes status. More information is available",
+				"through tmnxPkiCAProfActnStatusString and tmnxPkiCAProfActnStatusCode.",
+				"[EFFECT] This is due to the action performed using",
+				"tmnxPkiCAProfActnTable.",
+				"[RECOVERY] Depending on the information available in this trap",
+				"another tmnxPkiCAProfActnType request may be issued by correcting the",
+				"parameters in the tmnxPkiCAProfActnTable."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxPkiCAProfile>[A-Za-z0-9_]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==0) ? 1 : ($v2==2) ? 2 : 3"
+				},
+				"EventType" : "tmnxPkiCAProfActnStatusChg",
+				"ExpireTime" : {
+					"eval" : "($v2==0) ? 3600 : ($v2==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==0) ? 0 : ($v2==2) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PKI CA profile: $tmnxPkiCAProfile $v1 status is $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatusChg TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnType i 1 TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatus i 0 TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatusString s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatusCode i 0 TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnOrigCmdTime s EXAMPLEE TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnLastCAResp s EXAMPLEE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatusChg",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The tmnxPkiCAProfActnType specifies the action to be performed on the",
+							"CA profile.",
+							"",
+							"The tmnxPkiCAProfActnType and tmnxPkiCAProfAction objects must be set",
+							"together for the specific action to be performed."
+						],
+						"enums" : {
+							"1" : "initialRegistration",
+							"2" : "certRequest",
+							"3" : "keyUpdate",
+							"4" : "poll",
+							"5" : "clearRequest",
+							"6" : "abortRequest"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.22.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The tmnxPkiCAProfActnStatus indicates the status of the last action on",
+							"the CA profile."
+						],
+						"enums" : {
+							"0" : "processed",
+							"1" : "inProgress",
+							"2" : "failed"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.22.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The tmnxPkiCAProfActnStatusString indicates the detailed status of the",
+							"last action on the CA profile."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatusString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.22.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The tmnxPkiCAProfActnStatusCode indicates the status of the last",
+							"action on the CA profile."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "accepted",
+							"2" : "grantedWithMods",
+							"3" : "rejection",
+							"4" : "waiting",
+							"5" : "revocationWarning",
+							"6" : "revocationNotification",
+							"7" : "keyUpdateWarning"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnStatusCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.22.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The tmnxPkiCAProfActnOrigCmdTime indicates the time when original",
+							"command request was issued."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnOrigCmdTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.22.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The tmnxPkiCAProfActnLastCAResp indicates the last response from the",
+							"the CA server."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfActnLastCAResp",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.22.1.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSapOutProf",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtViolSapOutProf notification is generated when",
+				"the rate at which incoming control packets are marked as",
+				"out-of-profile specified by tmnxCpmProtPolOutProfileRate is exceeded.",
+				"This notification is generated when tmnxCpmProtPolOutProfRateLogEvnt",
+				"is set to 'true'.",
+				"[EFFECT] One or more control packets being marked as out-of-profile",
+				"will be discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, or",
+				"increase the out-of-profile rate, tmnxCpmProtPolOutProfileRate for",
+				"this SAP."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sapPortId>[0-9]+)\\.(?P<sapEncapValue>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolSapOutProf",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;sapPortId$sapPortId",
+				"Summary" : "Out-of-profile rate limit violation on SAP port: $sapPortId; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolSapOutProf TIMETRA-SECURITY-MIB::tCpmProtOutProfViolSapPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSapOutProf",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tCpmProtOutProfViolSapPeriods indicates the number of",
+							"times the out-of-profile rate limit violation was detected at this",
+							"SAP.",
+							"",
+							"The out-of-profile rate limit is indicated by the object",
+							"tmnxCpmProtPolOutProfileRate."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tCpmProtOutProfViolSapPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.62.1.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolIfOutProf",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtViolIfOutProf notification is generated when",
+				"the rate at which incoming control packets are marked as",
+				"out-of-profile specified by tmnxCpmProtPolOutProfileRate is exceeded.",
+				"This notification is generated when tmnxCpmProtPolOutProfRateLogEvnt",
+				"is set to 'true'.",
+				"[EFFECT] One or more control packets being marked as out-of-profile",
+				"will be discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, or",
+				"increase the out-of-profile rate, tmnxCpmProtPolOutProfileRate for",
+				"this interface."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<vRtrIfIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolIfOutProf",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "vRouterID:$vRtrID;vRouterIfIndex$vRtrIfIndex",
+				"Summary" : "Out-of-profile rate limit violation on router: $vRtrID; Interface index: $vRtrIfIndex; Frequency of violation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolIfOutProf TIMETRA-SECURITY-MIB::tCpmProtOutProfViolIfPeriods u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolIfOutProf",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tCpmProtOutProfViolIfPeriods indicates the number of",
+							"times the out-of-profile rate limit violation was detected at this",
+							"router interface.",
+							"",
+							"The out-of-profile rate limit is indicated by the object",
+							"tmnxCpmProtPolOutProfileRate."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tCpmProtOutProfViolIfPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.61.1.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindIp",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtExcdSdpBindIp notification is generated when a",
+				"source (identified by an IP address) sends a packet stream to a local",
+				"mesh-sdp or spoke-sdp at a rate which exceeds the SDP's configured",
+				"per-source-rate.",
+				"[EFFECT] One or more packets arriving at the mesh-sdp or spoke-sdp was",
+				"discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, or",
+				"increase the locally configured per-source-rate for the SDP."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sdpBindId>[0-9]+)\\.(?P<tmnxCpmProtExcdSdpBindIpAddrType>[0-9]+)\\.(?P<tmnxCpmProtExcdSdpBindIpAddr>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtExcdSdpBindIp",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;sdpBindId:$sdpBindId",
+				"Summary" : "The per-source-rate on SDP IP $tmnxCpmProtExcdSdpBindIpAddr exceeded the configured limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindIp TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindIpPeriods c 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindIp",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxCpmProtExcdSdpBindIpPeriods indicates the number of",
+							"times a per-source rate limit violation was detected for this source.",
+							"",
+							"The sampling interval length is indicated by the object",
+							"tmnxCpmProtDetectPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtExcdSdpBindIpPeriods",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.64.1.3",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxSecComputeCertChainFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSecComputeCertChainFailure notification is generated",
+				"when a compute chain-failure has occurred.",
+				"[EFFECT] The chain cannot be built for a configured certificate and",
+				"the corresponding chain will be empty.",
+				"[RECOVERY] Depending on the reason indicated by",
+				"tmnxSecNotifFailureReason, corrective action should be taken."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSecComputeCertChainFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Certificate chain failed; $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxSecComputeCertChainFailure TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxSecComputeCertChainFailure",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSdpBindOutProf",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCpmProtViolSdpBindOutProf notification is generated",
+				"when the rate at which incoming control packets are marked as",
+				"out-of-profile specified by tmnxCpmProtPolOutProfileRate is exceeded.",
+				"This notification is generated when tmnxCpmProtPolOutProfRateLogEvnt",
+				"is set to 'true'.",
+				"[EFFECT] One or more control packets being marked as out-of-profile",
+				"will be discarded.",
+				"[RECOVERY] Reduce the packet transmission rate at the far end, or",
+				"increase the out-of-profile rate, tmnxCpmProtPolOutProfileRate for",
+				"this SDP binding."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>[0-9]+)\\.(?P<sdpBindId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCpmProtViolSdpBindOutProf",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "svcId:$svcId;sdpBindId:$sdpBindId",
+				"Summary" : "Out-of-profile rate exceeded on SDP binding: $sdpBindId"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCpmProtViolSdpBindOutProf TIMETRA-SECURITY-MIB::tCpmProtOutProfViolSdpBindPeriod u 9999 TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolSdpBindOutProf",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tCpmProtOutProfViolSdpBindPeriod indicates the number of",
+							"times the out-of-profile rate limit violation was detected at this SDP",
+							"binding.",
+							"",
+							"The out-of-profile rate limit is indicated by the object",
+							"tmnxCpmProtPolOutProfileRate."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tCpmProtOutProfViolSdpBindPeriod",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.9.63.1.1",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value of tmnxCpmProtViolExcdPktHexDump contains at most the first",
+							"64 bytes (octets) of the first packet that was detected as exceeding",
+							"the configured rate.",
+							"",
+							"This object is not supported on SR-1 and ESS-1, where the value of",
+							"TIMETRA-CHASSIS-MIB::tmnxChassisType is '5', and 7710, where the value",
+							"of TIMETRA-CHASSIS-MIB::tmnxChassisType is '7' or '9'."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxCpmProtViolExcdPktHexDump",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.17.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxSecNotifKeyChainExpired",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSecNotifKeyChainExpired notification is generated when a",
+				"protocol instance tries to use a keychain, for which the last key",
+				"entry has expired."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxKeyChainName>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : 2"
+				},
+				"EventType" : "tmnxSecNotifKeyChainExpired",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Keychain $tmnxKeyChainName is expired' : 'Keychain $tmnxKeyChainName is not expired'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxSecNotifKeyChainExpired TIMETRA-SECURITY-MIB::tmnxKeyChainExpired i 1 TIMETRA-SECURITY-MIB::tmnxSecNotifOrigProtocol s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifKeyChainExpired",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxKeyChainExpired specifies whether this keychain is",
+							"expired or not."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxKeyChainExpired",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.14.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSecNotifOrigProtocol indicates the originating",
+							"protocol that generated the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifOrigProtocol",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCAProfUpDueToRevokeChkCrlOpt",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCAProfUpDueToRevokeChkCrlOpt notification is generated",
+				"when Certificate Authority profile changes state to 'up' due to",
+				"tmnxPkiCAProfRevokeChk set to 'crlOptional' even with the errors in",
+				"tmnxSecNotifFailureReason.",
+				"[EFFECT] Certificate Authority profile will remain up.",
+				"[RECOVERY] Errors described in tmnxSecNotifFailureReason should still",
+				"be corrected."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxPkiCAProfile>[a-zA-Z0-9_]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxCAProfUpDueToRevokeChkCrlOpt",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2) ? 0 : ($v1==3) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "The operatoinal state of certificate authority $tmnxPkiCAProfile is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCAProfUpDueToRevokeChkCrlOpt TIMETRA-SECURITY-MIB::tmnxPkiCAProfileOperState i 1 TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCAProfUpDueToRevokeChkCrlOpt",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPkiCAProfileOperState indicates the current",
+							"operational status of this Certificate-Authority profile."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfileOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.3.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCertBeforeExpWarning",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCertBeforeExpWarning notification is generated when",
+				"the certificate indicated in tmnxSecNotifFile will expire in the time",
+				"period indicated by tmnxPkiExpRemainingHours and",
+				"tmnxPkiExpRemainingMinutes.",
+				"[EFFECT] The indicated certificate will expire.",
+				"[RECOVERY] Replace the indicated file with an updated certificate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxPkiCertExpStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "The certificate $v1 will expire in $v2 hours and $v3 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCertBeforeExpWarning TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPkiExpRemainingHours u 9999 TIMETRA-SECURITY-MIB::tmnxPkiExpRemainingMinutes u 9999 TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCertBeforeExpWarning",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxPkiExpRemainingHours indicates the time (in hours)",
+							"remaining for the certificate or CRL (certificate revocation list) to",
+							"expire."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiExpRemainingHours",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxPkiExpRemainingMinutes indicates the time (in",
+							"minutes) remaining for the certificate or CRL (certificate revocation",
+							"list) to expire."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiExpRemainingMinutes",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.15",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifClientAppName indicates the name",
+							"of the client application associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.26",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCertAfterExpWarning",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCertAfterExpWarning notification is generated when",
+				"the certificate indicated in tmnxSecNotifFile has expired.",
+				"[EFFECT] The indicated certificate has expired.",
+				"[RECOVERY] Replace the indicated file with an updated certificate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxPkiCertExpStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "The certificate $v1 has expired"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCertAfterExpWarning TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCertAfterExpWarning",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifClientAppName indicates the name",
+							"of the client application associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.26",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCertExpWarningCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCertExpWarningCleared notification is generated",
+				"when the expiration warning for the certificate indicated in",
+				"tmnxSecNotifFile no longer applies because of the reason indicated in",
+				"tmnxPkiExpReason.",
+				"[EFFECT] The indicated certificate is no longer going to expire.",
+				"[RECOVERY] None needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxPkiCertExpStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Certificate expiration warning cleared because of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCertExpWarningCleared TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPkiExpReason s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCertExpWarningCleared",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxPkiExpReason indicates the reason why the expiration",
+							"warning for a certificate or CRL (certificate revocation list) no",
+							"longer applies."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiExpReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifClientAppName indicates the name",
+							"of the client application associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.26",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCRLBeforeExpWarning",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCRLBeforeExpWarning notification is generated when",
+				"the CRL (certificate revocation list) indicated in tmnxSecNotifFile",
+				"will expire in the time period indicated by tmnxPkiExpRemainingHours",
+				"and tmnxPkiExpRemainingMinutes.",
+				"[EFFECT] The indicated CRL (certificate revocation list) will expire.",
+				"[RECOVERY] Replace the indicated file with an updated CRL."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxPkiCRLExpStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Certificate revocation list expires in $v2 hours and $v3 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCRLBeforeExpWarning TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPkiExpRemainingHours u 9999 TIMETRA-SECURITY-MIB::tmnxPkiExpRemainingMinutes u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCRLBeforeExpWarning",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxPkiExpRemainingHours indicates the time (in hours)",
+							"remaining for the certificate or CRL (certificate revocation list) to",
+							"expire."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiExpRemainingHours",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxPkiExpRemainingMinutes indicates the time (in",
+							"minutes) remaining for the certificate or CRL (certificate revocation",
+							"list) to expire."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiExpRemainingMinutes",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.15",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCRLAfterExpWarning",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCRLAfterExpWarning notification is generated when",
+				"the CRL (certificate revocation list) indicated in tmnxSecNotifFile",
+				"has expired.",
+				"[EFFECT] The indicated CRL (certificate revocation list) has expired.",
+				"[RECOVERY] Replace the indicated file with an updated CRL."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxPkiCRLExpStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Certificate revocation list $v1 has expired"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCRLAfterExpWarning TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCRLAfterExpWarning",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCRLExpWarningCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCRLExpWarningCleared notification is generated when",
+				"the expiration warning for the CRL (certificate revocation list)",
+				"indicated in tmnxSecNotifFile no longer applies.",
+				"[EFFECT] The indicated CRL (certificate revocation list) is no longer",
+				"going to expire because of the reason indicated in tmnxPkiExpReason.",
+				"[RECOVERY] None needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxPkiCRLExpStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Certificate revocation list $v1 expiration warning cleared because of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCRLExpWarningCleared TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPkiExpReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCRLExpWarningCleared",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxPkiExpReason indicates the reason why the expiration",
+							"warning for a certificate or CRL (certificate revocation list) no",
+							"longer applies."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiExpReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFileReloaded",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSecNotifFileReloaded notification is generated when",
+				"the certificate or key indicated in tmnxSecNotifFile is reloaded.",
+				"tmnxSecNotifFileType indicates whether a certificate or key has been",
+				"reloaded.",
+				"[EFFECT] The indicated certificate or key has been reloaded.",
+				"[RECOVERY] None needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSecNotifFileReloaded",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "$v1 is reloaded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxSecNotifFileReloaded TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFileType s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFileReloaded",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxSecNotifFileType indicates the file type (certificate",
+							"or key) associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFileType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxSecPwdHistoryFileLoadFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSecPwdHistoryFileLoadFailed notification is generated",
+				"when the password history is enabled (tmnxPasswordHistory is not 0)",
+				"for the first time and the system was unable to load and process the",
+				"password history.",
+				"Failure could be due to the following reasons or more:",
+				"- This is the first time the password history is enabled on this system.",
+				"- A previous attempt to store the password history failed.",
+				"- Somebody removed or modified the password history file.",
+				"[EFFECT] The system might not be able to compare the new user password",
+				"with the user's password history from before the last reboot. If",
+				"tmnxSecPwdHistLoadFailReason is set to 'notFound(1)', a new, empty",
+				"history file will be created.",
+				"[RECOVERY] Investigation might be warranted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSecPwdHistoryFileLoadFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Password history file load failed because it is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxSecPwdHistoryFileLoadFailed TIMETRA-SECURITY-MIB::tmnxSecPwdHistLoadFailReason i 1",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxSecPwdHistoryFileLoadFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSecPwdHistLoadFailReason is used by",
+							"tmnxSecPwdHistoryFileLoadFailed to notify the reason for the failure",
+							"to load the password history."
+						],
+						"enums" : {
+							"1" : "notFound",
+							"2" : "corrupted"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecPwdHistLoadFailReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxSecPwdHistoryFileWriteFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSecPwdHistoryFileWriteFailed notification is generated",
+				"when the system is unable to store the password history when an user's",
+				"password is changed.",
+				"[EFFECT] After a reboot, the system might not be able to compare the",
+				"new user password with the user's password history.",
+				"[RECOVERY] Ensure the compact flash is present, and all file",
+				"permissions are correct."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSecPwdHistoryFileWriteFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "System unable to store password history when an user password changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxSecPwdHistoryFileWriteFailed ",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxSecPwdHistoryFileWriteFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.36"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateStart",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxPkiCAProfCrlUpdateStart notification is generated when a",
+				"CRL update operation is started for an existing CA Profile.",
+				"The CA Profile is configured via tmnxPkiCAProfileTable.",
+				"[EFFECT] The system is downloading the CRL file from a URL, which is",
+				"configured via tmnxPkiCAProfUrlTable.",
+				"[RECOVERY] No recovery is required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxPkiCAProfCrlUpdateStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "CRL update started for CA profile: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateStart TIMETRA-SECURITY-MIB::tmnxPkiCAProfileNameForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateStart",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.37",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPkiCAProfileNameForNotify indicates the name of the",
+							"Certificate-Authority profile."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfileNameForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateSuccess",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxPkiCAProfCrlUpdateSuccess notification is generated when",
+				"a new valid CRL file is successfully updated for an existing CA",
+				"Profile.",
+				"The CA Profile is configured via tmnxPkiCAProfileTable.",
+				"[EFFECT] tmnxPkiCAProfileCRLFile will be replaced if the downloaded",
+				"CRL file qualified.",
+				"The cases that a downloaded CRL does not qualify are explained in the",
+				"DESCRIPTION clause of tmnxPkiCAProfAtCrlUpdScheduleT.",
+				"[RECOVERY] No recovery is required for this notification."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxPkiCAProfile>[a-zA-Z0-9_]+)\\.(?P<tmnxPkiCAProfUrlId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxPkiCAProfCrlUpdateStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "New valid CRL file successfully updated for CA profile: $tmnxPkiCAProfile at $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateSuccess TIMETRA-SECURITY-MIB::tmnxPkiCAProfUrl s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateSuccess",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.38",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPkiCAProfUrl specifies the URL, which specifies the",
+							"location, where an updated CRL can be downloaded from.",
+							"",
+							"This object must be configured together with",
+							"tmnxPkiCAProfUrlFileTransProf.",
+							"",
+							"The value of an empty string specifies no URL is configured."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfUrl",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.15.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateUrlFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxPkiCAProfCrlUpdateUrlFail notification is generated when",
+				"the CRL update operation has failed after attempting the indicated URL",
+				"for an existing CA Profile.",
+				"The CA Profile is configured via tmnxPkiCAProfileTable. URLs for an",
+				"existing CA Profile are configured via tmnxPkiCAProfUrlTable.",
+				"A tmnxPkiCAProfCrlUpdateUrlFail will not be sent when the URL is the",
+				"last one in the URL list for an existing CA Profile. In such case, a",
+				"tmnxPkiCAProfCrlUpdAllUrlsFail notification will be sent.",
+				"[EFFECT] The system will attempt to download the CRL file from the",
+				"next URL in the URL list.",
+				"[RECOVERY] Make sure the URLs specified in tmnxPkiCAProfUrlTable are",
+				"correct."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxPkiCAProfile>[a-zA-Z0-9_]+)\\.(?P<tmnxPkiCAProfUrlId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxPkiCAProfCrlUpdateStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "CRL update operation failed for CA profile $tmnxPkiCAProfile after trying at $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateUrlFail TIMETRA-SECURITY-MIB::tmnxPkiCAProfUrl s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdateUrlFail",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.39",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPkiCAProfUrl specifies the URL, which specifies the",
+							"location, where an updated CRL can be downloaded from.",
+							"",
+							"This object must be configured together with",
+							"tmnxPkiCAProfUrlFileTransProf.",
+							"",
+							"The value of an empty string specifies no URL is configured."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfUrl",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.15.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdAllUrlsFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxPkiCAProfCrlUpdAllUrlsFail notification is generated",
+				"when the CRL update operation failed after attempting all URLs for an",
+				"existing CA Profile.",
+				"The CA Profile is configured via tmnxPkiCAProfileTable. URLs for an",
+				"existing CA Profile are configured via tmnxPkiCAProfUrlTable.",
+				"[EFFECT] When tmnxPkiCAProfAtCrlUpdScheduleT is 'nextUpdateBased (1)'",
+				"and tmnxPkiCAProfAtCrlUpdRetryIntv is zero, the system will stop",
+				"attempting to update the CRL file.",
+				"The system will attempt to download the same CRL file",
+				"starting from the first URL in the URL list again after",
+				"1) tmnxPkiCAProfAtCrlUpdRetryIntv (>0) seconds, when",
+				"tmnxPkiCAProfAtCrlUpdScheduleT is 'nextUpdateBased (1)', or",
+				"2) tmnxPkiCAProfAtCrlUpdPrdcUpdIntv seconds, when",
+				"tmnxPkiCAProfAtCrlUpdScheduleT is 'periodic (2)'.",
+				"[RECOVERY] Make sure the URLs specified in tmnxPkiCAProfUrlTable are",
+				"correct."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxPkiCAProfile>[a-zA-Z0-9_]+)\\.(?P<tmnxPkiCAProfUrlId>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxPkiCAProfCrlUpdateStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "CRL update operation failed for CA profile: $tmnxPkiCAProfile after trying at all URLs"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdAllUrlsFail TIMETRA-SECURITY-MIB::tmnxPkiCAProfUrl s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdAllUrlsFail",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.40",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPkiCAProfUrl specifies the URL, which specifies the",
+							"location, where an updated CRL can be downloaded from.",
+							"",
+							"This object must be configured together with",
+							"tmnxPkiCAProfUrlFileTransProf.",
+							"",
+							"The value of an empty string specifies no URL is configured."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfUrl",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.18.15.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiFileWriteFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiFileWriteFailed notification is generated when an",
+				"attempt to write the file fails. Reason for the failure is indicated",
+				"by the tmnxSecNotifFailureReason object.",
+				"[EFFECT] The downloaded file is not saved to disk.",
+				"[RECOVERY] Make sure the path specified in tmnxSecNotifFile is",
+				"correct, file permission is writable and there is sufficient disk",
+				"space."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxPkiFileWriteFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Write attempt in to PKI File: $v1 failed because of $v2; Size: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiFileWriteFailed TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFileSize C 9999",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiFileWriteFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.41",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxSecNotifFileSize indicates the size of the file to be",
+							"written at the path specified in tmnxSecNotifFile."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFileSize",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.20",
+						"valueType" : "COUNTER64"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdNoNxtUpdTime",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxPkiCAProfCrlUpdNoNxtUpdTime notification is generated",
+				"when tmnxPkiCAProfAtCrlUpdScheduleT is 'nextUpdateBased (1)' and",
+				"one of the following conditions is true:",
+				"1) The 'nextUpdate' field is missing from the CRL file or contains",
+				"a value that is beyond the limit of the system",
+				"2) tmnxPkiCAProfAtCrlUpdRetryIntv is zero, and none of the configured",
+				"URLs work or contain a CRL that qualifies from the first scheduled",
+				"update.",
+				"[EFFECT] The system will not download a new CRL file.",
+				"[RECOVERY] Change tmnxPkiCAProfAtCrlUpdScheduleT to 'periodic (2)' if",
+				"the system is to check for an updated CRL every",
+				"tmnxPkiCAProfAtCrlUpdPrdcUpdIntv seconds. Otherwise, configure the",
+				"tmnxPkiCAProfAtCrlUpdAdminState to 'outOfService (3)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxPkiCAProfCrlUpdNoNxtUpdTime",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "System will not download new CRL file as there is problem in next update"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdNoNxtUpdTime TIMETRA-SECURITY-MIB::tmnxPkiCAProfileNameForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdNoNxtUpdTime",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.42",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPkiCAProfileNameForNotify indicates the name of the",
+							"Certificate-Authority profile."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfileNameForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxUsrProfSessionLimitExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxUsrProfSessionLimitExceeded notification is generated",
+				"when an attempt to establish a new user access session is not",
+				"successful because any of SSH / Telnet / Total session limits defined",
+				"for the profile of which the user is a member has been exceeded.",
+				"The value of the object tmnxSessionLimitExceededName indicates the",
+				"name of the user profile of which the session limit has been exceeded.",
+				"The value of the object tmnxSessionLimitExceededType indicates the",
+				"type of the session limit that has been exceeded.",
+				"[EFFECT] The user access session has not been established.",
+				"[RECOVERY] An administrator may execute one of the following actions",
+				"in order to allow a successful session establishment:",
+				"1) force disconnection of an existing session(s) using",
+				"'admin disconnect' CLI command",
+				"2) increase the value of the session limit using CLI or SNMP SET",
+				"operation on the corresponding object in tmnxUserProfileTable",
+				"3) revoke the profile membership for the particular user (beware that",
+				"this action may have impact on user's privileges)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxUsrProfSessionLimitExceeded",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "User access session is not established because $v2 exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxUsrProfSessionLimitExceeded TIMETRA-SECURITY-MIB::tmnxSessionLimitExceededName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSessionLimitExceededType i 1",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxUsrProfSessionLimitExceeded",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSessionLimitExceededName indicates the",
+							"name of the object of which the session limit has been exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSessionLimitExceededName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSessionLimitExceededType indicates the",
+							"type of the session limit that has been exceeded.",
+							"",
+							"sshSessionLimit (1): limit for number of concurrent SSH user",
+							"access sessions",
+							"telnetSessionLimit (2): limit for number of concurrent Telnet user",
+							"access sessions",
+							"totalSessionLimit (3): limit for number of all concurrent user",
+							"access sessions"
+						],
+						"enums" : {
+							"1" : "sshSessionLimit",
+							"2" : "telnetSessionLimit",
+							"3" : "totalSessionLimit"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSessionLimitExceededType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxCliGroupSessionLimitExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxCliGroupSessionLimitExceeded notification is generated",
+				"when an attempt to establish a new user access session is not",
+				"successful because any of SSH / Telnet / Total session limits defined",
+				"for the CLI session group of which the user is an indirect member (as",
+				"a member of a user profile that is a member of the CLI session group)",
+				"has been exceeded.",
+				"The value of the object tmnxSessionLimitExceededName indicates the",
+				"name of the CLI session group of which the session limit has been",
+				"exceeded.",
+				"The value of the object tmnxSessionLimitExceededType indicates the",
+				"type of the session limit that has been exceeded.",
+				"[EFFECT] The user access session has not been established.",
+				"[RECOVERY] An administrator may execute one of the following actions",
+				"in order to allow a successful session establishment:",
+				"1) force disconnection of an existing session(s) using",
+				"'admin disconnect' CLI command",
+				"2) increase the value of the session limit using CLI or SNMP SET",
+				"operation on the corresponding object in tmnxCliSessionGroupTable",
+				"3) revoke the profile membership for the particular user (beware that",
+				"this action may have impact on user's privileges)",
+				"4) revoke the session group membership for the particular profile"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxCliGroupSessionLimitExceeded",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "User access session is not established because $v2 exceeded for the CLI group"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxCliGroupSessionLimitExceeded TIMETRA-SECURITY-MIB::tmnxSessionLimitExceededName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSessionLimitExceededType i 1",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxCliGroupSessionLimitExceeded",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSessionLimitExceededName indicates the",
+							"name of the object of which the session limit has been exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSessionLimitExceededName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSessionLimitExceededType indicates the",
+							"type of the session limit that has been exceeded.",
+							"",
+							"sshSessionLimit (1): limit for number of concurrent SSH user",
+							"access sessions",
+							"telnetSessionLimit (2): limit for number of concurrent Telnet user",
+							"access sessions",
+							"totalSessionLimit (3): limit for number of all concurrent user",
+							"access sessions"
+						],
+						"enums" : {
+							"1" : "sshSessionLimit",
+							"2" : "telnetSessionLimit",
+							"3" : "totalSessionLimit"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSessionLimitExceededType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdLargPreUpdTm",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxPkiCAProfCrlUpdLargPreUpdTm notification is generated",
+				"when the 'nextUpdate' time of a newly downloaded CRL is earlier than",
+				"the last successful update time or the time of setting",
+				"tmnxPkiCAProfAtCrlUpdAdminState to 'inService (2)' plus the pre-update",
+				"time.",
+				"The last successful update time is stored in",
+				"tmnxPkiCAProfAtCrlUpdLstSucsTmSt. The pre-update time is configured",
+				"via tmnxPkiCAProfAtCrlUpdPreUpdTime.",
+				"[EFFECT] The system will update the CRL again in",
+				"tmnxPkiCAProfAtCrlUpdRetryIntv seconds rather than immediately.",
+				"[RECOVERY] Configure tmnxPkiCAProfAtCrlUpdPreUpdTime to a value less",
+				"than (the 'nextUpdate' value of the newly downloaded CRL - the last",
+				"successful update time). The ideal value would be a value slightly",
+				"lower than the CRL overlap period to avoid unnecessary download",
+				"attempts.",
+				"No recovery is needed for if the notification is generated in case of",
+				"setting tmnxPkiCAProfAtCrlUpdAdminState to 'inService (2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxPkiCAProfCrlUpdLargPreUpdTm",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "The nextUpdate time of CRL is earlier that the last successful update time"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdLargPreUpdTm TIMETRA-SECURITY-MIB::tmnxPkiCAProfileNameForNotify s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfCrlUpdLargPreUpdTm",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.45",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPkiCAProfileNameForNotify indicates the name of the",
+							"Certificate-Authority profile."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCAProfileNameForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxUserCliLoginMaxAttempts",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxUserCliLoginMaxAttempts notification is generated when a",
+				"non Lawful Interception user attempting to open a CLI session failed",
+				"to authenticate for more than a maximum allowed number of times in a",
+				"period of tmnxPasswordAttemptsTime minutes.",
+				"The value of the object tmnxPasswordAttemptsCount indicates the",
+				"maximum number of unsuccessful login attempts allowed.",
+				"The value of the object tmnxPasswordAttemptsLockoutPeriod indicates",
+				"the number of minutes the user is locked out.",
+				"The value of the object tmnxSecNotifyUserName indicates the name of",
+				"the user attempting to open a CLI session.",
+				"The value of the object tmnxSecNotifyAddrType indicates the type of",
+				"the IP address stored in the object tmnxSecNotifyAddr.",
+				"The value of the object tmnxSecNotifyAddr indicates the IP address of",
+				"the user attempting to open a CLI session.",
+				"[EFFECT] The user is locked out for a period of",
+				"tmnxPasswordAttemptsLockoutPeriod minutes. A remote access session is",
+				"terminated.",
+				"[RECOVERY] No recovery action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxUserCliLoginMaxAttempts",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "User $v1 exceeded $v4 unsuccessful login attempts and locked out for $v5 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxUserCliLoginMaxAttempts TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType i 0 TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount u 1 TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod u 0",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxUserCliLoginMaxAttempts",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.46",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyUserName indicates the name of a",
+							"system user for a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddrType indicates the type of",
+							"the IP address stored in the object tmnxSecNotifyAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddr indicates an IP address for",
+							"a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of unsuccessful login attempts allowed for a user.",
+							"The value of tmnxPasswordAttemptsCount is used with the value of",
+							"tmnxPasswordAttemptsTime to find out if the user is to be locked out",
+							"for tmnxPasswordAttemptsLockoutPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The number of minutes the user is locked out if the threshold of",
+							"unsuccessful login attempts has exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxUserFtpLoginMaxAttempts",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxUserFtpLoginMaxAttempts notification is generated when a",
+				"non Lawful Interception user attempting to connect via FTP failed to",
+				"authenticate for more than a maximum allowed number of times in a",
+				"period of tmnxPasswordAttemptsTime minutes.",
+				"The value of the object tmnxPasswordAttemptsCount indicates the",
+				"maximum number of unsuccessful login attempts allowed.",
+				"The value of the object tmnxPasswordAttemptsLockoutPeriod indicates",
+				"the number of minutes the user is locked out.",
+				"The value of the object tmnxSecNotifyUserName indicates the name of",
+				"the user attempting to connect via FTP.",
+				"The value of the object tmnxSecNotifyAddrType indicates the type of",
+				"the IP address stored in the object tmnxSecNotifyAddr.",
+				"The value of the object tmnxSecNotifyAddr indicates the IP address of",
+				"the user attempting to connect via FTP.",
+				"[EFFECT] The user is locked out for a period of",
+				"tmnxPasswordAttemptsLockoutPeriod minutes. An FTP session is",
+				"terminated.",
+				"[RECOVERY] No recovery action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxUserFtpLoginMaxAttempts",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "FTP session terminated because the user: $v1 exceeded $v4 unsuccessful login attempts and locked out for $v5 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxUserFtpLoginMaxAttempts TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType i 0 TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount u 1 TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod u 0",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxUserFtpLoginMaxAttempts",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.47",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyUserName indicates the name of a",
+							"system user for a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddrType indicates the type of",
+							"the IP address stored in the object tmnxSecNotifyAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddr indicates an IP address for",
+							"a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of unsuccessful login attempts allowed for a user.",
+							"The value of tmnxPasswordAttemptsCount is used with the value of",
+							"tmnxPasswordAttemptsTime to find out if the user is to be locked out",
+							"for tmnxPasswordAttemptsLockoutPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The number of minutes the user is locked out if the threshold of",
+							"unsuccessful login attempts has exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxUserSshLoginMaxAttempts",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxUserSshLoginMaxAttempts notification is generated when a",
+				"non Lawful Interception user attempting to connect via SSH failed to",
+				"authenticate for more than a maximum allowed number of times in a",
+				"period of tmnxPasswordAttemptsTime minutes.",
+				"The value of the object tmnxPasswordAttemptsCount indicates the",
+				"maximum number of unsuccessful login attempts allowed.",
+				"The value of the object tmnxPasswordAttemptsLockoutPeriod indicates",
+				"the number of minutes the user is locked out.",
+				"The value of the object tmnxSecNotifyUserName indicates the name of",
+				"the user attempting to connect via SSH.",
+				"The value of the object tmnxSecNotifyAddrType indicates the type of",
+				"the IP address stored in the object tmnxSecNotifyAddr.",
+				"The value of the object tmnxSecNotifyAddr indicates the IP address of",
+				"the user attempting to connect via SSH.",
+				"[EFFECT] The user is locked out for a period of",
+				"tmnxPasswordAttemptsLockoutPeriod minutes. An SSH session is",
+				"terminated.",
+				"[RECOVERY] No recovery action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxUserSshLoginMaxAttempts",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SSH session terminated because the user: $v1 exceeded $v4 unsuccessful login attempts, and locked out for $v5 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxUserSshLoginMaxAttempts TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType i 0 TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount u 1 TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod u 0",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxUserSshLoginMaxAttempts",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.48",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyUserName indicates the name of a",
+							"system user for a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddrType indicates the type of",
+							"the IP address stored in the object tmnxSecNotifyAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddr indicates an IP address for",
+							"a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of unsuccessful login attempts allowed for a user.",
+							"The value of tmnxPasswordAttemptsCount is used with the value of",
+							"tmnxPasswordAttemptsTime to find out if the user is to be locked out",
+							"for tmnxPasswordAttemptsLockoutPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The number of minutes the user is locked out if the threshold of",
+							"unsuccessful login attempts has exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCertNotYetValid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCertNotYetValid notification is generated when the",
+				"certificate indicated in tmnxSecNotifFile is not yet valid.",
+				"[EFFECT] The indicated certificate is not usable until the 'notBefore'",
+				"time is reached. If the certificate is specified in a CA-profile, then",
+				"the operational state of the CA-profile (i.e.",
+				"tmnxPkiCAProfileOperState) remains down until the 'notBefore' time is",
+				"reached.",
+				"[RECOVERY] Replace tmnxSecNotifFile with a certificate file that is",
+				"still valid, or wait until the 'notBefore' time specified in the",
+				"certificate is reached for the system to recover itself.",
+				"REFERENCE",
+				"RFC 5280, 'Internet X.509 Public Key Infrastructure Certificate and",
+				"Certificate Revocation List (CRL) Profile', IETF, May 2008."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxPkiCertNotYetValid",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Certificate: $v1 is not valid yet"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCertNotYetValid TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCertNotYetValid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.49",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifClientAppName indicates the name",
+							"of the client application associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.26",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxPkiCRLNotYetValid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxPkiCRLNotYetValid notification is generated when the",
+				"CRL (Certificate Revocation List) indicated in tmnxSecNotifFile is not",
+				"yet valid.",
+				"[EFFECT] The CRL is not usable until the 'thisUpdate' time is reached.",
+				"Unless tmnxPkiCAProfRevokeChk is configured to 'crlOptional (2)', the",
+				"operational state of the CA-profile (i.e., tmnxPkiCAProfileOperState)",
+				"remains down until the 'thisUpdate' time is reached.",
+				"[RECOVERY] Replace tmnxSecNotifFile with a CRL that is still valid, or",
+				"wait until the 'thisUpdate' time specified in the CRL is reached for",
+				"the system to recover itself.",
+				"REFERENCE",
+				"RFC 5280, 'Internet X.509 Public Key Infrastructure Certificate and",
+				"Certificate Revocation List (CRL) Profile', IETF, May 2008."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxPkiCRLNotYetValid",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "CRL: $v1 is not yet valid"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxPkiCRLNotYetValid TIMETRA-SECURITY-MIB::tmnxSecNotifFile s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxPkiCRLNotYetValid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.50",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFile indicates the file associated",
+							"with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFile",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxLiUserCliLoginMaxAttempts",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxLiUserCliLoginMaxAttempts notification is generated when",
+				"a Lawful Interception user attempting to open a CLI session failed to",
+				"authenticate for more than a maximum allowed number of times in a",
+				"period of tmnxPasswordAttemptsTime minutes.",
+				"The value of the object tmnxPasswordAttemptsCount indicates the",
+				"maximum number of unsuccessful login attempts allowed.",
+				"The value of the object tmnxPasswordAttemptsLockoutPeriod indicates",
+				"the number of minutes the user is locked out.",
+				"The value of the object tmnxSecNotifyUserName indicates the name of",
+				"the user attempting to open a CLI session.",
+				"The value of the object tmnxSecNotifyAddrType indicates the type of",
+				"the IP address stored in the object tmnxSecNotifyAddr.",
+				"The value of the object tmnxSecNotifyAddr indicates the IP address of",
+				"the user attempting to open a CLI session.",
+				"[EFFECT] The user is locked out for a period of",
+				"tmnxPasswordAttemptsLockoutPeriod minutes. A remote access session is",
+				"terminated.",
+				"[RECOVERY] No recovery action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLiUserCliLoginMaxAttempts",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "CLI session failed to authenticate because $v4 unsuccessful login attempts exceeded and user locked out for $v5 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxLiUserCliLoginMaxAttempts TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType i 0 TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount u 1 TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod u 0",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxLiUserCliLoginMaxAttempts",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.51",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyUserName indicates the name of a",
+							"system user for a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddrType indicates the type of",
+							"the IP address stored in the object tmnxSecNotifyAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddr indicates an IP address for",
+							"a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of unsuccessful login attempts allowed for a user.",
+							"The value of tmnxPasswordAttemptsCount is used with the value of",
+							"tmnxPasswordAttemptsTime to find out if the user is to be locked out",
+							"for tmnxPasswordAttemptsLockoutPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The number of minutes the user is locked out if the threshold of",
+							"unsuccessful login attempts has exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxLiUserSshLoginMaxAttempts",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxLiUserSshLoginMaxAttempts notification is generated when",
+				"a Lawful Interception user attempting to connect via SSH failed to",
+				"authenticate for more than a maximum allowed number of times in a",
+				"period of tmnxPasswordAttemptsTime minutes.",
+				"The value of the object tmnxPasswordAttemptsCount indicates the",
+				"maximum number of unsuccessful login attempts allowed.",
+				"The value of the object tmnxPasswordAttemptsLockoutPeriod indicates",
+				"the number of minutes the user is locked out.",
+				"The value of the object tmnxSecNotifyUserName indicates the name of",
+				"the user attempting to connect via SSH.",
+				"The value of the object tmnxSecNotifyAddrType indicates the type of",
+				"the IP address stored in the object tmnxSecNotifyAddr.",
+				"The value of the object tmnxSecNotifyAddr indicates the IP address of",
+				"the user attempting to connect via SSH.",
+				"[EFFECT] The user is locked out for a period of",
+				"tmnxPasswordAttemptsLockoutPeriod minutes. An SSH session is",
+				"terminated.",
+				"[RECOVERY] No recovery action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLiUserSshLoginMaxAttempts",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SSH session terminated because $v4 unsuccessful login attempts exceeded and user $v1 locked out for $v5 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxLiUserSshLoginMaxAttempts TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType i 0 TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount u 1 TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod u 0",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxLiUserSshLoginMaxAttempts",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.52",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyUserName indicates the name of a",
+							"system user for a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddrType indicates the type of",
+							"the IP address stored in the object tmnxSecNotifyAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddr indicates an IP address for",
+							"a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of unsuccessful login attempts allowed for a user.",
+							"The value of tmnxPasswordAttemptsCount is used with the value of",
+							"tmnxPasswordAttemptsTime to find out if the user is to be locked out",
+							"for tmnxPasswordAttemptsLockoutPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The number of minutes the user is locked out if the threshold of",
+							"unsuccessful login attempts has exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxLiUserFtpLoginMaxAttempts",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxLiUserFtpLoginMaxAttempts notification is generated when",
+				"a Lawful Interception user attempting to connect via FTP failed to",
+				"authenticate for more than a maximum allowed number of times in a",
+				"period of tmnxPasswordAttemptsTime minutes.",
+				"The value of the object tmnxPasswordAttemptsCount indicates the",
+				"maximum number of unsuccessful login attempts allowed.",
+				"The value of the object tmnxPasswordAttemptsLockoutPeriod indicates",
+				"the number of minutes the user is locked out.",
+				"The value of the object tmnxSecNotifyUserName indicates the name of",
+				"the user attempting to connect via FTP.",
+				"The value of the object tmnxSecNotifyAddrType indicates the type of",
+				"the IP address stored in the object tmnxSecNotifyAddr.",
+				"The value of the object tmnxSecNotifyAddr indicates the IP address of",
+				"the user attempting to connect via FTP.",
+				"[EFFECT] The user is locked out for a period of",
+				"tmnxPasswordAttemptsLockoutPeriod minutes. An FTP session is",
+				"terminated.",
+				"[RECOVERY] No recovery action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLiUserFtpLoginMaxAttempts",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "FTP session terminated because $v4 unsuccessful login attempts exceeded and user $v1 locked out for $v5 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxLiUserFtpLoginMaxAttempts TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType i 0 TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount u 1 TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod u 0",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxLiUserFtpLoginMaxAttempts",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.53",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyUserName indicates the name of a",
+							"system user for a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddrType indicates the type of",
+							"the IP address stored in the object tmnxSecNotifyAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddr indicates an IP address for",
+							"a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of unsuccessful login attempts allowed for a user.",
+							"The value of tmnxPasswordAttemptsCount is used with the value of",
+							"tmnxPasswordAttemptsTime to find out if the user is to be locked out",
+							"for tmnxPasswordAttemptsLockoutPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The number of minutes the user is locked out if the threshold of",
+							"unsuccessful login attempts has exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxAppPkiCertVerificationFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxAppPkiCertVerificationFailed notification is generated",
+				"when an attempt to verify the certificate fails for a non-IPsec",
+				"application.",
+				"[EFFECT] Fail to establish a secured connection with the remote",
+				"entity.",
+				"[RECOVERY] Make sure the certificate specified in tmnxSecNotifCert is",
+				"a valid certificate and an appropriate trust anchor is configured."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxAppPkiCertVerificationFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Certificate: $v2 verification failed because of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxAppPkiCertVerificationFailed TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifCert s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxAppPkiCertVerificationFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.54",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifClientAppName indicates the name",
+							"of the client application associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifClientAppName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifCert indicates the certificate",
+							"name associated with the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifCert",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifFailureReason indicates the reason",
+							"for the generation of the notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SECURITY-MIB::tmnxUserNetconfLoginMaxAttempts",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxUserNetconfLoginMaxAttempts notification is generated",
+				"when a user attempting to connect via netconf failed to authenticate",
+				"for more than a maximum allowed number of times in a period of",
+				"tmnxPasswordAttemptsTime minutes.",
+				"The value of the object tmnxPasswordAttemptsCount indicates the",
+				"maximum number of unsuccessful login attempts allowed.",
+				"The value of the object tmnxPasswordAttemptsLockoutPeriod indicates",
+				"the number of minutes the user is locked out.",
+				"The value of the object tmnxSecNotifyUserName indicates the name of",
+				"the user attempting to connect via netconf.",
+				"The value of the object tmnxSecNotifyAddrType indicates the type of",
+				"the IP address stored in the object tmnxSecNotifyAddr.",
+				"The value of the object tmnxSecNotifyAddr indicates the IP address of",
+				"the user attempting to connect via netconf.",
+				"[EFFECT] The user is locked out for a period of",
+				"tmnxPasswordAttemptsLockoutPeriod minutes. The netconf session is",
+				"terminated.",
+				"[RECOVERY] No recovery action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxUserNetconfLoginMaxAttempts",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Netconf session terminated because $v4 unsuccessful login attempt exceeded and user $v1 locked out for $v5 minutes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SECURITY-MIB::tmnxUserNetconfLoginMaxAttempts TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName s EXAMPLE TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType i 0 TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr s EXAMPLE TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount u 1 TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod u 0",
+			"trap" : {
+				"name" : "TIMETRA-SECURITY-MIB::tmnxUserNetconfLoginMaxAttempts",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.22.0.55",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyUserName indicates the name of a",
+							"system user for a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddrType indicates the type of",
+							"the IP address stored in the object tmnxSecNotifyAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxSecNotifyAddr indicates an IP address for",
+							"a security notification."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxSecNotifyAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.16.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of unsuccessful login attempts allowed for a user.",
+							"The value of tmnxPasswordAttemptsCount is used with the value of",
+							"tmnxPasswordAttemptsTime to find out if the user is to be locked out",
+							"for tmnxPasswordAttemptsLockoutPeriod."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The number of minutes the user is locked out if the threshold of",
+							"unsuccessful login attempts has exceeded."
+						],
+						"name" : "TIMETRA-SECURITY-MIB::tmnxPasswordAttemptsLockoutPeriod",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.22.5.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

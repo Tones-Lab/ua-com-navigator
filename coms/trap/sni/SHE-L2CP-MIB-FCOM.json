@@ -1,0 +1,1303 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201503201330Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpLinkDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This alarm indicates that the operState of the ANCP instance has gone down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheL2cpLinkDown",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "$v3:$v2",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'ANCP instance is up' : 'ANCP instance is down'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpLinkDown SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 2",
+				"$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpLinkDown SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpLinkDown",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpPossibleNodeIdentifierLengthProblem",
+			"certification" : "STANDARD",
+			"description" : [
+				"Alarmtrap (warning), that the configured AccessNodeIdentfier together with the mandatory ",
+				"parameters of the port name could possibly exceed the maximal length of the port name.",
+				"New with R4.7M."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : 2"
+				},
+				"EventType" : "sheL2cpPossibleNodeIdentifierLengthProblem",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==1) ? 5 : (($v4==2) ? 4 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v4==5) ? 'Port name complies with length restriction' : 'Port name may exceed maximal length'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpPossibleNodeIdentifierLengthProblem SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 1",
+				"$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpPossibleNodeIdentifierLengthProblem SHE-ALARMING-MIB::sheAlarmTimeAndDate t 31536000 SHE-ALARMING-MIB::sheAlarmReportingSource u 9999 SHE-ALARMING-MIB::sheAlarmReportingSourceType i 1 SHE-ALARMING-MIB::sheAlarmSeverity i 5"
+			],
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpPossibleNodeIdentifierLengthProblem",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates the time stamp when the alarm notification was sent. "
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmTimeAndDate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"If applicable, indicates which instance of a component is ",
+							"reporting the alarm. It is interpreted dependent on the ",
+							"value of sheAlarmReportingSourceType as follows.",
+							"",
+							"sheAlarmReportingSourceType | sheAlarmReportingSource",
+							"----------------------------+-----------------------------------",
+							"physicalEntity(1) | entPhysicalIndex",
+							"interface(2) | ifIndex",
+							"vccTp(3) | sheAdslVccTpIndex, ",
+							"| sheShdslVccTpIndex",
+							"| sheXdslVccTpIndex",
+							"| (alarm OID determines scope)",
+							"vlan(4) | sheVlanIndex",
+							"bridgePort(5) | sheBridgePortIndex",
+							"erpDomain(6) | (obsolete)",
+							"voip(7) | sheVoipVgwIndex",
+							"vccTpShdsl(8) | (obsolete)",
+							"vccTpVdsl(9) | (obsolete)",
+							"l2cp(10) | sheL2cpIfIndex",
+							"syncSource(11) | sheSyncSourcePriority",
+							"pseudowire(12) | pwIndex",
+							"bfdSession(13) | (reserved for future use only)",
+							"syncT4Source(14) | sheSyncExtT4SourcePriority",
+							"voipSys(15) | (no relevance)",
+							"ntp(16) | (no relevance)",
+							"oamCfmMep(17) | (MaMegNetIndex << 16) + MepId",
+							"pseudowireGroup(18) | shePwVcRedGroupInstance",
+							"pmDataUpload(19) | sheSystemPMDataMaintenanceIndex",
+							"unknown(20) | (no relevance)",
+							"dataBaseBackup(21) | (no relevance)",
+							"igmpHistoryUpload(22) | entPhysicalIndex ",
+							"swMaintenance(23) | (no relevance)",
+							"systemFileControl(24) | (no relevance)",
+							"systemConfigLog(25) | (no relevance)",
+							"vectoredSystem(26) | sheVectoredSystemIndex",
+							"vectoredCard(27) | entPhysicalIndex",
+							"vectorEnginePeer(28) | (sheVectoredCardVEPeerIndex << 24) ",
+							"| + entPhysicalIndex",
+							"oamCfmGlobal(29) | (no relevance)",
+							"vectorEnginePort(30) | entPhysicalIndex",
+							"syncT4Out(31) | (no relevance) ",
+							""
+						],
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSource",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the type or class of reporting source for the alarm.",
+							"",
+							"Reporting source type determines how sheAlarmReportingSource",
+							"is to be interpreted. See sheAlarmReportingSourceType for a ",
+							"full list.",
+							"",
+							"A sheAlarmSeverityProfileEntry can be assigned to each ",
+							"sheAlarmReportingSourceType within the MIB associated with ",
+							"the sheAlarmReportingSourceType."
+						],
+						"enums" : {
+							"1" : "physicalEntity",
+							"2" : "interface",
+							"3" : "vccTp",
+							"4" : "vlan",
+							"5" : "bridgePort",
+							"6" : "erpDomain",
+							"7" : "voip",
+							"8" : "vccTpShdsl",
+							"9" : "vccTpVdsl",
+							"10" : "l2cp",
+							"11" : "syncSource",
+							"12" : "pseudowire",
+							"13" : "bfdSession",
+							"14" : "syncT4Source",
+							"15" : "voipSys",
+							"16" : "ntp",
+							"17" : "oamCfmMep",
+							"18" : "pseudowireGroup",
+							"19" : "pmDataUpload",
+							"20" : "unknown",
+							"21" : "dataBaseBackup",
+							"22" : "igmpHistoryUpload",
+							"23" : "swMaintenance",
+							"24" : "systemFileControl",
+							"25" : "systemConfigLog",
+							"26" : "vectoredSystem",
+							"27" : "vectoredCard",
+							"28" : "vectorEnginePeer",
+							"29" : "oamCfmGlobal",
+							"30" : "vectorEnginePort",
+							"31" : "syncT4Out"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmReportingSourceType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity of the alarm.",
+							"",
+							"VALUES",
+							"critical(1)",
+							"major(2)",
+							"minor(3)",
+							"warning(4)",
+							"cleared(5)",
+							"",
+							"Values 1..4 indicate that the alarm of the given severity has ",
+							"been raised, the actual severity used being dependent on the ",
+							"sheAlarmSeverityProfileEntry currently assigned to the ",
+							"sheAlarmReportingSourceType.",
+							"",
+							"Value 5 indicates that the alarm has been cleared."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "warning",
+							"5" : "cleared"
+						},
+						"name" : "SHE-ALARMING-MIB::sheAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpIfCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL2cpIfCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "ANCP interface created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpIfCreated SHE-L2CP-MIB::sheL2cpControlTimeStamp i 9999 SHE-L2CP-MIB::sheL2cpOperState i 1 SHE-L2CP-MIB::sheL2cpTimer1 i 1 SHE-L2CP-MIB::sheL2cpTimer2 i 0 SHE-L2CP-MIB::sheL2cpTimer3 i 0 SHE-L2CP-MIB::sheL2cpControllerIpAddress s EXAM SHE-L2CP-MIB::sheL2cpAccessNodeIdentifier s EXAMPLE SHE-L2CP-MIB::sheL2cpAdjacencyState i 1 SHE-L2CP-MIB::sheL2cpPartitionId i 0 SHE-L2CP-MIB::sheL2cpAlarmSeverityIndex i 1 SHE-L2CP-MIB::sheL2cpLinePropertySuboptions b 0 SHE-L2CP-MIB::sheL2cpInterfaceOptions b 0 SHE-L2CP-MIB::sheL2cpVlanId u 1 SHE-L2CP-MIB::sheL2cpProtocolVersion i 1 SHE-L2CP-MIB::sheL2cpSenderNameOption i 1 SHE-L2CP-MIB::sheL2cpCustomSenderName s EXAMPL",
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpIfCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.4.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The operational state of the ANCP interface."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpOperState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This timer defines the TIMER field is used to inform the receiver of the timer ",
+							"value used in the adjacency protocol of the sender. ",
+							"The timer specifies the nominal time between periodic ",
+							"adjacency protocol messages. ",
+							"It is a constant for the duration of a session."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpTimer1",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This value defines the minimum time between two port state messages of ",
+							"the same port. It is used to limit the port messages in case of",
+							"toggeling ports. ",
+							"The timer base is 1s.",
+							"0 means: all port state changes are reported."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpTimer2",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This timeout is used to handle ANCP message flooding after Controller recovery.",
+							"The timer is started when the link to the controller was established, The first",
+							"port state message is sent when this timer expires."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpTimer3",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IP address of the remote ANCP controller which should be contacted by this interface."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpControllerIpAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the access node. The DSLAM identifies itself with the",
+							"controller by means of this name."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpAccessNodeIdentifier",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The state of the adjacency protocol."
+						],
+						"enums" : {
+							"1" : "l2cpStateRESET",
+							"2" : "l2cpStateSYNSENT",
+							"3" : "l2cpStateSYNRCVD",
+							"4" : "l2cpStateESTAB"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpAdjacencyState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID of the partition managed via this ANCP instance.",
+							"0...255: Assigned partition ID. ",
+							"The port is managed by ANCP interface instances assigned",
+							"to this partition ID.",
+							"256: no assigned partition. ",
+							"The port belongs to no partition. It is managed by ANCP ",
+							"interface instances which are assigned to 'no partition'.",
+							"257: other partition ",
+							"The port is not managed by any ANCP instance."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpPartitionId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The currently used alarm severity profile index for this ANCP interface."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpAlarmSeverityIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.11",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This parameter enables/disables the used line property suboptions for this ANCP interface.",
+							"Each requested suboption should be enabled by setting the corresponding BIT to 1.",
+							"",
+							"BIT Suboption Message Type ADSL/ADSL2/",
+							"ADSL2plus/",
+							"VDSL2 SHDSL",
+							"actualDataRateUs(0) 0x81 Actual Data Rate Upstream ok ok",
+							"actualDataRateDs(1) 0x82 Actual Data Rate Downstream ok ok",
+							"minimumDataRateUs(2) 0x83 Minimum Data Rate Upstream ok ok",
+							"minimumDataRateDs(3) 0x84 Minimum Data Rate Downstream ok ok",
+							"attainableDataRateUs(4) 0x85 Attainable Data Rate Upstream ok ok",
+							"attainableDataRateDs(5) 0x86 Attainable Data Rate Downstream ok ok",
+							"maximumDataRateUs(6) 0x87 Maximum Data Rate Upstream ok ok",
+							"maximumDataRateDs(7) 0x88 Maximum Data Rate Downstream ok ok",
+							"minimumDataRateLowPowerUs(8) 0x89 Minimum Data Rate Upstream in Low Power State ok n/a",
+							"minimumDataRateLowPowerDs(9) 0x8A Minimum Data Rate Downstream in Low Power State ok n/a",
+							"maximumInterleavingDelayUs(10) 0x8B Maximum Interleaving Delay Upstream ok n/a",
+							"actualInterleavingDelaysUs(11) 0x8C Actual Interleaving Delay Upstream ok n/a",
+							"maximumInterleavingDelayDs(12) 0x8D Maximum Interleaving Delay Downstream ok n/a",
+							"actualInterleavingDelaysDs(13) 0x8E Actual Interleaving Delay Downstream ok n/a",
+							"accessLoopEncapsulation(14) 0x90 Access Loop Encapsulation ok ok",
+							"",
+							"NOTE:",
+							"New parameter with R3.8M/R4.7M.",
+							"Net-Data-Rate values will be mapped into sheL2cpLinePropertySuboptions 0x81 and 0x82",
+							"(G.997.1 clause 7.5.2.8 instead of 7.5.2.1)"
+						],
+						"enums" : {
+							"0" : "actualDataRateUs",
+							"1" : "actualDataRateDs",
+							"2" : "minimumDataRateUs",
+							"3" : "minimumDataRateDs",
+							"4" : "attainableDataRateUs",
+							"5" : "attainableDataRateDs",
+							"6" : "maximumDataRateUs",
+							"7" : "maximumDataRateDs",
+							"8" : "minimumDataRateLowPowerUs",
+							"9" : "minimumDataRateLowPowerDs",
+							"10" : "maximumInterleavingDelayUs",
+							"11" : "actualInterleavingDelaysUs",
+							"12" : "maximumInterleavingDelayDs",
+							"13" : "actualInterleavingDelaysDs",
+							"14" : "accessLoopEncapsulation"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpLinePropertySuboptions",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.12",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"This parameter enable/disable special options for this ANCP interface.",
+							"Each requested option should be enabled by setting the corresponding BIT to 1.",
+							"",
+							"Option Description",
+							"",
+							"cliSlotNumbers -> Use the same slot number in the cirtuit-id as used by CLI.",
+							"noVlanIdOrVcc -> Do not add VLAN-ID or VCC in circuit-id.",
+							"partitionId0 -> Use partition 0 in all messages independend of configured partition. ",
+							"fixVlanid -> Use the fix configured VlanId value sheL2cpVlanId in circuit-id.",
+							"",
+							"NOTE:",
+							"New parameter with R4.7M."
+						],
+						"enums" : {
+							"0" : "cliSlotNumbers",
+							"1" : "noVlanIdOrVcc",
+							"2" : "partitionId0",
+							"3" : "fixVlanId"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpInterfaceOptions",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.13",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"Use this VLAN ID in the circuit id for all Ethnert based DSL ports if the L2cpInterfaceOption",
+							"'fixVlanId' was activated.",
+							"",
+							"NOTE:",
+							"New parameter with R4.7M."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpVlanId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Defines the protocol version to be used on this interface.",
+							"",
+							"Value:",
+							"draft00(1) : Protocol acc. to draft-wadhwa-gsmp-l2control-configuration-00.txt (default)",
+							"rfc6320(2) : Protocol acc. to RFC 6230 ",
+							"(Not supported in R4.7.1M; Supported from R4.7.2M)",
+							"",
+							"New parameter in R4.7.1M"
+						],
+						"enums" : {
+							"1" : "draft00",
+							"2" : "rfc6320"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpProtocolVersion",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Defines sender address for ANCP.",
+							"",
+							"VALUES",
+							"macAddress(1) : MAC-Address",
+							"ipAddress(2) : IP-Address",
+							"customSenderName(3) : CustomSenderName",
+							"",
+							"NOTE:",
+							"As long as there is no TCP session for that ANCP interface",
+							"established, MAC address and IP address are still unknown.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: new"
+						],
+						"enums" : {
+							"1" : "macAddress",
+							"2" : "ipAddress",
+							"3" : "customSenderName"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpSenderNameOption",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used to define a sender name manually.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: new"
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpCustomSenderName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpIfDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL2cpIfDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "ANCP interface deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpIfDeleted SHE-L2CP-MIB::sheL2cpControlTimeStamp i 9999 SHE-L2CP-MIB::sheL2cpControlIndex u 9999",
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpIfDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.4.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The index of a port in the port partition table (vshL2cpPortPartitionTable) if the ",
+							"PartionId should be set or the index of a valid L2cpIf in the sheL2cpIfTable for ",
+							"modify or delete of these interface.",
+							""
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.4.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpIfModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL2cpIfModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "ANCP interface modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpIfModified SHE-L2CP-MIB::sheL2cpControlTimeStamp i 9999 SHE-L2CP-MIB::sheL2cpOperState i 1 SHE-L2CP-MIB::sheL2cpTimer1 i 1 SHE-L2CP-MIB::sheL2cpTimer2 i 0 SHE-L2CP-MIB::sheL2cpTimer3 i 0 SHE-L2CP-MIB::sheL2cpControllerIpAddress s EXAM SHE-L2CP-MIB::sheL2cpAccessNodeIdentifier s EXAMPLE SHE-L2CP-MIB::sheL2cpAdjacencyState i 1 SHE-L2CP-MIB::sheL2cpPartitionId i 0 SHE-L2CP-MIB::sheL2cpAlarmSeverityIndex i 1 SHE-L2CP-MIB::sheL2cpLinePropertySuboptions b 0 SHE-L2CP-MIB::sheL2cpInterfaceOptions b 0 SHE-L2CP-MIB::sheL2cpVlanId u 1 SHE-L2CP-MIB::sheL2cpProtocolVersion i 1 SHE-L2CP-MIB::sheL2cpSenderNameOption i 1 SHE-L2CP-MIB::sheL2cpCustomSenderName s EXAMPL",
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpIfModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.4.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The operational state of the ANCP interface."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpOperState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This timer defines the TIMER field is used to inform the receiver of the timer ",
+							"value used in the adjacency protocol of the sender. ",
+							"The timer specifies the nominal time between periodic ",
+							"adjacency protocol messages. ",
+							"It is a constant for the duration of a session."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpTimer1",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This value defines the minimum time between two port state messages of ",
+							"the same port. It is used to limit the port messages in case of",
+							"toggeling ports. ",
+							"The timer base is 1s.",
+							"0 means: all port state changes are reported."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpTimer2",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This timeout is used to handle ANCP message flooding after Controller recovery.",
+							"The timer is started when the link to the controller was established, The first",
+							"port state message is sent when this timer expires."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpTimer3",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IP address of the remote ANCP controller which should be contacted by this interface."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpControllerIpAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name of the access node. The DSLAM identifies itself with the",
+							"controller by means of this name."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpAccessNodeIdentifier",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The state of the adjacency protocol."
+						],
+						"enums" : {
+							"1" : "l2cpStateRESET",
+							"2" : "l2cpStateSYNSENT",
+							"3" : "l2cpStateSYNRCVD",
+							"4" : "l2cpStateESTAB"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpAdjacencyState",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID of the partition managed via this ANCP instance.",
+							"0...255: Assigned partition ID. ",
+							"The port is managed by ANCP interface instances assigned",
+							"to this partition ID.",
+							"256: no assigned partition. ",
+							"The port belongs to no partition. It is managed by ANCP ",
+							"interface instances which are assigned to 'no partition'.",
+							"257: other partition ",
+							"The port is not managed by any ANCP instance."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpPartitionId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The currently used alarm severity profile index for this ANCP interface."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpAlarmSeverityIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.11",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This parameter enables/disables the used line property suboptions for this ANCP interface.",
+							"Each requested suboption should be enabled by setting the corresponding BIT to 1.",
+							"",
+							"BIT Suboption Message Type ADSL/ADSL2/",
+							"ADSL2plus/",
+							"VDSL2 SHDSL",
+							"actualDataRateUs(0) 0x81 Actual Data Rate Upstream ok ok",
+							"actualDataRateDs(1) 0x82 Actual Data Rate Downstream ok ok",
+							"minimumDataRateUs(2) 0x83 Minimum Data Rate Upstream ok ok",
+							"minimumDataRateDs(3) 0x84 Minimum Data Rate Downstream ok ok",
+							"attainableDataRateUs(4) 0x85 Attainable Data Rate Upstream ok ok",
+							"attainableDataRateDs(5) 0x86 Attainable Data Rate Downstream ok ok",
+							"maximumDataRateUs(6) 0x87 Maximum Data Rate Upstream ok ok",
+							"maximumDataRateDs(7) 0x88 Maximum Data Rate Downstream ok ok",
+							"minimumDataRateLowPowerUs(8) 0x89 Minimum Data Rate Upstream in Low Power State ok n/a",
+							"minimumDataRateLowPowerDs(9) 0x8A Minimum Data Rate Downstream in Low Power State ok n/a",
+							"maximumInterleavingDelayUs(10) 0x8B Maximum Interleaving Delay Upstream ok n/a",
+							"actualInterleavingDelaysUs(11) 0x8C Actual Interleaving Delay Upstream ok n/a",
+							"maximumInterleavingDelayDs(12) 0x8D Maximum Interleaving Delay Downstream ok n/a",
+							"actualInterleavingDelaysDs(13) 0x8E Actual Interleaving Delay Downstream ok n/a",
+							"accessLoopEncapsulation(14) 0x90 Access Loop Encapsulation ok ok",
+							"",
+							"NOTE:",
+							"New parameter with R3.8M/R4.7M.",
+							"Net-Data-Rate values will be mapped into sheL2cpLinePropertySuboptions 0x81 and 0x82",
+							"(G.997.1 clause 7.5.2.8 instead of 7.5.2.1)"
+						],
+						"enums" : {
+							"0" : "actualDataRateUs",
+							"1" : "actualDataRateDs",
+							"2" : "minimumDataRateUs",
+							"3" : "minimumDataRateDs",
+							"4" : "attainableDataRateUs",
+							"5" : "attainableDataRateDs",
+							"6" : "maximumDataRateUs",
+							"7" : "maximumDataRateDs",
+							"8" : "minimumDataRateLowPowerUs",
+							"9" : "minimumDataRateLowPowerDs",
+							"10" : "maximumInterleavingDelayUs",
+							"11" : "actualInterleavingDelaysUs",
+							"12" : "maximumInterleavingDelayDs",
+							"13" : "actualInterleavingDelaysDs",
+							"14" : "accessLoopEncapsulation"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpLinePropertySuboptions",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.12",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"This parameter enable/disable special options for this ANCP interface.",
+							"Each requested option should be enabled by setting the corresponding BIT to 1.",
+							"",
+							"Option Description",
+							"",
+							"cliSlotNumbers -> Use the same slot number in the cirtuit-id as used by CLI.",
+							"noVlanIdOrVcc -> Do not add VLAN-ID or VCC in circuit-id.",
+							"partitionId0 -> Use partition 0 in all messages independend of configured partition. ",
+							"fixVlanid -> Use the fix configured VlanId value sheL2cpVlanId in circuit-id.",
+							"",
+							"NOTE:",
+							"New parameter with R4.7M."
+						],
+						"enums" : {
+							"0" : "cliSlotNumbers",
+							"1" : "noVlanIdOrVcc",
+							"2" : "partitionId0",
+							"3" : "fixVlanId"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpInterfaceOptions",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.13",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"Use this VLAN ID in the circuit id for all Ethnert based DSL ports if the L2cpInterfaceOption",
+							"'fixVlanId' was activated.",
+							"",
+							"NOTE:",
+							"New parameter with R4.7M."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpVlanId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Defines the protocol version to be used on this interface.",
+							"",
+							"Value:",
+							"draft00(1) : Protocol acc. to draft-wadhwa-gsmp-l2control-configuration-00.txt (default)",
+							"rfc6320(2) : Protocol acc. to RFC 6230 ",
+							"(Not supported in R4.7.1M; Supported from R4.7.2M)",
+							"",
+							"New parameter in R4.7.1M"
+						],
+						"enums" : {
+							"1" : "draft00",
+							"2" : "rfc6320"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpProtocolVersion",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Defines sender address for ANCP.",
+							"",
+							"VALUES",
+							"macAddress(1) : MAC-Address",
+							"ipAddress(2) : IP-Address",
+							"customSenderName(3) : CustomSenderName",
+							"",
+							"NOTE:",
+							"As long as there is no TCP session for that ANCP interface",
+							"established, MAC address and IP address are still unknown.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: new"
+						],
+						"enums" : {
+							"1" : "macAddress",
+							"2" : "ipAddress",
+							"3" : "customSenderName"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpSenderNameOption",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used to define a sender name manually.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: new"
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpCustomSenderName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.2.1.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpPartitionPortDataChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL2cpPartitionPortDataChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PartitionId:$v2",
+				"Summary" : "ANCP partition port data changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpPartitionPortDataChanged SHE-L2CP-MIB::sheL2cpControlTimeStamp i 9999 SHE-L2CP-MIB::sheL2cpPortPartitionId i 0",
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpPartitionPortDataChanged",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.2.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.4.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The ID of the partition managed via this ANCP instance.",
+							"0...255: Assigned partition ID. ",
+							"The port is managed by ANCP interface instances assigned",
+							"to this partition ID.",
+							"256: no assigned partition. ",
+							"The port belongs to no partition. It is managed by ANCP ",
+							"interface instances which are assigned to 'no partition'.",
+							"257: other partition ",
+							"The port is not managed by any ANCP instance."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpPortPartitionId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpHostIfCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Note: This parameter is not longer valid starting with release SHE R2.6 ",
+				"The IP interface configuration was moved to sheSystemIpHostTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL2cpHostIfCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "Host interface created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpHostIfCreated SHE-L2CP-MIB::sheL2cpHostIfControlIndex u 1 SHE-L2CP-MIB::sheL2cpHostIfControlStatus i 0 SHE-L2CP-MIB::sheL2cpHostIfControlReqResult i 30 SHE-L2CP-MIB::sheL2cpHostIfControlTimeStamp i 9999 SHE-L2CP-MIB::sheL2cpHostIfControlVlanId u 1 SHE-L2CP-MIB::sheL2cpHostIfControlIpAddress s EXAM SHE-L2CP-MIB::sheL2cpHostIfControlNetmask s EXAM",
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpHostIfCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a valid L2cpHostIf from sheL2cpHostIfTable for modifies or delete. "
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The status of a user command."
+						],
+						"enums" : {
+							"0" : "requestNone",
+							"1" : "requestIdle",
+							"2" : "requestBusy",
+							"3" : "requestPassed",
+							"4" : "requestFailed"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last ControlRequest"
+						],
+						"enums" : {
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"40" : "wrongL2cpIfIndex",
+							"41" : "tooManyL2cpInterfaces",
+							"50" : "wrongL2cpPortPartitionIndex",
+							"60" : "wrongL2cpHostIfIndex",
+							"61" : "tooManyL2cpHostInterfaces"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The host vlan for the local L2cp interface which should be used as tag to ",
+							"contact the remote L2cp controller.",
+							"This value could only be used for create command. A modification is not allowed!"
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlVlanId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The IP address of the local L2cp host interface."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlIpAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The l2cp host interface Netmask."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlNetmask",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpHostIfModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Note: This parameter is not longer valid starting with release SHE R2.6. ",
+				"The IP interface configuration was moved to sheSystemIpHostTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL2cpHostIfModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "Host interface modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpHostIfModified SHE-L2CP-MIB::sheL2cpHostIfControlIndex u 1 SHE-L2CP-MIB::sheL2cpHostIfControlStatus i 0 SHE-L2CP-MIB::sheL2cpHostIfControlReqResult i 30 SHE-L2CP-MIB::sheL2cpHostIfControlTimeStamp i 9999 SHE-L2CP-MIB::sheL2cpHostIfControlVlanId u 1 SHE-L2CP-MIB::sheL2cpHostIfControlIpAddress s EXAM SHE-L2CP-MIB::sheL2cpHostIfControlNetmask s EXAM",
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpHostIfModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a valid L2cpHostIf from sheL2cpHostIfTable for modifies or delete. "
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The status of a user command."
+						],
+						"enums" : {
+							"0" : "requestNone",
+							"1" : "requestIdle",
+							"2" : "requestBusy",
+							"3" : "requestPassed",
+							"4" : "requestFailed"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last ControlRequest"
+						],
+						"enums" : {
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"40" : "wrongL2cpIfIndex",
+							"41" : "tooManyL2cpInterfaces",
+							"50" : "wrongL2cpPortPartitionIndex",
+							"60" : "wrongL2cpHostIfIndex",
+							"61" : "tooManyL2cpHostInterfaces"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The host vlan for the local L2cp interface which should be used as tag to ",
+							"contact the remote L2cp controller.",
+							"This value could only be used for create command. A modification is not allowed!"
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlVlanId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The IP address of the local L2cp host interface."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlIpAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The l2cp host interface Netmask."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlNetmask",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L2CP-MIB::sheL2cpHostIfDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Note: This parameter is not longer valid starting with release SHE R2.6 ",
+				"The IP interface configuration was moved to sheSystemIpHostTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL2cpHostIfDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlIndex:$v1",
+				"Summary" : "Host interface deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L2CP-MIB::sheL2cpHostIfDeleted SHE-L2CP-MIB::sheL2cpHostIfControlIndex u 1 SHE-L2CP-MIB::sheL2cpHostIfControlStatus i 0 SHE-L2CP-MIB::sheL2cpHostIfControlReqResult i 30 SHE-L2CP-MIB::sheL2cpHostIfControlTimeStamp i 9999",
+			"trap" : {
+				"name" : "SHE-L2CP-MIB::sheL2cpHostIfDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.5.2.7",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a valid L2cpHostIf from sheL2cpHostIfTable for modifies or delete. "
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The status of a user command."
+						],
+						"enums" : {
+							"0" : "requestNone",
+							"1" : "requestIdle",
+							"2" : "requestBusy",
+							"3" : "requestPassed",
+							"4" : "requestFailed"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last ControlRequest"
+						],
+						"enums" : {
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"40" : "wrongL2cpIfIndex",
+							"41" : "tooManyL2cpInterfaces",
+							"50" : "wrongL2cpPortPartitionIndex",
+							"60" : "wrongL2cpHostIfIndex",
+							"61" : "tooManyL2cpHostInterfaces"
+						},
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-L2CP-MIB::sheL2cpHostIfControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.16.1.7.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

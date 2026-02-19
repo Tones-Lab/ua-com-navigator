@@ -1,0 +1,292 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201807130000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ZXR10-CONFIG-COPY-MIB::zxr10CopyCompletion",
+			"certification" : "STANDARD",
+			"description" : [
+				"A copyCompletion trap is sent at the completion",
+				"of a config-copy request. The copyFailCause is not",
+				"instantiated, and hence not included in a trap, when ",
+				"the copyState is success."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 4) ? 2 : ($v3 == 3) ? 1 : 3"
+				},
+				"EventType" : "zxr10CopyCompletion",
+				"ExpireTime" : {
+					"eval" : "($v3 == 4) ? 86400 : ($v3 == 3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 4) ? 5 : ($v3 == 3) ? 0 : 2"
+				},
+				"SubNode" : "ServerAddress:$v1",
+				"Summary" : {
+					"eval" : "($v3 == 4) ? 'Config-copy has failed due to $v6' : 'Config-copy completion status : $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZXR10-CONFIG-COPY-MIB::zxr10CopyCompletion ZXR10-CONFIG-COPY-MIB::zxr10CopyServerAddress a 192.0.2.1 ZXR10-CONFIG-COPY-MIB::zxr10CopySrcFileName s EXAMPLE ZXR10-CONFIG-COPY-MIB::zxr10CopyState i 1 ZXR10-CONFIG-COPY-MIB::zxr10CopyTimeStarted t 31536000 ZXR10-CONFIG-COPY-MIB::zxr10CopyTimeCompleted t 31536000 ZXR10-CONFIG-COPY-MIB::zxr10CopyFailCause i 1 ZXR10-CONFIG-COPY-MIB::zxr10CopyServerV6Address s EXAMPLEEXAMPLEEX",
+			"trap" : {
+				"name" : "ZXR10-CONFIG-COPY-MIB::zxr10CopyCompletion",
+				"oid" : "1.3.6.1.4.1.3902.3.202.1.2.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The IPv4 address of the FTP server from (or to) ",
+							"which to copy the configuration file. This object",
+							"can not be used with zxr10CopyServerV6Address at the ",
+							"same time. Values of 0.0.0.0 or FF.FF.FF.FF for",
+							"copyServerAddress are not allowed."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10CopyServerAddress",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.1.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The source file name (including the path, if applicable) of",
+							"the file. This object must be created when either the",
+							"copySourceFileType or copyDestFileType has the value",
+							"networkFile or localFile."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10CopySrcFileName",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the state of this config-copy request.",
+							"This value of this object is instantiated only after",
+							"the row has been instantiated, i.e. after the",
+							"copyEntryRowStatus has been made active."
+						],
+						"enums" : {
+							"1" : "waiting",
+							"2" : "running",
+							"3" : "successful",
+							"4" : "failed"
+						},
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10CopyState",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.1.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the time the copyState last transitioned",
+							"to running, or 0 if the state has never transitioned to",
+							"running (for e.g., stuck in waiting state).",
+							"This object is instantiated only after the row has been",
+							"instantiated."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10CopyTimeStarted",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.1.1.12",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"Specifies the time the copyState last transitioned",
+							"from running to successful or failed states. This",
+							"object is instantiated only after the row has been ",
+							"instantiated.",
+							"Its value will remain 0 until the request has completed."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10CopyTimeCompleted",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.1.1.13",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The reason why the config-copy operation failed.",
+							"This object is instantiated only when the copyState",
+							"for this entry is in the failed state."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "localSourceFileUnavailable",
+							"3" : "connectionTimeout",
+							"4" : "insufficientMemory",
+							"5" : "noConfig",
+							"6" : "unsupportedProtocol",
+							"7" : "someConfigApplyFailed",
+							"8" : "localDestFileExist",
+							"9" : "fileChecksumErr",
+							"10" : "ftpLoginFail",
+							"11" : "localDestFileCreateErr",
+							"12" : "serverFileAccessErr",
+							"13" : "serverCancelTrance",
+							"14" : "insufficientStorage",
+							"15" : "vrfInvalid",
+							"16" : "unsupportedChecksumType"
+						},
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10CopyFailCause",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IPv6 address of the FTP server from (or to) ",
+							"which to copy the configuration file. This object",
+							"can not be used with zxr10CopyServerAddress at the ",
+							"same time."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10CopyServerV6Address",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.1.1.20",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyCompletion",
+			"certification" : "STANDARD",
+			"description" : [
+				"A copyCompletion trap is sent at the completion of a tftp",
+				"copy request. The copyFailCause is not instantiated, and hence",
+				"not included in a trap, when the copyState is success."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 4) ? 2 : ($v3 == 3) ? 1 : 3"
+				},
+				"EventType" : "zxr10TFTPCopyCompletion",
+				"ExpireTime" : {
+					"eval" : "($v3 == 4) ? 86400 : ($v3 == 3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 4) ? 5 : ($v3 == 3) ? 0 : 2"
+				},
+				"SubNode" : "ServerAddress:$v1",
+				"Summary" : {
+					"eval" : "($v3 == 4) ? 'TFTP copy has failed due to $v6' : 'TFTP copy completion status : $v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyCompletion ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyServerAddress a 192.0.2.1 ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopySrcFileName s EXAMPLE ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyState i 1 ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyTimeStarted t 31536000 ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyTimeCompleted t 31536000 ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyFailCause i 1 ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyServerV6Address s EXAMPLEEXAMPLEEX",
+			"trap" : {
+				"name" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyCompletion",
+				"oid" : "1.3.6.1.4.1.3902.3.202.1.2.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The IPv4 address of the TFTP server from (or to) ",
+							"which to copy the configuration file. This object ",
+							"can not be used with zxr10TFTPCopyServerV6Address",
+							"at the same time. Values of 0.0.0.0 or FF.FF.FF.FF ",
+							"for copyServerAddress are not allowed."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyServerAddress",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.2.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The source file name (including the path, if applicable) of",
+							"the file. This object must be created when either the",
+							"copySourceFileType or copyDestFileType has the value",
+							"networkFile or localFile."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopySrcFileName",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the state of this tftp copy request.",
+							"This value of this object is instantiated only after",
+							"the row has been instantiated, i.e. after the",
+							"copyEntryRowStatus has been made active."
+						],
+						"enums" : {
+							"1" : "waiting",
+							"2" : "running",
+							"3" : "successful",
+							"4" : "failed"
+						},
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyState",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.2.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the time the copyState last transitioned to running",
+							"or 0 if the state has never transitioned to running",
+							"(for e.g., stuck in waiting state). This object is instantiated",
+							"only after the row has been instantiated.",
+							"The value is system uptime."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyTimeStarted",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.2.1.9",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"Specifies the time the copyState last transitioned from running",
+							"to successful or failed states. This object is instantiated",
+							"only after the row has been instantiated.",
+							"Its value will remain 0 until the request has completed.",
+							"The value is system uptime."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyTimeCompleted",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.2.1.10",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The reason why the tftp copy operation failed.",
+							"This object is instantiated only when the copyState",
+							"for this entry is in the failed state."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "vrfInvalid",
+							"3" : "serverIPAddressInvalid",
+							"4" : "localFileUnavailable",
+							"5" : "localDestFileExist",
+							"6" : "localSourceFileNotExist",
+							"7" : "localFileOperateError",
+							"8" : "remotFileOperateError",
+							"9" : "resourceNotAvailable",
+							"10" : "netWorkError",
+							"11" : "accessViolation",
+							"12" : "illegalOperation",
+							"13" : "unknownTransferID",
+							"14" : "insufficientStorage",
+							"15" : "someConfigApplyFailed",
+							"16" : "fileChecksumErr",
+							"17" : "unsupportedChecksumType",
+							"18" : "transmissionAborted",
+							"19" : "timeoutOccurred",
+							"255" : "noFailCause"
+						},
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyFailCause",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.2.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IPv6 address of the TFTP server from (or to) ",
+							"which to copy the configuration file. This object",
+							"can not be used with zxr10CopyTFTPServerAddress ",
+							"at the same time."
+						],
+						"name" : "ZXR10-CONFIG-COPY-MIB::zxr10TFTPCopyServerV6Address",
+						"oid" : "1.3.6.1.4.1.3902.3.202.1.1.1.2.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

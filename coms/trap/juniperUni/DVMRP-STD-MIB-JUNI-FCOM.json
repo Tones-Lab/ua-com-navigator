@@ -1,0 +1,139 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9910191200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DVMRP-STD-MIB-JUNI::junidDvmrpNeighborLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"A junidDvmrpNeighborLoss trap signifies the loss of a 2-way",
+				"adjacency with a neighbor. This trap should be generated",
+				"when the neighbor state changes from active to one-way",
+				"ignoring, or down. The trap should be generated only if the",
+				"router has no other neighbors on the same interface with a",
+				"lower IP address than itself."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "junidDvmrpNeighborLoss",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==4) ? 4 : 3)"
+				},
+				"SubNode" : "LocalIP:$v1",
+				"Summary" : "DVMRP neighbor $v1 state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DVMRP-STD-MIB-JUNI::junidDvmrpNeighborLoss DVMRP-STD-MIB-JUNI::junidDvmrpInterfaceLocalAddress a 192.0.2.1 DVMRP-STD-MIB-JUNI::junidDvmrpNeighborState i 1",
+			"trap" : {
+				"name" : "DVMRP-STD-MIB-JUNI::junidDvmrpNeighborLoss",
+				"oid" : "1.3.6.1.4.1.4874.3.2.1.1.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The IP address this system will use as a source address on",
+							"this interface. On unnumbered interfaces, it must be the",
+							"same value as junidDvmrpInterfaceLocalAddress for some interface",
+							"on the system."
+						],
+						"name" : "DVMRP-STD-MIB-JUNI::junidDvmrpInterfaceLocalAddress",
+						"oid" : "1.3.6.1.4.1.4874.3.2.1.1.1.1.2.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"State of the neighbor adjacency."
+						],
+						"enums" : {
+							"1" : "oneway",
+							"2" : "active",
+							"3" : "ignoring",
+							"4" : "down"
+						},
+						"name" : "DVMRP-STD-MIB-JUNI::junidDvmrpNeighborState",
+						"oid" : "1.3.6.1.4.1.4874.3.2.1.1.1.1.3.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DVMRP-STD-MIB-JUNI::junidDvmrpNeighborNotPruning",
+			"certification" : "STANDARD",
+			"description" : [
+				"A junidDvmrpNeighborNotPruning trap signifies that a non-pruning",
+				"neighbor has been detected (in an implementation-dependent",
+				"manner). This trap should be generated at most once per",
+				"generation ID of the neighbor. For example, it should be",
+				"generated at the time a neighbor is first heard from if the",
+				"prune bit is not set in its capabilities. It should also be",
+				"generated if the local system has the ability to tell that a",
+				"neighbor which sets the the prune bit in its capabilities is",
+				"not pruning any branches over an extended period of time.",
+				"The trap should be generated only if the router has no other",
+				"neighbors on the same interface with a lower IP address than",
+				"itself."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "junidDvmrpNeighborNotPruning",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Non-pruning neighbor $v1 detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DVMRP-STD-MIB-JUNI::junidDvmrpNeighborNotPruning DVMRP-STD-MIB-JUNI::junidDvmrpInterfaceLocalAddress a 192.0.2.1 DVMRP-STD-MIB-JUNI::junidDvmrpNeighborCapabilities b 0",
+			"trap" : {
+				"name" : "DVMRP-STD-MIB-JUNI::junidDvmrpNeighborNotPruning",
+				"oid" : "1.3.6.1.4.1.4874.3.2.1.1.1.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The IP address this system will use as a source address on",
+							"this interface. On unnumbered interfaces, it must be the",
+							"same value as junidDvmrpInterfaceLocalAddress for some interface",
+							"on the system."
+						],
+						"name" : "DVMRP-STD-MIB-JUNI::junidDvmrpInterfaceLocalAddress",
+						"oid" : "1.3.6.1.4.1.4874.3.2.1.1.1.1.2.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"This object describes the neighboring router's",
+							"capabilities. The leaf bit indicates that the neighbor has",
+							"only one interface with neighbors. The prune bit indicates",
+							"that the neighbor supports pruning. The generationID bit",
+							"indicates that the neighbor sends its generationID in Probe",
+							"messages. The mtrace bit indicates that the neighbor can",
+							"handle mtrace requests."
+						],
+						"enums" : {
+							"0" : "leaf",
+							"1" : "prune",
+							"2" : "generationID",
+							"3" : "mtrace"
+						},
+						"name" : "DVMRP-STD-MIB-JUNI::junidDvmrpNeighborCapabilities",
+						"oid" : "1.3.6.1.4.1.4874.3.2.1.1.1.1.3.1.8",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		}
+	]
+}

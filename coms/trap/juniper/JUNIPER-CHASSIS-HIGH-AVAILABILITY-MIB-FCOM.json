@@ -1,0 +1,448 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202003170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchover",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal switchover/failover."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxJsChHASwitchover",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "NodeId:$v2",
+				"Summary" : "HA system switchover to $v4 due to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchover JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoServicesRedundancyGroup s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoNodeId s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoPreviousState s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoCurrentState s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoReason s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchover",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains identification of services redundancy",
+							"group that switched over."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoServicesRedundancyGroup",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains node identification information",
+							"where the switchover occured."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoNodeId",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the state of HA system",
+							"before the occurance of switchover."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoPreviousState",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the state of HA system",
+							"after the occurance of switchover."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoCurrentState",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the cause for switchover."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASwitchoverInfoReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal peer link status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 eq 'UP' || $v2 eq 'Up' || $v2 eq 'up') ? 1 : (($v2 eq 'Down' || $v2 eq 'DOWN' || $v2 eq 'down') ? 2 : 3)"
+				},
+				"EventType" : "jnxJsChHAPeerLinkTrap",
+				"ExpireTime" : {
+					"eval" : "($v2 eq 'Down' || $v2 eq 'DOWN' || $v2 eq 'down') ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2 eq 'UP' || $v2 eq 'Up' || $v2 eq 'up') ? 0 : (($v2 eq 'Down' || $v2 eq 'DOWN' || $v2 eq 'down') ? 4 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Peer link $v1 is $v2 due to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapName s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapState s DOWN JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapSeverity s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapStateReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapName s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapState s UP JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapSeverity s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapStateReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapName s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapState s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapSeverity s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapStateReason s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the name of the peer link",
+							"that changed its state."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapName",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the state of the peer link;",
+							"whether it is UP or DOWN."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapState",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object reflects the severity;",
+							"whether it is minor or major."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapSeverity",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the reason why the peer link state",
+							"changed."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerLinkTrapStateReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal node health status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxJsChHANodeHealthStatus",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 eq 'major') ? 4 : (($v2 eq 'minor') ? 3 : 1)"
+				},
+				"SubNode" : "NodeID:$v1",
+				"Summary" : "HA node $v1 health status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatus JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusNodeID s EXAMPLE2 JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusSeverity s minor JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatus JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusNodeID s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusSeverity s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusReason s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatus",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains identification of node",
+							"in which the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusNodeID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object reflects the severity;",
+							"whether it is minor or major."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusSeverity",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains ha health status reason."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHANodeHealthStatusReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal HA peer status change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxJsChHAPeerBfdTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 eq 'major') ? 4 : (($v2 eq 'minor') ? 3 : 1)"
+				},
+				"SubNode" : "PeerID:$v1",
+				"Summary" : "BFD session with peer $v1 is down due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerID s EXAMPLE2 JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdSeverity s minor JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerID s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdSeverity s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdReason s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains identification of peer",
+							"in which the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object reflects the severity;",
+							"whether it is minor or major."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdSeverity",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains HA peer BFD down reason."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerBfdReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal HA SRG health status change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxJsChHASrgHealthStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "NodeID:$v1",
+				"Summary" : "HA SRG $v2 health status changed due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatus JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatusNodeID s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatusServicesRedundancyGroup s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatusReason s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatus",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains identification of node",
+							"in which the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatusNodeID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains identification of SRG",
+							"in which the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatusServicesRedundancyGroup",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the reason for",
+							"SRG health status change."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgHealthStatusReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal HA SRG Node activeness enforcement failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxJsChHASrgActEnfFlrTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "NodeID:$v2",
+				"Summary" : "HA SRG node $v2 activeness enforcement failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrapSrgID s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrapNodeID s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrapCurrentState s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains identification of SRG",
+							"in which the activeness enforcement failure event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrapSrgID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains identification of node",
+							"in which the activeness enforcement failure event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrapNodeID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the current state",
+							"when the activeness enforcement failure event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHASrgActEnfFlrTrapCurrentState",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.21",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal peer ICD link status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 eq 'UP' || $v2 eq 'Up' || $v2 eq 'up') ? 1 : (($v2 eq 'Down' || $v2 eq 'DOWN' || $v2 eq 'down') ? 2 : 3)"
+				},
+				"EventType" : "jnxJsChHAPeerICDLinkTrap",
+				"ExpireTime" : {
+					"eval" : "($v2 eq 'Down' || $v2 eq 'DOWN' || $v2 eq 'down') ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2 eq 'UP' || $v2 eq 'Up' || $v2 eq 'up') ? 0 : (($v2 eq 'Down' || $v2 eq 'DOWN' || $v2 eq 'down') ? 4 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "HA peer ICD link is $v2 due to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapName s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapState s DOWN JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapSeverity s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapStateReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapName s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapState s UP JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapSeverity s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapStateReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrap JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapName s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapState s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapSeverity s EXAMPLE JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapStateReason s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the name of the peer ICD link",
+							"that changed its state."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapName",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.22",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the state of the peer ICD link;",
+							"whether it is UP or DOWN."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapState",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object reflects the severity;",
+							"whether it is minor or major."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapSeverity",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the reason why the peer ICD link state",
+							"changed."
+						],
+						"name" : "JUNIPER-CHASSIS-HIGH-AVAILABILITY-MIB::jnxJsChHAPeerICDLinkTrapStateReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.19.1.1.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

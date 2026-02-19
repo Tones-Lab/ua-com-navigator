@@ -1,0 +1,1062 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201102090900Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesPortStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Ces port status changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 1 : (($v4 == 2 || $v4 == 7) ? 3 : 2)"
+				},
+				"EventType" : "hwCesPortStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 2 || $v4 == 7 || $v4 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 0 : (($v4 == 2 || $v4 == 7) ? 2 : (($v4 == 4 || $v4 == 5 || $v4 == 6) ? 4 : 3))"
+				},
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "CES port status changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesPortStatusTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0 HUAWEI-CES-MIB::hwAtmCesPortStatus i 4",
+				"$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesPortStatusTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0 HUAWEI-CES-MIB::hwAtmCesPortStatus i 1",
+				"$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesPortStatusTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0 HUAWEI-CES-MIB::hwAtmCesPortStatus i 2"
+			],
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesPortStatusTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Indicate the port state.",
+							"Options:",
+							"1. normal(1) - The port is in normal state",
+							"2. test(2) - The port is in test state",
+							"3. idle(3) - The port is in idle state",
+							"4. notExisted(4) - The port doesn't exist",
+							"5. fail(5) - The port is in fail state",
+							"6. block(6) - The port is in block state",
+							"7. maintain(7) - The port is in maintain state",
+							"8. loopback(11) - The port is in loopback state"
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "test",
+							"3" : "idle",
+							"4" : "notExisted",
+							"5" : "fail",
+							"6" : "block",
+							"7" : "maintain",
+							"11" : "loopback"
+						},
+						"name" : "HUAWEI-CES-MIB::hwAtmCesPortStatus",
+						"oid" : "1.3.6.1.4.1.2011.5.11.19.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesBoardWorkModeChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when E1T1 board work mode changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwCesBoardWorkModeChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "FrameIndex:$v2;SlotIndex:$v3",
+				"Summary" : "E1T1 board work mode changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesBoardWorkModeChangeTrap HUAWEI-DEVICE-MIB::hwConfigChangeIP a 192.0.2.1 HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-CES-MIB::hwAtmCesCfgAccessMode i 1",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesBoardWorkModeChangeTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The serial IP of configuration changes.",
+							"If the configuration changes is trigger by the command line users, the IP address is 0.0.0.0.",
+							"If it is triggered by the SNMP user, the IP address is the SNMP user's IP address.",
+							"The Trap of configuration changes will not be sent to the SNMP user",
+							"who triggered the configuration changes."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwConfigChangeIP",
+						"oid" : "1.3.6.1.4.1.2011.6.3.8.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Board work mode.",
+							"Options:",
+							"1. e1(1) - E1",
+							"2. t1(2) - T1"
+						],
+						"enums" : {
+							"1" : "e1",
+							"2" : "t1"
+						},
+						"name" : "HUAWEI-CES-MIB::hwAtmCesCfgAccessMode",
+						"oid" : "1.3.6.1.4.1.2011.5.11.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesPortWorkModeChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Ces port work mode changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwCesPortWorkModeChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "FrameIndex:$v2;SlotIndex:$v3;PortIndex:$v4",
+				"Summary" : "CES port work mode ($v5) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesPortWorkModeChangeTrap HUAWEI-DEVICE-MIB::hwConfigChangeIP a 192.0.2.1 HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0 HUAWEI-CES-MIB::hwAtmCesPortCfgWorkMode i -1 HUAWEI-CES-MIB::hwAtmCesPortCfgClockMode i -1 HUAWEI-CES-MIB::hwAtmCesPortCfgSignalType i -1 HUAWEI-CES-MIB::hwAtmCesPortCfgFrameVerifyMode i -1 HUAWEI-CES-MIB::hwAtmCesPortAcmSource i 9999",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesPortWorkModeChangeTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The serial IP of configuration changes.",
+							"If the configuration changes is trigger by the command line users, the IP address is 0.0.0.0.",
+							"If it is triggered by the SNMP user, the IP address is the SNMP user's IP address.",
+							"The Trap of configuration changes will not be sent to the SNMP user",
+							"who triggered the configuration changes."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwConfigChangeIP",
+						"oid" : "1.3.6.1.4.1.2011.6.3.8.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The working mode of port.",
+							"Options:",
+							"1. uni(1) - UNI mode",
+							"2. sdt(2) - SDT mode",
+							"3. udt(3) - UDT mode",
+							"4. idle(4) - Idle mode",
+							"5. ima(5) - IMA mode",
+							"6. invalidMode(-1) - Invalid mode"
+						],
+						"enums" : {
+							"-1" : "invalidMode",
+							"1" : "uni",
+							"2" : "sdt",
+							"3" : "udt",
+							"4" : "idle",
+							"5" : "ima"
+						},
+						"name" : "HUAWEI-CES-MIB::hwAtmCesPortCfgWorkMode",
+						"oid" : "1.3.6.1.4.1.2011.5.11.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The clock mode of port.",
+							"Options:",
+							"1. system(1) - System clock",
+							"2. line(2) - Line clock",
+							"3. acm(3) - Acm clock",
+							"4. srts(4) - Srts clock",
+							"5. invalidClock(-1) - Invalid clock"
+						],
+						"enums" : {
+							"-1" : "invalidClock",
+							"1" : "system",
+							"2" : "line",
+							"3" : "acm",
+							"4" : "srts"
+						},
+						"name" : "HUAWEI-CES-MIB::hwAtmCesPortCfgClockMode",
+						"oid" : "1.3.6.1.4.1.2011.5.11.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Signal type of port.",
+							"Options:",
+							"1. ccs(1) - CCS signal",
+							"2. cas(2) - CAS signal ",
+							"3. invalidSignal(-1) - Invalid signal"
+						],
+						"enums" : {
+							"-1" : "invalidSignal",
+							"1" : "ccs",
+							"2" : "cas"
+						},
+						"name" : "HUAWEI-CES-MIB::hwAtmCesPortCfgSignalType",
+						"oid" : "1.3.6.1.4.1.2011.5.11.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Frame verify mode of port.",
+							"Options:",
+							"1. enable(1) - Open frame verify",
+							"2. disable(2) - Close frame verify",
+							"3. invalidOrNotSupport(-1) - Invalid or does not support frame verify "
+						],
+						"enums" : {
+							"-1" : "invalidOrNotSupport",
+							"1" : "enable",
+							"2" : "disable"
+						},
+						"name" : "HUAWEI-CES-MIB::hwAtmCesPortCfgFrameVerifyMode",
+						"oid" : "1.3.6.1.4.1.2011.5.11.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Configuration of adaptive clock source."
+						],
+						"name" : "HUAWEI-CES-MIB::hwAtmCesPortAcmSource",
+						"oid" : "1.3.6.1.4.1.2011.5.11.3.1.19",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesPortSignalLossAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Loss of signal occurs at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwCesLOSAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Loss of signal occurred at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesPortSignalLossAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesPortSignalLossAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesFrameLossAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Loss of frame alignment occurs at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwCesFrameAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Loss of frame alignment occurred at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesFrameLossAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesFrameLossAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesRemoteAlarmReceivedAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when remote alarm occurs at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwCesRemoteAlarmReceivedStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Remote alarm occurred at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesRemoteAlarmReceivedAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesRemoteAlarmReceivedAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesMultiframeLossAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Loss of multiframe alignment occurs at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwCesMultiframeAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Loss of multiframe alignment occurred at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesMultiframeLossAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesMultiframeLossAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesSignalOccurAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when signal occurs at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwCesSignalAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Signal occurred at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesSignalOccurAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesSignalOccurAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesCRC4ErrorOccurAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when CRC4 error occurs at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwCesCRC4AlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "CRC4 error occurred at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesCRC4ErrorOccurAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesCRC4ErrorOccurAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesLOSRecoverAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Loss of signal(LOS) recover at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwCesLOSAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "LOS recovered at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesLOSRecoverAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesLOSRecoverAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesFrameRecoverAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Loss of frame recover at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwCesFrameAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Loss of frame recovered at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesFrameRecoverAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesFrameRecoverAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesRemoteAlarmRecoverAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Remote alarm recover at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwCesRemoteAlarmReceivedStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Remote alarm recovered at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesRemoteAlarmRecoverAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesRemoteAlarmRecoverAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesMultiframeRecoverAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when Loss of multiframe alignment recover at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwCesMultiframeAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Loss of multiframe alignment recovered at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesMultiframeRecoverAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesMultiframeRecoverAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesSignalRecoverAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when signal recover at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwCesSignalAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "Signal recovered at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesSignalRecoverAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesSignalRecoverAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesCRC4RecoverAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when CRC4 recover at the E1/T1 port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwCesCRC4AlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2;PortIndex:$v3",
+				"Summary" : "CRC4 recovered at E1/T1 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesCRC4RecoverAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-DEVICE-MIB::hwPortIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesCRC4RecoverAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Port index, indicating the physical number of the port on a board."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwPortIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesACMClockRestoreAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when ACM clock restore."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwCesACMClockAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2",
+				"Summary" : "ACM clock restored"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesACMClockRestoreAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-CES-MIB::hwAtmCesPortCESoPCLKIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesACMClockRestoreAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The index of adaptive clock source."
+						],
+						"name" : "HUAWEI-CES-MIB::hwAtmCesPortCESoPCLKIndex",
+						"oid" : "1.3.6.1.4.1.2011.5.11.17.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-CES-MIB::hwCesACMClockFaultAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap message is generated when ACM clock fault."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwCesACMClockAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "FrameIndex:$v1;SlotIndex:$v2",
+				"Summary" : "ACM clock fault occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CES-MIB::hwCesACMClockFaultAlarmTrap HUAWEI-DEVICE-MIB::hwFrameIndex i 0 HUAWEI-DEVICE-MIB::hwSlotIndex i 0 HUAWEI-CES-MIB::hwAtmCesPortCESoPCLKIndex i 0",
+			"trap" : {
+				"name" : "HUAWEI-CES-MIB::hwCesACMClockFaultAlarmTrap",
+				"oid" : "1.3.6.1.4.1.2011.5.11.20.2.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"The index of a shelf in the device."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwFrameIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A slot index is used to identify the location of a board in a shelf.",
+							"You can locate a board in a shelf according to hwFrameIndex and hwSlotIndex.",
+							"For the hwFrameIndex object, refer to hwFrameTable."
+						],
+						"name" : "HUAWEI-DEVICE-MIB::hwSlotIndex",
+						"oid" : "1.3.6.1.4.1.2011.6.3.3.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The index of adaptive clock source."
+						],
+						"name" : "HUAWEI-CES-MIB::hwAtmCesPortCESoPCLKIndex",
+						"oid" : "1.3.6.1.4.1.2011.5.11.17.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,1095 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptSMTHoldCondition",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when fddiSMTHoldState (fddimibSMTHoldState)",
+				"assumes the state holding-prm or holding-sec. This ",
+				"notification is a Condition in the Status Report",
+				"Protocol (see 7.2.7 and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiSMT 71 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "lpOptSMTHoldCondition",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : 4"
+				},
+				"SubNode" : "StationId:$v1",
+				"Summary" : "SMT hold state : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptSMTHoldCondition FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptSMTHoldState i 2",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptSMTHoldCondition",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This variable indicates the current state of the",
+							"Hold function. The value 'not-holding' is the",
+							"default and initial value. The value must be set",
+							"to 'not-holding' as part of Active_Actions and",
+							"when the conditions causing 'holding-prm' or",
+							"'holding-sec' are no longer true. The value",
+							"'holding-prm' must be set when the condition",
+							"(notTR_Flag & not RE_Flag & (PC_LS=QLS | LEM_Fail",
+							"| TNE>NS_Max | (not LS_Flag & TPC > T_Out))) is",
+							"satisfied in state PC8:ACTIVE for the A Port. The",
+							"value 'holding-sec' must be set when the condition",
+							"(notTR_Flag & not RE_Flag & (PC_LS=QLS | LEM_Fail",
+							"| TNE>NS_Max | (not LS_Flag & TPC > T_Out))) is",
+							"satisfied in state PC8:ACTIVE for the B Port."
+						],
+						"enums" : {
+							"2" : "not-holding",
+							"3" : "holding-prm",
+							"4" : "holding-sec"
+						},
+						"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptSMTHoldState",
+						"oid" : "1.3.6.1.4.1.114.1.10.1.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptSMTPeerWrapCondition",
+			"certification" : "STANDARD",
+			"description" : [
+				"This condition is active when fddiSMTPeerWrapFlag ",
+				"(fddimibSMTPeerWrapFlag) is set. This notification is",
+				"a Condition in the Status Report Protocol (see 7.2.7 ",
+				"and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiSMT 72 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 2 : 1"
+				},
+				"EventType" : "lpOptSMTPeerWrapCondition",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 3 : 0"
+				},
+				"SubNode" : "StationId:$v1",
+				"Summary" : {
+					"eval" : "($v3==1) ? 'SMT peer wrap detected' : 'SMT peer wrap cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptSMTPeerWrapCondition FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibSMTCFState i 1 FDDI-SMT73-MIB::fddimibSMTPeerWrapFlag i 1",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptSMTPeerWrapCondition",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The attachment configuration for the station or",
+							"concentrator (refer to ANSI SMT 9.7.2.2)."
+						],
+						"enums" : {
+							"1" : "cf0",
+							"2" : "cf1",
+							"3" : "cf2",
+							"4" : "cf3",
+							"5" : "cf4",
+							"6" : "cf5",
+							"7" : "cf6",
+							"8" : "cf7",
+							"9" : "cf8",
+							"10" : "cf9",
+							"11" : "cf10",
+							"12" : "cf11",
+							"13" : "cf12"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibSMTCFState",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable assumes the value of the",
+							"PeerWrapFlag in CFM (refer to ANSI SMT",
+							"9.7.2.4.4)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibSMTPeerWrapFlag",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.23",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACDuplicateAddressCondition",
+			"certification" : "STANDARD",
+			"description" : [
+				"This condition is active when either fddiMACDA-Flag",
+				"(fddimibMACDaFlag) or fddiMACUNDA-Flag ",
+				"(fddimibMACUnaDaFlag) is set. This event is handled",
+				"as a Condition in the Status Report Protocol (see 7.2.7",
+				"and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiMAC 140 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 2 : 1"
+				},
+				"EventType" : "lpOptMACDuplicateAddressCondition",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 4 : 0"
+				},
+				"SubNode" : "StationId:$v1",
+				"Summary" : {
+					"eval" : "($v4==1) ? 'MAC duplicate address condition detected' : 'MAC duplicate address condition cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACDuplicateAddressCondition FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibMACSMTAddress s EXAMPL FDDI-SMT73-MIB::fddimibMACUpstreamNbr s EXAMPL FDDI-SMT73-MIB::fddimibMACDaFlag i 1 FDDI-SMT73-MIB::fddimibMACUnaDaFlag i 1",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACDuplicateAddressCondition",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The 48-bit individual address of the MAC used for",
+							"SMT frames."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACSMTAddress",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC's upstream neighbor's long individual MAC",
+							"address. It has an initial value of the SMT-",
+							"Unknown-MAC Address and is only modified as",
+							"specified by the Neighbor Information Frame",
+							"protocol (refer to ANSI SMT 7.2.1 and 8.2)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACUpstreamNbr",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The RMT flag Duplicate Address Flag, DA_Flag",
+							"(refer to ANSI 10.2.1.2)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibMACDaFlag",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.29",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A flag, UNDA_Flag (refer to ANSI 8.2.2.1), set",
+							"when the upstream neighbor reports a duplicate",
+							"address condition. Cleared when the condition",
+							"clears."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibMACUnaDaFlag",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.30",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACFrameErrorCondition",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when the fddiMACFrameErrorRatio ",
+				"(fddimibMACFrameErrorRatio) is greater than or equal",
+				"to fddiMACFrameErrorThreshold ",
+				"(fddimibMACFrameErrorThreshold). This event is handled",
+				"as a Condition in the Status Report Protocol (see 7.2.7",
+				"and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiMAC 141 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 2 : 1"
+				},
+				"EventType" : "lpOptMACFrameErrorCondition",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 3 : 0"
+				},
+				"SubNode" : "StationId:$v1",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'MAC frame error ratio ($v6) exceeded the threshold' : 'MAC frame error ratio ($v6) is normal'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACFrameErrorCondition FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibMACFrameErrorFlag i 1 FDDI-SMT73-MIB::fddimibMACFrameCts c 9999 FDDI-SMT73-MIB::fddimibMACErrorCts c 9999 FDDI-SMT73-MIB::fddimibMACLostCts c 9999 FDDI-SMT73-MIB::fddimibMACFrameErrorRatio i 9999",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACFrameErrorCondition",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the MAC Frame Error Condition is",
+							"present when set. Cleared when the condition",
+							"clears and on station initialization."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibMACFrameErrorFlag",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.31",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A count of the number of frames received by this",
+							"MAC (refer to ANSI MAC 7.5.1)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACFrameCts",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.21",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"A count of the number of frames that were",
+							"detected in error by this MAC that had not been",
+							"detected in error by another MAC (refer to ANSI",
+							"MAC 7.5.2)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACErrorCts",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.24",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"A count of the number of instances that this MAC",
+							"detected a format error during frame reception",
+							"such that the frame was stripped (refer to ANSI",
+							"MAC 7.5.3)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACLostCts",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.25",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This variable is the value of the ratio",
+							"",
+							"((delta fddiMACLostCts + delta fddiMACErrorCts) /",
+							"(delta fddiMACFrameCts + delta fddiMACLostCts ))",
+							"* 2**16 "
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACFrameErrorRatio",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.27",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACNotCopiedCondition",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when the fddiMACNotCopiedRatio ",
+				"(fddimibMACNotCopiedRatio) is greater than or equal to ",
+				"the fddiMACNotCopiedThreshold (lpOptMACNotCopiedThreshold).",
+				"This event is handled as a Condition in the Status Report ",
+				"Protocol (see 7.2.7 and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiMAC 142 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==1) ? 2 : 1"
+				},
+				"EventType" : "lpOptMACNotCopiedCondition",
+				"ExpireTime" : {
+					"eval" : "($v5==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v5==1) ? 4 : 0"
+				},
+				"SubNode" : "StationId:$v1",
+				"Summary" : {
+					"eval" : "($v5==1) ? 'MAC not copied ratio ($v4) reached the threshold' : 'MAC not copied ratio ($v4) is normal'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACNotCopiedCondition FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibMACNotCopiedCts c 9999 FDDI-SMT73-MIB::fddimibMACCopiedCts c 9999 FDDI-SMT73-MIB::fddimibMACNotCopiedRatio i 9999 FDDI-SMT73-MIB::fddimibMACNotCopiedFlag i 1",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACNotCopiedCondition",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A count that should as closely as possible match",
+							"the number of frames that were addressed to this",
+							"MAC but were not copied into its receive buffers",
+							"(see ANSI MAC 7.5). For example, this might occur",
+							"due to local buffer congestion. Because of",
+							"implementation considerations, this count may not",
+							"match the actual number of frames not copied. It",
+							"is not a requirement that this count be exact.",
+							"Note that this count does not include MAC frames."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACNotCopiedCts",
+						"oid" : "1.3.6.1.2.1.10.15.73.3.1.1.3",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"A count that should as closely as possible match",
+							"the number of frames addressed to (A bit set) and",
+							"successfully copied into the station's receive",
+							"buffers (C bit set) by this MAC (refer to ANSI MAC",
+							"7.5). Note that this count does not include MAC",
+							"frames."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACCopiedCts",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.22",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This variable is the value of the ratio:",
+							"",
+							"(delta fddiMACNotCopiedCts /",
+							"(delta fddiMACCopiedCts +",
+							"delta fddiMACNotCopiedCts )) * 2**16 "
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACNotCopiedRatio",
+						"oid" : "1.3.6.1.2.1.10.15.73.3.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates that the Not Copied condition is",
+							"present when read as true(1). Set to false(2)",
+							"when the condition clears and on station",
+							"initialization."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibMACNotCopiedFlag",
+						"oid" : "1.3.6.1.2.1.10.15.73.3.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACNeighborChangeEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when a change in a MAC's upstream neighbor",
+				"address or downstream neighbor address is detected.",
+				"(see 7.2.7 and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiMAC 143 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpOptMACNeighborChangeEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "StationId:$v1",
+				"Summary" : {
+					"eval" : "(($v2 ne $v3) && ($v4 ne $v5)) ? 'Both upstream and downstream neighbors of MAC have been changed' : (($v2 ne $v3) ? 'Upstream neighbor of MAC has been changed' : 'Downstream neighbor of MAC has been changed')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACNeighborChangeEvent FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibMACUpstreamNbr s EXAMPL FDDI-SMT73-MIB::fddimibMACOldUpstreamNbr s EXAMPL FDDI-SMT73-MIB::fddimibMACDownstreamNbr s EXAMPL FDDI-SMT73-MIB::fddimibMACOldDownstreamNbr s EXAMPL FDDI-SMT73-MIB::fddimibMACCurrentPath i 1 FDDI-SMT73-MIB::fddimibMACSMTAddress s EXAMPL",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACNeighborChangeEvent",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC's upstream neighbor's long individual MAC",
+							"address. It has an initial value of the SMT-",
+							"Unknown-MAC Address and is only modified as",
+							"specified by the Neighbor Information Frame",
+							"protocol (refer to ANSI SMT 7.2.1 and 8.2)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACUpstreamNbr",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The previous value of the MAC's upstream",
+							"neighbor's long individual MAC address. It has an",
+							"initial value of the SMT-Unknown- MAC Address and",
+							"is only modified as specified by the Neighbor",
+							"Information Frame protocol (refer to ANSI SMT",
+							"7.2.1 and 8.2)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACOldUpstreamNbr",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC's downstream neighbor's long individual",
+							"MAC address. It has an initial value of the SMT-",
+							"Unknown-MAC Address and is only modified as",
+							"specified by the Neighbor Information Frame",
+							"protocol (refer to ANSI SMT 7.2.1 and 8.2)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACDownstreamNbr",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The previous value of the MAC's downstream",
+							"neighbor's long individual MAC address. It has an",
+							"initial value of the SMT- Unknown-MAC Address and",
+							"is only modified as specified by the Neighbor",
+							"Information Frame protocol (refer to ANSI SMT",
+							"7.2.1 and 8.2)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACOldDownstreamNbr",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the Path into which this MAC is",
+							"currently inserted (refer to ANSI 9.7.7)."
+						],
+						"enums" : {
+							"1" : "isolated",
+							"2" : "local",
+							"3" : "secondary",
+							"4" : "primary",
+							"5" : "concatenated",
+							"6" : "thru"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibMACCurrentPath",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The 48-bit individual address of the MAC used for",
+							"SMT frames."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACSMTAddress",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACPathChangeEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This event is generated when the value of the ",
+				"fddiMACCurrentPath (fddimibMACCurrentPath) changes.",
+				"This event shall be supressed if the value changes",
+				"from isolated to local or local to isolated (see",
+				"7.2.7 and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiMAC 144 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpOptMACPathChangeEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "StationId:$v1",
+				"Summary" : "MAC path changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACPathChangeEvent FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibMACAvailablePaths i 0 FDDI-SMT73-MIB::fddimibMACCurrentPath i 1 FDDI-SMT73-MIB::fddimibMACRequestedPaths i 0",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptMACPathChangeEvent",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the paths available for this MAC (refer",
+							"to ANSI SMT 9.7.7).",
+							"",
+							"The value is a sum. This value initially takes",
+							"the value zero, then for each type of PATH that",
+							"this MAC has available, 2 raised to a power is",
+							"added to the sum. The powers are according to the",
+							"following table:",
+							"",
+							"Path Power",
+							"Primary 0",
+							"Secondary 1",
+							"Local 2 "
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACAvailablePaths",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the Path into which this MAC is",
+							"currently inserted (refer to ANSI 9.7.7)."
+						],
+						"enums" : {
+							"1" : "isolated",
+							"2" : "local",
+							"3" : "secondary",
+							"4" : "primary",
+							"5" : "concatenated",
+							"6" : "thru"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibMACCurrentPath",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"List of permitted Paths which specifies the",
+							"Path(s) into which the MAC may be inserted (refer",
+							"to ansi SMT 9.7).",
+							"",
+							"The value is a sum which represents the individual",
+							"paths that are desired. This value initially",
+							"takes the value zero, then for each type of PATH",
+							"that this node is, 2 raised to a power is added to",
+							"the sum. The powers are according to the",
+							"following table:",
+							"",
+							"Path Power",
+							"local 0",
+							"secondary-alternate 1",
+							"primary-alternate 2",
+							"concatenated-alternate 3",
+							"secondary-preferred 4",
+							"primary-preferred 5",
+							"concatenated-preferred 6",
+							"thru 7 "
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibMACRequestedPaths",
+						"oid" : "1.3.6.1.2.1.10.15.73.2.2.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTLerCondition",
+			"certification" : "STANDARD",
+			"description" : [
+				"This condition becomes active when the value of ",
+				"fddiPORTLer-Estimate (fddimibPORTLerEstimate)",
+				"is less than or equal to fddiPORTLer-Alarm",
+				"(fddimibPORTLerAlarm). This will be reported",
+				"with the Status Report Frames (SRF) (see 7.2.7 ",
+				"and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiPORT 80 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v7==1) ? 2 : 1"
+				},
+				"EventType" : "lpOptPORTLerCondition",
+				"ExpireTime" : {
+					"eval" : "($v7==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v7==1) ? 4 : 0"
+				},
+				"SubNode" : "StationId:$v1",
+				"Summary" : {
+					"eval" : "($v7==1) ? 'Port LER condition detected' : 'Port LER condition cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTLerCondition FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibPORTLerCutoff i 4 FDDI-SMT73-MIB::fddimibPORTLerAlarm i 4 FDDI-SMT73-MIB::fddimibPORTLerEstimate i 4 FDDI-SMT73-MIB::fddimibPORTLemRejectCts c 9999 FDDI-SMT73-MIB::fddimibPORTLemCts c 9999 FDDI-SMT73-MIB::fddimibPORTLerFlag i 1",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTLerCondition",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The link error rate estimate at which a link",
+							"connection will be broken. It ranges from 10**-4",
+							"to 10**-15 and is reported as the absolute value",
+							"of the base 10 logarithm (default of 7)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibPORTLerCutoff",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The link error rate estimate at which a link",
+							"connection will generate an alarm. It ranges from",
+							"10**-4 to 10**-15 and is reported as the absolute",
+							"value of the base 10 logarithm of the estimate",
+							"(default of 8)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibPORTLerAlarm",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.19",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A long term average link error rate. It ranges",
+							"from 10**-4 to 10**-15 and is reported as the",
+							"absolute value of the base 10 logarithm (refer to",
+							"ANSI SMT 9.4.7.5.)."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibPORTLerEstimate",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A link error monitoring count of the times that a",
+							"link has been rejected."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibPORTLemRejectCts",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.16",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The aggregate link error monitor error count, set",
+							"to zero only on station initialization."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibPORTLemCts",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.17",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The condition becomes active when the value of",
+							"fddiPORTLerEstimate is less than or equal to",
+							"fddiPORTLerAlarm. This will be reported with the",
+							"Status Report Frames (SRF) (refer to ANSI SMT",
+							"7.2.7 and 8.3)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibPORTLerFlag",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.23",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTUndesiredConnAttemptEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when an undesired connection attempt has",
+				"been made (see 5.2.4, 7.2.7, and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiPORT 81 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpOptPORTUndesiredConnAttemptEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "StationId:$v1",
+				"Summary" : "Port $v2 undesired connection attempt detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTUndesiredConnAttemptEvent FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibPORTMyType i 1 FDDI-SMT73-MIB::fddimibPORTConnectState i 1 FDDI-SMT73-MIB::fddimibPORTNeighborType i 1 FDDI-SMT73-MIB::fddimibPORTPCWithhold i 1",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTUndesiredConnAttemptEvent",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the PORT's PC_Type (refer to ANSI",
+							"9.4.1, and 9.6.3.2)."
+						],
+						"enums" : {
+							"1" : "a",
+							"2" : "b",
+							"3" : "s",
+							"4" : "m",
+							"5" : "none"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibPORTMyType",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An indication of the connect state of this PORT",
+							"and is equal to the value of Connect_State (refer",
+							"to ANSI 9.4.1)"
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "connecting",
+							"3" : "standby",
+							"4" : "active"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibPORTConnectState",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the remote PORT as determined in PCM.",
+							"This variable has an initial value of none, and is",
+							"only modified in PC_RCode(3)_Actions (refer to",
+							"ANSI SMT 9.6.3.2)."
+						],
+						"enums" : {
+							"1" : "a",
+							"2" : "b",
+							"3" : "s",
+							"4" : "m",
+							"5" : "none"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibPORTNeighborType",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of PC_Withhold (refer to ANSI SMT",
+							"9.4.1)."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "m-m",
+							"3" : "otherincompatible",
+							"4" : "pathnotavailable"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibPORTPCWithhold",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTEBErrorCondition",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when the Elasticity Buffer Error-Ct",
+				"(lpOptPORTEBErrorCt) increments. This is handled",
+				"as a condition in the Status Report Protocol. It",
+				"is generated when an increment occurs in the ",
+				"station's sampling period (see 7.2.7 and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiPORT 82 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpOptPORTEBErrorCondition",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "StationId:$v1",
+				"Summary" : "Elasticity buffer error. Count : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTEBErrorCondition FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTEBErrorCt c 9999",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTEBErrorCondition",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A count that should as closely as possible match the ",
+							"times an Elasticity Buffer Error has occurred while in",
+							"active line state."
+						],
+						"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTEBErrorCt",
+						"oid" : "1.3.6.1.4.1.114.1.10.4.1.1.4",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTPathChangeEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This event is generated when the value of the ",
+				"fddiPORTCurrentPath (lpOptPORTCurrentPath)",
+				"changes. This event shall be surpressed if the",
+				"value changes from isolated to local or local",
+				"to isolated (see 7.2.7 and 8.3).",
+				"REFERENCE",
+				"ANSI { fddiPORT 83 }"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpOptPORTPathChangeEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "StationId:$v1",
+				"Summary" : "Port path changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTPathChangeEvent FDDI-SMT73-MIB::fddimibSMTStationId s EXAMPLEE FDDI-SMT73-MIB::fddimibPORTAvailablePaths i 0 FDDI-SMT73-MIB::fddimibPORTCurrentPath i 1 FDDI-SMT73-MIB::fddimibPORTRequestedPaths s EXA FDDI-SMT73-MIB::fddimibPORTMyType i 1 FDDI-SMT73-MIB::fddimibPORTNeighborType i 1",
+			"trap" : {
+				"name" : "LANPLEX-OPT-FDDI-MIB-1-2-2::lpOptPORTPathChangeEvent",
+				"oid" : "1.3.6.1.4.1.114.1.10.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"Used to uniquely identify an FDDI station."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibSMTStationId",
+						"oid" : "1.3.6.1.2.1.10.15.73.1.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the Paths which are available to this",
+							"Port. In the absence of faults, the A and B Ports",
+							"will always have both the Primary and Secondary",
+							"Paths available.",
+							"",
+							"The value is a sum. This value initially takes",
+							"the value zero, then for each type of PATH that",
+							"this port has available, 2 raised to a power is",
+							"added to the sum. The powers are according to the",
+							"following table:",
+							"",
+							"Path Power",
+							"Primary 0",
+							"Secondary 1",
+							"Local 2 "
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibPORTAvailablePaths",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the Path(s) into which this PORT is",
+							"currently inserted."
+						],
+						"enums" : {
+							"1" : "ce0",
+							"2" : "ce1",
+							"3" : "ce2",
+							"4" : "ce3",
+							"5" : "ce4",
+							"6" : "ce5"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibPORTCurrentPath",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This variable is a list of permitted Paths where",
+							"each list element defines the Port's permitted",
+							"Paths. The first octet corresponds to 'none', the",
+							"second octet to 'tree', and the third octet to",
+							"'peer'."
+						],
+						"name" : "FDDI-SMT73-MIB::fddimibPORTRequestedPaths",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the PORT's PC_Type (refer to ANSI",
+							"9.4.1, and 9.6.3.2)."
+						],
+						"enums" : {
+							"1" : "a",
+							"2" : "b",
+							"3" : "s",
+							"4" : "m",
+							"5" : "none"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibPORTMyType",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the remote PORT as determined in PCM.",
+							"This variable has an initial value of none, and is",
+							"only modified in PC_RCode(3)_Actions (refer to",
+							"ANSI SMT 9.6.3.2)."
+						],
+						"enums" : {
+							"1" : "a",
+							"2" : "b",
+							"3" : "s",
+							"4" : "m",
+							"5" : "none"
+						},
+						"name" : "FDDI-SMT73-MIB::fddimibPORTNeighborType",
+						"oid" : "1.3.6.1.2.1.10.15.73.5.2.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,1324 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201604140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-RTTMON-MIB::rttMonConnectionChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is only valid when the RttMonRttType",
+				"is 'echo' or 'pathEcho'.",
+				"A rttMonConnectionChangeNotification indicates that a",
+				"connection to a target (not to a hop along the path",
+				"to a target) has either failed on establishment or ",
+				"been lost and when reestablished. Precisely, this",
+				"has resulted in rttMonCtrlOperConnectionLostOccurred",
+				"changing value.",
+				"If History is not being collected, the instance values ",
+				"for the rttMonHistoryCollectionAddress object will not ",
+				"be valid. When RttMonRttType is not 'echo' or 'pathEcho'",
+				"the rttMonHistoryCollectionAddress object will be null.",
+				"rttMonConnectionChangeNotification object is superseded by",
+				"rttMonNotification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 2 : 1"
+				},
+				"EventType" : "rttMonConnectionChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 3 : 0"
+				},
+				"SubNode" : "AdminTag:$v1",
+				"Summary" : {
+					"eval" : "($v3 == 1) ? 'RTT connection has failed on AdminTag $v1' : 'RTT connection is established on AdminTag $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RTTMON-MIB::rttMonConnectionChangeNotification CISCO-RTTMON-MIB::rttMonCtrlAdminTag s EXAMPLE CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress s EXAMPLE CISCO-RTTMON-MIB::rttMonCtrlOperConnectionLostOccurred i 1",
+			"trap" : {
+				"name" : "CISCO-RTTMON-MIB::rttMonConnectionChangeNotification",
+				"oid" : "1.3.6.1.4.1.9.9.42.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A string which is used by a managing application to",
+							"identify the RTT target. This string is inserted into trap",
+							"notifications, but has no other significance to the ",
+							"agent.",
+							"",
+							"rttMonCtrlAdminTag object is superseded by",
+							"rttMonCtrlAdminLongTag."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlAdminTag",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"When the RttMonRttType is 'echo' or 'pathEcho' this",
+							"is a string which specifies the address of the target for",
+							"the this RTT operation. For all other values of",
+							"RttMonRttType this string will be null.",
+							"",
+							"This address will be the address of the hop along the",
+							"path to the rttMonEchoAdminTargetAddress address",
+							"including rttMonEchoAdminTargetAddress address, or just",
+							"the rttMonEchoAdminTargetAddress address, when the",
+							"path information is not collected. This behavior is",
+							"defined by the rttMonCtrlAdminRttType object.",
+							"",
+							"The interpretation of this string depends on the type",
+							"of RTT operation selected, as specified by the",
+							"rttMonEchoAdminProtocol object.",
+							"",
+							"See rttMonEchoAdminTargetAddress for a complete",
+							"description."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object will only change its value when the",
+							"RttMonRttType is 'echo' or 'pathEcho'.",
+							"",
+							"This object is set to true when the RTT connection fails ",
+							"to be established or is lost, and set to false when a ",
+							"connection is reestablished. When the RttMonRttType",
+							"is 'pathEcho', connection loss applies only to the",
+							"rttMonEchoAdminTargetAddress and not to intermediate",
+							"hops to the Target.",
+							"",
+							"When this value changes and ",
+							"rttMonReactAdminConnectionEnable is true, a reaction ",
+							"will occur. ",
+							"",
+							"If a trap is sent it is a ",
+							"rttMonConnectionChangeNotification.",
+							"",
+							"When this value changes and any one of the rttMonReactTable row",
+							"has rttMonReactVar object value as 'connectionLoss(8)'",
+							"a reaction may occur.",
+							"",
+							"If a trap is sent it is rttMonNotification with rttMonReactVar",
+							"value of 'connectionLoss'."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlOperConnectionLostOccurred",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.9.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RTTMON-MIB::rttMonTimeoutNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A rttMonTimeoutNotification indicates the occurrence of",
+				"a timeout for a RTT operation, and it indicates the ",
+				"clearing of such a condition by a subsequent RTT ",
+				"operation. Precisely, this has resulted in ",
+				"rttMonCtrlOperTimeoutOccurred changing value. ",
+				"When the RttMonRttType is 'pathEcho', this ",
+				"notification will only be sent when the timeout ",
+				"occurs during an operation to the target and not to",
+				"a hop along the path to the target. This also ",
+				"applies to the clearing of the timeout. ",
+				"If History is not being collected, the instance values ",
+				"for the rttMonHistoryCollectionAddress object will not ",
+				"be valid. When RttMonRttType is not 'echo' or 'pathEcho'",
+				"the rttMonHistoryCollectionAddress object will be null.",
+				"rttMonTimeoutNotification object is superseded by",
+				"rttMonNotification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 2 : 1"
+				},
+				"EventType" : "rttMonTimeoutNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 3 : 0"
+				},
+				"SubNode" : "AdminTag:$v1",
+				"Summary" : {
+					"eval" : "($v3 == 1) ? 'Operation on AdminTag $v1 has failed due to timeout' : 'Operation on AdminTag $v1 completed normally'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RTTMON-MIB::rttMonTimeoutNotification CISCO-RTTMON-MIB::rttMonCtrlAdminTag s EXAMPLE CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress s EXAMPLE CISCO-RTTMON-MIB::rttMonCtrlOperTimeoutOccurred i 1",
+			"trap" : {
+				"name" : "CISCO-RTTMON-MIB::rttMonTimeoutNotification",
+				"oid" : "1.3.6.1.4.1.9.9.42.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A string which is used by a managing application to",
+							"identify the RTT target. This string is inserted into trap",
+							"notifications, but has no other significance to the ",
+							"agent.",
+							"",
+							"rttMonCtrlAdminTag object is superseded by",
+							"rttMonCtrlAdminLongTag."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlAdminTag",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"When the RttMonRttType is 'echo' or 'pathEcho' this",
+							"is a string which specifies the address of the target for",
+							"the this RTT operation. For all other values of",
+							"RttMonRttType this string will be null.",
+							"",
+							"This address will be the address of the hop along the",
+							"path to the rttMonEchoAdminTargetAddress address",
+							"including rttMonEchoAdminTargetAddress address, or just",
+							"the rttMonEchoAdminTargetAddress address, when the",
+							"path information is not collected. This behavior is",
+							"defined by the rttMonCtrlAdminRttType object.",
+							"",
+							"The interpretation of this string depends on the type",
+							"of RTT operation selected, as specified by the",
+							"rttMonEchoAdminProtocol object.",
+							"",
+							"See rttMonEchoAdminTargetAddress for a complete",
+							"description."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object will change its value for all",
+							"RttMonRttTypes.",
+							"",
+							"This object is set to true when an operation times out, ",
+							"and set to false when an operation completes under ",
+							"rttMonCtrlAdminTimeout. When this value changes, a ",
+							"reaction may occur, as defined by ",
+							"rttMonReactAdminTimeoutEnable. ",
+							"",
+							"When the RttMonRttType is 'pathEcho', this timeout",
+							"applies only to the rttMonEchoAdminTargetAddress and",
+							"not to intermediate hops to the Target.",
+							"",
+							"If a trap is sent it is a rttMonTimeoutNotification.",
+							"",
+							"When this value changes and any one of the rttMonReactTable",
+							"row has rttMonReactVar object value as 'timeout(7)', a reaction",
+							"may occur.",
+							"",
+							"If a trap is sent it is rttMonNotification with rttMonReactVar",
+							"value of 'timeout'."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlOperTimeoutOccurred",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.9.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RTTMON-MIB::rttMonThresholdNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A rttMonThresholdNotification indicates the",
+				"occurrence of a threshold violation for a RTT operation",
+				"and it indicates the previous violation has subsided for",
+				"a subsequent RTT operation. Precisely, this has resulted",
+				"in rttMonCtrlOperOverThresholdOccurred changing value. ",
+				"When the RttMonRttType is 'pathEcho', this ",
+				"notification will only be sent when the threshold",
+				"violation occurs during an operation to the target and",
+				"not to a hop along the path to the target. This also",
+				"applies to the subsiding of a threshold condition.",
+				"If History is not being collected, the instance values ",
+				"for the rttMonHistoryCollectionAddress object will not ",
+				"be valid. When RttMonRttType is not 'echo' or 'pathEcho'",
+				"the rttMonHistoryCollectionAddress object will be null.",
+				"rttMonThresholdNotification object is superseded by",
+				"rttMonNotification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 2 : 1"
+				},
+				"EventType" : "rttMonThresholdNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 3 : 0"
+				},
+				"SubNode" : "AdminTag:$v1",
+				"Summary" : {
+					"eval" : "($v3 == 1) ? 'Threshold violation on AdminTag $v1' : 'Operation on AdminTag $v1 completed normally'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RTTMON-MIB::rttMonThresholdNotification CISCO-RTTMON-MIB::rttMonCtrlAdminTag s EXAMPLE CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress s EXAMPLE CISCO-RTTMON-MIB::rttMonCtrlOperOverThresholdOccurred i 1",
+			"trap" : {
+				"name" : "CISCO-RTTMON-MIB::rttMonThresholdNotification",
+				"oid" : "1.3.6.1.4.1.9.9.42.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A string which is used by a managing application to",
+							"identify the RTT target. This string is inserted into trap",
+							"notifications, but has no other significance to the ",
+							"agent.",
+							"",
+							"rttMonCtrlAdminTag object is superseded by",
+							"rttMonCtrlAdminLongTag."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlAdminTag",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"When the RttMonRttType is 'echo' or 'pathEcho' this",
+							"is a string which specifies the address of the target for",
+							"the this RTT operation. For all other values of",
+							"RttMonRttType this string will be null.",
+							"",
+							"This address will be the address of the hop along the",
+							"path to the rttMonEchoAdminTargetAddress address",
+							"including rttMonEchoAdminTargetAddress address, or just",
+							"the rttMonEchoAdminTargetAddress address, when the",
+							"path information is not collected. This behavior is",
+							"defined by the rttMonCtrlAdminRttType object.",
+							"",
+							"The interpretation of this string depends on the type",
+							"of RTT operation selected, as specified by the",
+							"rttMonEchoAdminProtocol object.",
+							"",
+							"See rttMonEchoAdminTargetAddress for a complete",
+							"description."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object will change its value for all",
+							"RttMonRttTypes.",
+							"",
+							"This object is changed by operation completion times over",
+							"threshold, as defined by rttMonReactAdminThresholdType. ",
+							"When this value changes, a reaction may occur, as defined ",
+							"by rttMonReactAdminThresholdType. ",
+							"",
+							"If a trap is sent it is a rttMonThresholdNotification.",
+							"",
+							"This object is set to true if the operation completion time",
+							"exceeds the rttMonCtrlAdminThreshold and set to false when an",
+							"operation completes under rttMonCtrlAdminThreshold. When this",
+							"value changes, a reaction may occur, as defined by",
+							"rttMonReactThresholdType.",
+							"",
+							"If a trap is sent it is rttMonNotification with rttMonReactVar",
+							"value of 'rtt'."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlOperOverThresholdOccurred",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.9.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RTTMON-MIB::rttMonVerifyErrorNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A rttMonVerifyErrorNotification indicates the",
+				"occurrence of a data corruption in an RTT operation.",
+				"rttMonVerifyErrorNotification object is superseded by",
+				"rttMonNotification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 2 : 1"
+				},
+				"EventType" : "rttMonVerifyErrorNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 3 : 0"
+				},
+				"SubNode" : "AdminTag:$v1",
+				"Summary" : {
+					"eval" : "($v3 == 1) ? 'Data corruption detected in an RTT operation on AdminTag $v1' : 'Data corruption no longer detected in an RTT operation on AdminTag $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RTTMON-MIB::rttMonVerifyErrorNotification CISCO-RTTMON-MIB::rttMonCtrlAdminTag s EXAMPLE CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress s EXAMPLE CISCO-RTTMON-MIB::rttMonCtrlOperVerifyErrorOccurred i 1",
+			"trap" : {
+				"name" : "CISCO-RTTMON-MIB::rttMonVerifyErrorNotification",
+				"oid" : "1.3.6.1.4.1.9.9.42.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A string which is used by a managing application to",
+							"identify the RTT target. This string is inserted into trap",
+							"notifications, but has no other significance to the ",
+							"agent.",
+							"",
+							"rttMonCtrlAdminTag object is superseded by",
+							"rttMonCtrlAdminLongTag."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlAdminTag",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"When the RttMonRttType is 'echo' or 'pathEcho' this",
+							"is a string which specifies the address of the target for",
+							"the this RTT operation. For all other values of",
+							"RttMonRttType this string will be null.",
+							"",
+							"This address will be the address of the hop along the",
+							"path to the rttMonEchoAdminTargetAddress address",
+							"including rttMonEchoAdminTargetAddress address, or just",
+							"the rttMonEchoAdminTargetAddress address, when the",
+							"path information is not collected. This behavior is",
+							"defined by the rttMonCtrlAdminRttType object.",
+							"",
+							"The interpretation of this string depends on the type",
+							"of RTT operation selected, as specified by the",
+							"rttMonEchoAdminProtocol object.",
+							"",
+							"See rttMonEchoAdminTargetAddress for a complete",
+							"description."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is true if rttMonCtrlAdminVerifyData is",
+							"set to true and data corruption occurs."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlOperVerifyErrorOccurred",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.9.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RTTMON-MIB::rttMonNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A rttMonNotification indicates the occurrence of a",
+				"threshold violation, and it indicates the previous",
+				"violation has subsided for a subsequent operation. ",
+				"When the RttMonRttType is 'pathEcho', this",
+				"notification will only be sent when the threshold",
+				"violation occurs during an operation to the target and",
+				"not to a hop along the path to the target. This also",
+				"applies to the subsiding of a threshold condition.",
+				"If History is not being collected, the instance values",
+				"for the rttMonHistoryCollectionAddress object will not",
+				"be valid. When RttMonRttType is not 'echo' or 'pathEcho'",
+				"the rttMonHistoryCollectionAddress object will be null.",
+				"rttMonReactVar defines the type of reaction that is",
+				"configured for the probe ( e.g jitterAvg, rtt etc ).",
+				"In the rttMonReactTable there are trap definitions",
+				"for the probes and each probe may have more than",
+				"one trap definitions for various types ( e.g rtt",
+				"jitterAvg, packetLoossSD etc ). So the object rttMonReactVar",
+				"indicates the type ( e.g. rtt, packetLossSD, timeout etc )",
+				"for which threshold violation traps has been generated.",
+				"The object rttMonEchoAdminLSPSelector will be valid only",
+				"for the probes based on 'mplsLspPingAppl' RttMonProtocol. For",
+				"all other probes it will be null.",
+				"rttMonNotification object is superseded by",
+				"rttMonNotificationV2."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 2 : 1"
+				},
+				"EventType" : "rttMonNotification",
+				"ExpireTime" : {
+					"eval" : "($v4 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 3 : 0"
+				},
+				"SubNode" : "AdminTag:$v1;ReactVar:$v3",
+				"Summary" : {
+					"eval" : "($v5 > $v6 && $v4 == 1) ? '$v3 has exceeded high threshold of $v6 with $v5 on AdminTag $v1' : (($v5 > $v6 && $v4 == 2) ? '$v1 $v3 high threshold violation has cleared on AdminTag $v1' : (($v5 < $v7 && $v4 == 1) ? '$v1 $v3 has gone below low threshold $v7 with $v5 on AdminTag $v1' : '$v1 $v3 low threshold violation has cleared on AdminTag $v1'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RTTMON-MIB::rttMonNotification CISCO-RTTMON-MIB::rttMonCtrlAdminTag s EXAMPLE CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress s EXAMPLE CISCO-RTTMON-MIB::rttMonReactVar i 1 CISCO-RTTMON-MIB::rttMonReactOccurred i 1 CISCO-RTTMON-MIB::rttMonReactValue i 9999 CISCO-RTTMON-MIB::rttMonReactThresholdRising i 9999 CISCO-RTTMON-MIB::rttMonReactThresholdFalling i 9999 CISCO-RTTMON-MIB::rttMonEchoAdminLSPSelector s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-RTTMON-MIB::rttMonNotification",
+				"oid" : "1.3.6.1.4.1.9.9.42.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A string which is used by a managing application to",
+							"identify the RTT target. This string is inserted into trap",
+							"notifications, but has no other significance to the ",
+							"agent.",
+							"",
+							"rttMonCtrlAdminTag object is superseded by",
+							"rttMonCtrlAdminLongTag."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlAdminTag",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"When the RttMonRttType is 'echo' or 'pathEcho' this",
+							"is a string which specifies the address of the target for",
+							"the this RTT operation. For all other values of",
+							"RttMonRttType this string will be null.",
+							"",
+							"This address will be the address of the hop along the",
+							"path to the rttMonEchoAdminTargetAddress address",
+							"including rttMonEchoAdminTargetAddress address, or just",
+							"the rttMonEchoAdminTargetAddress address, when the",
+							"path information is not collected. This behavior is",
+							"defined by the rttMonCtrlAdminRttType object.",
+							"",
+							"The interpretation of this string depends on the type",
+							"of RTT operation selected, as specified by the",
+							"rttMonEchoAdminProtocol object.",
+							"",
+							"See rttMonEchoAdminTargetAddress for a complete",
+							"description."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object specifies the type of reaction configured for a",
+							"probe.",
+							"",
+							"The reaction types 'rtt', 'timeout', and 'connectionLoss' ",
+							"can be configured for all probe types.",
+							"",
+							"The reaction type 'verifyError' can be configured for all ",
+							"probe types except RTP probe type.",
+							"",
+							"The reaction types 'jitterSDAvg', 'jitterDSAvg', 'jitterAvg', ",
+							"'packetLateArrival', 'packetOutOfSequence', ",
+							"'maxOfPositiveSD', 'maxOfNegativeSD', 'maxOfPositiveDS'",
+							"and 'maxOfNegativeDS' can be configured for UDP jitter ",
+							"and ICMP jitter probe types only.",
+							"",
+							"The reaction types 'mos' and 'icpif' can be configured ",
+							"for UDP jitter and ICMP jitter probe types only.",
+							"",
+							"The reaction types 'packetLossDS', 'packetLossSD' and ",
+							"'packetMIA' can be configured for UDP jitter, and ",
+							"RTP probe types only.",
+							"",
+							"The reaction types 'iaJitterDS', 'frameLossDS', 'mosLQDS', ",
+							"'mosCQDS', 'rFactorDS', 'iaJitterSD', 'rFactorSD', 'mosCQSD' ",
+							"can be configured for RTP probe type only.",
+							"",
+							"The reaction types 'successivePacketLoss', 'maxOfLatencyDS', ",
+							"'maxOfLatencySD', 'latencyDSAvg', 'latencySDAvg' and ",
+							"'packetLoss' can be configured for ICMP jitter probe ",
+							"type only."
+						],
+						"enums" : {
+							"1" : "rtt",
+							"2" : "jitterSDAvg",
+							"3" : "jitterDSAvg",
+							"4" : "packetLossSD",
+							"5" : "packetLossDS",
+							"6" : "mos",
+							"7" : "timeout",
+							"8" : "connectionLoss",
+							"9" : "verifyError",
+							"10" : "jitterAvg",
+							"11" : "icpif",
+							"12" : "packetMIA",
+							"13" : "packetLateArrival",
+							"14" : "packetOutOfSequence",
+							"15" : "maxOfPositiveSD",
+							"16" : "maxOfNegativeSD",
+							"17" : "maxOfPositiveDS",
+							"18" : "maxOfNegativeDS",
+							"19" : "iaJitterDS",
+							"20" : "frameLossDS",
+							"21" : "mosLQDS",
+							"22" : "mosCQDS",
+							"23" : "rFactorDS",
+							"24" : "successivePacketLoss",
+							"25" : "maxOfLatencyDS",
+							"26" : "maxOfLatencySD",
+							"27" : "latencyDSAvg",
+							"28" : "latencySDAvg",
+							"29" : "packetLoss",
+							"30" : "iaJitterSD",
+							"31" : "mosCQSD",
+							"32" : "rFactorSD",
+							"33" : "lpdGroup",
+							"34" : "lpdTreeTrace",
+							"35" : "lpdAll",
+							"36" : "unavailSD",
+							"37" : "unavailDS",
+							"38" : "pktLossPctSD",
+							"39" : "pktLossPctDS",
+							"40" : "rttPct",
+							"41" : "maxOfLatencySDPct",
+							"42" : "maxOfLatencyDSPct",
+							"43" : "latencySDAvgPct",
+							"44" : "latencyDSAvgPct",
+							"45" : "jitterSDAvgPct",
+							"46" : "jitterDSAvgPct",
+							"47" : "jitterAvgPct",
+							"48" : "overThreshold",
+							"49" : "protocolSpecificError"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonReactVar",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is set to true when the configured threshold",
+							"condition is violated as defined by rttMonReactThresholdType.",
+							"It will be again set to 'false' if the condition reverses.",
+							"",
+							"This object is set to true in the following conditions:",
+							"- rttMonReactVar is set to timeout and",
+							"rttMonCtrlOperTimeoutOccurred set to true.",
+							"- rttMonReactVar is set to connectionLoss and",
+							"rttMonCtrlOperConnectionLostOccurred set to true.",
+							"- rttMonReactVar is set to verifyError and",
+							"rttMonCtrlOperVerifyErrorOccurred is set to true.",
+							"- For all other values of rttMonReactVar, if the",
+							"corresponding value exceeds the configured",
+							"rttMonReactThresholdRising.",
+							"",
+							"This object is set to false in the following conditions:",
+							"- rttMonReactVar is set to timeout and",
+							"rttMonCtrlOperTimeoutOccurred set to false.",
+							"- rttMonReactVar is set to connectionLoss and ",
+							"rttMonCtrlOperConnectionLostOccurred set to false.",
+							"- rttMonReactVar is set to verifyError and",
+							"rttMonCtrlOperVerifyErrorOccurred is set to false.",
+							"- For all other values of rttMonReactVar, if the",
+							"corresponding value fall below the configured ",
+							"rttMonReactThresholdFalling.",
+							"",
+							"When the RttMonRttType is 'pathEcho' or 'pathJitter'",
+							"this object is applied only to the ",
+							"rttMonEchoAdminTargetAddress and not to intermediate",
+							"hops to the Target."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonReactOccurred",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object will be set when the configured threshold condition",
+							"is violated as defined by rttMonReactThresholdType and holds the",
+							"actual value that violated the configured threshold values.",
+							"",
+							"This object is not valid for the following values of",
+							"rttMonReactVar and It will be always 0:",
+							"- timeout",
+							"- connectionLoss",
+							"- verifyError."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonReactValue",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines the higher threshold limit.",
+							"If the value ( e.g rtt, jitterAvg, packetLossSD etc ) rises",
+							"above this limit and if the condition specified in",
+							"rttMonReactThresholdType are satisfied, a trap is generated.",
+							"",
+							"Default value of rttMonReactThresholdRising for",
+							"'rtt' is 5000",
+							"'jitterAvg' is 100.",
+							"'jitterSDAvg' is 100.",
+							"'jitterDSAvg' 100.",
+							"'packetLossSD' is 10000.",
+							"'packetLossDS' is 10000.",
+							"'mos' is 500.",
+							"'icpif' is 93.",
+							"'packetMIA' is 10000.",
+							"'packetLateArrival' is 10000.",
+							"'packetOutOfSequence' is 10000.",
+							"'maxOfPositiveSD' is 10000.",
+							"'maxOfNegativeSD' is 10000.",
+							"'maxOfPositiveDS' is 10000.",
+							"'maxOfNegativeDS' is 10000.",
+							"'iaJitterDS' is 20.",
+							"'frameLossDS' is 10000.",
+							"'mosLQDS' is 400.",
+							"'mosCQDS' is 400.",
+							"'rFactorDS' is 80.",
+							"'successivePacketLoss' is 1000.",
+							"'maxOfLatencyDS' is 5000.",
+							"'maxOfLatencySD' is 5000.",
+							"'latencyDSAvg' is 5000.",
+							"'latencySDAvg' is 5000.",
+							"'packetLoss' is 10000.",
+							"",
+							"This object is not applicable if the rttMonReactVar is",
+							"'timeout', 'connectionLoss' or 'verifyError'. For 'timeout'",
+							"'connectionLoss' and 'verifyError' default value of ",
+							"rttMonReactThresholdRising will be 0."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonReactThresholdRising",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines a lower threshold limit. If the",
+							"value ( e.g rtt, jitterAvg, packetLossSD etc ) falls",
+							"below this limit and if the conditions specified in",
+							"rttMonReactThresholdType are satisfied, a trap is generated.",
+							"",
+							"Default value of rttMonReactThresholdFalling",
+							"'rtt' is 3000",
+							"'jitterAvg' is 100.",
+							"'jitterSDAvg' is 100.",
+							"'jitterDSAvg' 100.",
+							"'packetLossSD' is 10000.",
+							"'packetLossDS' is 10000.",
+							"'mos' is 500.",
+							"'icpif' is 93.",
+							"'packetMIA' is 10000.",
+							"'packetLateArrival' is 10000.",
+							"'packetOutOfSequence' is 10000.",
+							"'maxOfPositiveSD' is 10000.",
+							"'maxOfNegativeSD' is 10000.",
+							"'maxOfPositiveDS' is 10000.",
+							"'maxOfNegativeDS' is 10000.",
+							"'iaJitterDS' is 20.",
+							"'frameLossDS' is 10000.",
+							"'mosLQDS' is 310.",
+							"'mosCQDS' is 310.",
+							"'rFactorDS' is 60.",
+							"'successivePacketLoss' is 1000.",
+							"'maxOfLatencyDS' is 3000.",
+							"'maxOfLatencySD' is 3000.",
+							"'latencyDSAvg' is 3000.",
+							"'latencySDAvg' is 3000.",
+							"'packetLoss' is 10000.",
+							"'iaJitterSD' is 20.",
+							"'mosCQSD' is 310.",
+							"'rFactorSD' is 60.",
+							"",
+							"This object is not applicable if the rttMonReactVar is",
+							"'timeout', 'connectionLoss' or 'verifyError'. For 'timeout'",
+							"'connectionLoss' and 'verifyError' default value of",
+							"rttMonReactThresholdFalling will be 0."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonReactThresholdFalling",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A string which specifies a valid 127/8 address. This address",
+							"is of the form 127.x.y.z.",
+							"This address is not used to route the MPLS echo packet to the",
+							"destination but is used for load balancing in cases where the",
+							"IP payload's destination address is used for load balancing."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonEchoAdminLSPSelector",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.2.1.33",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RTTMON-MIB::rttMonLpdDiscoveryNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A rttMonLpdDiscoveryNotification indicates that the LSP Path",
+				"Discovery to the target PE has failed, and it also indicates",
+				"the clearing of such condition. Precisely this has resulted in",
+				"rttMonLpdGrpStatsLPDFailOccurred changing value.",
+				"When the rttMonLpdGrpStatsLPDFailOccurred is 'false', the",
+				"instance value for rttMonLpdGrpStatsLPDFailCause is not valid."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 2 : 1"
+				},
+				"EventType" : "rttMonLpdDiscoveryNotification",
+				"ExpireTime" : {
+					"eval" : "($v4 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 3 : 0"
+				},
+				"SubNode" : "CtrlTag:$v1",
+				"Summary" : {
+					"eval" : "($v4 == 1) ? 'LSP Path Discovery for CtrlTag $v1 to target PE $v2 has failed due to $v3' : 'LSP Path Discovery for CtrlTag $v1 to target PE $v2 has cleared'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RTTMON-MIB::rttMonLpdDiscoveryNotification CISCO-RTTMON-MIB::rttMplsVpnMonCtrlTag s EXAMPLE CISCO-RTTMON-MIB::rttMonLpdGrpStatsTargetPE s EXAMPLE CISCO-RTTMON-MIB::rttMonLpdGrpStatsLPDFailCause i 1 CISCO-RTTMON-MIB::rttMonLpdGrpStatsLPDFailOccurred i 1",
+			"trap" : {
+				"name" : "CISCO-RTTMON-MIB::rttMonLpdDiscoveryNotification",
+				"oid" : "1.3.6.1.4.1.9.9.42.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"A string which is used by a managing application to",
+							"identify the RTT target.",
+							"",
+							"This string will be configured as rttMonCtrlAdminTag for all",
+							"the operations configured by this Auto SAA L3 MPLS VPN.",
+							"",
+							"The usage of this value in Auto SAA L3 MPLS VPN is same as",
+							"rttMonCtrlAdminTag in RTT operation."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMplsVpnMonCtrlTag",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.15.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object is a string that specifies the address of the",
+							"target PE for this LPD group."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonLpdGrpStatsTargetPE",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.3.7.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the cause of failure for the LSP Path",
+							"Discovery last attempted. It will be only valid if",
+							"rttMonLpdGrpStatsLPDFailOccurred is set to true.",
+							"",
+							"This object will be set to 'unknown' on reset."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "noPath",
+							"3" : "allPathsBroken",
+							"4" : "allPathsUnexplorable",
+							"5" : "allPathsBrokenOrUnexplorable",
+							"6" : "timeout",
+							"7" : "error"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonLpdGrpStatsLPDFailCause",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.3.7.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is set to true when the LSP Path Discovery",
+							"to the target PE i.e. rttMonLpdGrpStatsTargetPE fails, and",
+							"set to false when the LSP Path Discovery succeeds.",
+							"",
+							"When this value changes and rttMplsVpnMonReactLpdNotifyType is",
+							"set to 'lpdPathDiscovery' or 'lpdAll' a",
+							"rttMonLpdDiscoveryNotification will be generated.",
+							"",
+							"This object will be set to 'FALSE' on reset."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonLpdGrpStatsLPDFailOccurred",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.3.7.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RTTMON-MIB::rttMonLpdGrpStatusNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A rttMonLpdGrpStatusNotification indicates that the LPD",
+				"Group status rttMonLpdGrpStatsGroupStatus has changed indicating",
+				"some connectivity change to the target PE.",
+				"This has resulted in rttMonLpdGrpStatsGroupStatus changing",
+				"value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 >= 3) ? 2 : ($v3 == 2) ? 1 : 3"
+				},
+				"EventType" : "rttMonLpdGrpStatusNotification",
+				"ExpireTime" : {
+					"eval" : "($v3 >= 3) ? 86400 : ($v3 == 2) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 4) ? 4 : (($v3 == 3) ? 3 : (($v3 == 2) ? 0 : 2))"
+				},
+				"SubNode" : "CtrlTag:$v1",
+				"Summary" : "LPD group status for CtrlTag $v1 to $v2 has changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RTTMON-MIB::rttMonLpdGrpStatusNotification CISCO-RTTMON-MIB::rttMplsVpnMonCtrlTag s EXAMPLE CISCO-RTTMON-MIB::rttMonLpdGrpStatsTargetPE s EXAMPLE CISCO-RTTMON-MIB::rttMonLpdGrpStatsGroupStatus i 1",
+			"trap" : {
+				"name" : "CISCO-RTTMON-MIB::rttMonLpdGrpStatusNotification",
+				"oid" : "1.3.6.1.4.1.9.9.42.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"A string which is used by a managing application to",
+							"identify the RTT target.",
+							"",
+							"This string will be configured as rttMonCtrlAdminTag for all",
+							"the operations configured by this Auto SAA L3 MPLS VPN.",
+							"",
+							"The usage of this value in Auto SAA L3 MPLS VPN is same as",
+							"rttMonCtrlAdminTag in RTT operation."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMplsVpnMonCtrlTag",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.15.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object is a string that specifies the address of the",
+							"target PE for this LPD group."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonLpdGrpStatsTargetPE",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.3.7.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the LPD Group status.",
+							"",
+							"When the LPD Group status changes and",
+							"rttMplsVpnMonReactLpdNotifyType is set to 'lpdGroupStatus' or",
+							"'lpdAll' a rttMonLpdGrpStatusNotification will be generated.",
+							"",
+							"When the LPD Group status value is 'unknown' or changes to",
+							"'unknown' this notification will not be generated.",
+							"",
+							"When LSP Path Discovery is enabled for a particular row in",
+							"rttMplsVpnMonCtrlTable, 'single probes' in the 'lspGroup' probe",
+							"cannot generate notifications independently but will be",
+							"generating depending on the state of the group. Notifications ",
+							"are only generated if the failure/restoration of an individual",
+							"probe causes the state of the LPD Group to change.",
+							"",
+							"This object will be set to 'unknown' on reset."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "up",
+							"3" : "partial",
+							"4" : "down"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonLpdGrpStatsGroupStatus",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.3.7.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-RTTMON-MIB::rttMonNotificationV2",
+			"certification" : "STANDARD",
+			"description" : [
+				"A rttMonNotification indicates the occurrence of a",
+				"threshold violation, and it indicates the previous",
+				"violation has subsided for a subsequent operation.",
+				"Enhanced version of rttMonNotification which replaces",
+				"rttMonCtrlAdminTag with rttMonCtrlAdminLongTag object."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 2 : 1"
+				},
+				"EventType" : "rttMonNotificationV2",
+				"ExpireTime" : {
+					"eval" : "($v4 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 3 : 0"
+				},
+				"SubNode" : "AdminLongTag:$v1;ReactVar:$v3",
+				"Summary" : {
+					"eval" : "($v5 > $v6 && $v4 == 1) ? '$v3 has exceeded high threshold of $v6 with $v5 on AdminLongTag $v1' : (($v5 > $v6 && $v4 == 2) ? '$v1 $v3 high threshold violation has cleared on AdminLongTag $v1' : (($v5 < $v7 && $v4 == 1) ? '$v1 $v3 has gone below low threshold $v7 with $v5 on AdminLongTag $v1' : '$v1 $v3 low threshold violation has cleared on AdminLongTag $v1'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RTTMON-MIB::rttMonNotificationV2 CISCO-RTTMON-MIB::rttMonCtrlAdminLongTag s EXAMPLE CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress s EXAMPLE CISCO-RTTMON-MIB::rttMonReactVar i 1 CISCO-RTTMON-MIB::rttMonReactOccurred i 1 CISCO-RTTMON-MIB::rttMonReactValue i 9999 CISCO-RTTMON-MIB::rttMonReactThresholdRising i 9999 CISCO-RTTMON-MIB::rttMonReactThresholdFalling i 9999 CISCO-RTTMON-MIB::rttMonEchoAdminLSPSelector s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-RTTMON-MIB::rttMonNotificationV2",
+				"oid" : "1.3.6.1.4.1.9.9.42.2.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object provides additional information about the Probe",
+							"and is inserted into trap notifications, but has no other",
+							"significance to the agent.",
+							"",
+							"Setting this object will overwrite any description already set",
+							"by rttMonCtrlAdminTag and vice-versa."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonCtrlAdminLongTag",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.1.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"When the RttMonRttType is 'echo' or 'pathEcho' this",
+							"is a string which specifies the address of the target for",
+							"the this RTT operation. For all other values of",
+							"RttMonRttType this string will be null.",
+							"",
+							"This address will be the address of the hop along the",
+							"path to the rttMonEchoAdminTargetAddress address",
+							"including rttMonEchoAdminTargetAddress address, or just",
+							"the rttMonEchoAdminTargetAddress address, when the",
+							"path information is not collected. This behavior is",
+							"defined by the rttMonCtrlAdminRttType object.",
+							"",
+							"The interpretation of this string depends on the type",
+							"of RTT operation selected, as specified by the",
+							"rttMonEchoAdminProtocol object.",
+							"",
+							"See rttMonEchoAdminTargetAddress for a complete",
+							"description."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonHistoryCollectionAddress",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object specifies the type of reaction configured for a",
+							"probe.",
+							"",
+							"The reaction types 'rtt', 'timeout', and 'connectionLoss' ",
+							"can be configured for all probe types.",
+							"",
+							"The reaction type 'verifyError' can be configured for all ",
+							"probe types except RTP probe type.",
+							"",
+							"The reaction types 'jitterSDAvg', 'jitterDSAvg', 'jitterAvg', ",
+							"'packetLateArrival', 'packetOutOfSequence', ",
+							"'maxOfPositiveSD', 'maxOfNegativeSD', 'maxOfPositiveDS'",
+							"and 'maxOfNegativeDS' can be configured for UDP jitter ",
+							"and ICMP jitter probe types only.",
+							"",
+							"The reaction types 'mos' and 'icpif' can be configured ",
+							"for UDP jitter and ICMP jitter probe types only.",
+							"",
+							"The reaction types 'packetLossDS', 'packetLossSD' and ",
+							"'packetMIA' can be configured for UDP jitter, and ",
+							"RTP probe types only.",
+							"",
+							"The reaction types 'iaJitterDS', 'frameLossDS', 'mosLQDS', ",
+							"'mosCQDS', 'rFactorDS', 'iaJitterSD', 'rFactorSD', 'mosCQSD' ",
+							"can be configured for RTP probe type only.",
+							"",
+							"The reaction types 'successivePacketLoss', 'maxOfLatencyDS', ",
+							"'maxOfLatencySD', 'latencyDSAvg', 'latencySDAvg' and ",
+							"'packetLoss' can be configured for ICMP jitter probe ",
+							"type only."
+						],
+						"enums" : {
+							"1" : "rtt",
+							"2" : "jitterSDAvg",
+							"3" : "jitterDSAvg",
+							"4" : "packetLossSD",
+							"5" : "packetLossDS",
+							"6" : "mos",
+							"7" : "timeout",
+							"8" : "connectionLoss",
+							"9" : "verifyError",
+							"10" : "jitterAvg",
+							"11" : "icpif",
+							"12" : "packetMIA",
+							"13" : "packetLateArrival",
+							"14" : "packetOutOfSequence",
+							"15" : "maxOfPositiveSD",
+							"16" : "maxOfNegativeSD",
+							"17" : "maxOfPositiveDS",
+							"18" : "maxOfNegativeDS",
+							"19" : "iaJitterDS",
+							"20" : "frameLossDS",
+							"21" : "mosLQDS",
+							"22" : "mosCQDS",
+							"23" : "rFactorDS",
+							"24" : "successivePacketLoss",
+							"25" : "maxOfLatencyDS",
+							"26" : "maxOfLatencySD",
+							"27" : "latencyDSAvg",
+							"28" : "latencySDAvg",
+							"29" : "packetLoss",
+							"30" : "iaJitterSD",
+							"31" : "mosCQSD",
+							"32" : "rFactorSD",
+							"33" : "lpdGroup",
+							"34" : "lpdTreeTrace",
+							"35" : "lpdAll",
+							"36" : "unavailSD",
+							"37" : "unavailDS",
+							"38" : "pktLossPctSD",
+							"39" : "pktLossPctDS",
+							"40" : "rttPct",
+							"41" : "maxOfLatencySDPct",
+							"42" : "maxOfLatencyDSPct",
+							"43" : "latencySDAvgPct",
+							"44" : "latencyDSAvgPct",
+							"45" : "jitterSDAvgPct",
+							"46" : "jitterDSAvgPct",
+							"47" : "jitterAvgPct",
+							"48" : "overThreshold",
+							"49" : "protocolSpecificError"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonReactVar",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is set to true when the configured threshold",
+							"condition is violated as defined by rttMonReactThresholdType.",
+							"It will be again set to 'false' if the condition reverses.",
+							"",
+							"This object is set to true in the following conditions:",
+							"- rttMonReactVar is set to timeout and",
+							"rttMonCtrlOperTimeoutOccurred set to true.",
+							"- rttMonReactVar is set to connectionLoss and",
+							"rttMonCtrlOperConnectionLostOccurred set to true.",
+							"- rttMonReactVar is set to verifyError and",
+							"rttMonCtrlOperVerifyErrorOccurred is set to true.",
+							"- For all other values of rttMonReactVar, if the",
+							"corresponding value exceeds the configured",
+							"rttMonReactThresholdRising.",
+							"",
+							"This object is set to false in the following conditions:",
+							"- rttMonReactVar is set to timeout and",
+							"rttMonCtrlOperTimeoutOccurred set to false.",
+							"- rttMonReactVar is set to connectionLoss and ",
+							"rttMonCtrlOperConnectionLostOccurred set to false.",
+							"- rttMonReactVar is set to verifyError and",
+							"rttMonCtrlOperVerifyErrorOccurred is set to false.",
+							"- For all other values of rttMonReactVar, if the",
+							"corresponding value fall below the configured ",
+							"rttMonReactThresholdFalling.",
+							"",
+							"When the RttMonRttType is 'pathEcho' or 'pathJitter'",
+							"this object is applied only to the ",
+							"rttMonEchoAdminTargetAddress and not to intermediate",
+							"hops to the Target."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-RTTMON-MIB::rttMonReactOccurred",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object will be set when the configured threshold condition",
+							"is violated as defined by rttMonReactThresholdType and holds the",
+							"actual value that violated the configured threshold values.",
+							"",
+							"This object is not valid for the following values of",
+							"rttMonReactVar and It will be always 0:",
+							"- timeout",
+							"- connectionLoss",
+							"- verifyError."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonReactValue",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines the higher threshold limit.",
+							"If the value ( e.g rtt, jitterAvg, packetLossSD etc ) rises",
+							"above this limit and if the condition specified in",
+							"rttMonReactThresholdType are satisfied, a trap is generated.",
+							"",
+							"Default value of rttMonReactThresholdRising for",
+							"'rtt' is 5000",
+							"'jitterAvg' is 100.",
+							"'jitterSDAvg' is 100.",
+							"'jitterDSAvg' 100.",
+							"'packetLossSD' is 10000.",
+							"'packetLossDS' is 10000.",
+							"'mos' is 500.",
+							"'icpif' is 93.",
+							"'packetMIA' is 10000.",
+							"'packetLateArrival' is 10000.",
+							"'packetOutOfSequence' is 10000.",
+							"'maxOfPositiveSD' is 10000.",
+							"'maxOfNegativeSD' is 10000.",
+							"'maxOfPositiveDS' is 10000.",
+							"'maxOfNegativeDS' is 10000.",
+							"'iaJitterDS' is 20.",
+							"'frameLossDS' is 10000.",
+							"'mosLQDS' is 400.",
+							"'mosCQDS' is 400.",
+							"'rFactorDS' is 80.",
+							"'successivePacketLoss' is 1000.",
+							"'maxOfLatencyDS' is 5000.",
+							"'maxOfLatencySD' is 5000.",
+							"'latencyDSAvg' is 5000.",
+							"'latencySDAvg' is 5000.",
+							"'packetLoss' is 10000.",
+							"",
+							"This object is not applicable if the rttMonReactVar is",
+							"'timeout', 'connectionLoss' or 'verifyError'. For 'timeout'",
+							"'connectionLoss' and 'verifyError' default value of ",
+							"rttMonReactThresholdRising will be 0."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonReactThresholdRising",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines a lower threshold limit. If the",
+							"value ( e.g rtt, jitterAvg, packetLossSD etc ) falls",
+							"below this limit and if the conditions specified in",
+							"rttMonReactThresholdType are satisfied, a trap is generated.",
+							"",
+							"Default value of rttMonReactThresholdFalling",
+							"'rtt' is 3000",
+							"'jitterAvg' is 100.",
+							"'jitterSDAvg' is 100.",
+							"'jitterDSAvg' 100.",
+							"'packetLossSD' is 10000.",
+							"'packetLossDS' is 10000.",
+							"'mos' is 500.",
+							"'icpif' is 93.",
+							"'packetMIA' is 10000.",
+							"'packetLateArrival' is 10000.",
+							"'packetOutOfSequence' is 10000.",
+							"'maxOfPositiveSD' is 10000.",
+							"'maxOfNegativeSD' is 10000.",
+							"'maxOfPositiveDS' is 10000.",
+							"'maxOfNegativeDS' is 10000.",
+							"'iaJitterDS' is 20.",
+							"'frameLossDS' is 10000.",
+							"'mosLQDS' is 310.",
+							"'mosCQDS' is 310.",
+							"'rFactorDS' is 60.",
+							"'successivePacketLoss' is 1000.",
+							"'maxOfLatencyDS' is 3000.",
+							"'maxOfLatencySD' is 3000.",
+							"'latencyDSAvg' is 3000.",
+							"'latencySDAvg' is 3000.",
+							"'packetLoss' is 10000.",
+							"'iaJitterSD' is 20.",
+							"'mosCQSD' is 310.",
+							"'rFactorSD' is 60.",
+							"",
+							"This object is not applicable if the rttMonReactVar is",
+							"'timeout', 'connectionLoss' or 'verifyError'. For 'timeout'",
+							"'connectionLoss' and 'verifyError' default value of",
+							"rttMonReactThresholdFalling will be 0."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonReactThresholdFalling",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.19.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A string which specifies a valid 127/8 address. This address",
+							"is of the form 127.x.y.z.",
+							"This address is not used to route the MPLS echo packet to the",
+							"destination but is used for load balancing in cases where the",
+							"IP payload's destination address is used for load balancing."
+						],
+						"name" : "CISCO-RTTMON-MIB::rttMonEchoAdminLSPSelector",
+						"oid" : "1.3.6.1.4.1.9.9.42.1.2.2.1.33",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

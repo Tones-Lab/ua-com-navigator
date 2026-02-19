@@ -1,0 +1,5534 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "AAC3-MIB::sysPcmciaInserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The PCMCIA card has been inserted into the PCMCIA slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sysPcmciaInserted",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Inserted PCMCIA card status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysPcmciaInserted AAC3-MIB::confPcmciaStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysPcmciaInserted",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This variable reflects the current status of the PCMCIA slot.",
+							"empty The PCMCIA slot is empty.",
+							"cardRecognized PCMCIA card type is recognized.",
+							"cardUnrecognized PCMCIA card type is unrecognized."
+						],
+						"enums" : {
+							"1" : "empty",
+							"2" : "cardRecognized",
+							"3" : "cardUnrecognized"
+						},
+						"name" : "AAC3-MIB::confPcmciaStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.8.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysPcmciaRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"The PCMCIA card has been removed from the PCMCIA slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sysPcmciaRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Removed PCMCIA card status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysPcmciaRemoved AAC3-MIB::confPcmciaStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysPcmciaRemoved",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This variable reflects the current status of the PCMCIA slot.",
+							"empty The PCMCIA slot is empty.",
+							"cardRecognized PCMCIA card type is recognized.",
+							"cardUnrecognized PCMCIA card type is unrecognized."
+						],
+						"enums" : {
+							"1" : "empty",
+							"2" : "cardRecognized",
+							"3" : "cardUnrecognized"
+						},
+						"name" : "AAC3-MIB::confPcmciaStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.8.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysRefClockChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The source of the system reference clock has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sysRefClockChange",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Source of the system reference clock changed: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysRefClockChange AAC3-MIB::confPrimarySysClk i 11 AAC3-MIB::confSecondarySysClk i 11 AAC3-MIB::confCurrentSysClk i 11",
+			"trap" : {
+				"name" : "AAC3-MIB::sysRefClockChange",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The port ID of the requested primary source of the system",
+							"reference clock."
+						],
+						"name" : "AAC3-MIB::confPrimarySysClk",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.7.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port ID of the requested secondary source of the system",
+							"reference clock. This clock will be used when and if the",
+							"primary source is not usable."
+						],
+						"name" : "AAC3-MIB::confSecondarySysClk",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.7.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The port ID of the current source of the system reference",
+							"clock. This variable may report one of three possible sources",
+							"the confPrimarySysClk port ID, the confSecondarySysClk port ID",
+							"or the local System Controller, specified as port ID 11."
+						],
+						"name" : "AAC3-MIB::confCurrentSysClk",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.7.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysPowerRestored",
+			"certification" : "STANDARD",
+			"description" : [
+				"The power supply failure has cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sysPowerRestored",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Upper power supply has been restored: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysPowerRestored AAC3-MIB::confUpperPowerSupplyStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysPowerRestored",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"This variable reflects the current status of the upper power",
+							"supply bay. The values are defined as follows:",
+							"upperBayNotSpecified Supply type never specified",
+							"so bay not being monitored.",
+							"upperBayEmpty Bay specified as empty, so",
+							"it is not being monitored.",
+							"upperBayGood Supply installed and ok.",
+							"upperBayFail Supply installed but failing",
+							"or supply has been removed."
+						],
+						"enums" : {
+							"1" : "upperBayNotSpecified",
+							"2" : "upperBayEmpty",
+							"3" : "upperBayGood",
+							"4" : "upperBayFail"
+						},
+						"name" : "AAC3-MIB::confUpperPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.5.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysUpperSupplyFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The upper power supply has failed or has been removed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "sysUpperSupplyFail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 3 : (($v1 == 2) ? 3 : (($v1 == 3) ? 0 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Upper power supply failure: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysUpperSupplyFail AAC3-MIB::confUpperPowerSupplyStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysUpperSupplyFail",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"This variable reflects the current status of the upper power",
+							"supply bay. The values are defined as follows:",
+							"upperBayNotSpecified Supply type never specified",
+							"so bay not being monitored.",
+							"upperBayEmpty Bay specified as empty, so",
+							"it is not being monitored.",
+							"upperBayGood Supply installed and ok.",
+							"upperBayFail Supply installed but failing",
+							"or supply has been removed."
+						],
+						"enums" : {
+							"1" : "upperBayNotSpecified",
+							"2" : "upperBayEmpty",
+							"3" : "upperBayGood",
+							"4" : "upperBayFail"
+						},
+						"name" : "AAC3-MIB::confUpperPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.5.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysLowerSupplyFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The lower power supply has failed or has been removed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sysLowerSupplyFail",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 3 : (($v1 == 2) ? 3 : (($v1 == 3) ? 0 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Lower power supply failure: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysLowerSupplyFail AAC3-MIB::confLowerPowerSupplyStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysLowerSupplyFail",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"This variable reflects the current status of the lower power",
+							"supply bay. The values are defined as follows:",
+							"lowerBayNotSpecified Supply type never specified",
+							"so bay not being monitored.",
+							"lowerBayEmpty Bay specified as empty, so",
+							"it is not being monitored.",
+							"lowerBayGood Supply installed and ok.",
+							"lowerBayFail Supply installed but failing",
+							"or supply has been removed."
+						],
+						"enums" : {
+							"1" : "lowerBayNotSpecified",
+							"2" : "lowerBayEmpty",
+							"3" : "lowerBayGood",
+							"4" : "lowerBayFail"
+						},
+						"name" : "AAC3-MIB::confLowerPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.5.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysFansOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The cooling fan failure has cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sysFansOk",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Cooling fan recovered from failure and its current status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysFansOk AAC3-MIB::confFanStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysFansOk",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"This variable reflects the current status of the cooling fans."
+						],
+						"enums" : {
+							"1" : "fansOk",
+							"2" : "fanAFail",
+							"3" : "fanBFail",
+							"4" : "fansBothFail"
+						},
+						"name" : "AAC3-MIB::confFanStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.5.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysSingleFanFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"One of the system cooling fans has failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "sysSingleFanFail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "One system cooling fan has failed and its current status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysSingleFanFail AAC3-MIB::confFanStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysSingleFanFail",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"This variable reflects the current status of the cooling fans."
+						],
+						"enums" : {
+							"1" : "fansOk",
+							"2" : "fanAFail",
+							"3" : "fanBFail",
+							"4" : "fansBothFail"
+						},
+						"name" : "AAC3-MIB::confFanStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.5.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysDoubleFanFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"Both of the system cooling fans have failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "sysDoubleFanFail",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Both system cooling fans have failed and its current status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysDoubleFanFail AAC3-MIB::confFanStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysDoubleFanFail",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"This variable reflects the current status of the cooling fans."
+						],
+						"enums" : {
+							"1" : "fansOk",
+							"2" : "fanAFail",
+							"3" : "fanBFail",
+							"4" : "fansBothFail"
+						},
+						"name" : "AAC3-MIB::confFanStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.1.5.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotConfigMatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"PM/PLM configuration match."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotConfigMatch",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Protocol Module $v1 or Physical Layer Module $v2 configuration has matched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotConfigMatch AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotConfigMatch",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotPmInsertion",
+			"certification" : "STANDARD",
+			"description" : [
+				"A supported PM has been inserted into a chassis slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotPmInsertion",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Supported PM $v1 has been inserted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotPmInsertion AAC3-MIB::slotPmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotPmInsertion",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotPmMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"No driver available for the inserted PM type and version."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotPmMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "No driver available for the slot $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotPmMismatch AAC3-MIB::slotPmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotPmMismatch",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotPlmMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"No driver available for the inserted PLM type and version."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotPlmMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "No driver available for the slot $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotPlmMismatch AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotPlmMismatch",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotModuleIncompatible",
+			"certification" : "STANDARD",
+			"description" : [
+				"PM/PLM types are incompatible."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotModuleIncompatible",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Protocol Module $v1 or Physical Layer Module $v2 types are incompatible"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotModuleIncompatible AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotModuleIncompatible",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotConfigMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"PM/PLM combination does not match configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotConfigMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "PM configuration ID $v2 or PLM configuration ID $v4 does not match"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotConfigMismatch AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPmCfgdId i 1 AAC3-MIB::slotPlmId i 1 AAC3-MIB::slotPlmCfgdId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotConfigMismatch",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Protocol Module configuration currently held",
+							"for this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmCfgdId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module configuration currently",
+							"held for this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmCfgdId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotPmRemoval",
+			"certification" : "STANDARD",
+			"description" : [
+				"PM was removed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotPmRemoval",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PM $v1 was removed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotPmRemoval AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotPmRemoval",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotPlmRemoval",
+			"certification" : "STANDARD",
+			"description" : [
+				"PLM was removed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotPlmRemoval",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 4 : (($v1 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PLM $v2 was removed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotPlmRemoval AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotPlmRemoval",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.37",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotPmPlmFault",
+			"certification" : "STANDARD",
+			"description" : [
+				"PM/PLM fault detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotPmPlmFault",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "fault occured for PM $v1 or PLM $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotPmPlmFault AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotPmPlmFault",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.38",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotDead",
+			"certification" : "STANDARD",
+			"description" : [
+				"PM/PLM faulted or PM/PLM re-initialization failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotDead",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Re-initialization failure or fault occured for PM $v1 or PLM $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotDead AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotDead",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.39",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotNoBandwidth",
+			"certification" : "STANDARD",
+			"description" : [
+				"PM has no input bandwidth available, due to too many",
+				"high-bandwidth PM/PLMs installed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotNoBandwidth",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "No input bandwidth available for PM: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotNoBandwidth AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotNoBandwidth",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.40",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotInvalidPortCfg",
+			"certification" : "STANDARD",
+			"description" : [
+				"PM port type configuration is invalid. For example",
+				"setting the portPmTypes on a Packet/CBR Protocol Module",
+				"to have three CBR ports and one VBR port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotInvalidPortCfg",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Invalid port configuration for PM: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotInvalidPortCfg AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotInvalidPortCfg",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.41",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotRevisionMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The hardware revision level of the PM or PLM installed in",
+				"this slot is not capable of supporting some aspect of the",
+				"configuration stored for this slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotRevisionMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "The hardware revision level is not capable of supporting this configuration"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotRevisionMismatch AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotRevisionMismatch",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.42",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::slotDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The PM or PLM in the affected slot is down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "slotDown",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "PM $v1 or PLM $v2 in the affected slot is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::slotDown AAC3-MIB::slotPmId i 1 AAC3-MIB::slotPlmId i 1 AAC3-MIB::slotPmCondition i 1 AAC3-MIB::slotPlmCondition i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::slotDown",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for the Protocol Module currently installed in this",
+							"slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "systemController",
+							"4" : "cellPm",
+							"5" : "quadPacketCbrPm",
+							"6" : "quadCellPm",
+							"7" : "quadPacketPm",
+							"8" : "packetPm",
+							"9" : "quadEthernetPm",
+							"10" : "octalCbrPm"
+						},
+						"name" : "AAC3-MIB::slotPmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for the Physical Layer Module currently installed in",
+							"this slot."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "unrecognized",
+							"3" : "extensionModule",
+							"4" : "quadDsx1Plm",
+							"5" : "quadE1Plm",
+							"6" : "triV35Eia530AndDsx1Plm",
+							"7" : "triV35Eia530AndE1Plm",
+							"8" : "e3Plm",
+							"9" : "ds3Plm",
+							"10" : "oc3cStm1MultimodePlm",
+							"11" : "oc3cStm1SinglemodePlm",
+							"12" : "j2Plm",
+							"13" : "quadV35Eia530Plm",
+							"14" : "hssiPlm",
+							"15" : "quadDs1ImaPlm",
+							"16" : "quadE1ImaPlm",
+							"17" : "quadEthernet10BaseTPlm",
+							"18" : "extensionModule10021"
+						},
+						"name" : "AAC3-MIB::slotPlmId",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The condition of the PM for this slot:",
+							"pmReady The PM is ready.",
+							"pmIndeterminate The PM is slot is empty, dead, or",
+							"in another state which makes this",
+							"variable not meaningful.",
+							"pmInvalidUcode The PM had detected missing or",
+							"invalid on-board firmware or microcode.",
+							"pmIncompatUcode The PM has detected that the version",
+							"of firmware or microcode is",
+							"incompatible with the system software.",
+							"",
+							"The value pmReady(1) is only reported when slotPmStatus has",
+							"the value configured(6). The values pmInvalidUcode(3) and",
+							"pmIncompatUcode(4) are only reported when the slotPmStatus has",
+							"the value down(12). The value pmIndeterminate(2) is reported",
+							"for all other values of slotPmStatus."
+						],
+						"enums" : {
+							"1" : "pmReady",
+							"2" : "pmIndeterminate",
+							"3" : "pmInvalidUcode",
+							"4" : "pmIncompatUcode"
+						},
+						"name" : "AAC3-MIB::slotPmCondition",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The condition of the PLM for this slot:",
+							"plmReady The PLM is ready.",
+							"plmIndeterminate The PLM is slot is empty, dead, or",
+							"in another state which makes this",
+							"variable not meaningful.",
+							"plmInvalidUcode The PLM had detected missing or",
+							"invalid on-board firmware or microcode.",
+							"plmIncompatUcode The PLM has detected that the version",
+							"of firmware or microcode is",
+							"incompatible with the system software.",
+							"",
+							"The value plmReady(1) is only reported when slotPlmStatus has",
+							"the value configured(6). The values plmInvalidUcode(3) and",
+							"plmIncompatUcode(4) are only when reported the slotPlmStatus",
+							"has the value down(12). The value plmIndeterminate(2) is",
+							"reported for all other values of slotPlmStatus."
+						],
+						"enums" : {
+							"1" : "plmReady",
+							"2" : "plmIndeterminate",
+							"3" : "plmInvalidUcode",
+							"4" : "plmIncompatUcode"
+						},
+						"name" : "AAC3-MIB::slotPlmCondition",
+						"oid" : "1.3.6.1.4.1.181.1.13.4.1.1.22",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::portFrlmNetworkClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"A service-affecting condition in network device mode has been",
+				"cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "portFrlmNetworkClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Network device status of the FRLM on the port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::portFrlmNetworkClear AAC3-MIB::portFrlmStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::portFrlmNetworkClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.50",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the Frame Relay Link",
+							"Management operation on the port.",
+							"",
+							"The portFrlmStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms)",
+							"simultaneously.",
+							"",
+							"portFrlmNoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"The various bit positions are:",
+							"1 frlmNoAlarm No alarm present.",
+							"2 frlmDisabled Link management is disabled.",
+							"4 frlmNetworkSac Service-affecting condition is",
+							"detected in network mode.",
+							"8 frlmUserSac Service-affecting condition is",
+							"detected in user mode."
+						],
+						"name" : "AAC3-MIB::portFrlmStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.5.3.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::portFrlmNetworkServAffectCond",
+			"certification" : "STANDARD",
+			"description" : [
+				"A service-affecting condition in network device mode has been",
+				"detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "portFrlmNetworkServAffectCond",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Network device status of the FRLM on the port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::portFrlmNetworkServAffectCond AAC3-MIB::portFrlmStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::portFrlmNetworkServAffectCond",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.51",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the Frame Relay Link",
+							"Management operation on the port.",
+							"",
+							"The portFrlmStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms)",
+							"simultaneously.",
+							"",
+							"portFrlmNoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"The various bit positions are:",
+							"1 frlmNoAlarm No alarm present.",
+							"2 frlmDisabled Link management is disabled.",
+							"4 frlmNetworkSac Service-affecting condition is",
+							"detected in network mode.",
+							"8 frlmUserSac Service-affecting condition is",
+							"detected in user mode."
+						],
+						"name" : "AAC3-MIB::portFrlmStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.5.3.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::portFrlmUserClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"A service-affecting condition in user device mode has been",
+				"cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "portFrlmUserClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "User device status of the FRLM on the port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::portFrlmUserClear AAC3-MIB::portFrlmStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::portFrlmUserClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.52",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the Frame Relay Link",
+							"Management operation on the port.",
+							"",
+							"The portFrlmStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms)",
+							"simultaneously.",
+							"",
+							"portFrlmNoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"The various bit positions are:",
+							"1 frlmNoAlarm No alarm present.",
+							"2 frlmDisabled Link management is disabled.",
+							"4 frlmNetworkSac Service-affecting condition is",
+							"detected in network mode.",
+							"8 frlmUserSac Service-affecting condition is",
+							"detected in user mode."
+						],
+						"name" : "AAC3-MIB::portFrlmStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.5.3.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::portFrlmUserServAffectCond",
+			"certification" : "STANDARD",
+			"description" : [
+				"A service-affecting condition in user device mode has been",
+				"detected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "portFrlmUserServAffectCond",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "User device status of the FRLM on the port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::portFrlmUserServAffectCond AAC3-MIB::portFrlmStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::portFrlmUserServAffectCond",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.53",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the Frame Relay Link",
+							"Management operation on the port.",
+							"",
+							"The portFrlmStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms)",
+							"simultaneously.",
+							"",
+							"portFrlmNoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"The various bit positions are:",
+							"1 frlmNoAlarm No alarm present.",
+							"2 frlmDisabled Link management is disabled.",
+							"4 frlmNetworkSac Service-affecting condition is",
+							"detected in network mode.",
+							"8 frlmUserSac Service-affecting condition is",
+							"detected in user mode."
+						],
+						"name" : "AAC3-MIB::portFrlmStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.5.3.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::sysTestTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A test trap has been sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sysTestTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Sent a test trap: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::sysTestTrap RFC1213-MIB::sysObjectID o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "AAC3-MIB::sysTestTrap",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.99",
+				"variables" : [
+					{
+						"description" : [
+							"The vendor's authoritative identification of the",
+							"network management subsystem contained in the",
+							"entity. This value is allocated within the SMI",
+							"enterprises subtree (1.3.6.1.4.1) and provides an",
+							"easy and unambiguous means for determining `what",
+							"kind of box' is being managed. For example, if",
+							"vendor `Flintstones, Inc.' was assigned the",
+							"subtree 1.3.6.1.4.1.4242, it could assign the",
+							"identifier 1.3.6.1.4.1.4242.1.1 to its `Fred",
+							"Router'."
+						],
+						"name" : "RFC1213-MIB::sysObjectID",
+						"oid" : "1.3.6.1.2.1.1.2",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cellAlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All Cell port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cellAlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Cell port alarms cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cellAlarmsClear AAC3-MIB::cellStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cellAlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.100",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the Cell port.",
+							"",
+							"The cellStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cellNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cellNoAlarm No alarm present.",
+							"2 cellPlcpOof PLCP Out of Frame.",
+							"4 cellPlcpYellow PLCP Yellow Alarm.",
+							"8 cellHecOocd HEC Out of Cell Delineation.",
+							"16 cellCbrInFifoOflow CBR input FIFO is overflowing.",
+							"32 cellCbrOutFifoOflow CBR output FIFO is overflowing.",
+							"64 cellGrpInactive Cell AIMUX group is inactive."
+						],
+						"name" : "AAC3-MIB::cellStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.6.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cellPlcpOof",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Cell port has detected a PLCP Out Of Frame condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cellPlcpOof",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected PLCP Out Of Frame condition"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cellPlcpOof AAC3-MIB::cellStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cellPlcpOof",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.101",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the Cell port.",
+							"",
+							"The cellStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cellNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cellNoAlarm No alarm present.",
+							"2 cellPlcpOof PLCP Out of Frame.",
+							"4 cellPlcpYellow PLCP Yellow Alarm.",
+							"8 cellHecOocd HEC Out of Cell Delineation.",
+							"16 cellCbrInFifoOflow CBR input FIFO is overflowing.",
+							"32 cellCbrOutFifoOflow CBR output FIFO is overflowing.",
+							"64 cellGrpInactive Cell AIMUX group is inactive."
+						],
+						"name" : "AAC3-MIB::cellStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.6.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cellPlcpRya",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Cell port has detected the reception of PLCP Yellow",
+				"Alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cellPlcpRya",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected reception of PLCP Yellow alarm"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cellPlcpRya AAC3-MIB::cellStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cellPlcpRya",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.102",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the Cell port.",
+							"",
+							"The cellStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cellNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cellNoAlarm No alarm present.",
+							"2 cellPlcpOof PLCP Out of Frame.",
+							"4 cellPlcpYellow PLCP Yellow Alarm.",
+							"8 cellHecOocd HEC Out of Cell Delineation.",
+							"16 cellCbrInFifoOflow CBR input FIFO is overflowing.",
+							"32 cellCbrOutFifoOflow CBR output FIFO is overflowing.",
+							"64 cellGrpInactive Cell AIMUX group is inactive."
+						],
+						"name" : "AAC3-MIB::cellStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.6.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cellHecOutOfCellDelineation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Cell port has detected an HEC Out of Cell Delineation",
+				"condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cellHecOutOfCellDelineation",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected HEC Out of Cell Delineation"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cellHecOutOfCellDelineation AAC3-MIB::cellStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cellHecOutOfCellDelineation",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.103",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the Cell port.",
+							"",
+							"The cellStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cellNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cellNoAlarm No alarm present.",
+							"2 cellPlcpOof PLCP Out of Frame.",
+							"4 cellPlcpYellow PLCP Yellow Alarm.",
+							"8 cellHecOocd HEC Out of Cell Delineation.",
+							"16 cellCbrInFifoOflow CBR input FIFO is overflowing.",
+							"32 cellCbrOutFifoOflow CBR output FIFO is overflowing.",
+							"64 cellGrpInactive Cell AIMUX group is inactive."
+						],
+						"name" : "AAC3-MIB::cellStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.6.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cellCbrInputFifoOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Cell port's CBR input FIFO has overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cellCbrInputFifoOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "CBR input FIFO overflowed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cellCbrInputFifoOverflow AAC3-MIB::cellStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cellCbrInputFifoOverflow",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.104",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the Cell port.",
+							"",
+							"The cellStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cellNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cellNoAlarm No alarm present.",
+							"2 cellPlcpOof PLCP Out of Frame.",
+							"4 cellPlcpYellow PLCP Yellow Alarm.",
+							"8 cellHecOocd HEC Out of Cell Delineation.",
+							"16 cellCbrInFifoOflow CBR input FIFO is overflowing.",
+							"32 cellCbrOutFifoOflow CBR output FIFO is overflowing.",
+							"64 cellGrpInactive Cell AIMUX group is inactive."
+						],
+						"name" : "AAC3-MIB::cellStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.6.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cellCbrOutputFifoOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Cell port's CBR output FIFO has overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cellCbrOutputFifoOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "CBR output FIFO overflowed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cellCbrOutputFifoOverflow AAC3-MIB::cellStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cellCbrOutputFifoOverflow",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.105",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the Cell port.",
+							"",
+							"The cellStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cellNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cellNoAlarm No alarm present.",
+							"2 cellPlcpOof PLCP Out of Frame.",
+							"4 cellPlcpYellow PLCP Yellow Alarm.",
+							"8 cellHecOocd HEC Out of Cell Delineation.",
+							"16 cellCbrInFifoOflow CBR input FIFO is overflowing.",
+							"32 cellCbrOutFifoOflow CBR output FIFO is overflowing.",
+							"64 cellGrpInactive Cell AIMUX group is inactive."
+						],
+						"name" : "AAC3-MIB::cellStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.6.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cellGrpInactive",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Cell port's AIMUX group has become inactive."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cellGrpInactive",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "AIMUX group has become inactive"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cellGrpInactive AAC3-MIB::cellStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cellGrpInactive",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.106",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the Cell port.",
+							"",
+							"The cellStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cellNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cellNoAlarm No alarm present.",
+							"2 cellPlcpOof PLCP Out of Frame.",
+							"4 cellPlcpYellow PLCP Yellow Alarm.",
+							"8 cellHecOocd HEC Out of Cell Delineation.",
+							"16 cellCbrInFifoOflow CBR input FIFO is overflowing.",
+							"32 cellCbrOutFifoOflow CBR output FIFO is overflowing.",
+							"64 cellGrpInactive Cell AIMUX group is inactive."
+						],
+						"name" : "AAC3-MIB::cellStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.6.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::vbrPktAlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All VBR/Packet port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vbrPktAlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All VBR/Packet port alarms cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::vbrPktAlarmsClear AAC3-MIB::vbrPktStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::vbrPktAlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.200",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the VBR/Packet",
+							"port.",
+							"",
+							"The vbrPktStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"vbrPktNoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"The various bit positions are:",
+							"1 vbrPktNoAlarm No alarm present.",
+							"2 vbrPktInFifoOflow VBR input FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::vbrPktStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.7.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::vbrPktInputFifoOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"The VBR/Packet port's VBR input FIFO has overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vbrPktInputFifoOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "VBR/Packet port's VBR input FIFO overflowed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::vbrPktInputFifoOverflow AAC3-MIB::vbrPktStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::vbrPktInputFifoOverflow",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.201",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the VBR/Packet",
+							"port.",
+							"",
+							"The vbrPktStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"vbrPktNoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"The various bit positions are:",
+							"1 vbrPktNoAlarm No alarm present.",
+							"2 vbrPktInFifoOflow VBR input FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::vbrPktStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.7.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cbrAlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All CBR port alarm conditions have cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cbrAlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All CBR port alarm conditions cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cbrAlarmsClear AAC3-MIB::cbrStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cbrAlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.250",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the CBR port.",
+							"",
+							"The cbrStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cbrNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cbrNoAlarm No alarm present.",
+							"2 cbrInFifoOflow CBR input FIFO is overflowing.",
+							"4 cbrOutFifoUflow CBR output FIFO is underflowing.",
+							"8 cbrOutFifoOflow CBR output FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::cbrStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.8.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cbrInputFifoOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"The CBR port's input FIFO has overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cbrInputFifoOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "CBR port's input FIFO overflowed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cbrInputFifoOverflow AAC3-MIB::cbrStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cbrInputFifoOverflow",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.251",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the CBR port.",
+							"",
+							"The cbrStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cbrNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cbrNoAlarm No alarm present.",
+							"2 cbrInFifoOflow CBR input FIFO is overflowing.",
+							"4 cbrOutFifoUflow CBR output FIFO is underflowing.",
+							"8 cbrOutFifoOflow CBR output FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::cbrStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.8.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cbrOutputFifoUnderflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"The CBR port's output FIFO has underflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cbrOutputFifoUnderflow",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "CBR port's output FIFO underflowed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cbrOutputFifoUnderflow AAC3-MIB::cbrStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cbrOutputFifoUnderflow",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.252",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the CBR port.",
+							"",
+							"The cbrStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cbrNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cbrNoAlarm No alarm present.",
+							"2 cbrInFifoOflow CBR input FIFO is overflowing.",
+							"4 cbrOutFifoUflow CBR output FIFO is underflowing.",
+							"8 cbrOutFifoOflow CBR output FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::cbrStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.8.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::cbrOutputFifoOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"The CBR port's output FIFO has overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cbrOutputFifoOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "CBR port's output FIFO overflowed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::cbrOutputFifoOverflow AAC3-MIB::cbrStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::cbrOutputFifoOverflow",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.253",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the CBR port.",
+							"",
+							"The cbrStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"cbrNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 cbrNoAlarm No alarm present.",
+							"2 cbrInFifoOflow CBR input FIFO is overflowing.",
+							"4 cbrOutFifoUflow CBR output FIFO is underflowing.",
+							"8 cbrOutFifoOflow CBR output FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::cbrStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.8.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds1AlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All DSX-1 port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds1AlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All DSX-1 port alarms cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds1AlarmsClear RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds1AlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.300",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds1Los",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DSX-1 port has detected a Loss Of Signal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds1Los",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected a Loss Of Signal: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds1Los RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds1Los",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.301",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds1Oof",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DSX-1 port has detected an Out Of Frame condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds1Oof",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected an Out Of Frame condition: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds1Oof RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds1Oof",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.302",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds1Rai",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DSX-1 port has detected the reception of Alarm",
+				"Indication Signal (AIS)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds1Rai",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected the reception of Alarm: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds1Rai RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds1Rai",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.303",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds1Rya",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DSX-1 port has detected the reception of Yellow",
+				"Alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds1Rya",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected the reception of Yellow alarm: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds1Rya RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds1Rya",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.304",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E1AlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All E1 port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E1AlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All E1 port alarms cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E1AlarmsClear RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E1AlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.310",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E1Los",
+			"certification" : "STANDARD",
+			"description" : [
+				"The E1 port has detected a Loss Of Signal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E1Los",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected a loss Of Signal condition"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E1Los RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E1Los",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.311",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E1Oof",
+			"certification" : "STANDARD",
+			"description" : [
+				"The E1 port has detected an Out Of Frame condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E1Oof",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Detected an Out Of Frame condition"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E1Oof RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E1Oof",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.312",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E1Rai",
+			"certification" : "STANDARD",
+			"description" : [
+				"The E1 port has detected the reception of Alarm",
+				"Indication Signal (AIS)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E1Rai",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Detected the reception of Alarm"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E1Rai RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E1Rai",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.313",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E1Rya",
+			"certification" : "STANDARD",
+			"description" : [
+				"The E1 port has detected the reception of Yellow",
+				"Alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E1Rya",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected the reception of Yellow alarm"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E1Rya RFC1406-MIB::dsx1LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E1Rya",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.314",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the",
+							"interface. It contains loopback, failure, re-",
+							"ceived 'alarm' and transmitted 'alarm' infor-",
+							"mation.",
+							"",
+							"The dsx1LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and",
+							"a LoopbackState simultaneously.",
+							"",
+							"dsx1NoAlarm should be set if and only if no other flag is",
+							"set.",
+							"",
+							"If the dsx1LoopbackState bit is set, the loopback in ef-",
+							"fect can be determined from the dsx1LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 dsx1NoAlarm No Alarm Present",
+							"2 dsx1RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 dsx1XmtFarEndLOF Near end sending LOF Indication",
+							"8 dsx1RcvAIS Far end sending AIS",
+							"16 dsx1XmtAIS Near end sending AIS",
+							"32 dsx1LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 dsx1LossOfSignal Near end Loss Of Signal",
+							"128 dsx1LoopbackState Near end is looped",
+							"256 dsx1T16AIS E1 TS16 AIS",
+							"512 dsx1RcvFarEndLOMF Far End Sending TS16 LOMF",
+							"1024 dsx1XmtFarEndLOMF Near End Sending TS16 LOMF",
+							"2048 dsx1RcvTestCode Near End detects a test code",
+							"4096 dsx1OtherFailure any line status not defined here"
+						],
+						"name" : "RFC1406-MIB::dsx1LineStatus",
+						"oid" : "1.3.6.1.2.1.10.18.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aimuxGroupActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"The AIMUX group is active with no failures present."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimuxGroupActive",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "AIMUX group is active with status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aimuxGroupActive AAC3-MIB::aimuxGrpStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aimuxGroupActive",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.320",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the AIMUX group. The",
+							"aimuxGrpStatus is a bit map represented as a sum; however",
+							"multiple failure conditions should not occur simultaneously.",
+							"",
+							"The various bit positions are:",
+							"1 aimuxActive Active with no failures",
+							"2 aimuxUnconfigured Group not configured",
+							"4 aimuxAcpTimeout ACP timeout",
+							"8 aimuxSignalFailure Configuration mismatch or non-",
+							"arrival of LCP cells during group",
+							"setup.",
+							"16 aimuxBadDiffDelay Differential delay exceeded",
+							"maximum threshold.",
+							"32 aimuxArbConflict AIMUX ID could not be resolved.",
+							"64 aimuxMajGrpAlarm Major alarm in group."
+						],
+						"name" : "AAC3-MIB::aimuxGrpStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.11.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aimuxBandwidthChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The number of active links has changed. This trap is sent",
+				"whenever the number of active links decreases, or when the",
+				"number of active links again reached the number configured",
+				"for the AIMUX port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimuxBandwidthChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Number of active and passing links: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aimuxBandwidthChanged AAC3-MIB::aimuxGrpLinkActiveMask i 0",
+			"trap" : {
+				"name" : "AAC3-MIB::aimuxBandwidthChanged",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.321",
+				"variables" : [
+					{
+						"description" : [
+							"A bit mask defining which links in the AIMUX group are",
+							"currently active and passing traffic."
+						],
+						"name" : "AAC3-MIB::aimuxGrpLinkActiveMask",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.11.1.2.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aimuxAcpTimeout",
+			"certification" : "STANDARD",
+			"description" : [
+				"ACP timeout failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimuxAcpTimeout",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "ACP Timeout failed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aimuxAcpTimeout AAC3-MIB::aimuxGrpStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aimuxAcpTimeout",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.322",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the AIMUX group. The",
+							"aimuxGrpStatus is a bit map represented as a sum; however",
+							"multiple failure conditions should not occur simultaneously.",
+							"",
+							"The various bit positions are:",
+							"1 aimuxActive Active with no failures",
+							"2 aimuxUnconfigured Group not configured",
+							"4 aimuxAcpTimeout ACP timeout",
+							"8 aimuxSignalFailure Configuration mismatch or non-",
+							"arrival of LCP cells during group",
+							"setup.",
+							"16 aimuxBadDiffDelay Differential delay exceeded",
+							"maximum threshold.",
+							"32 aimuxArbConflict AIMUX ID could not be resolved.",
+							"64 aimuxMajGrpAlarm Major alarm in group."
+						],
+						"name" : "AAC3-MIB::aimuxGrpStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.11.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aimuxSignalFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration mismatch or non-arrival of LCP cells during",
+				"group setup."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimuxSignalFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Signal failed $v1 due to Configuration mismatch or non-arrival of LCP cells"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aimuxSignalFailure AAC3-MIB::aimuxGrpStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aimuxSignalFailure",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.323",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the AIMUX group. The",
+							"aimuxGrpStatus is a bit map represented as a sum; however",
+							"multiple failure conditions should not occur simultaneously.",
+							"",
+							"The various bit positions are:",
+							"1 aimuxActive Active with no failures",
+							"2 aimuxUnconfigured Group not configured",
+							"4 aimuxAcpTimeout ACP timeout",
+							"8 aimuxSignalFailure Configuration mismatch or non-",
+							"arrival of LCP cells during group",
+							"setup.",
+							"16 aimuxBadDiffDelay Differential delay exceeded",
+							"maximum threshold.",
+							"32 aimuxArbConflict AIMUX ID could not be resolved.",
+							"64 aimuxMajGrpAlarm Major alarm in group."
+						],
+						"name" : "AAC3-MIB::aimuxGrpStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.11.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aimuxBadDiffDelay",
+			"certification" : "STANDARD",
+			"description" : [
+				"Differential delay exceeded maximum threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimuxBadDiffDelay",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Differential delay exceeded maximum threshold: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aimuxBadDiffDelay AAC3-MIB::aimuxGrpStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aimuxBadDiffDelay",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.324",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the AIMUX group. The",
+							"aimuxGrpStatus is a bit map represented as a sum; however",
+							"multiple failure conditions should not occur simultaneously.",
+							"",
+							"The various bit positions are:",
+							"1 aimuxActive Active with no failures",
+							"2 aimuxUnconfigured Group not configured",
+							"4 aimuxAcpTimeout ACP timeout",
+							"8 aimuxSignalFailure Configuration mismatch or non-",
+							"arrival of LCP cells during group",
+							"setup.",
+							"16 aimuxBadDiffDelay Differential delay exceeded",
+							"maximum threshold.",
+							"32 aimuxArbConflict AIMUX ID could not be resolved.",
+							"64 aimuxMajGrpAlarm Major alarm in group."
+						],
+						"name" : "AAC3-MIB::aimuxGrpStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.11.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aimuxArbConflict",
+			"certification" : "STANDARD",
+			"description" : [
+				"AIMUX ID could not be resolved."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimuxArbConflict",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Cannot resolve AIMUX ID: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aimuxArbConflict AAC3-MIB::aimuxGrpStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aimuxArbConflict",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.325",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the AIMUX group. The",
+							"aimuxGrpStatus is a bit map represented as a sum; however",
+							"multiple failure conditions should not occur simultaneously.",
+							"",
+							"The various bit positions are:",
+							"1 aimuxActive Active with no failures",
+							"2 aimuxUnconfigured Group not configured",
+							"4 aimuxAcpTimeout ACP timeout",
+							"8 aimuxSignalFailure Configuration mismatch or non-",
+							"arrival of LCP cells during group",
+							"setup.",
+							"16 aimuxBadDiffDelay Differential delay exceeded",
+							"maximum threshold.",
+							"32 aimuxArbConflict AIMUX ID could not be resolved.",
+							"64 aimuxMajGrpAlarm Major alarm in group."
+						],
+						"name" : "AAC3-MIB::aimuxGrpStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.11.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aimuxMajGrpAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Major group alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aimuxMajGrpAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Major group alarm raised: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aimuxMajGrpAlarm AAC3-MIB::aimuxGrpStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aimuxMajGrpAlarm",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.326",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the AIMUX group. The",
+							"aimuxGrpStatus is a bit map represented as a sum; however",
+							"multiple failure conditions should not occur simultaneously.",
+							"",
+							"The various bit positions are:",
+							"1 aimuxActive Active with no failures",
+							"2 aimuxUnconfigured Group not configured",
+							"4 aimuxAcpTimeout ACP timeout",
+							"8 aimuxSignalFailure Configuration mismatch or non-",
+							"arrival of LCP cells during group",
+							"setup.",
+							"16 aimuxBadDiffDelay Differential delay exceeded",
+							"maximum threshold.",
+							"32 aimuxArbConflict AIMUX ID could not be resolved.",
+							"64 aimuxMajGrpAlarm Major alarm in group."
+						],
+						"name" : "AAC3-MIB::aimuxGrpStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.11.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3AlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All DS3 port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3AlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All DS3 port alarms cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3AlarmsClear RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3AlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.400",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3Los",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 port has detected a Loss Of Signal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3Los",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Loss of Signal detected for DS3 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3Los RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3Los",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.401",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3Oof",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 port has detected an Out Of Frame condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3Oof",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Out Of Frame condition detected for DS3 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3Oof RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3Oof",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.402",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3Rai",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 port has detected the reception of Alarm",
+				"Indication Signal (AIS)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3Rai",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Reception of Alarm Indication Signal detected for DS3 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3Rai RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3Rai",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.403",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3Rya",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 port has detected the reception of Yellow Alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3Rya",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Reception of Yellow Alarm detected for DS3 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3Rya RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3Rya",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.404",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3Ris",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 port has detected the reception of Idle Signal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3Ris",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Reception of Idle Signal detected for DS3 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3Ris RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3Ris",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.405",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E3AlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All E3 port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E3AlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All E3 port alarms cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E3AlarmsClear RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E3AlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.410",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E3Los",
+			"certification" : "STANDARD",
+			"description" : [
+				"The E3 port has detected a Loss Of Signal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E3Los",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Loss Of Signal condition detected for E3 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E3Los RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E3Los",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.411",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E3Oof",
+			"certification" : "STANDARD",
+			"description" : [
+				"The E3 port has detected an Out Of Frame condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E3Oof",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Out Of Frame condition detected for E3 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E3Oof RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E3Oof",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.412",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E3Rai",
+			"certification" : "STANDARD",
+			"description" : [
+				"The E3 port has detected the reception of Alarm",
+				"Indication Signal (AIS)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E3Rai",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Reception of Alarm detected for E3 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E3Rai RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E3Rai",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.413",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3E3Rya",
+			"certification" : "STANDARD",
+			"description" : [
+				"The E3 port has detected the reception of Yellow Alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3E3Rya",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Reception of Yellow Alarm detected for E3 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3E3Rya RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3E3Rya",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.414",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3FeLos",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 port has been informed that the far end has detected",
+				"a Loss Of Signal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3FeLos",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Informed DS3 port about loss of signal condition: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3FeLos RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3FeLos",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.451",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3FeLof",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 Port has been informed that the far end has detected",
+				"a Loss Of Frame condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3FeLof",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Informed DS3 port about the Loss of Frame condition: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3FeLof RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3FeLof",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.452",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3FeRai",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 port has been informed that the far end has detected",
+				"the reception of Alarm Indication Signal (AIS)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3FeRai",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Informed DS3 port about the reception of Alarm Indication Signal: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3FeRai RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3FeRai",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.453",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::aac3Ds3FeRis",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DS3 port has been informed that the far end has detected",
+				"the reception of Idle Signal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "aac3Ds3FeRis",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Informed DS3 port about the reception of Idle Signal: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::aac3Ds3FeRis RFC1407-MIB::dsx3LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::aac3Ds3FeRis",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.454",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the",
+							"Line Status of the interface.",
+							"It contains loopback state information",
+							"and failure state information.",
+							"The dsx3LineStatus is a bit map represented",
+							"as a sum, therefore",
+							"it can represent multiple failures",
+							"and a loopback (see dsx3LoopbackConfig object",
+							"for the type of loopback)",
+							"simultaneously.",
+							"The dsx3NoAlarm should be set if and only if",
+							"no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 dsx3NoAlarm No alarm present",
+							"2 dsx3RcvRAIFailure Receiving Yellow/Remote",
+							"Alarm Indication",
+							"4 dsx3XmitRAIAlarm Transmitting Yellow/Remote",
+							"Alarm Indication",
+							"dsx3RcvAIS Receiving AIS failure state",
+							"16 dsx3XmitAIS Transmitting AIS",
+							"32 dsx3LOF Receiving LOF failure state",
+							"64 dsx3LOS Receiving LOS failure state",
+							"128 dsx3LoopbackState Looping the received signal",
+							"256 dsx3RcvTestCode Receiving a Test Pattern",
+							"512 dsx3OtherFailure any line status not defined",
+							"here"
+						],
+						"name" : "RFC1407-MIB::dsx3LineStatus",
+						"oid" : "1.3.6.1.2.1.10.30.5.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ktxSonetAlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All SONET port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ktxSonetAlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All SONET port alarms cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ktxSonetAlarmsClear AAC3-MIB::ktxSonetSectionCurrentStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ktxSonetAlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.500",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the",
+							"interface. The ktxSonetSectionCurrentStatus",
+							"is a bit map represented as a sum, therefore",
+							"it can represent multiple defects simultaneously.",
+							"The sonetSectionNoDefect should be set if and",
+							"only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetSectionNoDefect",
+							"2 sonetSectionLOS",
+							"4 sonetSectionLOF"
+						],
+						"name" : "AAC3-MIB::ktxSonetSectionCurrentStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.3.1.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ktxSonetLos",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SONET port has detected a Loss Of Signal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ktxSonetLos",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Detected a Loss Of Signal condition for SONET port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ktxSonetLos AAC3-MIB::ktxSonetSectionCurrentStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ktxSonetLos",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.501",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the",
+							"interface. The ktxSonetSectionCurrentStatus",
+							"is a bit map represented as a sum, therefore",
+							"it can represent multiple defects simultaneously.",
+							"The sonetSectionNoDefect should be set if and",
+							"only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetSectionNoDefect",
+							"2 sonetSectionLOS",
+							"4 sonetSectionLOF"
+						],
+						"name" : "AAC3-MIB::ktxSonetSectionCurrentStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.3.1.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ktxSonetOof",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SONET port has detected an Out Of Frame condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ktxSonetOof",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Detected an Out Of Frame condition for SONET port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ktxSonetOof AAC3-MIB::ktxSonetSectionCurrentStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ktxSonetOof",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.502",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the",
+							"interface. The ktxSonetSectionCurrentStatus",
+							"is a bit map represented as a sum, therefore",
+							"it can represent multiple defects simultaneously.",
+							"The sonetSectionNoDefect should be set if and",
+							"only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetSectionNoDefect",
+							"2 sonetSectionLOS",
+							"4 sonetSectionLOF"
+						],
+						"name" : "AAC3-MIB::ktxSonetSectionCurrentStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.3.1.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ktxSonetAisl",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SONET port has detected the reception of line Alarm",
+				"Indication Signal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ktxSonetAisl",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected the reception of line Alarm for SONET port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ktxSonetAisl AAC3-MIB::ktxSonetLineCurrentStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ktxSonetAisl",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.503",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the",
+							"interface. The ktxSonetLineCurrentStatus",
+							"is a bit map represented as a sum, therefore",
+							"it can represent multiple defects simultaneously.",
+							"The sonetLineNoDefect should be set if and only",
+							"if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetLineNoDefect",
+							"2 sonetLineAIS",
+							"4 sonetLineRDI"
+						],
+						"name" : "AAC3-MIB::ktxSonetLineCurrentStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.3.1.1.3.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ktxSonetLopp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SONET port has detected a Loss of Pointer condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ktxSonetLopp",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected a Loss of Pointer condition for SONET port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ktxSonetLopp AAC3-MIB::ktxSonetPathCurrentStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ktxSonetLopp",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.504",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the interface.",
+							"The ktxSonetPathCurrentStatus is a bit map represented",
+							"as a sum, therefore, it can represent multiple defects",
+							"simultaneously. The sonetPathNoDefect should be set",
+							"if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetPathNoDefect",
+							"2 sonetPathSTSLOP",
+							"4 sonetPathSTSAIS",
+							"8 sonetPathSTSRDI",
+							"16 sonetPathUnequipped",
+							"32 sonetPathSignalLabelMismatch"
+						],
+						"name" : "AAC3-MIB::ktxSonetPathCurrentStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.3.1.2.1.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ktxSonetAisp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SONET port has detected the reception of path Alarm",
+				"Indication Signal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ktxSonetAisp",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Detected the reception of path Alarm Indication Signal for SONET port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ktxSonetAisp AAC3-MIB::ktxSonetPathCurrentStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ktxSonetAisp",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.505",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the interface.",
+							"The ktxSonetPathCurrentStatus is a bit map represented",
+							"as a sum, therefore, it can represent multiple defects",
+							"simultaneously. The sonetPathNoDefect should be set",
+							"if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetPathNoDefect",
+							"2 sonetPathSTSLOP",
+							"4 sonetPathSTSAIS",
+							"8 sonetPathSTSRDI",
+							"16 sonetPathUnequipped",
+							"32 sonetPathSignalLabelMismatch"
+						],
+						"name" : "AAC3-MIB::ktxSonetPathCurrentStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.3.1.2.1.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ktxSonetRdil",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SONET port has received a line Remote Defect Indication."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ktxSonetRdil",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Received a line Remote Defect Indication for SONET port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ktxSonetRdil AAC3-MIB::ktxSonetLineCurrentStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ktxSonetRdil",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.506",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the",
+							"interface. The ktxSonetLineCurrentStatus",
+							"is a bit map represented as a sum, therefore",
+							"it can represent multiple defects simultaneously.",
+							"The sonetLineNoDefect should be set if and only",
+							"if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetLineNoDefect",
+							"2 sonetLineAIS",
+							"4 sonetLineRDI"
+						],
+						"name" : "AAC3-MIB::ktxSonetLineCurrentStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.3.1.1.3.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ktxSonetRdip",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SONET port has received a path Remote Defect Indication."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ktxSonetRdip",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Received a path Remote Defect Indication for SONET port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ktxSonetRdip AAC3-MIB::ktxSonetPathCurrentStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ktxSonetRdip",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.507",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the status of the interface.",
+							"The ktxSonetPathCurrentStatus is a bit map represented",
+							"as a sum, therefore, it can represent multiple defects",
+							"simultaneously. The sonetPathNoDefect should be set",
+							"if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 sonetPathNoDefect",
+							"2 sonetPathSTSLOP",
+							"4 sonetPathSTSAIS",
+							"8 sonetPathSTSRDI",
+							"16 sonetPathUnequipped",
+							"32 sonetPathSignalLabelMismatch"
+						],
+						"name" : "AAC3-MIB::ktxSonetPathCurrentStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.3.1.2.1.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::v35AlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All V.35/EIA-530 port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "v35AlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All V.35/EIA-530 port alarms cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::v35AlarmsClear AAC3-MIB::v35Status i 9999",
+			"trap" : {
+				"name" : "AAC3-MIB::v35AlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.600",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the V.35/EIA-530",
+							"interface.",
+							"",
+							"The v35Status is a bit map represented as a sum, therefore, it",
+							"can represent multiple failures (alarms) simultaneously.",
+							"",
+							"v35NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 v35NoAlarm No alarm present.",
+							"2 v35Los Loss of signal detected.",
+							"4 v35DteLineLoopback DTE Line Loopback.",
+							"8 v35LocalLoopback Local Loopback.",
+							"16 v35LossOfClock Loss of Clock detected."
+						],
+						"name" : "AAC3-MIB::v35Status",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.4.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::v35Los",
+			"certification" : "STANDARD",
+			"description" : [
+				"The V.35/EIA-530 port has detected a Loss Of Signal",
+				"condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "v35Los",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Loss Of Signal detected for V.35/EIA-530 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::v35Los AAC3-MIB::v35Status i 9999",
+			"trap" : {
+				"name" : "AAC3-MIB::v35Los",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.601",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the V.35/EIA-530",
+							"interface.",
+							"",
+							"The v35Status is a bit map represented as a sum, therefore, it",
+							"can represent multiple failures (alarms) simultaneously.",
+							"",
+							"v35NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 v35NoAlarm No alarm present.",
+							"2 v35Los Loss of signal detected.",
+							"4 v35DteLineLoopback DTE Line Loopback.",
+							"8 v35LocalLoopback Local Loopback.",
+							"16 v35LossOfClock Loss of Clock detected."
+						],
+						"name" : "AAC3-MIB::v35Status",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.4.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::v35Loc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The V.35/EIA-530 port has detected a Loss Of Clock condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "v35Loc",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Loss Of Clock condition detected for V.35/EIA-530 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::v35Loc AAC3-MIB::v35Status i 9999",
+			"trap" : {
+				"name" : "AAC3-MIB::v35Loc",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.602",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the V.35/EIA-530",
+							"interface.",
+							"",
+							"The v35Status is a bit map represented as a sum, therefore, it",
+							"can represent multiple failures (alarms) simultaneously.",
+							"",
+							"v35NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 v35NoAlarm No alarm present.",
+							"2 v35Los Loss of signal detected.",
+							"4 v35DteLineLoopback DTE Line Loopback.",
+							"8 v35LocalLoopback Local Loopback.",
+							"16 v35LossOfClock Loss of Clock detected."
+						],
+						"name" : "AAC3-MIB::v35Status",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.4.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::j2AlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All J2 port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "j2AlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All J2 port alarms cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::j2AlarmsClear AAC3-MIB::j2LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::j2AlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.700",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the interface.",
+							"It contains loopback, failure, received 'alarm' and",
+							"transmitted 'alarm' information.",
+							"",
+							"The j2LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and a",
+							"LoopbackState simultaneously.",
+							"",
+							"j2NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"If the j2LoopbackState bit is set, the loopback in effect can",
+							"be determined from the j2LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 j2NoAlarm No Alarm Present",
+							"2 j2RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 j2XmtFarEndLOF Near end sending LOF Indication",
+							"8 j2RcvAIS Far end sending AIS",
+							"16 j2XmtAIS Near end sending AIS",
+							"32 j2LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 j2LossOfSignal Near end Loss Of Signal",
+							"128 j2LoopbackState Near end is looped",
+							"256 j2LOQ Loss of Line Quality",
+							"512 j2RcvPAIS Near End receiving Payload AIS",
+							"1024 j2XmtPAIS Near End sending Payload AIS",
+							"2048 j2OtherFailure Any line status not defined here"
+						],
+						"name" : "AAC3-MIB::j2LineStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.9.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::j2Los",
+			"certification" : "STANDARD",
+			"description" : [
+				"The J2 port has detected a Loss Of Signal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "j2Los",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Loss Of Signal condition detected for J2 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::j2Los AAC3-MIB::j2LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::j2Los",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.701",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the interface.",
+							"It contains loopback, failure, received 'alarm' and",
+							"transmitted 'alarm' information.",
+							"",
+							"The j2LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and a",
+							"LoopbackState simultaneously.",
+							"",
+							"j2NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"If the j2LoopbackState bit is set, the loopback in effect can",
+							"be determined from the j2LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 j2NoAlarm No Alarm Present",
+							"2 j2RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 j2XmtFarEndLOF Near end sending LOF Indication",
+							"8 j2RcvAIS Far end sending AIS",
+							"16 j2XmtAIS Near end sending AIS",
+							"32 j2LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 j2LossOfSignal Near end Loss Of Signal",
+							"128 j2LoopbackState Near end is looped",
+							"256 j2LOQ Loss of Line Quality",
+							"512 j2RcvPAIS Near End receiving Payload AIS",
+							"1024 j2XmtPAIS Near End sending Payload AIS",
+							"2048 j2OtherFailure Any line status not defined here"
+						],
+						"name" : "AAC3-MIB::j2LineStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.9.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::j2Oof",
+			"certification" : "STANDARD",
+			"description" : [
+				"The J2 port has detected an Out Of Frame condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "j2Oof",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Out Of Frame condition detected for J2 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::j2Oof AAC3-MIB::j2LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::j2Oof",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.702",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the interface.",
+							"It contains loopback, failure, received 'alarm' and",
+							"transmitted 'alarm' information.",
+							"",
+							"The j2LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and a",
+							"LoopbackState simultaneously.",
+							"",
+							"j2NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"If the j2LoopbackState bit is set, the loopback in effect can",
+							"be determined from the j2LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 j2NoAlarm No Alarm Present",
+							"2 j2RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 j2XmtFarEndLOF Near end sending LOF Indication",
+							"8 j2RcvAIS Far end sending AIS",
+							"16 j2XmtAIS Near end sending AIS",
+							"32 j2LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 j2LossOfSignal Near end Loss Of Signal",
+							"128 j2LoopbackState Near end is looped",
+							"256 j2LOQ Loss of Line Quality",
+							"512 j2RcvPAIS Near End receiving Payload AIS",
+							"1024 j2XmtPAIS Near End sending Payload AIS",
+							"2048 j2OtherFailure Any line status not defined here"
+						],
+						"name" : "AAC3-MIB::j2LineStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.9.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::j2Loq",
+			"certification" : "STANDARD",
+			"description" : [
+				"The J2 port has detected a Loss of Line Quality condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "j2Loq",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Loss of Line Quality condition detected for J2 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::j2Loq AAC3-MIB::j2LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::j2Loq",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.703",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the interface.",
+							"It contains loopback, failure, received 'alarm' and",
+							"transmitted 'alarm' information.",
+							"",
+							"The j2LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and a",
+							"LoopbackState simultaneously.",
+							"",
+							"j2NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"If the j2LoopbackState bit is set, the loopback in effect can",
+							"be determined from the j2LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 j2NoAlarm No Alarm Present",
+							"2 j2RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 j2XmtFarEndLOF Near end sending LOF Indication",
+							"8 j2RcvAIS Far end sending AIS",
+							"16 j2XmtAIS Near end sending AIS",
+							"32 j2LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 j2LossOfSignal Near end Loss Of Signal",
+							"128 j2LoopbackState Near end is looped",
+							"256 j2LOQ Loss of Line Quality",
+							"512 j2RcvPAIS Near End receiving Payload AIS",
+							"1024 j2XmtPAIS Near End sending Payload AIS",
+							"2048 j2OtherFailure Any line status not defined here"
+						],
+						"name" : "AAC3-MIB::j2LineStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.9.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::j2Ais",
+			"certification" : "STANDARD",
+			"description" : [
+				"The J2 port has detected the reception of AIS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "j2Ais",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Reception of AIS detected for J2 port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::j2Ais AAC3-MIB::j2LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::j2Ais",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.704",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the interface.",
+							"It contains loopback, failure, received 'alarm' and",
+							"transmitted 'alarm' information.",
+							"",
+							"The j2LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and a",
+							"LoopbackState simultaneously.",
+							"",
+							"j2NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"If the j2LoopbackState bit is set, the loopback in effect can",
+							"be determined from the j2LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 j2NoAlarm No Alarm Present",
+							"2 j2RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 j2XmtFarEndLOF Near end sending LOF Indication",
+							"8 j2RcvAIS Far end sending AIS",
+							"16 j2XmtAIS Near end sending AIS",
+							"32 j2LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 j2LossOfSignal Near end Loss Of Signal",
+							"128 j2LoopbackState Near end is looped",
+							"256 j2LOQ Loss of Line Quality",
+							"512 j2RcvPAIS Near End receiving Payload AIS",
+							"1024 j2XmtPAIS Near End sending Payload AIS",
+							"2048 j2OtherFailure Any line status not defined here"
+						],
+						"name" : "AAC3-MIB::j2LineStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.9.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::j2Rai",
+			"certification" : "STANDARD",
+			"description" : [
+				"The J2 port has detected the reception of Remote Alarm",
+				"Indication Signal (RAI)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "j2Rai",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Reception of Remote Alarm Indication Signal detected for J2 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::j2Rai AAC3-MIB::j2LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::j2Rai",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.705",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the interface.",
+							"It contains loopback, failure, received 'alarm' and",
+							"transmitted 'alarm' information.",
+							"",
+							"The j2LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and a",
+							"LoopbackState simultaneously.",
+							"",
+							"j2NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"If the j2LoopbackState bit is set, the loopback in effect can",
+							"be determined from the j2LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 j2NoAlarm No Alarm Present",
+							"2 j2RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 j2XmtFarEndLOF Near end sending LOF Indication",
+							"8 j2RcvAIS Far end sending AIS",
+							"16 j2XmtAIS Near end sending AIS",
+							"32 j2LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 j2LossOfSignal Near end Loss Of Signal",
+							"128 j2LoopbackState Near end is looped",
+							"256 j2LOQ Loss of Line Quality",
+							"512 j2RcvPAIS Near End receiving Payload AIS",
+							"1024 j2XmtPAIS Near End sending Payload AIS",
+							"2048 j2OtherFailure Any line status not defined here"
+						],
+						"name" : "AAC3-MIB::j2LineStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.9.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::j2Pais",
+			"certification" : "STANDARD",
+			"description" : [
+				"The J2 port has detected the reception of Payload Alarm",
+				"Indication Signal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "j2Pais",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Reception of Payload Alarm Indication Signal detected for J2 port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::j2Pais AAC3-MIB::j2LineStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::j2Pais",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.706",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the Line Status of the interface.",
+							"It contains loopback, failure, received 'alarm' and",
+							"transmitted 'alarm' information.",
+							"",
+							"The j2LineStatus is a bit map represented as a sum",
+							"therefore, it can represent multiple failures (alarms) and a",
+							"LoopbackState simultaneously.",
+							"",
+							"j2NoAlarm should be set if and only if no other flag is set.",
+							"",
+							"If the j2LoopbackState bit is set, the loopback in effect can",
+							"be determined from the j2LoopbackConfig object.",
+							"",
+							"The various bit positions are:",
+							"1 j2NoAlarm No Alarm Present",
+							"2 j2RcvFarEndLOF Far end LOF (a.k.a., Yellow Alarm)",
+							"4 j2XmtFarEndLOF Near end sending LOF Indication",
+							"8 j2RcvAIS Far end sending AIS",
+							"16 j2XmtAIS Near end sending AIS",
+							"32 j2LossOfFrame Near end LOF (a.k.a., Red Alarm)",
+							"64 j2LossOfSignal Near end Loss Of Signal",
+							"128 j2LoopbackState Near end is looped",
+							"256 j2LOQ Loss of Line Quality",
+							"512 j2RcvPAIS Near End receiving Payload AIS",
+							"1024 j2XmtPAIS Near End sending Payload AIS",
+							"2048 j2OtherFailure Any line status not defined here"
+						],
+						"name" : "AAC3-MIB::j2LineStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.9.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::hssiAlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All HSSI port alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hssiAlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All HSSI port alarms cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::hssiAlarmsClear AAC3-MIB::hssiStatus i 9999",
+			"trap" : {
+				"name" : "AAC3-MIB::hssiAlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.800",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the HSSI port.",
+							"",
+							"The hssiStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"hssiNoAlarm should be set if and only if no other flag is set.",
+							"hssiLos is declared when the DTR line is deasserted for a",
+							"period of 5 seconds or more.",
+							"",
+							"The various bit positions are:",
+							"1 hssiNoAlarm No alarm present.",
+							"2 hssiLos Loss of signal detected.",
+							"4 hssiDteLineLoopback DTE Line Loopback.",
+							"8 hssiLocalLoopback Local Loopback.",
+							"16 hssiLossOfClock Loss of clock detected."
+						],
+						"name" : "AAC3-MIB::hssiStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.5.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::hssiLos",
+			"certification" : "STANDARD",
+			"description" : [
+				"The HSSI port has detected a Loss Of Signal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hssiLos",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Loss Of Signal condition detected for HSSI port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::hssiLos AAC3-MIB::hssiStatus i 9999",
+			"trap" : {
+				"name" : "AAC3-MIB::hssiLos",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.801",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the HSSI port.",
+							"",
+							"The hssiStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"hssiNoAlarm should be set if and only if no other flag is set.",
+							"hssiLos is declared when the DTR line is deasserted for a",
+							"period of 5 seconds or more.",
+							"",
+							"The various bit positions are:",
+							"1 hssiNoAlarm No alarm present.",
+							"2 hssiLos Loss of signal detected.",
+							"4 hssiDteLineLoopback DTE Line Loopback.",
+							"8 hssiLocalLoopback Local Loopback.",
+							"16 hssiLossOfClock Loss of clock detected."
+						],
+						"name" : "AAC3-MIB::hssiStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.5.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::hssiLoc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The HSSI port has detected a Loss Of Clock condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hssiLoc",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Loss Of Clock condition detected for HSSI port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::hssiLoc AAC3-MIB::hssiStatus i 9999",
+			"trap" : {
+				"name" : "AAC3-MIB::hssiLoc",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.802",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the HSSI port.",
+							"",
+							"The hssiStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"hssiNoAlarm should be set if and only if no other flag is set.",
+							"hssiLos is declared when the DTR line is deasserted for a",
+							"period of 5 seconds or more.",
+							"",
+							"The various bit positions are:",
+							"1 hssiNoAlarm No alarm present.",
+							"2 hssiLos Loss of signal detected.",
+							"4 hssiDteLineLoopback DTE Line Loopback.",
+							"8 hssiLocalLoopback Local Loopback.",
+							"16 hssiLossOfClock Loss of clock detected."
+						],
+						"name" : "AAC3-MIB::hssiStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.5.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ethAlarmsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"All ethernet bridge alarms have now cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ethAlarmsClear",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "All ethernet bridge alarms cleared: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ethAlarmsClear AAC3-MIB::ethStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ethAlarmsClear",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.850",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the ethernet",
+							"port.",
+							"",
+							"The ethStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"ethNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 ethNoAlarm No alarm present.",
+							"2 ethInFifoOverflow Input FIFO is overflowing.",
+							"4 ethOutFifoOverflow Output FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::ethStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.10.4.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ethInputFifoOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"The input FIFO on the bridge's ATM port has overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ethInputFifoOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "The input FIFO overflowed $v1 on the bridge's ATM port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ethInputFifoOverflow AAC3-MIB::ethStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ethInputFifoOverflow",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.851",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the ethernet",
+							"port.",
+							"",
+							"The ethStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"ethNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 ethNoAlarm No alarm present.",
+							"2 ethInFifoOverflow Input FIFO is overflowing.",
+							"4 ethOutFifoOverflow Output FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::ethStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.10.4.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "AAC3-MIB::ethOutputFifoOverflow",
+			"certification" : "STANDARD",
+			"description" : [
+				"The output FIFO on the bridge's ATM port has overflowed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ethOutputFifoOverflow",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "The output FIFO overflowed $v1 on the bridge's ATM port"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD AAC3-MIB::ethOutputFifoOverflow AAC3-MIB::ethStatus i 1",
+			"trap" : {
+				"name" : "AAC3-MIB::ethOutputFifoOverflow",
+				"oid" : "1.3.6.1.4.1.181.1.13.0.852",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the alarm status of the ethernet",
+							"port.",
+							"",
+							"The ethStatus is a bit map represented as a sum, therefore",
+							"it can represent multiple failures (alarms) simultaneously.",
+							"",
+							"ethNoAlarm should be set if and only if no other flag is set.",
+							"",
+							"The various bit positions are:",
+							"1 ethNoAlarm No alarm present.",
+							"2 ethInFifoOverflow Input FIFO is overflowing.",
+							"4 ethOutFifoOverflow Output FIFO is overflowing."
+						],
+						"name" : "AAC3-MIB::ethStatus",
+						"oid" : "1.3.6.1.4.1.181.1.13.6.10.4.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

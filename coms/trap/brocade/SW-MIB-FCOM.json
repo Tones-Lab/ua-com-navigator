@@ -1,0 +1,1555 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201310041340Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SW-MIB::swFault",
+			"certification" : "STANDARD",
+			"description" : [
+				"Obsoleted this trap as firmware doesn't support this trap.",
+				"A swFault(1) is generated whenever the diagnostics",
+				"detects a fault with the switch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "swFault",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "swSsn:$v2",
+				"Summary" : "Software diagnostic result: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swFault SW-MIB::swDiagResult i 1 SW-MIB::swSsn s EXAMPLE",
+			"trap" : {
+				"name" : "SW-MIB::swFault",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The result of the power-on startup (POST)",
+							"diagnostics."
+						],
+						"enums" : {
+							"1" : "sw-ok",
+							"2" : "sw-faulty",
+							"3" : "sw-embedded-port-fault"
+						},
+						"name" : "SW-MIB::swDiagResult",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "SW-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swSensorScn",
+			"certification" : "STANDARD",
+			"description" : [
+				"A swSensorScn(2) is generated whenever an",
+				"environment sensor changes its operational state. For instance",
+				"a fan stop working. The VarBind in the Trap Data Unit shall",
+				"contain the corresponding instance of the sensor",
+				"status, sensor index, sensor type, sensor value (reading)",
+				"and sensor information. Note that the sensor information contains the type of sensor",
+				"and its number in textual format."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==4) ? 1 : (($v1==1) ? 3 : 2)"
+				},
+				"EventType" : "swSensorScn",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==4) ? 0 : (($v1==1) ? 1 : (($v1==3 || $v1==6) ? 3 : 4))"
+				},
+				"SubNode" : "swSsn:$v6",
+				"Summary" : "$v3 sensor ($v2) status: $v1. $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swSensorScn SW-MIB::swSensorStatus i 1 SW-MIB::swSensorIndex i 1 SW-MIB::swSensorType i 1 SW-MIB::swSensorValue i 9999 SW-MIB::swSensorInfo s EXAMPLE SW-MIB::swSsn s EXAMPLE",
+			"trap" : {
+				"name" : "SW-MIB::swSensorScn",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The current status of the sensor."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "faulty",
+							"3" : "below-min",
+							"4" : "nominal",
+							"5" : "above-max",
+							"6" : "absent"
+						},
+						"name" : "SW-MIB::swSensorStatus",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.22.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object identifies the sensor."
+						],
+						"name" : "SW-MIB::swSensorIndex",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.22.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies the sensor type."
+						],
+						"enums" : {
+							"1" : "temperature",
+							"2" : "fan",
+							"3" : "power-supply"
+						},
+						"name" : "SW-MIB::swSensorType",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.22.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current value (reading) of the sensor.",
+							"The value, -2147483648, represents an unknown quantity.",
+							"It also means that the sensor does not have the capability to",
+							"measure the actual value. In V2.0, the temperature sensor",
+							"value will be in Celsius; the fan value will be in RPM",
+							"(revolution per minute); and the power supply sensor reading",
+							"will be unknown."
+						],
+						"name" : "SW-MIB::swSensorValue",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.22.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Additional displayable information on the sensor.",
+							"In V2.x, it contains the sensor type and number",
+							"in textual format. For example, 'Temp 3', 'Fan 6'."
+						],
+						"name" : "SW-MIB::swSensorInfo",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.22.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "SW-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swFCPortScn",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever an FC port operational status or",
+				"its type changed. The events that trigger this trap are",
+				"port goes to online/offline, port type changed to ",
+				"E-port/F-port/FL-port. swFCPortName and swSsn are optional ",
+				"varbind in the trap PDU "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2 || $v1==4) ? 2 : 3)"
+				},
+				"EventType" : "swFCPortScn",
+				"ExpireTime" : {
+					"eval" : "($v1==2 || $v1==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==0) ? 1 : (($v1==3) ? 2 : 4))"
+				},
+				"SubNode" : "PortIndex:$v2",
+				"Summary" : "FC port ($v3) operational status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swFCPortScn SW-MIB::swFCPortOpStatus i 0 SW-MIB::swFCPortIndex i 9999 SW-MIB::swFCPortName s EXAMPLE SW-MIB::swFCPortWwn s EXAMPLEE SW-MIB::swFCPortPrevType i 1 SW-MIB::swFCPortBrcdType i 1 SW-MIB::swSsn s EXAMPLE SW-MIB::swFCPortFlag b 0 SW-MIB::swFCPortDisableReason i 1 SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swFCPortScn",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object identifies the operational status of",
+							"the port. The online(1) state indicates that user frames",
+							"can be passed. The unknown(0) state indicates that likely",
+							"the port module is physically absent (see swFCPortPhyState)."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "online",
+							"2" : "offline",
+							"3" : "testing",
+							"4" : "faulty"
+						},
+						"name" : "SW-MIB::swFCPortOpStatus",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object identifies the switch port index.",
+							"Note that the value of a port index is 1 higher than the",
+							"port number labeled on the front panel.",
+							"E.g. port index 1 correspond to port number 0."
+						],
+						"name" : "SW-MIB::swFCPortIndex",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A string indicates the name of the addressed port.",
+							"The names should be persistent across switch reboots.",
+							"Port names do not have to be unique within a switch or",
+							"within a fabric."
+						],
+						"name" : "SW-MIB::swFCPortName",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.36",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The World_wide_Name of the Fibre Channel port.",
+							"The contents of an instance are in the IEEE extended format",
+							"as specified in FC-PH; the 12-bit port identifier represents",
+							"the port number within the switch."
+						],
+						"name" : "SW-MIB::swFCPortWwn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.34",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents port type of a port before ",
+							"it goes online/offline and it is valid only in swFcPortSCN trap"
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "fl-port",
+							"4" : "f-port",
+							"5" : "e-port",
+							"6" : "g-port",
+							"7" : "ex-port"
+						},
+						"name" : "SW-MIB::swFCPortPrevType",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.35",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Brocade port type."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "other",
+							"3" : "fl-port",
+							"4" : "f-port",
+							"5" : "e-port",
+							"6" : "g-port",
+							"7" : "ex-port"
+						},
+						"name" : "SW-MIB::swFCPortBrcdType",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.39",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "SW-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A bit map of port status flags which includes the information of port type.",
+							"Currently this will indicate if the port is virtual or physical."
+						],
+						"enums" : {
+							"0" : "physical",
+							"1" : "virtual"
+						},
+						"name" : "SW-MIB::swFCPortFlag",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.38",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"It indicates the state change reason",
+							"when port goes from online to offline"
+						],
+						"enums" : {
+							"1" : "r-recover-fail",
+							"2" : "r-invalid-reason",
+							"3" : "r-forced",
+							"4" : "r-sw-disabled",
+							"5" : "r-bl-disabled",
+							"6" : "r-slot-off",
+							"7" : "r-sw-enabled",
+							"8" : "r-bl-enabled",
+							"9" : "r-slot-on",
+							"10" : "r-persistid",
+							"11" : "r-sw-violation",
+							"12" : "r-prv-dev-violation",
+							"13" : "r-pub-dev-violation",
+							"14" : "r-port-data-fail",
+							"15" : "r-online-incomplete",
+							"16" : "r-online-route-fail",
+							"17" : "r-inconsistent",
+							"18" : "r-set-vcc-fail",
+							"19" : "r-ecp-in-testing",
+							"20" : "r-elp-in-testing",
+							"21" : "r-ecp-retries-exceeded",
+							"22" : "r-invalid-ecp-state",
+							"23" : "r-bad-ecp-rcvd",
+							"24" : "r-send-rtmark-fail",
+							"25" : "r-send-ecp-fail",
+							"26" : "r-save-link-rtt-fail",
+							"27" : "r-em-incnst",
+							"28" : "r-pci-attach-fail",
+							"29" : "r-buf-starv",
+							"30" : "r-elp-fctl-mismatch",
+							"31" : "r-eport-disabled",
+							"32" : "r-trunk-with-vcxlt",
+							"33" : "r-sw-fl-port-not-ready",
+							"34" : "r-link-reinit",
+							"35" : "r-domain-id-change",
+							"36" : "r-auth-rejected",
+							"37" : "r-auth-timeout",
+							"38" : "r-auth-fail-retry",
+							"39" : "r-fcr-conf-mismatch1",
+							"40" : "r-fcr-conf-mismatch2",
+							"41" : "r-fcr-port-ld-mode-mismatch",
+							"42" : "r-fcr-ld-credit-mismatch",
+							"43" : "r-fcr-set-vcc-failed",
+							"44" : "r-fcr-set-rtc-failed",
+							"45" : "r-fcr-elp-ver-inconsis",
+							"46" : "r-fcr-elp-fctl-mismatch",
+							"47" : "r-fcr-pid-mismatch",
+							"48" : "r-fcr-tov-mismatch",
+							"49" : "r-fcr-ld-incompat",
+							"50" : "r-fcr-isolated",
+							"51" : "r-elp-retries-exceeded",
+							"52" : "r-fcr-exports-exceeded",
+							"53" : "r-fcr-license",
+							"54" : "r-fcr-conf-ex",
+							"55" : "r-fcr-ftag-over",
+							"56" : "r-fcr-ftag-conflict",
+							"57" : "r-fcr-fowner-conflict",
+							"58" : "r-fcr-zone-resource",
+							"59" : "r-fcr-port-state-to",
+							"60" : "r-fcr-authn-reject",
+							"61" : "r-fcr-sec-fcs-list",
+							"62" : "r-fcr-sec-failure",
+							"63" : "r-fcr-incompatible-mode",
+							"64" : "r-fcr-sec-scc-list",
+							"65" : "r-fcr-generic",
+							"66" : "r-sw-ex-port-not-ready",
+							"67" : "r-fcr-class-f-incompat",
+							"68" : "r-fcr-class-n-incompat",
+							"69" : "r-fcr-invalid-flow-rcvd",
+							"70" : "r-fcr-state-disabled",
+							"71" : "r-fdd-strict-exist",
+							"72" : "r-last-port-disable-msg",
+							"73" : "r-sw-l-port-not-support",
+							"74" : "r-peer-port-in-di-zone",
+							"75" : "r-zone-incompat",
+							"76" : "r-sw-config-l-port-not-support",
+							"77" : "r-sw-port-mirror-configured",
+							"78" : "r-nportlogin-inprogress",
+							"79" : "r-nonpiv",
+							"80" : "r-nomapping",
+							"81" : "r-unknowntype",
+							"82" : "r-nportoffline",
+							"83" : "r-flogifailed",
+							"84" : "r-nportbusy",
+							"85" : "r-noflogi",
+							"86" : "r-noflogiresp",
+							"87" : "r-flogidupalpa",
+							"88" : "r-loopcfg",
+							"89" : "r-noenclicense",
+							"90" : "r-nofiportmapping",
+							"91" : "r-brcdfabconn",
+							"92" : "r-port-reset",
+							"93" : "r-floginport",
+							"94" : "r-fdd-strict-conflict",
+							"95" : "r-fdd-cfg-conflict",
+							"96" : "r-fdd-cfg-conflict-na-neigh",
+							"97" : "r-fcr-insistent-front-did-mismatch",
+							"98" : "r-fcr-fabric-binding-failure",
+							"99" : "r-fcr-non-standard-domain-offset",
+							"100" : "r-area-in-use",
+							"101" : "r-mstr-diff-pg",
+							"102" : "r-mstr-diff-area",
+							"103" : "r-ta-not-supported",
+							"104" : "r-eport-not-supported",
+							"105" : "r-fport-not-supported",
+							"106" : "r-cfg-not-supported",
+							"107" : "r-port-ll-th-exceeded",
+							"108" : "r-port-synl-th-exceeded",
+							"109" : "r-port-pe-th-exceeded",
+							"110" : "f-port-disable-no-trk-lic",
+							"111" : "r-port-inw-th-exceeded",
+							"112" : "r-port-crc-th-exceeded",
+							"113" : "f-port-tr-disable-speed-not-ok",
+							"114" : "r-port-auto-disable",
+							"115" : "r-fcr-export-in-non-base-sw",
+							"116" : "r-base-switch-supports-no-device",
+							"117" : "r-port-trunk-proto-error",
+							"118" : "r-no-area-avail",
+							"119" : "r-cannot-unbind-existing-area",
+							"120" : "r-cannot-use-10bit-area",
+							"121" : "r-authentication-required",
+							"122" : "r-port-lr-th-exceeded",
+							"123" : "r-fcr-export-lf-conflict",
+							"124" : "r-incompat",
+							"125" : "r-did-overlap",
+							"126" : "r-zone-conflict",
+							"127" : "r-eport-seg",
+							"128" : "r-no-license",
+							"129" : "r-platform-db",
+							"130" : "r-sec-incompat",
+							"131" : "r-sec-violation",
+							"132" : "r-ecp-longdist",
+							"133" : "r-dup-wwn",
+							"134" : "r-eport-isolated",
+							"135" : "r-ad",
+							"136" : "r-esc-did-offset",
+							"137" : "r-esc-etiz",
+							"138" : "r-esc-fid",
+							"139" : "r-safe-zone",
+							"140" : "r-vf",
+							"141" : "r-vf-bs-incompat",
+							"142" : "r-pers-pid-on-lport",
+							"143" : "r-pers-pid-portaddr-collision",
+							"144" : "r-pers-pid-port-on-same-area",
+							"145" : "r-pers-pid-port-addr-bnd",
+							"146" : "r-msfr",
+							"147" : "r-sw-halfbw-lic",
+							"148" : "r-1g-mode-incompat",
+							"149" : "r-10g-mode-incompat",
+							"150" : "r-dual-mode-incompat",
+							"151" : "r-implict-plt-service-block",
+							"152" : "r-port-st-th-exceeded",
+							"153" : "r-port-c3txto-th-exceeded",
+							"154" : "r-eport-not-supported-def-sw",
+							"155" : "r-eport-ll-th-exceeded",
+							"156" : "r-eport-synl-th-exceeded",
+							"157" : "r-eport-pe-th-exceeded",
+							"158" : "r-eport-inw-th-exceeded",
+							"159" : "r-eport-crc-th-exceeded",
+							"160" : "r-eport-lr-th-exceeded",
+							"161" : "r-eport-st-th-exceeded",
+							"162" : "r-eport-c3txto-th-exceeded",
+							"163" : "r-fopport-ll-th-exceeded",
+							"164" : "r-fopport-synl-th-exceeded",
+							"165" : "r-fopport-pe-th-exceeded",
+							"166" : "r-fopport-inw-th-exceeded",
+							"167" : "r-fopport-crc-th-exceeded",
+							"168" : "r-fopport-lr-th-exceeded",
+							"169" : "r-fopport-st-th-exceeded",
+							"170" : "r-fopport-c3txto-th-exceeded",
+							"171" : "r-fcuport-ll-th-exceeded",
+							"172" : "r-fcuport-synl-th-exceeded",
+							"173" : "r-fcuport-pe-th-exceeded",
+							"174" : "r-fcuport-inw-th-exceeded",
+							"175" : "r-fcuport-crc-th-exceeded",
+							"176" : "r-fcuport-lr-th-exceeded",
+							"177" : "r-fcuport-st-th-exceeded",
+							"178" : "r-fcuport-c3txto-th-exceeded",
+							"179" : "r-port-no-area-avail-pers-disable",
+							"180" : "r-eport-locked",
+							"181" : "r-enh-tizone",
+							"182" : "r-sw-port-swap-not-supported",
+							"183" : "r-fport-slow-drain-condition",
+							"184" : "r-esc-vlanid",
+							"185" : "r-port-recov-state",
+							"186" : "r-port-auto-disable-losn",
+							"187" : "r-port-auto-disable-losg",
+							"188" : "r-port-auto-disable-ols",
+							"189" : "r-port-auto-disable-nos",
+							"190" : "r-port-auto-disable-lip",
+							"191" : "r-port-compression",
+							"192" : "r-port-encryption",
+							"193" : "r-port-enccomp-res",
+							"194" : "r-port-decommissioned",
+							"195" : "r-port-dportmode",
+							"196" : "r-port-dport-incompat",
+							"197" : "r-port-enc-comp-mismatch",
+							"198" : "r-non-rcs-rem-dom",
+							"199" : "r-port-fips-comp-mismatch",
+							"200" : "r-port-non-fips-comp-mismatch",
+							"201" : "r-port-enc-auth-disabled",
+							"202" : "r-port-disable-on-zeroize",
+							"203" : "r-cfgspeed-not-supported",
+							"204" : "r-fcr-ex-port-not-allowed",
+							"205" : "r-port-duplicate-pwwn",
+							"206" : "r-fcr-trunk-master-sfid-not-set",
+							"207" : "r-nportistrunkmem",
+							"208" : "r-policynotsupported",
+							"209" : "r-no-icl-license",
+							"210" : "r-no-ten-gig-license",
+							"211" : "r-fdd-strict-scc-conflict",
+							"212" : "r-fdd-strict-dcc-conflict",
+							"213" : "r-fdd-strict-fcs-conflict",
+							"214" : "r-fdd-strict-fabwide-conflict",
+							"215" : "r-fdd-strict-pwd-conflict",
+							"216" : "r-fcr-interop-conf",
+							"217" : "r-port-enc-interop-conflict",
+							"218" : "r-port-comp-interop-conflict",
+							"219" : "r-no-port-open-rsp",
+							"220" : "r-no-eicl-license",
+							"221" : "r-eicl-license-limited",
+							"222" : "r-esc-base-sw",
+							"223" : "r-sw-cpu-overload",
+							"224" : "r-no-icl-pod2-license",
+							"225" : "r-port-area-mismatch-pers-disable",
+							"226" : "r-unauthorized-device",
+							"227" : "r-max-flogi-reached",
+							"228" : "r-auth-not-supported-in-switch",
+							"229" : "r-icl-ex-on-non-vf",
+							"230" : "r-user-disabled-reason"
+						},
+						"name" : "SW-MIB::swFCPortDisableReason",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.40",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when an event whose",
+				"level at or below swEventTrapLevel occurs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swEventTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==1) ? 5 : (($v3==2) ? 4 : (($v3==4) ? 2 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'Software event $v1 occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swEventTrap SW-MIB::swEventIndex i 9999 SW-MIB::swEventTimeInfo s EXAMPLE SW-MIB::swEventLevel i 1 SW-MIB::swEventRepeatCount i 9999 SW-MIB::swEventDescr s EXAMPLE SW-MIB::swSsn s EXAMPLE SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swEventTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object identifies the event entry."
+						],
+						"name" : "SW-MIB::swEventIndex",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies the date and time when this",
+							"event occurred, in textual format."
+						],
+						"name" : "SW-MIB::swEventTimeInfo",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the severity level of this",
+							"event entry."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "error",
+							"3" : "warning",
+							"4" : "informational",
+							"5" : "debug"
+						},
+						"name" : "SW-MIB::swEventLevel",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object identifies how many times this particular",
+							"event has occurred."
+						],
+						"name" : "SW-MIB::swEventRepeatCount",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object identifies the textual description of",
+							"the event."
+						],
+						"name" : "SW-MIB::swEventDescr",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.8.5.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "SW-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swFabricWatchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"trap to be sent by Fabric Watch to notify of an event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v8==2) ? 1 : (($v8==1) ? 3 : 2)"
+				},
+				"EventType" : "swFabricWatchTrap",
+				"ExpireTime" : {
+					"eval" : "($v8==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v8==2) ? 0 : (($v8==1) ? 2 : 4)"
+				},
+				"SubNode" : "swVfId:$v11",
+				"Summary" : "Fabric $v11 watch ($v3) state changed to $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swFabricWatchTrap SW-MIB::swFwClassAreaIndex i 1 SW-MIB::swFwThresholdIndex i 9999 SW-MIB::swFwName s EXAMPLE SW-MIB::swFwLabel s EXAMPLE SW-MIB::swFwLastEventVal i 9999 SW-MIB::swFwLastEventTime s EXAMPLE SW-MIB::swFwLastEvent i 1 SW-MIB::swFwLastState i 1 SW-MIB::swFwLastSeverityLevel i 0 SW-MIB::swSsn s EXAMPLE SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swFabricWatchTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object identifies the class type."
+						],
+						"enums" : {
+							"1" : "swFwEnvTemp",
+							"2" : "swFwEnvFan",
+							"3" : "swFwEnvPs",
+							"4" : "swFwTransceiverTemp",
+							"5" : "swFwTransceiverRxp",
+							"6" : "swFwTransceiverTxp",
+							"7" : "swFwTransceiverCurrent",
+							"8" : "swFwPortLink",
+							"9" : "swFwPortSync",
+							"10" : "swFwPortSignal",
+							"11" : "swFwPortPe",
+							"12" : "swFwPortWords",
+							"13" : "swFwPortCrcs",
+							"14" : "swFwPortRXPerf",
+							"15" : "swFwPortTXPerf",
+							"16" : "swFwPortState",
+							"17" : "swFwFabricEd",
+							"18" : "swFwFabricFr",
+							"19" : "swFwFabricDi",
+							"20" : "swFwFabricSc",
+							"21" : "swFwFabricZc",
+							"22" : "swFwFabricFq",
+							"23" : "swFwFabricFl",
+							"24" : "swFwFabricGs",
+							"25" : "swFwEPortLink",
+							"26" : "swFwEPortSync",
+							"27" : "swFwEPortSignal",
+							"28" : "swFwEPortPe",
+							"29" : "swFwEPortWords",
+							"30" : "swFwEPortCrcs",
+							"31" : "swFwEPortRXPerf",
+							"32" : "swFwEPortTXPerf",
+							"33" : "swFwEPortState",
+							"34" : "swFwFCUPortLink",
+							"35" : "swFwFCUPortSync",
+							"36" : "swFwFCUPortSignal",
+							"37" : "swFwFCUPortPe",
+							"38" : "swFwFCUPortWords",
+							"39" : "swFwFCUPortCrcs",
+							"40" : "swFwFCUPortRXPerf",
+							"41" : "swFwFCUPortTXPerf",
+							"42" : "swFwFCUPortState",
+							"43" : "swFwFOPPortLink",
+							"44" : "swFwFOPPortSync",
+							"45" : "swFwFOPPortSignal",
+							"46" : "swFwFOPPortPe",
+							"47" : "swFwFOPPortWords",
+							"48" : "swFwFOPPortCrcs",
+							"49" : "swFwFOPPortRXPerf",
+							"50" : "swFwFOPPortTXPerf",
+							"51" : "swFwFOPPortState",
+							"52" : "swFwPerfALPACRC",
+							"53" : "swFwPerfEToECRC",
+							"54" : "swFwPerfEToERxCnt",
+							"55" : "swFwPerfEToETxCnt",
+							"56" : "swFwPerffltCusDef",
+							"57" : "swFwTransceiverVoltage",
+							"58" : "swFwSecTelnetViolations",
+							"59" : "swFwSecHTTPViolations",
+							"60" : "swFwSecAPIViolations",
+							"61" : "swFwSecRSNMPViolations",
+							"62" : "swFwSecWSNMPViolations",
+							"63" : "swFwSecSESViolations",
+							"64" : "swFwSecMSViolations",
+							"65" : "swFwSecSerialViolations",
+							"66" : "swFwSecFPViolations",
+							"67" : "swFwSecSCCViolations",
+							"68" : "swFwSecDCCViolations",
+							"69" : "swFwSecLoginViolations",
+							"70" : "swFwSecInvalidTS",
+							"71" : "swFwSecInvalidSign",
+							"72" : "swFwSecInvalidCert",
+							"73" : "swFwSecSlapFail",
+							"74" : "swFwSecSlapBadPkt",
+							"75" : "swFwSecTSOutSync",
+							"76" : "swFwSecNoFcs",
+							"77" : "swFwSecIncompDB",
+							"78" : "swFwSecIllegalCmd",
+							"79" : "swFwSAMTotalDownTime",
+							"80" : "swFwSAMTotalUpTime",
+							"81" : "swFwSAMDurationOfOccur",
+							"82" : "swFwSAMFreqOfOccur",
+							"83" : "swFwResourceFlash",
+							"84" : "swFwEPortUtil",
+							"85" : "swFwEPortPktl",
+							"86" : "swFwPortLr",
+							"87" : "swFwEPortLr",
+							"88" : "swFwFCUPortLr",
+							"89" : "swFwFOPPortLr",
+							"90" : "swFwPortC3Discard",
+							"91" : "swFwEPortC3Discard",
+							"92" : "swFwFCUPortC3Discard",
+							"93" : "swFwFOPPortC3Discard",
+							"94" : "swFwVEPortStateChange",
+							"95" : "swFwVEPortUtil",
+							"96" : "swFwVEPortPktLoss",
+							"97" : "swFwEPortTrunkUtil",
+							"98" : "swFwFCUPortTrunkUtil",
+							"99" : "swFwFOPPortTrunkUtil",
+							"100" : "swFwCPUMemUsage",
+							"101" : "filterFmCfg1",
+							"102" : "filterFmCfg2",
+							"103" : "filterFmCfg3",
+							"104" : "filterFmCfg4",
+							"105" : "filterFmCfg5",
+							"106" : "filterFmCfg6",
+							"107" : "filterFmCfg7",
+							"108" : "filterFmCfg8",
+							"109" : "filterFmCfg9",
+							"110" : "filterFmCfg10",
+							"111" : "filterFmCfg11",
+							"112" : "filterFmCfg12",
+							"113" : "filterFmCfg13",
+							"114" : "filterFmCfg14",
+							"115" : "filterFmCfg15",
+							"116" : "filterFmCfg16",
+							"117" : "filterFmCfg17",
+							"118" : "filterFmCfg18",
+							"119" : "filterFmCfg19",
+							"120" : "filterFmCfg20",
+							"121" : "filterFmCfg21",
+							"122" : "filterFmCfg22",
+							"123" : "filterFmCfg23",
+							"124" : "filterFmCfg24",
+							"125" : "filterFmCfg25",
+							"126" : "filterFmCfg26",
+							"127" : "filterFmCfg27",
+							"128" : "filterFmCfg28",
+							"129" : "filterFmCfg29",
+							"130" : "filterFmCfg30",
+							"131" : "filterFmCfg31",
+							"132" : "filterFmCfg32",
+							"133" : "filterFmCfg33",
+							"134" : "filterFmCfg34",
+							"135" : "filterFmCfg35",
+							"136" : "filterFmCfg36",
+							"137" : "filterFmCfg37",
+							"138" : "filterFmCfg38",
+							"139" : "filterFmCfg39",
+							"140" : "filterFmCfg40",
+							"141" : "filterFmCfg41",
+							"142" : "filterFmCfg42",
+							"143" : "filterFmCfg43",
+							"144" : "filterFmCfg44",
+							"145" : "filterFmCfg45",
+							"146" : "filterFmCfg46",
+							"147" : "filterFmCfg47",
+							"148" : "filterFmCfg48",
+							"149" : "filterFmCfg49",
+							"150" : "filterFmCfg50",
+							"151" : "filterFmCfg51",
+							"152" : "swFwPowerOnHours"
+						},
+						"name" : "SW-MIB::swFwClassAreaIndex",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object identifies the element index of",
+							"an threshold."
+						],
+						"name" : "SW-MIB::swFwThresholdIndex",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.3.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object is a name of the threshold."
+						],
+						"name" : "SW-MIB::swFwName",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a label of the threshold."
+						],
+						"name" : "SW-MIB::swFwLabel",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a last event value of the threshold."
+						],
+						"name" : "SW-MIB::swFwLastEventVal",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.3.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object is a last event time of the threshold."
+						],
+						"name" : "SW-MIB::swFwLastEventTime",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object is a last event type of the threshold."
+						],
+						"enums" : {
+							"1" : "started",
+							"2" : "changed",
+							"3" : "exceeded",
+							"4" : "below",
+							"5" : "above",
+							"6" : "inBetween",
+							"7" : "lowBufferCrsd"
+						},
+						"name" : "SW-MIB::swFwLastEvent",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.3.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is a last event state of the threshold."
+						],
+						"enums" : {
+							"1" : "swFwInformative",
+							"2" : "swFwNormal",
+							"3" : "swFwFaulty"
+						},
+						"name" : "SW-MIB::swFwLastState",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.3.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object is a last event severity level of the threshold."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "critical",
+							"2" : "error",
+							"3" : "warning",
+							"4" : "informational",
+							"5" : "debug"
+						},
+						"name" : "SW-MIB::swFwLastSeverityLevel",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.10.3.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "SW-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swTrackChangesTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"trap to be sent for tracking login/logout/config changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swTrackChangesTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "swSsn:$v2",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'Software tracking changed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swTrackChangesTrap SW-MIB::swTrackChangesInfo s EXAMPLE SW-MIB::swSsn s EXAMPLE SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swTrackChangesTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Track changes string. For trap only"
+						],
+						"name" : "SW-MIB::swTrackChangesInfo",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "SW-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swIPv6ChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when an ipv6 address",
+				"status change event occurs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : 2"
+				},
+				"EventType" : "swIPv6ChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==4) ? 4 : 3)"
+				},
+				"SubNode" : "swIPv6Address:$v1",
+				"Summary" : "Ipv6 address $v1 status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swIPv6ChangeTrap SW-MIB::swIPv6Address s EXAMPLE SW-MIB::swIPv6Status i 1",
+			"trap" : {
+				"name" : "SW-MIB::swIPv6ChangeTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"IPV6 address."
+						],
+						"name" : "SW-MIB::swIPv6Address",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.29",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current status of ipv6 address."
+						],
+						"enums" : {
+							"1" : "tentative",
+							"2" : "preferred",
+							"3" : "ipdeprecated",
+							"4" : "inactive"
+						},
+						"name" : "SW-MIB::swIPv6Status",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.30",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swPmgrEventTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when any partition manager",
+				"change happens."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swPmgrEventTrap:$v1",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "swSsn:$v4",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? '$v3' : 'PMGR $v1 event occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swPmgrEventTrap SW-MIB::swPmgrEventType i 0 SW-MIB::swPmgrEventTime s EXAMPLE SW-MIB::swPmgrEventDescr s EXAMPLE SW-MIB::swSsn s EXAMPLE SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swPmgrEventTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates Partition manager event type."
+						],
+						"enums" : {
+							"0" : "create",
+							"1" : "delete",
+							"2" : "moveport",
+							"3" : "fidchange",
+							"4" : "basechange",
+							"6" : "vfstatechange"
+						},
+						"name" : "SW-MIB::swPmgrEventType",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object identifies the date and time when this pmgr",
+							"event occurred, in textual format."
+						],
+						"name" : "SW-MIB::swPmgrEventTime",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object identifies the textual description of",
+							"the pmgr event."
+						],
+						"name" : "SW-MIB::swPmgrEventDescr",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "SW-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swFabricReconfigTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"trap to be sent for tracking fabric reconfiguration"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swFabricReconfigTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Fabric $v1 reconfiguration occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swFabricReconfigTrap SW-MIB::swDomainID i 1",
+			"trap" : {
+				"name" : "SW-MIB::swFabricReconfigTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The current Fibre Channel domain ID of the switch.",
+							"To set a new value, the switch (swAdmStatus) must be in",
+							"offline or testing state."
+						],
+						"name" : "SW-MIB::swDomainID",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swFabricSegmentTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"trap to be sent for tracking segmentation"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swFabricSegmentTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Fabric $v5 segmentation event occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swFabricSegmentTrap SW-MIB::swFCPortIndex i 9999 SW-MIB::swFCPortName s EXAMPLE SW-MIB::swSsn s EXAMPLE SW-MIB::swFCPortFlag b 0 SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swFabricSegmentTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"This object identifies the switch port index.",
+							"Note that the value of a port index is 1 higher than the",
+							"port number labeled on the front panel.",
+							"E.g. port index 1 correspond to port number 0."
+						],
+						"name" : "SW-MIB::swFCPortIndex",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A string indicates the name of the addressed port.",
+							"The names should be persistent across switch reboots.",
+							"Port names do not have to be unique within a switch or",
+							"within a fabric."
+						],
+						"name" : "SW-MIB::swFCPortName",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.36",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The soft serial number of the switch."
+						],
+						"name" : "SW-MIB::swSsn",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A bit map of port status flags which includes the information of port type.",
+							"Currently this will indicate if the port is virtual or physical."
+						],
+						"enums" : {
+							"0" : "physical",
+							"1" : "virtual"
+						},
+						"name" : "SW-MIB::swFCPortFlag",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.38",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swExtTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"THIS IS INTERNAL TRAP"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swExtTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Software EXT event occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swExtTrap ",
+			"trap" : {
+				"name" : "SW-MIB::swExtTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.11"
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever switch state changes to online/offline"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : (($v1==3) ? 3 : 2)"
+				},
+				"EventType" : "swStateChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==3) ? 2 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Switch state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swStateChangeTrap SW-MIB::swOperStatus i 1 SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The current operational status of the switch.",
+							"The states are as follow:",
+							"o online(1) means the switch is accessible by an external",
+							"Fibre Channel port;",
+							"o offline(2) means the switch is not accessible;",
+							"o testing(3) means the switch is in a built-in test mode",
+							"and is not accessible by an external Fibre Channel port;",
+							"o faulty(4) means the switch is not operational."
+						],
+						"enums" : {
+							"1" : "online",
+							"2" : "offline",
+							"3" : "testing",
+							"4" : "faulty"
+						},
+						"name" : "SW-MIB::swOperStatus",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swPortMoveTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when ports are moved from one switch to another"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swPortMoveTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Ports moved from one switch to another"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swPortMoveTrap SW-MIB::swPortList s EXAMPLE SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swPortMoveTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"This string represents the list of ports and",
+							"its WWN when ports moved from one switch to another."
+						],
+						"name" : "SW-MIB::swPortList",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.33",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swBrcdGenericTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when there is any one of the following ",
+				"event occured. ",
+				"1. fabric change",
+				"2. device change",
+				"3. Fapwwn change",
+				"4. fdmi event ",
+				"This Trap is strictly for brocade's internal usage."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swBrcdGenericTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Software brocade generic event occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swBrcdGenericTrap SW-MIB::swBrcdTrapBitMask i 9999",
+			"trap" : {
+				"name" : "SW-MIB::swBrcdGenericTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"Type of notification will be represented by a single bit",
+							"in this variable.",
+							"0x01 - Fabric change event",
+							"0x02 - Device change event",
+							"0x04 - Fapwwn change event",
+							"0x08 - FDMI events."
+						],
+						"name" : "SW-MIB::swBrcdTrapBitMask",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.34",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swDeviceStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever there is a device login or logout"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : (($v2==3) ? 3 : 2)"
+				},
+				"EventType" : "swDeviceStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 3 : 1)"
+				},
+				"SubNode" : "PortID:$v3",
+				"Summary" : "Device status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swDeviceStatusTrap SW-MIB::swFCPortSpecifier s EXAMPLE SW-MIB::swDeviceStatus i 1 SW-MIB::swEndDevicePortID s EXAM SW-MIB::swNsNodeName s EXAMPLEE",
+			"trap" : {
+				"name" : "SW-MIB::swDeviceStatusTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"This string indicates the physical port number of the addressed port.",
+							"The format of the string is: <slot>/port, where 'slot' being",
+							"present only for bladed systems. ",
+							""
+						],
+						"name" : "SW-MIB::swFCPortSpecifier",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.6.2.1.37",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This represents the attached device status.",
+							"The status will change whenever port/node goes to ",
+							"online/offline"
+						],
+						"enums" : {
+							"1" : "login",
+							"2" : "logout",
+							"3" : "unknown"
+						},
+						"name" : "SW-MIB::swDeviceStatus",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.1.36",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object identifies the Fibre Channel port address",
+							"ID of the entry."
+						],
+						"name" : "SW-MIB::swEndDevicePortID",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.21.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object identifies the Fibre Channel World_wide",
+							"Name of the associated node as defined in FC-GS-2."
+						],
+						"name" : "SW-MIB::swNsNodeName",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.7.2.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SW-MIB::swZoneConfigChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent whenever there is change in local zone database."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "swZoneConfigChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Zone configuration changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SW-MIB::swZoneConfigChangeTrap SW-MIB::swVfId i 0",
+			"trap" : {
+				"name" : "SW-MIB::swZoneConfigChangeTrap",
+				"oid" : "1.3.6.1.4.1.1588.2.1.1.1.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The Virtual fabric id."
+						],
+						"name" : "SW-MIB::swVfId",
+						"oid" : "1.3.6.1.4.1.1588.2.1.1.1.2.15",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		}
+	]
+}

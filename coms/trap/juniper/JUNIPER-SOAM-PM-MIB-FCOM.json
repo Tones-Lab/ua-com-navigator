@@ -1,0 +1,536 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201605310000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "JUNIPER-SOAM-PM-MIB::jnxSoamLmSessionStartStopAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"An jnxSoamLmSessionStartStopAlarm notification is sent when the state of",
+				"jnxSoamLmCfgSessionStatus changes.",
+				"The management entity that receives the notification can identify",
+				"the system from the network source address of the notification",
+				"and can identify the individual PM session reporting the start/stop",
+				"by the indices in the OID jnxSoamLmCfgSessionStatus, including",
+				"dot1agCfmMdIndex, dot1agCfmMaIndex, dot1agCfmMepIdentifier, and",
+				"jnxSoamLmCfgIndex.",
+				"An agent is not to generate more than one jnxSoamLmSessionStartStopAlarm",
+				"'notification-event' in a given time interval per LM session as specified",
+				"by the jnxSoamPmNotificationCfgAlarmInterval. A 'notification-event' is",
+				"the transmission of a single notification to a list of notification",
+				"destinations.",
+				"If additional operational state changes occur within the",
+				"jnxSoamPmNotificationCfgAlarmInterval period, then notification",
+				"generation for these changes are be suppressed by the agent until",
+				"the current alarm interval expires. At the end of an alarm interval",
+				"period, one notification-event is generated if any operational",
+				"state changes occurred since the start of the alarm interval period. In",
+				"such a case, another alarm interval period is started right away.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxSoamLmSessionStartStopAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "DestinationMEP:$v3",
+				"Summary" : "SOAM LM session is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-SOAM-PM-MIB::jnxSoamLmSessionStartStopAlarm JUNIPER-SOAM-PM-MIB::jnxSoamLmCfgSessionStatus s EXAMPLE JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDateAndTime s EXAMPLEE JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDestinationMep s EXAMPL",
+			"trap" : {
+				"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamLmSessionStartStopAlarm",
+				"oid" : "1.3.6.1.4.1.2636.3.78.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the current status of the LM session. A value",
+							"of 'active' indicates the current LM session is active, i.e. the current",
+							"time lies between the start time and the stop time, and",
+							"jnxSoamLmCfgEnabled is true. A value of 'notActive' indicates the",
+							"current LM session is not active, i.e. it has not started yet, has",
+							"stopped upon reaching the stop time, or is disabled.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamLmCfgSessionStatus",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.2.1.1.22",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the time and date at the time that",
+							"the notification event is detected, not the time of the notification",
+							"generation.",
+							"",
+							"This object is used only for notifications. The mechanism to set and keep",
+							"current the date and time is not specified.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDateAndTime",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the Destination MEP associated the notification found",
+							"in either the jnxSoamDmCfgTable or jnxSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDestinationMep",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-SOAM-PM-MIB::jnxSoamDmSessionStartStopAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"An jnxSoamDmSessionStartStopAlarm notification is sent when the state of",
+				"jnxSoamDmCfgSessionStatus changes.",
+				"The management entity that receives the notification can identify",
+				"the system from the network source address of the notification",
+				"and can identify the individual PM session reporting the start/stop",
+				"by the indices in the OID jnxSoamDmCfgSessionStatus, including",
+				"dot1agCfmMdIndex, dot1agCfmMaIndex, dot1agCfmMepIdentifier, and",
+				"jnxSoamDmCfgIndex.",
+				"An agent is not to generate more than one jnxSoamDmSessionStartStopAlarm",
+				"'notification-event' in a given time interval per DM session as specified",
+				"by jnxSoamPmNotificationCfgAlarmInterval. A 'notification-event' is the",
+				"transmission of a single notification to a list of notification",
+				"destinations.",
+				"If additional operational state changes occur within the",
+				"jnxSoamPmNotificationCfgAlarmInterval period, then notification generation",
+				"for these changes are suppressed by the agent until the current alarm",
+				"interval expires. At the end of an alarm interval period, one",
+				"notification-event is generated if any operational state changes",
+				"occurred since the start of the alarm interval period. In such a case",
+				"another alarm interval period is started right away.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxSoamDmSessionStartStopAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "DestinationMEP:$v3",
+				"Summary" : "SOAM DM session is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-SOAM-PM-MIB::jnxSoamDmSessionStartStopAlarm JUNIPER-SOAM-PM-MIB::jnxSoamDmCfgSessionStatus s EXAMPLE JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDateAndTime s EXAMPLEE JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDestinationMep s EXAMPL",
+			"trap" : {
+				"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamDmSessionStartStopAlarm",
+				"oid" : "1.3.6.1.4.1.2636.3.78.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the current status of the DM session. A value",
+							"of 'active' indicates the current DM session is active, i.e. the current",
+							"time lies between the start time and the stop time, and",
+							"jnxSoamDmCfgEnabled is true. A value of 'notActive' indicates the",
+							"current DM session is not active, i.e. it has not started yet, has",
+							"stopped upon reaching the stop time, or is disabled.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamDmCfgSessionStatus",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.3.1.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the time and date at the time that",
+							"the notification event is detected, not the time of the notification",
+							"generation.",
+							"",
+							"This object is used only for notifications. The mechanism to set and keep",
+							"current the date and time is not specified.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDateAndTime",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the Destination MEP associated the notification found",
+							"in either the jnxSoamDmCfgTable or jnxSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDestinationMep",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmThresholdCrossingAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"An jnxSoamPmThresholdCrossingAlarm notification is sent if the",
+				"following conditions are met for a particular type.",
+				"For an aboveAlarm five conditions need to be met:",
+				"a) measurement of the parameter is enabled via jnxSoamLmCfgMeasurementEnable",
+				"for a LM crossing or jnxSoamDmCfgMeasurementEnable for a DM crossing;",
+				"and",
+				"b) the parameter threshold is configured in the jnxSoamLmThresholdCfgTable",
+				"or jnxSoamDmThresholdCfgTable; and",
+				"c) the threshold crossing type of bPmThresholdAboveAlarm is enabled;",
+				"and",
+				"d) the measured value of the parameter exceeds the value configured in",
+				"the jnxSoamLmThresholdCfgTable for a LM crossing entry or",
+				"jnxSoamDmThresholdCfgTable for a DM crossing entry for a type of",
+				"bPmThresholdAboveAlarm; and",
+				"e) no previous jnxSoamPmThresholdCrossingAlarm notifications with type",
+				"aboveAlarm have been sent relating to the same threshold in the",
+				"jnxSoamLmThresholdCfgTable or jnxSoamDmThresholdCfgTable and the",
+				"same parameter, during this Measurement Interval.",
+				"For a setAlarm five conditions need to be met:",
+				"a) measurement of the parameter is enabled via jnxSoamLmCfgMeasurementEnable",
+				"for a LM crossing or jnxSoamDmCfgMeasurementEnable for a DM crossing;",
+				"and",
+				"b) the parameter threshold is configured in the jnxSoamLmThresholdCfgTable",
+				"or jnxSoamDmThresholdCfgTable; and",
+				"c) the threshold crossing type of bPmThresholdSetClearAlarm is enabled;",
+				"and",
+				"d) the measured value of the parameter exceeds the value configured in",
+				"the jnxSoamLmThresholdCfgTable for a LM crossing entry or",
+				"jnxSoamDmThresholdCfgTable for a DM crossing entry for a type of",
+				"bPmThresholdSetClearAlarm for the Measurement Interval; and",
+				"e) the previous measured value did not",
+				"exceed the value configured in the jnxSoamLmThresholdCfgTable for",
+				"a LM crossing entry or jnxSoamDmThresholdCfgTable for a DM crossing",
+				"entry for a type of bPmThresholdSetClearAlarm.",
+				"For a clearAlarm five conditions need to be met:",
+				"a) measurement of the parameter is enabled via jnxSoamLmCfgMeasurementEnable",
+				"for a LM crossing or jnxSoamDmCfgMeasurementEnable for a DM crossing;",
+				"and",
+				"b) the parameter threshold is configured in the jnxSoamLmThresholdCfgTable",
+				"or jnxSoamDmThresholdCfgTable; and",
+				"c) the threshold crossing type of bPmThresholdSetClearAlarm is enabled;",
+				"and",
+				"d) the measured value of the parameter did not exceed the value configured",
+				"in the jnxSoamLmThresholdCfgTable for a LM crossing entry or",
+				"jnxSoamDmThresholdCfgTable for a DM crossing entry for a type of",
+				"bPmThresholdSetClearAlarm for the Measurement Interval; and",
+				"e) the previous measured value did",
+				"exceed the value configured in the jnxSoamLmThresholdCfgTable for",
+				"a LM crossing entry or jnxSoamDmThresholdCfgTable for a DM crossing",
+				"entry for a type of bPmThresholdSetClearAlarm.",
+				"In the case of thresholds applied to a maximum or average measurement",
+				"counter, the previous measured value is the value of the counter at the",
+				"end of the preceding Measurement Interval. In the case of thresholds",
+				"applied to the last measured value, it is the previous measured value.",
+				"The management entity that receives the notification can identify",
+				"the system from the network source address of the notification",
+				"and can identify the LM or DM session reporting the threshold",
+				"crossing by the indices in the jnxSoamPmNotificationCfgThresholdId object",
+				"including dot1agCfmMdIndex, dot1agCfmMaIndex, dot1agCfmMepIdentifier",
+				"and the jnxSoamLmCfgIndex or jnxSoamDmCfgIndex.",
+				"An agent is not to generate more than one jnxSoamLmThresholdCrossingAlarm",
+				"'notification-event' of a given type per LM or DM session as specified",
+				"by jnxSoamPmNotificationCfgAlarmInterval. A 'notification-event' is the",
+				"transmission of a single notification to a list of notification",
+				"destinations.",
+				"If additional threshold crossing events occur within the",
+				"jnxSoamPmNotificationCfgAlarmInterval period, then notification",
+				"generation for these changes are suppressed by the agent until",
+				"the current alarm interval expires. At the end of an alarm interval",
+				"period, one notification-event is generated if any threshold",
+				"crossing events occurred since the start of the alarm interval period.",
+				"In such a case, another alarm interval period is started right away.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : ($v1==3) ? 1 : 3"
+				},
+				"EventType" : "jnxSoamPmThresholdCrossingAlarm",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : ($v1==3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 4 : ($v1==3) ? 0 : 2"
+				},
+				"SubNode" : "DestinationMEP:$v7",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'SOAM PM threshold exceeded' : (($v1==2) ? 'SOAM PM threshold is set to $v3' : 'SOAM PM threshold is normal')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-SOAM-PM-MIB::jnxSoamPmThresholdCrossingAlarm JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjCrossingType i 1 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdId o 1.3.6.1.4.1.8072.2.1.1 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdConfig u 9999 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdValue u 9999 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjSuspect i 1 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDateAndTime s EXAMPLEE JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDestinationMep s EXAMPL",
+			"trap" : {
+				"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmThresholdCrossingAlarm",
+				"oid" : "1.3.6.1.4.1.2636.3.78.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The Notification Crossing Type of the object that caused the generation",
+							"of the notification from the jnxSoamLmThresholdEntry or",
+							"jnxSoamDmThresholdEntry.",
+							"",
+							"aboveAlarm(1) indicates that the crossing type alarm was an above",
+							"threshold",
+							"",
+							"setAlarm(2) indicates that the crossing type alarm was a set",
+							"threshold",
+							"",
+							"clearAlarm(3) indicates that the crossing type alarm was a clear",
+							"threshold",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"enums" : {
+							"1" : "aboveAlarm",
+							"2" : "setAlarm",
+							"3" : "clearAlarm"
+						},
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjCrossingType",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Object Identifier of the object that caused the generation of the",
+							"notification from the jnxSoamLmThresholdEntry or jnxSoamDmThresholdEntry.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdId",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The configured threshold value of the object that caused the generation",
+							"of the notification.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdConfig",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The measured value of the object at the time of the generation of the",
+							"Notification, from the jnxSoamLmMeasuredStatsTable",
+							"jnxSoamLmCurrentStatsTable",
+							"jnxSoamDmMeasuredStatsTable or jnxSoamDmCurrentStatsTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdValue",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The suspect flag for the current Measurement Interval in which the",
+							"notification was generated from the jnxSoamLmCurrentStatsTable",
+							"or jnxSoamDmCurrentStatsTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjSuspect",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the time and date at the time that",
+							"the notification event is detected, not the time of the notification",
+							"generation.",
+							"",
+							"This object is used only for notifications. The mechanism to set and keep",
+							"current the date and time is not specified.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDateAndTime",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The MAC address of the Destination MEP associated the notification found",
+							"in either the jnxSoamDmCfgTable or jnxSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDestinationMep",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmThresholdFlapAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				" The jnxSoamPmThresholdFlapAlarm is sent when the CFM Threshold Flap ",
+				"Notification feature is enabled which would dampen the ",
+				"jnxSoamPmThresholdCrossingAlarm sent to NMS. The jnxSoamPmThresholdFlapAlarm",
+				"gives details about Flaps occured during the time interval. The ",
+				"jnxSoamPmThresholdFlapAlarm is sent for the follwing below conditions",
+				"a) Trap is sent if one flap sequence has occured",
+				"b) Trap is sent if threshold or timer changes happens.",
+				"c) Trap is sent when finite iterations counts expires.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 2 : ($v6==3) ? 1 : 3"
+				},
+				"EventType" : "jnxSoamPmThresholdCrossingAlarm",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 86400 : ($v6==3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 4 : ($v6==3) ? 0 : 2"
+				},
+				"SubNode" : "DestinationMEP:$v7",
+				"Summary" : {
+					"eval" : "($v6==1) ? 'SOAM PM threshold exceeded; Total flaps: $v4' : (($v6==2) ? 'SOAM PM threshold is set to $v2; Total flaps: $v4' : 'SOAM PM threshold is normal; Total flaps: $v4')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-SOAM-PM-MIB::jnxSoamPmThresholdFlapAlarm JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdId o 1.3.6.1.4.1.8072.2.1.1 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdConfig u 9999 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdLastValue u 9999 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationTotalFlaps u 9999 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationAccTotalFlaps u 9999 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjCurrentState i 1 JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDestinationMep s EXAMPL",
+			"trap" : {
+				"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmThresholdFlapAlarm",
+				"oid" : "1.3.6.1.4.1.2636.3.78.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The Object Identifier of the object that caused the generation of the",
+							"notification from the jnxSoamLmThresholdEntry or jnxSoamDmThresholdEntry.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdId",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The configured threshold value of the object that caused the generation",
+							"of the notification.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdConfig",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The measured value of the object at the time of the generation of the",
+							"last Notification during the flap trap timer interval.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjThresholdLastValue",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.11",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The measured value of total number of flaps occured during the",
+							"flap trap timer itnerval.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationTotalFlaps",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The measured value of total number of accumulated flaps occured during the",
+							"flap trap timer itnerval.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationAccTotalFlaps",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The Current Notification Crossing Type of the ",
+							"object that caused the generation",
+							"of the notification at the end of timer interval ",
+							"from the jnxSoamLmThresholdEntry or",
+							"jnxSoamDmThresholdEntry.",
+							"",
+							"aboveAlarm(1) indicates that the crossing type alarm was an above",
+							"threshold",
+							"",
+							"setAlarm(2) indicates that the crossing type alarm was a set",
+							"threshold",
+							"",
+							"clearAlarm(3) indicates that the crossing type alarm was a clear",
+							"threshold",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"enums" : {
+							"1" : "aboveAlarm",
+							"2" : "setAlarm",
+							"3" : "clearAlarm"
+						},
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjCurrentState",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The MAC address of the Destination MEP associated the notification found",
+							"in either the jnxSoamDmCfgTable or jnxSoamLmCfgTable.",
+							"",
+							"This object is only used for the notification.",
+							""
+						],
+						"name" : "JUNIPER-SOAM-PM-MIB::jnxSoamPmNotificationObjDestinationMep",
+						"oid" : "1.3.6.1.4.1.2636.3.78.1.5.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

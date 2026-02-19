@@ -1,0 +1,2155 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200504080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevInitTLVUnknownTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event due to detection of unknown TLV during the TLV ",
+				"parsing process. The values of docsDevEvLevel, docsDevId, ",
+				"and docsDevEvText are from the entry which logs this event ",
+				"in the docsDevEventTable. The value of ",
+				"cabhPsDevWanManMacAddress indicates the WAN-Man MAC address",
+				"of the PS. This part of the information is uniform across ",
+				"all PS Traps. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "cabhPsDevWanManMacAddress:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevInitTLVUnknownTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevInitTLVUnknownTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevInitTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This inform is issued to confirm the successful completion",
+				"of the CableHome provisioning process."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cabhPsDevWanManMacAddress:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevInitTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevProvConfigFile s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevProvConfigTLVProcessed i 9999 CABH-PS-DEV-MIB::cabhPsDevProvConfigTLVRejected i 9999",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevInitTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The URL of the TFTP host for downloading provisioning and",
+							"configuration parameters to this device. Returns NULL if",
+							"the server address is unknown."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevProvConfigFile",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of TLVs processed in config file."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevProvConfigTLVProcessed",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Number of TLVs rejected in config file."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevProvConfigTLVRejected",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.2.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevInitRetryTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report a failure happened during the ",
+				"initialization process and was detected in the PS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "cabhPsDevWanManMacAddress:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevInitRetryTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevInitRetryTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevDHCPFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report the failure of a DHCP server. The",
+				"value of cabhCdpServerDhcpAddressis the IP address of",
+				"the DHCP server. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "cabhCdpServerDhcpAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevDHCPFailTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE CABH-CDP-MIB::cabhCdpServerDhcpAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevDHCPFailTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this MIB object is always the",
+							"same as the value of the cabhCdpServerRouter",
+							"object. The type of this address is specified",
+							"by cabhCdpServerDhcpAddressType.",
+							"The PS MUST provide the value of this MIB",
+							"object in the Option 54 (DHCP server identifier)",
+							"field of DHCP OFFER and ACK messages",
+							"sent to a LAN IP device."
+						],
+						"name" : "CABH-CDP-MIB::cabhCdpServerDhcpAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.4.1.3.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevSwUpgradeInitTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report a software upgrade initiated event. ",
+				"The values of docsDevSwFilename, and docsDevSwServer ",
+				"indicate the software image name and the IP address of the",
+				"server from which the image was downloaded. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "cabhPsDevSwUpgrade",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "docsDevSwServer:$v6",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevSwUpgradeInitTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE DOCS-CABLE-DEVICE-MIB::docsDevSwFilename s EXAMPLE DOCS-CABLE-DEVICE-MIB::docsDevSwServer a 192.0.2.1",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevSwUpgradeInitTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The filename of the software image to be downloaded via",
+							"TFTP, or the abs_path (as defined in RFC 2616) of the",
+							"software image to be downloaded via HTTP.",
+							"",
+							"Unless set via SNMP, this is the filename or abs_path",
+							"specified by the provisioning server during the boot",
+							"process that corresponds to the software version that",
+							"is desired for this device.",
+							"",
+							"If unknown, the value of this object is the zero-length",
+							"string."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevSwFilename",
+						"oid" : "1.3.6.1.2.1.69.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The address of the TFTP server used for software",
+							"upgrades. If the TFTP server is unknown or is a",
+							"non-IPv4 address, return 0.0.0.0.",
+							"",
+							"This object is deprecated. See docsDevSwServerAddress",
+							"for its replacement. This object will have its value",
+							"modified, given a valid SET to docsDevSwServerAddress."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevSwServer",
+						"oid" : "1.3.6.1.2.1.69.1.3.1",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevSwUpgradeFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report the failure of a software upgrade ",
+				"attempt. The values of docsDevSwFilename, and ",
+				"docsDevSwServer indicate the software image name and the IP",
+				"address of the server from which the image was downloaded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "cabhPsDevSwUpgrade",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "docsDevSwServer:$v6",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevSwUpgradeFailTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE DOCS-CABLE-DEVICE-MIB::docsDevSwFilename s EXAMPLE DOCS-CABLE-DEVICE-MIB::docsDevSwServer a 192.0.2.1",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevSwUpgradeFailTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The filename of the software image to be downloaded via",
+							"TFTP, or the abs_path (as defined in RFC 2616) of the",
+							"software image to be downloaded via HTTP.",
+							"",
+							"Unless set via SNMP, this is the filename or abs_path",
+							"specified by the provisioning server during the boot",
+							"process that corresponds to the software version that",
+							"is desired for this device.",
+							"",
+							"If unknown, the value of this object is the zero-length",
+							"string."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevSwFilename",
+						"oid" : "1.3.6.1.2.1.69.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The address of the TFTP server used for software",
+							"upgrades. If the TFTP server is unknown or is a",
+							"non-IPv4 address, return 0.0.0.0.",
+							"",
+							"This object is deprecated. See docsDevSwServerAddress",
+							"for its replacement. This object will have its value",
+							"modified, given a valid SET to docsDevSwServerAddress."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevSwServer",
+						"oid" : "1.3.6.1.2.1.69.1.3.1",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevSwUpgradeSuccessTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report the Software upgrade success event.",
+				"The values of docsDevSwFilename, and docsDevSwServer ",
+				"indicate the software image name and the IP address of the",
+				"server from which the image was downloaded. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cabhPsDevSwUpgrade",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "docsDevSwServer:$v6",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevSwUpgradeSuccessTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE DOCS-CABLE-DEVICE-MIB::docsDevSwFilename s EXAMPLE DOCS-CABLE-DEVICE-MIB::docsDevSwServer a 192.0.2.1",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevSwUpgradeSuccessTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The filename of the software image to be downloaded via",
+							"TFTP, or the abs_path (as defined in RFC 2616) of the",
+							"software image to be downloaded via HTTP.",
+							"",
+							"Unless set via SNMP, this is the filename or abs_path",
+							"specified by the provisioning server during the boot",
+							"process that corresponds to the software version that",
+							"is desired for this device.",
+							"",
+							"If unknown, the value of this object is the zero-length",
+							"string."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevSwFilename",
+						"oid" : "1.3.6.1.2.1.69.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The address of the TFTP server used for software",
+							"upgrades. If the TFTP server is unknown or is a",
+							"non-IPv4 address, return 0.0.0.0.",
+							"",
+							"This object is deprecated. See docsDevSwServerAddress",
+							"for its replacement. This object will have its value",
+							"modified, given a valid SET to docsDevSwServerAddress."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevSwServer",
+						"oid" : "1.3.6.1.2.1.69.1.3.1",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevSwUpgradeCVCFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report the failure of the verification of code",
+				"file happened during a secure software upgrade attempt. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevSwUpgradeCVCFailTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevSwUpgradeCVCFailTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevTODFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report the failure of a time of day server. ",
+				"The value of cabhPsDevTimeServerAddr indicates the server ",
+				"IP address. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "cabhPsDevTimeServerAddr:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevTODFailTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevTimeServerAddr s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevTODFailTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The IP address of the Time server (RFC-868). Returns ",
+							"0.0.0.0 if the time server IP address is unknown."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevTimeServerAddr",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.2.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevCdpWanDataIpTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report the failure of PS to obtain all",
+				"needed WAN-Data Ip Addresses.",
+				"cabhCdpWanDataAddrClientId indicates the ClientId for",
+				"which the failure occurred. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "cabhCdpWanDataAddrClientId:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevCdpWanDataIpTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-CDP-MIB::cabhCdpWanDataAddrClientId s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevCdpWanDataIpTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique WAN-Data ClientID used when attempting",
+							"to acquire a WAN-Data IP Address via DHCP."
+						],
+						"name" : "CABH-CDP-MIB::cabhCdpWanDataAddrClientId",
+						"oid" : "1.3.6.1.4.1.4491.2.4.4.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevCdpThresholdTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report that the LAN-Trans address assignment ",
+				"threshold has been exceeded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevCdpThresholdTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE CABH-CDP-MIB::cabhCdpLanTransThreshold i 9999",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevCdpThresholdTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The threshold number of LAN-Trans IP addresses allocated",
+							"or assigned above which the PS generates an alarm",
+							"condition. Whenever an attempt is made to allocate a",
+							"LAN-Trans IP address when cabhCdpLanTransCurCount is",
+							"greater than or equal to cabhCdpLanTransThreshold, an",
+							"event is generated. A value of 0 indicates that the CDP",
+							"sets the threshold at the highest number of addresses in",
+							"the LAN address pool."
+						],
+						"name" : "CABH-CDP-MIB::cabhCdpLanTransThreshold",
+						"oid" : "1.3.6.1.4.1.4491.2.4.4.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevCspTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"To report an event with the CableHome Security Portal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevCspTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevCspTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevCapTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"To report an event with the CableHome Address Portal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevCapTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevCapTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevCtpTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"To report an event with the CableHome Test Portal."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevCtpTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevCtpTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevProvEnrollTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is issued to initiate the CableHome ",
+				"provisioning process for SNMP Provisioning Mode.",
+				"REFERENCE",
+				"CableHome 1.1 Specification, ",
+				"13.4 Provisioning the PS for Management:",
+				"SNMP Provisioning Mode."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cabhPsDevTypeIdentifier:$v3",
+				"Summary" : "Initiated CableHome provisioning process for SNMP mode. HW version: $v1 ; SW version: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevProvEnrollTrap CABH-PS-DEV-MIB::cabhPsDevHardwareVersion s EXAMPLE DOCS-CABLE-DEVICE-MIB::docsDevSwCurrentVers s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevTypeIdentifier s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevProvEnrollTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"The manufacturer's hardware version for this PS. This ",
+							"parameter is manufacturer provided and is stored in ",
+							"non-volatile memory."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevHardwareVersion",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The software version currently operating in this device.",
+							"This string's syntax is that used by the",
+							"individual vendor to identify software versions.",
+							"For a CM, this string will describe the current",
+							"software load. For a CMTS, this object SHOULD contain",
+							"a human-readable representation either of the vendor",
+							"specific designation of the software for the chassis",
+							"or of the software for the control processor. If",
+							"neither of these is applicable, the value MUST be a",
+							"zero-length string."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevSwCurrentVers",
+						"oid" : "1.3.6.1.2.1.69.1.3.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is a copy of the device type identifier used in the",
+							"DHCP option 60 exchanged between the PS and the DHCP",
+							"server."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevTypeIdentifier",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevCdpLanIpPoolTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event to report that the pool of IP addresses for LAN",
+				"clients, as defined by cabh CdpLanPoolStart and ",
+				"cabhCdpLanPoolEnd, is exhausted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevCdpLanIpPoolTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress s EXAMPLE CABH-CDP-MIB::cabhCdpLanTransCurCount u 9999",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevCdpLanIpPoolTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The PS WAN-Man MAC address. This is the PS hardware ",
+							"address to be used by the CDC to uniquely identify",
+							"the PS to the cable data network DHCP server for ",
+							"the acquisition of an IP address to be used for ",
+							"management messaging between the cable network ",
+							"NMS and the CMP."
+						],
+						"name" : "CABH-PS-DEV-MIB::cabhPsDevWanManMacAddress",
+						"oid" : "1.3.6.1.4.1.4491.2.4.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current number of active leases in the",
+							"cabhCdpLanAddrTable (the number of row entries in the",
+							"table that have a cabhCdpLanAddrMethod value of",
+							"reservationActive(2) or dynamicActive (4)). This count",
+							"does not include expired leases or reservations not",
+							"associated with a current lease."
+						],
+						"name" : "CABH-CDP-MIB::cabhCdpLanTransCurCount",
+						"oid" : "1.3.6.1.4.1.4491.2.4.4.1.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CABH-PS-DEV-MIB::cabhPsDevUpnpMultiplePHTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"To report that more than one active UPnP Policy Holders",
+				"have been detected.",
+				"This notification is triggered in the case the PS ",
+				"has cabhPsDevUpnpEnabled true."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 2 : 3"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2 || $v1==3 || $v1==4 || $v1==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CABH-PS-DEV-MIB::cabhPsDevUpnpMultiplePHTrap DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE CABH-QOS2-MIB::cabhQos2NumActivePolicyHolder u 0 CABH-QOS2-MIB::cabhQos2PolicyHolderEnabled i 1 CABH-QOS2-MIB::cabhQos2PolicyAdmissionControl i 1",
+			"trap" : {
+				"name" : "CABH-PS-DEV-MIB::cabhPsDevUpnpMultiplePHTrap",
+				"oid" : "1.3.6.1.4.1.4491.2.4.1.2.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the number of active policy holders the PS",
+							"have discovered in the LAN. This object includes the PS",
+							"Policy Holder if active."
+						],
+						"name" : "CABH-QOS2-MIB::cabhQos2NumActivePolicyHolder",
+						"oid" : "1.3.6.1.4.1.4491.2.4.8.1.3.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The value true indicates that the Policy Holder entity is",
+							"active and advertised in PS UPnP standard discovery ",
+							"mechanisms; false indicates it is disabled."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CABH-QOS2-MIB::cabhQos2PolicyHolderEnabled",
+						"oid" : "1.3.6.1.4.1.4491.2.4.8.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates if the QoS Policy Admission Control",
+							"is enabled or disabled for all the traffic requests."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CABH-QOS2-MIB::cabhQos2PolicyAdmissionControl",
+						"oid" : "1.3.6.1.4.1.4491.2.4.8.1.3.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

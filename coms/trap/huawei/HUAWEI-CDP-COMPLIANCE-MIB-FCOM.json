@@ -1,0 +1,69 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200905050000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-CDP-COMPLIANCE-MIB::hwCdpComplianceRemTablesChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A hwCdpComplianceRemTablesChange notification is sent when the value",
+				"of hwCdpComplianceStatsRemTableLastChangeTime changes. It can be",
+				"utilized by an NMS to trigger LLDP remote systems table",
+				"maintenance polls.",
+				"Note that transmission of hwCdpComplianceRemTablesChange",
+				"notifications are throttled by the agent, as specified by the",
+				"'hwCdpComplianceNotificationInterval' object."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwCdpComplianceRemTablesChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "CDP compliance remote table changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-CDP-COMPLIANCE-MIB::hwCdpComplianceRemTablesChange HUAWEI-CDP-COMPLIANCE-MIB::hwCdpComplianceStatsRemTablesLastChangeTime t 31536000 HUAWEI-CDP-COMPLIANCE-MIB::hwCdpComplianceStatsRemTablesAgeouts u 9999",
+			"trap" : {
+				"name" : "HUAWEI-CDP-COMPLIANCE-MIB::hwCdpComplianceRemTablesChange",
+				"oid" : "1.3.6.1.4.1.2011.5.25.198.2.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sysUpTime object (defined in IETF RFC 3418)",
+							"at the time an entry is created, modified, or deleted in the",
+							"in tables associated with the hwCdpComplianceRemoteSystemData ",
+							"objects associated with remote systems.",
+							"An NMS can use this object to reduce polling of the",
+							"hwCdpComplianceRemoteSystemData objects."
+						],
+						"name" : "HUAWEI-CDP-COMPLIANCE-MIB::hwCdpComplianceStatsRemTablesLastChangeTime",
+						"oid" : "1.3.6.1.4.1.2011.5.25.198.1.2.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The number of times the complete set of information",
+							"advertised by a particular MSAP has been deleted from tables",
+							"contained in hwCdpComplianceRemoteSystemsData ",
+							"because the information timeliness interval has expired.",
+							"This counter should be incremented only once when the complete",
+							"set of information is completely invalidated (aged out)",
+							"from all related tables. Partial aging, similar to deletion",
+							"case, is not allowed, and thus, should not change the value",
+							"of this counter."
+						],
+						"name" : "HUAWEI-CDP-COMPLIANCE-MIB::hwCdpComplianceStatsRemTablesAgeouts",
+						"oid" : "1.3.6.1.4.1.2011.5.25.198.1.2.2",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

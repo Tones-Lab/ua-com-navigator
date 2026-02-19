@@ -1,0 +1,268 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201603080000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CIENA-CES-PM::cienaCesPmAlertTcaNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent when the device reports an Alert",
+				"Threshold Crossing Alert (TCA) event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v12==3) ? 2 : (($v12==2) ? 1 : 3)"
+				},
+				"EventType" : "cienaCesPmAlertTcaNotification",
+				"ExpireTime" : {
+					"eval" : "($v12==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==3) ? 5 : (($v1==4) ? 4 : (($v1==5 || $v1==6) ? 3 : (($v1==0) ? 1 : 2))))"
+				},
+				"SubNode" : "cienaCesPmInstanceName:$v2",
+				"Summary" : {
+					"eval" : "($v12==2) ? 'PM TCA cleared on $v4 interface $v5' : (($v12==3) ? 'PM TCA occurred on $v4 interface $v5' : 'PM TCA event on $v4 interface $v5, state is $v12')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD CIENA-CES-PM::cienaCesPmAlertTcaNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-PM::cienaCesPmInstanceName s EXAMPLE1 CIENA-CES-PM::cienaCesPmInstanceInterfaceType i 1 CIENA-CES-PM::cienaCesPmInstanceInterfaceName s EXAMPLE CIENA-CES-PM::cienaCesPmAlertTcaLastTcaUnits i 1 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaBasisValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaBoundaryValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkType i 1 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkStats b 0 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaState i 3",
+				"$SNMPTRAPCMD CIENA-CES-PM::cienaCesPmAlertTcaNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-PM::cienaCesPmInstanceName s EXAMPLE1 CIENA-CES-PM::cienaCesPmInstanceInterfaceType i 1 CIENA-CES-PM::cienaCesPmInstanceInterfaceName s EXAMPLE CIENA-CES-PM::cienaCesPmAlertTcaLastTcaUnits i 1 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaBasisValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaBoundaryValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkType i 1 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkStats b 0 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaState i 2",
+				"$SNMPTRAPCMD CIENA-CES-PM::cienaCesPmAlertTcaNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 9 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-PM::cienaCesPmInstanceName s EXAMPLE2 CIENA-CES-PM::cienaCesPmInstanceInterfaceType i 1 CIENA-CES-PM::cienaCesPmInstanceInterfaceName s EXAMPLE CIENA-CES-PM::cienaCesPmAlertTcaLastTcaUnits i 1 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaBasisValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaBoundaryValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkType i 1 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkStats b 0 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkValue C 9999 CIENA-CES-PM::cienaCesPmAlertTcaLastTcaState i 1"
+			],
+			"trap" : {
+				"name" : "CIENA-CES-PM::cienaCesPmAlertTcaNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.40.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name for the PM instance."
+						],
+						"name" : "CIENA-CES-PM::cienaCesPmInstanceName",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.2.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Interface type associated with the PM instance."
+						],
+						"enums" : {
+							"1" : "port",
+							"2" : "subport",
+							"3" : "pbttransit",
+							"4" : "pbtservice",
+							"5" : "datasource",
+							"6" : "igmpvs",
+							"7" : "accessflow",
+							"8" : "mplsVc",
+							"9" : "qosflow",
+							"10" : "queueGroupInstance",
+							"11" : "lineModule",
+							"12" : "mplsTransitLsp",
+							"13" : "tdmPort",
+							"14" : "tdmVc",
+							"15" : "tpStaticTransitUnidir",
+							"16" : "tpStaticTransitCorout",
+							"17" : "ptp",
+							"18" : "otu",
+							"19" : "odu",
+							"20" : "tpRsvpIngressCorout",
+							"99" : "unknown"
+						},
+						"name" : "CIENA-CES-PM::cienaCesPmInstanceInterfaceType",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.2.2.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Interface name associated with the PM instance."
+						],
+						"name" : "CIENA-CES-PM::cienaCesPmInstanceInterfaceName",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.2.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of cienaCesPmAlertTcaUnits that was in use during",
+							"the last Alert TCA for the PM instance."
+						],
+						"enums" : {
+							"1" : "unspecified",
+							"2" : "bitsPerSecond"
+						},
+						"name" : "CIENA-CES-PM::cienaCesPmAlertTcaLastTcaUnits",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.3.4.1.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The alert basis value that was in place when the last Alert",
+							"TCA event occurred. This refers to the value of",
+							"cienaCesPmAlertTcaBasis when the last Alert TCA occurred."
+						],
+						"name" : "CIENA-CES-PM::cienaCesPmAlertTcaLastTcaBasisValue",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.3.4.1.1.23",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The threshold boundary value which was reached or exceeded",
+							"causing the last Alert TCA. This refers to the value of",
+							"cienaCesPmAlertTcaBoundaryValue when the last Alert TCA",
+							"occurred."
+						],
+						"name" : "CIENA-CES-PM::cienaCesPmAlertTcaLastTcaBoundaryValue",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.3.4.1.1.26",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The type of watermark that was used in the logic that caused",
+							"the last Alert TCA event for the PM instance. This refers to",
+							"the watermark value reported by the",
+							"cienaCesPmAlertTcaLastTcaWatermarkValue object."
+						],
+						"enums" : {
+							"1" : "unspecified",
+							"2" : "high"
+						},
+						"name" : "CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkType",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.3.4.1.1.28",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The statistic(s) which were used by the Alert TCA feature to",
+							"establish the watermark value identified by the",
+							"cienaCesPmAlertTcaLastTcaWatermarkValue object. This refers",
+							"to the value of cienaCesPmAlertTcaHighWatermarkStats when the",
+							"Alert TCA occurred."
+						],
+						"enums" : {
+							"0" : "statisticSubIdentifier0",
+							"1" : "statisticSubIdentifier1",
+							"2" : "statisticSubIdentifier2",
+							"3" : "statisticSubIdentifier3",
+							"4" : "statisticSubIdentifier4",
+							"5" : "statisticSubIdentifier5",
+							"6" : "statisticSubIdentifier6",
+							"7" : "statisticSubIdentifier7",
+							"8" : "statisticSubIdentifier8",
+							"9" : "statisticSubIdentifier9",
+							"10" : "statisticSubIdentifier10",
+							"11" : "statisticSubIdentifier11",
+							"12" : "statisticSubIdentifier12",
+							"13" : "statisticSubIdentifier13",
+							"14" : "statisticSubIdentifier14",
+							"15" : "statisticSubIdentifier15",
+							"16" : "statisticSubIdentifier16",
+							"17" : "statisticSubIdentifier17",
+							"18" : "statisticSubIdentifier18",
+							"19" : "statisticSubIdentifier19",
+							"20" : "statisticSubIdentifier20",
+							"21" : "statisticSubIdentifier21",
+							"22" : "statisticSubIdentifier22",
+							"23" : "statisticSubIdentifier23",
+							"24" : "statisticSubIdentifier24",
+							"25" : "statisticSubIdentifier25",
+							"26" : "statisticSubIdentifier26",
+							"27" : "statisticSubIdentifier27",
+							"28" : "statisticSubIdentifier28",
+							"29" : "statisticSubIdentifier29",
+							"30" : "statisticSubIdentifier30",
+							"31" : "statisticSubIdentifier31",
+							"32" : "statisticSubIdentifier32",
+							"33" : "statisticSubIdentifier33",
+							"34" : "statisticSubIdentifier34",
+							"35" : "statisticSubIdentifier35",
+							"36" : "statisticSubIdentifier36",
+							"37" : "statisticSubIdentifier37",
+							"38" : "statisticSubIdentifier38",
+							"39" : "statisticSubIdentifier39",
+							"40" : "statisticSubIdentifier40",
+							"41" : "statisticSubIdentifier41",
+							"42" : "statisticSubIdentifier42",
+							"43" : "statisticSubIdentifier43",
+							"44" : "statisticSubIdentifier44",
+							"45" : "statisticSubIdentifier45",
+							"46" : "statisticSubIdentifier46",
+							"47" : "statisticSubIdentifier47",
+							"48" : "statisticSubIdentifier48",
+							"49" : "statisticSubIdentifier49",
+							"50" : "statisticSubIdentifier50"
+						},
+						"name" : "CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkStats",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.3.4.1.1.29",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"The watermark value that was used in the logic that caused the",
+							"last Alert TCA event for the PM instance. This refers to the",
+							"value of cienaCesPmAlertTcaHighWatermarkValue when the last",
+							"Alert TCA occurred."
+						],
+						"name" : "CIENA-CES-PM::cienaCesPmAlertTcaLastTcaWatermarkValue",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.3.4.1.1.30",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The alert state that was in place during the last Alert TCA.",
+							"Alert TCA events occur whenever there are changes to the Alert",
+							"TCA state of the PM Instance. This object indicates whether",
+							"the last Alert TCA represented the PM instance having entered",
+							"the Alert TCA state by indicating a value of alert. This",
+							"object indicates whether the last Alert TCA represented the PM",
+							"instance having exited the Alert TCA state by indicating a",
+							"value of normal."
+						],
+						"enums" : {
+							"1" : "unspecified",
+							"2" : "normal",
+							"3" : "alert"
+						},
+						"name" : "CIENA-CES-PM::cienaCesPmAlertTcaLastTcaState",
+						"oid" : "1.3.6.1.4.1.1271.2.3.1.3.4.1.1.31",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

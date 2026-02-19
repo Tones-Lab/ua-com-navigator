@@ -1,0 +1,116 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200205141520Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "USR-FR-EXT-MIB::usrfrExtDLCMIStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap indicates that the indicated Data Link Layer",
+				"has changed state. It has either been created or invalidated",
+				"or has toggled between the active and inactive states. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 1 : (($v1 == 2) ? 3 : 2)"
+				},
+				"EventType" : "usrfrExtDLCMIStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 3600 : (($v1 == 2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 0 : (($v1 == 2) ? 2 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Data link layer state changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD USR-FR-EXT-MIB::usrfrExtDLCMIStatusChange USR-FR-EXT-MIB::usrfrExtDlcmiOperStatus i 1",
+			"trap" : {
+				"name" : "USR-FR-EXT-MIB::usrfrExtDLCMIStatusChange",
+				"oid" : "1.3.6.1.4.1.429.4.64.7.1",
+				"variables" : [
+					{
+						"description" : [
+							"This variable indicates the operational status of ",
+							"the Frame Relay link. The Status is determined by a ",
+							"success or failure of the LMI message exchange with",
+							"the Frame Relay switch, the WAN Interface state and ",
+							"Administrator Link State."
+						],
+						"enums" : {
+							"1" : "ready",
+							"2" : "waitForDriver",
+							"3" : "recovery",
+							"4" : "down",
+							"5" : "disabled"
+						},
+						"name" : "USR-FR-EXT-MIB::usrfrExtDlcmiOperStatus",
+						"oid" : "1.3.6.1.4.1.429.4.64.4.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "USR-FR-EXT-MIB::usrfrExtPTMPGroupStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				" This trap indicates that the indicated PTMP PVC Group",
+				"has changed its state. It has either been created or invalidated",
+				"or has toggled between the active and inactive states. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "usrfrExtPTMPGroupStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "PTMP PVC Group state changed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD USR-FR-EXT-MIB::usrfrExtPTMPGroupStatusChange USR-FR-EXT-MIB::usrfrExtPTMPGroupOperStatus i 1",
+			"trap" : {
+				"name" : "USR-FR-EXT-MIB::usrfrExtPTMPGroupStatusChange",
+				"oid" : "1.3.6.1.4.1.429.4.64.7.2",
+				"variables" : [
+					{
+						"description" : [
+							"The current operational state of the PTMP PVC Group. The",
+							"disabled(3) state indicates that no data packets",
+							"can be passed through this PTMP PVC Group. It reflects the fact that ",
+							"RowStatus is set to notInService. The up(1) describes",
+							"a state when packets can be sent and received on the PTMP PVC Group.",
+							"The down(2) indicates that PTMP PVC Group is not able to operate. ",
+							"The up(1) and down(2) states are set up based",
+							"on status of all PVC participating in this Group. "
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "disabled"
+						},
+						"name" : "USR-FR-EXT-MIB::usrfrExtPTMPGroupOperStatus",
+						"oid" : "1.3.6.1.4.1.429.4.64.8.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

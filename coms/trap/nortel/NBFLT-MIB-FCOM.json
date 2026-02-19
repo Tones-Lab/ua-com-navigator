@@ -1,0 +1,129 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9807081200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NBFLT-MIB::nbSymposiumAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"MAS Trap conveying information about raised alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 2 : (($v4 == 2) ? 1 : 3)"
+				},
+				"EventType" : "nbFltAlarmEventCode:$v3",
+				"ExpireTime" : {
+					"eval" : "($v4 == 1) ? 86400 : (($v4 == 2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 4) ? 2 : (($v4 == 2) ? 0 : (($v5 == 3) ? 3 : (($v5 == 2) ? 4 : (($v5 == 1) ? 5 : 1))))"
+				},
+				"SubNode" : "nbFltAlarmOriginator:$v8",
+				"Summary" : "MAS alarm: $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NBFLT-MIB::nbSymposiumAlarmTrap NBFLT-MIB::nbFltAlarmSequence c 9999 NBFLT-MIB::nbFltAlarmTimeStamp s EXAMPLE NBFLT-MIB::nbFltAlarmEventCode i 9999 NBFLT-MIB::nbFltAlarmEventType i 1 NBFLT-MIB::nbFltAlarmEventSeverity i 2 NBFLT-MIB::nbFltAlarmTenantID i 9999 NBFLT-MIB::nbFltAlarmCustomerID i 9999 NBFLT-MIB::nbFltAlarmOriginator s EXAMPLE NBFLT-MIB::nbFltAlarmDescription s EXAMPLE",
+			"trap" : {
+				"name" : "NBFLT-MIB::nbSymposiumAlarmTrap",
+				"oid" : "1.3.6.1.4.1.562.3.8.1.5.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the alarm sequence number"
+						],
+						"name" : "NBFLT-MIB::nbFltAlarmSequence",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This object defines the time when alarm was raised"
+						],
+						"name" : "NBFLT-MIB::nbFltAlarmTimeStamp",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object defines the MAS event code for the ",
+							"generated alarm."
+						],
+						"name" : "NBFLT-MIB::nbFltAlarmEventCode",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object defines the type of the event."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "set",
+							"2" : "clear",
+							"4" : "message"
+						},
+						"name" : "NBFLT-MIB::nbFltAlarmEventType",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object defines the severity of the reported ",
+							"alarm."
+						],
+						"enums" : {
+							"0" : "indeterminate",
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor"
+						},
+						"name" : "NBFLT-MIB::nbFltAlarmEventSeverity",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object defines the tenant ID"
+						],
+						"name" : "NBFLT-MIB::nbFltAlarmTenantID",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object defines the customer ID"
+						],
+						"name" : "NBFLT-MIB::nbFltAlarmCustomerID",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object describes the subsystem which raised the ",
+							"alarm."
+						],
+						"name" : "NBFLT-MIB::nbFltAlarmOriginator",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object describes what happened in the system, ",
+							"which caused",
+							"the alarm to occur."
+						],
+						"name" : "NBFLT-MIB::nbFltAlarmDescription",
+						"oid" : "1.3.6.1.4.1.562.3.8.1.5.2.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

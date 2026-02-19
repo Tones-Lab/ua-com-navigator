@@ -1,0 +1,2733 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201505120000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegReqFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a registration",
+				"request from a CM during the CM initialization",
+				"process that was detected on the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "docsIfCmtsCmStatusMacAddress:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegReqFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegReqFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegRspFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a registration",
+				"response during the CM initialization",
+				"process that was detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "docsIfCmtsCmStatusMacAddress:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegRspFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegRspFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegAckFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a registration",
+				"acknowledgement from the CM during the CM",
+				"initialization process that was detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "docsIfCmtsCmStatusMacAddress:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegAckFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsInitRegAckFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServReqFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a dynamic service",
+				"request during the dynamic services process",
+				"that was detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "ifCMTSPhysAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServReqFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServReqFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServRspFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a dynamic service",
+				"response during the dynamic services process",
+				"that was detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "ifCMTSPhysAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServRspFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServRspFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServAckFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a dynamic service",
+				"acknowledgement during the dynamic services",
+				"process that was detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "ifCMTSPhysAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServAckFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynServAckFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsBpiInitNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a BPI",
+				"initialization attempt during the CM registration process",
+				"that was detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsBpiInitNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsBpiInitNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsBPKMNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a BPKM operation",
+				"that is detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "ifCMTSPhysAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsBPKMNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsBPKMNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynamicSANotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a dynamic security",
+				"association operation that is detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "ifCMTSPhysAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynamicSANotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDynamicSANotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCReqFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a dynamic channel",
+				"change request during the dynamic channel",
+				"change process and is detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "ifCMTSPhysAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCReqFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCReqFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCRspFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a dynamic channel",
+				"change response during the dynamic channel",
+				"change process and is detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "ifCMTSPhysAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCRspFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCRspFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCAckFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report the failure of a dynamic channel",
+				"change acknowledgement during the dynamic channel",
+				"change process and is detected by the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "ifCMTSPhysAddress:$v5",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCAckFailNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsDCCAckFailNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsEmModeEnterNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report entering energy management mode ",
+				"for a particular modem attached to the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "docsIfCmtsCmStatusMacAddress:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsEmModeEnterNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsEmModeEnterNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsEmModeExitNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification to report exiting energy management mode ",
+				"for a particular modem attached to the CMTS.",
+				"This notification sends additional information about",
+				"the event by including the following objects in its",
+				"varbinding list.",
+				"- docsDevEvLevel: the priority level associated with the",
+				"event.",
+				"- docsDevEvId: the unique identifier of the event that",
+				"occurred.",
+				"- docsDevEvText: a textual description of the event.",
+				"- docsIfCmtsCmStatusMacAddress: the MAC address of the CM",
+				"with which this notification is associated.",
+				"- ifPhysAddress: the MAC address of the CMTS",
+				"(if there is a cable card/interface in the CMTS",
+				"then it is actually the MAC address of the cable",
+				"interface that connected to the CM) cable interface",
+				"connected to the CM.",
+				"- docsIfCmtsCmStatusDocsisRegMode: the QOS level (1.0, 1.1)",
+				"that the reporting CM is operating in.",
+				"- docsIfDocsisBaseCapability: the highest",
+				"version of the DOCSIS specification (1.0, 1.1, 2.0)",
+				"that the device is capable of supporting.",
+				"- docsIfCmtsCmStatusModulationType: the upstream",
+				"modulation methodology used by the CM.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3 : 2"
+				},
+				"EventType" : "docsDevEvId:$v2",
+				"ExpireTime" : {
+					"eval" : "($v1==6 || $v1==7 || $v1==8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 5 : ($v1==3) ? 4 : ($v1==4 || $v1==5) ? 3 : 2"
+				},
+				"SubNode" : "docsIfCmtsCmStatusMacAddress:$v4",
+				"Summary" : "$v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsEmModeExitNotif DOCS-CABLE-DEVICE-MIB::docsDevEvLevel i 1 DOCS-CABLE-DEVICE-MIB::docsDevEvId u 9999 DOCS-CABLE-DEVICE-MIB::docsDevEvText s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s EXAMPL IF-MIB::ifPhysAddress s EXAMPLE DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode i 1 DOCS-IF-MIB::docsIfDocsisBaseCapability i 1 DOCS-IF-MIB::docsIfCmtsCmStatusModulationType i 0",
+			"trap" : {
+				"name" : "DOCS-IETF-CABLE-DEVICE-NOTIFICATION-MIB::docsDevCmtsEmModeExitNotif",
+				"oid" : "1.3.6.1.2.1.132.3.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"The priority level of this event, as defined by the",
+							"vendor. These are ordered from most serious (emergency)",
+							"to least serious (debug).",
+							"",
+							"emergency(1) events indicate vendor-specific fatal",
+							"hardware or software errors that prevent normal system",
+							"operation.",
+							"",
+							"alert(2) events indicate a serious failure that causes",
+							"the reporting system to reboot but that is not caused by",
+							"hardware or software malfunctioning.",
+							"",
+							"critical(3) events indicate a serious failure that",
+							"requires attention and prevents the device from",
+							"transmitting data but that could be recovered without",
+							"rebooting the system.",
+							"",
+							"error(4) and warning(5) events indicate that a failure",
+							"occurred that could interrupt the normal data flow but",
+							"that does not cause the device to re-register.",
+							"",
+							"notice(6) and information(7) events indicate a",
+							"milestone or checkpoint in normal operation that could",
+							"be of particular importance for troubleshooting.",
+							"",
+							"debug(8) events are reserved for vendor-specific",
+							"events.",
+							"",
+							"During normal operation, no event more",
+							"critical than notice(6) should be generated. Events",
+							"between warning and emergency should be generated at",
+							"appropriate levels of problems (e.g., emergency when the",
+							"box is about to crash)."
+						],
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "information",
+							"8" : "debug"
+						},
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvLevel",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"For this product, uniquely identifies the type of event",
+							"that is reported by this entry."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvId",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Provides a human-readable description of the event",
+							"including all relevant context (interface numbers",
+							"etc.)."
+						],
+						"name" : "DOCS-CABLE-DEVICE-MIB::docsDevEvText",
+						"oid" : "1.3.6.1.2.1.69.1.5.8.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"MAC address of the cable modem. If the cable modem has",
+							"multiple MAC addresses, this is the MAC address associated",
+							"with the Cable interface."
+						],
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indication of whether the CM has registered using 1.0",
+							"Class of Service or 1.1 Quality of Service."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDocsisRegMode",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indication of the DOCSIS capability of the device."
+						],
+						"enums" : {
+							"1" : "docsis10",
+							"2" : "docsis11",
+							"3" : "docsis20"
+						},
+						"name" : "DOCS-IF-MIB::docsIfDocsisBaseCapability",
+						"oid" : "1.3.6.1.2.1.10.127.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates modulation type currently used by the CM. Since",
+							"this object specifically identifies PHY mode, the shared",
+							"type is not permitted. If the upstream channel is",
+							"unknown, this object returns a value of zero."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "tdma",
+							"2" : "atdma",
+							"3" : "scdma",
+							"4" : "tdmaAndAtdma"
+						},
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusModulationType",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

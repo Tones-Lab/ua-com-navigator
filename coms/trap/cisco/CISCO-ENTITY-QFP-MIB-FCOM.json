@@ -1,0 +1,162 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201406180000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ENTITY-QFP-MIB::ceqfpMemoryResRisingThreshNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification indicating that the QFP memory usage is rising",
+				"the threshold on this memory resource.",
+				"This notification will be sent, whenever the QFP memory",
+				"usage (ceqfpMemoryResInUse) is equal to or above the ",
+				"rising threshold (ceqfpMemoryResRisingThreshold).",
+				"An agent may throttle the generation of consecutive",
+				"ceqfpMemoryResRisingThreshNotif notification so that",
+				"there is at least a five second (suggested default)",
+				"gap between notification of this type."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ceqfpMemoryResRisingThreshNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "QFP memory usage has crossed the rising threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-QFP-MIB::ceqfpMemoryResRisingThreshNotif CISCO-ENTITY-QFP-MIB::ceqfpMemoryResInUse u 9999 CISCO-ENTITY-QFP-MIB::ceqfpMemoryResCurrentRisingThresh u 9999",
+			"trap" : {
+				"name" : "CISCO-ENTITY-QFP-MIB::ceqfpMemoryResRisingThreshNotif",
+				"oid" : "1.3.6.1.4.1.9.9.715.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ENTITY-QFP-MIB::ceqfpMemoryResInUse",
+						"oid" : "1.3.6.1.4.1.9.9.715.1.1.7.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-ENTITY-QFP-MIB::ceqfpMemoryResCurrentRisingThresh",
+						"oid" : "1.3.6.1.4.1.9.9.715.1.2.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-QFP-MIB::ceqfpMemoryResFallingThreshNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification indicating that the QFP memory usage is equal",
+				"to or below the falling threshold on this memory resource.",
+				"This notification will be sent, whenever the QFP memory",
+				"usage (ceqfpMemoryResInUse) is equal to or below the ",
+				"falling threshold (ceqfpMemoryResFallingThreshold).",
+				"An agent may throttle the generation of consecutive",
+				"ceqfpMemoryResFallingThreshNotif notification so that",
+				"there is at least a five second (suggested default)",
+				"gap between notification of this type."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ceqfpMemoryResFallingThreshNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "QFP memory usage has crossed the falling threshold $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-QFP-MIB::ceqfpMemoryResFallingThreshNotif CISCO-ENTITY-QFP-MIB::ceqfpMemoryResInUse u 9999 CISCO-ENTITY-QFP-MIB::ceqfpMemoryResCurrentFallingThresh u 9999",
+			"trap" : {
+				"name" : "CISCO-ENTITY-QFP-MIB::ceqfpMemoryResFallingThreshNotif",
+				"oid" : "1.3.6.1.4.1.9.9.715.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-ENTITY-QFP-MIB::ceqfpMemoryResInUse",
+						"oid" : "1.3.6.1.4.1.9.9.715.1.1.7.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-ENTITY-QFP-MIB::ceqfpMemoryResCurrentFallingThresh",
+						"oid" : "1.3.6.1.4.1.9.9.715.1.2.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-QFP-MIB::ceqfpThroughputNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification indicating that the average throughput rate for",
+				"the configured interval has exceeded the threshold or reached",
+				"maximum bandwidth allowed.",
+				"This notification will be sent, whenever the ceqfpThroughputLevel",
+				"object has the value warning(2) or exceed(3). The condition for",
+				"trap generation will be checked in every",
+				"ceqfpThroughputInterval.",
+				"ceqfpThroughputNotif with ceqfpThrougputLevel as warning(2)",
+				"indicates that average throughput rate has crossed the",
+				"configured threshold.",
+				"ceqfpThroughputNotif with ceqfpThrougputLevel as exceed(3)",
+				"indicates that average throughput rate has reached maximum",
+				"licensed bandwidth."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 1) ? 1 : 2"
+				},
+				"EventType" : "ceqfpThroughputNotif",
+				"ExpireTime" : {
+					"eval" : "($v2 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 0 : (($v2 == 2) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Average throughput rate $v3 is above threshold (max bandwidth $v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-QFP-MIB::ceqfpThroughputNotif CISCO-ENTITY-QFP-MIB::ceqfpThroughputLicensedBW C 9999 CISCO-ENTITY-QFP-MIB::ceqfpThroughputLevel i 1 CISCO-ENTITY-QFP-MIB::ceqfpThroughputAvgRate C 9999",
+			"trap" : {
+				"name" : "CISCO-ENTITY-QFP-MIB::ceqfpThroughputNotif",
+				"oid" : "1.3.6.1.4.1.9.9.715.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-ENTITY-QFP-MIB::ceqfpThroughputLicensedBW",
+						"oid" : "1.3.6.1.4.1.9.9.715.1.1.8.1.1",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"enums" : {
+							"1" : "normal",
+							"2" : "warning",
+							"3" : "exceed"
+						},
+						"name" : "CISCO-ENTITY-QFP-MIB::ceqfpThroughputLevel",
+						"oid" : "1.3.6.1.4.1.9.9.715.1.1.8.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ENTITY-QFP-MIB::ceqfpThroughputAvgRate",
+						"oid" : "1.3.6.1.4.1.9.9.715.1.1.8.1.5",
+						"valueType" : "COUNTER64"
+					}
+				]
+			}
+		}
+	]
+}

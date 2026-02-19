@@ -1,0 +1,142 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200907100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::ciscoMobilePolicyChargingControlPreloadError",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is issued when cmpccPreloadErrorNotifEnabled",
+				"is set to true, and an error occurs in preloading as indicated",
+				"by the value of cmpccppsErrorState:",
+				"0 indicates PCRF has sent an incomplete Policy object.",
+				"1 indicates a mandatory AVP in the preloading message is",
+				"missing.",
+				"2 indicates PCEF is not able to install/modify/remove a policy",
+				"preloading object.",
+				"3 indicates PCRF sent the preloading objects in wrong order.",
+				"4 indicates PCRF tried to preload an object, which is already",
+				"statically configured in PCEF.",
+				"255 indicates no error has occurred so far."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoMobilePolicyChargingControlPreloadError",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 6) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'Preloading has reported $v2 Data Inconsistancies' : (($v1 == 2) ? 'Preloading has reported $v3 AVP missing' : (($v1 == 3) ? 'Preloading has reported $v4 Enforce Failures' : (($v1 == 4) ? 'Preloading has reported $v5 Static Config Conflicts' : (($v1 == 5) ? 'Preloading has reported $v6 Wrong Order Failures' : 'Preloading reported normal'))))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::ciscoMobilePolicyChargingControlPreloadError CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsErrorState i 1 CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsPreloadDataInconsistent c 9999 CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsAVPMissing c 9999 CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsEnforceFailures c 9999 CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsStaticConfigConflicts c 9999 CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsWrongOrderFailures c 9999",
+			"trap" : {
+				"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::ciscoMobilePolicyChargingControlPreloadError",
+				"oid" : "1.3.6.1.4.1.9.9.690.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "preloadInconsistentData",
+							"2" : "preloadAVPMissing",
+							"3" : "preloadEnforceFailure",
+							"4" : "preloadWrongOrderFailure",
+							"5" : "preloadStaticConfigConflict",
+							"6" : "preloadNoError"
+						},
+						"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsErrorState",
+						"oid" : "1.3.6.1.4.1.9.9.690.1.2.3.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsPreloadDataInconsistent",
+						"oid" : "1.3.6.1.4.1.9.9.690.1.2.3.1.9",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsAVPMissing",
+						"oid" : "1.3.6.1.4.1.9.9.690.1.2.3.1.10",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsEnforceFailures",
+						"oid" : "1.3.6.1.4.1.9.9.690.1.2.3.1.12",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsStaticConfigConflicts",
+						"oid" : "1.3.6.1.4.1.9.9.690.1.2.3.1.13",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccppsWrongOrderFailures",
+						"oid" : "1.3.6.1.4.1.9.9.690.1.2.3.1.11",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccPreloadRollbackFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when rollback of an object",
+				"fails, which indicates that object could be out of sync. The",
+				"cmpccppsRollbackFailedReason present in the varbind list",
+				"indicates the reason that triggers the sending for",
+				"'cmpccPreloadRollbackFailed' notification. The entPhysicalName",
+				"identifies the entity that implements the PCEF functionality of",
+				"the Gx interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cmpccPreloadRollbackFailed",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 == 1) ? 2 : 3"
+				},
+				"SubNode" : "$v1",
+				"Summary" : {
+					"eval" : "($v2 == 1) ? 'No rollback error has occurred' : 'Rollback of $v2 has failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccPreloadRollbackFailed ENTITY-MIB::entPhysicalName s EXAMPLE CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccRollbackFailedReason i 1",
+			"trap" : {
+				"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccPreloadRollbackFailed",
+				"oid" : "1.3.6.1.4.1.9.9.690.0.2",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "acctPolicyMap",
+							"3" : "contentPolicy",
+							"4" : "serviceContent",
+							"5" : "billingService",
+							"6" : "billingPlan"
+						},
+						"name" : "CISCO-MOBILE-POLICY-CHARGING-CONTROL-MIB::cmpccRollbackFailedReason",
+						"oid" : "1.3.6.1.4.1.9.9.690.1.2.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

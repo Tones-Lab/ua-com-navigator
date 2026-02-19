@@ -1,0 +1,367 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "POWERHUB-ATM-MIB::atmLinkUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"A LinkUp trap is sent by the ATM interface",
+				"while link up is dected. The slot id is reported",
+				"because individual virtual port number is not applicable ",
+				"here."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "atmLink",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "alAtmAMASlotNumber:$v1",
+				"Summary" : "ATM interface link is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD POWERHUB-ATM-MIB::atmLinkUp POWERHUB-ATM-MIB::alAtmAMASlotNumber i 9999 POWERHUB-ATM-MIB::alAtmAMAActualUse i 1 POWERHUB-ATM-MIB::alAtmCurrentAMAType i 1",
+			"trap" : {
+				"name" : "POWERHUB-ATM-MIB::atmLinkUp",
+				"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for which the following AMA",
+							"information applies."
+						],
+						"name" : "POWERHUB-ATM-MIB::alAtmAMASlotNumber",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The AMA that is actually being used. If the ",
+							"link to the primary AMA fails, this field ",
+							"shows that the backup AMA is in use, even",
+							"though the primary AMA was selected for ",
+							"use."
+						],
+						"enums" : {
+							"1" : "primary",
+							"2" : "backup"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmAMAActualUse",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The PHY-layer protocol actually in use. ",
+							"The protocol can be one of the following:",
+							"155M OC3 - 155 Mb/s using an OC-3 connector",
+							"45M DS3 - 45 Mb/s using a DS3 connector",
+							"39M E3 - 39 Mb/s using an E3 connector."
+						],
+						"enums" : {
+							"1" : "oc3-155Mbps",
+							"2" : "ds3-45Mbps",
+							"3" : "e3-39Mbps"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmCurrentAMAType",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "POWERHUB-ATM-MIB::atmLinkDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"A LinkDown trap is sent by the ATM interface",
+				"while link down is dected. The slot id is reported",
+				"because individual virtual port number is not applicable ",
+				"here."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "atmLink",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "alAtmAMASlotNumber:$v1",
+				"Summary" : "ATM interface link is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD POWERHUB-ATM-MIB::atmLinkDown POWERHUB-ATM-MIB::alAtmAMASlotNumber i 9999 POWERHUB-ATM-MIB::alAtmPreviousAMA i 1 POWERHUB-ATM-MIB::alAtmPreviousAMAType i 1",
+			"trap" : {
+				"name" : "POWERHUB-ATM-MIB::atmLinkDown",
+				"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for which the following AMA",
+							"information applies."
+						],
+						"name" : "POWERHUB-ATM-MIB::alAtmAMASlotNumber",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The AMA that is actually being used before",
+							"link down or cut over. The initial value",
+							"is notset."
+						],
+						"enums" : {
+							"1" : "primary",
+							"2" : "backup",
+							"3" : "unknown"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmPreviousAMA",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The PHY-layer protocol in use before",
+							"link down or cut-over. ",
+							"The protocol can be one of the following:",
+							"155M OC3 - 155 Mb/s using an OC-3 connector",
+							"45M DS3 - 45 Mb/s using a DS3 connector",
+							"39M E3 - 39 Mb/s using an E3 connector."
+						],
+						"enums" : {
+							"1" : "oc3-155Mbps",
+							"2" : "ds3-45Mbps",
+							"3" : "e3-39Mbps",
+							"4" : "unknown"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmPreviousAMAType",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "POWERHUB-ATM-MIB::atmCutOver",
+			"certification" : "STANDARD",
+			"description" : [
+				"A trap is sent if cut over is dected. The cut over ",
+				"can be from primary to back or vice versa."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "atmCutOver",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "alAtmAMASlotNumber:$v2",
+				"Summary" : "AMA cut over from $v4 to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD POWERHUB-ATM-MIB::atmCutOver POWERHUB-ATM-MIB::alAtmAMASlotNumber i 9999 POWERHUB-ATM-MIB::alAtmAMAActualUse i 1 POWERHUB-ATM-MIB::alAtmCurrentAMAType i 1 POWERHUB-ATM-MIB::alAtmPreviousAMA i 1 POWERHUB-ATM-MIB::alAtmPreviousAMAType i 1",
+			"trap" : {
+				"name" : "POWERHUB-ATM-MIB::atmCutOver",
+				"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for which the following AMA",
+							"information applies."
+						],
+						"name" : "POWERHUB-ATM-MIB::alAtmAMASlotNumber",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The AMA that is actually being used. If the ",
+							"link to the primary AMA fails, this field ",
+							"shows that the backup AMA is in use, even",
+							"though the primary AMA was selected for ",
+							"use."
+						],
+						"enums" : {
+							"1" : "primary",
+							"2" : "backup"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmAMAActualUse",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The PHY-layer protocol actually in use. ",
+							"The protocol can be one of the following:",
+							"155M OC3 - 155 Mb/s using an OC-3 connector",
+							"45M DS3 - 45 Mb/s using a DS3 connector",
+							"39M E3 - 39 Mb/s using an E3 connector."
+						],
+						"enums" : {
+							"1" : "oc3-155Mbps",
+							"2" : "ds3-45Mbps",
+							"3" : "e3-39Mbps"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmCurrentAMAType",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The AMA that is actually being used before",
+							"link down or cut over. The initial value",
+							"is notset."
+						],
+						"enums" : {
+							"1" : "primary",
+							"2" : "backup",
+							"3" : "unknown"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmPreviousAMA",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The PHY-layer protocol in use before",
+							"link down or cut-over. ",
+							"The protocol can be one of the following:",
+							"155M OC3 - 155 Mb/s using an OC-3 connector",
+							"45M DS3 - 45 Mb/s using a DS3 connector",
+							"39M E3 - 39 Mb/s using an E3 connector."
+						],
+						"enums" : {
+							"1" : "oc3-155Mbps",
+							"2" : "ds3-45Mbps",
+							"3" : "e3-39Mbps",
+							"4" : "unknown"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmPreviousAMAType",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "POWERHUB-ATM-MIB::atmBootUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"A BootUp trap is sent by the ATM interface",
+				"while startup is dected. The slot id is reported",
+				"because individual virtual port number is not applicable ",
+				"here."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "atmBootUp",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "alAtmAMASlotNumber:$v1",
+				"Summary" : "ATM interface boot up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD POWERHUB-ATM-MIB::atmBootUp POWERHUB-ATM-MIB::alAtmAMASlotNumber i 9999 POWERHUB-ATM-MIB::alAtmAMAActualUse i 1 POWERHUB-ATM-MIB::alAtmCurrentAMAType i 1",
+			"trap" : {
+				"name" : "POWERHUB-ATM-MIB::atmBootUp",
+				"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for which the following AMA",
+							"information applies."
+						],
+						"name" : "POWERHUB-ATM-MIB::alAtmAMASlotNumber",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The AMA that is actually being used. If the ",
+							"link to the primary AMA fails, this field ",
+							"shows that the backup AMA is in use, even",
+							"though the primary AMA was selected for ",
+							"use."
+						],
+						"enums" : {
+							"1" : "primary",
+							"2" : "backup"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmAMAActualUse",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The PHY-layer protocol actually in use. ",
+							"The protocol can be one of the following:",
+							"155M OC3 - 155 Mb/s using an OC-3 connector",
+							"45M DS3 - 45 Mb/s using a DS3 connector",
+							"39M E3 - 39 Mb/s using an E3 connector."
+						],
+						"enums" : {
+							"1" : "oc3-155Mbps",
+							"2" : "ds3-45Mbps",
+							"3" : "e3-39Mbps"
+						},
+						"name" : "POWERHUB-ATM-MIB::alAtmCurrentAMAType",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "POWERHUB-ATM-MIB::atmFault",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Fault trap is sent by the ATM interface",
+				"while a series of link down is dected. The slot id is reported",
+				"because individual virtual port number is not applicable ",
+				"here."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "atmFault",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "alAtmAMASlotNumber:$v1",
+				"Summary" : "ATM fault because a series of links are down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD POWERHUB-ATM-MIB::atmFault POWERHUB-ATM-MIB::alAtmAMASlotNumber i 9999",
+			"trap" : {
+				"name" : "POWERHUB-ATM-MIB::atmFault",
+				"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The slot number for which the following AMA",
+							"information applies."
+						],
+						"name" : "POWERHUB-ATM-MIB::alAtmAMASlotNumber",
+						"oid" : "1.3.6.1.4.1.326.2.6.1.1.2.8.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

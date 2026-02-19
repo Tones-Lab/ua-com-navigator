@@ -1,0 +1,182 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201308160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaFilterChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system generates this notification to indicate that the",
+				"cscaFilterStatus of the attack filter for cscaType has changed",
+				"due to the reason determined by cscaDescription. The system",
+				"limits the generation of this notifications for the same",
+				"cscaType to a five-second interval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cscaFilterChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Status of attack filter for attack type $v2 has changed to $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaFilterChange ENTITY-MIB::entPhysicalName s EXAMPLE CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaType i 9999 CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaSourceAddressType i 0 CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaSourceAddress s EXAMPLE CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaDestinationAddressType i 0 CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaDestinationAddress s EXAMPLE CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaAttackedPort u 9999 CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaFilterStatus i 1",
+			"trap" : {
+				"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaFilterChange",
+				"oid" : "1.3.6.1.4.1.9.9.693.0.1",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaType",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaSourceAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaSourceAddress",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaDestinationAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaDestinationAddress",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaAttackedPort",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"enums" : {
+							"1" : "activated",
+							"2" : "deactivated"
+						},
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaFilterStatus",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaGlobalAttackFilterChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification is generated when a start or end of a global",
+				"attack is detected in the system. ",
+				"Below fields are sent with the trap:",
+				"entPhysicalName indicates the name of the ",
+				"originating physical entity.",
+				"cscaGlobalAttackType indicates the type of the global",
+				"attack.",
+				"cscaFilterStatus indicates whether the global attack is",
+				"started or ended ie. the attack filter status is activated or",
+				"deactivated.",
+				"cscaTypeOriginatedByNetworkSide indicates the origin/source",
+				"of the attack, whether it originated from network or subscriber",
+				"side."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 2 : 1"
+				},
+				"EventType" : "cscaGlobalAttackFilterChange",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 4 : 0"
+				},
+				"SubNode" : "$v1",
+				"Summary" : {
+					"eval" : "($v3 == 1 && $v4 == 1) ? 'Global attack $v2 has started on the network side' : (($v3 == 1 && $v4 == 2) ? 'Global attack $v2 has started on the subscriber side' : (($v3 == 2 && $v4 == 2) ? 'Global ended $v2 has started on the subscriber side' : 'Global attack $v2 has ended on the network side'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaGlobalAttackFilterChange ENTITY-MIB::entPhysicalName s EXAMPLE CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaGlobalAttackType i 1 CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaFilterStatus i 1 CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaTypeOriginatedByNetworkSide i 1",
+			"trap" : {
+				"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaGlobalAttackFilterChange",
+				"oid" : "1.3.6.1.4.1.9.9.693.0.2",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalName",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "icmpAttack",
+							"2" : "udpAttack",
+							"3" : "udpFragmentAttack",
+							"4" : "tcpSynAttack",
+							"5" : "tcpRstAttack",
+							"6" : "tcpFragmentAttack",
+							"7" : "tcpNonSynAttack"
+						},
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaGlobalAttackType",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "activated",
+							"2" : "deactivated"
+						},
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaFilterStatus",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-SERVICE-CONTROL-ATTACK-MIB::cscaTypeOriginatedByNetworkSide",
+						"oid" : "1.3.6.1.4.1.9.9.693.1.2.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

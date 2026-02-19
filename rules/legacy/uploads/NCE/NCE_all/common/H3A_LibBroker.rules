@@ -1,0 +1,65 @@
+sub LibBroker_Enrichment {
+	my $eventRef = shift;
+    
+    my $trace = 'LibEnrich_Broker';
+    
+	$Log->Message('DEBUG', $trace . " started...");
+
+    # skip enrichment if event is discarded.
+    if ($discard_flag == 1) {
+        $Log->Message('DEBUG', $trace . " Event marked for discard. Skipping Enrichment.");
+        $Log->Message('DEBUG', $trace . " ...done");
+        return;
+    }
+
+	my $enrichTotalTime = [ Time::HiRes::gettimeofday( ) ];
+
+    # EMSKey
+    # Used for different functions. Possible suffix needs to be removed so e.g. "UME AN Test" and "UME AN Prod" are processed as "UME AN"
+	my $EMSKey = $eventRef->{'EMSName'};
+	$EMSKey=~s/\b\s+(?:test|prod|int|sit|preprod|pilot)\b$//ig;
+    
+    
+	# get database handle... 
+	# updates the $DATASOURCES{xxx}->{dbh}
+	LibMySQL_GetDBH_v2(\%{$DATASOURCES{DCI}});
+	LibOracle_GetDBH_v2(\%{$DATASOURCES{UMSDB}});
+    
+    # do not run msggroup enrichment if executed by CAPE H3A_ReCheck_Osiris_ReEnrich
+    if (not exists $eventRef->{EventID} ) {
+    	LibEnrichDCI_MsgGroup($eventRef,$DATASOURCES{DCI}->{dbh});
+    }
+    
+    # Enrichments only for AN Events except Heartbeat
+    # ZoneID: 1000 - H3A Access Network
+    # ZoneID: 2000 - H3A Access Network (ATF)
+    if (($eventRef->{ZoneID} == 1000 or $eventRef->{ZoneID} == 2000) and $eventRef->{EventCategory} != 10) {
+    	    
+    	if ($EMSKey eq 'Huawei NCE' or $EMSKey eq 'NetMaster' or $EMSKey eq 'ATF') {
+    		LibEnrichOsiris_Interfaces($eventRef,$DATASOURCES{UMSDB}->{dbh});
+    		LibEnrichOsiris_Links($eventRef,$DATASOURCES{UMSDB}->{dbh});
+    	}
+		LibEnrichOsiris_BusinessService($eventRef,$DATASOURCES{UMSDB}->{dbh});
+		LibEnrichOsiris_Devices($eventRef,$DATASOURCES{UMSDB}->{dbh});
+    	LibEnrichOsiris_SiteData($eventRef,$DATASOURCES{UMSDB}->{dbh});			# pre-requisit for LibEnrichDCI_Company! 
+    	LibEnrichOsiris_SiteSuppression($eventRef,$DATASOURCES{UMSDB}->{dbh});
+    	LibEnrichOsiris_EventInfo($eventRef,$DATASOURCES{UMSDB}->{dbh});
+    	LibEnrichOsiris_SitePrio($eventRef,$DATASOURCES{UMSDB}->{dbh});   		# pre-requisit for LibEnrichDCI_VIPSites!
+    	LibEnrichOsiris_NTTf($eventRef,$DATASOURCES{UMSDB}->{dbh});
+    	LibEnrichDCI_Company($eventRef,$DATASOURCES{DCI}->{dbh});				# pre-requisit LibEnrichDCI_MsgGroup
+    	LibEnrichDCI_VIPSite($eventRef,$DATASOURCES{DCI}->{dbh});
+        LibEnrichDCI_CheckActiveSuppression($eventRef,$DATASOURCES{DCI}->{dbh});
+    }
+    
+    
+	LibEnrichRemedy_ActiveChanges($eventRef,$DATASOURCES{UMSDB}->{dbh});
+    LibEnrichRemedy_CMDBCIID($eventRef,$DATASOURCES{UMSDB}->{dbh});
+    LibEnrichAPI_ATI($eventRef);
+
+    $enrichTotalTime = Time::HiRes::tv_interval($enrichTotalTime);
+	LibUtil_AddDetails($eventRef,'Statistics','Event enriched in ' . $enrichTotalTime);
+
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+1;

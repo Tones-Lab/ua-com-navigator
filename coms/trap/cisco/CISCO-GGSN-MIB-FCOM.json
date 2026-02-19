@@ -1,0 +1,540 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201205040000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates the occurrence of a GGSN",
+				"related alarm. If and when additional useful information",
+				"is available for specific types of alarms, then that ",
+				"information may be appended to the end of the",
+				"notification in additional varbinds."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 1 : (($v1 == 2 || $v1 == 4) ? 2 : 3)"
+				},
+				"EventType" : "cGgsnNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 3600 : (($v1 == 2 || $v1 == 4) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 0 : (($v1 == 2 || $v1 == 4) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "GGSN alarm for $v1 has occurred due to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnNotification CISCO-GGSN-MIB::cGgsnHistNotifType i 1 CISCO-GGSN-MIB::cGgsnHistNotifSeverity i 1 CISCO-GGSN-MIB::cGgsnHistNotifTimestamp t 9999 CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddrType i 0 CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddr s EXAMPLE CISCO-GGSN-MIB::cGgsnHistNotifInfo s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnNotification",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "ggsnServiceUp",
+							"2" : "ggsnServiceDown",
+							"3" : "mapSgsnUp",
+							"4" : "mapSgsnDown",
+							"5" : "noResource",
+							"6" : "noRADIUS",
+							"7" : "noDHCPServer",
+							"8" : "ipAllocationFail",
+							"9" : "authenticationFail",
+							"10" : "apnUnreachable"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifType",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifTimestamp",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.4",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddr",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifInfo",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnInServiceNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when GGSN is",
+				"placed in inService mode which is specified by",
+				"cGgsnServiceModeStatus."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cGgsnInServiceNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "GGSN has been placed inService"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnInServiceNotif",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnInServiceNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.2"
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnMaintenanceNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when GGSN is",
+				"placed in maintenance mode which is specified by",
+				"cGgsnServiceModeStatus."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cGgsnMaintenanceNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "GGSN has been placed in maintenance mode."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnMaintenanceNotif",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnMaintenanceNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.3"
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnMemThresholdReachedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when GGSN",
+				"reaches the memory threshold value specified by",
+				"cGgsnMemoryThreshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cGgsnMemThresholdNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "GGSN has reached its memory threshold."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnMemThresholdReachedNotif",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnMemThresholdReachedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.4"
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnMemThresholdClearedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when GGSN",
+				"retains the memory and falls below threshold value ",
+				"speficied by cGgsnMemoryThreshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cGgsnMemThresholdNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "GGSN has gone below the memory threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnMemThresholdClearedNotif",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnMemThresholdClearedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.5"
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnPdfStateUpNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when PDF",
+				"connection comes UP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cGgsnPdfStateNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v2",
+				"Summary" : "PDF connection has come up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnPdfStateUpNotif CISCO-GGSN-MIB::cGgsnPdfServerAddrType i 0 CISCO-GGSN-MIB::cGgsnPdfServerAddr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnPdfStateUpNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnPdfServerAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnPdfServerAddr",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnPdfStateDownNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification of this type is generated when PDF",
+				"connection goes DOWN."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cGgsnPdfStateNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v2",
+				"Summary" : "PDF connection has gone down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnPdfStateDownNotif CISCO-GGSN-MIB::cGgsnPdfServerAddrType i 0 CISCO-GGSN-MIB::cGgsnPdfServerAddr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnPdfStateDownNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.7",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnPdfServerAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnPdfServerAddr",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnGlobalErrorNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates the occurrence of a GGSN",
+				"related alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 1 : (($v1 == 2 || $v1 == 4) ? 2 : 3)"
+				},
+				"EventType" : "cGgsnGlobalErrorNotif",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 3600 : (($v1 == 2 || $v1 == 4) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1 || $v1 == 3) ? 0 : (($v1 == 2 || $v1 == 4) ? 4 : 3)"
+				},
+				"SubNode" : "$v5",
+				"Summary" : "GGSN service status $v1 : $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnGlobalErrorNotif CISCO-GGSN-MIB::cGgsnGlobalErrorTypes i 1 CISCO-GGSN-MIB::cGgsnHistNotifSeverity i 1 CISCO-GGSN-MIB::cGgsnHistNotifTimestamp t 9999 CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddrType i 0 CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddr s EXAMPLE CISCO-GGSN-MIB::cGgsnHistNotifInfo s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnGlobalErrorNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.8",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "ggsnServiceUp",
+							"2" : "ggsnServiceDown",
+							"3" : "mapSgsnUp",
+							"4" : "mapSgsnDown",
+							"5" : "noDHCPServer"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnGlobalErrorTypes",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifTimestamp",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.4",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddr",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifInfo",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnAccessPointNameNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates the occurrence of a APN",
+				"related alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cGgsnAccessPointNameNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v7",
+				"Summary" : {
+					"eval" : "($v6 ne '') ? 'APN error $v1 : $v6' : 'APN error $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnAccessPointNameNotif CISCO-GGSN-MIB::cGgsnAccessPointErrorTypes i 1 CISCO-GGSN-MIB::cGgsnHistNotifSeverity i 1 CISCO-GGSN-MIB::cGgsnHistNotifTimestamp t 9999 CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddrType i 0 CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddr s EXAMPLE CISCO-GGSN-MIB::cGgsnHistNotifInfo s EXAMPLE CISCO-GGSN-MIB::cGgsnNotifAccessPointName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnAccessPointNameNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.9",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "noRadius",
+							"2" : "ipAllocationFail",
+							"3" : "apnUnreachable"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnAccessPointErrorTypes",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifTimestamp",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.4",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddr",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifInfo",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnNotifAccessPointName",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-GGSN-MIB::cGgsnPacketDataProtocolNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates the occurrence of a User",
+				"related alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cGgsnPacketDataProtocolNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v9",
+				"Summary" : {
+					"eval" : "($v6 ne '') ? 'User alarm $v1 : $v6' : 'User alarm $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GGSN-MIB::cGgsnPacketDataProtocolNotif CISCO-GGSN-MIB::cGgsnPacketDataProtoErrorTypes i 1 CISCO-GGSN-MIB::cGgsnHistNotifSeverity i 1 CISCO-GGSN-MIB::cGgsnHistNotifTimestamp t 9999 CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddrType i 0 CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddr s EXAMPLE CISCO-GGSN-MIB::cGgsnHistNotifInfo s EXAMPLE CISCO-GGSN-MIB::cGgsnNotifPdpImsi s EXAMPLE CISCO-GGSN-MIB::cGgsnNotifPdpMsisdn s EXAMPLE CISCO-GGSN-MIB::cGgsnNotifAccessPointName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-GGSN-MIB::cGgsnPacketDataProtocolNotif",
+				"oid" : "1.3.6.1.4.1.9.9.240.2.0.10",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "noResource",
+							"2" : "authenticationFail",
+							"3" : "ccrInitFail",
+							"4" : "quotaPushFail"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnPacketDataProtoErrorTypes",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifTimestamp",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.4",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddrType",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifGgsnIpAddr",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnHistNotifInfo",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.2.7.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnNotifPdpImsi",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnNotifPdpMsisdn",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-GGSN-MIB::cGgsnNotifAccessPointName",
+						"oid" : "1.3.6.1.4.1.9.9.240.1.5.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

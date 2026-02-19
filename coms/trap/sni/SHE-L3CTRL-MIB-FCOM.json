@@ -1,0 +1,3435 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201704101323Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterControlResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"long running command finished"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterControlResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==37) ? 0 : (($v4==1 || $v4==30 || $v4==32 || ($v4>=52 && $v4<=58) || $v4==62 || $v4==71 || $v4==80 || $v4==81 || $v4==200 || $v4==202) ? 2 : (($v4==31 || $v4==36 || $v4==34 || ($v4>=100 && $v4<=116) || $v4==203 || $v4==204) ? 4 : 3))"
+				},
+				"SubNode" : "ControlRouterIndex:$v2",
+				"Summary" : "L3 IP router $v3 request result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterControlResult SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex u 1 SHE-L3CTRL-MIB::sheL3IpRouterControlRequest i 0 SHE-L3CTRL-MIB::sheL3IpRouterControlReqResult i 37",
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterControlResult SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex u 1 SHE-L3CTRL-MIB::sheL3IpRouterControlRequest i 0 SHE-L3CTRL-MIB::sheL3IpRouterControlReqResult i 203"
+			],
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the virtual router."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"",
+							"createRouter (101):",
+							"sheL3ctrlControlName ",
+							"sheL3ctrlControlRpTrigger ",
+							"-> sheL3IpRouterCreated",
+							"-> sheL3IpRouterControlResult",
+							"",
+							"deleteRouter (102):",
+							"sheL3IpRouterControlRouterIndex",
+							"-> sheL3IpRouterDeleted",
+							"-> sheL3IpRouterControlResult",
+							"",
+							"modifyRouter (103):",
+							"sheL3IpRouterControlRouterIndex",
+							"sheL3ctrlControlRpTrigger",
+							"-> sheL3IpRouterModified",
+							"-> sheL3IpRouterControlResult",
+							"",
+							"enableManagementVr (104): ",
+							"-> sheL3IpManagementVrEnabled",
+							"-> sheL3IpRouterControlResult",
+							"The command can only be applied if the sheL3ctrlManagementVrStatus is disabled.",
+							"The command is needed to upgrade an IPD release from L2 to L3 functionality. ",
+							"To take effect the NE must reboot.",
+							"",
+							"NOTE: ",
+							"R4.0M/R4.7M will not support any router commands. ",
+							"There is one default router available which could not be modified.",
+							""
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"101" : "createRouter",
+							"102" : "deleteRouter",
+							"103" : "modifyRouter",
+							"104" : "enableManagementVr",
+							"201" : "createRouterPort",
+							"202" : "deleteRouterPort",
+							"203" : "modifyRouterPort",
+							"204" : "modifyRouterPortType",
+							"206" : "createSecondaryIpAddress",
+							"207" : "deleteSecondaryIpAddress",
+							"208" : "modifyRouterPortFilterServices",
+							"209" : "setDisabledMessagesProfile",
+							"220" : "modifyRouterPortIPv4Interface",
+							"230" : "modifyRouterPortIPv6Interface",
+							"241" : "createMessageFilteringProfile",
+							"242" : "modifyMessageFilteringProfile",
+							"243" : "deleteMessageFilteringProfile",
+							"251" : "createIpAddress",
+							"252" : "modifyIpAddress",
+							"253" : "deletepAddress",
+							"311" : "createRoute",
+							"312" : "deleteRoute",
+							"313" : "searchForL3IpRoute",
+							"355" : "createAcl",
+							"356" : "modifyAcl",
+							"357" : "modifyAclRuleOrder",
+							"358" : "deleteAcl",
+							"361" : "createAclRule",
+							"362" : "deleteAclRule"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command. "
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"41" : "configurationNotSupported",
+							"42" : "wrongAdminstateForConfiguration",
+							"50" : "vlanNotExisting",
+							"51" : "noInterfaceWithRequestedIndex",
+							"52" : "interfaceWithRequestedIndexAlreadyExisting",
+							"53" : "routerPortStillUsedByVpnAcTableEntry",
+							"54" : "ipAddressStillUsedAsTransAddrByLdpEntity",
+							"55" : "ipRouteDestStillUsedAsTargetPeerAddrByLdpEntity",
+							"56" : "createSecondaryIpAddressOnlyAllowedForNumberedInterface",
+							"58" : "labelSwitchingOnlyAllowedForPortTypeBr",
+							"59" : "modifyRouterPortTypeFailedIpAddressConfigInvalid",
+							"62" : "routerPortMtuSizeModifyNotPossibleWhenAssignedToVpnInstance",
+							"71" : "aclRuleWithRequestedIndexAlreadyExisting",
+							"72" : "aclRuleRequestedAclListNameNotExisting",
+							"73" : "aclRuleRequestedAddressRangesNotSupported",
+							"80" : "aclWithRequestedNameAlreadyExisting",
+							"81" : "aclWithRequestedIndexAlreadyExisting",
+							"82" : "deleteAclFailedforActiveList",
+							"100" : "routeCreationFailedDestTypeDoesNotMatchWithNextHopType",
+							"101" : "routeCreationFailedNextHopDoesNotMatchWithInterfaceIndex",
+							"102" : "routeCreationFailedInconsistentAddressMask",
+							"103" : "routeCreationFailedInvalidNextHopAddress",
+							"104" : "routeCreationFailedNoFreeRouteIndexAvailable",
+							"110" : "ipAddressCreateDeleteFailedBadPrefixLength",
+							"111" : "ipAddressCreateDeleteFailedBadIpAddressStringLength",
+							"112" : "ipAddressCreateDeleteFailedBadAddressMask",
+							"113" : "ipAddressCreateDeleteFailedInvalidAddress",
+							"114" : "ipAddressCreateFailedAddressOverlapping",
+							"115" : "ipAddressCreateFailedCreationNotPossible",
+							"116" : "ipAddressDeleteFailedAddressNonExistent",
+							"200" : "profileNameAlreadyExists",
+							"201" : "profileDoesNotExist",
+							"202" : "profileInUse",
+							"203" : "profileAssignmentFailed",
+							"204" : "maxNoOfProfilesReached"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouterTable entry created"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlRouterIndex:$v2",
+				"Summary" : "IP router table entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterCreated SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex u 1 SHE-L3CTRL-MIB::sheL3IpRouterName s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouterRpTrigger b 0",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the virtual router."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The Name of the Virtual Router.",
+							"Router names are unique and that NE rejects router creation",
+							"commands if a router name is already used by an existing router.",
+							"Router names of existing routers must not be modified."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents Routing Protocol (RP) ",
+							"Triggers on a Virtual Router and it meant to ",
+							"be used to initiate or shutdown routing ",
+							"protocols on a VR. Multiple RPs can be acted ",
+							"on simultaneously. Also, individual RPs can ",
+							"be brought up in steps, which should not ",
+							"affect the RPs that were running. The BITS ",
+							"represent an Action-code that specifies what ",
+							"action is to be performed for the RPs. ",
+							"The actions are: initiate(1) or shutdown(0).",
+							"",
+							"Bits 0-3 may be specified in any combination.",
+							"Individual routing protocols may be enabled ",
+							"and disabled independently. Protocols are",
+							"enabled by setting the respective BIT and are",
+							"disabled by resetting the BIT.",
+							"",
+							"So, for example, to enable RIP and BGP protocols ",
+							"the RpTrigger bits 0 and 2 need to be set, and ",
+							"as encoded as 10100000.",
+							"All zeros should be interpreted as all protocols",
+							"disable.",
+							""
+						],
+						"enums" : {
+							"0" : "rip",
+							"1" : "ospf",
+							"2" : "bgp",
+							"3" : "isis",
+							"4" : "dhcp",
+							"5" : "igmp",
+							"6" : "pimsm",
+							"7" : "ldp"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterRpTrigger",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.1.1.4",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouterTable entry deleted"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ControlRouterIndex:$v2",
+				"Summary" : "IP router table entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterDeleted SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex u 1",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the virtual router."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouterTable entry modified"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlRouterIndex:$v2",
+				"Summary" : "IP router table entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterModified SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex u 1 SHE-L3CTRL-MIB::sheL3IpRouterName s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouterRpTrigger b 0",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the virtual router."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The Name of the Virtual Router.",
+							"Router names are unique and that NE rejects router creation",
+							"commands if a router name is already used by an existing router.",
+							"Router names of existing routers must not be modified."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents Routing Protocol (RP) ",
+							"Triggers on a Virtual Router and it meant to ",
+							"be used to initiate or shutdown routing ",
+							"protocols on a VR. Multiple RPs can be acted ",
+							"on simultaneously. Also, individual RPs can ",
+							"be brought up in steps, which should not ",
+							"affect the RPs that were running. The BITS ",
+							"represent an Action-code that specifies what ",
+							"action is to be performed for the RPs. ",
+							"The actions are: initiate(1) or shutdown(0).",
+							"",
+							"Bits 0-3 may be specified in any combination.",
+							"Individual routing protocols may be enabled ",
+							"and disabled independently. Protocols are",
+							"enabled by setting the respective BIT and are",
+							"disabled by resetting the BIT.",
+							"",
+							"So, for example, to enable RIP and BGP protocols ",
+							"the RpTrigger bits 0 and 2 need to be set, and ",
+							"as encoded as 10100000.",
+							"All zeros should be interpreted as all protocols",
+							"disable.",
+							""
+						],
+						"enums" : {
+							"0" : "rip",
+							"1" : "ospf",
+							"2" : "bgp",
+							"3" : "isis",
+							"4" : "dhcp",
+							"5" : "igmp",
+							"6" : "pimsm",
+							"7" : "ldp"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterRpTrigger",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.1.1.4",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpManagementVrEnabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"conf trap"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpManagementVrEnabled",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ControlRouterIndex:$v2",
+				"Summary" : "L3 IP management VR enabled"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpManagementVrEnabled SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex u 1",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpManagementVrEnabled",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the virtual router."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterControlRouterIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.2.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"long running command finished"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterControlResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==37) ? 0 : (($v4==1 || $v4==30 || $v4==32 || ($v4>=52 && $v4<=58) || $v4==62 || $v4==71 || $v4==80 || $v4==81 || $v4==200 || $v4==202) ? 2 : (($v4==31 || $v4==36 || $v4==34 || ($v4>=100 && $v4<=116) || $v4==203 || $v4==204) ? 4 : 3))"
+				},
+				"SubNode" : "PortControlIfIndex:$v2",
+				"Summary" : "L3 IP router port control $v3 request result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortControlResult SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex i 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlRequest i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortControlReqResult i 37",
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortControlResult SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex i 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlRequest i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortControlReqResult i 203"
+			],
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the router port.",
+							"",
+							"All l3RouterPort interfaces should use ifType = bridge(209) in the ifTable! "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"",
+							"createRouterPort (201):",
+							"-> creating router ports of type 'loop' or 'mgmt' is not possible",
+							"sheL3IpRouterPortControlUnnumbered",
+							"sheL3IpRouterPortControlIpAddressType ",
+							"sheL3IpRouterPortControlIpAddress",
+							"sheL3IpRouterPortControlIpPfxLen",
+							"sheL3IpRouterPortControlVlanId ",
+							"sheL3IpRouterPortControlNetworkPointer",
+							"sheL3IpRouterPortControlManagementIf",
+							"sheL3IpRouterPortControlType",
+							"sheL3IpRouterPortControlInnerVlanId",
+							"sheL3IpRouterPortControlVlanPriority",
+							"sheL3IpRouterPortControlInnerVlanPriority",
+							"sheL3IpRouterPortControlUseDhcp (R4.7.3M: obsolete)",
+							"sheL3IpRouterPortControlLabelSwitching",
+							"sheL3IpRouterPortControlLabelSpace",
+							"sheL3IpRouterPortControlMtuSize",
+							"sheL3IpRouterPortControlDescription (optional, new with R4.7M)",
+							"sheL3IpRouterPortControlServiceFilteringEnabled (new with R4.7M)",
+							"sheL3IpRouterPortControlAllowedServicesList (new with R4.7M)",
+							"-> sheL3IpRouterPortCreated",
+							"-> sheL3IpRouterPortControlResult",
+							"",
+							"deleteRouterPort (202):",
+							"-> deleting router ports of type 'loop' or 'mgmt' is not possible",
+							"sheL3IpRouterPortControlIfIndex",
+							"-> sheL3IpRouterPortDeleted",
+							"-> sheL3IpRouterPortControlResult",
+							"",
+							"modifyRouterPort (203):",
+							"-> modify router ports of type 'loop' is not possible",
+							"sheL3IpRouterPortControlIfIndex",
+							"sheL3IpRouterPortControlIpAddressType",
+							"sheL3IpRouterPortControlIpAddress ",
+							"sheL3IpRouterPortControlIpPfxLen ",
+							"sheL3IpRouterPortControlNetworkPointer",
+							"sheL3IpRouterPortControlVlanPriority",
+							"sheL3IpRouterPortControlInnerVlanPriority",
+							"sheL3IpRouterPortControlUseDhcp (R4.7.3M: obsolete)",
+							"sheL3IpRouterPortControlLabelSwitching",
+							"sheL3IpRouterPortControlLabelSpace",
+							"sheL3IpRouterPortControlMtuSize",
+							"sheL3IpRouterPortControlDescription (optional, new with R4.7M)",
+							"sheL3IpRouterPortControlServiceFilteringEnabled (new with R4.7M)",
+							"sheL3IpRouterPortControlAllowedServicesList (new with R4.7M)",
+							"-> sheL3IpRouterPortModified",
+							"-> sheL3IpRouterPortControlResult",
+							"",
+							"modifyRouterPortType (204):",
+							"-> modify router ports of type 'loop' or 'mgmt' is not possible",
+							"sheL3IpRouterPortControlIfIndex",
+							"sheL3IpRouterPortControlType",
+							"-> sheL3IpRouterPortModified",
+							"-> sheL3IpRouterPortControlResult",
+							"",
+							"createSecondaryIpAddress (206): ",
+							"-> Deprecated in SR5.1 ",
+							"sheL3IpRouterPortControlIfIndex",
+							"sheL3IpRouterPortControlSecondaryIpAddress",
+							"sheL3IpRouterPortControlSecondaryIpPfxLen",
+							"-> sheL3IpRouterPortSecAddrCreated",
+							"-> sheL3IpRouterPortControlResult",
+							"",
+							"deleteSecondaryIpAddress (207): ",
+							"-> Deprecated in SR5.1 ",
+							"sheL3IpRouterPortControlIfIndex",
+							"sheL3IpRouterPortControlSecondaryIpAddress",
+							"sheL3IpRouterPortControlSecondaryIpPfxLen",
+							"-> sheL3IpRouterPortSecAddrDeleted",
+							"-> sheL3IpRouterPortControlResult",
+							"",
+							"modifyRouterPortFilterServices (208):",
+							"-> modify router ports of type 'loop' is not possible",
+							"-> New in R4.7M",
+							"sheL3IpRouterPortControlIfIndex",
+							"sheL3IpRouterPortControlServiceFilteringEnabled",
+							"sheL3IpRouterPortControlAllowedServicesList ",
+							"-> sheL3IpRouterPortServiceFilteringModified",
+							"-> sheL3IpRouterPortControlResult",
+							"",
+							"setDisabledMessagesProfile (209):",
+							"-> New in SR5.1",
+							"sheL3IpRouterPortControlIfIndex",
+							"sheL3IpRouterPortControlDisabledMessages",
+							"-> sheL3IpRouterPortDisabledMessagesModified",
+							"-> sheL3IpRouterPortControlResult",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: createSecondaryIpAddress(206) and deleteSecondaryIpAddress(207) deprecated, ",
+							"to be replaced by createIpAddress(251) and deleteIpAddress(253) in ",
+							"sheL3IpAddressControlRequest;",
+							"setDisabledMessagesProfile(209) added. ",
+							""
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"101" : "createRouter",
+							"102" : "deleteRouter",
+							"103" : "modifyRouter",
+							"104" : "enableManagementVr",
+							"201" : "createRouterPort",
+							"202" : "deleteRouterPort",
+							"203" : "modifyRouterPort",
+							"204" : "modifyRouterPortType",
+							"206" : "createSecondaryIpAddress",
+							"207" : "deleteSecondaryIpAddress",
+							"208" : "modifyRouterPortFilterServices",
+							"209" : "setDisabledMessagesProfile",
+							"220" : "modifyRouterPortIPv4Interface",
+							"230" : "modifyRouterPortIPv6Interface",
+							"241" : "createMessageFilteringProfile",
+							"242" : "modifyMessageFilteringProfile",
+							"243" : "deleteMessageFilteringProfile",
+							"251" : "createIpAddress",
+							"252" : "modifyIpAddress",
+							"253" : "deletepAddress",
+							"311" : "createRoute",
+							"312" : "deleteRoute",
+							"313" : "searchForL3IpRoute",
+							"355" : "createAcl",
+							"356" : "modifyAcl",
+							"357" : "modifyAclRuleOrder",
+							"358" : "deleteAcl",
+							"361" : "createAclRule",
+							"362" : "deleteAclRule"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command. "
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"41" : "configurationNotSupported",
+							"42" : "wrongAdminstateForConfiguration",
+							"50" : "vlanNotExisting",
+							"51" : "noInterfaceWithRequestedIndex",
+							"52" : "interfaceWithRequestedIndexAlreadyExisting",
+							"53" : "routerPortStillUsedByVpnAcTableEntry",
+							"54" : "ipAddressStillUsedAsTransAddrByLdpEntity",
+							"55" : "ipRouteDestStillUsedAsTargetPeerAddrByLdpEntity",
+							"56" : "createSecondaryIpAddressOnlyAllowedForNumberedInterface",
+							"58" : "labelSwitchingOnlyAllowedForPortTypeBr",
+							"59" : "modifyRouterPortTypeFailedIpAddressConfigInvalid",
+							"62" : "routerPortMtuSizeModifyNotPossibleWhenAssignedToVpnInstance",
+							"71" : "aclRuleWithRequestedIndexAlreadyExisting",
+							"72" : "aclRuleRequestedAclListNameNotExisting",
+							"73" : "aclRuleRequestedAddressRangesNotSupported",
+							"80" : "aclWithRequestedNameAlreadyExisting",
+							"81" : "aclWithRequestedIndexAlreadyExisting",
+							"82" : "deleteAclFailedforActiveList",
+							"100" : "routeCreationFailedDestTypeDoesNotMatchWithNextHopType",
+							"101" : "routeCreationFailedNextHopDoesNotMatchWithInterfaceIndex",
+							"102" : "routeCreationFailedInconsistentAddressMask",
+							"103" : "routeCreationFailedInvalidNextHopAddress",
+							"104" : "routeCreationFailedNoFreeRouteIndexAvailable",
+							"110" : "ipAddressCreateDeleteFailedBadPrefixLength",
+							"111" : "ipAddressCreateDeleteFailedBadIpAddressStringLength",
+							"112" : "ipAddressCreateDeleteFailedBadAddressMask",
+							"113" : "ipAddressCreateDeleteFailedInvalidAddress",
+							"114" : "ipAddressCreateFailedAddressOverlapping",
+							"115" : "ipAddressCreateFailedCreationNotPossible",
+							"116" : "ipAddressDeleteFailedAddressNonExistent",
+							"200" : "profileNameAlreadyExists",
+							"201" : "profileDoesNotExist",
+							"202" : "profileInUse",
+							"203" : "profileAssignmentFailed",
+							"204" : "maxNoOfProfilesReached"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouterPortTable entry created",
+				"Modified with R4.7M."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortControlIfIndex:$v2",
+				"Summary" : "L3 IP router port table entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortCreated SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex i 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortMacAddress s EXAMPL SHE-L3CTRL-MIB::sheL3IpRouterPortUnnumbered i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortIpAddressType i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortIpAddress s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouterPortIpPfxLen u 0 SHE-L3CTRL-MIB::sheL3IpRouterPortVlanId u 0 SHE-L3CTRL-MIB::sheL3IpRouterPortNetworkPointer u 1 SHE-L3CTRL-MIB::sheL3IpRouterPortManagementIf i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortType i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortInnerVlanId u 0 SHE-L3CTRL-MIB::sheL3IpRouterPortVlanPriority u 0 SHE-L3CTRL-MIB::sheL3IpRouterPortInnerVlanPriority u 0 SHE-L3CTRL-MIB::sheL3IpRouterPortDescription s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouterPortLabelSwitching i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortLabelSpace u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortMtuSize u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringEnabled i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortAllowedServicesList s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the router port.",
+							"",
+							"All l3RouterPort interfaces should use ifType = bridge(209) in the ifTable! "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of this router port."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortMacAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"numbered(0)",
+							"unnumbered(1)",
+							"IP unnumbered only makes sense for point-to-point links between routers.",
+							"An unnumbered interface has no unique IP address assignment.",
+							"The address of the interface is 'borrowed' from one of the router's other",
+							"functional interfaces and used as the source address for routing updates",
+							"and packets sourced from the interface.",
+							"",
+							"When IP unnumbered is configured, routes learned through the IP unnumbered",
+							"interface have the interface as the next hop instead of the source address",
+							"of the routing update.",
+							"In this way, address space is conserved."
+						],
+						"enums" : {
+							"0" : "numbered",
+							"1" : "unnumbered"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortUnnumbered",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the sheL3IpRouterPortIpAddress, as defined in the InetAddress MIB.",
+							"",
+							"Only address type ipv4(1) may appear in an actual router port table and is allowed",
+							"as value of this object for IP interfaces with valid address. ",
+							"Unnumbered interfaces (no valid ip address needed) will use address type unknown(0).",
+							"",
+							"NOTE",
+							"This object is deprecated. Definitions of IP addresses for router ports are to ",
+							"be replaced by entries in the sheL3IpAddressTable.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpAddressType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IP address of this router port.",
+							"The type of this address is determined by the value of the sheL3IpRouterPortIpAddressType.",
+							"For loopback interfaces the IP address is read only.",
+							"",
+							"NOTE",
+							"This object is deprecated. Definitions of IP addresses for router ports are to ",
+							"be replaced by entries in the sheL3IpAddressTable.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the number of leading one bits that form the",
+							"mask to be logical-ANDed with the address.",
+							"",
+							"NOTE",
+							"This object is deprecated. Definitions of IP addresses for router ports are to ",
+							"be replaced by entries in the sheL3IpAddressTable.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpPfxLen",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This attribute points to an entry of the sheVlanTable.",
+							"This is the default VLAN ID of the router port used for frames sent by the router.",
+							"The value 0 is used if no VLAN is assigned to the port (automatically created loopback",
+							"and management interfaces)."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortVlanId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This attribute points to an entry of the sheL3IpRouterTable."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortNetworkPointer",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to identify outband and inband management interfaces.",
+							"Outband interfaces will additionaly use the PortType = mgmt(4)"
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortManagementIf",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicate the type of RouterPort:",
+							"br(1)",
+							"numbered interfaces",
+							"create / delete / modify by operator (with IP address and VLAN)",
+							"used for physical uplink interfaces and host IP services on CXU e.g. ANCP (up to 4095)",
+							"",
+							"loop(2)",
+							"numbered interfaces",
+							"autocreated on create of routers (fixed IP address 127.0.0.1 and no VLAN)",
+							"one interface per router (up to 6)",
+							"",
+							"mgmt(3)",
+							"numbered interfaces",
+							"one interface autocreated on startup (create of management router)",
+							"or create / delete / modify by operator (with IP address and VLAN)",
+							"used for management access (SNMP) to NE",
+							"",
+							"l2vpn(4)",
+							"unnumbered interfaces (default association is loop interface)",
+							"create / delete / modify by operator (with VLAN)",
+							"used for VPLS/VPWS services at subscriber ports",
+							"",
+							"hostL2vpn(5)",
+							"numbered interfaces",
+							"create / delete / modify by operator (with IP address and VLAN)",
+							"used for VPLS/VPWS services at host IP services on CXU as well as subscriber ports ",
+							""
+						],
+						"enums" : {
+							"1" : "br",
+							"2" : "loop",
+							"3" : "mgmt",
+							"4" : "l2vpn",
+							"5" : "hostL2vpn"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is the inner VLAN ID tag of the router port used for frames sent by the router",
+							"if the NE run in double tagging mode.",
+							"Set to 0 if no inner VLAN should be used or if the NE uses single tag mode."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortInnerVlanId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The used .1p priority for default VLAN. ",
+							"Setting is don't care if no default VLAN should be used."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortVlanPriority",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The used .1p priority for inner VLAN. ",
+							"Setting is don't care if no inner VLAN should be used."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortInnerVlanPriority",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Content will be used NE internaly.",
+							"",
+							"Note: ",
+							"Configurable with R4.7M.",
+							"A descriptive text for this router port for operator own notes."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortDescription",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Could only be set on RouterPorts of type 'br' as long as the IPD should work as LER(label edge router).",
+							"",
+							"If set true, this RouterPort is available for label switching and the content of the parameters",
+							"EnableLdp and LabelSpace become valid.",
+							""
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortLabelSwitching",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Define the labelSpace binding to an ldp entity for a RouterPorts of type 'br' if LabelSwitching",
+							"is enabled for this port.",
+							"",
+							"NOTE:",
+							"R4.0M/R4.7M will only support the default per platform labelspace 0."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortLabelSpace",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.20",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Sets the default value for locally supported static MTU size for this IP Router Port.",
+							"",
+							"NOTE:",
+							"RouterPort interfaces of type 'loop' (loopback interfaces) support a default MTU size of 16436 byte.",
+							"The MTU size for interfaces of type 'loop' and 'mgmt' could not be modified.",
+							"The configurable range for other interface types is restricted!",
+							"",
+							"The MTU size for interfaces of type 'l2vpn' and 'hostl2vpn' could only be modified",
+							"if the interface is not assigned to an Vpn instance via sheVpnAcTable (sheL2VPNMib).",
+							"If the routerPort should be assigned to an Vpn instance of type 'VPLS', the configured",
+							"MTU size here must be equal to the MTU size on the Vpn instance."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortMtuSize",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.21",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Status information if service filtering is enabled on this interface or not.",
+							"",
+							"If 'true', only services configured via sheL3IpRouterPortAllowedServicesList could be used on this interface.",
+							"All other services will be blocked.",
+							"",
+							"If 'false', no service filtering will be performed on this interface and all known services are allowed to run.",
+							"",
+							"New parameter with R4.7M.",
+							"",
+							"NOTE:",
+							"During release upgrade existing interfaces will use default value 'false' for service filtering for",
+							"backward compatibility reasons.",
+							"",
+							"New created interfaces should use default setting 'true' for security reasons. To run services",
+							"on these interfaces, the filtering must be switched off or allowed services must be configured in",
+							"sheL3IpRouterPortAllowedServicesList."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringEnabled",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This list contain valid indeces of the sheL3IpRouterPortServiceTable for allowed services",
+							"on this interface. Each index consists of 1 octet.",
+							"Known services from sheL3IpRouterPortServiceTable which are not listed here, could not be used ",
+							"via this interface in case of enabled service filtering.",
+							"",
+							"The setting here is only valid, if sheL3IpRouterPortServiceFilteringEnabled = 'true', otherwise",
+							"it will be ignored.",
+							"",
+							"New parameter with R4.7M."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortAllowedServicesList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.23",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouterPortTable entry deleted"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PortControlIfIndex:$v2",
+				"Summary" : "L3 IP router port table entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortDeleted SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex i 9999",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the router port.",
+							"",
+							"All l3RouterPort interfaces should use ifType = bridge(209) in the ifTable! "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouterPortTable entry modified",
+				"Modified with R4.7M."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortControlIfIndex:$v2",
+				"Summary" : "L3 IP router port table entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortModified SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex i 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortMacAddress s EXAMPL SHE-L3CTRL-MIB::sheL3IpRouterPortIpAddressType i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortIpAddress s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouterPortIpPfxLen u 0 SHE-L3CTRL-MIB::sheL3IpRouterPortNetworkPointer u 1 SHE-L3CTRL-MIB::sheL3IpRouterPortVlanPriority u 0 SHE-L3CTRL-MIB::sheL3IpRouterPortInnerVlanPriority u 0 SHE-L3CTRL-MIB::sheL3IpRouterPortDescription s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouterPortLabelSwitching i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortLabelSpace u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortMtuSize u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringEnabled i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortAllowedServicesList s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the router port.",
+							"",
+							"All l3RouterPort interfaces should use ifType = bridge(209) in the ifTable! "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MAC address of this router port."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortMacAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of the sheL3IpRouterPortIpAddress, as defined in the InetAddress MIB.",
+							"",
+							"Only address type ipv4(1) may appear in an actual router port table and is allowed",
+							"as value of this object for IP interfaces with valid address. ",
+							"Unnumbered interfaces (no valid ip address needed) will use address type unknown(0).",
+							"",
+							"NOTE",
+							"This object is deprecated. Definitions of IP addresses for router ports are to ",
+							"be replaced by entries in the sheL3IpAddressTable.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpAddressType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IP address of this router port.",
+							"The type of this address is determined by the value of the sheL3IpRouterPortIpAddressType.",
+							"For loopback interfaces the IP address is read only.",
+							"",
+							"NOTE",
+							"This object is deprecated. Definitions of IP addresses for router ports are to ",
+							"be replaced by entries in the sheL3IpAddressTable.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the number of leading one bits that form the",
+							"mask to be logical-ANDed with the address.",
+							"",
+							"NOTE",
+							"This object is deprecated. Definitions of IP addresses for router ports are to ",
+							"be replaced by entries in the sheL3IpAddressTable.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpPfxLen",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This attribute points to an entry of the sheL3IpRouterTable."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortNetworkPointer",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The used .1p priority for default VLAN. ",
+							"Setting is don't care if no default VLAN should be used."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortVlanPriority",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The used .1p priority for inner VLAN. ",
+							"Setting is don't care if no inner VLAN should be used."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortInnerVlanPriority",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Content will be used NE internaly.",
+							"",
+							"Note: ",
+							"Configurable with R4.7M.",
+							"A descriptive text for this router port for operator own notes."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortDescription",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Could only be set on RouterPorts of type 'br' as long as the IPD should work as LER(label edge router).",
+							"",
+							"If set true, this RouterPort is available for label switching and the content of the parameters",
+							"EnableLdp and LabelSpace become valid.",
+							""
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortLabelSwitching",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Define the labelSpace binding to an ldp entity for a RouterPorts of type 'br' if LabelSwitching",
+							"is enabled for this port.",
+							"",
+							"NOTE:",
+							"R4.0M/R4.7M will only support the default per platform labelspace 0."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortLabelSpace",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.20",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Sets the default value for locally supported static MTU size for this IP Router Port.",
+							"",
+							"NOTE:",
+							"RouterPort interfaces of type 'loop' (loopback interfaces) support a default MTU size of 16436 byte.",
+							"The MTU size for interfaces of type 'loop' and 'mgmt' could not be modified.",
+							"The configurable range for other interface types is restricted!",
+							"",
+							"The MTU size for interfaces of type 'l2vpn' and 'hostl2vpn' could only be modified",
+							"if the interface is not assigned to an Vpn instance via sheVpnAcTable (sheL2VPNMib).",
+							"If the routerPort should be assigned to an Vpn instance of type 'VPLS', the configured",
+							"MTU size here must be equal to the MTU size on the Vpn instance."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortMtuSize",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.21",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Status information if service filtering is enabled on this interface or not.",
+							"",
+							"If 'true', only services configured via sheL3IpRouterPortAllowedServicesList could be used on this interface.",
+							"All other services will be blocked.",
+							"",
+							"If 'false', no service filtering will be performed on this interface and all known services are allowed to run.",
+							"",
+							"New parameter with R4.7M.",
+							"",
+							"NOTE:",
+							"During release upgrade existing interfaces will use default value 'false' for service filtering for",
+							"backward compatibility reasons.",
+							"",
+							"New created interfaces should use default setting 'true' for security reasons. To run services",
+							"on these interfaces, the filtering must be switched off or allowed services must be configured in",
+							"sheL3IpRouterPortAllowedServicesList."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringEnabled",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This list contain valid indeces of the sheL3IpRouterPortServiceTable for allowed services",
+							"on this interface. Each index consists of 1 octet.",
+							"Known services from sheL3IpRouterPortServiceTable which are not listed here, could not be used ",
+							"via this interface in case of enabled service filtering.",
+							"",
+							"The setting here is only valid, if sheL3IpRouterPortServiceFilteringEnabled = 'true', otherwise",
+							"it will be ignored.",
+							"",
+							"New parameter with R4.7M."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortAllowedServicesList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.23",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortUnnumberedAssociationModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"associated numbered interface of an unnumbered interface modified"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortUnnumberedAssociationModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "IfIndex:$v2",
+				"Summary" : "Associated numbered interface of unnumbered interface modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortUnnumberedAssociationModified SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex i 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlUnnumberedAssociation u 9999",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortUnnumberedAssociationModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.6",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the router port.",
+							"",
+							"All l3RouterPort interfaces should use ifType = bridge(209) in the ifTable! "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"An unnumbered interface has no unique IP address",
+							"assignment. The address of the interface is 'borrowed'",
+							"from one of the same router's other functional interfaces.",
+							"This is the pointer (ifIndex) to the associated numbered interface.",
+							"If there is no associated interface, or for numbered interfaces",
+							"this attribute is set to 0."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlUnnumberedAssociation",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.14",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortSecAddrCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"secondary IP address of a numbered interface created",
+				"REVISION HISTORY",
+				"SR5.1: deprecated; to be replaced by entries in the sheL3IpAddressTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortSecAddrCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PortControlIfIndex:$v2",
+				"Summary" : "Secondary IP address ($v3) of a numbered interface created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortSecAddrCreated SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex i 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlSecondaryIpAddress s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouterPortControlSecondaryIpPfxLen u 0",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortSecAddrCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.7",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the router port.",
+							"",
+							"All l3RouterPort interfaces should use ifType = bridge(209) in the ifTable! "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A secondary IP address of this router port.",
+							"The type of this address is determined by the value of",
+							"the sheL3IpRouterPortIpAddressType object.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated; to be replaced by entries in the sheL3IpAddressTable."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlSecondaryIpAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the number of leading one bits that form the",
+							"mask to be logical-ANDed with the address.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated; to be replaced by entries in the sheL3IpAddressTable."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlSecondaryIpPfxLen",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.16",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortSecAddrDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"secondary IP address of a numbered interface deleted",
+				"REVISION HISTORY",
+				"SR5.1: deprecated; to be replaced by entries in the sheL3IpAddressTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortSecAddrDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PortControlIfIndex:$v2",
+				"Summary" : "Secondary IP address of numbered interface deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortSecAddrDeleted SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex i 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortControlSecondaryIpAddress s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouterPortControlSecondaryIpPfxLen u 0",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortSecAddrDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.8",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the router port.",
+							"",
+							"All l3RouterPort interfaces should use ifType = bridge(209) in the ifTable! "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A secondary IP address of this router port.",
+							"The type of this address is determined by the value of",
+							"the sheL3IpRouterPortIpAddressType object.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated; to be replaced by entries in the sheL3IpAddressTable."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlSecondaryIpAddress",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the number of leading one bits that form the",
+							"mask to be logical-ANDed with the address.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: deprecated; to be replaced by entries in the sheL3IpAddressTable."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlSecondaryIpPfxLen",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.16",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouterPortTable entry modified",
+				"New with R4.7M."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortServiceFilteringModified",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2=2) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'Port service filtering enabled' : 'Port service filtering disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringModified SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringEnabled i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortAllowedServicesList s EXAMPLE",
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringModified SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringEnabled i 2 SHE-L3CTRL-MIB::sheL3IpRouterPortAllowedServicesList s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.9",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Status information if service filtering is enabled on this interface or not.",
+							"",
+							"If 'true', only services configured via sheL3IpRouterPortAllowedServicesList could be used on this interface.",
+							"All other services will be blocked.",
+							"",
+							"If 'false', no service filtering will be performed on this interface and all known services are allowed to run.",
+							"",
+							"New parameter with R4.7M.",
+							"",
+							"NOTE:",
+							"During release upgrade existing interfaces will use default value 'false' for service filtering for",
+							"backward compatibility reasons.",
+							"",
+							"New created interfaces should use default setting 'true' for security reasons. To run services",
+							"on these interfaces, the filtering must be switched off or allowed services must be configured in",
+							"sheL3IpRouterPortAllowedServicesList."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortServiceFilteringEnabled",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This list contain valid indeces of the sheL3IpRouterPortServiceTable for allowed services",
+							"on this interface. Each index consists of 1 octet.",
+							"Known services from sheL3IpRouterPortServiceTable which are not listed here, could not be used ",
+							"via this interface in case of enabled service filtering.",
+							"",
+							"The setting here is only valid, if sheL3IpRouterPortServiceFilteringEnabled = 'true', otherwise",
+							"it will be ignored.",
+							"",
+							"New parameter with R4.7M."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortAllowedServicesList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.23",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortDisabledMessagesModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that sheL3IpRouterPortDisabledMessages has been modified.",
+				"REVISION HISTORY",
+				"SR5.1: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortDisabledMessagesModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2==0) ? 'No messages are disabled on port' : 'Messages from filter profile table disabled on port'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortDisabledMessagesModified SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortDisabledMessages u 0",
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortDisabledMessagesModified SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortDisabledMessages u 1"
+			],
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortDisabledMessagesModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.1.10",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.5.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Configures a Message Filtering Profile to be used to select ",
+							"messages to be disabled for this IP router port.",
+							"",
+							"VALUES",
+							"0 - No messages to be explicitly disabled for this ",
+							"router port (default).",
+							"NOTE: Some messages may nevertheless be disabled by ",
+							"the NE globally as a general policy.",
+							"1..16 - Messages, as defined by the entry in the ",
+							"sheL3CtrlMessageFilteringProfileTable identified ",
+							"with the index equal to this value, are to be disabled ",
+							"for this router port",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortDisabledMessages",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.3.1.24",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event notification that an entry in the sheL3IpRouterPortIpv4InterfaceTable has been modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortIpv4InterfaceModified",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'IPv4 interface enabled' : 'IPv4 interface disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceModified SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceEnableStatus i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceMtuSize u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceUseDhcp i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceUseDhcpDefaultRouter i 1",
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceModified SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceEnableStatus i 2 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceMtuSize u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceUseDhcp i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceUseDhcpDefaultRouter i 1"
+			],
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The indication of whether IPv4 is enabled (up) or disabled",
+							"(down) on this interface. This object does not affect the",
+							"state of the interface itself, only its connection to an",
+							"IPv4 stack. The IF-MIB should be used to control the state",
+							"of the interface."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceEnableStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sets the locally supported static MTU size for this speicific protocol.",
+							"",
+							"Values:",
+							"0 - Use default setting given by sheL3IpRouterPortMtuSize (Default).",
+							"NOTE: NE cannot currently support separate MTU sizes for IPv4 and IPv6 ",
+							"-> only value 0 allowed.",
+							"",
+							"NOTES:",
+							"- RouterPort interfaces of type 'loop' (loopback interfaces) support a default MTU size ",
+							"of 16436 byte.",
+							"- The MTU size for interfaces of type 'loop' and 'mgmt' cannot be modified.",
+							"- The configurable range for other interface types is also restricted."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceMtuSize",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Set DHCP usage for this IP Router Port IPv4 interface.",
+							"",
+							"Values:",
+							"noUseDhcp(0) - DHCP will not be used and the IP Address has to be configured (default)",
+							"useDhcp(1) - use DHCP to obtain an IPv4 address"
+						],
+						"enums" : {
+							"0" : "noUseDhcp",
+							"1" : "useDhcp"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceUseDhcp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sets whether DHCPv4 is to be used on this IP Router Port IPv4 Interface to determine ",
+							"the default router address from the DHCPv4 router option 3."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv4InterfaceUseDhcpDefaultRouter",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event notification that an entry in the sheL3IpRouterPortIpv6InterfaceTable has been modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterPortIpv6InterfaceModified",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'IPv6 interface enabled' : 'IPv6 interface disabled'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceModified SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceEnableStatus i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceMtuSize u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseDhcp i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseDAD i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfAddr i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfDefaultRouter i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfMtuSize i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceMldVersion i 1",
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceModified SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceEnableStatus i 2 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceMtuSize u 9999 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseDhcp i 0 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseDAD i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfAddr i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfDefaultRouter i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfMtuSize i 1 SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceMldVersion i 1"
+			],
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"The indication of whether IPv6 is enabled (up) or disabled",
+							"(down) on this interface. This object does not affect the",
+							"state of the interface itself, only its connection to an",
+							"IPv6 stack. The IF-MIB should be used to control the state",
+							"of the interface."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceEnableStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sets the locally supported static MTU size for this specific protocol.",
+							"",
+							"Values:",
+							"0 - Use default setting given by sheL3IpRouterPortMtuSize (Default).",
+							"NOTE: NE cannot currently support separate MTU sizes for IPv4 and IPv6 ",
+							"-> only value 0 allowed.",
+							"",
+							"NOTES:",
+							"- RouterPort interfaces of type 'loop' (loopback interfaces) support a default MTU size ",
+							"of 16436 byte.",
+							"- The MTU size for interfaces of type 'loop' and 'mgmt' cannot be modified.",
+							"- The configurable range for other interface types is also restricted."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceMtuSize",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.2.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Set DHCP usage for this IP Router Port IPv6 interface.",
+							"",
+							"Values:",
+							"noUseDhcp(0) - DHCP will not be used and the IP Address has to be configured (default)",
+							"useDhcp(1) - use DHCPv6 to obtain an IPv6 address"
+						],
+						"enums" : {
+							"0" : "noUseDhcp",
+							"1" : "useDhcp"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseDhcp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sets whether Duplicate Address Detection (DAD) is to be used on this ",
+							"IP Router Port IPv6 Interface."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseDAD",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sets whether Stateless Address Auto Configuration (SLAAC) is to be ",
+							"used on this IP Router Port IPv6 Interface to generate IPv6 address ",
+							"from the IPv6 prefix received in the router advertisment."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfAddr",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sets whether Stateless Address Auto Configuration (SLAAC) is to be ",
+							"used on this IP Router Port IPv6 Interface to determine the default ",
+							"router address from the router advertisment."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfDefaultRouter",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.2.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sets whether Stateless Address Auto Configuration (SLAAC) is to be ",
+							"used on this IP Router Port IPv6 Interface to determine the MTU ",
+							"size dynamically the router advertisment.",
+							"",
+							"NOTE: ",
+							"NE cannot currently support separate MTU sizes for IPv4 and IPv6 ",
+							"-> only false(2) allowed."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceUseAutoconfMtuSize",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Sets whether Multicast Group Subscription is to use Version 1 ",
+							"(mldv1(1)) or Version 2 (mldv2(2)) of Multicast Listener Discovery",
+							"on this IP Router Port IPv6 Interface."
+						],
+						"enums" : {
+							"1" : "mldv1",
+							"2" : "mldv2"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouterPortIpv6InterfaceMldVersion",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.6.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouteControlResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Description."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterControlResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==37) ? 0 : (($v4==1 || $v4==30 || $v4==32 || ($v4>=52 && $v4<=58) || $v4==62 || $v4==71 || $v4==80 || $v4==81 || $v4==200 || $v4==202) ? 2 : (($v4==31 || $v4==36 || $v4==34 || ($v4>=100 && $v4<=116) || $v4==203 || $v4==204) ? 4 : 3))"
+				},
+				"SubNode" : "RouteControlIndex:$v2",
+				"Summary" : "L3 IP route control $v3 request result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouteControlResult SHE-L3CTRL-MIB::sheL3IpRouteControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlIndex u 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlRequest i 0 SHE-L3CTRL-MIB::sheL3IpRouteControlReqResult i 37",
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouteControlResult SHE-L3CTRL-MIB::sheL3IpRouteControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlIndex u 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlRequest i 0 SHE-L3CTRL-MIB::sheL3IpRouteControlReqResult i 204"
+			],
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the route table."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.21",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"",
+							"createRoute (311):",
+							"sheL3IpRouteControlRouterPointer",
+							"sheL3IpRouteControlDestType",
+							"sheL3IpRouteControlDest",
+							"sheL3IpRouteControlPfxLen",
+							"sheL3IpRouteControlDistance",
+							"sheL3IpRouteControlType",
+							"sheL3IpRouteControlNextHopType",
+							"sheL3IpRouteControlNextHop",
+							"sheL3IpRouteControlInterfaceIndex",
+							"sheL3IpRouteControlMetric1",
+							"sheL3IpRouteControlMetric2",
+							"sheL3IpRouteControlMetric3",
+							"sheL3IpRouteControlMetric4",
+							"sheL3IpRouteControlMetric5",
+							"-> sheL3IpRouteCreated",
+							"-> sheL3IpRouteControlResult",
+							"",
+							"deleteRoute (312):",
+							"sheL3IpRouteControlIndex",
+							"-> sheL3IpRouteDeleted",
+							"-> sheL3IpRouteControlResult",
+							"",
+							"",
+							"searchForL3IpRoute (313): [NO_CONFIG-CHANGE]",
+							"sheL3IpRouteControlDestType",
+							"sheL3IpRouteControlSearchDestAddress",
+							"sheL3IpRouteControlPfxLen",
+							"sheL3IpRouteControlSearchRequestId"
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"101" : "createRouter",
+							"102" : "deleteRouter",
+							"103" : "modifyRouter",
+							"104" : "enableManagementVr",
+							"201" : "createRouterPort",
+							"202" : "deleteRouterPort",
+							"203" : "modifyRouterPort",
+							"204" : "modifyRouterPortType",
+							"206" : "createSecondaryIpAddress",
+							"207" : "deleteSecondaryIpAddress",
+							"208" : "modifyRouterPortFilterServices",
+							"209" : "setDisabledMessagesProfile",
+							"220" : "modifyRouterPortIPv4Interface",
+							"230" : "modifyRouterPortIPv6Interface",
+							"241" : "createMessageFilteringProfile",
+							"242" : "modifyMessageFilteringProfile",
+							"243" : "deleteMessageFilteringProfile",
+							"251" : "createIpAddress",
+							"252" : "modifyIpAddress",
+							"253" : "deletepAddress",
+							"311" : "createRoute",
+							"312" : "deleteRoute",
+							"313" : "searchForL3IpRoute",
+							"355" : "createAcl",
+							"356" : "modifyAcl",
+							"357" : "modifyAclRuleOrder",
+							"358" : "deleteAcl",
+							"361" : "createAclRule",
+							"362" : "deleteAclRule"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command. "
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"41" : "configurationNotSupported",
+							"42" : "wrongAdminstateForConfiguration",
+							"50" : "vlanNotExisting",
+							"51" : "noInterfaceWithRequestedIndex",
+							"52" : "interfaceWithRequestedIndexAlreadyExisting",
+							"53" : "routerPortStillUsedByVpnAcTableEntry",
+							"54" : "ipAddressStillUsedAsTransAddrByLdpEntity",
+							"55" : "ipRouteDestStillUsedAsTargetPeerAddrByLdpEntity",
+							"56" : "createSecondaryIpAddressOnlyAllowedForNumberedInterface",
+							"58" : "labelSwitchingOnlyAllowedForPortTypeBr",
+							"59" : "modifyRouterPortTypeFailedIpAddressConfigInvalid",
+							"62" : "routerPortMtuSizeModifyNotPossibleWhenAssignedToVpnInstance",
+							"71" : "aclRuleWithRequestedIndexAlreadyExisting",
+							"72" : "aclRuleRequestedAclListNameNotExisting",
+							"73" : "aclRuleRequestedAddressRangesNotSupported",
+							"80" : "aclWithRequestedNameAlreadyExisting",
+							"81" : "aclWithRequestedIndexAlreadyExisting",
+							"82" : "deleteAclFailedforActiveList",
+							"100" : "routeCreationFailedDestTypeDoesNotMatchWithNextHopType",
+							"101" : "routeCreationFailedNextHopDoesNotMatchWithInterfaceIndex",
+							"102" : "routeCreationFailedInconsistentAddressMask",
+							"103" : "routeCreationFailedInvalidNextHopAddress",
+							"104" : "routeCreationFailedNoFreeRouteIndexAvailable",
+							"110" : "ipAddressCreateDeleteFailedBadPrefixLength",
+							"111" : "ipAddressCreateDeleteFailedBadIpAddressStringLength",
+							"112" : "ipAddressCreateDeleteFailedBadAddressMask",
+							"113" : "ipAddressCreateDeleteFailedInvalidAddress",
+							"114" : "ipAddressCreateFailedAddressOverlapping",
+							"115" : "ipAddressCreateFailedCreationNotPossible",
+							"116" : "ipAddressDeleteFailedAddressNonExistent",
+							"200" : "profileNameAlreadyExists",
+							"201" : "profileDoesNotExist",
+							"202" : "profileInUse",
+							"203" : "profileAssignmentFailed",
+							"204" : "maxNoOfProfilesReached"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouteCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouteTable entry created"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouteCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "RouteControlInterfaceIndex:$v10",
+				"Summary" : "IP route table entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouteCreated SHE-L3CTRL-MIB::sheL3IpRouteControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlRouterPointer u 1 SHE-L3CTRL-MIB::sheL3IpRouteControlDestType i 0 SHE-L3CTRL-MIB::sheL3IpRouteControlDest s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouteControlPfxLen u 0 SHE-L3CTRL-MIB::sheL3IpRouteControlDistance u 1 SHE-L3CTRL-MIB::sheL3IpRouteControlType i 1 SHE-L3CTRL-MIB::sheL3IpRouteControlNextHopType i 0 SHE-L3CTRL-MIB::sheL3IpRouteControlNextHop s EXAMPLE SHE-L3CTRL-MIB::sheL3IpRouteControlInterfaceIndex i 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlMetric1 i 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlMetric2 i 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlMetric3 i 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlMetric4 i 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlMetric5 i 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlIndex u 9999",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouteCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.3.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The sheL3IpRouterEntry this sheL3IpRouteEntry belongs to."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlRouterPointer",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The type of the sheL3IpRouteDest address, as defined",
+							"in the InetAddress MIB.",
+							"Only address type ipv4(1) may appear in an actual",
+							"routing table and is allowed as value of this object."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlDestType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The destination IP address of this route.",
+							"The type of this address is determined by the value of",
+							"the sheL3IpRouteDestType object.",
+							"The values for the index objects sheL3IpRouteDest and",
+							"sheL3IpRoutePfxLen must be consistent. When the value",
+							"of sheL3IpRouteDest (excluding the zone index, if one",
+							"is present) is x, then the bitwise logical-AND",
+							"of x with the value of the mask formed from the",
+							"corresponding index object sheL3IpRoutePfxLen MUST be",
+							"equal to x."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlDest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the number of leading one bits that form the",
+							"mask to be logical-ANDed with the destination address",
+							"before being compared to the value in the",
+							"sheL3IpRouteDest field.",
+							"The values for the index objects sheL3IpRouteDest and",
+							"sheL3IpRoutePfxLen must be consistent. When the value",
+							"of sheL3IpRouteDest (excluding the zone index, if one",
+							"is present) is x, then the bitwise logical-AND",
+							"of x with the value of the mask formed from the",
+							"corresponding index object sheL3IpRoutePfxLen MUST be",
+							"equal to x."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlPfxLen",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Administrative distance is the feature that routers use in order",
+							"to select the best path when there are two or more different",
+							"routes to the same destination from two different routing",
+							"protocols. Administrative distance defines the reliability of",
+							"a routing protocol. Each routing protocol is prioritized in order",
+							"of most to least reliable with the help of an administrative",
+							"distance value."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlDistance",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The type of route. Note that local(3) refers to a",
+							"route for which the next hop is the final destination;",
+							"remote(4) refers to a route for which the next hop is",
+							"not the final destination.",
+							"Routes that do not result in traffic forwarding or",
+							"rejection should not be displayed, even if the",
+							"implementation keeps them stored internally.",
+							"reject(2) refers to a route that, if matched, discards",
+							"the message as unreachable and returns a notification",
+							"(e.g., ICMP error) to the message sender. This is used",
+							"in some protocols as a means of correctly aggregating",
+							"routes.",
+							"blackhole(5) refers to a route that, if matched",
+							"discards the message silently."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "reject",
+							"3" : "local",
+							"4" : "remote",
+							"5" : "blackhole"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of the sheL3IpRouteNextHop address, as",
+							"defined in the InetAddress MIB.",
+							"Value should be set to unknown(0) for non-remote",
+							"routes.",
+							"Only address type ipv4(1) may appear in an actual",
+							"routing table and is allowed for remote routes",
+							"as value of this object."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlNextHopType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"On remote routes, the address of the next system on",
+							"route. For non-remote routes, a zero length string.",
+							"The type of this address is determined by the value of",
+							"the sheL3IpRouteNextHopType object."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlNextHop",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The ifIndex value that identifies the local interface",
+							"(sheL3IpRouterPortEntry) through which the next hop",
+							"of this route should be reached. A value of 0 is valid",
+							"and represents the scenario where no interface is specified."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlInterfaceIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The primary routing metric for this route. The",
+							"semantics of this metric are determined by the routing",
+							"protocol specified in the route's sheL3IpRouteProto",
+							"value. If this metric is not used, its value should be",
+							"set to -1.",
+							"",
+							"NOTE:",
+							"Support started with R4.7M."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlMetric1",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.16",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"An alternate routing metric for this route. The",
+							"semantics of this metric are determined by the routing-",
+							"protocol specified in the route's sheL3IpRouteProto",
+							"value.If this metric is not used, its value should be",
+							"set to -1.",
+							"",
+							"NOTE:",
+							"Currently no support planed."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlMetric2",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.17",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"An alternate routing metric for this route. The",
+							"semantics of this metric are determined by the routing-",
+							"protocol specified in the route's sheL3IpRouteProto",
+							"value. If this metric is not used, its value should be",
+							"set to -1.",
+							"",
+							"NOTE:",
+							"Currently no support planed."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlMetric3",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.18",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"An alternate routing metric for this route. The",
+							"semantics of this metric are determined by the routing-",
+							"protocol specified in the route's sheL3IpRouteProto",
+							"value. If this metric is not used, its value should be",
+							"set to -1.",
+							"",
+							"NOTE:",
+							"Currently no support planed."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlMetric4",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.19",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"An alternate routing metric for this route. The",
+							"semantics of this metric are determined by the routing-",
+							"protocol specified in the route's sheL3IpRouteProto",
+							"value. If this metric is not used, its value should be",
+							"set to -1.",
+							"",
+							"NOTE:",
+							"Currently no support planed."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlMetric5",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.20",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Instance of the route table."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.21",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpRouteDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"sheL3IpRouteTable entry deleted"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouteDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "RouteControlIndex:$v1",
+				"Summary" : "IP route table entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpRouteDeleted SHE-L3CTRL-MIB::sheL3IpRouteControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpRouteControlIndex u 9999",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpRouteDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.3.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the route table."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpRouteControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.9.21",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"long running command finished"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpRouterControlResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==37) ? 0 : (($v4==1 || $v4==30 || $v4==32 || ($v4>=52 && $v4<=58) || $v4==62 || $v4==71 || $v4==80 || $v4==81 || $v4==200 || $v4==202) ? 2 : (($v4==31 || $v4==36 || $v4==34 || ($v4>=100 && $v4<=116) || $v4==203 || $v4==204) ? 4 : 3))"
+				},
+				"SubNode" : "AclControlIndex:$v2",
+				"Summary" : "ACL control $v3 request result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlAclControlResult SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclControlIndex u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclControlRequest i 0 SHE-L3CTRL-MIB::sheL3CtrlAclControlReqResult i 37",
+				"$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlAclControlResult SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclControlIndex u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclControlRequest i 0 SHE-L3CTRL-MIB::sheL3CtrlAclControlReqResult i 204"
+			],
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.4.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the AclRuleTable or AclTable to configure depending on command."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"",
+							"createAcl (355):",
+							"sheL3CtrlAclControlIndex -> taken from sheL3CtrlAclTableIndexNext",
+							"sheL3CtrlAclControlName",
+							"sheL3CtrlAclControlDescription",
+							"",
+							"modifyAcl (356):",
+							"sheL3CtrlAclControlIndex",
+							"sheL3CtrlAclControlDescription",
+							"",
+							"modifyAclRuleOrder (357):",
+							"sheL3CtrlAclControlIndex",
+							"sheL3CtrlAclControlRuleList",
+							"",
+							"deleteAcl (358):",
+							"sheL3CtrlAclControlIndex",
+							"",
+							"createAclRule (361):",
+							"sheL3CtrlAclControlIndex -> taken from sheL3CtrlAclRuleTableIndexNext",
+							"sheL3CtrlAclRuleControlListName -> must exist, new Rule will be part of this list",
+							"sheL3CtrlAclRuleControlAddrType",
+							"sheL3CtrlAclRuleControlAddr",
+							"sheL3CtrlAclRuleControlAddrPfxLength",
+							"sheL3CtrlAclRuleControlAction",
+							"",
+							"deleteAclRule (362):",
+							"sheL3CtrlAclControlIndex -> Deleting the last rule in an ACL will also delete the ACL!",
+							""
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"101" : "createRouter",
+							"102" : "deleteRouter",
+							"103" : "modifyRouter",
+							"104" : "enableManagementVr",
+							"201" : "createRouterPort",
+							"202" : "deleteRouterPort",
+							"203" : "modifyRouterPort",
+							"204" : "modifyRouterPortType",
+							"206" : "createSecondaryIpAddress",
+							"207" : "deleteSecondaryIpAddress",
+							"208" : "modifyRouterPortFilterServices",
+							"209" : "setDisabledMessagesProfile",
+							"220" : "modifyRouterPortIPv4Interface",
+							"230" : "modifyRouterPortIPv6Interface",
+							"241" : "createMessageFilteringProfile",
+							"242" : "modifyMessageFilteringProfile",
+							"243" : "deleteMessageFilteringProfile",
+							"251" : "createIpAddress",
+							"252" : "modifyIpAddress",
+							"253" : "deletepAddress",
+							"311" : "createRoute",
+							"312" : "deleteRoute",
+							"313" : "searchForL3IpRoute",
+							"355" : "createAcl",
+							"356" : "modifyAcl",
+							"357" : "modifyAclRuleOrder",
+							"358" : "deleteAcl",
+							"361" : "createAclRule",
+							"362" : "deleteAclRule"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command. "
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"41" : "configurationNotSupported",
+							"42" : "wrongAdminstateForConfiguration",
+							"50" : "vlanNotExisting",
+							"51" : "noInterfaceWithRequestedIndex",
+							"52" : "interfaceWithRequestedIndexAlreadyExisting",
+							"53" : "routerPortStillUsedByVpnAcTableEntry",
+							"54" : "ipAddressStillUsedAsTransAddrByLdpEntity",
+							"55" : "ipRouteDestStillUsedAsTargetPeerAddrByLdpEntity",
+							"56" : "createSecondaryIpAddressOnlyAllowedForNumberedInterface",
+							"58" : "labelSwitchingOnlyAllowedForPortTypeBr",
+							"59" : "modifyRouterPortTypeFailedIpAddressConfigInvalid",
+							"62" : "routerPortMtuSizeModifyNotPossibleWhenAssignedToVpnInstance",
+							"71" : "aclRuleWithRequestedIndexAlreadyExisting",
+							"72" : "aclRuleRequestedAclListNameNotExisting",
+							"73" : "aclRuleRequestedAddressRangesNotSupported",
+							"80" : "aclWithRequestedNameAlreadyExisting",
+							"81" : "aclWithRequestedIndexAlreadyExisting",
+							"82" : "deleteAclFailedforActiveList",
+							"100" : "routeCreationFailedDestTypeDoesNotMatchWithNextHopType",
+							"101" : "routeCreationFailedNextHopDoesNotMatchWithInterfaceIndex",
+							"102" : "routeCreationFailedInconsistentAddressMask",
+							"103" : "routeCreationFailedInvalidNextHopAddress",
+							"104" : "routeCreationFailedNoFreeRouteIndexAvailable",
+							"110" : "ipAddressCreateDeleteFailedBadPrefixLength",
+							"111" : "ipAddressCreateDeleteFailedBadIpAddressStringLength",
+							"112" : "ipAddressCreateDeleteFailedBadAddressMask",
+							"113" : "ipAddressCreateDeleteFailedInvalidAddress",
+							"114" : "ipAddressCreateFailedAddressOverlapping",
+							"115" : "ipAddressCreateFailedCreationNotPossible",
+							"116" : "ipAddressDeleteFailedAddressNonExistent",
+							"200" : "profileNameAlreadyExists",
+							"201" : "profileDoesNotExist",
+							"202" : "profileInUse",
+							"203" : "profileAssignmentFailed",
+							"204" : "maxNoOfProfilesReached"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlAclCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3CtrlAclCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "L3 control ACL entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlAclCreated SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclName s EXAMPLE SHE-L3CTRL-MIB::sheL3CtrlAclDescription s EXAMPLE SHE-L3CTRL-MIB::sheL3CtrlAclNumberOfRules u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclRuleList s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.4.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"List name which identifies the access list unambiguously. ",
+							"The list name is used by other managed objects to reference the access list used ",
+							"by this object.",
+							"",
+							"Spaces and other special characters (: ?) are not allowed!!",
+							"The ACL name should NOT start with a number."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"access-list entry comment"
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclDescription",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of rules contained in the access list."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclNumberOfRules",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This string containing the rule indexes of the access list in the right order.",
+							"Each RuleIndex should be written as decimal number separated by a semicolon, e.g.: '2;25;100'",
+							"",
+							"The order of rules is meaningful because the switch stops checking the access list ",
+							"after a match occurs.",
+							""
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.2.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlAclModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration event after AclModify or AclRuleCreate/Delete commands."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3CtrlAclModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "L3 control ACL entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlAclModified SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclDescription s EXAMPLE SHE-L3CTRL-MIB::sheL3CtrlAclNumberOfRules u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclRuleList s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.4.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"access-list entry comment"
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclDescription",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of rules contained in the access list."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclNumberOfRules",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.2.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This string containing the rule indexes of the access list in the right order.",
+							"Each RuleIndex should be written as decimal number separated by a semicolon, e.g.: '2;25;100'",
+							"",
+							"The order of rules is meaningful because the switch stops checking the access list ",
+							"after a match occurs.",
+							""
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleList",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.2.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlAclDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3CtrlAclDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "AclControlIndex:$v2",
+				"Summary" : "Control ACL entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlAclDeleted SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclControlIndex u 9999",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.4.4",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the AclRuleTable or AclTable to configure depending on command."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3CtrlAclRuleCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "L3 control ACL rule created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlAclRuleCreated SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclRuleListName s EXAMPLE SHE-L3CTRL-MIB::sheL3CtrlAclRuleAddrType i 0 SHE-L3CTRL-MIB::sheL3CtrlAclRuleAddr s EXAMPLE SHE-L3CTRL-MIB::sheL3CtrlAclRuleAddrPfxLen u 0 SHE-L3CTRL-MIB::sheL3CtrlAclRuleAction i 1",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.4.5",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"List name which identifies the access list to which the rule belongs unambiguously.",
+							""
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleListName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.4.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of address, as defined in the InetAddress MIB.",
+							"Only address type ipv4(1) may appear in an actual release.",
+							"",
+							"NOTE:",
+							"With R4.7M also type 'unknown(0)' could be used together with a addresslist or addressrange configuration.",
+							""
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleAddrType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The IP address of this rule.",
+							"The type of this address is determined by the value of the sheL3CtrlAclRuleAddrType object.",
+							"0.0.0.0 if Action=denyAny or permitAny.",
+							"",
+							"NOTE: ",
+							"New with R4.7M and only together with AddrType = 'unknown(0)', the NE will accept a list of ",
+							"single addresses and/or address ranges. ",
+							"Single addresses must be separate with semicolon -> '192.168.1.1;192.168.2.1'",
+							"Address ranges must be connected with a dash -> '192.168.2.1-192.168.2.10'",
+							"A combination of both is also valid -> '192.168.1.1;192.168.2.1-192.168.2.10'",
+							""
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleAddr",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.4.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the number of leading one bits that form the",
+							"mask to be logical-ANDed with the address.",
+							"0 if Action=denyAny or permitAny."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleAddrPfxLen",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.4.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Describes the action on rule match."
+						],
+						"enums" : {
+							"1" : "deny",
+							"2" : "denyExactMatch",
+							"3" : "denyAny",
+							"4" : "permit",
+							"5" : "permitExactMatch",
+							"6" : "permitAny"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleAction",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.4.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3CtrlAclRuleDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "AclControlIndex:$v2",
+				"Summary" : "L3 control ACL rule deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlAclRuleDeleted SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlAclControlIndex u 9999",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclRuleDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.4.6",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Instance of the AclRuleTable or AclTable to configure depending on command."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlAclControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.20.6.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpAddressEntryCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event notification that an entry has been created in the sheL3IpAddressTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpAddressEntryCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "IP address table entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpAddressEntryCreated SHE-L3CTRL-MIB::sheL3IpAddressControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpAddressType i 1 SHE-L3CTRL-MIB::sheL3IpAddressPrefix o 1.3.6.1.4.1.8072.2.1.1 SHE-L3CTRL-MIB::sheL3IpAddressOrigin i 1 SHE-L3CTRL-MIB::sheL3IpAddressStatus i 1 SHE-L3CTRL-MIB::sheL3IpAddressCreated t 31536000 SHE-L3CTRL-MIB::sheL3IpAddressLastChanged t 31536000",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpAddressEntryCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.5.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.28.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The type of address. broadcast(3) is not a valid value for",
+							"IPv6 addresses (RFC 3513)."
+						],
+						"enums" : {
+							"1" : "unicast",
+							"2" : "anycast",
+							"3" : "broadcast"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A pointer to the row in the prefix table to which this",
+							"address belongs. May be { 0 0 } if there is no such row."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressPrefix",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The origin of the address."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "manual",
+							"4" : "dhcp",
+							"5" : "linklayer",
+							"6" : "random"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressOrigin",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of the address, describing if the address can be",
+							"used for communication.",
+							"",
+							"In the absence of other information, an IPv4 address is",
+							"always preferred(1)."
+						],
+						"enums" : {
+							"1" : "preferred",
+							"2" : "deprecated",
+							"3" : "invalid",
+							"4" : "inaccessible",
+							"5" : "unknown",
+							"6" : "tentative",
+							"7" : "duplicate",
+							"8" : "optimistic"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sysUpTime at the time this entry was created.",
+							"If this entry was created prior to the last re-",
+							"initialization of the local network management subsystem",
+							"then this object contains a zero value."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressCreated",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.8",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The value of sysUpTime at the time this entry was last",
+							"updated. If this entry was updated prior to the last re-",
+							"initialization of the local network management subsystem",
+							"then this object contains a zero value."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressLastChanged",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.9",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpAddressEntryModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event notification that an entry in the sheL3IpAddressTable has been modified.",
+				"NOTE",
+				"Since entries within the sheL3IpAddressTable cannot be modified, this ",
+				"notification is not supported by the NE."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpAddressEntryModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "IP address table entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpAddressEntryModified SHE-L3CTRL-MIB::sheL3IpAddressControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpAddressType i 1 SHE-L3CTRL-MIB::sheL3IpAddressPrefix o 1.3.6.1.4.1.8072.2.1.1 SHE-L3CTRL-MIB::sheL3IpAddressOrigin i 1 SHE-L3CTRL-MIB::sheL3IpAddressStatus i 1 SHE-L3CTRL-MIB::sheL3IpAddressCreated t 31536000 SHE-L3CTRL-MIB::sheL3IpAddressLastChanged t 31536000",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpAddressEntryModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.5.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.28.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The type of address. broadcast(3) is not a valid value for",
+							"IPv6 addresses (RFC 3513)."
+						],
+						"enums" : {
+							"1" : "unicast",
+							"2" : "anycast",
+							"3" : "broadcast"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A pointer to the row in the prefix table to which this",
+							"address belongs. May be { 0 0 } if there is no such row."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressPrefix",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.5",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The origin of the address."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "manual",
+							"4" : "dhcp",
+							"5" : "linklayer",
+							"6" : "random"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressOrigin",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of the address, describing if the address can be",
+							"used for communication.",
+							"",
+							"In the absence of other information, an IPv4 address is",
+							"always preferred(1)."
+						],
+						"enums" : {
+							"1" : "preferred",
+							"2" : "deprecated",
+							"3" : "invalid",
+							"4" : "inaccessible",
+							"5" : "unknown",
+							"6" : "tentative",
+							"7" : "duplicate",
+							"8" : "optimistic"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sysUpTime at the time this entry was created.",
+							"If this entry was created prior to the last re-",
+							"initialization of the local network management subsystem",
+							"then this object contains a zero value."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressCreated",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.8",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The value of sysUpTime at the time this entry was last",
+							"updated. If this entry was updated prior to the last re-",
+							"initialization of the local network management subsystem",
+							"then this object contains a zero value."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressLastChanged",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.27.1.9",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3IpAddressEntryDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Event notification that an entry in the sheL3IpAddressTable has been deleted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3IpAddressEntryDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "IP address table entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3IpAddressEntryDeleted SHE-L3CTRL-MIB::sheL3IpAddressControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3IpAddressControlAddrType i 0 SHE-L3CTRL-MIB::sheL3IpAddressControlAddr s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3IpAddressEntryDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.5.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.28.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Used to set sheL3IpAddressAddrType.",
+							"",
+							"NOTE:",
+							"The NE supports only the following adddress types in this table:",
+							"ipv4(1)",
+							"ipv6(2)",
+							"ipv6z(4) (for link-local addresses)."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressControlAddrType",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.28.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Used to set sheL3IpAddressAddr."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3IpAddressControlAddr",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.28.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that a new sheL3CtrlMessageFilteringProfileEntry ",
+				"has been created.",
+				"REVISION HISTORY",
+				"SR5.1: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3CtrlMessageFilteringProfileEntryCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New control message filtering profile $v2 entry created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryCreated SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileName s EXAMPLE SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileIcmpV4 b 0 SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileIcmpV6 b 0",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryCreated",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.6.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). ",
+							"",
+							"REVISION HISTORY ",
+							"SR5.1: New."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Name of the profile.",
+							"",
+							"Spaces and other special characters (: ?) are not allowed.",
+							"The name should not start with a number.",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the specific ICMPv4 messages to select when using this profile.",
+							"",
+							"VALUES",
+							"destinationUnreachable(0) - ICMPv4 messsage type 3 (Destination Unreachable)",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"enums" : {
+							"0" : "destinationUnreachable"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileIcmpV4",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.3.1.4",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"Identifies the specific ICMPv6 messages to select when using this profile.",
+							"",
+							"VALUES",
+							"destinationUnreachable(0) - ICMPv6 messsage type 1 (Destination Unreachable)",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"enums" : {
+							"0" : "destinationUnreachable"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileIcmpV6",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.3.1.6",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that an existing sheL3CtrlMessageFilteringProfileEntry ",
+				"has been modified.",
+				"REVISION HISTORY",
+				"SR5.1: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3CtrlMessageFilteringProfileEntryModified",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New control message filtering profile entry modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryModified SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileIcmpV4 b 0 SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileIcmpV6 b 0",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.6.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). ",
+							"",
+							"REVISION HISTORY ",
+							"SR5.1: New."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Identifies the specific ICMPv4 messages to select when using this profile.",
+							"",
+							"VALUES",
+							"destinationUnreachable(0) - ICMPv4 messsage type 3 (Destination Unreachable)",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"enums" : {
+							"0" : "destinationUnreachable"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileIcmpV4",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.3.1.4",
+						"valueType" : "BITS"
+					},
+					{
+						"description" : [
+							"Identifies the specific ICMPv6 messages to select when using this profile.",
+							"",
+							"VALUES",
+							"destinationUnreachable(0) - ICMPv6 messsage type 1 (Destination Unreachable)",
+							"",
+							"REVISION HISTORY",
+							"SR5.1: New."
+						],
+						"enums" : {
+							"0" : "destinationUnreachable"
+						},
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileIcmpV6",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.3.1.6",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that an existing sheL3CtrlMessageFilteringProfileEntry ",
+				"has been deleted.",
+				"REVISION HISTORY",
+				"SR5.1: New."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheL3CtrlMessageFilteringProfileEntryDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "MessageFilteringControlIndex:$v2",
+				"Summary" : "New control message filtering profile entry deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryDeleted SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringControlTimeStamp u 9999 SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringControlIndex u 0",
+			"trap" : {
+				"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringProfileEntryDeleted",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.3.6.3",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). ",
+							"",
+							"REVISION HISTORY ",
+							"SR5.1: New."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Index identifying the entry in the sheL3CtrlMessageFilteringProfileTable",
+							"on which the control request is to apply.",
+							"",
+							"VALUES",
+							"0 - createMessageFilterProfile(241) only:",
+							"Index of the new entry will be assigned by the NE.",
+							"modifyMessageFilterProfile(242), ",
+							"deleteMessageFilterProfile(243):",
+							"Not valid.",
+							"1..16 - createMessageFilterProfile(241):",
+							"NE will create a new entry with this index;",
+							"NOTE: index must not be in use!",
+							"modifyMessageFilterProfile(242), ",
+							"deleteMessageFilterProfile(243):",
+							"An entry must exist in the table identified by an ",
+							"index with this value.",
+							"",
+							"REVISION HISTORY ",
+							"SR5.1: New."
+						],
+						"name" : "SHE-L3CTRL-MIB::sheL3CtrlMessageFilteringControlIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.53.2.12.1.2",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

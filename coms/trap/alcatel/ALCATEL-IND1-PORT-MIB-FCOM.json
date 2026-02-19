@@ -1,0 +1,652 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201311220000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::esmDrvTrapDropsLink",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the Ethernet code drops the link because of",
+				"excessive errors, a Trap is sent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "esmDrvTrapDropsLink",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "esmPortSlot:$v1;esmPortIF:$v2",
+				"Summary" : "Ethernet code drops the link because of excessive errors"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::esmDrvTrapDropsLink ALCATEL-IND1-PORT-MIB::esmPortSlot i 9999 ALCATEL-IND1-PORT-MIB::esmPortIF i 9999 IF-MIB::ifInErrors c 9999 IF-MIB::ifOutErrors c 9999 ALCATEL-IND1-PORT-MIB::esmDrvTrapDrops i 9999",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::esmDrvTrapDropsLink",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The physical Slot number for this Ethernet Port.",
+							"Slot number has been added to be used by the private Trap."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::esmPortSlot",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.2.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The on-board interface number for this Ethernet Port.",
+							"Port Number has been added to be used by the private Trap."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::esmPortIF",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.2.1.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"For packet-oriented interfaces, the number of inbound",
+							"packets that contained errors preventing them from being",
+							"deliverable to a higher-layer protocol. For character-",
+							"oriented or fixed-length interfaces, the number of inbound",
+							"transmission units that contained errors preventing them",
+							"from being deliverable to a higher-layer protocol.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"ifCounterDiscontinuityTime."
+						],
+						"name" : "IF-MIB::ifInErrors",
+						"oid" : "1.3.6.1.2.1.2.2.1.14",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"For packet-oriented interfaces, the number of outbound",
+							"packets that could not be transmitted because of errors.",
+							"For character-oriented or fixed-length interfaces, the",
+							"number of outbound transmission units that could not be",
+							"transmitted because of errors.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"ifCounterDiscontinuityTime."
+						],
+						"name" : "IF-MIB::ifOutErrors",
+						"oid" : "1.3.6.1.2.1.2.2.1.20",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Partitioned port (separated due to errors)."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::esmDrvTrapDrops",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::ddmTemperatureThresholdViolated",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object notifies management station if an SFP/XFP/SFP+ temperature has crossed any",
+				"threshold or reverted from previous threshold violation for a port represented by ifIndex.",
+				"It also provides the current realtime value of SFP/XFP/SFP+ temperature."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "ddmTemperatureThresholdViolated",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==2) ? 5 : ($v2==3) ? 4 : 3"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "DDM temperature threshold is violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::ddmTemperatureThresholdViolated IF-MIB::ifIndex i 9999 ALCATEL-IND1-PORT-MIB::ddmNotificationType i 1 ALCATEL-IND1-PORT-MIB::ddmTemperature i 9999",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::ddmTemperatureThresholdViolated",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines the trap type for monitored DDM parameters."
+						],
+						"enums" : {
+							"1" : "clearViolation",
+							"2" : "highAlarm",
+							"3" : "highWarning",
+							"4" : "lowWarning",
+							"5" : "lowAlarm"
+						},
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmNotificationType",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of ddmTemperature indicates the current temperature",
+							"of the SFP/XFP in 1000s of degrees Celsius.",
+							"A value of -200000 indicates this object is not applicable."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmTemperature",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.2.5.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::ddmVoltageThresholdViolated",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object notifies management station if an SFP/XFP/SFP+ supply voltage has crossed any",
+				"threshold or reverted from previous threshold violation for a port represented by ifIndex.",
+				"It also provides the current realtime value of SFP/XFP/SFP+ supply voltage."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "ddmVoltageThresholdViolated",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==2) ? 5 : ($v2==3) ? 4 : 3"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "DDM voltage threshold is violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::ddmVoltageThresholdViolated IF-MIB::ifIndex i 9999 ALCATEL-IND1-PORT-MIB::ddmNotificationType i 1 ALCATEL-IND1-PORT-MIB::ddmSupplyVoltage i 9999",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::ddmVoltageThresholdViolated",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines the trap type for monitored DDM parameters."
+						],
+						"enums" : {
+							"1" : "clearViolation",
+							"2" : "highAlarm",
+							"3" : "highWarning",
+							"4" : "lowWarning",
+							"5" : "lowAlarm"
+						},
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmNotificationType",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of ddmSupplyVoltage indicates the current supply",
+							"voltage of the SFP/XFP in 1000s of Volts (V).",
+							"A value of -200000 indicates this object is not applicable."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmSupplyVoltage",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.2.5.1.6",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::ddmCurrentThresholdViolated",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object notifies management station if an SFP/XFP/SFP+ Tx bias current has crossed any",
+				"threshold or reverted from previous threshold violation for a port represented by ifIndex.",
+				"It also provides the current realtime value of SFP/XFP/SFP+ Tx bias current."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "ddmCurrentThresholdViolated",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==2) ? 5 : ($v2==3) ? 4 : 3"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "DDM current threshold is violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::ddmCurrentThresholdViolated IF-MIB::ifIndex i 9999 ALCATEL-IND1-PORT-MIB::ddmNotificationType i 1 ALCATEL-IND1-PORT-MIB::ddmTxBiasCurrent i 9999",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::ddmCurrentThresholdViolated",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines the trap type for monitored DDM parameters."
+						],
+						"enums" : {
+							"1" : "clearViolation",
+							"2" : "highAlarm",
+							"3" : "highWarning",
+							"4" : "lowWarning",
+							"5" : "lowAlarm"
+						},
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmNotificationType",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of ddmTxBiasCurrent indicates the current Transmit",
+							"Bias Current of the SFP/XFP in 1000s of milli-Amperes (mA).",
+							"A value of -200000 indicates this object is not applicable."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmTxBiasCurrent",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.2.5.1.11",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::ddmTxPowerThresholdViolated",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object notifies management station if an SFP/XFP/SFP+ Tx output power has crossed any",
+				"threshold or reverted from previous threshold violation for a port represented by ifIndex.",
+				"It also provides the current realtime value of SFP/XFP/SFP+ Tx output power."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "ddmTxPowerThresholdViolated",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==2) ? 5 : ($v2==3) ? 4 : 3"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "DDM TX power threshold is violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::ddmTxPowerThresholdViolated IF-MIB::ifIndex i 9999 ALCATEL-IND1-PORT-MIB::ddmNotificationType i 1 ALCATEL-IND1-PORT-MIB::ddmTxOutputPower i 9999",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::ddmTxPowerThresholdViolated",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines the trap type for monitored DDM parameters."
+						],
+						"enums" : {
+							"1" : "clearViolation",
+							"2" : "highAlarm",
+							"3" : "highWarning",
+							"4" : "lowWarning",
+							"5" : "lowAlarm"
+						},
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmNotificationType",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of ddmTxOutputPower indicates the current Output",
+							"Power of the SFP/XFP in 1000s of dBm.",
+							"A value of -200000 indicates this object is not applicable."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmTxOutputPower",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.2.5.1.16",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::ddmRxPowerThresholdViolated",
+			"certification" : "STANDARD",
+			"description" : [
+				"This object notifies management station if an SFP/XFP/SFP+ Rx optical power has crossed any",
+				"threshold or reverted from previous threshold violation for a port represented by ifIndex.",
+				"It also provides the current realtime value of SFP/XFP/SFP+ Rx optical power."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "ddmRxPowerThresholdViolated",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==2) ? 5 : ($v2==3) ? 4 : 3"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "DDM RX power threshold is violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::ddmRxPowerThresholdViolated IF-MIB::ifIndex i 9999 ALCATEL-IND1-PORT-MIB::ddmNotificationType i 1 ALCATEL-IND1-PORT-MIB::ddmRxOpticalPower i 9999",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::ddmRxPowerThresholdViolated",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object defines the trap type for monitored DDM parameters."
+						],
+						"enums" : {
+							"1" : "clearViolation",
+							"2" : "highAlarm",
+							"3" : "highWarning",
+							"4" : "lowWarning",
+							"5" : "lowAlarm"
+						},
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmNotificationType",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.4.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of ddmRxOpticalPower indicates the current Received",
+							"Optical Power of the SFP/XFP in 1000s of dBm.",
+							"A value of -200000 indicates this object is not applicable."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::ddmRxOpticalPower",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.2.5.1.21",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::portViolationTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Trap will be generated when a port violation occurs. The port",
+				"violation trap will indicate the source of the violation and the",
+				"reason for the violation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "portViolationStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Port violation has occurred because of source $v2 & reason $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::portViolationTrap IF-MIB::ifIndex i 9999 ALCATEL-IND1-PORT-MIB::portViolationSource i 1 ALCATEL-IND1-PORT-MIB::portViolationReason i 1",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::portViolationTrap",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Indicates the source of the port violation.",
+							"The source is the feature or module that has",
+							"caused the violation. The list is given below",
+							"1. Initiated by Source Learning",
+							"2. Initiated by QOS Policy",
+							"3. Initiated by Net Sec",
+							"4. Initiated by UDLD",
+							"5. Initiated by NI supervison (Fabric Stability).",
+							"When there is no value the value of this will be 0"
+						],
+						"enums" : {
+							"1" : "srcLrn",
+							"2" : "qos",
+							"3" : "netsec",
+							"4" : "udld",
+							"5" : "nisup",
+							"8" : "lfp",
+							"9" : "lm"
+						},
+						"name" : "ALCATEL-IND1-PORT-MIB::portViolationSource",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.5.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Reason for the port violation. This will be application",
+							"specific. The Reason indicate the violation for the 1st Violation",
+							"that happened on this port."
+						],
+						"enums" : {
+							"1" : "pvSLLpsShutDown",
+							"2" : "pvSLLpsRestrict",
+							"3" : "pvQosPolicy",
+							"4" : "pvQosSpoofed",
+							"5" : "pvQosBpdu",
+							"6" : "pvQosBgp",
+							"7" : "pvQosOspf",
+							"8" : "pvQosRip",
+							"9" : "pvQosVrrp",
+							"10" : "pvQosDhcp",
+							"11" : "pvQosPim",
+							"12" : "pvQosDvmrp",
+							"13" : "pvQosIsis",
+							"14" : "pvQosDnsReply",
+							"15" : "pvUdld",
+							"17" : "pvLfpShutDown"
+						},
+						"name" : "ALCATEL-IND1-PORT-MIB::portViolationReason",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.5.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::portViolationNotificationTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Trap will be generated when a port violation is cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "portViolationStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Port violation is cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::portViolationNotificationTrap IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::portViolationNotificationTrap",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ALCATEL-IND1-PORT-MIB::alaDyingGaspTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Dying Gasp trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "alaDyingGaspTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "alaDyingGaspChassisId:$v1",
+				"Summary" : "Dying Gasp trap received"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ALCATEL-IND1-PORT-MIB::alaDyingGaspTrap ALCATEL-IND1-PORT-MIB::alaDyingGaspChassisId i 9999 ALCATEL-IND1-PORT-MIB::alaDyingGaspPowerSupplyType i 1 ALCATEL-IND1-PORT-MIB::alaDyingGaspTime s EXAMPLEE",
+			"trap" : {
+				"name" : "ALCATEL-IND1-PORT-MIB::alaDyingGaspTrap",
+				"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"This object specifies the chassis id of the chassis whose NI is going down."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::alaDyingGaspChassisId",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.6.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object specifies the type of the power supply."
+						],
+						"enums" : {
+							"1" : "primary",
+							"2" : "backup",
+							"3" : "saps"
+						},
+						"name" : "ALCATEL-IND1-PORT-MIB::alaDyingGaspPowerSupplyType",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.6.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies the time of power failure."
+						],
+						"name" : "ALCATEL-IND1-PORT-MIB::alaDyingGaspTime",
+						"oid" : "1.3.6.1.4.1.6486.801.1.2.1.5.1.1.6.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

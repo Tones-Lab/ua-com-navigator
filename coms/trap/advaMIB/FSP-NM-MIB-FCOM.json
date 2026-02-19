@@ -1,0 +1,456 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201809200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "FSP-NM-MIB::fspNmGenericEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This is a generic event which represents an FSP Network",
+				"Manager event log entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fspNmGenericEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v5 == 1) ? 2 : (($v5 == 3) ? 4 : (($v5 == 2) ? 5 : 3))"
+				},
+				"SubNode" : "IpAddress:$v10",
+				"Summary" : {
+					"eval" : "($v16 ne '') ? '$v16' : 'FSP network manager event occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD FSP-NM-MIB::fspNmGenericEvent FSP-NM-MIB::id i 9999 FSP-NM-MIB::update i 1 FSP-NM-MIB::name s EXAMPLE FSP-NM-MIB::disposition i 1 FSP-NM-MIB::severity i 3 FSP-NM-MIB::impairment i 1 FSP-NM-MIB::disabled i 1 FSP-NM-MIB::neType i 1 FSP-NM-MIB::elementName s EXAMPLE FSP-NM-MIB::neIpAddress s EXAMPLE FSP-NM-MIB::entity s EXAMPLE FSP-NM-MIB::location i 0 FSP-NM-MIB::direction i 0 FSP-NM-MIB::nmsTime s EXAMPLEE FSP-NM-MIB::neTime s EXAMPLEE FSP-NM-MIB::description s EXAMPLE FSP-NM-MIB::acknowledged i 1 FSP-NM-MIB::corr i 1 FSP-NM-MIB::corrRef i 9999 FSP-NM-MIB::mtosiNeType s EXAMPLE FSP-NM-MIB::serviceName s EXAMPLE FSP-NM-MIB::customerName s EXAMPLE FSP-NM-MIB::security i 1 FSP-NM-MIB::comment s EXAMPLE FSP-NM-MIB::eventType i 0 FSP-NM-MIB::physLocation s EXAMPLE FSP-NM-MIB::entityAlias s EXAMPLE",
+				"$SNMPTRAPCMD FSP-NM-MIB::fspNmGenericEvent FSP-NM-MIB::id i 9999 FSP-NM-MIB::update i 1 FSP-NM-MIB::name s EXAMPLE FSP-NM-MIB::disposition i 1 FSP-NM-MIB::severity i 1 FSP-NM-MIB::impairment i 1 FSP-NM-MIB::disabled i 1 FSP-NM-MIB::neType i 1 FSP-NM-MIB::elementName s EXAMPLE FSP-NM-MIB::neIpAddress s EXAMPLE FSP-NM-MIB::entity s EXAMPLE FSP-NM-MIB::location i 0 FSP-NM-MIB::direction i 0 FSP-NM-MIB::nmsTime s EXAMPLEE FSP-NM-MIB::neTime s EXAMPLEE FSP-NM-MIB::description s EXAMPLE FSP-NM-MIB::acknowledged i 1 FSP-NM-MIB::corr i 1 FSP-NM-MIB::corrRef i 9999 FSP-NM-MIB::mtosiNeType s EXAMPLE FSP-NM-MIB::serviceName s EXAMPLE FSP-NM-MIB::customerName s EXAMPLE FSP-NM-MIB::security i 1 FSP-NM-MIB::comment s EXAMPLE FSP-NM-MIB::eventType i 0 FSP-NM-MIB::physLocation s EXAMPLE FSP-NM-MIB::entityAlias s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "FSP-NM-MIB::fspNmGenericEvent",
+				"oid" : "1.3.6.1.4.1.2544.1.13.1.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Unique event identifier"
+						],
+						"name" : "FSP-NM-MIB::id",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Indicates whether it is a new event or update."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false",
+							"3" : "syn"
+						},
+						"name" : "FSP-NM-MIB::update",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An event acronym, e.g. LOS for Loss of signal."
+						],
+						"name" : "FSP-NM-MIB::name",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Event type."
+						],
+						"enums" : {
+							"1" : "arm",
+							"2" : "clr",
+							"3" : "trn",
+							"4" : "sec",
+							"5" : "sys"
+						},
+						"name" : "FSP-NM-MIB::disposition",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Event severity."
+						],
+						"enums" : {
+							"1" : "informational",
+							"2" : "critical",
+							"3" : "major",
+							"4" : "minor",
+							"5" : "warning"
+						},
+						"name" : "FSP-NM-MIB::severity",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the alarm is potentially service affecting",
+							"(SA) or not (NSA)."
+						],
+						"enums" : {
+							"1" : "serviceAffecting",
+							"2" : "nonServiceAffecting",
+							"3" : "serviceAffectingInstall",
+							"4" : "serviceAffectingActivate"
+						},
+						"name" : "FSP-NM-MIB::impairment",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the alarm is disabled, i.e. inhibited",
+							"(FALSE) or not (TRUTH)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FSP-NM-MIB::disabled",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Network Element Type"
+						],
+						"enums" : {
+							"1" : "fsp500",
+							"2" : "fsp1500",
+							"3" : "fsp2000",
+							"4" : "fsp3000",
+							"5" : "fsp150CP",
+							"6" : "fsp150Mx",
+							"10" : "fsp150CCt-312",
+							"11" : "fsp150CCd-410",
+							"12" : "fsp150CCf-411",
+							"13" : "fsp150CCt-512",
+							"14" : "fsp150CCs-624",
+							"15" : "fsp150CCd-811",
+							"16" : "fsp150CCf-814",
+							"17" : "fsp150CCf-815",
+							"18" : "fsp150CCf-825",
+							"19" : "fsp150CCs-925",
+							"20" : "fsp150CC-GE206",
+							"21" : "fsp150CC-GE201",
+							"22" : "fsp150CC-GE201SE",
+							"23" : "fsp150CC-324",
+							"24" : "fsp150CC-584",
+							"25" : "fsp150CC-GE206F",
+							"26" : "fsp150EG-X",
+							"27" : "fsp150CC-GE206V",
+							"28" : "fsp150CC-GE112",
+							"29" : "fsp150CC-GE114",
+							"30" : "fsp150CC-GE114S",
+							"31" : "fsp150CC-XG210",
+							"32" : "osa-5410",
+							"33" : "fsp150CC-GE114H",
+							"34" : "fsp150CC-GE114SH",
+							"35" : "fsp150CC-GE114PH",
+							"36" : "fsp150CC-T1804",
+							"37" : "fsp150CC-T3204",
+							"38" : "fsp150CC-SH1PCS",
+							"39" : "osa-5411",
+							"40" : "fsp150CC-XG210C",
+							"50" : "fsp150CM",
+							"60" : "osa-5331",
+							"61" : "osa-5548C-SSU60",
+							"62" : "osa-5548C-SSU200",
+							"63" : "osa-5548C-TSG60",
+							"64" : "osa-5548C-TSG200",
+							"65" : "osa-5335-PTPGM",
+							"66" : "osa-5420",
+							"67" : "osa-5421",
+							"68" : "osa-5430",
+							"69" : "osa-5440",
+							"71" : "fsp150-GE112pro",
+							"72" : "fsp150-GE112proM",
+							"73" : "fsp150-GE112proH",
+							"74" : "fsp150-GE114pro",
+							"75" : "fsp150-GE114proC",
+							"76" : "fsp150-GE114proSH",
+							"77" : "fsp150-GE114proCSH",
+							"78" : "fsp150-GE114proHE",
+							"79" : "osaSNMPProxy",
+							"80" : "osa-5401",
+							"81" : "fsp150-proVMeF26x4",
+							"82" : "fsp150-proVMeF26x8CS",
+							"83" : "fsp150-GE101pro",
+							"84" : "fsp150-proVMeF26x4C",
+							"85" : "fsp150-GO102proS",
+							"86" : "fsp150-GO102proSP",
+							"87" : "osa-5405-I",
+							"88" : "osa-5405-O",
+							"89" : "fsp150CC-XG116pro",
+							"90" : "fsp150CC-XG120pro",
+							"91" : "fsp150-GE102proH",
+							"92" : "fsp150CC-XG116proH",
+							"100" : "fsp3000R7",
+							"101" : "fsp3000RE",
+							"102" : "ots1000",
+							"103" : "fsp3000R7-ALM",
+							"104" : "fsp1500-STM16",
+							"105" : "fsp1500-STM16-PROT",
+							"106" : "fsp1500-STM4-PROT",
+							"107" : "fsp150-112proVM",
+							"108" : "fsp150-114G",
+							"109" : "fsp150-egm2",
+							"112" : "fsp-xg304",
+							"113" : "fsp-xg304u",
+							"114" : "fsp-xg308",
+							"115" : "fsp-xg304f",
+							"116" : "fsp-xg304uf",
+							"117" : "fsp-xg308f",
+							"118" : "fsp-xg440",
+							"119" : "fsp150-GO102proSM",
+							"200" : "t320",
+							"201" : "t640",
+							"202" : "t1600",
+							"203" : "t4000",
+							"204" : "mx240",
+							"205" : "mx480",
+							"206" : "mx960",
+							"207" : "mx80",
+							"208" : "ptx5000",
+							"209" : "ptx9000",
+							"210" : "ptx3000",
+							"300" : "tp5000",
+							"1000" : "hn4000",
+							"1001" : "hn400",
+							"1002" : "fsp150-egm4",
+							"1003" : "fsp150-egm8",
+							"1004" : "hn400-Standalone",
+							"1005" : "arista",
+							"1006" : "voyager",
+							"2000" : "unmanaged",
+							"9999" : "fspNm",
+							"10000" : "customProduct",
+							"10001" : "customProduct1",
+							"10002" : "customProduct2",
+							"10003" : "customProduct3"
+						},
+						"name" : "FSP-NM-MIB::neType",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Network element name or Line name"
+						],
+						"name" : "FSP-NM-MIB::elementName",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Network element ip address"
+						],
+						"name" : "FSP-NM-MIB::neIpAddress",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique name of the managed entity which the event is",
+							"related to, e.g. the Access Identifier (AID). The AID is",
+							"specific to the NE type."
+						],
+						"name" : "FSP-NM-MIB::entity",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the location associated with the particular",
+							"information, relative to entity object."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "both",
+							"2" : "farEnd",
+							"3" : "nearEnd",
+							"4" : "notApplicable"
+						},
+						"name" : "FSP-NM-MIB::location",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The direction of the data flow which the event is",
+							"related to. "
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "bidirectional",
+							"2" : "bothDirections",
+							"3" : "notApplicable",
+							"4" : "receiveDirectionOnly",
+							"5" : "transmitDirectionOnly",
+							"6" : "uniDirectional"
+						},
+						"name" : "FSP-NM-MIB::direction",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time of detection or notification reception by the FSP",
+							"Network Manager (FSP Network Manager server time zone)."
+						],
+						"name" : "FSP-NM-MIB::nmsTime",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The time of detection by the NE (FSP Network Manager server",
+							"time zone; nmsTime if not available)."
+						],
+						"name" : "FSP-NM-MIB::neTime",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Device specific message that contain additional information",
+							"regarding the context of the event."
+						],
+						"name" : "FSP-NM-MIB::description",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates whether the event has been acknowledged by an",
+							"operator or not."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FSP-NM-MIB::acknowledged",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the event is a primary event or root cause",
+							"(PRM), or a redundant event (RDN) which is caused by another",
+							"event. It applies to alarms only."
+						],
+						"enums" : {
+							"1" : "redundant",
+							"2" : "primary"
+						},
+						"name" : "FSP-NM-MIB::corr",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"If Corr=RDN this field indicates the ID of the root cause",
+							"event; otherwise it is zero. If the value is not",
+							"available -1 would be given."
+						],
+						"name" : "FSP-NM-MIB::corrRef",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.19",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The MTOSI compatible NE type string."
+						],
+						"name" : "FSP-NM-MIB::mtosiNeType",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If disposition = (alm | clr) then name of the service to",
+							"which the trap is related. Relevant only for service fault",
+							"alarms."
+						],
+						"name" : "FSP-NM-MIB::serviceName",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"If disposition = (alm | clr) then name of the customer to",
+							"which the trap is related. Relevant only for service fault",
+							"alarms."
+						],
+						"name" : "FSP-NM-MIB::customerName",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.22",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates whether it is a security event."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "FSP-NM-MIB::security",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Shows the user comment associated to an alarm."
+						],
+						"name" : "FSP-NM-MIB::comment",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.24",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Shows the event type associated with the alarm/event."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "communications",
+							"2" : "qos",
+							"3" : "processing",
+							"4" : "equipment",
+							"5" : "environmental"
+						},
+						"name" : "FSP-NM-MIB::eventType",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.25",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Shows physical location attribute of the alarm/event."
+						],
+						"name" : "FSP-NM-MIB::physLocation",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.26",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Shows the entity alias attribute of the alarm/event."
+						],
+						"name" : "FSP-NM-MIB::entityAlias",
+						"oid" : "1.3.6.1.4.1.2544.1.13.1.1.1.27",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

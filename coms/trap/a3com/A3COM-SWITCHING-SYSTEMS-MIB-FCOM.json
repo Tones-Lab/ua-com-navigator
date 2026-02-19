@@ -1,0 +1,679 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemOverTemperatureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when the system temperature",
+				"exceeds a certain threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : (($v1==2) ? 1 : 3)"
+				},
+				"EventType" : "a3ComSysSystemOverTemperatureEvent",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : (($v1==2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 4 : (($v1==2) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'System temperature exceeded the threshold' : (($v1==2) ? 'System temperature is normal' : 'System temperature is not supported')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemOverTemperatureEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemOvertemperature i 1",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemOverTemperatureEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the current overtemperature",
+							"status for the system. If the system does not support",
+							"overtemperature detection, this object returns",
+							"notSupported."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false",
+							"3" : "notSupported"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemOvertemperature",
+						"oid" : "1.3.6.1.4.1.43.29.4.1.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyFailureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when a power supply unit",
+				"fails."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "a3ComSysPowerSupplyFailureEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Power supply unit $v1 failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyFailureEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyStatusIndex i 9999 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyStatus i 9999 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyStatusSupported i 9999",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyFailureEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The unique index of the power supply identified by this",
+							"entry."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyStatusIndex",
+						"oid" : "1.3.6.1.4.1.43.29.4.4.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the power supply status. The",
+							"value is a sum. It initially takes on the value 0, then",
+							"for each type which is active, 2 raised to a power is",
+							"added to the sum. The powers are according to the",
+							"following table.",
+							"For the 6000 Backbone Aggregator an over temp for power",
+							"supply 1 and power supply 2 will be reported as a power",
+							"supply 1 Over Temperature Failure, and a fan failure will",
+							"be reported as a power supply 2 Over Temperature Failure.",
+							"",
+							"Failure Type Power",
+							"AC Failure 0",
+							"Plus 5 Failure 1",
+							"Plus 12 Failure 2",
+							"Over Temperature Failure 3",
+							"Power Supply Inserted 4",
+							"Power Supply Extracted 5"
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.43.29.4.4.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the various power supply status ",
+							"types which are supported. The value is a sum. It",
+							"initially takes on the value 0, then for each type",
+							"which is supported, 2 raised to a power is added to the",
+							"sum. The powers are according to the following table:",
+							"",
+							"Failure Type Power",
+							"AC Failure 0",
+							"Plus 5 Failure 1",
+							"Plus 12 Failure 2",
+							"Over Temperature Failure 3",
+							"Power Supply Inserted 4",
+							"Power Supply Extracted 5",
+							"",
+							"This object used in conjunction with the",
+							"a3ComSysPowerSupplyStatus object for a given power supply",
+							"provide a complete picture of the status of the power",
+							"supply."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysPowerSupplyStatusSupported",
+						"oid" : "1.3.6.1.4.1.43.29.4.4.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotOverTemperatureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when the temperature of a",
+				"board in a particular slot exceeds a certain threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==1) ? 2 : (($v5==2) ? 1 : 3)"
+				},
+				"EventType" : "a3ComSysChassisSlotOverTemperatureEvent",
+				"ExpireTime" : {
+					"eval" : "($v5==1) ? 86400 : (($v5==2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v5==1) ? 4 : (($v5==2) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v5==1) ? '$v2 temperature exceeded the threshold' : (($v5==2) ? '$v2 temperature is normal' : '$v2 temperature is not supported')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotOverTemperatureEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotIndex i 9999 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardType i 1 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardRevision s E A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardStatus i 1 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotOvertemperature i 1 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotConverterBad i 1",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotOverTemperatureEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the slot identified by this entry."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotIndex",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of board residing in the slot identified by",
+							"this entry."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "emptyLocation",
+							"7" : "esmBoard",
+							"8" : "fcmBoard",
+							"9" : "lmmBoard",
+							"10" : "efsmBoard",
+							"11" : "trsmBoard",
+							"12" : "tmmBoard",
+							"13" : "fsmBoard",
+							"14" : "fesmBoard"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardType",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The revision number of the board in the slot identified",
+							"by this entry. If the slot is empty, or the revision is",
+							"unknown this object returns a zero length string."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardRevision",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status of the board in the slot identified by this",
+							"entry."
+						],
+						"enums" : {
+							"1" : "notPresent",
+							"2" : "testing",
+							"3" : "offline",
+							"4" : "online"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardStatus",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the current overtemperature status",
+							"for the slot. If the slot does not support overtemperature",
+							"detection, this object returns notSupported."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false",
+							"3" : "notSupported"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotOvertemperature",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the current status +12V->+5V",
+							"converter for the slot. If the slot does not support",
+							"+12V->+5V converter detection, this object returns",
+							"notSupported."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false",
+							"3" : "notSupported"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotConverterBad",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotInsertEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when a board is inserted into a",
+				"particular slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "a3ComSysChassisSlotInsertEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Board ($v2) inserted into the slot $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotInsertEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotIndex i 9999 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardType i 1 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardRevision s E",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotInsertEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the slot identified by this entry."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotIndex",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of board residing in the slot identified by",
+							"this entry."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "emptyLocation",
+							"7" : "esmBoard",
+							"8" : "fcmBoard",
+							"9" : "lmmBoard",
+							"10" : "efsmBoard",
+							"11" : "trsmBoard",
+							"12" : "tmmBoard",
+							"13" : "fsmBoard",
+							"14" : "fesmBoard"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardType",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The revision number of the board in the slot identified",
+							"by this entry. If the slot is empty, or the revision is",
+							"unknown this object returns a zero length string."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotBoardRevision",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotExtractEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when a board is extracted",
+				"from a particular slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "a3ComSysChassisSlotExtractEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Board extracted from slot $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotExtractEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotIndex i 9999",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysChassisSlotExtractEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the slot identified by this entry."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSlotIndex",
+						"oid" : "1.3.6.1.4.1.43.29.4.2.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysBridgeAddressThresholdEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when the number of addresses",
+				"stored in the bridge reaches a3ComSysBridgeAddressThreshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "a3ComSysBridgeAddressThresholdEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "a3ComSysBridgeIndex:$v1",
+				"Summary" : "Number of address stored in the bridge reached its threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysBridgeAddressThresholdEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysBridgeIndex i 9999",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysBridgeAddressThresholdEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the bridge identified by this entry",
+							"relative to this agent."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysBridgeIndex",
+						"oid" : "1.3.6.1.4.1.43.29.4.10.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemFanFailureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when one of the system fans",
+				"fails."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : (($v1==2) ? 1 : 3)"
+				},
+				"EventType" : "a3ComSysSystemFanFailureEvent",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : (($v1==2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 4 : (($v1==2) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'System fan failed' : (($v1==2) ? 'System fan is normal' : 'System fan is not supported')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemFanFailureEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemFanFailure i 1",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemFanFailureEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the current fan status for the",
+							"system. If the system does not support fan failure",
+							"detection, this object returns notSupported."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false",
+							"3" : "notSupported"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysSystemFanFailure",
+						"oid" : "1.3.6.1.4.1.43.29.4.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardSysOverTemperatureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when the temperature of ",
+				"the system exceeds a certain threshold. This trap is",
+				"generated from agents that support the ",
+				"a3ComSysModuleCardInfoTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "a3ComSysModuleCardSysOverTemperatureEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "a3ComSysModuleCardInfoIndex:$v1",
+				"Summary" : "System temperature exceeded its threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardSysOverTemperatureEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoIndex i 9999 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoFamily i 1 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoGenericType i 1",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardSysOverTemperatureEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the modular component identified by this",
+							"entry."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoIndex",
+						"oid" : "1.3.6.1.4.1.43.29.4.18.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The family code for this module."
+						],
+						"enums" : {
+							"1" : "coreBuilder3500",
+							"2" : "superStack7000",
+							"3" : "superStack9000",
+							"17" : "coreBuilder9000-RF12R",
+							"18" : "coreBuilder9000-RF6MC",
+							"19" : "coreBuilder9000-LF20R",
+							"20" : "coreBuilder9000-LF10MC",
+							"21" : "coreBuilder9000-LF36T",
+							"22" : "coreBuilder9000-FG24",
+							"23" : "coreBuilder9000-FG9",
+							"24" : "coreBuilder9000-LG9MC",
+							"25" : "coreBuilder9000-LG9"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoFamily",
+						"oid" : "1.3.6.1.4.1.43.29.4.18.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The generic type code for this module."
+						],
+						"enums" : {
+							"1" : "backplaneOrMotherboard",
+							"2" : "processorBoard",
+							"3" : "enet10MbAnd100MbAdaptor",
+							"4" : "enet1GbAdaptor",
+							"5" : "fddiAdaptor",
+							"6" : "atmAdaptor"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoGenericType",
+						"oid" : "1.3.6.1.4.1.43.29.4.18.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInsertEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when a board is inserted into a",
+				"particular modular slot. This trap is generated from agents ",
+				"that support the a3ComSysModuleCardInfoTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "a3ComSysModuleCardInsertEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "a3ComSysModuleCardInfoIndex:$v1",
+				"Summary" : "Board inserted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInsertEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoIndex i 9999 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoFamily i 1 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoGenericType i 1 A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoSpecificType i 1",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInsertEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the modular component identified by this",
+							"entry."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoIndex",
+						"oid" : "1.3.6.1.4.1.43.29.4.18.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The family code for this module."
+						],
+						"enums" : {
+							"1" : "coreBuilder3500",
+							"2" : "superStack7000",
+							"3" : "superStack9000",
+							"17" : "coreBuilder9000-RF12R",
+							"18" : "coreBuilder9000-RF6MC",
+							"19" : "coreBuilder9000-LF20R",
+							"20" : "coreBuilder9000-LF10MC",
+							"21" : "coreBuilder9000-LF36T",
+							"22" : "coreBuilder9000-FG24",
+							"23" : "coreBuilder9000-FG9",
+							"24" : "coreBuilder9000-LG9MC",
+							"25" : "coreBuilder9000-LG9"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoFamily",
+						"oid" : "1.3.6.1.4.1.43.29.4.18.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The generic type code for this module."
+						],
+						"enums" : {
+							"1" : "backplaneOrMotherboard",
+							"2" : "processorBoard",
+							"3" : "enet10MbAnd100MbAdaptor",
+							"4" : "enet1GbAdaptor",
+							"5" : "fddiAdaptor",
+							"6" : "atmAdaptor"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoGenericType",
+						"oid" : "1.3.6.1.4.1.43.29.4.18.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The specific type code for this module."
+						],
+						"enums" : {
+							"1" : "notApplicable",
+							"161" : "atmSonetOC3Fiber",
+							"162" : "atmSonetOC12Fiber",
+							"163" : "atmSonetOC3Copper",
+							"164" : "atmSonetOC12Copper",
+							"177" : "enet1Gb850nMMultimodeFiber",
+							"178" : "enet1Gb1300nMFiber",
+							"179" : "enet1GbCoax",
+							"180" : "packetSwitchingFabric1000BaseBackplane",
+							"181" : "enet1Gb1000BaseTx",
+							"183" : "enet1000BaseSxMmfSCandGBIC",
+							"225" : "enet100Mb100BaseTx",
+							"226" : "enet10or100BaseTxTelco",
+							"227" : "enet100Mb100BaseFx",
+							"228" : "enet100Mb100BaseT4",
+							"229" : "enet100Mb100BaseTxSTP",
+							"230" : "enet100Mb100BaseT2",
+							"241" : "fddiMultimodeSC",
+							"242" : "fddiSingleModeSC",
+							"243" : "fddiCopperUTP",
+							"244" : "fddiCopperSTP"
+						},
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoSpecificType",
+						"oid" : "1.3.6.1.4.1.43.29.4.18.2.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardExtractEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when a board is extracted",
+				"from a particular modular slot. This trap is generated",
+				"from agents that support the a3ComSysModuleCardInfoTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "a3ComSysModuleCardExtractEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "a3ComSysModuleCardInfoIndex:$v1",
+				"Summary" : "Board extracted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardExtractEvent A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoIndex i 9999",
+			"trap" : {
+				"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardExtractEvent",
+				"oid" : "1.3.6.1.4.1.43.29.4.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the modular component identified by this",
+							"entry."
+						],
+						"name" : "A3COM-SWITCHING-SYSTEMS-MIB::a3ComSysModuleCardInfoIndex",
+						"oid" : "1.3.6.1.4.1.43.29.4.18.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

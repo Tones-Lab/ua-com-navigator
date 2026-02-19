@@ -1,0 +1,188 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200606130000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-CFS-MIB::ciscoCFSFeatureActionNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to covey the information of the action",
+				"performed on a CFS capable feature.",
+				"This notification gets generated when :",
+				"- a CFS operation action is triggered on CFS capable",
+				"feature",
+				"- the result of last action performed on the CFS",
+				"capable feature changes.",
+				"The 'cfsFeatureOpLastActionResult' indicates the new",
+				"value of the last action result performed on the feature.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoCFSFeatureActionNotif",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4 == 3) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Action $v1 has a status of $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CFS-MIB::ciscoCFSFeatureActionNotif CISCO-CFS-MIB::cfsFeatureOpLastAction i 1 CISCO-CFS-MIB::cfsFeatureOpLastScopeType i 1 CISCO-CFS-MIB::cfsFeatureOpLastScopeVal s EXAMPLE CISCO-CFS-MIB::cfsFeatureOpLastActionResult i 1",
+			"trap" : {
+				"name" : "CISCO-CFS-MIB::ciscoCFSFeatureActionNotif",
+				"oid" : "1.3.6.1.4.1.9.9.433.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "noop",
+							"2" : "enable",
+							"3" : "disable",
+							"4" : "commit",
+							"5" : "abort",
+							"6" : "clear"
+						},
+						"name" : "CISCO-CFS-MIB::cfsFeatureOpLastAction",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.1.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "vsanID"
+						},
+						"name" : "CISCO-CFS-MIB::cfsFeatureOpLastScopeType",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CFS-MIB::cfsFeatureOpLastScopeVal",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.1.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "success",
+							"3" : "failed",
+							"4" : "inProgress",
+							"5" : "partialSuccess"
+						},
+						"name" : "CISCO-CFS-MIB::cfsFeatureOpLastActionResult",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.1.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CFS-MIB::ciscoCFSMergeFailNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to convey the information of the 'Merge",
+				"Failure' occurred in the fabric. This notification gets",
+				"generated when the merge of the two fabrics fail for a",
+				"CFS capable feature.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoCFSMergeFailNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Merge Failure occurred in the fabric: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CFS-MIB::ciscoCFSMergeFailNotif CISCO-CFS-MIB::cfsMergeFailFeatureName s EXAMPLE CISCO-CFS-MIB::cfsMergeFailScopeType i 1 CISCO-CFS-MIB::cfsMergeFailScopeVal s EXAMPLE CISCO-CFS-MIB::cfsMergeFailReasonDescription s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CFS-MIB::ciscoCFSMergeFailNotif",
+				"oid" : "1.3.6.1.4.1.9.9.433.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-CFS-MIB::cfsMergeFailFeatureName",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "vsanID"
+						},
+						"name" : "CISCO-CFS-MIB::cfsMergeFailScopeType",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CFS-MIB::cfsMergeFailScopeVal",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-CFS-MIB::cfsMergeFailReasonDescription",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.2.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-CFS-MIB::ciscoCFSDiscoveryCompleteNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to indicate that the CFS has completed",
+				"discovering the CFS capable devices in the fabric.",
+				"If the value of cfsPeersDiscoveryResult is 'successful'",
+				"then the cfsPeersTable is appropriately populated.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoCFSDiscoveryCompleteNotif",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 4) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CFS has completed discovering the CFS capable devices in the fabric with a status of $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-CFS-MIB::ciscoCFSDiscoveryCompleteNotif CISCO-CFS-MIB::cfsPeersDiscoveryResult i 1 CISCO-CFS-MIB::cfsPeersDiscoveryFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-CFS-MIB::ciscoCFSDiscoveryCompleteNotif",
+				"oid" : "1.3.6.1.4.1.9.9.433.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "notInitiated",
+							"2" : "inProgress",
+							"3" : "successful",
+							"4" : "failed"
+						},
+						"name" : "CISCO-CFS-MIB::cfsPeersDiscoveryResult",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.3.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-CFS-MIB::cfsPeersDiscoveryFailureReason",
+						"oid" : "1.3.6.1.4.1.9.9.433.1.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

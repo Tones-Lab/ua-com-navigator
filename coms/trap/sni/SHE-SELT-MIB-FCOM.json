@@ -1,0 +1,624 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201603011700Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-SELT-MIB::sheSeltServerControlResultEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				" Succeeded or failed to connect with SELT server. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSeltServerControlResultEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==30 || $v2==32 || $v2==37) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SELT server control request $v1 result: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SELT-MIB::sheSeltServerControlResultEvent SHE-SELT-MIB::sheSeltServerControlReq i 1 SHE-SELT-MIB::sheSeltServerControlReqResult i 37 SHE-SELT-MIB::sheSeltServerControlTimeStamp u 9999",
+				"$SNMPTRAPCMD SHE-SELT-MIB::sheSeltServerControlResultEvent SHE-SELT-MIB::sheSeltServerControlReq i 1 SHE-SELT-MIB::sheSeltServerControlReqResult i 4 SHE-SELT-MIB::sheSeltServerControlTimeStamp u 9998"
+			],
+			"trap" : {
+				"name" : "SHE-SELT-MIB::sheSeltServerControlResultEvent",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.5.1",
+				"variables" : [
+					{
+						"description" : [
+							"Control connection between CXU and SELT server(config SELT server IP address and service port",
+							"connect CXU to SELT server and disconnect CXU with SELT server.SELT server is used to receive",
+							"and collect selt raw data from plugin unit IU throuth CXU, to calculate and then to send selt result to CXU, ",
+							"so before doing selt test,SELT server must be configed and connected.A config command is permanent ",
+							"unless we need to change SELT sever's IP address or service port.A connect command supports all IU's",
+							"selt test unless the connection is close for some reasons.",
+							"",
+							"seltConfigSeltServer (1):",
+							"sheSeltServerControlServerIP",
+							"sheSeltServerControlServicePort",
+							"",
+							"seltConnectSeltServer (2): [NO_CONFIG-CHANGE]",
+							"",
+							"seltDisconnectSeltServer (3): [NO_CONFIG-CHANGE]"
+						],
+						"enums" : {
+							"1" : "seltConfigSeltServer",
+							"2" : "seltConnectSeltServer",
+							"3" : "seltDisconnectSeltServer"
+						},
+						"name" : "SHE-SELT-MIB::sheSeltServerControlReq",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command."
+						],
+						"enums" : {
+							"4" : "seltControlServerReqNotSupported",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded"
+						},
+						"name" : "SHE-SELT-MIB::sheSeltServerControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.2.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command). "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltServerControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.2.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SELT-MIB::sheSeltTestRequestControlResultEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				" Succeeded or failed to execute the command of selt request. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSeltTestRequestControlResultEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==30 || $v4==32 || $v4==37) ? 2 : 3"
+				},
+				"SubNode" : "IfIndex:$v2",
+				"Summary" : "SELT test request $v1 result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SELT-MIB::sheSeltTestRequestControlResultEvent SHE-SELT-MIB::sheSeltTestRequestControlReq i 1 SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex i 100 SHE-SELT-MIB::sheSeltTestRequestControlReqComdId u 9999 SHE-SELT-MIB::sheSeltTestRequestControlReqResult i 37 SHE-SELT-MIB::sheSeltTestRequestControlReqTimeStamp u 9999",
+				"$SNMPTRAPCMD SHE-SELT-MIB::sheSeltTestRequestControlResultEvent SHE-SELT-MIB::sheSeltTestRequestControlReq i 1 SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex i 100 SHE-SELT-MIB::sheSeltTestRequestControlReqComdId u 9999 SHE-SELT-MIB::sheSeltTestRequestControlReqResult i 2 SHE-SELT-MIB::sheSeltTestRequestControlReqTimeStamp u 9998"
+			],
+			"trap" : {
+				"name" : "SHE-SELT-MIB::sheSeltTestRequestControlResultEvent",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.5.2",
+				"variables" : [
+					{
+						"description" : [
+							"",
+							"NOTE:",
+							"Simultaneous tests of subscriber's loop on different IUs are allowed, but simultaneous tests",
+							"of different subscribers' loops on the same IU are not allowed. ",
+							"",
+							"seltStartSeltRequest (1): [NO_CONFIG-CHANGE]",
+							"- NOTE: supported on Lantiq-based IUs only!",
+							"- NOTE: Requires SELT server!",
+							"- When IU receives the command it will begin to process and send raw data to CXU, which ",
+							"sends it on to the SELT server.",
+							"sheSeltTestRequestControlReqIfIndex",
+							"sheSeltTestRequestControlReqComdId",
+							"sheSeltTestRequestControlReqFDRCollectionEnable",
+							"sheSeltTestRequestControlReqFDRCollectionNumAverage",
+							"-> sheSeltTestRequestControlResultEvent",
+							"",
+							"seltStopSeltRequest (2): [NO_CONFIG-CHANGE]",
+							"- NOTE: supported on Lantiq-based IUs only!",
+							"sheSeltTestRequestControlReqIfIndex",
+							"-> sheSeltTestRequestControlResultEvent",
+							"",
+							"startSelt (11): [NO_CONFIG-CHANGE]",
+							"- From R4.7.3M",
+							"- NOTE: supported on BCM-based IUs only!",
+							"sheSeltTestRequestControlReqIfIndex",
+							"sheSeltTestRequestControlReqComdId",
+							"sheSeltTestRequestControlReqUerMmdC",
+							"sheSeltTestRequestControlReqQlnMmdC",
+							"sheSeltTestRequestControlReqUmeC",
+							"sheSeltTestRequestControlReqQmeC",
+							"-> sheSeltTestRequestRunSeltReqResult",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: startSelt added."
+						],
+						"enums" : {
+							"1" : "seltStartSeltRequest",
+							"2" : "seltStopSeltRequest",
+							"11" : "startSelt"
+						},
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReq",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The interface index for which SELT shall be activated. "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Command ID of one single end loop test. "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqComdId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The result of the last user command."
+						],
+						"enums" : {
+							"2" : "seltRequestControlReqNotSupported",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"38" : "seltStopNotSupported"
+						},
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SELT-MIB::sheSeltReceivedRawDataEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				" Having received raw data from IU. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSeltReceivedRawDataEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "IfIndex:$v1",
+				"Summary" : "Raw data received from IU"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SELT-MIB::sheSeltReceivedRawDataEvent SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex i 100 SHE-SELT-MIB::sheSeltTestRequestControlReqComdId u 9999",
+			"trap" : {
+				"name" : "SHE-SELT-MIB::sheSeltReceivedRawDataEvent",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.5.3",
+				"variables" : [
+					{
+						"description" : [
+							"The interface index for which SELT shall be activated. "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Command ID of one single end loop test. "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqComdId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SELT-MIB::sheSeltNoReceivedRawDataEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				" Having not received raw data from IU. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSeltNoReceivedRawDataEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "IfIndex:$v1",
+				"Summary" : "Raw data not received from IU"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SELT-MIB::sheSeltNoReceivedRawDataEvent SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex i 100 SHE-SELT-MIB::sheSeltTestRequestControlReqComdId u 9999",
+			"trap" : {
+				"name" : "SHE-SELT-MIB::sheSeltNoReceivedRawDataEvent",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.5.4",
+				"variables" : [
+					{
+						"description" : [
+							"The interface index of the ADSL central PPTP",
+							"for which selt shall be activated. "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Command ID of one single end loop test. "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqComdId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SELT-MIB::sheSeltTestRequestStartSeltReqResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Result of a startSelt(11) command request.",
+				"REVISION HISTORY",
+				"R3.8M V1.410/R4.7.3M: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSeltTestRequestStartSeltReqResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==30 || $v2==32 || $v2==37) ? 2 : 3"
+				},
+				"SubNode" : "IfIndex:$v4",
+				"Summary" : "Command request $v1 executed with result: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SELT-MIB::sheSeltTestRequestStartSeltReqResult SHE-SELT-MIB::sheSeltTestRequestControlReq i 1 SHE-SELT-MIB::sheSeltTestRequestControlReqResult i 37 SHE-SELT-MIB::sheSeltTestRequestControlReqTimeStamp u 9999 SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex i 100 SHE-SELT-MIB::sheSeltTestRequestControlReqComdId u 9999",
+				"$SNMPTRAPCMD SHE-SELT-MIB::sheSeltTestRequestStartSeltReqResult SHE-SELT-MIB::sheSeltTestRequestControlReq i 1 SHE-SELT-MIB::sheSeltTestRequestControlReqResult i 35 SHE-SELT-MIB::sheSeltTestRequestControlReqTimeStamp u 9999 SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex i 100 SHE-SELT-MIB::sheSeltTestRequestControlReqComdId u 9999"
+			],
+			"trap" : {
+				"name" : "SHE-SELT-MIB::sheSeltTestRequestStartSeltReqResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.5.5",
+				"variables" : [
+					{
+						"description" : [
+							"",
+							"NOTE:",
+							"Simultaneous tests of subscriber's loop on different IUs are allowed, but simultaneous tests",
+							"of different subscribers' loops on the same IU are not allowed. ",
+							"",
+							"seltStartSeltRequest (1): [NO_CONFIG-CHANGE]",
+							"- NOTE: supported on Lantiq-based IUs only!",
+							"- NOTE: Requires SELT server!",
+							"- When IU receives the command it will begin to process and send raw data to CXU, which ",
+							"sends it on to the SELT server.",
+							"sheSeltTestRequestControlReqIfIndex",
+							"sheSeltTestRequestControlReqComdId",
+							"sheSeltTestRequestControlReqFDRCollectionEnable",
+							"sheSeltTestRequestControlReqFDRCollectionNumAverage",
+							"-> sheSeltTestRequestControlResultEvent",
+							"",
+							"seltStopSeltRequest (2): [NO_CONFIG-CHANGE]",
+							"- NOTE: supported on Lantiq-based IUs only!",
+							"sheSeltTestRequestControlReqIfIndex",
+							"-> sheSeltTestRequestControlResultEvent",
+							"",
+							"startSelt (11): [NO_CONFIG-CHANGE]",
+							"- From R4.7.3M",
+							"- NOTE: supported on BCM-based IUs only!",
+							"sheSeltTestRequestControlReqIfIndex",
+							"sheSeltTestRequestControlReqComdId",
+							"sheSeltTestRequestControlReqUerMmdC",
+							"sheSeltTestRequestControlReqQlnMmdC",
+							"sheSeltTestRequestControlReqUmeC",
+							"sheSeltTestRequestControlReqQmeC",
+							"-> sheSeltTestRequestRunSeltReqResult",
+							"",
+							"REVISION HISTORY",
+							"R4.7.3M: startSelt added."
+						],
+						"enums" : {
+							"1" : "seltStartSeltRequest",
+							"2" : "seltStopSeltRequest",
+							"11" : "startSelt"
+						},
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReq",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command."
+						],
+						"enums" : {
+							"2" : "seltRequestControlReqNotSupported",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"38" : "seltStopNotSupported"
+						},
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The interface index for which SELT shall be activated. "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqIfIndex",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Command ID of one single end loop test. "
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlReqComdId",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.3",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SELT-MIB::sheSeltTestResultDataFileConfigModified",
+			"certification" : "STANDARD",
+			"description" : [
+				"A configuration notification indicating that the sheSeltTestResultConfig objects ",
+				"have been modified."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSeltTestResultDataFileConfigModified",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SELT test result data file configuration modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-SELT-MIB::sheSeltTestResultDataFileConfigModified SHE-SELT-MIB::sheSeltTestResultControlTimeStamp u 9999 SHE-SELT-MIB::sheSeltTestResultDataFilePathName s EXAMPLE SHE-SELT-MIB::sheSeltTestResultDataFileNamePrefix s EXAMPLE SHE-SELT-MIB::sheSeltTestResultDataFileTransferProfile s EXAMPLE",
+			"trap" : {
+				"name" : "SHE-SELT-MIB::sheSeltTestResultDataFileConfigModified",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.6.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command).",
+							"",
+							"REVISION HISTORY",
+							"R3.8M V1.410/R4.7.3M: Added; reserved for future use only."
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestResultControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.6.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"RESERVED FOR FUTURE USE ONLY.",
+							"",
+							"Path name for the data file containing the SELT measurements on the server referenced by ",
+							"sheSeltTestResultDataFileTransferProfile.",
+							"",
+							"This path should be set relative to the server root and use only Linux notation ( / ). ",
+							"",
+							"Spaces in path names are not allowed, because of possible problems with",
+							"different file transfer protocol implementations (client and/or server)!",
+							"",
+							"IMPORTANT",
+							"Depending on the server configuration, a leading / in the path configuration could ",
+							"force a write or read action outside of the root directory of the used user account.",
+							"In this case, the path is no longer relative to the root. It will be read as ",
+							"an absolute path setting.",
+							"",
+							"REVISION HISTORY",
+							"R3.8M V1.410/R4.7.3M: Added; reserved for future use only."
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestResultDataFilePathName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.6.3.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"RESERVED FOR FUTURE USE ONLY.",
+							"",
+							"Optional prefix to be used when generating the file name stem of the data file ",
+							"containing the SELT measurements to be transfered to the server referenced by ",
+							"sheSeltTestResultDataFileTransferProfile.",
+							"",
+							"The generated file name stems contains additional information about the NE, the",
+							"port measured and the date and time of the measurement as follows.",
+							"[<prefix>_]selt_<hostname>_port<nn>_date<yyyymmdd>_time<hhmmss>.*",
+							"",
+							"REVISION HISTORY",
+							"R3.8M V1.410/R4.7.3M: Added; reserved for future use only."
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestResultDataFileNamePrefix",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.6.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"RESERVED FOR FUTURE USE ONLY.",
+							"",
+							"This parameter configures the name of an existing file transfer profile in either ",
+							"sheSecurityConnectionProfileTable or sheSecurityDistributionProfileTable in the ",
+							"SHE-SECURITY-MIB to enable the SELT data file containing the SELT measurements ",
+							"to be uploaded on request to a server.",
+							"",
+							"A reference to a profile is mandatory for uploading the data file to a server. ",
+							"",
+							"REVISION HISTORY",
+							"R3.8M V1.410/R4.7.3M: Added; reserved for future use only."
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestResultDataFileTransferProfile",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.6.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-SELT-MIB::sheSeltTestResultUploadReqResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"A configuration notification indicating that the long-running command ",
+				"uploadSeltTestResultDataFile(2) has completed.",
+				"REVISION HISTORY",
+				"R3.8M V1.410/R4.7.3M: New"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheSeltTestResultUploadReqResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==30 || $v3==32 || $v3==37) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Command request uploadSeltTestResultDataFile ended with result: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-SELT-MIB::sheSeltTestResultUploadReqResult SHE-SELT-MIB::sheSeltTestResultControlTimeStamp u 9999 SHE-SELT-MIB::sheSeltTestRequestControlStatus i 0 SHE-SELT-MIB::sheSeltTestResultControlReqResult i 37",
+				"$SNMPTRAPCMD SHE-SELT-MIB::sheSeltTestResultUploadReqResult SHE-SELT-MIB::sheSeltTestResultControlTimeStamp u 9999 SHE-SELT-MIB::sheSeltTestRequestControlStatus i 0 SHE-SELT-MIB::sheSeltTestResultControlReqResult i 10"
+			],
+			"trap" : {
+				"name" : "SHE-SELT-MIB::sheSeltTestResultUploadReqResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.6.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command).",
+							"",
+							"REVISION HISTORY",
+							"R3.8M V1.410/R4.7.3M: Added; reserved for future use only."
+						],
+						"name" : "SHE-SELT-MIB::sheSeltTestResultControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.6.2.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The status of a control request."
+						],
+						"enums" : {
+							"0" : "requestNone",
+							"1" : "requestIdle",
+							"2" : "requestBusy",
+							"3" : "requestPassed",
+							"4" : "requestFailed"
+						},
+						"name" : "SHE-SELT-MIB::sheSeltTestRequestControlStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.4.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command.",
+							"",
+							"REVISION HISTORY",
+							"R3.8M V1.410/R4.7.3M: Added; reserved for future use only."
+						],
+						"enums" : {
+							"0" : "noRequest",
+							"10" : "ftsError",
+							"11" : "ftsIpAddrFailed",
+							"12" : "ftsAccountFailed",
+							"13" : "ftsPasswdFailed",
+							"14" : "ftsDescPathFailed",
+							"15" : "ftsProfileUnknown",
+							"16" : "ftsServerConnectionTimeOut",
+							"17" : "ftsServerConnectionNoOpen",
+							"18" : "ftsServerConnectionAborted",
+							"19" : "ftsServerConnectionFileAborted",
+							"21" : "ftsServerConnectionRequestedActionNotTaken",
+							"22" : "ftsRequestPartiallyFailed",
+							"23" : "ftsAuthenticationModeNotSupportedByServer",
+							"24" : "ftsServerConnectionInvalidFileSize",
+							"30" : "commExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"33" : "commandAborted",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded",
+							"40" : "featureNotSupported",
+							"41" : "insufficientResources",
+							"70" : "uploadFailedNoMeasurementAvailable",
+							"71" : "uploadFailedInsufficientResources"
+						},
+						"name" : "SHE-SELT-MIB::sheSeltTestResultControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.23.6.2.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

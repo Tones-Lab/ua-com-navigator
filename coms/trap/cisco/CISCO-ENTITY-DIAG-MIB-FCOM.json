@@ -1,0 +1,191 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201603110000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ENTITY-DIAG-MIB::ceDiagBootUpFailedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ceDiagBootUpFailedNotif is sent if the online diagnostic",
+				"discovers a boot up failure for a physical entity."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ceDiagBootUpFailedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "$v1",
+				"Summary" : "Boot up failed for physical entity $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-DIAG-MIB::ceDiagBootUpFailedNotif ENTITY-MIB::entPhysicalDescr s EXAMPLE CISCO-ENTITY-DIAG-MIB::ceDiagEntityBootLevel i 1 CISCO-ENTITY-DIAG-MIB::ceDiagEventErrorMsg s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagBootUpFailedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.350.0.1",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "bypass",
+							"2" : "minimal",
+							"3" : "complete"
+						},
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagEntityBootLevel",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.3.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagEventErrorMsg",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.8.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-DIAG-MIB::ceDiagHMThresholdReachedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ceDiagHMThresholdReachedNotif is sent if the number of",
+				"consecutive failure of a Health Monitoring test reaches",
+				"the configured threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ceDiagHMThresholdReachedNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "$v3 failed $v2 times"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-DIAG-MIB::ceDiagHMThresholdReachedNotif ENTITY-MIB::entPhysicalDescr s EXAMPLE CISCO-ENTITY-DIAG-MIB::ceDiagHMTestThreshold u 9999 CISCO-ENTITY-DIAG-MIB::ceDiagTestText s EXAMPLE CISCO-ENTITY-DIAG-MIB::ceDiagTestAttributes b 1",
+			"trap" : {
+				"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagHMThresholdReachedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.350.0.2",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagHMTestThreshold",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.7.2.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagTestText",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagTestAttributes",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.1.1.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-DIAG-MIB::ceDiagHMTestRecoverNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ceDiagHMTestRecoverNotif is sent when no error is",
+				"detected for the first time on the same Health Monitoring test ",
+				"which previously triggered ceDiagHMThresholdReachedNotif."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ceDiagHMThresholdReachedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v1",
+				"Summary" : "$v2 test passed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-DIAG-MIB::ceDiagHMTestRecoverNotif ENTITY-MIB::entPhysicalDescr s EXAMPLE CISCO-ENTITY-DIAG-MIB::ceDiagTestText s EXAMPLE CISCO-ENTITY-DIAG-MIB::ceDiagTestAttributes b 1",
+			"trap" : {
+				"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagHMTestRecoverNotif",
+				"oid" : "1.3.6.1.4.1.9.9.350.0.3",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagTestText",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagTestAttributes",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.1.1.1.3",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ENTITY-DIAG-MIB::ceDiagScheduledTestFailedNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ceDiagScheduledTestFailedNotif is sent if a scheduled",
+				"test failed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ceDiagScheduledTestFailedNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Scheduled test $v2 failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ENTITY-DIAG-MIB::ceDiagScheduledTestFailedNotif ENTITY-MIB::entPhysicalDescr s EXAMPLE CISCO-ENTITY-DIAG-MIB::ceDiagTestText s EXAMPLE CISCO-ENTITY-DIAG-MIB::ceDiagEventErrorMsg s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagScheduledTestFailedNotif",
+				"oid" : "1.3.6.1.4.1.9.9.350.0.4",
+				"variables" : [
+					{
+						"name" : "ENTITY-MIB::entPhysicalDescr",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagTestText",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ENTITY-DIAG-MIB::ceDiagEventErrorMsg",
+						"oid" : "1.3.6.1.4.1.9.9.350.1.8.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

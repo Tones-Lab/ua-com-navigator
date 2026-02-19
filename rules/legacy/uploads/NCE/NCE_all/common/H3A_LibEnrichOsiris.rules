@@ -1,0 +1,565 @@
+######################################################################################################
+#       _Name_  collection/event/H3A/common/H3A_LibEnrichOsiris.rules
+######################################################################################################
+# 
+# Osiris functions
+#
+# Source Control:
+#       1.0		2023-12-14	aignerma	<STORY>		initial version
+#
+######################################################################################################
+
+sub LibEnrichOsiris_Interfaces {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_Interfaces';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    my @result=();
+    my $table = "OBJ_OSIRIS_INTERFACES_V1";
+    my $filter = "";
+    if ($EMSKey eq 'NetMaster') {
+        if ( $eventRef->{'NECard'} > 0 ) {
+            $filter = "IPADDRESS = '" . $eventRef->{'IPAddress'} . "' and INTERFACE = '".$eventRef->{NECard}."' and STATUS = 'active'";
+        } else {
+            $Log->Message('DEBUG', $trace . " No valid Event for Enrichment found (NECard missing).");
+            $Log->Message('DEBUG', $trace . " ...done");
+            return;
+        }
+    } elsif ($EMSKey eq 'Huawei NCE' )  {
+        if ( $eventRef->{'Node'}=~/^[A-Z]?\d{6}[A-Z]\// ) {
+            $filter = "NETNAME = '" . $eventRef->{'Node'} . "' and IPADDRESS = '".$eventRef->{IPAddress}."' and STATUS = 'active'";
+        } else {
+            $Log->Message('DEBUG', $trace . " No valid Event for Enrichment found (Node does not match expected pattern).");
+            $Log->Message('DEBUG', $trace . " ...done");
+            return;
+        }
+    } else {
+    	$Log->Message('DEBUG', $trace . " ...done (nothing to do)");
+    	return;
+    }
+    my @columns = qw(SITEID NETNAME NETELEMENT MWNODES IPADDRESS SLOT PORT INTERFACE LINK DESCRIPTION MAXMILESTONE MILESTONE_DESC);
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	$Log->Message('DEBUG', $trace . " Received Rows: " . Dumper(\@result));
+		if ($cnt == 1) {
+            $eventRef->{NESlot} = $result[0]->{SLOT} if ($eventRef->{NESlot} eq '');
+            $eventRef->{NEPort} = $result[0]->{PORT} if ($eventRef->{NEPort} eq '');
+            $eventRef->{NEName} = $result[0]->{NETELEMENT} if ($eventRef->{NEName} eq '');
+            $eventRef->{AlarmCategorization2} = "Slot=" . $result[0]->{SLOT}. " Port=". $result[0]->{PORT}. " (" . $result[0]->{DESCRIPTION}.")";
+            if (defined $result[0]->{LINK} ) {
+            	# overwrite CI 
+				$eventRef->{CMDBCIID} = $result[0]->{LINK};
+            	LibUtil_SetAdditionalInfo($eventRef,'Osiris LinkID',$result[0]->{LINK});
+            }
+            $eventRef->{Location} = $result[0]->{SITEID} if ($eventRef->{Location} eq '');
+        } else {
+        	my $errTxt = $trace . " No or multiple rows found. Query to " . $table . " for '" . $filter . "' returned ". $cnt . "rows. ";
+            $Log->Message('WARN', $errTxt);
+            LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEnrichOsiris_Links {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_Links';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    my $linkid = LibUtil_GetAdditionalInfo($eventRef,'Osiris LinkID');
+    if ( ! defined $linkid ) {
+    	$Log->Message('DEBUG', $trace . " ...done (nothing to do)");
+    	return;
+    }
+
+    my @result=();
+    my $table = "OBJ_OSIRIS_LINKS_V2";
+    my $filter = "LINKID = '" . $linkid . "' and STATUS = 'active'";
+    my @columns = qw(EQUIPMENTTYPE LINKTYPE LINKTYPE_DESC MAXMILESTONE SITEID_A SITEID_B MILESTONE_DESC);
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	$Log->Message('DEBUG', $trace . " Received Rows: " . Dumper(\@result));
+		if ($cnt == 1) {
+        	# overwrite CI 
+            if ( defined $result[0]->{EQUIPMENTTYPE} ) {
+                LibUtil_SetAdditionalInfo($eventRef,'Osiris LinkType',$result[0]->{LINKTYPE} . " (" . $result[0]->{EQUIPMENTTYPE} . ")");
+            } else {
+                LibUtil_SetAdditionalInfo($eventRef,'Osiris LinkType',$result[0]->{LINKTYPE});
+            }
+			
+            #check milestone:
+			if ( $result[0]->{MAXMILESTONE} < 100 || $result[0]->{MAXMILESTONE} >=900 ) {
+				LibUtil_AddSuppression($eventRef,'Osiris Milestone', 'Link', 0, $result[0]->{MAXMILESTONE} . '('. $result[0]->{MILESTONE_DESC} .')', $trace);
+            }
+            
+        } else {
+        	my $errTxt = $trace . " No or multiple rows found. Query to " . $table . " with filter '" . $filter . "' returned ". $cnt . "rows. ";
+            $Log->Message('WARN', $errTxt);
+            LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+
+sub LibEnrichOsiris_Devices {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_Devices';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    my @result=();
+    my $table = "OBJ_OSIRIS_DEVICES_V2";
+
+    my $filter = "";
+
+    # PowerBox NEName enrichment
+    if ($EMSKey eq 'Huawei NetEco' || $EMSKey eq 'Icinga2:FAPS' ) {
+        my $filetype = LibUtil_GetAdditionalInfo($eventRef,'FileType');
+        if (defined $filetype ) {
+            $filter = "SITEID = '" . $eventRef->{Location} . "' and FILETYPE = '".$filetype."' and IPADDRESS = '".$eventRef->{IPAddress}. "' and STATUS = 'active'";
+        } elsif ( defined $eventRef->{NEName} ) {
+            $filter = "NETWORKELEMENT = '" . $eventRef->{NEName} . "' and STATUS = 'active'";
+        } else {
+            $Log->Message('DEBUG', $trace . " No valid Event for Device Enrichment found (FileType AdditionalInfo missing).");
+            $Log->Message('DEBUG', $trace . " ...done");
+            return;
+        }
+
+    # NCE enrichment
+    } elsif ($EMSKey eq 'Huawei NCE') {
+        $filter = "ELEMENTNAME = '" . $eventRef->{Node} . "' and STATUS = 'active'";
+
+    # NetMaster enrichment
+    } elsif ($EMSKey eq 'NetMaster') {
+        $filter = "SITEID = '" . $eventRef->{Location} . "' and (IPADDRESS = '" . $eventRef->{IPAddress} . "' or NETWORKELEMENT = '" . $eventRef->{NEName} . "') and STATUS = 'active'";
+
+    # ZTE UEDM enrichment
+    } elsif ($EMSKey eq 'ZTE UEDM') {
+            $filter = "SITEID = '" . $eventRef->{Location} . "' and STATUS = 'active' and " .
+                " ( " .
+                "   /* Prefer the specific IP if it exists */ " .
+                "   ( IPADDRESS = '" . $eventRef->{IPAddress} . "' ) " .
+                "   /* Otherwise, fall back to the generic condition */ ".
+                "   OR ( " .
+                "           NETWORKTYPE = 'I0101' AND EQUIPMENTTYPE LIKE 'ZTE%' AND NOT EXISTS " .
+                "               ( SELECT 1 FROM OBJ_OSIRIS_DEVICES_V2 x WHERE STATUS = 'active' AND SITEID = '" . $eventRef->{Location} . "' and IPADDRESS = '" . $eventRef->{IPAddress} . "' )" .
+                "      )" .
+                " ) ";
+
+    # ZTE UME AN enrichment
+    } elsif ($EMSKey eq 'ZTE UME AN') {
+
+        # skip if no valid Location.
+        if ($eventRef->{Location}!~/^[A-Z]?\d{6}[A-Z]$/ ) {
+            $Log->Message('INFO', $trace . " No valid Location '".$eventRef->{Location}."' for EventKey '".$eventRef->{EventKey}."'. Skipping Osiris Device Enrichment.");
+            $Log->Message('DEBUG', $trace . " ...done");
+            return;
+        }
+
+        my $aircom_cellid = LibUtil_GetAdditionalInfo($eventRef,'Aircom CellId');
+        my $bbu = LibUtil_GetAdditionalInfo($eventRef,'BBU');
+        my $me_id = LibUtil_GetAdditionalInfo($eventRef,'MEID');
+        my $nodeB_id = LibUtil_GetAdditionalInfo($eventRef,'NodeBID');
+
+        # skip if no valid Location - Location for UME AN should be extracted from the Event always.
+        if ($eventRef->{Location}!~/^[A-Z]?\d{6}[A-Z]$/ ) {
+            $Log->Message('INFO', $trace . " No valid Location '".$eventRef->{Location}."' for EventKey '".$eventRef->{EventKey}."'. Skipping Osiris Device Enrichment.");
+            $Log->Message('DEBUG', $trace . " ...done");
+            return;
+        }
+        if (defined $aircom_cellid) {
+            $filter = "SITEID = '" . $eventRef->{Location} . "' and CELLLIST like '%" . $aircom_cellid . "%' and STATUS = 'active'";
+        } elsif (defined $nodeB_id) {
+            $filter = "SITEID = '" . $eventRef->{Location} . "' and TECHNOLOGY = 'BBU' and NODEBID = '" . $nodeB_id . "' and STATUS = 'active'";
+        } elsif (defined $me_id) {
+            $filter = "SITEID = '" . $eventRef->{Location} . "' and TECHNOLOGY = 'BBU' and MEID = '" . $me_id . "' and STATUS = 'active'";
+        } elsif (defined $bbu) {
+            $filter = "SITEID = '" . $eventRef->{Location} . "' and TECHNOLOGY = 'BBU' and MEID = '" . $bbu . "' and STATUS = 'active'";
+        } else {
+            $Log->Message('DEBUG', $trace . " No valid Event for Device Enrichment found (Aircom CellId, BBU, MEID, NodeBID AdditionalInfo missing).");
+            $Log->Message('DEBUG', $trace . " ...done");
+            return;
+        }
+
+    # ZTE UME TRX enrichment
+    } elsif ($EMSKey eq 'ZTE UME TRX') {
+            if ( $eventRef->{NodeAlias}=~/^[A-Z]?\d{6}[A-Z]/ ) {
+                $filter = "SITEID = '" . $eventRef->{Location} . "' and ELEMENTNAME = '" . $eventRef->{NodeAlias} . "' and STATUS = 'active'";
+            } else {
+                $Log->Message('DEBUG', $trace . " No valid Event for Device Enrichment found (NodeAlias does not match expected pattern).");
+                $Log->Message('DEBUG', $trace . " ...done");
+                return;
+            }
+
+    # all other EMS or only based on NEName
+    } else {
+        if ( $eventRef->{NEName} eq '' ) {
+            $Log->Message('DEBUG', $trace . " No valid Event for Device Enrichment found (NEName missing).");
+            $Log->Message('DEBUG', $trace . " ...done");
+            return;
+        }
+        $filter = "NETWORKELEMENT = '" . $eventRef->{NEName} . "' and STATUS = 'active'";
+    }
+    
+    my @columns = qw(SITEID SITEOWNERGROUP NETWORKELEMENT ELEMENTNAME NETWORKTYPE DONORCELL NETWORKTYPE_DESC EQUIPMENTTYPE FILETYPE IPADDRESS TECHNOLOGY BBU MEID NODEBID ENODEBID IPSEC SUBNETWORK MIMVERSION EMS MAXMILESTONE MILESTONE_DESC CAMPUSNETWORKCOMBINATION);
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	$Log->Message('DEBUG', $trace . " Received Rows: " . Dumper(\@result));
+		if ($cnt == 1) {
+
+            my $newDeviceType = $result[0]->{NETWORKTYPE} . " ("  . $result[0]->{NETWORKTYPE_DESC} . ")";
+			$eventRef->{DeviceType}             = $newDeviceType if ($eventRef->{DeviceType} ne $newDeviceType);
+            $eventRef->{SubDeviceType}          = $result[0]->{EQUIPMENTTYPE}   if ($eventRef->{SubDeviceType} ne $result[0]->{EQUIPMENTTYPE});
+            $eventRef->{NEName} 	            = $result[0]->{NETWORKELEMENT}  if ($eventRef->{NEName} ne $result[0]->{NETWORKELEMENT});
+
+            if ($EMSKey eq 'Huawei NCE') {
+                # Spcecial CMDBCIID logic for NCE
+                if ($eventRef->{Location} eq '') {
+                    $eventRef->{CMDBCIID}       = $result[0]->{SITEID} ;
+                }
+                if ( $result[0]->{NETWORKTYPE} =~ /(A0500)|(L0200)|(L0300)/ ) {
+            	    $eventRef->{CMDBCIID} 	    = $eventRef->{NEName};
+            	}
+            } elsif ($EMSKey eq 'ZTE UEDM') {
+                # set IPAddress if available in Osiris and missing in Event
+                if ( $eventRef->{IPAddress} ne $result[0]->{IPADDRESS} ) {
+                    if ( $eventRef->{IPAddress} ne '' ) {
+                        my $errTxt = $trace . " IPAddress from Event" . $eventRef->{IPAddress} . " changed to IP from Osiris '".$result[0]->{IPADDRESS}."'. Check table " .$table. " filter '" . $filter . "'.";
+                        $Log->Message('WARN', $errTxt);
+                        LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+                    }
+                    # change ip to Osiris value in order not flood details logging with same info on re-enrichments
+                    $eventRef->{IPAddress} = $result[0]->{IPADDRESS};
+                }
+                LibUtil_SetAdditionalInfo($eventRef,'FileType',$result[0]->{FILETYPE});
+            }
+
+            # keep line position as Location on empty values is used in NCE condition above
+            $eventRef->{Location} 	            = $result[0]->{SITEID}  if ($eventRef->{Location} eq '');
+
+            #check milestone:
+			if ( $result[0]->{MAXMILESTONE} < 450 || $result[0]->{MAXMILESTONE} >=900 ) {
+				LibUtil_AddSuppression($eventRef,'Osiris Milestone', 'NetworkElement', 0, $result[0]->{MAXMILESTONE} . ' ('. $result[0]->{MILESTONE_DESC} .')', $trace);
+            }
+            
+        } else {
+        	my $errTxt = $trace . " No or multiple rows found. Query to " . $table . " with filter '" . $filter . "' returned ". $cnt . " rows. ";
+            $Log->Message('WARN', $errTxt);
+            LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+            $eventRef->{NEName} = 'norecord' if ($eventRef->{NEName} eq '');
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEnrichOsiris_SiteData {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_SiteData';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+
+    # skip if no valid Location.
+    if ($eventRef->{Location}!~/^[A-Z]?\d{6}[A-Z]$/ ) {
+        $Log->Message('INFO', $trace . " No valid Location '".$eventRef->{Location}."' for EventKey '".$eventRef->{EventKey}."'. Skipping Osiris Site Enrichment.");
+        return;
+    }
+
+    my @result=();
+    my $table = "OBJ_OSIRIS_SITEDATA_V2";
+    my $filter = "SITEID = '" . $eventRef->{'Location'} . "' and STATUS = 'active'";
+    my @columns = qw(MILESTONE MILESTONE_DESC REGION CLUSTERNAME THS RNC NOCINFO LONGITUDE LATITUDE SITETRANSFER SITEOWNERGROUP STATUS);
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	$Log->Message('DEBUG', $trace . " Received Rows: " . Dumper(\@result));
+		if ($cnt == 1) {
+            $eventRef->{NECluster}              = $result[0]->{CLUSTERNAME};
+           	$eventRef->{NEMilestone}            = $result[0]->{MILESTONE};
+            $eventRef->{NEMilestoneDescription} = $result[0]->{MILESTONE_DESC};
+            $eventRef->{NERegion}               = "Region_".$result[0]->{REGION};
+            $eventRef->{NERNC}                  = $result[0]->{RNC};
+            $eventRef->{NETHS}                  = $result[0]->{THS};
+            if ( $result[0]->{MILESTONE} < 450 || $result[0]->{MILESTONE} >=900 ) {
+				LibUtil_AddSuppression($eventRef,'Osiris Milestone', 'Site', 0, $result[0]->{MAXMILESTONE} . '('. $result[0]->{MILESTONE_DESC} .')', $trace);
+            }
+            LibUtil_SetAdditionalInfo($eventRef,'Osiris SiteOwnerGroup',$result[0]->{SITEOWNERGROUP});
+        } else {
+        	my $errTxt = $trace . " No or multiple rows found. Query to " . $table . " with filter '" . $filter . "' returned ". $cnt . "rows. ";
+            $Log->Message('WARN', $errTxt);
+            LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+            $eventRef->{NECluster} = 'norecord' if ($eventRef->{NECluster} eq '');
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+        $eventRef->{NECluster} = 'norecord' if ($eventRef->{NECluster} eq '');
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEnrichOsiris_SiteSuppression {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_SiteSuppression';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+  
+    my @result=();
+    my $table = "OBJ_OSIRIS_SITESUPPRESSALARM";
+    my $filter = "SITEID = '" . $eventRef->{'Location'} . "' and ALARMSUPPRESSIONNAME = 'HIDDENFROMNOC'";
+    my @columns = qw(ALARMSUPPRESSIONNAME ALARMSUPPRESSIONREASON);
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	if ($cnt == 0) {
+        	# nothing to do. no active site suppression found for given Location.
+		} else {
+        	foreach my $row (@result) {
+				LibUtil_AddSuppression($eventRef,'Osiris SiteSuppression', $row->{ALARMSUPPRESSIONNAME}, 0, 'Reason: ' . $row->{ALARMSUPPRESSIONREASON}, $trace);
+			}
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+
+sub LibEnrichOsiris_EventInfo {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_EventInfo';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    my @result=();
+    my $table = "OBJ_OSIRIS_EVENTS";
+    my $filter = "SITEID = '" . $eventRef->{'Location'} . "'";
+    my @columns = ("EVENTNAME", "to_char(STARTDATE,'dd.mm.yyyy hh24:mi:ss') as STARTDATE", "to_char(ENDDATE,'dd.mm.yyyy hh24:mi:ss') as ENDDATE");
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	if ($cnt == 0) {
+        	# nothing to do. no events found for given Location.
+        } elsif ($cnt == 1) {
+			LibUtil_SetAdditionalInfo($eventRef, 'Osiris EventName', $result[0]->{EVENTNAME} . ' (' . $result[0]->{STARTDATE} . ' - ' . $result[0]->{ENDDATE} . ')' );
+        } else {
+			LibUtil_SetAdditionalInfo($eventRef, 'Osiris EventName', $result[0]->{EVENTNAME} . ' (' . $result[0]->{STARTDATE} . ' - ' . $result[0]->{ENDDATE} . ')' );
+			LibUtil_SetAdditionalInfo($eventRef, 'Osiris EventName2', $result[1]->{EVENTNAME} . ' (' . $result[0]->{STARTDATE} . ' - ' . $result[0]->{ENDDATE} . ')' );
+        	#my $errTxt = $trace . " Multiple rows found. Query to " . $table . " with filter '" . $filter . "' returned ". $cnt . "rows. ";
+            #$Log->Message('WARN', $errTxt);
+            #LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+
+sub LibEnrichOsiris_SitePrio {
+	# DEPENDENCY to LibEnrichDCI_VIPSites!!! 
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_SitePrio';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    my @result=();
+    my $table = "OBJ_OSIRIS_SITEPRIO";
+    my $filter = "SITEID = '" . $eventRef->{'Location'} . "' and PRIOTYPE = 'Large-Enterprise'";
+    my @columns = qw(PRIOCLASS PRIOTYPE);
+
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	if ($cnt == 0) {
+        	# nothing to do. no site prio found for given Location.
+        } elsif ($cnt == 1) {
+			LibUtil_SetAdditionalInfo($eventRef, 'Osiris SitePrio', $result[0]->{PRIOTYPE} );
+        } else {
+			# multiple site prios found
+			my $errTxt = $trace . " Multiple rows found. Query to " . $table . " with filter '" . $filter . "' returned ". $cnt . "rows. First is taken.";
+			$Log->Message('WARN', $errTxt);
+			LibUtil_AddDetails($eventRef,'EnrichmentLog',$errTxt);
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEnrichOsiris_BusinessService {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_BusinessService';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+  	my $linkid = LibUtil_GetAdditionalInfo($eventRef,'Osiris LinkID');
+    if (defined $linkid ) {
+   	    my @result=();
+	    my $table = "OBJ_OSIRIS_SRVID";
+    	my $filter = "LINKID = '" . $linkid . "' and STATUS = 'active'";
+    	# my @columns = qw(SERVICEACCESSID COMMENTS);
+        my @columns = ("unique SERVICEACCESSID","COMMENTS");
+
+
+    	my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+	    if (defined $cnt) {
+    		if ($cnt == 0) {
+        		# nothing to do. no business service found for given Location.
+        	} elsif ($cnt == 1) {
+  		        	LibUtil_SetAdditionalInfo($eventRef, 'Osiris Business ServiceAccessID', $result[0]->{SERVICEACCESSID} . ' (' . $result[0]->{COMMENTS} . ')' );
+	        } else {
+    	    	# Multiple ServiceAccessIDs found. Add all to AdditionalInfo.
+        		my $rowcounter = 0;
+				foreach my $row (@result) {
+					$rowcounter++;
+                	#we need to add the row number, otherweise the EventName Key of the AdditionalInfo will be overwritten! 
+					LibUtil_SetAdditionalInfo($eventRef,'Osiris Business ServiceAccessID ' . $rowcounter,$row->{SERVICEACCESSID} . ' (' . $row->{COMMENTS} . ')' );
+        		}
+        	}
+		} else {
+    		my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+			$Log->Message('ERROR', $errTxt);
+        	LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+		}
+    } else { 
+    	$Log->Message('INFO', $trace . " Event has no LinkID in AdditionalInfo. Nothing to do.");
+    }
+   
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEnrichOsiris_RNCBSCTHS {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_RNCBSCTHS';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    my @result=();
+    my $table = "OBJ_OSIRIS_RNCBSCTHS_V2";
+    my $filter = "SITEID = '" . $eventRef->{'Location'} . "' and TYPE in ('RNC','THS')";
+    my @columns = qw(SITEID TYPE);
+
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+    
+    if (defined $cnt) {
+    	LibUtil_SetAdditionalInfo($eventRef, 'Osiris isTHS', 'no');
+        LibUtil_SetAdditionalInfo($eventRef, 'Osiris isRNC', 'no');
+        foreach my $row (@result) {
+        	if ( $row->{TYPE} eq 'RNC' ) {
+              	LibUtil_SetAdditionalInfo($eventRef, 'Osiris isRNC', 'yes');
+			}
+			if ( $row->{TYPE} eq 'THS' ) {
+				LibUtil_SetAdditionalInfo($eventRef, 'Osiris isTHS', 'yes');
+			}
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+
+# OSS-1671         lavickm2      001   2020-08-19   Initial development
+# WO0000000072256  lavickm2      002   2020-11-04   Change Milestone from >= 100 to >= 82
+# OSS-2840         aignerma      003   2022-09-24   Datatype OBJ_OSIRIS_FIBEROPTICAL replaced with OBJ_OSIRIS_FIBEROPTICAL_V2
+# A6J6-1976        lavickm2      004   2024-06-19   Added new Enrichment for ETH_LOS
+sub LibEnrichOsiris_NTTf {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichOsiris_NTTf';
+
+    $Log->Message('DEBUG', $trace . " started...");
+
+    my $filter = "1=1";
+    if ($EMSKey eq 'Huawei NCE' )  {
+            if ( $eventRef->{'Location'}=~/^[A-Z]?\d{6}[A-Z]\// ) {
+                $filter = "CABLE_TYP = 'K200' AND MAXMILESTONE >= 82 AND MAXMILESTONE < 900 AND (SITE_A = '" . $eventRef->{'Location'} . "' OR SITE_B = '" .$eventRef->{'Location'} . "') AND STATUS = 'active'";
+            } else {
+                $Log->Message('DEBUG', $trace . " No valid Event for Enrichment found (Location does not match expected pattern).");
+                $Log->Message('DEBUG', $trace . " ...done");
+                return;
+            }
+    } else {
+        $Log->Message('DEBUG', $trace . " ...done (nothing to do)");
+        return;
+    }
+
+    my @result=();
+    my $table = "OBJ_OSIRIS_FIBEROPTICAL";
+    my @columns = qw(CABLE_NR CABLE_TYP CABLE DISTANCE FIBERQUANTITY PROVIDER MAXMILESTONE MILESTONE_DESC SITE_A SITE_B);
+
+    my ($cnt,$msg) = LibOracle_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef,undef);
+
+    if (defined $cnt) {
+
+        if ( $cnt > 0 && (
+                            $eventRef->{HelpKey} eq '1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 1' ||        # R_LOS
+                            $eventRef->{HelpKey} eq '1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 186' ||      # MUT_LOS
+                            $eventRef->{HelpKey} eq '1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 12323' ||    # OTU2_LOF
+                            $eventRef->{HelpKey} eq '1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 12843' ||    # OSC_LOS
+                            $eventRef->{HelpKey} eq '1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 13203'       # OTU4_LOF
+                        )
+        ) {
+            $eventRef->{Summary} = "H3A Fiber Section - NTTf: " . $eventRef->{Summary} if ( $eventRef->{Summary} !~ /^H3A Fiber Section - NTTf:/ );
+
+        # ETH_LOS (Added A6J6-1976)
+        } elsif ( $cnt > 0 && $eventRef->{HelpKey} eq '1.3.6.1.4.1.2011.2.15.1.7.1|6|1 - 268374017 - 235' && $eventRef->{AlarmCategorization2} =~ /K200/ ) {
+            $eventRef->{Summary} = "NTTf-Case - contact RAN-TX-BO! -  " . $eventRef->{Summary} if ( $eventRef->{Summary} !~ /^NTTf-Case - contact RAN-TX-BO/ );
+        } else {
+            $Log->Message('DEBUG', $trace . " No NTTf Cable_Typ K200 found for SiteID '" . $eventRef->{'Location'} . "' and HelpKey '".$eventRef->{HelpKey}."'.");
+        }
+
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+1;

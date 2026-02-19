@@ -1,0 +1,382 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201211050900Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NETOPTICS-FILES-MIB::fileOperationStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent as a result of a file operation status change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==1) ? 1 : (($v11==2) ? 2 : 3)"
+				},
+				"EventType" : "fileOperationStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v11==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==1 || $v3==2 || $v3==3) ? 2 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : 5)))"
+				},
+				"SubNode" : "SrcFile:$v7",
+				"Summary" : "File $v10 operation status is $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NETOPTICS-FILES-MIB::fileOperationStatusChanged NETOPTICS-TRAPS-MIB::alertSequence u 9999 NETOPTICS-TRAPS-MIB::eventIndex u 9999 NETOPTICS-TRAPS-MIB::alertSeverity i 2 NETOPTICS-TRAPS-MIB::alertType s EXAMPLE NETOPTICS-TRAPS-MIB::alertDateTime s EXAMPLE NETOPTICS-TRAPS-MIB::alertMessage s EXAMPLE NETOPTICS-FILES-MIB::lastFileOperSrcFileNameOrURI s EXAMPLE1 NETOPTICS-FILES-MIB::lastFileOperDestFileNameOrURI s EXAMPLE NETOPTICS-FILES-MIB::lastFileOperFileType i 1 NETOPTICS-FILES-MIB::lastFileOperCommand i 1 NETOPTICS-FILES-MIB::lastFileOperResult i 1 NETOPTICS-FILES-MIB::lastFileOperDateTime s EXAMPLE NETOPTICS-FILES-MIB::lastFileOperMessage s EXAMPLE",
+			"trap" : {
+				"name" : "NETOPTICS-FILES-MIB::fileOperationStatusChanged",
+				"oid" : "1.3.6.1.4.1.23022.100.9.1.0.4.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Description."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "NETOPTICS-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for NETOPTICS-TRAPS-MIB::NetopAlertType."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name or URI of the source file involved in the last file operation.",
+							"May be empty if no souce was involved.",
+							"If the file was internally generated then the file name may be empty or",
+							"else set to some agreed name such as _internal_."
+						],
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperSrcFileNameOrURI",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name or URI of the destination file involved in the last file operation.",
+							"May be empty if no destination was involved.",
+							"Desitination file is the one ultimately created, deleted, or modified."
+						],
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperDestFileNameOrURI",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of file(s) involved in the last file operation. It is assumed that if two",
+							"files are involved they are of the same type. This should be true for all file",
+							"commands which are primitive save, load, etc.)"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "plainText",
+							"2" : "miscFileType",
+							"3" : "configScript",
+							"4" : "configXML",
+							"5" : "configDB",
+							"6" : "binaryExecutable"
+						},
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperFileType",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the code for the most recent file command"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "save",
+							"2" : "load",
+							"3" : "delete",
+							"4" : "copy",
+							"5" : "move",
+							"6" : "swap",
+							"7" : "checkExists",
+							"8" : "validate",
+							"9" : "upload",
+							"10" : "download",
+							"11" : "cancel"
+						},
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperCommand",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result code of the last file operation."
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "ok",
+							"2" : "fail",
+							"3" : "processing",
+							"4" : "cancelled"
+						},
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperResult",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time the last file operation was performed or initiated."
+						],
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperDateTime",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An optional message associated with the last file operation",
+							"usually empty unless there was an error."
+						],
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperMessage",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NETOPTICS-FILES-MIB::fileOperationStatusChangedPreV41",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent as a result of a file operation status change.",
+				"The OID of this trap does not conform to RFC2576 v1/v2c",
+				"interoperability requirements and is deprecated. It should",
+				"be replaced with fileOperationStatusChanged trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v11==1) ? 1 : (($v11==3 || $v11==0) ? 3 : 2)"
+				},
+				"EventType" : "fileOperationStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v11==1 || $v11==3 || $v11==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==0) ? 0 : (($v3==1 || $v3==2 || $v3==3) ? 2 : (($v3==4 || $v3==5) ? 3 : (($v3==6) ? 4 : 5)))"
+				},
+				"SubNode" : "SrcFile:$v7",
+				"Summary" : "File $v10 operation status is $v11"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NETOPTICS-FILES-MIB::fileOperationStatusChangedPreV41 NETOPTICS-TRAPS-MIB::alertSequence u 9999 NETOPTICS-TRAPS-MIB::eventIndex u 9999 NETOPTICS-TRAPS-MIB::alertSeverity i 0 NETOPTICS-TRAPS-MIB::alertType s EXAMPLE NETOPTICS-TRAPS-MIB::alertDateTime s EXAMPLE NETOPTICS-TRAPS-MIB::alertMessage s EXAMPLE NETOPTICS-FILES-MIB::lastFileOperSrcFileNameOrURI s EXAMPLE2 NETOPTICS-FILES-MIB::lastFileOperDestFileNameOrURI s EXAMPLE NETOPTICS-FILES-MIB::lastFileOperFileType i 4 NETOPTICS-FILES-MIB::lastFileOperCommand i 8 NETOPTICS-FILES-MIB::lastFileOperResult i 2 NETOPTICS-FILES-MIB::lastFileOperDateTime s EXAMPLE NETOPTICS-FILES-MIB::lastFileOperMessage s EXAMPLE",
+			"trap" : {
+				"name" : "NETOPTICS-FILES-MIB::fileOperationStatusChangedPreV41",
+				"oid" : "1.3.6.1.4.1.23022.100.9.1.0.4.4",
+				"variables" : [
+					{
+						"description" : [
+							"A counting sequence number, used to identify the order of traps as well as detect gaps in a received trap sequence."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::alertSequence",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Description."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::eventIndex",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The severity level of the alert from Recovery to Critical"
+						],
+						"enums" : {
+							"0" : "recoveryAlert",
+							"1" : "debugAlert",
+							"2" : "infoAlert",
+							"3" : "noticeAlert",
+							"4" : "warnAlert",
+							"5" : "minorAlert",
+							"6" : "majorAlert",
+							"7" : "criticalAlert"
+						},
+						"name" : "NETOPTICS-TRAPS-MIB::alertSeverity",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a unique number which identifies the type of alert. It is an alternative to using the OID as a unique trap type identifier.",
+							"See detailed decription for NETOPTICS-TRAPS-MIB::NetopAlertType."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::alertType",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is the system data and time when the alert-causing event occurred."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::alertDateTime",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This is an optional text message to provide additional details about the alert."
+						],
+						"name" : "NETOPTICS-TRAPS-MIB::alertMessage",
+						"oid" : "1.3.6.1.4.1.23022.100.9.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name or URI of the source file involved in the last file operation.",
+							"May be empty if no souce was involved.",
+							"If the file was internally generated then the file name may be empty or",
+							"else set to some agreed name such as _internal_."
+						],
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperSrcFileNameOrURI",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name or URI of the destination file involved in the last file operation.",
+							"May be empty if no destination was involved.",
+							"Desitination file is the one ultimately created, deleted, or modified."
+						],
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperDestFileNameOrURI",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of file(s) involved in the last file operation. It is assumed that if two",
+							"files are involved they are of the same type. This should be true for all file",
+							"commands which are primitive save, load, etc.)"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "plainText",
+							"2" : "miscFileType",
+							"3" : "configScript",
+							"4" : "configXML",
+							"5" : "configDB",
+							"6" : "binaryExecutable"
+						},
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperFileType",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the code for the most recent file command"
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "save",
+							"2" : "load",
+							"3" : "delete",
+							"4" : "copy",
+							"5" : "move",
+							"6" : "swap",
+							"7" : "checkExists",
+							"8" : "validate",
+							"9" : "upload",
+							"10" : "download",
+							"11" : "cancel"
+						},
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperCommand",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result code of the last file operation."
+						],
+						"enums" : {
+							"0" : "na",
+							"1" : "ok",
+							"2" : "fail",
+							"3" : "processing",
+							"4" : "cancelled"
+						},
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperResult",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time the last file operation was performed or initiated."
+						],
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperDateTime",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An optional message associated with the last file operation",
+							"usually empty unless there was an error."
+						],
+						"name" : "NETOPTICS-FILES-MIB::lastFileOperMessage",
+						"oid" : "1.3.6.1.4.1.23022.100.7.1.3.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

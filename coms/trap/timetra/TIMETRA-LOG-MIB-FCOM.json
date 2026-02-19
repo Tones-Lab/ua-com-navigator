@@ -1,0 +1,1176 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201904010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogSpaceContention",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when space contention occurs on the compact flash where",
+				"a log or accounting file creation is being attempted. Space contention",
+				"exists if:",
+				"Insufficient space is available on the compact flash to create",
+				"a file of the same size as the file being rolled over.",
+				"The first file of this type is being created and less than",
+				"10% of the total compact flash space is available.",
+				"A write operation on a log or accounting file is denied due to",
+				"lack of space."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxLogFileId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogSpaceContention",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "CreateFileID:$tmnxLogFileId",
+				"Summary" : "Space contention occurred on the compact flash"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogSpaceContention TIMETRA-LOG-MIB::tmnxLogFileIdRolloverTime.8 i 9999 TIMETRA-LOG-MIB::tmnxLogFileIdRetainTime i 99 TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdLogId i 99 TIMETRA-LOG-MIB::tmnxLogFileIdLogType i 0",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogSpaceContention",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxLogFileIdRolloverTime specifies how often, in",
+							"minutes, a new log or accounting file will be created. If the value",
+							"of tmnxLogFileIdLogType is not 'rollover', then the value of this",
+							"object is irrelevant."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdRolloverTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdRetainTime specifies the minimum time",
+							"in hours, that a file is retained on the media. Once this time",
+							"period has expired the file is deleted."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdRetainTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdAdminLocation specifies where the log",
+							"or accounting file should be created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs.",
+							"",
+							"If no location is specified, 0, the compact flash cf1: is used to",
+							"store the log files or cf2: is used to store accounting files."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdBackupLoc specifies where the log",
+							"or accounting file should be created if it cannot be created in",
+							"the location specified by tmnxLogFileIdAdminLocation. The file",
+							"location should be a compact flash on the primary CPM. When the",
+							"secondary CPM becomes the primary CPM after a failure, the same",
+							"log file policies will be activated. Thus it is recommended that",
+							"the same media is available to both secondary and primary CPMs.",
+							"",
+							"If no backup location is specified, 0, and the log or accounting file",
+							"could not be created in the location specified by",
+							"tmnxLogFileIdAdminLocation or the file creation at the specified",
+							"backup location fails, a file create failure trap is issued and the",
+							"associated log or accounting policy is marked as operationally",
+							"'outOfService'."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdOperLocation indicates where the log",
+							"or accounting file has been created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogId indicates the ID index of the log or",
+							"accounting policy this file is attached to. A value of zero (0)",
+							"indicates that this file definition is not currently used by any",
+							"log or accounting policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogType indicates the type of information",
+							"that will be written to this file."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "eventLog",
+							"2" : "accountingPolicy"
+						},
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogAdminLocFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when an attempt to create a log or accounting file at the",
+				"location specified by tmnxLogFileIdAdminLocation has failed. Indicates",
+				"that the backup location, if specified, will be used."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxLogFileId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogAdminLocFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "CreateFileID:$tmnxLogFileId",
+				"Summary" : "Failed to create log ($v5) or accounting file at the location ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogAdminLocFailed TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation.5 u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdLogId i 99 TIMETRA-LOG-MIB::tmnxLogFileIdLogType i 1",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogAdminLocFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxLogFileIdAdminLocation specifies where the log",
+							"or accounting file should be created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs.",
+							"",
+							"If no location is specified, 0, the compact flash cf1: is used to",
+							"store the log files or cf2: is used to store accounting files."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdBackupLoc specifies where the log",
+							"or accounting file should be created if it cannot be created in",
+							"the location specified by tmnxLogFileIdAdminLocation. The file",
+							"location should be a compact flash on the primary CPM. When the",
+							"secondary CPM becomes the primary CPM after a failure, the same",
+							"log file policies will be activated. Thus it is recommended that",
+							"the same media is available to both secondary and primary CPMs.",
+							"",
+							"If no backup location is specified, 0, and the log or accounting file",
+							"could not be created in the location specified by",
+							"tmnxLogFileIdAdminLocation or the file creation at the specified",
+							"backup location fails, a file create failure trap is issued and the",
+							"associated log or accounting policy is marked as operationally",
+							"'outOfService'."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdOperLocation indicates where the log",
+							"or accounting file has been created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogId indicates the ID index of the log or",
+							"accounting policy this file is attached to. A value of zero (0)",
+							"indicates that this file definition is not currently used by any",
+							"log or accounting policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogType indicates the type of information",
+							"that will be written to this file."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "eventLog",
+							"2" : "accountingPolicy"
+						},
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogBackupLocFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when an attempt to create a log or accounting file at the",
+				"location specified by tmnxLogFileIdBackupLoc has failed."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxLogFileId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogBackupLocFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "CreateFileID:$tmnxLogFileId",
+				"Summary" : "Failed to create log ($v4) or accounting file at the backup location ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogBackupLocFailed TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation.7 u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc u 0 TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdLogId i 99 TIMETRA-LOG-MIB::tmnxLogFileIdLogType i 2",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogBackupLocFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxLogFileIdAdminLocation specifies where the log",
+							"or accounting file should be created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs.",
+							"",
+							"If no location is specified, 0, the compact flash cf1: is used to",
+							"store the log files or cf2: is used to store accounting files."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdBackupLoc specifies where the log",
+							"or accounting file should be created if it cannot be created in",
+							"the location specified by tmnxLogFileIdAdminLocation. The file",
+							"location should be a compact flash on the primary CPM. When the",
+							"secondary CPM becomes the primary CPM after a failure, the same",
+							"log file policies will be activated. Thus it is recommended that",
+							"the same media is available to both secondary and primary CPMs.",
+							"",
+							"If no backup location is specified, 0, and the log or accounting file",
+							"could not be created in the location specified by",
+							"tmnxLogFileIdAdminLocation or the file creation at the specified",
+							"backup location fails, a file create failure trap is issued and the",
+							"associated log or accounting policy is marked as operationally",
+							"'outOfService'."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdOperLocation indicates where the log",
+							"or accounting file has been created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogId indicates the ID index of the log or",
+							"accounting policy this file is attached to. A value of zero (0)",
+							"indicates that this file definition is not currently used by any",
+							"log or accounting policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogType indicates the type of information",
+							"that will be written to this file."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "eventLog",
+							"2" : "accountingPolicy"
+						},
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogFileRollover",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when an event log or accounting policy file's",
+				"rollover time has expired. The file located as indicated",
+				"by the value of tmnxLogFileIdOperLocation is closed and a new",
+				"file is created as specified by tmnxLogFileIdAdminLocation",
+				"and tmnxLogFileIdBackupLoc."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxLogFileId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogFileRollover",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "CreateFileID:$tmnxLogFileId",
+				"Summary" : "Event log or accounting policy file rollover time ($v1) expired"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogFileRollover TIMETRA-LOG-MIB::tmnxLogFileIdRolloverTime.5 i 99 TIMETRA-LOG-MIB::tmnxLogFileIdRetainTime i 99 TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdLogId i 99 TIMETRA-LOG-MIB::tmnxLogFileIdLogType i 1 TIMETRA-LOG-MIB::tmnxLogFileIdPathName s EXAMPLE TIMETRA-LOG-MIB::tmnxLogFileIdCreateTime x 07cc09010F1E00002b011E",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogFileRollover",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxLogFileIdRolloverTime specifies how often, in",
+							"minutes, a new log or accounting file will be created. If the value",
+							"of tmnxLogFileIdLogType is not 'rollover', then the value of this",
+							"object is irrelevant."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdRolloverTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdRetainTime specifies the minimum time",
+							"in hours, that a file is retained on the media. Once this time",
+							"period has expired the file is deleted."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdRetainTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdAdminLocation specifies where the log",
+							"or accounting file should be created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs.",
+							"",
+							"If no location is specified, 0, the compact flash cf1: is used to",
+							"store the log files or cf2: is used to store accounting files."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdBackupLoc specifies where the log",
+							"or accounting file should be created if it cannot be created in",
+							"the location specified by tmnxLogFileIdAdminLocation. The file",
+							"location should be a compact flash on the primary CPM. When the",
+							"secondary CPM becomes the primary CPM after a failure, the same",
+							"log file policies will be activated. Thus it is recommended that",
+							"the same media is available to both secondary and primary CPMs.",
+							"",
+							"If no backup location is specified, 0, and the log or accounting file",
+							"could not be created in the location specified by",
+							"tmnxLogFileIdAdminLocation or the file creation at the specified",
+							"backup location fails, a file create failure trap is issued and the",
+							"associated log or accounting policy is marked as operationally",
+							"'outOfService'."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdOperLocation indicates where the log",
+							"or accounting file has been created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogId indicates the ID index of the log or",
+							"accounting policy this file is attached to. A value of zero (0)",
+							"indicates that this file definition is not currently used by any",
+							"log or accounting policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogType indicates the type of information",
+							"that will be written to this file."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "eventLog",
+							"2" : "accountingPolicy"
+						},
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdPathName is the pathname of the currently",
+							"opened file used by this file-id entry. The value of",
+							"tmnxLogFileIdPathName is affected by the value of stiPreferLocalTime."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdPathName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdCreateTime is the time the currently opened",
+							"file version used by this file-id entry was created. The value of",
+							"tmnxLogFileIdCreateTime is affected by the value of",
+							"stiPreferLocalTime."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdCreateTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogFileDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when a closed event log or accounting policy file has been",
+				"deleted as part of the space contention cleanup."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogFileDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Log file ($v5) deleted from location $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogFileDeleted TIMETRA-LOG-MIB::tmnxLogFileDeletedLogId i 99 TIMETRA-LOG-MIB::tmnxLogFileDeletedFileId i 99 TIMETRA-LOG-MIB::tmnxLogFileDeletedLogType i 2 TIMETRA-LOG-MIB::tmnxLogFileDeletedLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileDeletedName s EXAMPLE TIMETRA-LOG-MIB::tmnxLogFileDeletedCreateTime x 07cc09010F1E00002b011E",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogFileDeleted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxLogFileDeletedLogId indicates with which event log-id",
+							"or accounting-policy-id the deleted file was associated. Note the",
+							"corresponding entry in the tmnxLogIdTable or tmnxLogApTable may no",
+							"longer exist."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileDeletedLogId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileDeletedFileId indicates with which event",
+							"log-id or accounting-policy-id the deleted file was associated. Note",
+							"that the corresponding entry in the tmnxLogFileIdTable may no longer",
+							"exist."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileDeletedFileId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileDeletedLogType indicates whether the deleted",
+							"file was an 'eventLog' or 'accountingPolicy'."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "eventLog",
+							"2" : "accountingPolicy"
+						},
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileDeletedLogType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileDeletedLocation indicates on which compact",
+							"flash device the event log or accounting policy file that has been",
+							"deleted was located. "
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileDeletedLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileDeletedName indicates the pathname of an event",
+							"log or accounting policy file that has been deleted because of space",
+							"contention on a compact flash device."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileDeletedName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileDeletedCreateTime indicates the date and time",
+							"when the deleted file had been created."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileDeletedCreateTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxTestEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxTestEvent notification is generated when the object",
+				"tmnxEventTest is set to a value of 'doAction'. This event can",
+				"be used to test that remote log destinations such as syslog and",
+				"snmp trap destinations are configured correctly."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxTestEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Test event detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxTestEvent SNMPv2-MIB::sysDescr s EXAMP-V2 SNMPv2-MIB::sysObjectID o 1.3.6.1.4.1.8072.2.1.1",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxTestEvent",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"A textual description of the entity. This value should",
+							"include the full name and version identification of",
+							"the system's hardware type, software operating-system",
+							"and networking software."
+						],
+						"name" : "SNMPv2-MIB::sysDescr",
+						"oid" : "1.3.6.1.2.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The vendor's authoritative identification of the",
+							"network management subsystem contained in the entity.",
+							"This value is allocated within the SMI enterprises",
+							"subtree (1.3.6.1.4.1) and provides an easy and",
+							"unambiguous means for determining `what kind of box' is",
+							"being managed. For example, if vendor `Flintstones",
+							"Inc.' was assigned the subtree 1.3.6.1.4.1.424242",
+							"it could assign the identifier 1.3.6.1.4.1.424242.1.1",
+							"to its `Fred Router'."
+						],
+						"name" : "SNMPv2-MIB::sysObjectID",
+						"oid" : "1.3.6.1.2.1.1.2",
+						"valueType" : "OBJECTID"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogTraceError",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxLogTraceError notification is generated when a",
+				"critical level trace error has been detected by the software. There",
+				"are multiple triggers for such a trace error.",
+				"[EFFECT] Effect varies depending on the specific trigger.",
+				"[RECOVERY] Contact Nokia Support."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogTraceError",
+				"ExpireTime" : 3600,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 ne '') ? '$v2' : 'Software dectected critical level trace error ($v1)'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogTraceError TIMETRA-LOG-MIB::tmnxLogTraceErrorTitle s EXAMPLE TIMETRA-LOG-MIB::tmnxLogTraceErrorMessage s EXAMPLE TIMETRA-LOG-MIB::tmnxLogTraceErrorSubject s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogTraceError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxLogTraceErrorTitle indicates the title string of the",
+							"trace error event that generated the tmnxLogTraceError notification."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogTraceErrorTitle",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogTraceErrorMessage indicates the message text",
+							"string of the trace error event that generated the tmnxLogTraceError",
+							"notification."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogTraceErrorMessage",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogTraceErrorSubject indicates the subject string of",
+							"the trace error event that generated the tmnxLogTraceError",
+							"notification.",
+							"",
+							"The subject is the entity that originated the event, such as the Slot",
+							"ID."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogTraceErrorSubject",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogEventThrottled",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxLogEventThrottled notification is generated at the end of the",
+				"throttling interval when one or more events are dropped because the",
+				"throttling limit was reached for that interval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogEventThrottled",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "$v2 throttling events dropped due to interval limit reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogEventThrottled TIMETRA-LOG-MIB::tmnxLogThrottledEventID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-LOG-MIB::tmnxLogThrottledEvents u 9999",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogEventThrottled",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxLogThrottledEventID is used by the tmnxLogEventThrottled",
+							"notification to indicate the NOTIFICATION-TYPE object identifier of",
+							"the throttled event."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogThrottledEventID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.10",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxLogThrottledEvents is used by the tmnxLogEventThrottled",
+							"notification to indicate the number of events dropped because of event",
+							"throttling during the last throttle interval."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogThrottledEvents",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.11",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxSysLogTargetProblem",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxSysLogTargetProblem notification is generated when a problem is",
+				"encountered when trying to deliver data to the syslog destination",
+				"identified by the tmnxSysLogTargetId."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysLogTargetProblem",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Syslog target ($v1) problem ($v2) detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxSysLogTargetProblem TIMETRA-LOG-MIB::tmnxSysLogTargetId i 9 TIMETRA-LOG-MIB::tmnxSysLogTargetProblemDescr s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxSysLogTargetProblem",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSysLogTargetId is used by the tmnxSysLogTargetProblem notification",
+							"to indicate the involved TmnxSyslogId."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxSysLogTargetId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.12",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxSysLogTargetProblemDescr indicates the type of error",
+							"encountered when trying to deliver events to the destination specified",
+							"in the TmnxSyslogId."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxSysLogTargetProblemDescr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogAccountingDataLoss",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxLogAccountingDataLoss notification is generated",
+				"when an accounting file is still being written to",
+				"when the next interval ends. The collection of",
+				"statistics for the past interval is immediately",
+				"stopped and collection is started for the next",
+				"interval. There are missing records in the file",
+				"for this past interval."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxLogFileId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogAccountingDataLoss",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "CreateFileID:$tmnxLogFileId",
+				"Summary" : "Log accounting data lost"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogAccountingDataLoss TIMETRA-LOG-MIB::tmnxLogFileIdRolloverTime.3 i 99 TIMETRA-LOG-MIB::tmnxLogFileIdRetainTime i 99 TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation u 9999 TIMETRA-LOG-MIB::tmnxLogFileIdLogId i 99 TIMETRA-LOG-MIB::tmnxLogNotifyApInterval i 99",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogAccountingDataLoss",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxLogFileIdRolloverTime specifies how often, in",
+							"minutes, a new log or accounting file will be created. If the value",
+							"of tmnxLogFileIdLogType is not 'rollover', then the value of this",
+							"object is irrelevant."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdRolloverTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdRetainTime specifies the minimum time",
+							"in hours, that a file is retained on the media. Once this time",
+							"period has expired the file is deleted."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdRetainTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdAdminLocation specifies where the log",
+							"or accounting file should be created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs.",
+							"",
+							"If no location is specified, 0, the compact flash cf1: is used to",
+							"store the log files or cf2: is used to store accounting files."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdAdminLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdBackupLoc specifies where the log",
+							"or accounting file should be created if it cannot be created in",
+							"the location specified by tmnxLogFileIdAdminLocation. The file",
+							"location should be a compact flash on the primary CPM. When the",
+							"secondary CPM becomes the primary CPM after a failure, the same",
+							"log file policies will be activated. Thus it is recommended that",
+							"the same media is available to both secondary and primary CPMs.",
+							"",
+							"If no backup location is specified, 0, and the log or accounting file",
+							"could not be created in the location specified by",
+							"tmnxLogFileIdAdminLocation or the file creation at the specified",
+							"backup location fails, a file create failure trap is issued and the",
+							"associated log or accounting policy is marked as operationally",
+							"'outOfService'."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdBackupLoc",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.13",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdOperLocation indicates where the log",
+							"or accounting file has been created. The file location should be a",
+							"compact flash on the primary CPM. When the secondary CPM becomes",
+							"the primary CPM after a failure, the same log file policies will",
+							"be activated. Thus it is recommended that the same media is",
+							"available to both secondary and primary CPMs."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdOperLocation",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogFileIdLogId indicates the ID index of the log or",
+							"accounting policy this file is attached to. A value of zero (0)",
+							"indicates that this file definition is not currently used by any",
+							"log or accounting policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogFileIdLogId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.3.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogNotifyApInterval indicates how frequently the",
+							"statistics are collected and written to their destination."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogNotifyApInterval",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.14",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxStdEventsReplayed",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxStdEventsReplayed notification is generated when",
+				"an SNMP trap target address is added to the RTM (tmnxVRtrID)",
+				"following a period when the address had been removed.",
+				"The value of tmnxStdReplayStartEvent is the SNMP notification",
+				"request ID of the first event that was replayed. The value",
+				"of tmnxStdReplayEndEvent is the SNMP notification request ID of the",
+				"last missed event that was replayed. The value of",
+				"tmnxStdReplayStart is the request ID of the first event for",
+				"which there was no route to the trap target address."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxStdIndex>\\d+)\\.(?P<tmnxStdName>\\w+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxStdEventsReplayed",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Index:$tmnxStdIndex",
+				"Summary" : "STD events replayed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxStdEventsReplayed TIMETRA-LOG-MIB::tmnxStdDestAddrType.2.12 i 1 TIMETRA-LOG-MIB::tmnxStdDestAddr x 0x7f000001 TIMETRA-LOG-MIB::tmnxStdReplayStartEvent u 9 TIMETRA-LOG-MIB::tmnxStdReplayEndEvent u 99 TIMETRA-LOG-MIB::tmnxStdReplayStart u 3",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxStdEventsReplayed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxStdDestAddrType specifies the type of",
+							"host address to be used for the remote SNMP notification",
+							"collector. This object indicates the type of address stored",
+							"in the corresponding tmnxStdDestAddr object.",
+							"",
+							"If the value of this object is 'unknown', then no messages will be",
+							"sent nor will any counters be incremented.",
+							"",
+							"If tmnxStdDestAddrType is not set in the same PDU with",
+							"tmnxStdDestAddr, the set request will fail with an inconsistentValue",
+							"error."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-LOG-MIB::tmnxStdDestAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.18.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxStdDestAddr specifies the IP host address to be used",
+							"for the remote SNMP notification collector.",
+							"",
+							"The SNMP notification collector IP address type is determined by the",
+							"value of the corresponding tmnxStdDestAddrType object.",
+							"",
+							"If the value of this object is empty or all NULLs, then no messages",
+							"will be sent nor will any counters be incremented.",
+							"",
+							"If tmnxStdDestAddrType is not set in the same PDU with",
+							"tmnxStdDestAddr, the set request will fail with an inconsistentValue",
+							"error."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxStdDestAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.18.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxStdReplayStartEvent indicates the SNMP notification",
+							"request ID of the first missed event that was replayed when an SNMP",
+							"notification target address was readded to the RTM following a period",
+							"when the target address had been removed. It is used by the",
+							"tmnxStdEventsReplayed notification."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxStdReplayStartEvent",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.15",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxStdReplayEndEvent indicates the SNMP notification",
+							"request ID of the last missed event that was replayed when an SNMP",
+							"notification target address was readded to the RTM following a period",
+							"when the target address had been removed. It is used by the",
+							"tmnxStdEventsReplayed notification."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxStdReplayEndEvent",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.16",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxStdReplayStart indicates the SNMP notification",
+							"request ID of the first event that could not be generated because",
+							"there is no route to this notification target address.",
+							"",
+							"Events will be resent when this notification target address is",
+							"readded to the route tables, on either an in-band or out-of-band",
+							"interface. The agent searches backwards in the event log and",
+							"begins resending events from the oldest event that has a timestamp",
+							"<= 5 centiseconds less than the timestamp of the",
+							"event with this request ID. Note that if the outage is long",
+							"and a large number of events are generated in the meantime",
+							"it is possible that the log memory storage has wrapped and the",
+							"event data for this request ID is no longer available. In that case",
+							"the oldest event saved in the log will be the first event resent.",
+							"",
+							"A value of 0 indicates that there are no missed events waiting to be",
+							"resent."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxStdReplayStart",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.18.1.13",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-LOG-MIB::tmnxLogEventOverrun",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A tmnxLogEventOverrun notification is generated",
+				"at the end of the overrun throttling interval when one or more",
+				"events of the type specified by tmnxLogThrottledEventID were",
+				"dropped because the logger input stream's input queue limit",
+				"was exceeded. The overrun throttling interval begins when the",
+				"input queue limit is first exceeded and ends when the number of",
+				"events in the input queue has dropped below an internal low",
+				"watermark. At that point a tmnxLogEventOverrun notification is",
+				"generated for each event type that had one or more events dropped",
+				"because of the input queue overrun. The number of dropped events",
+				"is specified by tmnxLogThrottledEvents.",
+				"[EFFECT] Logger events have been dropped and were not sent to any",
+				"log destination. tmnxEventDropCount has been incremented for",
+				"each event dropped because of input queue overrun.",
+				"[RECOVERY] The specific event information of dropped events",
+				"cannot be recovered. The frequency of input queue overruns",
+				"can be lessened by configuring as few event logs as possible",
+				"especially those going to remote destinations such as file",
+				"syslog and snmp notification logs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxLogEventOverrun",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Log event overrun problem detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-LOG-MIB::tmnxLogEventOverrun TIMETRA-LOG-MIB::tmnxLogThrottledEventID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-LOG-MIB::tmnxLogThrottledEvents u 999",
+			"trap" : {
+				"name" : "TIMETRA-LOG-MIB::tmnxLogEventOverrun",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.12.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxLogThrottledEventID is used by the tmnxLogEventThrottled",
+							"notification to indicate the NOTIFICATION-TYPE object identifier of",
+							"the throttled event."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogThrottledEventID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.10",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxLogThrottledEvents is used by the tmnxLogEventThrottled",
+							"notification to indicate the number of events dropped because of event",
+							"throttling during the last throttle interval."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogThrottledEvents",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.11",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

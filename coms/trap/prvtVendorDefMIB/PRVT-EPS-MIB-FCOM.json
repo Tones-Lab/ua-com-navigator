@@ -1,0 +1,434 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201004170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsDefectAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"1. EPS service is either operational or not operational;",
+				"2. Failure of protocol defects."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "prvtEpsDefectAlarm",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'EPS service is up' : 'EPS service is down'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsDefectAlarm PRVT-EPS-MIB::prvtEpsServiceOperationalStatus i 2 PRVT-EPS-MIB::prvtEpsServiceDefectsPresent b 0",
+				"$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsDefectAlarm PRVT-EPS-MIB::prvtEpsServiceOperationalStatus i 1 PRVT-EPS-MIB::prvtEpsServiceDefectsPresent b 0"
+			],
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsDefectAlarm",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies whether this service is ready for running.",
+							"The operational status can be up(true) or down(false).",
+							"When creating the service the operational",
+							"status will be down. Receiving CCMs from both transport",
+							"entities and establishment of APS on the protection transport",
+							"entity will bring the operational status to up."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "PRVT-EPS-MIB::prvtEpsServiceOperationalStatus",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Defects registered by the APS protocol could be either none or a composition of bits 0-3:",
+							"",
+							"fullyIncompatibleProvisioning(0) - occurs upon reception of three APS frames with the",
+							"incompatible 'B' bit value within the 22.5 second period;",
+							"",
+							"protectionSwitchingIncomplete(1) - occurs if the transmitted 'Requested Signal' and the",
+							"received 'Bridged Signal' do not match for a period of 50ms or longer;",
+							"",
+							"protectionConfigurationMismatch(2) - working/protection configuration mismatch, occurs at",
+							"the reception of three APS frames from the working transport entity within the 22.5 second period;",
+							"",
+							"epsConfigurationMismatch(3) - provisioning mismatch - for example, the local device is",
+							"set to revertive mode and the remote device is set to non-revertive mode."
+						],
+						"enums" : {
+							"0" : "fullyIncompatibleProvisioning",
+							"1" : "protectionSwitchingIncomplete",
+							"2" : "protectionConfigurationMismatch",
+							"3" : "epsConfigurationMismatch"
+						},
+						"name" : "PRVT-EPS-MIB::prvtEpsServiceDefectsPresent",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.15",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsSwitchoverAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The alarm is issued if the active link is changed",
+				"pointing to the path where the switchover occured."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "prvtEpsSwitchoverAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "EPS switchover alarm occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsSwitchoverAlarm PRVT-EPS-MIB::prvtEpsServiceActivePath i 0",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsSwitchoverAlarm",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"Protected service active path."
+						],
+						"enums" : {
+							"0" : "working",
+							"1" : "protection"
+						},
+						"name" : "PRVT-EPS-MIB::prvtEpsServiceActivePath",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsLostCommunication",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The alarm is issued in case of non reception of APS frames",
+				"in three consecutive intervals each representing 5 seconds."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "prvtEpsCommunicationStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "EpsSvcId:$v1",
+				"Summary" : "EPS communication lost"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsLostCommunication PRVT-EPS-MIB::prvtEpsSvcId u 9999",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsLostCommunication",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The service ID."
+						],
+						"name" : "PRVT-EPS-MIB::prvtEpsSvcId",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsRestoredCommunication",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"APS frames are received normally after APS communication failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "prvtEpsCommunicationStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "EpsSvcId:$v1",
+				"Summary" : "EPS communication restored"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsRestoredCommunication PRVT-EPS-MIB::prvtEpsSvcId u 9999",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsRestoredCommunication",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The service ID."
+						],
+						"name" : "PRVT-EPS-MIB::prvtEpsSvcId",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsSignalFailDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The alarm is issued in case of CCMs are not received",
+				"and (3.5 * CCMtime(CCMinterval)) has expired."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "prvtEpsSignalStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "EpsSvcId:$v1",
+				"Summary" : "EPS signal failure alarm occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsSignalFailDetected PRVT-EPS-MIB::prvtEpsSvcId u 9999",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsSignalFailDetected",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The service ID."
+						],
+						"name" : "PRVT-EPS-MIB::prvtEpsSvcId",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsSignalDegradeDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The alarm is issued in case of monitored error threshold is crossed:",
+				"1W Jitter error",
+				"2W Jitter error",
+				"Latency error",
+				"Frame loss error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "prvtEpsSignalDegradeStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "EpsSvcId:$v1",
+				"Summary" : "EPS signal degradation detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsSignalDegradeDetected PRVT-EPS-MIB::prvtEpsSvcId u 9999",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsSignalDegradeDetected",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The service ID."
+						],
+						"name" : "PRVT-EPS-MIB::prvtEpsSvcId",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsProtctSignalFailDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The alarm is issued in case of CCMs are not received on the protected link",
+				"and (3.5 * CCMtime(CCMinterval)) has expired or the protected link is down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "prvtEpsProtctSignalStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "EpsSvcId:$v1",
+				"Summary" : "EPS protected signal failure detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsProtctSignalFailDetected PRVT-EPS-MIB::prvtEpsSvcId u 9999",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsProtctSignalFailDetected",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The service ID."
+						],
+						"name" : "PRVT-EPS-MIB::prvtEpsSvcId",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsSignalFailRecovery",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The alarm is issued in case of CCMs start to be received",
+				"correctly again after a prvtEpsSignalFailDetected alarm occured",
+				"and (3.5 * CCMtime(CCMinterval)) timer no longer expires or the link is up ."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "prvtEpsSignalStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "EpsSvcId:$v1",
+				"Summary" : "EPS signal recovered"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsSignalFailRecovery PRVT-EPS-MIB::prvtEpsSvcId u 9999",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsSignalFailRecovery",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The service ID."
+						],
+						"name" : "PRVT-EPS-MIB::prvtEpsSvcId",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsSignalDegradeRecovery",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The alarm is issued in case of monitored error threshold is crossed bellow limis:",
+				"1W Jitter error",
+				"2W Jitter error",
+				"Latency error",
+				"Frame loss error."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "prvtEpsSignalDegradeStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "EpsSvcId:$v1",
+				"Summary" : "EPS recovered from signal degradation"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsSignalDegradeRecovery PRVT-EPS-MIB::prvtEpsSvcId u 9999",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsSignalDegradeRecovery",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The service ID."
+						],
+						"name" : "PRVT-EPS-MIB::prvtEpsSvcId",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PRVT-EPS-MIB::prvtEpsProtctSignalFailRecovery",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"The alarm is issued in case of CCMs start to be received correctly again",
+				"on the protected link after a prvtEpsProtctSignalFailDetected alarm occured",
+				"and (3.5 * CCMtime(CCMinterval)) timer no longer expires or the link is up ."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "prvtEpsProtctSignalStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "EpsSvcId:$v1",
+				"Summary" : "EPS protected signal recovered from failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PRVT-EPS-MIB::prvtEpsProtctSignalFailRecovery PRVT-EPS-MIB::prvtEpsSvcId u 9999",
+			"trap" : {
+				"name" : "PRVT-EPS-MIB::prvtEpsProtctSignalFailRecovery",
+				"oid" : "1.3.6.1.4.1.738.10.5.132.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The service ID."
+						],
+						"name" : "PRVT-EPS-MIB::prvtEpsSvcId",
+						"oid" : "1.3.6.1.4.1.738.10.5.132.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

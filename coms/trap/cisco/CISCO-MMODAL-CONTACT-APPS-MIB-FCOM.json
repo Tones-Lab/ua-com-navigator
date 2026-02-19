@@ -1,0 +1,101 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200807070000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaMIBEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event is a notification that is sent by a functional",
+				"service of the CUEA application. Notifications are sent by CUEA",
+				"when unusual conditions occur that potentially, can affect the ",
+				"functioning of a service in CUEA. Each Notification describes",
+				"the operation state information of a service when such service ",
+				"impacting conditions occur."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 2) ? 1 : 2"
+				},
+				"EventType" : "cmmcaMIBEvent",
+				"ExpireTime" : {
+					"eval" : "($v5 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v5 == 2) ? 0 : (($v6 <= 3) ? 5 : (($v6 == 3) ? 4 : (($v6 == 5) ? 3 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v8 ne '') ? 'CUEA application has reported $v8' : 'CUEA application has reported error on $v2:$v3: MsgId $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaMIBEvent CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventMessageId u 9999 CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventHostName s EXAMPLE CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventAppName s EXAMPLE CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventMessageName s EXAMPLE CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventState i 1 CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventSeverity i 1 CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventTimestamp s EXAMPLEE CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventText s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaMIBEvent",
+				"oid" : "1.3.6.1.4.1.9.9.664.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventMessageId",
+						"oid" : "1.3.6.1.4.1.9.9.664.1.7.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventHostName",
+						"oid" : "1.3.6.1.4.1.9.9.664.1.7.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventAppName",
+						"oid" : "1.3.6.1.4.1.9.9.664.1.7.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventMessageName",
+						"oid" : "1.3.6.1.4.1.9.9.664.1.7.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "raise",
+							"2" : "clear"
+						},
+						"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventState",
+						"oid" : "1.3.6.1.4.1.9.9.664.1.7.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "emergency",
+							"2" : "alert",
+							"3" : "critical",
+							"4" : "error",
+							"5" : "warning",
+							"6" : "notice",
+							"7" : "informational",
+							"8" : "debug"
+						},
+						"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventSeverity",
+						"oid" : "1.3.6.1.4.1.9.9.664.1.7.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventTimestamp",
+						"oid" : "1.3.6.1.4.1.9.9.664.1.7.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-MMODAL-CONTACT-APPS-MIB::cmmcaEventText",
+						"oid" : "1.3.6.1.4.1.9.9.664.1.7.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

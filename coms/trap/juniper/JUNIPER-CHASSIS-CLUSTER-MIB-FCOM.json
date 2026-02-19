@@ -1,0 +1,370 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201908290000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChassisClusterSwitchover",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal switchover/failover."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxJsChassisClusterSwitchover",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ClusterId:$v2;Node:$v3",
+				"Summary" : "Cluster $v2 switched over to $v5 state due to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChassisClusterSwitchover JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoRedundancyGroup s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoClusterId s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoNodeId s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoPreviousState s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoCurrentState s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoReason s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChassisClusterSwitchover",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains identification of redundancy group",
+							"that switched over."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoRedundancyGroup",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains cluster identification information",
+							"where the switchover occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoClusterId",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains node identification information",
+							"where the switchover occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoNodeId",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the redundancy state of the cluster",
+							"before the occurance of switchover."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoPreviousState",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the redundancy state of the cluster",
+							"after the occurance of switchover."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoCurrentState",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the cause for switchover."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal node health status change (healthy/unhealthy)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 eq 'UP') ? 1 : ($v3 eq 'DOWN') ? 2 : 3"
+				},
+				"EventType" : "jnxJsChClusterIntfTrap",
+				"ExpireTime" : {
+					"eval" : "($v3 eq 'UP') ? 3600 : ($v3 eq 'DOWN') ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 eq 'UP') ? 0 : ($v3 eq 'DOWN') ? 4 : 1"
+				},
+				"SubNode" : "ClusterID:$v1",
+				"Summary" : "Link $v2 is $v3 due to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoClusterId s UPDOWN_TEST JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfName s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfState s DOWN JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfSeverity s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfStateReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoClusterId s UPDOWN_TEST JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfName s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfState s UP JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfSeverity s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfStateReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoClusterId s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfName s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfState s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfSeverity s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfStateReason s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains cluster identification information",
+							"where the switchover occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSwitchoverInfoClusterId",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the name of the link",
+							"that changed its state."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfName",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the state of the link;",
+							"whether it is UP or DOWN."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfState",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object reflects the severity;",
+							"whether it is minor or major."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfSeverity",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains the reason why the link state",
+							"changed."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterIntfStateReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSpuMismatchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal cluster having different SPU number."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxJsChClusterSpuMismatchTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "NodeID:$v1",
+				"Summary" : "Cluster SPU mismatch: Local node: $v2; Remote node: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSpuMismatchTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeZeroId s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeZeroSpuCount s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeOneId s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeOneSpuCount s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterSpuMismatchTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains remote node identification information",
+							"where the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeZeroId",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains local node total SPU number."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeZeroSpuCount",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains remote node identification information",
+							"where the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeOneId",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains remote node total SPU number."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeOneSpuCount",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.14",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal node health status change (healthy/unhealthy)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 eq 'unhealthy') ? 2 : ($v4 eq 'healthy') ? 1 : 3"
+				},
+				"EventType" : "jnxJsChClusterWeightTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 eq 'unhealthy') ? 86400 : ($v4 eq 'healthy') ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 eq 'unhealthy') ? 4 : ($v4 eq 'healthy') ? 0 : 1"
+				},
+				"SubNode" : "ClusterId:$v1",
+				"Summary" : "Cluster $v1 health status: $v4; Weight: $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterClusterID s HealthyUnhealthy_TEST JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterRedundancyGroupID s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeID s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightHealthStatus s unhealthy JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightValue s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterClusterID s HealthyUnhealthy_TEST JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterRedundancyGroupID s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeID s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightHealthStatus s healthy JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightValue s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterClusterID s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterRedundancyGroupID s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeID s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightHealthStatus s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightValue s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains identification of cluster",
+							"in which the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterClusterID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains identification of RedundancyGroup",
+							"in which the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterRedundancyGroupID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains identification of node",
+							"in which the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterNodeID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains health status, whether is healthy",
+							"or unhealthy."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightHealthStatus",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains weight value."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterWeightValue",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification to signal cluster is in unhealth status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "jnxJsChClusterHealthTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2 eq 'major') ? 4 : ($v2 eq 'minor') ? 3 : 1"
+				},
+				"SubNode" : "NodeID:$v1",
+				"Summary" : "Cluster $v1 is unhealthy due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthNodeID s SEVERITY_TEST JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthSeverity s major JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthNodeID s SEVERITY_TEST JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthSeverity s minor JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthReason s EXAMPLE",
+				"$SNMPTRAPCMD JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthTrap JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthNodeID s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthSeverity s EXAMPLE JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthReason s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthTrap",
+				"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains identification of node",
+							"in which the event occured."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthNodeID",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object reflects the severity;",
+							"whether it is minor or major."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthSeverity",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains ha unhealth status reason."
+						],
+						"name" : "JUNIPER-CHASSIS-CLUSTER-MIB::jnxJsChClusterHealthReason",
+						"oid" : "1.3.6.1.4.1.2636.3.39.1.14.1.1.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

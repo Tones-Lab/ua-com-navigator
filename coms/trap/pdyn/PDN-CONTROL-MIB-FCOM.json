@@ -1,0 +1,325 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0011201800Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PDN-CONTROL-MIB::devFileXferEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is to communicate a couple of things about",
+				"the completion of a file transfer.",
+				"devFileXferStatus - Did it complete successfully or not.",
+				"devFileXferErrorStatus - If not, what was the error code.",
+				"devFileXferOperation - What operation was performed?.",
+				"devFileXferFileType - Was it a firmware xfer or config?",
+				"devFileXferFileName - The name of the file transfered.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "devFileXferEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 3) ? 3 : (($v1 == 2) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 3) ? 'Transfer ($v3) status for $v4 file $v5 : $v1 (error code: $v2)' : 'Transfer ($v3) status for $v4 file $v5 : $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-CONTROL-MIB::devFileXferEvent PDN-CONTROL-MIB::devFileXferStatus i 1 PDN-CONTROL-MIB::devFileXferErrorStatus i 9999 PDN-CONTROL-MIB::devFileXferOperation i 1 PDN-CONTROL-MIB::devFileXferFileType i 1 PDN-CONTROL-MIB::devFileXferFileName s EXAMPLE",
+			"trap" : {
+				"name" : "PDN-CONTROL-MIB::devFileXferEvent",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.10.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the status of the file transfer."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "success",
+							"3" : "failure",
+							"4" : "inprogress"
+						},
+						"name" : "PDN-CONTROL-MIB::devFileXferStatus",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.1.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the reason code of the failure determined in ",
+							"devFileXferStatus.",
+							"The reason code are specific to the file transfer protocol.",
+							"",
+							"Please refer to the file transfer protocols respective RFC for ",
+							"clarification",
+							"of the error code value meanings.",
+							"",
+							"TFTP Error Codes from rfc 1350",
+							"FTP Error Codes from rfc 959"
+						],
+						"name" : "PDN-CONTROL-MIB::devFileXferErrorStatus",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.1.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object contains the operation the file transfer wants to ",
+							"perform."
+						],
+						"enums" : {
+							"1" : "get",
+							"2" : "put"
+						},
+						"name" : "PDN-CONTROL-MIB::devFileXferOperation",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the type of file your want to transfer."
+						],
+						"enums" : {
+							"1" : "firmware",
+							"2" : "config"
+						},
+						"name" : "PDN-CONTROL-MIB::devFileXferFileType",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the name of the filetransfer file."
+						],
+						"name" : "PDN-CONTROL-MIB::devFileXferFileName",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PDN-CONTROL-MIB::devAutoBackupFailEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a condition exists, which prevents ",
+				"automated backup of a device's configuration to the ",
+				"Management Controller Card (MCC) Flash File System at a ",
+				"scheduled time."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "devAutoBackupFailEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Configuration backup to MCC failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-CONTROL-MIB::devAutoBackupFailEvent ENTITY-MIB::entPhysicalIndex i 9999",
+			"trap" : {
+				"name" : "PDN-CONTROL-MIB::devAutoBackupFailEvent",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.10.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The index for this entry."
+						],
+						"name" : "ENTITY-MIB::entPhysicalIndex",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PDN-CONTROL-MIB::devConfigRestoreFailEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent by a device to indicate that an incorrect",
+				"or incompatible configuration file is being downloaded to the",
+				"device from the MCC Flash File System."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "devConfigRestoreFailEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Incompatible configuration file is being downloaded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-CONTROL-MIB::devConfigRestoreFailEvent ENTITY-MIB::entPhysicalIndex i 9999",
+			"trap" : {
+				"name" : "PDN-CONTROL-MIB::devConfigRestoreFailEvent",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.10.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The index for this entry."
+						],
+						"name" : "ENTITY-MIB::entPhysicalIndex",
+						"oid" : "1.3.6.1.2.1.47.1.1.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PDN-CONTROL-MIB::devAutoFwEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is to communicate the result of the Auto Firmware Download.",
+				"The variable binding for this trap would be the devAutoFwStatus",
+				"of pdnAutoFwGroup. The exact format of this display string will ",
+				"be well-documented."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "devAutoFwEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Auto Firmware Download event; Status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-CONTROL-MIB::devAutoFwEvent PDN-CONTROL-MIB::devAutoFwStatus s EXAMPLE",
+			"trap" : {
+				"name" : "PDN-CONTROL-MIB::devAutoFwEvent",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.10.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This indicates the Status of Auto Firmware Download",
+							"where each field is separated by a semi-colon.",
+							"The get function will return the status of the latest ",
+							"card downloaded."
+						],
+						"name" : "PDN-CONTROL-MIB::devAutoFwStatus",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.12.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "PDN-CONTROL-MIB::pdnDevFileXferEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is to communicate a couple of things about",
+				"the completion of a file transfer.",
+				"pdnDevFileXferStatus - Did it complete successfully or not.",
+				"pdnDevFileXferErrorStatus - If not, what was the error code.",
+				"pdnDevFileXferOperation - What operation was performed?.",
+				"pdnDevFileXferFileType - Was it a firmware xfer or config?",
+				"pdnDevFileXferFileName - The name of the file transfered.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "pdnDevFileXferEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 == 3) ? 3 : (($v1 == 2) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 3) ? 'Transfer ($v3) status for $v4 file $v5 : $v1 (error code: $v2)' : 'Transfer ($v3) status for $v4 file $v5 : $v1'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD PDN-CONTROL-MIB::pdnDevFileXferEvent PDN-CONTROL-MIB::pdnDevFileXferStatus i 1 PDN-CONTROL-MIB::pdnDevFileXferErrorStatus i 9999 PDN-CONTROL-MIB::pdnDevFileXferOperation i 1 PDN-CONTROL-MIB::pdnDevFileXferFileType i 1 PDN-CONTROL-MIB::pdnDevFileXferFileName s EXAMPLE",
+			"trap" : {
+				"name" : "PDN-CONTROL-MIB::pdnDevFileXferEvent",
+				"oid" : "1.3.6.1.4.1.1795.2.24.2.10.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the status of the file transfer."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "success",
+							"3" : "failure",
+							"4" : "inprogress"
+						},
+						"name" : "PDN-CONTROL-MIB::pdnDevFileXferStatus",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.2.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the reason code of the failure determined in ",
+							"devFileXferStatus.",
+							"The reason code are specific to the file transfer protocol.",
+							"Please refer to the file transfer protocols respective RFC for ",
+							"clarification",
+							"of the error code value meanings.",
+							"TFTP Error Codes from rfc 1350",
+							"FTP Error Codes from rfc 959"
+						],
+						"name" : "PDN-CONTROL-MIB::pdnDevFileXferErrorStatus",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.2.1.18",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object contains the operation the file transfer wants to ",
+							"perform."
+						],
+						"enums" : {
+							"1" : "get",
+							"2" : "put"
+						},
+						"name" : "PDN-CONTROL-MIB::pdnDevFileXferOperation",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.2.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the type of file your want to transfer."
+						],
+						"enums" : {
+							"1" : "firmware",
+							"2" : "config"
+						},
+						"name" : "PDN-CONTROL-MIB::pdnDevFileXferFileType",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.2.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object contains the name of the filetransfer file."
+						],
+						"name" : "PDN-CONTROL-MIB::pdnDevFileXferFileName",
+						"oid" : "1.3.6.1.4.1.1795.2.24.2.10.7.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

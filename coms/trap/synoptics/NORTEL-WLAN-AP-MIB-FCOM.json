@@ -1,0 +1,356 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200404120000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NORTEL-WLAN-AP-MIB::ntWlanApDot1xAuthenticationFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that a Mobile Unit failed 802.1x authentication.",
+				"- ifPhysAddress is the MAC address of the Access Point",
+				"sending this trap message.",
+				"- ntWlanDot11AssociationStationAddress is the MAC address",
+				"of the Mobile Unit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ntWlanApDot1xAuthenticationFail",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Mobile unit $v2 802.1x authentication failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-WLAN-AP-MIB::ntWlanApDot1xAuthenticationFail IF-MIB::ifPhysAddress s EXAMPLE NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress s EXAMPLE",
+			"trap" : {
+				"name" : "NORTEL-WLAN-AP-MIB::ntWlanApDot1xAuthenticationFail",
+				"oid" : "1.3.6.1.4.1.45.1.11.1.8.0.101",
+				"variables" : [
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This values indicates the MAC address of the Mobile Unit ",
+							"associating with this Access Point."
+						],
+						"name" : "NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress",
+						"oid" : "1.3.6.1.4.1.45.1.11.1.7.9.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NORTEL-WLAN-AP-MIB::ntWlanApMuAssocTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that there is a Mobile Unit associating",
+				"with this Access Point.",
+				"- ifPhysAddress is the MAC address of the Access Point",
+				"sending this trap message.",
+				"- ntWlanDot11AssociationStationAddress is the MAC address of the ",
+				"Mobile Unit.",
+				"Note: If two or more Mobile Units associate with the",
+				"Access Point at the same time, ntWlanDot11AssociationStationAddress ",
+				"belongs to the last Mobile Unit.",
+				"- ntWlanDot11AssociationMU is the number of Mobile Units currently",
+				"associating with this Access Point."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ntWlanApMuAssocStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Mobile unit $v2 associated with access point"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-WLAN-AP-MIB::ntWlanApMuAssocTrap IF-MIB::ifPhysAddress s EXAMPLE NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress s EXAMPLE NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationMU i 9999",
+			"trap" : {
+				"name" : "NORTEL-WLAN-AP-MIB::ntWlanApMuAssocTrap",
+				"oid" : "1.3.6.1.4.1.45.1.11.1.8.0.111",
+				"variables" : [
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This values indicates the MAC address of the Mobile Unit ",
+							"associating with this Access Point."
+						],
+						"name" : "NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress",
+						"oid" : "1.3.6.1.4.1.45.1.11.1.7.9.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This values indicates the number of Mobile Units associated",
+							"on the Interface"
+						],
+						"name" : "NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationMU",
+						"oid" : "1.3.6.1.4.1.45.1.11.1.7.9.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NORTEL-WLAN-AP-MIB::ntWlanApMuDisAssocTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that there is one Mobile Unit no longer",
+				"associating with this Access Point anymore.",
+				"- ifPhysAddress is the MAC address of the Access Point",
+				"sending this trap message.",
+				"- ntWlanDot11DisassociationStationAddress is the MAC address of the ",
+				"Mobile Unit.",
+				"Note: If two or more Mobile Units un-associate with",
+				"the Access Point at the same time, ",
+				"ntWlanDot11DisassociationStationAddress belongs to the last ",
+				"Mobile Unit.",
+				"- ntWlanDot11AssociationMU is the number of Mobile Units currently",
+				"associating with this Access Point."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ntWlanApMuAssocStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Mobile unit $v2 is not associated with access point"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-WLAN-AP-MIB::ntWlanApMuDisAssocTrap IF-MIB::ifPhysAddress s EXAMPLE NORTEL-WLAN-AP-MIB::ntWlanDot11DisassociationStationAddress s EXAMPLE NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationMU i 9999",
+			"trap" : {
+				"name" : "NORTEL-WLAN-AP-MIB::ntWlanApMuDisAssocTrap",
+				"oid" : "1.3.6.1.4.1.45.1.11.1.8.0.112",
+				"variables" : [
+					{
+						"description" : [
+							"The interface's address at its protocol sub-layer. For",
+							"example, for an 802.x interface, this object normally",
+							"contains a MAC address. The interface's media-specific MIB",
+							"must define the bit and byte ordering and the format of the",
+							"value of this object. For interfaces which do not have such",
+							"an address (e.g., a serial line), this object should contain",
+							"an octet string of zero length."
+						],
+						"name" : "IF-MIB::ifPhysAddress",
+						"oid" : "1.3.6.1.2.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This values indicates the MAC address of the Mobile Unit ",
+							"no longer associated with this Access Point."
+						],
+						"name" : "NORTEL-WLAN-AP-MIB::ntWlanDot11DisassociationStationAddress",
+						"oid" : "1.3.6.1.4.1.45.1.11.1.7.9.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This values indicates the number of Mobile Units associated",
+							"on the Interface"
+						],
+						"name" : "NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationMU",
+						"oid" : "1.3.6.1.4.1.45.1.11.1.7.9.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NORTEL-WLAN-AP-MIB::ntWlanApMuWEPAuthFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that WEP authentication of a Mobile Unit failed.",
+				"- ifIndex identifies the radio to which the MU attempted to connect.",
+				"- ntWlanDot11AssociationStationAddress is the MAC address of the ",
+				"Mobile Unit that attempted to connect."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ntWlanApMuWEPAuthFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "WEP authentication of mobile unit $v2 failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-WLAN-AP-MIB::ntWlanApMuWEPAuthFail IF-MIB::ifIndex i 9999 NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress s EXAMPLE",
+			"trap" : {
+				"name" : "NORTEL-WLAN-AP-MIB::ntWlanApMuWEPAuthFail",
+				"oid" : "1.3.6.1.4.1.45.1.11.1.8.0.113",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This values indicates the MAC address of the Mobile Unit ",
+							"associating with this Access Point."
+						],
+						"name" : "NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress",
+						"oid" : "1.3.6.1.4.1.45.1.11.1.7.9.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NORTEL-WLAN-AP-MIB::ntWlanApMuWPAAuthFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that WPA authentication of a Mobile Unit failed.",
+				"- ifIndex identifies the radio to which the MU attempted to connect.",
+				"- ntWlanDot11AssociationStationAddress is the MAC address of the ",
+				"Mobile Unit that attempted to connect."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ntWlanApMuWPAAuthFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "WPA authentication of mobile unit $v2 failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-WLAN-AP-MIB::ntWlanApMuWPAAuthFail IF-MIB::ifIndex i 9999 NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress s EXAMPLE",
+			"trap" : {
+				"name" : "NORTEL-WLAN-AP-MIB::ntWlanApMuWPAAuthFail",
+				"oid" : "1.3.6.1.4.1.45.1.11.1.8.0.114",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This values indicates the MAC address of the Mobile Unit ",
+							"associating with this Access Point."
+						],
+						"name" : "NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress",
+						"oid" : "1.3.6.1.4.1.45.1.11.1.7.9.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NORTEL-WLAN-AP-MIB::ntWlanApMuWPAAuthFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that WPA authentication of a Mobile Unit failed.",
+				"- ifIndex identifies the radio to which the MU attempted to connect.",
+				"- ntWlanDot11AssociationStationAddress is the MAC address of the ",
+				"Mobile Unit that attempted to connect."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ntWlanApMuWPAAuthFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "WPA authentication of mobile unit $v2 failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD NORTEL-WLAN-AP-MIB::ntWlanApMuWPAAuthFail IF-MIB::ifIndex i 9999 NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress s EXAMPLE",
+			"trap" : {
+				"name" : "NORTEL-WLAN-AP-MIB::ntWlanApMuWPAAuthFail",
+				"oid" : "1.3.6.1.4.1.45.1.11.1.8.0.114",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This values indicates the MAC address of the Mobile Unit ",
+							"associating with this Access Point."
+						],
+						"name" : "NORTEL-WLAN-AP-MIB::ntWlanDot11AssociationStationAddress",
+						"oid" : "1.3.6.1.4.1.45.1.11.1.7.9.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

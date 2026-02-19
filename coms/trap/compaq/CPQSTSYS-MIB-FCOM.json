@@ -1,0 +1,4427 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs2FanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System fan status change.",
+				"The agent has detected a change in the Fan Status of a storage",
+				"system. The variable cpqSsBoxFanStatus indicates the current",
+				"fan status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqSs2FanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : (($v1==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==1) ? 1 : (($v1==3) ? 4 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Storage system fan status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs2FanStatusChange CPQSTSYS-MIB::cpqSsBoxFanStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs2FanStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8001",
+				"variables" : [
+					{
+						"description" : [
+							"Drive Box Fan Status.",
+							"",
+							"This is the current status of the fans in the drive box.",
+							"This value will be one of the following:",
+							"other(1)",
+							"Fan monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"All fans are working normally.",
+							"",
+							"failed(3)",
+							"One or more storage system fans have failed. The fan(s) should",
+							"be replaced immediately to avoid hardware damage.",
+							"",
+							"noFan(4)",
+							"This unit does not support fan monitoring.",
+							"",
+							"degraded(5)",
+							"At least one storage system fan has failed, but there is still",
+							"sufficient cooling capacity to allow the system to continue.",
+							"The fan should be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "noFan",
+							"5" : "degraded"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxFanStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsTempFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System temperature failure.",
+				"The agent has detected that a temperature status has been set",
+				"to failed. The storage system will be shutdown."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqSsTempAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Storage system temperature failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsTempFailed CPQSTSYS-MIB::cpqSsBoxTempStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsTempFailed",
+				"oid" : "1.3.6.1.4.1.232.0.8002",
+				"variables" : [
+					{
+						"description" : [
+							"The temperature of the drive system.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"Temperature monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(3)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(4)",
+							"The temperature could permanently damage the system.",
+							"The storage system will automatically shutdown if this",
+							"condition is detected.",
+							"",
+							"noTemp(5)",
+							"This unit does not support temperature monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noTemp"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsTempDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System temperature degraded.",
+				"The agent has detected a temperature status that has been set to",
+				"degraded. The storage system's temperature is outside of the",
+				"normal operating range."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqSsTempAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Storage system temperature degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsTempDegraded CPQSTSYS-MIB::cpqSsBoxTempStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsTempDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.8003",
+				"variables" : [
+					{
+						"description" : [
+							"The temperature of the drive system.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"Temperature monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(3)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(4)",
+							"The temperature could permanently damage the system.",
+							"The storage system will automatically shutdown if this",
+							"condition is detected.",
+							"",
+							"noTemp(5)",
+							"This unit does not support temperature monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noTemp"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsTempOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System temperature ok.",
+				"The temperature status has been set to OK. The storage",
+				"system's temperature has returned to normal operating range.",
+				"It may be reactivated by the administrator."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqSsTempAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Storage system temperature is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsTempOk CPQSTSYS-MIB::cpqSsBoxTempStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsTempOk",
+				"oid" : "1.3.6.1.4.1.232.0.8004",
+				"variables" : [
+					{
+						"description" : [
+							"The temperature of the drive system.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"Temperature monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(3)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(4)",
+							"The temperature could permanently damage the system.",
+							"The storage system will automatically shutdown if this",
+							"condition is detected.",
+							"",
+							"noTemp(5)",
+							"This unit does not support temperature monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noTemp"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsSidePanelInPlace",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System side panel is in place.",
+				"The side panel status has been set to in place. The storage",
+				"system's side panel has returned to a properly installed state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqSsSidePanelAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Storage system side panel is properly installed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsSidePanelInPlace CPQSTSYS-MIB::cpqSsBoxSidePanelStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsSidePanelInPlace",
+				"oid" : "1.3.6.1.4.1.232.0.8005",
+				"variables" : [
+					{
+						"description" : [
+							"Drive Box Side Panel Status.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"The agent does not recognize the status. You may need to",
+							"upgrade your software.",
+							"",
+							"sidePanelInPlace(2)",
+							"The side panel is properly installed on the storage system.",
+							"",
+							"sidePanelRemoved(3)",
+							"The side panel is not properly installed on the storage system.",
+							"",
+							"noSidePanelStatus(4)",
+							"This unit does not support side panel status monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "sidePanelInPlace",
+							"3" : "sidePanelRemoved",
+							"4" : "noSidePanelStatus"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSidePanelStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsSidePanelRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System side panel is removed.",
+				"The side panel status has been set to removed. The storage",
+				"system's side panel is not in a properly installed state. This",
+				"situation may result in improper cooling of the drives in the",
+				"storage system due to air flow changes caused by the missing",
+				"side panel."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqSsSidePanelAlert",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Storage system side panel is removed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsSidePanelRemoved CPQSTSYS-MIB::cpqSsBoxSidePanelStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsSidePanelRemoved",
+				"oid" : "1.3.6.1.4.1.232.0.8006",
+				"variables" : [
+					{
+						"description" : [
+							"Drive Box Side Panel Status.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"The agent does not recognize the status. You may need to",
+							"upgrade your software.",
+							"",
+							"sidePanelInPlace(2)",
+							"The side panel is properly installed on the storage system.",
+							"",
+							"sidePanelRemoved(3)",
+							"The side panel is not properly installed on the storage system.",
+							"",
+							"noSidePanelStatus(4)",
+							"This unit does not support side panel status monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "sidePanelInPlace",
+							"3" : "sidePanelRemoved",
+							"4" : "noSidePanelStatus"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSidePanelStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsPwrSupplyDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"A storage system power supply status has been set to degraded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqSsPwrSupplyDegraded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Storage system power supply unit is degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsPwrSupplyDegraded ",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsPwrSupplyDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.8007"
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs3FanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System fan status change.",
+				"The agent has detected a change in the Fan Status of a storage",
+				"system. The variable cpqSsBoxFanStatus indicates the current",
+				"fan status.",
+				"User Action: If the fan status is degraded or failed, replace",
+				"any failed fans."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : (($v1==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqSs3FanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : (($v1==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==1) ? 1 : (($v1==3) ? 4 : 3))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system 3 fan status is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs3FanStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxFanStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs3FanStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8008",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Fan Status.",
+							"",
+							"This is the current status of the fans in the drive box.",
+							"This value will be one of the following:",
+							"other(1)",
+							"Fan monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"All fans are working normally.",
+							"",
+							"failed(3)",
+							"One or more storage system fans have failed. The fan(s) should",
+							"be replaced immediately to avoid hardware damage.",
+							"",
+							"noFan(4)",
+							"This unit does not support fan monitoring.",
+							"",
+							"degraded(5)",
+							"At least one storage system fan has failed, but there is still",
+							"sufficient cooling capacity to allow the system to continue.",
+							"The fan should be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "noFan",
+							"5" : "degraded"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxFanStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs3TempFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System temperature failure.",
+				"The agent has detected that a temperature status has been set to",
+				"failed. The storage system will be shutdown.",
+				"User Action: Shutdown the storage system as soon as possible.",
+				"Insure that the storage system environment is being cooled",
+				"properly and that no components are overheated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqSs3TempAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system 3 temperature failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs3TempFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxTempStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs3TempFailed",
+				"oid" : "1.3.6.1.4.1.232.0.8009",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The temperature of the drive system.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"Temperature monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(3)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(4)",
+							"The temperature could permanently damage the system.",
+							"The storage system will automatically shutdown if this",
+							"condition is detected.",
+							"",
+							"noTemp(5)",
+							"This unit does not support temperature monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noTemp"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs3TempDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System temperature degraded.",
+				"The agent has detected a temperature status that has been set to",
+				"degraded. The storage system's temperature is outside of the",
+				"normal operating range.",
+				"User Action: Shutdown the storage system as soon as possible.",
+				"Insure that the storage system environment is being cooled",
+				"properly and that no components are overheated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqSs3TempAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system 3 temperature degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs3TempDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxTempStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs3TempDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.8010",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The temperature of the drive system.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"Temperature monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(3)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(4)",
+							"The temperature could permanently damage the system.",
+							"The storage system will automatically shutdown if this",
+							"condition is detected.",
+							"",
+							"noTemp(5)",
+							"This unit does not support temperature monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noTemp"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs3TempOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System temperature ok.",
+				"The temperature status has been set to OK. The storage",
+				"system's temperature has returned to normal operating range.",
+				"It may be reactivated by the administrator.",
+				"User Action: None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqSs3TempAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system 3 temperature is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs3TempOk RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxTempStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs3TempOk",
+				"oid" : "1.3.6.1.4.1.232.0.8011",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The temperature of the drive system.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"Temperature monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(3)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(4)",
+							"The temperature could permanently damage the system.",
+							"The storage system will automatically shutdown if this",
+							"condition is detected.",
+							"",
+							"noTemp(5)",
+							"This unit does not support temperature monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noTemp"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs3SidePanelInPlace",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System side panel is in place.",
+				"The side panel status has been set to in place. The storage",
+				"system's side panel has returned to a properly installed state.",
+				"User Action: None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqSs3SidePanelAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system 3 side panel is properly installed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs3SidePanelInPlace RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxSidePanelStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs3SidePanelInPlace",
+				"oid" : "1.3.6.1.4.1.232.0.8012",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Side Panel Status.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"The agent does not recognize the status. You may need to",
+							"upgrade your software.",
+							"",
+							"sidePanelInPlace(2)",
+							"The side panel is properly installed on the storage system.",
+							"",
+							"sidePanelRemoved(3)",
+							"The side panel is not properly installed on the storage system.",
+							"",
+							"noSidePanelStatus(4)",
+							"This unit does not support side panel status monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "sidePanelInPlace",
+							"3" : "sidePanelRemoved",
+							"4" : "noSidePanelStatus"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSidePanelStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs3SidePanelRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System side panel is removed.",
+				"The side panel status has been set to removed. The storage",
+				"system's side panel is not in a properly installed state. This",
+				"situation may result in improper cooling of the drives in the",
+				"storage system due to air flow changes caused by the missing",
+				"side panel.",
+				"User Action: Replace the storage system side panel."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqSs3SidePanelAlert",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system 3 side panel is removed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs3SidePanelRemoved RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxSidePanelStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs3SidePanelRemoved",
+				"oid" : "1.3.6.1.4.1.232.0.8013",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Side Panel Status.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"The agent does not recognize the status. You may need to",
+							"upgrade your software.",
+							"",
+							"sidePanelInPlace(2)",
+							"The side panel is properly installed on the storage system.",
+							"",
+							"sidePanelRemoved(3)",
+							"The side panel is not properly installed on the storage system.",
+							"",
+							"noSidePanelStatus(4)",
+							"This unit does not support side panel status monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "sidePanelInPlace",
+							"3" : "sidePanelRemoved",
+							"4" : "noSidePanelStatus"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSidePanelStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs3PwrSupplyDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"A storage system power supply status has been set to degraded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqSs3PwrSupplyDegraded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system 4 power supply unit is degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs3PwrSupplyDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs3PwrSupplyDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.8014",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs4PwrSupplyDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"A storage system power supply status has been set to degraded.",
+				"User Action: Take action to restore power or replace any failed",
+				"storage system power supply."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqSs4PwrSupplyDegraded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system 4 power supply unit is degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs4PwrSupplyDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxFltTolPwrSupplyStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs4PwrSupplyDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.8015",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This value specifies the overall status of the fault tolerant",
+							"power supply sub-system in a drive box.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"The power supply status cannot be determined.",
+							"",
+							"ok(2)",
+							"There are no detected power supply failures.",
+							"",
+							"degraded(3)",
+							"One of the power supply units in a fault tolerant power",
+							"supply has failed.",
+							"",
+							"failed(4)",
+							"No failure conditions can currently be determined.",
+							"",
+							"noFltTolPower(5)",
+							"This unit does not support fault tolerant power supply",
+							"monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noFltTolPower"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxFltTolPwrSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsExFanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system fan status change.",
+				"The agent has detected a change in the Fan Module Status of a",
+				"storage system. The variable cpqSsFanModuleStatus indicates the",
+				"current fan status.",
+				"User Action: If the fan status is degraded or failed, replace",
+				"any failed fans."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==3) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsExFanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==3) ? 0 : (($v6==4) ? 3 : 4))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system fan status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsExFanStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsFanModuleLocation i 1 CPQSTSYS-MIB::cpqSsFanModuleStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsExFanStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8016",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Fan Module Location.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine the location of this storage",
+							"system fan module.",
+							"",
+							"fanBay(2)",
+							"This fan module is installed in the first fan bay.",
+							"",
+							"composite(3)",
+							"The fan information is a composite of all fans in the storage",
+							"system.",
+							"",
+							"fanBay2(4)",
+							"This fan module is installed in the second fan bay."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fanBay",
+							"3" : "composite",
+							"4" : "fanBay2"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsFanModuleLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Fan Module Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if this storage system fan",
+							"module is installed.",
+							"",
+							"notInstalled(3)",
+							"The fan module is not installed.",
+							"",
+							"ok(2)",
+							"The fan module is installed and operating normally.",
+							"",
+							"degraded(4)",
+							"The fan module degraded.",
+							"",
+							"failed(5)",
+							"The fan module is failed. Replace the fan module."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notInstalled",
+							"3" : "ok",
+							"4" : "degraded",
+							"5" : "failed"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsFanModuleStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.4.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsExPowerSupplyStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system power supply status change.",
+				"The agent has detected a change in the power supply status of a",
+				"storage system. The variable cpqSsPowerSupplyStatus indicates",
+				"the current status.",
+				"User Action: If the power supply status is failed, take action to",
+				"restore power or replace the failed power supply."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==3) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsExPowerSupplyStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==3) ? 0 : (($v6==5) ? 3 : 4))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system power supply status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsExPowerSupplyStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsPowerSupplyBay i 1 CPQSTSYS-MIB::cpqSsPowerSupplyStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsExPowerSupplyStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8017",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Bay.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent does not recognize the bay. You may need to upgrade",
+							"your software.",
+							"",
+							"powerBay1(2)",
+							"The power supply is installed in the first power supply bay.",
+							"",
+							"powerBay2(3)",
+							"The power supply is installed in the second power supply bay.",
+							"",
+							"composite(4)",
+							"The power supply information is a composite of all power",
+							"supplies in the storage system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "powerBay1",
+							"3" : "powerBay2",
+							"4" : "composite"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if this storage system power",
+							"supply bay is occupied.",
+							"",
+							"notInstalled(2)",
+							"Nothing is installed in this power supply bay.",
+							"",
+							"ok(3)",
+							"A power supply is installed and operating normally.",
+							"",
+							"failed(4)",
+							"A power supply is installed and is no longer operating.",
+							"Replace the power supply.",
+							"",
+							"degraded(5)",
+							"For composite power supplies, this indicates that at least one",
+							"power supply has failed or lost power."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notInstalled",
+							"3" : "ok",
+							"4" : "failed",
+							"5" : "degraded"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsExPowerSupplyUpsStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system power supply UPS status change.",
+				"The agent has detected a change status of a UPS attached to a",
+				"storage system power supply. The variable",
+				"cpqSsPowerSupplyUpsStatus indicates the current status.",
+				"User Action: If the UPS status is powerFailed(4) or batteryLow(5)",
+				"take action to restore power to the UPS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==3) ? 1 : (($v6==1) ? 3 : 2)"
+				},
+				"EventType" : "cpqSsExPowerSupplyUpsStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==3) ? 3600 : (($v6==1) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==3) ? 0 : (($v6==4) ? 4 : 3))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system power supply UPS status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsExPowerSupplyUpsStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsPowerSupplyBay i 1 CPQSTSYS-MIB::cpqSsPowerSupplyUpsStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsExPowerSupplyUpsStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8018",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Bay.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent does not recognize the bay. You may need to upgrade",
+							"your software.",
+							"",
+							"powerBay1(2)",
+							"The power supply is installed in the first power supply bay.",
+							"",
+							"powerBay2(3)",
+							"The power supply is installed in the second power supply bay.",
+							"",
+							"composite(4)",
+							"The power supply information is a composite of all power",
+							"supplies in the storage system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "powerBay1",
+							"3" : "powerBay2",
+							"4" : "composite"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Uninterruptible Power Supply (UPS)",
+							"Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if this power supply is",
+							"attached to an Uninterruptible Power Supply (UPS).",
+							"",
+							"noUps(2)",
+							"No UPS is attached to the power supply.",
+							"",
+							"ok(3)",
+							"A UPS is attached to the power supply and is operating",
+							"normally.",
+							"",
+							"powerFailed(4)",
+							"A UPS is attached to the power supply and the AC power has",
+							"failed.",
+							"",
+							"batteryLow(5)",
+							"A UPS is attached to the power supply, the AC power has",
+							"failed and the UPS battery is low."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "noUps",
+							"3" : "ok",
+							"4" : "powerFailed",
+							"5" : "batteryLow"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplyUpsStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsExTempSensorStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system temperature sensor status change.",
+				"The agent has detected a change in the status of a storage",
+				"system temperature sensor. The variable cpqSsTempSensorStatus",
+				"indicates the current status.",
+				"User Action: If the temperature status is degraded or failed",
+				"shutdown the storage system as soon as possible. Insure that",
+				"the storage system environment is being cooled properly and that",
+				"no components are overheated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsExTempSensorStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==2) ? 0 : (($v6==3) ? 3 : 4))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Storage system temperature sensor status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsExTempSensorStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsTempSensorLocation i 1 CPQSTSYS-MIB::cpqSsTempSensorStatus i 1 CPQSTSYS-MIB::cpqSsTempSensorCurrentValue i 9999",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsExTempSensorStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8019",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Fan Module Location.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine the location of this storage",
+							"system temperature sensor.",
+							"",
+							"fanBay(2)",
+							"This temperature sensor is located on the fan module in the",
+							"fan bay.",
+							"",
+							"backplane(3)",
+							"This temperature is located on the SCSI drive backplane."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fanBay",
+							"3" : "backplane"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsTempSensorLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.5.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Temperature Sensor Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if the storage system",
+							"temperature sensor status.",
+							"",
+							"ok(2)",
+							"The temperature is OK.",
+							"",
+							"degraded(3)",
+							"The temperature is degraded.",
+							"",
+							"failed(4)",
+							"The temperature is failed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsTempSensorStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Temperature Sensor Current Value.",
+							"",
+							"The current value of the temperature sensor in degrees Celsius."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsTempSensorCurrentValue",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.5.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsEx2FanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system fan status change.",
+				"The agent has detected a change in the fan module status of a",
+				"storage system. The variable cpqSsFanModuleStatus indicates the",
+				"current fan status.",
+				"User Action: If the fan status is degraded or failed, replace",
+				"any failed fans."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 3 : (($v6==3) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsEx2FanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : (($v6==3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==3) ? 0 : (($v6==4) ? 3 : 4))"
+				},
+				"SubNode" : "FanSerialNo:$v7",
+				"Summary" : "Storage system fan module status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsEx2FanStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsFanModuleLocation i 1 CPQSTSYS-MIB::cpqSsFanModuleStatus i 1 CPQSTSYS-MIB::cpqSsFanModuleSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsFanModuleBoardRevision s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsEx2FanStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8020",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Fan Module Location.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine the location of this storage",
+							"system fan module.",
+							"",
+							"fanBay(2)",
+							"This fan module is installed in the first fan bay.",
+							"",
+							"composite(3)",
+							"The fan information is a composite of all fans in the storage",
+							"system.",
+							"",
+							"fanBay2(4)",
+							"This fan module is installed in the second fan bay."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "fanBay",
+							"3" : "composite",
+							"4" : "fanBay2"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsFanModuleLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Fan Module Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if this storage system fan",
+							"module is installed.",
+							"",
+							"notInstalled(3)",
+							"The fan module is not installed.",
+							"",
+							"ok(2)",
+							"The fan module is installed and operating normally.",
+							"",
+							"degraded(4)",
+							"The fan module degraded.",
+							"",
+							"failed(5)",
+							"The fan module is failed. Replace the fan module."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notInstalled",
+							"3" : "ok",
+							"4" : "degraded",
+							"5" : "failed"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsFanModuleStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Fan Module Serial Number.",
+							"",
+							"This is the fan module's serial number. This can be used",
+							"for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsFanModuleSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.4.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Fan Module Board Revision.",
+							"",
+							"This is the fan module board revision."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsFanModuleBoardRevision",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.4.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsEx2PowerSupplyStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system power supply status change.",
+				"The agent has detected a change in the power supply status of a",
+				"storage system. The variable cpqSsPowerSupplyStatus indicates",
+				"the current status.",
+				"User Action: If the power supply status is failed, take action to",
+				"restore power or replace the failed power supply."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1 || $v6==2) ? 3 : (($v6==3) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsEx2PowerSupplyStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v6==1 || $v6==2) ? 3600 : (($v6==3) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 1 : (($v6==3) ? 0 : (($v6==5) ? 3 : 4))"
+				},
+				"SubNode" : "PowerSupplySerialNo:$v7",
+				"Summary" : "Storage system $v3 power supply status is $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsEx2PowerSupplyStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsPowerSupplyBay i 1 CPQSTSYS-MIB::cpqSsPowerSupplyStatus i 1 CPQSTSYS-MIB::cpqSsPowerSupplySerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsPowerSupplyBoardRevision s EXAMPLE CPQSTSYS-MIB::cpqSsPowerSupplyFirmwareRevision s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsEx2PowerSupplyStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8021",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Bay.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent does not recognize the bay. You may need to upgrade",
+							"your software.",
+							"",
+							"powerBay1(2)",
+							"The power supply is installed in the first power supply bay.",
+							"",
+							"powerBay2(3)",
+							"The power supply is installed in the second power supply bay.",
+							"",
+							"composite(4)",
+							"The power supply information is a composite of all power",
+							"supplies in the storage system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "powerBay1",
+							"3" : "powerBay2",
+							"4" : "composite"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if this storage system power",
+							"supply bay is occupied.",
+							"",
+							"notInstalled(2)",
+							"Nothing is installed in this power supply bay.",
+							"",
+							"ok(3)",
+							"A power supply is installed and operating normally.",
+							"",
+							"failed(4)",
+							"A power supply is installed and is no longer operating.",
+							"Replace the power supply.",
+							"",
+							"degraded(5)",
+							"For composite power supplies, this indicates that at least one",
+							"power supply has failed or lost power."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notInstalled",
+							"3" : "ok",
+							"4" : "failed",
+							"5" : "degraded"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Serial Number.",
+							"",
+							"This is the power supply's serial number. This can be used",
+							"for identification purposes. If the serial number is not supported",
+							"the agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Board Revision.",
+							"",
+							"This is the power supply board revision. If the board revision is",
+							"not supported, the agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplyBoardRevision",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Power Supply Firmware Revision.",
+							"",
+							"This is the power supply firmware revision. If the firmware revision",
+							"is not supported, the agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsPowerSupplyFirmwareRevision",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.3.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsExBackplaneFanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system fan status change.",
+				"The agent has detected a change in the fan status of a storage",
+				"system. The variable cpqSsBackplaneFanStatus indicates the",
+				"current fan status.",
+				"User Action: If the fan status is degraded or failed, replace",
+				"any failed fans."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==3 || $v9==6) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsExBackplaneFanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==3 || $v9==6) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==2 || $v9==4) ? 3 : (($v9==3 || $v9==6) ? 0 : 4))"
+				},
+				"SubNode" : "backplaneIndex:$v5",
+				"Summary" : "Storage system Back plane fan status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsExBackplaneFanStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsBackplaneIndex i 0 CPQSTSYS-MIB::cpqSsBackplaneVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneModel s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneFanStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsExBackplaneFanStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8022",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Index.",
+							"",
+							"This index uniquely identifies a storage system backplane."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Vendor",
+							"",
+							"This is the storage box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Model.",
+							"",
+							"This is a description of the storage system's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Serial Number.",
+							"",
+							"This is the storage system backplane serial number which is normally",
+							"displayed on the front bezel. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Fan Status.",
+							"",
+							"This is the current status of the fans in the storage system.",
+							"This value will be one of the following:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if this storage system has",
+							"fan monitoring.",
+							"",
+							"notInstalled(2)",
+							"This unit does not support fan monitoring.",
+							"",
+							"ok(3)",
+							"All fans are working normally.",
+							"",
+							"degraded(4)",
+							"At least one storage system fan has failed, but there is still",
+							"sufficient cooling capacity to allow the system to continue.",
+							"The fan should be replaced.",
+							"",
+							"failed(5)",
+							"One or more storage system fans have failed. The fan(s) should",
+							"be replaced immediately to avoid hardware damage.",
+							"",
+							"notSupported(6)",
+							"The storage system does not support reporting fan status",
+							"through this backplane. The fan status is reported through the",
+							"first backplane on this storage system.",
+							"",
+							"degraded-Fan1Failed(7)",
+							"Fan 1 has failed, but there is still sufficient cooling",
+							"capacity to allow the system to continue. The fan should be",
+							"replaced.",
+							"",
+							"degraded-Fan2Failed(8)",
+							"Fan 2 has failed, but there is still sufficient cooling",
+							"capacity to allow the system to continue. The fan should be",
+							"replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notInstalled",
+							"3" : "ok",
+							"4" : "degraded",
+							"5" : "failed",
+							"6" : "notSupported",
+							"7" : "degraded-Fan1Failed",
+							"8" : "degraded-Fan2Failed"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneFanStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsExBackplaneTempStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system temperature status change.",
+				"The agent has detected a change in the status of the temperature",
+				"in a storage system. The variable cpqSsBackplaneTempStatus",
+				"indicates the current status.",
+				"User Action: If the temperature status is degraded or failed",
+				"shutdown the storage system as soon as possible. Insure that",
+				"the storage system environment is being cooled properly and that",
+				"no components are overheated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==3 || $v9==6) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsExBackplaneTempStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==3 || $v9==6) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==3 || $v9==6) ? 0 : (($v9==5) ? 4 : 3))"
+				},
+				"SubNode" : "backplaneIndex:$v5",
+				"Summary" : "Storage system Backp lane temperature status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsExBackplaneTempStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsBackplaneIndex i 0 CPQSTSYS-MIB::cpqSsBackplaneVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneModel s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneTempStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsExBackplaneTempStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8023",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Index.",
+							"",
+							"This index uniquely identifies a storage system backplane."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Vendor",
+							"",
+							"This is the storage box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Model.",
+							"",
+							"This is a description of the storage system's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Serial Number.",
+							"",
+							"This is the storage system backplane serial number which is normally",
+							"displayed on the front bezel. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Fan Status.",
+							"",
+							"This value will be one of the following:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if this storage system has",
+							"temperature monitoring.",
+							"",
+							"noTemp(2)",
+							"This unit does not support temperature monitoring.",
+							"",
+							"ok(3)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(4)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(5)",
+							"The temperature could permanently damage the system.",
+							"",
+							"notSupported(6)",
+							"The storage system does not support reporting temperature",
+							"status through this backplane. The temperature status is",
+							"reported through the first backplane on this storage system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "noTemp",
+							"3" : "ok",
+							"4" : "degraded",
+							"5" : "failed",
+							"6" : "notSupported"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsExBackplanePowerSupplyStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system power supply status change.",
+				"The agent has detected a change in the power supply status of a",
+				"storage system. The variable cpqSsBackplaneFtpsStatus indicates",
+				"the current status.",
+				"User Action: If the power supply status is degraded, take action to",
+				"restore power or replace the failed power supply."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==3 || $v9==6) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsExBackplanePowerSupplyStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==3 || $v9==6) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==3 || $v9==6) ? 0 : (($v9==5) ? 4 : 3))"
+				},
+				"SubNode" : "backplaneIndex:$v5",
+				"Summary" : "Storage system Back plane power supply status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsExBackplanePowerSupplyStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsBackplaneIndex i 0 CPQSTSYS-MIB::cpqSsBackplaneVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneModel s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBackplaneFtpsStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsExBackplanePowerSupplyStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8024",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Index.",
+							"",
+							"This index uniquely identifies a storage system backplane."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Vendor",
+							"",
+							"This is the storage box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Model.",
+							"",
+							"This is a description of the storage system's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Serial Number.",
+							"",
+							"This is the storage system backplane serial number which is normally",
+							"displayed on the front bezel. This can be used for identification",
+							"purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Backplane Fault Tolerant Power Supply Status.",
+							"",
+							"This value specifies the overall status of the redundant power",
+							"supply in a drive box. This value will be one of the following:",
+							"",
+							"other(1)",
+							"The agent is unable to determine if this storage system has",
+							"redundant power supplies.",
+							"",
+							"noFltTolPower(2)",
+							"This unit does not have a redundant supply.",
+							"",
+							"ok(3)",
+							"There are no detected power supply failures.",
+							"",
+							"degraded(4)",
+							"One of the power supply units has failed.",
+							"",
+							"failed(5)",
+							"All of the power supplies have failed. A status of failed can",
+							"not currently be determined.",
+							"",
+							"notSupported(6)",
+							"The storage system does not support reporting fault tolerant",
+							"power supply status through this backplane. The fault tolerant",
+							"power supply status is reported through the first backplane on",
+							"this storage system.",
+							"",
+							"noFltTolPower-Bay1Missing(7)",
+							"This unit does not have a redundant supply. The power supply",
+							"in bay 1 is missing.",
+							"",
+							"noFltTolPower-Bay2Missing(8)",
+							"This unit does not have a redundant supply. The power supply",
+							"in bay 2 is missing."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "noFltTolPower",
+							"3" : "ok",
+							"4" : "degraded",
+							"5" : "failed",
+							"6" : "notSupported",
+							"7" : "noFltTolPower-Bay1Missing",
+							"8" : "noFltTolPower-Bay2Missing"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBackplaneFtpsStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.6.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsExRecoveryServerStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system recovery server option status change.",
+				"The agent has detected a change in the recovery server option",
+				"status of a storage system. The variable cpqSsChassisRsoStatus",
+				"indicates the current status.",
+				"User Action: If the RSO status is noSecondary(6) or linkDown(7)",
+				"insure the secondary server is operational and all cables are",
+				"connected properly. If the RSO status is secondaryRunningAuto(8)",
+				"or secondaryRunningUser(9), examine the the primary server for",
+				"failed components."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==1) ? 3 : (($v5==6) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsExRecoveryServerStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v5==1) ? 3600 : (($v5==6) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v5==1) ? 1 : (($v5==6) ? 0 : (($v5==4 || $v5==5 || $v5==9 || $v5==13 || $v5==14) ? 4 : 3))"
+				},
+				"SubNode" : "ChassisIndex:$v6",
+				"Summary" : "Storage system recovery server option status is $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsExRecoveryServerStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsChassisName s EXAMPLE CPQSTSYS-MIB::cpqSsChassisTime i 9999 CPQSTSYS-MIB::cpqSsChassisRsoStatus i 1 CPQSTSYS-MIB::cpqSsChassisIndex i 9999",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsExRecoveryServerStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8025",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Name.",
+							"",
+							"This is a user defined name for this storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisName",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Time.",
+							"",
+							"This is the storage system chassis's time in tenths of seconds.",
+							"If the chassis time is not supported, the agent will return 0."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisTime",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.18",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Recovery Server Option Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The recovery server option status cannot be determined for",
+							"this storage system.",
+							"",
+							"notSupported(2)",
+							"The recovery server option is not supported for this storage",
+							"system.",
+							"",
+							"notConfigured(3)",
+							"The recovery server option is supported, but is not",
+							"configured on this storage system.",
+							"",
+							"disabled(4)",
+							"The recovery server option is configured as primary, but",
+							"has been disabled by software.",
+							"",
+							"daemonDownDisabled(5)",
+							"The recovery server option operating system daemon is no",
+							"longer running. The last status of RSO was disabled(4).",
+							"",
+							"ok(6)",
+							"The recovery server option is configured as primary and",
+							"everything is working correctly.",
+							"",
+							"daemonDownActive(7)",
+							"The recovery server option operating system daemon is no",
+							"longer running. The last status of RSO was ok(6).",
+							"",
+							"noSecondary(8)",
+							"The recovery server option is configured as primary, but",
+							"communication with the standby server has not been established.",
+							"",
+							"daemonDownNoSecondary(9)",
+							"The recovery server option operating system daemon is no",
+							"longer running. The last status of RSO was noSecondary(8).",
+							"",
+							"linkDown(10)",
+							"The recovery server option is configured as primary, but",
+							"communication with the standby server has failed.",
+							"",
+							"daemonDownLinkDown(11)",
+							"The recovery server option operating system daemon is no",
+							"longer running. The last status of RSO was linkDown(10).",
+							"",
+							"secondaryRunningAuto(12)",
+							"The recovery server option is configured and the standby",
+							"server is running. The secondary server assumed control",
+							"after communication with the primary server failed.",
+							"",
+							"secondaryRunningUser(13)",
+							"The recovery server option is configured and the standby",
+							"server is running. A user forced the secondary server to",
+							"assume control.",
+							"",
+							"evTimeoutError(14)",
+							"The recovery server option environment variable cannot be",
+							"accessed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notSupported",
+							"3" : "notConfigured",
+							"4" : "disabled",
+							"5" : "daemonDownDisabled",
+							"6" : "ok",
+							"7" : "daemonDownActive",
+							"8" : "noSecondary",
+							"9" : "daemonDownNoSecondary",
+							"10" : "linkDown",
+							"11" : "daemonDownLinkDown",
+							"12" : "secondaryRunningAuto",
+							"13" : "secondaryRunningUser",
+							"14" : "evTimeoutError"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsChassisRsoStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Storage System Chassis Index.",
+							"",
+							"The chassis index uniquely identifies a storage system chassis."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsChassisIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs5FanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System fan status change.",
+				"The agent has detected a change in the Fan Status of a storage",
+				"system. The variable cpqSsBoxFanStatus indicates the current",
+				"fan status.",
+				"User Action: If the fan status is degraded or failed, replace",
+				"any failed fans."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSs5FanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==2) ? 0 : (($v9==3) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerIndex:$v4",
+				"Summary" : "Storage system 5 on $v4 fan status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs5FanStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation s EXAMPLE CPQSTSYS-MIB::cpqSsBoxCntlrIndex i 9999 CPQSTSYS-MIB::cpqSsBoxBusIndex i 0 CPQSTSYS-MIB::cpqSsBoxVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBoxModel s EXAMPLE CPQSTSYS-MIB::cpqSsBoxSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBoxFanStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs5FanStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8026",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A text description of the hardware location of the controller",
+							"to which this box is attached. A NULL string indicates that",
+							"the hardware location could not be determined or is irrelevant."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Controller Index.",
+							"",
+							"The controller index indicates to which adapter card instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Bus Index.",
+							"",
+							"The bus index indicates to which bus instance on an adapter card",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxBusIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Vendor",
+							"",
+							"This is the drive box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Model.",
+							"",
+							"This is a description of the drive box's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Serial Number.",
+							"",
+							"This is the drive box's serial number which is normally display",
+							"on the front panel. This can be used for identification",
+							"purposes. If the box's serial number cannot be determined, the ",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Fan Status.",
+							"",
+							"This is the current status of the fans in the drive box.",
+							"This value will be one of the following:",
+							"other(1)",
+							"Fan monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"All fans are working normally.",
+							"",
+							"failed(3)",
+							"One or more storage system fans have failed. The fan(s) should",
+							"be replaced immediately to avoid hardware damage.",
+							"",
+							"noFan(4)",
+							"This unit does not support fan monitoring.",
+							"",
+							"degraded(5)",
+							"At least one storage system fan has failed, but there is still",
+							"sufficient cooling capacity to allow the system to continue.",
+							"The fan should be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "noFan",
+							"5" : "degraded"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxFanStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs5TempStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System temperature status change.",
+				"The agent has detected a change in the temperature status of a",
+				"storage system. The variable cpqSsBoxTempStatus indicates the",
+				"current temperature status.",
+				"User Action: If the temperature status is degraded or failed",
+				"shutdown the storage system as soon as possible. Insure that",
+				"the storage system environment is being cooled properly and that",
+				"no components are overheated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSs5TempStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==2) ? 0 : (($v9==4) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerIndex:$v4",
+				"Summary" : "Storage system 5 temperature status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs5TempStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation s EXAMPLE CPQSTSYS-MIB::cpqSsBoxCntlrIndex i 9999 CPQSTSYS-MIB::cpqSsBoxBusIndex i 0 CPQSTSYS-MIB::cpqSsBoxVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBoxModel s EXAMPLE CPQSTSYS-MIB::cpqSsBoxSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBoxTempStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs5TempStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8027",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A text description of the hardware location of the controller",
+							"to which this box is attached. A NULL string indicates that",
+							"the hardware location could not be determined or is irrelevant."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Controller Index.",
+							"",
+							"The controller index indicates to which adapter card instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Bus Index.",
+							"",
+							"The bus index indicates to which bus instance on an adapter card",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxBusIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Vendor",
+							"",
+							"This is the drive box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Model.",
+							"",
+							"This is a description of the drive box's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Serial Number.",
+							"",
+							"This is the drive box's serial number which is normally display",
+							"on the front panel. This can be used for identification",
+							"purposes. If the box's serial number cannot be determined, the ",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The temperature of the drive system.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"Temperature monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(3)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(4)",
+							"The temperature could permanently damage the system.",
+							"The storage system will automatically shutdown if this",
+							"condition is detected.",
+							"",
+							"noTemp(5)",
+							"This unit does not support temperature monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noTemp"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs5PwrSupplyStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system power supply status change.",
+				"The agent has detected a change in the power supply status of a",
+				"storage system. The variable cpqSsBoxFltTolPwrSupplyStatus",
+				"indicates the current power supply status.",
+				"User Action: If the power supply status is degraded, take action",
+				"to restore power or replace the failed power supply."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSs5PwrSupplyStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==2) ? 0 : (($v9==4) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerIndex:$v4",
+				"Summary" : "Storage system 5 power supply status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs5PwrSupplyStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation s EXAMPLE CPQSTSYS-MIB::cpqSsBoxCntlrIndex i 9999 CPQSTSYS-MIB::cpqSsBoxBusIndex i 0 CPQSTSYS-MIB::cpqSsBoxVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBoxModel s EXAMPLE CPQSTSYS-MIB::cpqSsBoxSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBoxFltTolPwrSupplyStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs5PwrSupplyStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8028",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A text description of the hardware location of the controller",
+							"to which this box is attached. A NULL string indicates that",
+							"the hardware location could not be determined or is irrelevant."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Controller Index.",
+							"",
+							"The controller index indicates to which adapter card instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Bus Index.",
+							"",
+							"The bus index indicates to which bus instance on an adapter card",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxBusIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Vendor",
+							"",
+							"This is the drive box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Model.",
+							"",
+							"This is a description of the drive box's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Serial Number.",
+							"",
+							"This is the drive box's serial number which is normally display",
+							"on the front panel. This can be used for identification",
+							"purposes. If the box's serial number cannot be determined, the ",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This value specifies the overall status of the fault tolerant",
+							"power supply sub-system in a drive box.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"The power supply status cannot be determined.",
+							"",
+							"ok(2)",
+							"There are no detected power supply failures.",
+							"",
+							"degraded(3)",
+							"One of the power supply units in a fault tolerant power",
+							"supply has failed.",
+							"",
+							"failed(4)",
+							"No failure conditions can currently be determined.",
+							"",
+							"noFltTolPower(5)",
+							"This unit does not support fault tolerant power supply",
+							"monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noFltTolPower"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxFltTolPwrSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs6FanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System fan status change.",
+				"The agent has detected a change in the Fan Status of a storage",
+				"system. The variable cpqSsBoxFanStatus indicates the current",
+				"fan status.",
+				"User Action: If the fan status is degraded or failed, replace",
+				"any failed fans."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSs6FanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==2) ? 0 : (($v9==3) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerIndex:$v4",
+				"Summary" : "Storage system 6 ($v10) fan status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs6FanStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation s EXAMPLE CPQSTSYS-MIB::cpqSsBoxCntlrIndex i 9999 CPQSTSYS-MIB::cpqSsBoxBusIndex i 0 CPQSTSYS-MIB::cpqSsBoxVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBoxModel s EXAMPLE CPQSTSYS-MIB::cpqSsBoxSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBoxFanStatus i 1 CPQSTSYS-MIB::cpqSsBoxLocationString s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs6FanStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8029",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A text description of the hardware location of the controller",
+							"to which this box is attached. A NULL string indicates that",
+							"the hardware location could not be determined or is irrelevant."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Controller Index.",
+							"",
+							"The controller index indicates to which adapter card instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Bus Index.",
+							"",
+							"The bus index indicates to which bus instance on an adapter card",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxBusIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Vendor",
+							"",
+							"This is the drive box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Model.",
+							"",
+							"This is a description of the drive box's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Serial Number.",
+							"",
+							"This is the drive box's serial number which is normally display",
+							"on the front panel. This can be used for identification",
+							"purposes. If the box's serial number cannot be determined, the ",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Fan Status.",
+							"",
+							"This is the current status of the fans in the drive box.",
+							"This value will be one of the following:",
+							"other(1)",
+							"Fan monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"All fans are working normally.",
+							"",
+							"failed(3)",
+							"One or more storage system fans have failed. The fan(s) should",
+							"be replaced immediately to avoid hardware damage.",
+							"",
+							"noFan(4)",
+							"This unit does not support fan monitoring.",
+							"",
+							"degraded(5)",
+							"At least one storage system fan has failed, but there is still",
+							"sufficient cooling capacity to allow the system to continue.",
+							"The fan should be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "noFan",
+							"5" : "degraded"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxFanStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Location String.",
+							"",
+							"This string describes the location of the drive box in relation",
+							"to the controller to which it is attached. If the location",
+							"string cannot be determined, the agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxLocationString",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.23",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs6TempStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System temperature status change.",
+				"The agent has detected a change in the temperature status of a",
+				"storage system. The variable cpqSsBoxTempStatus indicates the",
+				"current temperature status.",
+				"User Action: If the temperature status is degraded or failed",
+				"shutdown the storage system as soon as possible. Insure that",
+				"the storage system environment is being cooled properly and that",
+				"no components are overheated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSs6TempStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==2) ? 0 : (($v9==4) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerIndex:$v4",
+				"Summary" : "Storage system 6 ($v10) temperature status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs6TempStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation s EXAMPLE CPQSTSYS-MIB::cpqSsBoxCntlrIndex i 9999 CPQSTSYS-MIB::cpqSsBoxBusIndex i 0 CPQSTSYS-MIB::cpqSsBoxVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBoxModel s EXAMPLE CPQSTSYS-MIB::cpqSsBoxSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBoxTempStatus i 1 CPQSTSYS-MIB::cpqSsBoxLocationString s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs6TempStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8030",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A text description of the hardware location of the controller",
+							"to which this box is attached. A NULL string indicates that",
+							"the hardware location could not be determined or is irrelevant."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Controller Index.",
+							"",
+							"The controller index indicates to which adapter card instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Bus Index.",
+							"",
+							"The bus index indicates to which bus instance on an adapter card",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxBusIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Vendor",
+							"",
+							"This is the drive box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Model.",
+							"",
+							"This is a description of the drive box's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Serial Number.",
+							"",
+							"This is the drive box's serial number which is normally display",
+							"on the front panel. This can be used for identification",
+							"purposes. If the box's serial number cannot be determined, the ",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The temperature of the drive system.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"Temperature monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"The temperature is within normal operating range.",
+							"",
+							"degraded(3)",
+							"The temperature is outside of normal operating range.",
+							"",
+							"failed(4)",
+							"The temperature could permanently damage the system.",
+							"The storage system will automatically shutdown if this",
+							"condition is detected.",
+							"",
+							"noTemp(5)",
+							"This unit does not support temperature monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noTemp"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTempStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Location String.",
+							"",
+							"This string describes the location of the drive box in relation",
+							"to the controller to which it is attached. If the location",
+							"string cannot be determined, the agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxLocationString",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.23",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSs6PwrSupplyStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system power supply status change.",
+				"The agent has detected a change in the power supply status of a",
+				"storage system. The variable cpqSsBoxFltTolPwrSupplyStatus",
+				"indicates the current power supply status.",
+				"User Action: If the power supply status is degraded, take action",
+				"to restore power or replace the failed power supply."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSs6PwrSupplyStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==2) ? 0 : (($v9==4) ? 4 : 3))"
+				},
+				"SubNode" : "ControllerIndex:$v4",
+				"Summary" : "Storage system 6 ($v10) power supply status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSs6PwrSupplyStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation s EXAMPLE CPQSTSYS-MIB::cpqSsBoxCntlrIndex i 9999 CPQSTSYS-MIB::cpqSsBoxBusIndex i 0 CPQSTSYS-MIB::cpqSsBoxVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBoxModel s EXAMPLE CPQSTSYS-MIB::cpqSsBoxSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBoxFltTolPwrSupplyStatus i 1 CPQSTSYS-MIB::cpqSsBoxLocationString s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSs6PwrSupplyStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8031",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A text description of the hardware location of the controller",
+							"to which this box is attached. A NULL string indicates that",
+							"the hardware location could not be determined or is irrelevant."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Controller Index.",
+							"",
+							"The controller index indicates to which adapter card instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Bus Index.",
+							"",
+							"The bus index indicates to which bus instance on an adapter card",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxBusIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Vendor",
+							"",
+							"This is the drive box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Model.",
+							"",
+							"This is a description of the drive box's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Serial Number.",
+							"",
+							"This is the drive box's serial number which is normally display",
+							"on the front panel. This can be used for identification",
+							"purposes. If the box's serial number cannot be determined, the ",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This value specifies the overall status of the fault tolerant",
+							"power supply sub-system in a drive box.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"The power supply status cannot be determined.",
+							"",
+							"ok(2)",
+							"There are no detected power supply failures.",
+							"",
+							"degraded(3)",
+							"One of the power supply units in a fault tolerant power",
+							"supply has failed.",
+							"",
+							"failed(4)",
+							"No failure conditions can currently be determined.",
+							"",
+							"noFltTolPower(5)",
+							"This unit does not support fault tolerant power supply",
+							"monitoring."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed",
+							"5" : "noFltTolPower"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxFltTolPwrSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Location String.",
+							"",
+							"This string describes the location of the drive box in relation",
+							"to the controller to which it is attached. If the location",
+							"string cannot be determined, the agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxLocationString",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.23",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsConnectionStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage system connection status change.",
+				"The agent has detected a change in the connection status of a storage",
+				"system. The variable cpqSSboxConnectionStatus indicates the current ",
+				"connection status.",
+				"User Action: If the connection status is disconnected, take action",
+				"to restore the connection between the HBA and the storage system"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v9==1) ? 3 : (($v9==4) ? 2 : 1)"
+				},
+				"EventType" : "cpqSsConnectionStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v9==1) ? 3600 : (($v9==4) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v9==1) ? 1 : (($v9==4) ? 4 : 0)"
+				},
+				"SubNode" : "ControllerIndex:$v4",
+				"Summary" : "Storage system ($v10) connection status is $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsConnectionStatusChange RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation s EXAMPLE CPQSTSYS-MIB::cpqSsBoxCntlrIndex i 9999 CPQSTSYS-MIB::cpqSsBoxBusIndex i 0 CPQSTSYS-MIB::cpqSsBoxVendor s EXAMPLE CPQSTSYS-MIB::cpqSsBoxModel s EXAMPLE CPQSTSYS-MIB::cpqSsBoxSerialNumber s EXAMPLE CPQSTSYS-MIB::cpqSsBoxConnectionStatus i 1 CPQSTSYS-MIB::cpqSsBoxLocationString s EXAMPLE CPQSTSYS-MIB::cpqSsBoxTargetSasAddress s EXAMPLE CPQSTSYS-MIB::cpqSsBoxLocalManageIpAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsConnectionStatusChange",
+				"oid" : "1.3.6.1.4.1.232.0.8032",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A text description of the hardware location of the controller",
+							"to which this box is attached. A NULL string indicates that",
+							"the hardware location could not be determined or is irrelevant."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrHwLocation",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Controller Index.",
+							"",
+							"The controller index indicates to which adapter card instance",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxCntlrIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Bus Index.",
+							"",
+							"The bus index indicates to which bus instance on an adapter card",
+							"this table entry belongs."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxBusIndex",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Vendor",
+							"",
+							"This is the drive box's vendor name.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxVendor",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Model.",
+							"",
+							"This is a description of the drive box's model.",
+							"This can be used for identification purposes."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxModel",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Serial Number.",
+							"",
+							"This is the drive box's serial number which is normally display",
+							"on the front panel. This can be used for identification",
+							"purposes. If the box's serial number cannot be determined, the ",
+							"agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxSerialNumber",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Connection Status.",
+							"",
+							"The following values are defined:",
+							"",
+							"other(1)",
+							"The agent is unable to determine the storage system's",
+							"connection status.",
+							"",
+							"notSupported(2)",
+							"Reporting this storage system's connection status is not ",
+							"supported.",
+							"",
+							"connected(3)",
+							"The storage system is connected.",
+							"",
+							"notConnected(4)",
+							"The storage system is disconnected."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notSupported",
+							"3" : "connected",
+							"4" : "notConnected"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxConnectionStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.28",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Drive Box Location String.",
+							"",
+							"This string describes the location of the drive box in relation",
+							"to the controller to which it is attached. If the location",
+							"string cannot be determined, the agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxLocationString",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Target SAS Address String.",
+							"",
+							"This string describes the SAS address of the target (i.e. the ",
+							"drive box itself). If the drive box target SAS address string ",
+							"cannot be determined, the agent will return a NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxTargetSasAddress",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Drive Box Local Management IP Address String.",
+							"",
+							"This string reports the management IP address for the ",
+							"storage box primary controller. If the drive box local management",
+							"IP address string cannot be determined, the agent will return a ",
+							"NULL string."
+						],
+						"name" : "CPQSTSYS-MIB::cpqSsBoxLocalManageIpAddress",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.26",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQSTSYS-MIB::cpqSsFanStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"Storage System fan status change.",
+				"The agent has detected a change in the Fan Status of a storage",
+				"system. The variable cpqSsBoxFanStatus indicates the current",
+				"fan status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : (($v1==2) ? 1 : 2)"
+				},
+				"EventType" : "cpqSsFanStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : (($v1==2) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 0 : (($v1==3) ? 4 : 3))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Storage system fan status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQSTSYS-MIB::cpqSsFanStatusChange CPQSTSYS-MIB::cpqSsBoxFanStatus i 1",
+			"trap" : {
+				"name" : "CPQSTSYS-MIB::cpqSsFanStatusChange",
+				"oid" : "1.3.6.1.4.1.232.8.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Drive Box Fan Status.",
+							"",
+							"This is the current status of the fans in the drive box.",
+							"This value will be one of the following:",
+							"other(1)",
+							"Fan monitoring is not supported by this system",
+							"or it is not supported by the driver.",
+							"",
+							"ok(2)",
+							"All fans are working normally.",
+							"",
+							"failed(3)",
+							"One or more storage system fans have failed. The fan(s) should",
+							"be replaced immediately to avoid hardware damage.",
+							"",
+							"noFan(4)",
+							"This unit does not support fan monitoring.",
+							"",
+							"degraded(5)",
+							"At least one storage system fan has failed, but there is still",
+							"sufficient cooling capacity to allow the system to continue.",
+							"The fan should be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "failed",
+							"4" : "noFan",
+							"5" : "degraded"
+						},
+						"name" : "CPQSTSYS-MIB::cpqSsBoxFanStatus",
+						"oid" : "1.3.6.1.4.1.232.8.2.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

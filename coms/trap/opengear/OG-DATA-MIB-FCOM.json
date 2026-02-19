@@ -1,0 +1,78 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201308110000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "OG-DATA-MIB::ogdataEventOccurred",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification sent when a status event occurs"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 2 : 1"
+				},
+				"EventType" : "ogdataEventOccurred",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 4 : 0"
+				},
+				"SubNode" : "InterfaceID:$v3",
+				"Summary" : {
+					"eval" : "($v4==1) ? 'Data usage exceeded $v1 bytes for $v2 seconds' : 'Data usage is normal'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD OG-DATA-MIB::ogdataEventOccurred OG-DATA-MIB::ogdataEventBytes i 9999 OG-DATA-MIB::ogdataEventSeconds i 9999 OG-DATA-MIB::ogdataEventDevice s EXAMPLE OG-DATA-MIB::ogdataEventState i 0",
+			"trap" : {
+				"name" : "OG-DATA-MIB::ogdataEventOccurred",
+				"oid" : "1.3.6.1.4.1.25049.10.17.2.0.200",
+				"variables" : [
+					{
+						"description" : [
+							"The number of bytes exceeded during the time period"
+						],
+						"name" : "OG-DATA-MIB::ogdataEventBytes",
+						"oid" : "1.3.6.1.4.1.25049.10.17.10.1.1.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The time in seconds over which the number of bytes was exceeded"
+						],
+						"name" : "OG-DATA-MIB::ogdataEventSeconds",
+						"oid" : "1.3.6.1.4.1.25049.10.17.10.1.1.1.11",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The unique name for the interface the alert occurred on."
+						],
+						"name" : "OG-DATA-MIB::ogdataEventDevice",
+						"oid" : "1.3.6.1.4.1.25049.10.17.10.1.1.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status of the data alert."
+						],
+						"enums" : {
+							"0" : "off",
+							"1" : "on"
+						},
+						"name" : "OG-DATA-MIB::ogdataEventState",
+						"oid" : "1.3.6.1.4.1.25049.10.17.10.1.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

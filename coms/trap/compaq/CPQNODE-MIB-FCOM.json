@@ -1,0 +1,1469 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CPQNODE-MIB::cpqNodeTemperatureDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to degraded in the",
+				"specified chassis and location.",
+				"The server's temperature is outside of the normal operating",
+				"range."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 3 : 2"
+				},
+				"EventType" : "cpqNodeTemperature:$v8",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : ($v3==2) ? 3 : 4"
+				},
+				"SubNode" : "cpqNodeUUID:$v9;ChassisNumber:$v4",
+				"Summary" : "CPQ node temperature is degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQNODE-MIB::cpqNodeTemperatureDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeThermalDegradedAction i 1 CPQHLTH-MIB::cpqHeTemperatureChassis i 9999 CPQHLTH-MIB::cpqHeTemperatureLocale i 1 CPQNODE-MIB::cpqNodeCart i 9999 CPQNODE-MIB::cpqNodeNode i 9999 CPQNODE-MIB::cpqNodeType i 0 CPQNODE-MIB::cpqNodeUUID s EXAMPLE CPQNODE-MIB::cpqNodeSerial s EXAMPLE CPQNODE-MIB::cpqNodeMac1 s EXAMPLE CPQNODE-MIB::cpqNodeMac2 s EXAMPLE CPQNODE-MIB::cpqNodeMac3 s EXAMPLE CPQNODE-MIB::cpqNodeMac4 s EXAMPLE",
+			"trap" : {
+				"name" : "CPQNODE-MIB::cpqNodeTemperatureDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.23001",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The action to perform when the thermal condition is degraded.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"This feature is not supported by this system or driver.",
+							"",
+							"continue(2)",
+							"The system should be allowed to continue.",
+							"",
+							"shutdown(3)",
+							"The system should be shutdown."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "continue",
+							"3" : "shutdown"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeThermalDegradedAction",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This specifies the location of the temperature sensor",
+							"present in the system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "system",
+							"4" : "systemBoard",
+							"5" : "ioBoard",
+							"6" : "cpu",
+							"7" : "memory",
+							"8" : "storage",
+							"9" : "removableMedia",
+							"10" : "powerSupply",
+							"11" : "ambient",
+							"12" : "chassis",
+							"13" : "bridgeCard"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureLocale",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cart number to index within this chassis when cpqNodeType is CART."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeCart",
+						"oid" : "1.3.6.1.4.1.232.20.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The node number to index within this chassis when cpqNodeType is NODE."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeNode",
+						"oid" : "1.3.6.1.4.1.232.20.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the event applies to a cartridge, node or switch."
+						],
+						"enums" : {
+							"0" : "cartridge",
+							"1" : "node",
+							"2" : "switch",
+							"3" : "unknown"
+						},
+						"name" : "CPQNODE-MIB::cpqNodeType",
+						"oid" : "1.3.6.1.4.1.232.20.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Cartridge specific Unique Identitifer to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeUUID",
+						"oid" : "1.3.6.1.4.1.232.20.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Cartridge specific Serial Number to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeSerial",
+						"oid" : "1.3.6.1.4.1.232.20.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac1",
+						"oid" : "1.3.6.1.4.1.232.20.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac2",
+						"oid" : "1.3.6.1.4.1.232.20.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac3",
+						"oid" : "1.3.6.1.4.1.232.20.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac4",
+						"oid" : "1.3.6.1.4.1.232.20.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQNODE-MIB::cpqNodeTemperatureOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to ok in the",
+				"specified chassis and location.",
+				"The server's temperature has returned to the normal operating",
+				"range."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqNodeTemperature:$v7",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "cpqNodeUUID:$v8;ChassisNumber:$v4",
+				"Summary" : "CPQ node temperature is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQNODE-MIB::cpqNodeTemperatureOk RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeTemperatureChassis i 9999 CPQHLTH-MIB::cpqHeTemperatureLocale i 1 CPQNODE-MIB::cpqNodeCart i 9999 CPQNODE-MIB::cpqNodeNode i 9999 CPQNODE-MIB::cpqNodeType i 0 CPQNODE-MIB::cpqNodeUUID s EXAMPLE CPQNODE-MIB::cpqNodeSerial s EXAMPLE CPQNODE-MIB::cpqNodeMac1 s EXAMPLE CPQNODE-MIB::cpqNodeMac2 s EXAMPLE CPQNODE-MIB::cpqNodeMac3 s EXAMPLE CPQNODE-MIB::cpqNodeMac4 s EXAMPLE",
+			"trap" : {
+				"name" : "CPQNODE-MIB::cpqNodeTemperatureOk",
+				"oid" : "1.3.6.1.4.1.232.0.23002",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This specifies the location of the temperature sensor",
+							"present in the system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "system",
+							"4" : "systemBoard",
+							"5" : "ioBoard",
+							"6" : "cpu",
+							"7" : "memory",
+							"8" : "storage",
+							"9" : "removableMedia",
+							"10" : "powerSupply",
+							"11" : "ambient",
+							"12" : "chassis",
+							"13" : "bridgeCard"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureLocale",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cart number to index within this chassis when cpqNodeType is CART."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeCart",
+						"oid" : "1.3.6.1.4.1.232.20.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The node number to index within this chassis when cpqNodeType is NODE."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeNode",
+						"oid" : "1.3.6.1.4.1.232.20.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the event applies to a cartridge, node or switch."
+						],
+						"enums" : {
+							"0" : "cartridge",
+							"1" : "node",
+							"2" : "switch",
+							"3" : "unknown"
+						},
+						"name" : "CPQNODE-MIB::cpqNodeType",
+						"oid" : "1.3.6.1.4.1.232.20.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Cartridge specific Unique Identitifer to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeUUID",
+						"oid" : "1.3.6.1.4.1.232.20.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Cartridge specific Serial Number to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeSerial",
+						"oid" : "1.3.6.1.4.1.232.20.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac1",
+						"oid" : "1.3.6.1.4.1.232.20.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac2",
+						"oid" : "1.3.6.1.4.1.232.20.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac3",
+						"oid" : "1.3.6.1.4.1.232.20.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac4",
+						"oid" : "1.3.6.1.4.1.232.20.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQNODE-MIB::cpqNodeTemperatureFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to degraded in the",
+				"specified chassis and location.",
+				"The server's temperature is outside of the normal operating",
+				"range."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 3 : 2"
+				},
+				"EventType" : "cpqNodeTemperature:$v8",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : ($v3==2) ? 3 : 4"
+				},
+				"SubNode" : "cpqNodeUUID:$v9;ChassisNumber:$v4",
+				"Summary" : "CPQ node temperature failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQNODE-MIB::cpqNodeTemperatureFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeThermalDegradedAction i 1 CPQHLTH-MIB::cpqHeTemperatureChassis i 9999 CPQHLTH-MIB::cpqHeTemperatureLocale i 1 CPQNODE-MIB::cpqNodeCart i 9999 CPQNODE-MIB::cpqNodeNode i 9999 CPQNODE-MIB::cpqNodeType i 0 CPQNODE-MIB::cpqNodeUUID s EXAMPLE CPQNODE-MIB::cpqNodeSerial s EXAMPLE CPQNODE-MIB::cpqNodeMac1 s EXAMPLE CPQNODE-MIB::cpqNodeMac2 s EXAMPLE CPQNODE-MIB::cpqNodeMac3 s EXAMPLE CPQNODE-MIB::cpqNodeMac4 s EXAMPLE",
+			"trap" : {
+				"name" : "CPQNODE-MIB::cpqNodeTemperatureFailed",
+				"oid" : "1.3.6.1.4.1.232.0.23003",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The action to perform when the thermal condition is degraded.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"This feature is not supported by this system or driver.",
+							"",
+							"continue(2)",
+							"The system should be allowed to continue.",
+							"",
+							"shutdown(3)",
+							"The system should be shutdown."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "continue",
+							"3" : "shutdown"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeThermalDegradedAction",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This specifies the location of the temperature sensor",
+							"present in the system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "system",
+							"4" : "systemBoard",
+							"5" : "ioBoard",
+							"6" : "cpu",
+							"7" : "memory",
+							"8" : "storage",
+							"9" : "removableMedia",
+							"10" : "powerSupply",
+							"11" : "ambient",
+							"12" : "chassis",
+							"13" : "bridgeCard"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureLocale",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cart number to index within this chassis when cpqNodeType is CART."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeCart",
+						"oid" : "1.3.6.1.4.1.232.20.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The node number to index within this chassis when cpqNodeType is NODE."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeNode",
+						"oid" : "1.3.6.1.4.1.232.20.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the event applies to a cartridge, node or switch."
+						],
+						"enums" : {
+							"0" : "cartridge",
+							"1" : "node",
+							"2" : "switch",
+							"3" : "unknown"
+						},
+						"name" : "CPQNODE-MIB::cpqNodeType",
+						"oid" : "1.3.6.1.4.1.232.20.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Cartridge specific Unique Identitifer to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeUUID",
+						"oid" : "1.3.6.1.4.1.232.20.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Cartridge specific Serial Number to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeSerial",
+						"oid" : "1.3.6.1.4.1.232.20.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac1",
+						"oid" : "1.3.6.1.4.1.232.20.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac2",
+						"oid" : "1.3.6.1.4.1.232.20.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac3",
+						"oid" : "1.3.6.1.4.1.232.20.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac4",
+						"oid" : "1.3.6.1.4.1.232.20.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQNODE-MIB::cpqNodeErrorEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"An error event has been received from a cartridge. The",
+				"details can be found in the error message string."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqNodeError:$v6",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "cpqNodeUUID:$v9;ChassisNumber:$v4",
+				"Summary" : "Error event on chassis $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQNODE-MIB::cpqNodeErrorEvent RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQNODE-MIB::cpqNodeErrorMessage s EXAMPLE CPQNODE-MIB::cpqNodeCart i 9999 CPQNODE-MIB::cpqNodeNode i 9999 CPQNODE-MIB::cpqNodeType i 0 CPQNODE-MIB::cpqNodeUUID s EXAMPLE CPQNODE-MIB::cpqNodeSerial s EXAMPLE CPQNODE-MIB::cpqNodeMac1 s EXAMPLE CPQNODE-MIB::cpqNodeMac2 s EXAMPLE CPQNODE-MIB::cpqNodeMac3 s EXAMPLE CPQNODE-MIB::cpqNodeMac4 s EXAMPLE",
+			"trap" : {
+				"name" : "CPQNODE-MIB::cpqNodeErrorEvent",
+				"oid" : "1.3.6.1.4.1.232.0.23004",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Cartridge specific message defining what the error is."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeErrorMessage",
+						"oid" : "1.3.6.1.4.1.232.20.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The cart number to index within this chassis when cpqNodeType is CART."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeCart",
+						"oid" : "1.3.6.1.4.1.232.20.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The node number to index within this chassis when cpqNodeType is NODE."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeNode",
+						"oid" : "1.3.6.1.4.1.232.20.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the event applies to a cartridge, node or switch."
+						],
+						"enums" : {
+							"0" : "cartridge",
+							"1" : "node",
+							"2" : "switch",
+							"3" : "unknown"
+						},
+						"name" : "CPQNODE-MIB::cpqNodeType",
+						"oid" : "1.3.6.1.4.1.232.20.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Cartridge specific Unique Identitifer to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeUUID",
+						"oid" : "1.3.6.1.4.1.232.20.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Cartridge specific Serial Number to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeSerial",
+						"oid" : "1.3.6.1.4.1.232.20.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac1",
+						"oid" : "1.3.6.1.4.1.232.20.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac2",
+						"oid" : "1.3.6.1.4.1.232.20.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac3",
+						"oid" : "1.3.6.1.4.1.232.20.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac4",
+						"oid" : "1.3.6.1.4.1.232.20.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQNODE-MIB::cpqNodePowerOn",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Moonshot node has powered on."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqNodePower:$v5",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "NodeUUID:$v6;NodeNumber:$v4",
+				"Summary" : "Moonshot chassis node powered on"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQNODE-MIB::cpqNodePowerOn RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQNODE-MIB::cpqNodeCart i 9999 CPQNODE-MIB::cpqNodeNode i 9999 CPQNODE-MIB::cpqNodeType i 0 CPQNODE-MIB::cpqNodeUUID s EXAMPLE CPQNODE-MIB::cpqNodeSerial s EXAMPLE CPQNODE-MIB::cpqNodeMac1 s EXAMPLE CPQNODE-MIB::cpqNodeMac2 s EXAMPLE CPQNODE-MIB::cpqNodeMac3 s EXAMPLE CPQNODE-MIB::cpqNodeMac4 s EXAMPLE",
+			"trap" : {
+				"name" : "CPQNODE-MIB::cpqNodePowerOn",
+				"oid" : "1.3.6.1.4.1.232.0.23010",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cart number to index within this chassis when cpqNodeType is CART."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeCart",
+						"oid" : "1.3.6.1.4.1.232.20.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The node number to index within this chassis when cpqNodeType is NODE."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeNode",
+						"oid" : "1.3.6.1.4.1.232.20.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the event applies to a cartridge, node or switch."
+						],
+						"enums" : {
+							"0" : "cartridge",
+							"1" : "node",
+							"2" : "switch",
+							"3" : "unknown"
+						},
+						"name" : "CPQNODE-MIB::cpqNodeType",
+						"oid" : "1.3.6.1.4.1.232.20.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Cartridge specific Unique Identitifer to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeUUID",
+						"oid" : "1.3.6.1.4.1.232.20.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Cartridge specific Serial Number to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeSerial",
+						"oid" : "1.3.6.1.4.1.232.20.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac1",
+						"oid" : "1.3.6.1.4.1.232.20.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac2",
+						"oid" : "1.3.6.1.4.1.232.20.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac3",
+						"oid" : "1.3.6.1.4.1.232.20.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac4",
+						"oid" : "1.3.6.1.4.1.232.20.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQNODE-MIB::cpqNodePowerOff",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Moonshot node has powered off."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqNodePower:$v5",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "NodeUUID:$v6;NodeNumber:$v4",
+				"Summary" : "Moonshot chassis node powered off"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQNODE-MIB::cpqNodePowerOff RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQNODE-MIB::cpqNodeCart i 9999 CPQNODE-MIB::cpqNodeNode i 9999 CPQNODE-MIB::cpqNodeType i 0 CPQNODE-MIB::cpqNodeUUID s EXAMPLE CPQNODE-MIB::cpqNodeSerial s EXAMPLE CPQNODE-MIB::cpqNodeMac1 s EXAMPLE CPQNODE-MIB::cpqNodeMac2 s EXAMPLE CPQNODE-MIB::cpqNodeMac3 s EXAMPLE CPQNODE-MIB::cpqNodeMac4 s EXAMPLE",
+			"trap" : {
+				"name" : "CPQNODE-MIB::cpqNodePowerOff",
+				"oid" : "1.3.6.1.4.1.232.0.23011",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The cart number to index within this chassis when cpqNodeType is CART."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeCart",
+						"oid" : "1.3.6.1.4.1.232.20.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The node number to index within this chassis when cpqNodeType is NODE."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeNode",
+						"oid" : "1.3.6.1.4.1.232.20.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates whether the event applies to a cartridge, node or switch."
+						],
+						"enums" : {
+							"0" : "cartridge",
+							"1" : "node",
+							"2" : "switch",
+							"3" : "unknown"
+						},
+						"name" : "CPQNODE-MIB::cpqNodeType",
+						"oid" : "1.3.6.1.4.1.232.20.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Cartridge specific Unique Identitifer to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeUUID",
+						"oid" : "1.3.6.1.4.1.232.20.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Cartridge specific Serial Number to indetify where the trap ",
+							"came from withing the chassis."
+						],
+						"name" : "CPQNODE-MIB::cpqNodeSerial",
+						"oid" : "1.3.6.1.4.1.232.20.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac1",
+						"oid" : "1.3.6.1.4.1.232.20.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac2",
+						"oid" : "1.3.6.1.4.1.232.20.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac3",
+						"oid" : "1.3.6.1.4.1.232.20.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The module date.",
+							"",
+							"field octets contents ",
+							"===== ====== ======= ",
+							"1 1-2 first byte of mac address",
+							"2 3 : separator",
+							"3 4-5 2nd byte of mac address",
+							"4 6 : separator",
+							"5 7-8 3rd byte of mac address",
+							"6 9 : separator",
+							"7 10-11 4th byte of mac address",
+							"8 12 : separator",
+							"9 13-14 5th byte of mac address",
+							"10 15 : separator",
+							"11 16-17 6th byte of mac address",
+							"12 18 : separator",
+							"",
+							"First MAC address to identify the node"
+						],
+						"name" : "CPQNODE-MIB::cpqNodeMac4",
+						"oid" : "1.3.6.1.4.1.232.20.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,485 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201303270000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmOnOffNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the cable modem coming",
+				"online and going offline. A notification will be sent from",
+				"CMTS for a cable modem status changing to online or offline",
+				"within the interval specified in",
+				"cdxCmtsCmOnOffTrapInterval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6 == 1) ? 2 : (($v6 == 12) ? 1 : 3)"
+				},
+				"EventType" : "cdxCmtsCmOnOffNotification",
+				"ExpireTime" : {
+					"eval" : "($v6 == 1) ? 86400 : (($v6 == 12) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v6 == 1) ? 5 : (($v6 == 12) ? 0 : 2)"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "Cable modem $v2 status has changed to $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DOCS-EXT-MIB::cdxCmtsCmOnOffNotification DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s 00:00:00:00:00:00 DOCS-IF-MIB::docsIfCmtsCmStatusIpAddress a 192.168.2.1 DOCS-IF-MIB::docsIfCmtsCmStatusDownChannelIfIndex i 9999 DOCS-IF-MIB::docsIfCmtsCmStatusUpChannelIfIndex i 9999 CISCO-DOCS-EXT-MIB::cdxCmCpeCmtsServiceId i 9999 CISCO-DOCS-EXT-MIB::cdxCmtsCmStatusValue i 1",
+			"trap" : {
+				"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmOnOffNotification",
+				"oid" : "1.3.6.1.4.1.9.9.116.2.0.1",
+				"variables" : [
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusIpAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDownChannelIfIndex",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusUpChannelIfIndex",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-DOCS-EXT-MIB::cdxCmCpeCmtsServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.3.1.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "offline",
+							"2" : "others",
+							"3" : "initRangingRcvd",
+							"4" : "initDhcpReqRcvd",
+							"5" : "onlineNetAccessDisabled",
+							"6" : "onlineKekAssigned",
+							"7" : "onlineTekAssigned",
+							"8" : "rejectBadMic",
+							"9" : "rejectBadCos",
+							"10" : "kekRejected",
+							"11" : "tekRejected",
+							"12" : "online",
+							"13" : "initTftpPacketRcvd",
+							"14" : "initTodRequestRcvd",
+							"15" : "reset",
+							"16" : "rangingInProgress",
+							"17" : "rangingCompleted",
+							"18" : "dhcpGotIpAddr",
+							"19" : "rejStaleConfig",
+							"20" : "rejIpSpoof",
+							"21" : "rejClassFail",
+							"22" : "rejRegNack",
+							"23" : "bpiKekExpired",
+							"24" : "bpiTekExpired",
+							"25" : "shutdown",
+							"26" : "channelChgInitRangingRcvd",
+							"27" : "channelChgRangingInProgress"
+						},
+						"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmStatusValue",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.3.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent at the completion of a CMTS",
+				"channel override operation if ",
+				"cdxCmtsCmChOverTrapOnCompletion is true in the",
+				"original entry.",
+				"Once a channel override operation has been activated, it ",
+				"cannot be stopped. That is, it will run until either the ",
+				"CMTS has generated downstream frequency and/or upstream ",
+				"channel override fields in the RNG-RSP message sent to a ",
+				"cable modem or ",
+				"cdxCmtsCmChOverTimeExpiration time expired.",
+				"In either case, the operation is completed. State in the ",
+				"cdxCmtsCmChOverState object will tell in which ",
+				"condition the operation is completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cdxCmtsCmChOverNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v5 == 1) ? 2 : 3"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "CMTS Channel override operation completed with status $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverNotification CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverMacAddress s 09:09:09:09:09:09 CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverDownFrequency i 9999 CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverUpChannelId i 0 CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverOpInitiatedTime t 9999 CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverState i 1",
+			"trap" : {
+				"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverNotification",
+				"oid" : "1.3.6.1.4.1.9.9.116.2.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.3.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverDownFrequency",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.3.5.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverUpChannelId",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.3.5.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverOpInitiatedTime",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.3.5.1.6",
+						"valueType" : "TICKS"
+					},
+					{
+						"enums" : {
+							"1" : "messageSent",
+							"2" : "commandNotActive",
+							"3" : "noOpNeeded",
+							"4" : "modemNotFound",
+							"5" : "waitToSendMessage",
+							"6" : "timeOut"
+						},
+						"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmChOverState",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.3.5.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmDMICLockNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent whenever a modem is locked because",
+				"it failed the Dynamic Message Integrity Check."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cdxCmtsCmDMICLockNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Modem $v1 locked because of failed Dynamic Message Integrity Check"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DOCS-EXT-MIB::cdxCmtsCmDMICLockNotification DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s 00:00:00:00:00:00",
+			"trap" : {
+				"name" : "CISCO-DOCS-EXT-MIB::cdxCmtsCmDMICLockNotification",
+				"oid" : "1.3.6.1.4.1.9.9.116.2.0.3",
+				"variables" : [
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DOCS-EXT-MIB::cdxWBResilRFDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that a RF channel changed state to",
+				"logical DOWN state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cdxWBResilRF",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v2",
+				"Summary" : "RF channel has changed state to logical DOWN"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DOCS-EXT-MIB::cdxWBResilRFDown IF-MIB::ifIndex i 9999 IF-MIB::ifDescr s EXAMPLE CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel i 1",
+			"trap" : {
+				"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilRFDown",
+				"oid" : "1.3.6.1.4.1.9.9.116.2.0.4",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "IF-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "info",
+							"2" : "warning",
+							"3" : "error"
+						},
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DOCS-EXT-MIB::cdxWBResilRFUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that a RF channel changed state to",
+				"logical UP state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cdxWBResilRF",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v2",
+				"Summary" : "RF channel has changed state to logical UP"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DOCS-EXT-MIB::cdxWBResilRFUp IF-MIB::ifIndex i 9999 IF-MIB::ifDescr s EXAMPLE CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel i 1",
+			"trap" : {
+				"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilRFUp",
+				"oid" : "1.3.6.1.4.1.9.9.116.2.0.5",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "IF-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "info",
+							"2" : "warning",
+							"3" : "error"
+						},
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DOCS-EXT-MIB::cdxWBResilCMPartialServiceNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that a Cable Modem is in partial",
+				"service. Object docsIfCmtsCmStatusDownChannelIfIndex ",
+				"represents the target wideband/narrowband ifindex."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cdxWBResilCMServiceNotif",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v2",
+				"Summary" : "Cable Modem $v2 is in partial service"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DOCS-EXT-MIB::cdxWBResilCMPartialServiceNotif IF-MIB::ifIndex i 9999 DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s 00:00:00:00:00:00 DOCS-IF-MIB::docsIfCmtsCmStatusDownChannelIfIndex i 9999 CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel i 1",
+			"trap" : {
+				"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilCMPartialServiceNotif",
+				"oid" : "1.3.6.1.4.1.9.9.116.2.0.6",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDownChannelIfIndex",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "info",
+							"2" : "warning",
+							"3" : "error"
+						},
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DOCS-EXT-MIB::cdxWBResilCMFullServiceNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that a Cable Modem is recovered",
+				"from partial service. Object docsIfCmtsCmStatusDownChannelIfIndex",
+				"represents the target wideband/narrowband ifindex."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cdxWBResilCMServiceNotif",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v2",
+				"Summary" : "Cable Modem $v2 has recovered from partial service"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DOCS-EXT-MIB::cdxWBResilCMFullServiceNotif IF-MIB::ifIndex i 9999 DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s 00:00:00:00:00:00 DOCS-IF-MIB::docsIfCmtsCmStatusDownChannelIfIndex i 9999 CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel i 1",
+			"trap" : {
+				"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilCMFullServiceNotif",
+				"oid" : "1.3.6.1.4.1.9.9.116.2.0.7",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusDownChannelIfIndex",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"enums" : {
+							"1" : "info",
+							"2" : "warning",
+							"3" : "error"
+						},
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DOCS-EXT-MIB::cdxWBResilEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that a wideband resiliency event is",
+				"received by CMTS."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cdxWBResilEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v6 == 3) ? 3 : 2"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "A wideband resiliency $v2 event has been received by CMTS"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DOCS-EXT-MIB::cdxWBResilEvent DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress s 00:00:00:00:00:00 CISCO-DOCS-EXT-MIB::cdxWBResilEventType i 1 CISCO-DOCS-EXT-MIB::cdxWBResilUpdateTime s EXAMPLEE CISCO-DOCS-EXT-MIB::cdxWBResilEventTotalCount c 9999 CISCO-DOCS-EXT-MIB::cdxWBResilEventTotalDupCount c 9999 CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel i 1",
+			"trap" : {
+				"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEvent",
+				"oid" : "1.3.6.1.4.1.9.9.116.2.0.8",
+				"variables" : [
+					{
+						"name" : "DOCS-IF-MIB::docsIfCmtsCmStatusMacAddress",
+						"oid" : "1.3.6.1.2.1.10.127.1.3.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "cmEventMddTimeout",
+							"2" : "cmEventQamFecFailure",
+							"3" : "cmEventMddRecovery",
+							"4" : "cmEventQamFecRecovery"
+						},
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEventType",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilUpdateTime",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEventTotalCount",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.10",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEventTotalDupCount",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.11",
+						"valueType" : "COUNTER"
+					},
+					{
+						"enums" : {
+							"1" : "info",
+							"2" : "warning",
+							"3" : "error"
+						},
+						"name" : "CISCO-DOCS-EXT-MIB::cdxWBResilEventLevel",
+						"oid" : "1.3.6.1.4.1.9.9.116.1.5.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

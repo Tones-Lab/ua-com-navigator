@@ -1,0 +1,73 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201404020000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-GMPLS-MIB::vRtrGmplsLspPathStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vRtrGmplsLspPathStateChange notification is generated when the ",
+				"operational state of the GMPLS LSP Path changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2 || $v2==6) ? 1 : ($v2==3 || $v2==5) ? 2 : 3"
+				},
+				"EventType" : "vRtrGmplsLspPathStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2 || $v2==6) ? 3600 : ($v2==3 || $v2==5) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2 || $v2==6) ? 0 : ($v2==1) ? 1 : ($v2==3) ? 5 : ($v2==5) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of GMPLS LSP path: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-GMPLS-MIB::vRtrGmplsLspPathStateChange TIMETRA-GMPLS-MIB::vRtrGmplsLspPathAdminState i 1 TIMETRA-GMPLS-MIB::vRtrGmplsLspPathOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-GMPLS-MIB::vRtrGmplsLspPathStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.97.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrGmplsLspPathAdminState specifies the administrative",
+							"state of the GMPLS LSP Path."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-GMPLS-MIB::vRtrGmplsLspPathAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.97.13.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrGmplsLspPathOperState indicates the operational state",
+							"of the GMPLS LSP Path."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "inProgress",
+							"5" : "failed",
+							"6" : "restored",
+							"7" : "protected"
+						},
+						"name" : "TIMETRA-GMPLS-MIB::vRtrGmplsLspPathOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.97.13.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

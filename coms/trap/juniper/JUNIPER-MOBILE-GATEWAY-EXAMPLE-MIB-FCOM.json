@@ -1,0 +1,72 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201011221200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification signifies that the specified server has ",
+				"changed state. The ServerName identifies the server, the ",
+				"ServicePicName identifies the session-pic that originated this",
+				"notification and ServerState indicates whether server came up or went down. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 eq 'Up') ? 1 : ($v3 eq 'Down') ? 2 : 3"
+				},
+				"EventType" : "jnxMobileGatewayExampleServerStatus",
+				"ExpireTime" : {
+					"eval" : "($v3 eq 'Up') ? 3600 : ($v3 eq 'Down') ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3 eq 'Up') ? 0 : ($v3 eq 'Down') ? 4 : 1"
+				},
+				"SubNode" : "ServicePicName:$v2",
+				"Summary" : "Gateway example server $v1 is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerStatus JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerName s EXAMPLE JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServicePicName s EXAMPLE JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerState s Up",
+				"$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerStatus JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerName s EXAMPLE JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServicePicName s EXAMPLE JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerState s Down",
+				"$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerStatus JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerName s EXAMPLE JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServicePicName s EXAMPLE JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerState s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerStatus",
+				"oid" : "1.3.6.1.4.1.2636.5.5.2.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"The name identifies an external server (charging,AAA,etc) on mobile-gateway."
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerName",
+						"oid" : "1.3.6.1.4.1.2636.5.5.2.1.4.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This identifies the session-pic, in the form ms-a/b/0, where",
+							"<a> is the slot and <b> could be either 0 or 1."
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServicePicName",
+						"oid" : "1.3.6.1.4.1.2636.5.5.2.1.4.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This indicates whether the server status is Up or Down"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-EXAMPLE-MIB::jnxMobileGatewayExampleServerState",
+						"oid" : "1.3.6.1.4.1.2636.5.5.2.1.4.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

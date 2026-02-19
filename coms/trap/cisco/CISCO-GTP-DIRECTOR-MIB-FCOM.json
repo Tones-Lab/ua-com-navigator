@@ -1,0 +1,51 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200109131400Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-GTP-DIRECTOR-MIB::ciscoGtpDirectorNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates the occurrence of a GDM",
+				"related alarm. ",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "ciscoGtpDirectorNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "GDM reported $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-GTP-DIRECTOR-MIB::ciscoGtpDirectorNotification CISCO-GTP-DIRECTOR-MIB::cgdNotifType i 1",
+			"trap" : {
+				"name" : "CISCO-GTP-DIRECTOR-MIB::ciscoGtpDirectorNotification",
+				"oid" : "1.3.6.1.4.1.9.9.245.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "gdmServiceUp",
+							"2" : "gdmServiceDown"
+						},
+						"name" : "CISCO-GTP-DIRECTOR-MIB::cgdNotifType",
+						"oid" : "1.3.6.1.4.1.9.9.245.1.4.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

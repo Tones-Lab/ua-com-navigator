@@ -1,0 +1,83 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201806280000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "IEEE8021-CFM-MIB::dot1agCfmFaultAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"A MEP has a persistent defect condition. A notification",
+				"(fault alarm) is sent to the management entity with the OID",
+				"of the MEP that has detected the fault.",
+				"Whenever a MEP has a persistent defect",
+				"it may or may not generate a Fault Alarm to warn the system",
+				"administrator of the problem, as controlled by the MEP",
+				"Fault Notification Generator State Machine and associated",
+				"Managed Objects. Only the highest-priority defect, as shown",
+				"in Table 20-1, is reported in the Fault Alarm.",
+				"If a defect with a higher priority is raised after a Fault",
+				"Alarm has been issued, another Fault Alarm is issued.",
+				"The management entity receiving the notification can identify",
+				"the system from the network source address of the",
+				"notification, and can identify the MEP reporting the defect",
+				"by the indices in the OID of the dot1agCfmMepHighestPrDefect",
+				"variable in the notification:",
+				"dot1agCfmMdIndex - Also the index of the MEP's",
+				"Maintenance Domain table entry",
+				"(dot1agCfmMdTable).",
+				"dot1agCfmMaIndex - Also an index (with the MD table index)",
+				"of the MEP's Maintenance Association",
+				"network table entry",
+				"(dot1agCfmMaNetTable), and (with the MD",
+				"table index and component ID) of the",
+				"MEP's MA component table entry",
+				"(dot1agCfmMaCompTable).",
+				"dot1agCfmMepIdentifier - MEP Identifier and final index",
+				"into the MEP table (dot1agCfmMepTable).",
+				"",
+				"REFERENCE",
+				"12.14.7.7"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "dot1agCfmFaultAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "MEP has persistent defect condition. Highest priority defect: $v1."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD IEEE8021-CFM-MIB::dot1agCfmFaultAlarm IEEE8021-CFM-MIB::dot1agCfmMepHighestPrDefect i 0",
+			"trap" : {
+				"name" : "IEEE8021-CFM-MIB::dot1agCfmFaultAlarm",
+				"oid" : "1.3.111.2.802.1.1.8.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The highest priority defect that has been present since the",
+							"MEPs Fault Notification Generator State Machine was last in",
+							"the FNG_RESET state.",
+							" "
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "defRDICCM",
+							"2" : "defMACstatus",
+							"3" : "defRemoteCCM",
+							"4" : "defErrorCCM",
+							"5" : "defXconCCM"
+						},
+						"name" : "IEEE8021-CFM-MIB::dot1agCfmMepHighestPrDefect",
+						"oid" : "1.3.111.2.802.1.1.8.1.7.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,132 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventServerUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent if the state transition of",
+				"cddServerPortStatus object is from 'down' or",
+				"'undetermined' to 'up' state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : (($v1 == 2) ? 2 : 3)"
+				},
+				"EventType" : "ciscoDistDirEventServerUp",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : (($v1 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 2) ? 5 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port status has changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventServerUp CISCO-DIST-DIRECTOR-MIB::cddServerPortStatus i 1",
+			"trap" : {
+				"name" : "CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventServerUp",
+				"oid" : "1.3.6.1.4.1.9.9.197.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "undetermined"
+						},
+						"name" : "CISCO-DIST-DIRECTOR-MIB::cddServerPortStatus",
+						"oid" : "1.3.6.1.4.1.9.9.197.1.3.2.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventServerDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is sent if the state transition of",
+				"cddServerPortStatus object is from 'up' or",
+				"'undetermined' to 'down' state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : (($v1 == 2) ? 2 : 3)"
+				},
+				"EventType" : "ciscoDistDirEventServerDown",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : (($v1 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 2) ? 5 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Port status has changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventServerDown CISCO-DIST-DIRECTOR-MIB::cddServerPortStatus i 1",
+			"trap" : {
+				"name" : "CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventServerDown",
+				"oid" : "1.3.6.1.4.1.9.9.197.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "undetermined"
+						},
+						"name" : "CISCO-DIST-DIRECTOR-MIB::cddServerPortStatus",
+						"oid" : "1.3.6.1.4.1.9.9.197.1.3.2.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventHitRateHigh",
+			"certification" : "STANDARD",
+			"description" : [
+				"High DNS/HTTP queries/requests notification.",
+				"mteEventTable and mteTriggerThresholdTable in",
+				"DISMAN-EVENT-MIB can be used to control the trigger of",
+				"this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoDistDirEventHitRateHigh",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "High DNS/HTTP queries/requests rate $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventHitRateHigh CISCO-DIST-DIRECTOR-MIB::cddGeneralQueryRate u 9999",
+			"trap" : {
+				"name" : "CISCO-DIST-DIRECTOR-MIB::ciscoDistDirEventHitRateHigh",
+				"oid" : "1.3.6.1.4.1.9.9.197.2.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-DIST-DIRECTOR-MIB::cddGeneralQueryRate",
+						"oid" : "1.3.6.1.4.1.9.9.197.1.1.14",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

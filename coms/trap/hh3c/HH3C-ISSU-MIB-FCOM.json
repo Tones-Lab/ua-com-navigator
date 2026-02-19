@@ -1,0 +1,125 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201301151536Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HH3C-ISSU-MIB::hh3cIssuUpgradeOpCompletionNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"An hh3cIssuUpgradeOpCompletionNotify is sent at the",
+				"completion of upgrade operation denoted by",
+				"hh3cIssuOp object, if such a notification",
+				"was requested when the operation was initiated.",
+				"hh3cIssuOpType indicates the type of the",
+				"operation. hh3cIssuOpStatus indicates the",
+				"result of the operation. hh3cIssuFailedReason",
+				"indicates the operation failure reason.",
+				"hh3cIssuOpTimeCompleted indicates the time",
+				"when the operation was completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hh3cIssuUpgradeOpCompletionNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Upgrade operation completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HH3C-ISSU-MIB::hh3cIssuUpgradeOpCompletionNotify HH3C-ISSU-MIB::hh3cIssuOpType i 1 HH3C-ISSU-MIB::hh3cIssuOpStatus i 1 HH3C-ISSU-MIB::hh3cIssuFailedReason s EXAMPLE HH3C-ISSU-MIB::hh3cIssuOpTimeCompleted s EXAMPLE",
+			"trap" : {
+				"name" : "HH3C-ISSU-MIB::hh3cIssuUpgradeOpCompletionNotify",
+				"oid" : "1.3.6.1.4.1.25506.2.133.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Command to be executed.",
+							"The 'test' command must be performed before the 'install'",
+							"command can be executed. The 'install'",
+							"command is allowed only if a read of",
+							"this object returns 'test' and the value of object",
+							"hh3cIssuOpStatus is 'success'.",
+							"",
+							"Command Remarks",
+							"",
+							"none If the user sets this object to 'none', the agent will return a success",
+							"without performing an upgrade operation.",
+							"done If this object returns any value other than",
+							"'none', setting this to 'done' will do",
+							"the required cleanup of the previous upgrade",
+							"operation and get the system ready for a new",
+							"upgrade operation.",
+							"test Check the version compatibility and upgrade method",
+							"for the given set of image files.",
+							"install For all the image entities listed in the",
+							"hh3cIssuUpgradeImageTable, perform the required",
+							"upgrade operation listed in that table.",
+							"rollback Abort the current 'install' operation and roll back",
+							"to the previous version.",
+							""
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "done",
+							"3" : "test",
+							"4" : "install",
+							"5" : "rollback"
+						},
+						"name" : "HH3C-ISSU-MIB::hh3cIssuOpType",
+						"oid" : "1.3.6.1.4.1.25506.2.133.1.1.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of the specified operation.",
+							"none - No operation was performed.",
+							"failure - Specified operation has failed.",
+							"inProgress - Specified operation is in progress.",
+							"success - Specified operation completed successfully.",
+							"rollbackInProgress - Rollback operation is in progress.",
+							"rollbackSuccess - Rollback operation completed successfully.",
+							""
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "failure",
+							"3" : "inProgress",
+							"4" : "success",
+							"5" : "rollbackInProgress",
+							"6" : "rollbackSuccess"
+						},
+						"name" : "HH3C-ISSU-MIB::hh3cIssuOpStatus",
+						"oid" : "1.3.6.1.4.1.25506.2.133.1.1.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the the cause of 'failure' state",
+							"of the object 'hh3cIssuOpStatus'.",
+							"This object would be a null string if the value of",
+							"'hh3cIssuOpStatus' is not 'failure'."
+						],
+						"name" : "HH3C-ISSU-MIB::hh3cIssuFailedReason",
+						"oid" : "1.3.6.1.4.1.25506.2.133.1.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the time when the upgrade operation was completed.",
+							"This object would be a null string if hh3cIssuOpType is",
+							"'none'. "
+						],
+						"name" : "HH3C-ISSU-MIB::hh3cIssuOpTimeCompleted",
+						"oid" : "1.3.6.1.4.1.25506.2.133.1.1.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

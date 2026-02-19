@@ -1,0 +1,3817 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201605140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpCreated notification is sent when a new row is created in the",
+				"sdpInfoTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SDPID:$v1",
+				"Summary" : "New row is created in the table"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpCreated TIMETRA-SDP-MIB::sdpId u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpCreated",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpDeleted notification is sent when an existing row is deleted",
+				"from the sdpInfoTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SDPID:$v1",
+				"Summary" : "Existing row is deleted from the table"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpDeleted TIMETRA-SDP-MIB::sdpId u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpDeleted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpStatusChanged notification is generated when there is a change",
+				"in the administrative or operating status of an SDP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : 2"
+				},
+				"EventType" : "sdpStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : (($v3>=2 && $v3<=4) ? 3 : 4)"
+				},
+				"SubNode" : "SDPID:$v1",
+				"Summary" : "SDP operational status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpStatusChanged TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::sdpAdminStatus i 2 TIMETRA-SDP-MIB::sdpOperStatus i 4",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpStatusChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The desired state of this SDP."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpAdminStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The operating state of this SDP. The value 'notAlive' is valid only",
+							"when keep-alive is enabled, and it means that the keep-alive operating",
+							"status is not alive. The value 'notReady' is valid only when this SDP",
+							"uses a label signaling protocol (e.g. TLDP) and it means that the",
+							"signaling session with the far-end peer has not been established. The",
+							"value 'invalidEgressInterface' indicates that the IOMs have detected",
+							"that the egress interface towards the far-end device is not a network",
+							"port."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "notAlive",
+							"3" : "notReady",
+							"4" : "invalidEgressInterface",
+							"5" : "transportTunnelDown",
+							"6" : "down"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindCreated",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindCreated notification is sent when a new row is created in",
+				"the sdpBindTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindCreated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "SDP bind ($v4) created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindCreated TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindCreated",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDeleted notification is sent when an existing row is",
+				"deleted from the sdpBindTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "SDP bind ($v4) deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDeleted TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDeleted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindStatusChanged notification is generated when there is a",
+				"change in the administrative or operating status of an SDP Binding.",
+				"Notice that this trap is not generated whenever the SDP Binding",
+				"operating status change is caused by an operating status change on the",
+				"associated SDP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v6==1) ? 1 : 2"
+				},
+				"EventType" : "sdpBindStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v6==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v6==1) ? 0 : (($v6==5 || $v6==9 || $v6==10) ? 4 : 3)"
+				},
+				"SubNode" : "BindID:$v4",
+				"Summary" : "SDP bind operational status: $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindStatusChanged TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindAdminStatus i 1 TIMETRA-SDP-MIB::sdpBindOperStatus i 1 TIMETRA-SDP-MIB::sdpBindOperFlags b '3'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindStatusChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The desired state of this Service-SDP binding."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindAdminStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sdpBindOperStatus indicates the operating status of",
+							"this Service-SDP binding.",
+							"'up' The Service-SDP binding is operational.",
+							"'noEgressLabel' The ingress label is available but the",
+							"egress one is missing.",
+							"'noIngressLabel' The egress label is available but the",
+							"ingress one is not.",
+							"'noLabels' Both the ingress and the egress labels",
+							"are missing.",
+							"'down' The binding is administratively down.",
+							"'svcMtuMismatch' Both labels are available, but a service",
+							"MTU mismatch was detected between the local",
+							"and the far-end devices.",
+							"'sdpPathMtuTooSmall' The operating path MTU of the corresponding",
+							"SDP minus the size of the SDP Bind control",
+							"word (if applicable) is smaller than the",
+							"service MTU.",
+							"'sdpNotReady' The SDP's signaling session is down.",
+							"'sdpDown' The SDP is not operationally up.",
+							"'sapDown' The SAP associated with the service is down."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "noEgressLabel",
+							"3" : "noIngressLabel",
+							"4" : "noLabels",
+							"5" : "down",
+							"6" : "svcMtuMismatch",
+							"7" : "sdpPathMtuTooSmall",
+							"8" : "sdpNotReady",
+							"9" : "sdpDown",
+							"10" : "sapDown"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates all the conditions that affect the operating",
+							"status of this SDP Bind.",
+							"",
+							"The bit values are as follows:",
+							"",
+							"sdpBindAdminDown (0) - SDP Bind is admin down.",
+							"svcAdminDown (1) - Service is admin down.",
+							"stitchingSvcTxDown (2) - PW-PORT FPE stitching svc",
+							"transmit is down.",
+							"sdpOperDown (3) - SDP is oper down.",
+							"sdpPathMtuTooSmall (4) - SDP's path MTU minus SDP Bind control",
+							"word size is less than Service MTU.",
+							"noIngressVcLabel (5) - No ingress VC label.",
+							"noEgressVcLabel (6) - No egress VC label.",
+							"svcMtuMismatch (7) - Service MTU mismatch with the",
+							"remote PE.",
+							"vcTypeMismatch (8) - VC type mismatch with the remote PE.",
+							"relearnLimitExceeded (9) - MAC relearn limit was exceeded",
+							"(TLS only).",
+							"iesIfAdminDown (10) - IP interface is admin down",
+							"(IES and VPRN only).",
+							"releasedIngressVcLabel (11) - Peer released our ingress VC label.",
+							"labelsExhausted (12) - Label Manager has ran out of labels.",
+							"svcParamMismatch (13) - Service-specific parameter mismatch.",
+							"insufficientBandwidth (14) - Insufficient bandwidth to allocate",
+							"to SDP binding.",
+							"pwPeerFaultStatusBits (15) - Received PW fault status bits from",
+							"peer.",
+							"meshSdpDown (16) - Mesh SDP Down.",
+							"notManagedByMcRing (17) - Not managed by mc-ring.",
+							"outOfResource (18) - Such as memory.",
+							"mhStandby (19) - Standby due to BGP.",
+							"multi-home protocol.",
+							"oamDownMepFault (20) - ETH-CFM down MEP fault detected.",
+							"oamUpMepFault (21) - ETH-CFM up MEP fault detected.",
+							"standbySigSlaveTxDown (22) - Transmit is down for",
+							"standby-sig-spoke.",
+							"operGrpDown (23) - Operational group is down.",
+							"withdrawnIngressVcLabel(24) - Withdrawn due to incompatibility.",
+							"vplsPmsiDown (25) - provider-tunnel down.",
+							"recProtSrcMac (26) - Received a packet with a",
+							"protected source MAC.",
+							"peerFaultStatusTxDown (27) - Transmit is down because",
+							"block-on-peer-fault is",
+							"enabled and received PW",
+							"faults status from peer.",
+							"evpnRouteConflict (28) - EVPN has route to.",
+							"adminLocked (29) - SDP Bind is admin-locked.",
+							"evpnP2mpConfict (30) - Conflict with evpn p2mp.",
+							"labelStackLimitExceeded(31) - label stack overhead exceeding the",
+							"egress IOM limitation."
+						],
+						"enums" : {
+							"0" : "sdpBindAdminDown",
+							"1" : "svcAdminDown",
+							"2" : "stitchingSvcTxDown",
+							"3" : "sdpOperDown",
+							"4" : "sdpPathMtuTooSmall",
+							"5" : "noIngressVcLabel",
+							"6" : "noEgressVcLabel",
+							"7" : "svcMtuMismatch",
+							"8" : "vcTypeMismatch",
+							"9" : "relearnLimitExceeded",
+							"10" : "iesIfAdminDown",
+							"11" : "releasedIngressVcLabel",
+							"12" : "labelsExhausted",
+							"13" : "svcParamMismatch",
+							"14" : "insufficientBandwidth",
+							"15" : "pwPeerFaultStatusBits",
+							"16" : "meshSdpDown",
+							"17" : "notManagedByMcRing",
+							"18" : "outOfResource",
+							"19" : "mhStandby",
+							"20" : "oamDownMepFault",
+							"21" : "oamUpMepFault",
+							"22" : "standbySigSlaveTxDown",
+							"23" : "operGrpDown",
+							"24" : "withdrawnIngressVcLabel",
+							"25" : "vplsPmsiDown",
+							"26" : "recProtSrcMac",
+							"27" : "peerFaultStatusTxDown",
+							"28" : "evpnRouteConflict",
+							"29" : "adminLocked",
+							"30" : "evpnP2mpConflict",
+							"31" : "labelStackLimitExceeded"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindOperFlags",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.20",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpTlsMacAddrLimitAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpTlsMacAddrLimitAlarmRaised notification is sent whenever the",
+				"number of MAC addresses stored in the FDB for this spoke sdp-bind",
+				"increases to reach the watermark specified by the object",
+				"svcTlsFdbTableFullHighWatermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "sdpTlsMacAddrLimitAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "SDPID:$v4",
+				"Summary" : "SDP TLS MAC addresses limit alarm raised"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpTlsMacAddrLimitAlarmRaised TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpTlsMacAddrLimitAlarmRaised",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpTlsMacAddrLimitAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpTlsMacAddrLimitAlarmCleared notification is sent whenever the",
+				"number of MAC addresses stored in the FDB for this spoke sdp-bind",
+				"drops to the watermark specified by the object",
+				"svcTlsFdbTableFullLowWatermark."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sdpTlsMacAddrLimitAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "SDPID:$v4",
+				"Summary" : "SDP TLS MAC addresses limit alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpTlsMacAddrLimitAlarmCleared TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpTlsMacAddrLimitAlarmCleared",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpTlsDHCPSuspiciousPcktRcvd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpTlsDHCPSuspiciousPcktRcvd notification is generated when a DHCP",
+				"packet is received with suspicious content."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpTlsDHCPSuspiciousPcktRcvd",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SDPID:$v4",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'SDP TLS DHCP received suspicious content packet'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpTlsDHCPSuspiciousPcktRcvd TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SERV-MIB::tlsDhcpPacketProblem s 'EXAMPLE'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpTlsDHCPSuspiciousPcktRcvd",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tlsDhcpPacketProblem indicates information on",
+							"a received DHCP packet is considered suspicious by the system. This",
+							"object was made obsolete in the 4.0 release."
+						],
+						"name" : "TIMETRA-SERV-MIB::tlsDhcpPacketProblem",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDHCPLeaseEntriesExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDHCPLeaseEntriesExceeded notification is generated when the",
+				"number of DHCP lease state entries on a given IES or VRPN spoke-SDP",
+				"reaches the user configurable upper limit given by",
+				"TIMETRA-VRTR-MIB::vRtrIfDHCPLeasePopulate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDHCPLeaseEntriesExceeded",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "Number of DHCP lease state entries exceeded the limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDHCPLeaseEntriesExceeded TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcDhcpLseStateNewCiAddr a 10.168.154.127 TIMETRA-SERV-MIB::svcDhcpLseStateNewChAddr x 000eaa12ddff TIMETRA-SERV-MIB::svcDhcpClientLease i 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDHCPLeaseEntriesExceeded",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpLseStateNewCiAddr indicates the client",
+							"IP address specified in the DHCP PDU causing the trap."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpLseStateNewCiAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.22",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpLseStateNewChAddr indicates the client",
+							"MAC address specified in the DHCP PDU causing the trap."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpLseStateNewChAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpClientLease indicates the lease time",
+							"specified in the DHCP PDU causing the trap."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpClientLease",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.24",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDHCPLseStateOverride",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDHCPLseStateOverride notification is generated when an",
+				"existing DHCP lease state is overridden by a new lease state which has",
+				"the same IP address but a different MAC address. This trap is only",
+				"applicable for IES and VPRN spoke-SDPs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDHCPLseStateOverride",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "Existing DHCP lease state is overridden by new lease state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDHCPLseStateOverride TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcDhcpLseStateNewCiAddr a 10.168.154.12 TIMETRA-SERV-MIB::svcDhcpLseStateNewChAddr x 000eaa12ddff TIMETRA-SERV-MIB::svcDhcpLseStateOldCiAddr a 10.168.154.12 TIMETRA-SERV-MIB::svcDhcpLseStateOldChAddr x 000eaa12ddff",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDHCPLseStateOverride",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpLseStateNewCiAddr indicates the client",
+							"IP address specified in the DHCP PDU causing the trap."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpLseStateNewCiAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.22",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpLseStateNewChAddr indicates the client",
+							"MAC address specified in the DHCP PDU causing the trap."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpLseStateNewChAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpLseStateOldCiAddr indicates the client",
+							"IP address that was formerly assigned to the specified DHCP lease",
+							"state."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpLseStateOldCiAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.20",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpLseStateOldChAddr indicates the client",
+							"MAC address that was formerly assigned to the specified DHCP lease",
+							"state."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpLseStateOldChAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.21",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDHCPSuspiciousPcktRcvd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDHCPSuspiciousPcktRcvd notification is generated when a",
+				"DHCP packet is received with suspicious content."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDHCPSuspiciousPcktRcvd",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BindID:$v4",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'SDP bind ($v4) DHCP received suspicious content packet'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDHCPSuspiciousPcktRcvd TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcDhcpPacketProblem s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDHCPSuspiciousPcktRcvd",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpPacketProblem indicates information on",
+							"a received DHCP packet that is considered suspicious by the system."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpPacketProblem",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.25",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDHCPLseStatePopulateErr",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDHCPLseStatePopulateErr notification indicates that the",
+				"system was unable to update the DHCP Lease State table with the",
+				"information contained in the DHCP ACK message. The DHCP ACK message",
+				"has been discarded. This trap is only applicable for IES and VPRN",
+				"spoke-SDPs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDHCPLseStatePopulateErr",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "DHCP ACK message discarded due to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDHCPLseStatePopulateErr TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcDhcpLseStatePopulateError s 'EXAMPLE'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDHCPLseStatePopulateErr",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpLseStatePopulateError indicates the",
+							"reason why the system was unable to update the Lease State table upon",
+							"reception of a DHCP ACK message."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpLseStatePopulateError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.26",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindPwPeerStatusBitsChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindPwPeerStatusBitsChanged notification is generated when",
+				"there is a change in the PW status bits received from the peer."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindPwPeerStatusBitsChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "PW status bits received from the peer with status bits changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindPwPeerStatusBitsChanged TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindPwPeerStatusBits b '2'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindPwPeerStatusBitsChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"sdpBindPwPeerStatusBits indicates the bits set by the LDP",
+							"peer when there is a fault on its side of the pseudowire.",
+							"LAC failures occur on the SAP that has been configured on",
+							"the PIPE service, PSN bits are set by SDP-binding failures",
+							"on the PIPE service. The pwNotForwarding bit is set when",
+							"none of the above failures apply, such as an MTU mismatch",
+							"failure. This value is only applicable if the peer is",
+							"using the pseudowire status signalling method to indicate",
+							"faults."
+						],
+						"enums" : {
+							"0" : "pwNotForwarding",
+							"1" : "lacIngressFault",
+							"2" : "lacEgresssFault",
+							"3" : "psnIngressFault",
+							"4" : "psnEgressFault",
+							"5" : "pwFwdingStandby"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindPwPeerStatusBits",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.28",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindTlsMacMoveExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindTlsMacMoveExceeded notification is generated when the SDP",
+				"exceeds the TLS svcTlsMacMoveMaxRate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindTlsMacMoveExceeded",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "SDP exceeded the TLS MAC move maximum rate"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindTlsMacMoveExceeded TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindAdminStatus i 1 TIMETRA-SDP-MIB::sdpBindOperStatus i 1 TIMETRA-SDP-MIB::sdpBindTlsMacMoveRateExcdLeft u 9999 TIMETRA-SDP-MIB::sdpBindTlsMacMoveNextUpTime u 9999 TIMETRA-SERV-MIB::svcTlsMacMoveMaxRate u 9999 TIMETRA-SDP-MIB::sdpBindNotifyMacAddr x 000eaa12ddff",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindTlsMacMoveExceeded",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The desired state of this Service-SDP binding."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindAdminStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sdpBindOperStatus indicates the operating status of",
+							"this Service-SDP binding.",
+							"'up' The Service-SDP binding is operational.",
+							"",
+							"'noEgressLabel' The ingress label is available but the",
+							"egress one is missing.",
+							"",
+							"'noIngressLabel' The egress label is available but the",
+							"ingress one is not.",
+							"",
+							"'noLabels' Both the ingress and the egress labels",
+							"are missing.",
+							"",
+							"'down' The binding is administratively down.",
+							"",
+							"'svcMtuMismatch' Both labels are available, but a service",
+							"MTU mismatch was detected between the local",
+							"and the far-end devices.",
+							"",
+							"'sdpPathMtuTooSmall' The operating path MTU of the corresponding",
+							"SDP minus the size of the SDP Bind control",
+							"word (if applicable) is smaller than the",
+							"service MTU.",
+							"",
+							"'sdpNotReady' The SDP's signaling session is down.",
+							"",
+							"'sdpDown' The SDP is not operationally up.",
+							"",
+							"'sapDown' The SAP associated with the service is down."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "noEgressLabel",
+							"3" : "noIngressLabel",
+							"4" : "noLabels",
+							"5" : "down",
+							"6" : "svcMtuMismatch",
+							"7" : "sdpPathMtuTooSmall",
+							"8" : "sdpNotReady",
+							"9" : "sdpDown",
+							"10" : "sapDown"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindTlsMacMoveRateExcdLeft counts down the",
+							"number of times this SDP bind can exceed the TLS svcTlsMacMoveMaxRate",
+							"and still be automatically brought up."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindTlsMacMoveRateExcdLeft",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.6.1.44",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindTlsMacMoveNextUpTime counts down the",
+							"time in seconds until a SDP bind that has been brought down due to",
+							"exceeding the TLS svcTlsMacMoveMaxRate, sdpBindOperFlags",
+							"'relearnLimitExceeded', is automatically brought up again.",
+							"",
+							"When this value is 0xffff, the SDP bind will never be automatically",
+							"brought up.",
+							"",
+							"When sdpBindOperStatus is 'up', this object counts down the time in",
+							"seconds until the value of sdpBindTlsMacMoveRateExcdLeft is reset."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindTlsMacMoveNextUpTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.6.1.43",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcTlsMacMoveMaxRate specifies the maximum",
+							"rate at which MACs can be relearned in this TLS service, before the",
+							"SAP where the moving MAC was last seen is automatically disabled in",
+							"order to protect the system against undetected loops or duplicate",
+							"MACs. The rate is computed as the maximum number of relearns allowed",
+							"in a 5 second interval: e.g. the default rate of 2 relearns per second",
+							"corresponds to 10 relearns in a 5 second period."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcTlsMacMoveMaxRate",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.3.1.43",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindNotifyMacAddr indicates the MAC address",
+							"associated with a VPLS SDP Binding."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindNotifyMacAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindPwPeerFaultAddrChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindPwPeerFaultAddrChanged notification is",
+				"generated when there is a change in the IP address",
+				"included in the PW status message sent by the peer.",
+				"This notification is only generated if the IP address",
+				"is the only information in the notification that",
+				"changed. If the status bits changed as well, then",
+				"the sdpBindPwPeerStatusBitsChanged notification will",
+				"be generated instead."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindPwPeerFaultAddrChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "SDP bind PW peer fault address ($v6) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindPwPeerFaultAddrChanged TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindPwFaultInetAddressType i 0 TIMETRA-SDP-MIB::sdpBindPwFaultInetAddress x 0x7f000001",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindPwPeerFaultAddrChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindPwFaultInetAddressType indicates the",
+							"address type of sdpBindPwFaultInetAddress."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindPwFaultInetAddressType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.36",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sdpBindPwFaultInetAddress indicates the IP",
+							"address that was included in the pseudowire status",
+							"message sent by the LDP peer. This value is only",
+							"applicable if the peer is using the pseudowire status",
+							"signalling method to indicate faults."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindPwFaultInetAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.37",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDHCPProxyServerError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDHCPProxyServerError notification indicates that the system",
+				"was unable to proxy DHCP requests."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDHCPProxyServerError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "DHCP proxy server error detected due to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDHCPProxyServerError TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcDhcpProxyError s 'EXAMPLE'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDHCPProxyServerError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpProxyError indicates the reason why the",
+							"proxy server failed to operate."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpProxyError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.37",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDHCPCoAError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDHCPCoAError notification indicates that the system was",
+				"unable to process a Change of Authorization (CoA) request from a",
+				"Radius server."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDHCPCoAError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "Bind ($v4) DHCP change of authorization error detected due to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDHCPCoAError TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcDhcpCoAError s 'EXAMPLE'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDHCPCoAError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpCoAError indicates the reason why the",
+							"node failed to process a Change of Authorization (CoA) request from a",
+							"Radius server."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpCoAError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.38",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDHCPSubAuthError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDHCPSubAuthError notification indicates that the system",
+				"encountered a problem while trying to authenticate a subscriber."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDHCPSubAuthError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BindID:$v4",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'Bind ($v4) DHCP subscriber authentication failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDHCPSubAuthError TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcDhcpSubAuthError s 'EXAMPLE'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDHCPSubAuthError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpSubAuthError is a printable character",
+							"string which contains information about the problem that occurred",
+							"while trying to authenticate the subscriber."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpSubAuthError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.39",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindSdpStateChangeProcessed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindSdpStateChangeProcessed notification indicates that the",
+				"agent has finished processing an SDP state change event, and that the",
+				"operating status of all the affected SDP Bindings has been updated",
+				"accordingly. The value of the sdpNotifySdpId object indicates the SDP",
+				"that experienced the state change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindSdpStateChangeProcessed",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SDPID:$v1",
+				"Summary" : "Agent finished processing an SDP $v1 state change event"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindSdpStateChangeProcessed TIMETRA-SDP-MIB::sdpNotifySdpId u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindSdpStateChangeProcessed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of the SDP where SDP Bindings are associated. This object is",
+							"used by the sdpBindSdpStateChangeProcessed notification to indicate",
+							"the SDP that changed state and that resulted in having the associated",
+							"sdpBindStatusChanged events suppressed for all SDP Bindings on that",
+							"SDP."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpNotifySdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindDHCPLseStateMobilityErr",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindDHCPLseStateMobilityErr notification indicates that the",
+				"system was unable to perform a mobility check for this lease state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindDHCPLseStateMobilityErr",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "Bind DHCP lease state mobility check failed due to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindDHCPLseStateMobilityErr TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcDhcpLseStatePopulateError s 'EXAMPLE'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindDHCPLseStateMobilityErr",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcDhcpLseStatePopulateError indicates the",
+							"reason why the system was unable to update the Lease State table upon",
+							"reception of a DHCP ACK message."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcDhcpLseStatePopulateError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.26",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBandwidthOverbooked",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBandwidthOverbooked notification indicates that the bandwidth",
+				"that has been allocated to the SDP bindings indicated by",
+				"sdpBookedBandwidth exceeds sdpMaxBookableBandwidth."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBandwidthOverbooked",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SDPID:$v1",
+				"Summary" : "SDP $v1 booked bandwidth ($v3) exceeded the maximum bookable bandwidth limit ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBandwidthOverbooked TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::sdpMaxBookableBandwidth u 9999 TIMETRA-SDP-MIB::sdpBookedBandwidth u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBandwidthOverbooked",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of sdpMaxBookableBandwidth indicates the max Bandwidth that",
+							"the SDP has for booking by the SDP bindings. The value of",
+							"sdpMaxBookableBandwidth is calculated as follow:",
+							"sdpMaxBookableBandwidth = sdpOperBandwidth *",
+							"sdpBandwidthBookingFactor"
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpMaxBookableBandwidth",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.42",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of sdpBookedBandwidth indicates the SDP Bandwidth that has",
+							"been booked by the SDP bindings."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBookedBandwidth",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.43",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindInsufficientBandwidth",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpBindInsufficientBandwidth notification indicates that the",
+				"available bandwidth of the SDP is insufficient to satisfy the",
+				"bandwidth requirement specified by sdpBindAdminBandwidth of this SDP",
+				"binding."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindInsufficientBandwidth",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SDPID:$v2",
+				"Summary" : "Available bandwidth ($v4) of the SDP $v2 is insufficient to satisfy the bandwidth requirement"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindInsufficientBandwidth TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpAvailableBandwidth u 9999 TIMETRA-SDP-MIB::sdpBindAdminBandwidth u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindInsufficientBandwidth",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of sdpAvailableBandwidth indicates the Bandwidth that is",
+							"still free for booking by the SDP bindings on the SDP."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpAvailableBandwidth",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.41",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindAdminBandwidth specifies the bandwidth",
+							"that needs to be reserved for this SDP binding in kilobits per second.",
+							"The SdpBindBandwidth object only applies to the SDP bindings under the",
+							"epipe(1), apipe(7), fpipe(8), ipipe(9) and cpipe(10) services."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindAdminBandwidth",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.40",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::dynamicSdpConfigChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The dynamicSdpConfigChanged notification is generated when a dynamic",
+				"SDP is 'created', 'modified', or 'deleted', with the value of",
+				"dynamicSdpStatus indicated which state it has entered."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<svcId>\\d+)\\.(?P<svcL2RteVsiPrefix>\\d+)\\.(?P<svcL2RteRouteDistinguisher>\\w+)\\.(?P<svcL2RteNextHopType>\\d+)\\.(?P<svcL2RteNextHop>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dynamicSdpConfigChanged",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==3) ? 3 : 2"
+				},
+				"SubNode" : "SDPID:$v2;NextHopIPAddr:$svcL2RteNextHop",
+				"Summary" : "Dynamic SDP configuration status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::dynamicSdpConfigChanged TIMETRA-SDP-MIB::dynamicSdpOrigin i 5 TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::svcL2RteSdpBindId.1.2.123.1.4.4.4.4 s 'EXAMPLES' TIMETRA-SDP-MIB::dynamicSdpStatus i 2",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::dynamicSdpConfigChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"The value of dynamicSdpOrigin indicates the origin of the dynamic SDP.",
+							"The origin indicates the protocol or mechanism that created the",
+							"dynamic SDP."
+						],
+						"enums" : {
+							"1" : "manual",
+							"2" : "bgp-l2vpn",
+							"3" : "radius",
+							"4" : "bgpSignalL2vpn",
+							"5" : "multiSegmentPW",
+							"6" : "vplsPmsi",
+							"7" : "dynScript",
+							"8" : "bof",
+							"9" : "bgpSignalVpws",
+							"12" : "vsd",
+							"13" : "evpn",
+							"14" : "vsd-sd",
+							"15" : "satellites",
+							"16" : "fpe",
+							"17" : "evpnIsa",
+							"18" : "greBridged",
+							"19" : "tli",
+							"20" : "pdn",
+							"23" : "ipsec",
+							"24" : "reserved24",
+							"25" : "reserved25",
+							"26" : "manual-mci"
+						},
+						"name" : "TIMETRA-SDP-MIB::dynamicSdpOrigin",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of svcL2RteSdpBindId indicates the SDP bind ID of the SDP",
+							"bind that binds this VPLS context to the VSI indicated by",
+							"svcL2RteRouteDistinguisher, svcL2RteVsiPrefix, and svcL2RteNextHop.",
+							"",
+							"The value of svcL2RteSdpBindId will be '0000000000000000'H if there",
+							"was an error in creating the L2 route and the svcL2RteError will",
+							"contain a string describing the error."
+						],
+						"name" : "TIMETRA-SDP-MIB::svcL2RteSdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.39.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of dynamicSdpStatus indicates the status of the dynamic SDP",
+							"which is used by the dynamicSdpConfigChanged and",
+							"dynamicSdpBindConfigChanged notifications to indicate what state the",
+							"dynamic SDP or SDP Bind has entered: 'created', 'modified', or",
+							"'deleted'."
+						],
+						"enums" : {
+							"1" : "created",
+							"2" : "modified",
+							"3" : "deleted"
+						},
+						"name" : "TIMETRA-SDP-MIB::dynamicSdpStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::dynamicSdpBindConfigChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The dynamicSdpBindConfigChanged notification is generated when a",
+				"dynamic SDP Bind is 'created', 'modified', or 'deleted'. New state",
+				"of the SDP Bind is indicated by the value of dynamicSdpStatus. The",
+				"affected SDP is indicated by the value of 'sdpId' or by Spoke-SDP FEC",
+				"identifier 'sdpMSPwPeId'.",
+				"[EFFECT] This is an informational notification. Depending on the type",
+				"of change, new layer-2 route may have been created, modified or",
+				"deleted.",
+				"[RECOVERY] No recovery action is required."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<svcId>\\d+)\\.(?P<svcL2RteVsiPrefix>\\d+)\\.(?P<svcL2RteRouteDistinguisher>\\w+)\\.(?P<svcL2RteNextHopType>\\d+)\\.(?P<svcL2RteNextHop>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dynamicSdpBindConfigChanged",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4==3) ? 3 : 2"
+				},
+				"SubNode" : "SDPID:$v2;NextHopIPAddr:$svcL2RteNextHop",
+				"Summary" : "Dynamic SDP bind configuration status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::dynamicSdpBindConfigChanged TIMETRA-SDP-MIB::dynamicSdpOrigin i 6 TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::svcL2RteSdpBindId.1.2.123.1.4.4.4.4 s 'EXAMPLES' TIMETRA-SDP-MIB::dynamicSdpStatus i 1 TIMETRA-SDP-MIB::sdpMSPwPeId u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::dynamicSdpBindConfigChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"The value of dynamicSdpOrigin indicates the origin of the dynamic SDP.",
+							"The origin indicates the protocol or mechanism that created the",
+							"dynamic SDP."
+						],
+						"enums" : {
+							"1" : "manual",
+							"2" : "bgp-l2vpn",
+							"3" : "radius",
+							"4" : "bgpSignalL2vpn",
+							"5" : "multiSegmentPW",
+							"6" : "vplsPmsi",
+							"7" : "dynScript",
+							"8" : "bof",
+							"9" : "bgpSignalVpws",
+							"12" : "vsd",
+							"13" : "evpn",
+							"14" : "vsd-sd",
+							"15" : "satellites",
+							"16" : "fpe",
+							"17" : "evpnIsa",
+							"18" : "greBridged",
+							"19" : "tli",
+							"20" : "pdn",
+							"23" : "ipsec",
+							"24" : "reserved24",
+							"25" : "reserved25",
+							"26" : "manual-mci"
+						},
+						"name" : "TIMETRA-SDP-MIB::dynamicSdpOrigin",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of svcL2RteSdpBindId indicates the SDP bind ID of the SDP",
+							"bind that binds this VPLS context to the VSI indicated by",
+							"svcL2RteRouteDistinguisher, svcL2RteVsiPrefix, and svcL2RteNextHop.",
+							"The value of svcL2RteSdpBindId will be '0000000000000000'H if there",
+							"was an error in creating the L2 route and the svcL2RteError will",
+							"contain a string describing the error."
+						],
+						"name" : "TIMETRA-SDP-MIB::svcL2RteSdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.39.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of dynamicSdpStatus indicates the status of the dynamic SDP",
+							"which is used by the dynamicSdpConfigChanged and",
+							"dynamicSdpBindConfigChanged notifications to indicate what state the",
+							"dynamic SDP or SDP Bind has entered: 'created', 'modified', or",
+							"'deleted'."
+						],
+						"enums" : {
+							"1" : "created",
+							"2" : "modified",
+							"3" : "deleted"
+						},
+						"name" : "TIMETRA-SDP-MIB::dynamicSdpStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object sdpMSPwPeId specifies the multi-segment",
+							"pseudo-wire provider-edge identifier for the service associated with",
+							"this notification."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpMSPwPeId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::dynamicSdpCreationFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The dynamicSdpCreationFailed notification is generated when the system",
+				"fails to create a dynamic SDP."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>\\d+)\\.(?P<svcL2RteVsiPrefix>\\d+)\\.(?P<svcL2RteRouteDistinguisher>\\w+)\\.(?P<svcL2RteNextHopType>\\d+)\\.(?P<svcL2RteNextHop>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dynamicSdpCreationFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "NextHopIPAddr:$svcL2RteNextHop;BindId:$v1",
+				"Summary" : "Dynamic SDP creation failed due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::dynamicSdpCreationFailed TIMETRA-SDP-MIB::svcL2RteSdpBindId.1.2.123.1.4.4.4.4 s 'EXAMPLES' TIMETRA-SDP-MIB::dynamicSdpOrigin i 5 TIMETRA-SDP-MIB::dynamicSdpCreationError s 'EXAMPLE'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::dynamicSdpCreationFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"The value of svcL2RteSdpBindId indicates the SDP bind ID of the SDP",
+							"bind that binds this VPLS context to the VSI indicated by",
+							"svcL2RteRouteDistinguisher, svcL2RteVsiPrefix, and svcL2RteNextHop.",
+							"The value of svcL2RteSdpBindId will be '0000000000000000'H if there",
+							"was an error in creating the L2 route and the svcL2RteError will",
+							"contain a string describing the error."
+						],
+						"name" : "TIMETRA-SDP-MIB::svcL2RteSdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.39.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of dynamicSdpOrigin indicates the origin of the dynamic SDP.",
+							"The origin indicates the protocol or mechanism that created the",
+							"dynamic SDP."
+						],
+						"enums" : {
+							"1" : "manual",
+							"2" : "bgp-l2vpn",
+							"3" : "radius",
+							"4" : "bgpSignalL2vpn",
+							"5" : "multiSegmentPW",
+							"6" : "vplsPmsi",
+							"7" : "dynScript",
+							"8" : "bof",
+							"9" : "bgpSignalVpws",
+							"12" : "vsd",
+							"13" : "evpn",
+							"14" : "vsd-sd",
+							"15" : "satellites",
+							"16" : "fpe",
+							"17" : "evpnIsa",
+							"18" : "greBridged",
+							"19" : "tli",
+							"20" : "pdn",
+							"23" : "ipsec",
+							"24" : "reserved24",
+							"25" : "reserved25",
+							"26" : "manual-mci"
+						},
+						"name" : "TIMETRA-SDP-MIB::dynamicSdpOrigin",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object dynamicSdpCreationError indicates the reason",
+							"why the system was unable to create the dynamic SDP."
+						],
+						"name" : "TIMETRA-SDP-MIB::dynamicSdpCreationError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::dynamicSdpBindCreationFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The dynamicSdpBindCreationFailed notification is generated when the",
+				"system fails to create a dynamic SDP Bind."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>\\d+)\\.(?P<svcL2RteVsiPrefix>\\d+)\\.(?P<svcL2RteRouteDistinguisher>\\w+)\\.(?P<svcL2RteNextHopType>\\d+)\\.(?P<svcL2RteNextHop>\\d+\\.\\d+\\.\\d+\\.\\d+)$",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$oid4",
+						"pattern" : "\\.(?P<pwTemplateId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dynamicSdpBindCreationFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sdpId:$v3;NextHopIPAddr:$svcL2RteNextHop",
+				"Summary" : "Dynamic SDP bind ($v1) creation failed due to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::dynamicSdpBindCreationFailed TIMETRA-SDP-MIB::svcL2RteSdpBindId.1.2.123.1.4.4.4.4 s 'EXAMPLES' TIMETRA-SDP-MIB::dynamicSdpOrigin i 1 TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::pwTemplateLastChanged.2 t 31536000 TIMETRA-SDP-MIB::dynamicSdpBindCreationError s 'EXAMPLE'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::dynamicSdpBindCreationFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"The value of svcL2RteSdpBindId indicates the SDP bind ID of the SDP",
+							"bind that binds this VPLS context to the VSI indicated by",
+							"svcL2RteRouteDistinguisher, svcL2RteVsiPrefix, and svcL2RteNextHop.",
+							"The value of svcL2RteSdpBindId will be '0000000000000000'H if there",
+							"was an error in creating the L2 route and the svcL2RteError will",
+							"contain a string describing the error."
+						],
+						"name" : "TIMETRA-SDP-MIB::svcL2RteSdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.39.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of dynamicSdpOrigin indicates the origin of the dynamic SDP.",
+							"The origin indicates the protocol or mechanism that created the",
+							"dynamic SDP."
+						],
+						"enums" : {
+							"1" : "manual",
+							"2" : "bgp-l2vpn",
+							"3" : "radius",
+							"4" : "bgpSignalL2vpn",
+							"5" : "multiSegmentPW",
+							"6" : "vplsPmsi",
+							"7" : "dynScript",
+							"8" : "bof",
+							"9" : "bgpSignalVpws",
+							"12" : "vsd",
+							"13" : "evpn",
+							"14" : "vsd-sd",
+							"15" : "satellites",
+							"16" : "fpe",
+							"17" : "evpnIsa",
+							"18" : "greBridged",
+							"19" : "tli",
+							"20" : "pdn",
+							"23" : "ipsec",
+							"24" : "reserved24",
+							"25" : "reserved25",
+							"26" : "manual-mci"
+						},
+						"name" : "TIMETRA-SDP-MIB::dynamicSdpOrigin",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of pwTemplateLastChanged indicates the sysUpTime at the time",
+							"of the last modification of this entry.",
+							"If no changes were made to the entry since the last re-initialization",
+							"of the local network management subsystem, then this object contains a",
+							"zero value."
+						],
+						"name" : "TIMETRA-SDP-MIB::pwTemplateLastChanged",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.18.1.3",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The value of the object dynamicSdpBindCreationError indicates the",
+							"reason why the system was unable to create the dynamic SDP Binding."
+						],
+						"name" : "TIMETRA-SDP-MIB::dynamicSdpBindCreationError",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpEgrIfsNetDomInconsCntChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sdpEgrIfsNetDomInconsCntChanged notification is generated when the",
+				"value of sdpEgIfNetDomainInconsCount changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpEgrIfsNetDomInconsCntChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SDP egress interfaces network domain inconsistent count changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpEgrIfsNetDomInconsCntChanged TIMETRA-SDP-MIB::sdpEgIfNetDomainInconsCount u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpEgrIfsNetDomInconsCntChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object sdpEgIfNetDomainInconsCount indicates the",
+							"number of SDPs which have an inconsistent network-domain for the SDP",
+							"and egress network interfaces of the SDP."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpEgIfNetDomainInconsCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindIpipeCeIpAddressChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sdpBindIpipeCeIpAddressChange notification indicates an IP",
+				"address has been discovered for the far end CE device on a specified",
+				"IPIPE SDP. The type of IP address is specified by",
+				"sdpBindIpipeCeIpAddrType. The IP address is specified by",
+				"sdpBindIpipeCeIpAddress.",
+				"[EFFECT] The IP address specified by sdpBindIpipeCeIpAddress and of",
+				"type sdpBindIpipeCeIpAddrType has been discovered on the remote CE",
+				"device.",
+				"[RECOVERY] No action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindIpipeCeIpAddressChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SDPBindID:$v2",
+				"Summary" : "SDP bind ($v2) IPIPE CE IP address ($v3) changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindIpipeCeIpAddressChange TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindIpipeCeIpAddrType i 1 TIMETRA-SDP-MIB::sdpBindIpipeCeIpAddress x 0x7f000001",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindIpipeCeIpAddressChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of sdpBindIpipeCeIpAddrType indicates the type of CE address",
+							"on an IPIPE SDP. The CE IP address is specified by",
+							"sdpBindIpipeCeIpAddress."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindIpipeCeIpAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sdpBindIpipeCeIpAddress indicates the CE IP address of",
+							"type sdpBindIpipeCeIpAddrType on an IPIPE SDP."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindIpipeCeIpAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindReceivedProtSrcMac",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sdpBindReceivedProtSrcMac notification is generated when a",
+				"protected source MAC is received on a TLS SDP-BIND with",
+				"sdpBindTlsRestProtSrcMac 'true', or if the TLS SDP-BIND belongs to an",
+				"SHG with tlsShgRestProtSrcMac set to 'true'.",
+				"[EFFECT] If the sdpBindTlsRestProtSrcMacAction is set to",
+				"'discardFrame', the frame will be discarded.",
+				"[RECOVERY] No action is required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : 2"
+				},
+				"EventType" : "sdpBindReceivedProtSrcMac",
+				"ExpireTime" : {
+					"eval" : "($v4==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : 4"
+				},
+				"SubNode" : "BindID:$v2",
+				"Summary" : "SDP bind received protection source MAC ($v3) action: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindReceivedProtSrcMac TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::protectedMacForNotify x 000eaa12ddff TIMETRA-SDP-MIB::sdpBindTlsRestProtSrcMacAction i 1",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindReceivedProtSrcMac",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object protectedMacForNotify indicates the protected",
+							"MAC address that was received, causing the sapReceivedProtSrcMac",
+							"notification."
+						],
+						"name" : "TIMETRA-SERV-MIB::protectedMacForNotify",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.6.30",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindTlsRestProtSrcMacAction indicates the",
+							"action to take whenever a relearn request for a protected MAC is",
+							"received on a restricted SAP.",
+							"",
+							"When the value of this object is 'disable' the SAP will be placed in",
+							"the operational down state, with the operating flag 'recProtSrcMac'",
+							"set.",
+							"",
+							"When the value of this object is 'alarmOnly', the SDP-BIND",
+							"will be left up and only a notification",
+							"sdpBindReceivedProtSrcMac, will be generated.",
+							"",
+							"When the value of this object is 'discardFrame', the SDP-BIND will",
+							"start discarding the frame in addition to generating",
+							"sdpBindReceivedProtSrcMac notification."
+						],
+						"enums" : {
+							"1" : "disable",
+							"2" : "alarmOnly",
+							"3" : "discardFrame"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindTlsRestProtSrcMacAction",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.6.1.53",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindPwLocalStatusBitsChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sdpBindPwLocalStatusBitsChanged notification is generated",
+				"when there is a change in the local PW status bits.",
+				"[EFFECT] Based on the change in the sdpBindPwLocalStatusBits traffic",
+				"on the SDP-BIND may be impacted.",
+				"[RECOVERY] Based on the change in the sdpBindPwLocalStatusBits",
+				"appropriate configuration changes may be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindPwLocalStatusBitsChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "Bind PW local status bits changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindPwLocalStatusBitsChanged TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindPwLocalStatusBits b '2'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindPwLocalStatusBitsChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"sdpBindPwLocalStatusBits indicates the bits set locally",
+							"when there is a fault.",
+							"LAC failures occur on the SAP that has been configured on",
+							"the PIPE service, PSN bits are set by SDP-binding failures",
+							"on the PIPE service. The pwNotForwarding bit is set when",
+							"none of the above failures apply, such as an MTU mismatch",
+							"failure. This value is sent to the peer via pseudowire",
+							"status signalling method to indicate faults only if",
+							"sdpBindPwStatusSignaling is set to true."
+						],
+						"enums" : {
+							"0" : "pwNotForwarding",
+							"1" : "lacIngressFault",
+							"2" : "lacEgresssFault",
+							"3" : "psnIngressFault",
+							"4" : "psnEgressFault",
+							"5" : "pwFwdingStandby"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindPwLocalStatusBits",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.67",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindTlsMacMoveExceedNonBlock",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sdpBindTlsMacMoveExceedNonBlock notification is generated",
+				"when the SDP exceeds the TLS svcTlsMacMoveMaxRate even when",
+				"sdpBindTlsLimitMacMove is set to 'nonBlocking'.In case of Provider",
+				"Backbone Bridging (PBB), if the MAC address that exceeds the rate is",
+				"in ISID-VPLS(iVpls) FDB and sdp binding that detects the move is in",
+				"Backbone-VPLS(bVpls), the notification will be generated with svcId",
+				"custId of I-VPLS and B-VPLS sdpBindId.",
+				"[EFFECT] This notification is informational only.",
+				"[RECOVERY] User can adjust the value of svcTlsMacMoveMaxRate to reduce",
+				"the frequency of this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindTlsMacMoveExceedNonBlock",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BindID:$v4",
+				"Summary" : "SDP bind TLS MAC ($v6) move (set to nonBlocking) exceeded the threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindTlsMacMoveExceedNonBlock TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SERV-MIB::svcVpnId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcTlsMacMoveMaxRate u 9999 TIMETRA-SDP-MIB::sdpBindNotifyMacAddr x 000eaa12ddff",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindTlsMacMoveExceedNonBlock",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcVpnId specifies the VPN ID",
+							"assigned to this service. The value of this object can",
+							"be specified only when the row is created."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcVpnId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcTlsMacMoveMaxRate specifies the maximum",
+							"rate at which MACs can be relearned in this TLS service, before the",
+							"SAP where the moving MAC was last seen is automatically disabled in",
+							"order to protect the system against undetected loops or duplicate",
+							"MACs. The rate is computed as the maximum number of relearns allowed",
+							"in a 5 second interval: e.g. the default rate of 2 relearns per second",
+							"corresponds to 10 relearns in a 5 second period."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcTlsMacMoveMaxRate",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.3.1.43",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindNotifyMacAddr indicates the MAC address",
+							"associated with a VPLS SDP Binding."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindNotifyMacAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sdpBindEthLoopbackStarted notification is generated when",
+				"the SDP binding is placed into loopback.",
+				"[EFFECT] This notification is informational only."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>\\d+)\\.(?P<sdpBindId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindEthLoopbackStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$sdpBindId",
+				"Summary" : "SDP binding is placed into $v1 loopback"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindEthLoopbackStarted TIMETRA-SDP-MIB::sdpBindEthLoopbackMode.1.2 i 1 TIMETRA-SDP-MIB::sdpBindEthLoopbackMacSwap i 1 TIMETRA-SDP-MIB::sdpBindEthLoopbackMacSwapAddr x 000eaa12ddff TIMETRA-SDP-MIB::sdpBindEthLoopbackMacSwapAddrAll i 1",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackStarted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object sdpBindEthLoopbackMode specifies how traffic",
+							"will be reflected.",
+							"If the value is set to 'ingress(1)', traffic arriving at the SDP",
+							"binding ingress will be reflected back out the same SDP binding. If",
+							"the value is set to 'egress(2)', traffic arriving at the SDP binding",
+							"egress will be reflected back into the service in the direction of the",
+							"original source."
+						],
+						"enums" : {
+							"1" : "ingress",
+							"2" : "egress"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.59.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindEthLoopbackMacSwap specifies the",
+							"enabling or disabling of source address and destination address",
+							"swapping for the reflected packets when the arriving packet is",
+							"unicast. With sdpBindEthLoopbackMacSwap enabled, any broadcast or",
+							"multicast packets arriving on a looped point will be dropped."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackMacSwap",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.59.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindEthLoopbackMacSwapAddr specifies the",
+							"source MAC address used in the reflected packet when the arriving",
+							"packet is broadcast or multicast. This does not apply to arriving",
+							"unicast packets."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackMacSwapAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.59.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindEthLoopbackMacSwapAddrAll specifies",
+							"whether or not to use the configured sdpBindEthLoopbackMacSwapAddr as",
+							"the source address for all reflected parameters."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackMacSwapAddrAll",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.59.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackStopped",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sdpBindEthLoopbackStopped notification is generated when",
+				"the SDP binding is removed from loopback.",
+				"[EFFECT] This notification is informational only."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<svcId>\\d+)\\.(?P<sdpBindId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sdpBindEthLoopbackStopped",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$sdpBindId",
+				"Summary" : "SDP binding is removed from $v1 loop back"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpBindEthLoopbackStopped TIMETRA-SDP-MIB::sdpBindEthLoopbackMode.1.2 i 2",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackStopped",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object sdpBindEthLoopbackMode specifies how traffic",
+							"will be reflected.",
+							"If the value is set to 'ingress(1)', traffic arriving at the SDP",
+							"binding ingress will be reflected back out the same SDP binding. If",
+							"the value is set to 'egress(2)', traffic arriving at the SDP binding",
+							"egress will be reflected back into the service in the direction of the",
+							"original source."
+						],
+						"enums" : {
+							"1" : "ingress",
+							"2" : "egress"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindEthLoopbackMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.59.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpPbbActvPwWithNonActvCtrlPwChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sdpPbbActvPwWithNonActvCtrlPwChg notification is generated",
+				"when last pseudo-wire (PW) goes standby or down and when first PW",
+				"becomes active on the Backbone Edge Bridge (BEB) where control PW is",
+				"standby or down on that SDP.",
+				"[EFFECT] There is a change which caused last active PW to become",
+				"standby or down and when first PW becomes active.",
+				"[RECOVERY] sdpPbbActvPwWithNonActvCtrlPwChg event with",
+				"sdpPbbActvPwWithNonActvCtrlPw set to 'false' indicate clearing of",
+				"sdpPbbActvPwWithNonActvCtrlPwChg with sdpPbbActvPwWithNonActvCtrlPw",
+				"set to 'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "$v2"
+				},
+				"EventType" : "sdpPbbActvPwWithNonActvCtrlPwChg",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "SDPID:$v1",
+				"Summary" : {
+					"eval" : "($v2==1) ? 'PWs active status changed to up' : 'PWs active status changed to down'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpPbbActvPwWithNonActvCtrlPwChg TIMETRA-SDP-MIB::sdpId u 9999 TIMETRA-SDP-MIB::sdpPbbActvPwWithNonActvCtrlPw i 1",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpPbbActvPwWithNonActvCtrlPwChg",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of sdpPbbActvPwWithNonActvCtrlPw indicates that the",
+							"first pseudo-wire (PW) with sdpBindUseSdpBMac set to 'true' becomes",
+							"active on the Backbone Edge Bridge (BEB) where the control PW is",
+							"standby or down on that SDP.",
+							"Value of 'false' for sdpPbbActvPwWithNonActvCtrlPw indicates that the",
+							"last PW with sdpBindUseSdpBMac set to 'true' becomes standby or down",
+							"on the BEB where control PW is standby or down on that SDP."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpPbbActvPwWithNonActvCtrlPw",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.100.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::sdpControlPwActiveStateChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sdpControlPwActiveStateChg notification is generated when",
+				"the SDP control PW Active value changes on that SDP.",
+				"[EFFECT] Control pseudo-wire state change could affect related SDP",
+				"bindings.",
+				"[RECOVERY] A change in the configuration may be required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "sdpControlPwActiveStateChg",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Control PW is active' : 'Control PW is not active'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::sdpControlPwActiveStateChg TIMETRA-SDP-MIB::sdpControlPWIsActive i 1",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::sdpControlPwActiveStateChg",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.4.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sdpControlPWIsActive indicates whether control",
+							"pseudo-wire is considered active on the Backbone Edge Bridge (BEB)."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpControlPWIsActive",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.66",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::unacknowledgedTCN",
+			"certification" : "STANDARD",
+			"description" : [
+				"The unacknowledgedTCN notification is generated when a",
+				"TCN sent towards the root bridge on the root port (SAP",
+				"or SDP binding) has not been acknowledged within the",
+				"allowed time. A portion of the spanning tree topology",
+				"may not have been notified that a topology change has",
+				"taken place. FDB tables on some devices may take",
+				"significantly longer to represent the new distribution",
+				"of layer-2 addresses. Examine this device and devices",
+				"towards the root bridge for STP issues."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "unacknowledgedTCN",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SDPID:$v3",
+				"Summary" : "TCN sent towards the root bridge on the root port is unacknowledged within allowed time"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::unacknowledgedTCN TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpId u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::unacknowledgedTCN",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.3.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSvcTopoChgSdpBindMajorState",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSvcTopoChgSdpBindMajorState notification is",
+				"generated when a SDP binding has transitioned its",
+				"state from learning to forwarding or from forwarding",
+				"to blocking or broken. The spanning tree topology has",
+				"been modified. It may denote loss of customer access",
+				"or redundancy. Check the new topology against the",
+				"provisioned topology to determine the severity of",
+				"connectivity loss."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : ($v4==3 || $v4==4) ? 3 : 2"
+				},
+				"EventType" : "tmnxSvcTopoChgSdpBindMajorState",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : ($v4==3 || $v4==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==3 || $v4==4) ? 2 : (($v4==6) ? 4 : 3))"
+				},
+				"SubNode" : "BindID:$v3",
+				"Summary" : "SDP binding TLS STP port state: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSvcTopoChgSdpBindMajorState TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindTlsStpPortState i 3 TIMETRA-SERV-MIB::tmnxOldSdpBindTlsStpPortState i 2",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSvcTopoChgSdpBindMajorState",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindTlsStpPortState indicates the port's",
+							"current state as defined by application of the Spanning Tree Protocol.",
+							"This state controls what action a port takes on reception of a frame.",
+							"If the bridge has detected a port that is malfunctioning it will place",
+							"that port into the 'broken' state. All possible states are: learning",
+							"forwarding, broken, and discarding."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "blocking",
+							"3" : "listening",
+							"4" : "learning",
+							"5" : "forwarding",
+							"6" : "broken",
+							"7" : "discarding"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindTlsStpPortState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.6.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxOldSdpBindTlsStpPortState specifies the previous state of an SDP",
+							"binding."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "blocking",
+							"3" : "listening",
+							"4" : "learning",
+							"5" : "forwarding",
+							"6" : "broken",
+							"7" : "discarding"
+						},
+						"name" : "TIMETRA-SERV-MIB::tmnxOldSdpBindTlsStpPortState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.5.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSvcNewRootSdpBind",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSvcNewRootSdpBind notification is generated",
+				"when the previous root bridge has been aged out and a",
+				"new root bridge has been elected. The new root bridge",
+				"creates a new spanning tree topology. It may denote",
+				"loss of customer access or redundancy. Check the new",
+				"topology against the provisioned topology to determine",
+				"the severity of connectivity loss."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSvcNewRootSdpBind",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v3",
+				"Summary" : "New root bridge ($v4) elected because of previous root bridge aged out"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSvcNewRootSdpBind TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::svcTlsStpDesignatedRoot s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSvcNewRootSdpBind",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object svcTlsStpDesignatedRoot indicates the bridge",
+							"identifier of the root of the spanning tree as determined by the",
+							"Spanning Tree Protocol instance associated with this service. This",
+							"value is used as the Root Identifier parameter in all Configuration",
+							"BPDUs originated by this node."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcTlsStpDesignatedRoot",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.3.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSvcTopoChgSdpBindState",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSvcTopoChgSdpBindState notification is",
+				"generated when a SDP binding has transitioned state to",
+				"blocking or broken from learning state. This event",
+				"complements what is not covered by",
+				"tmnxSvcTopoChgSdpBindMajorState. The spanning tree",
+				"topology has been modified. It may denote loss of",
+				"customer access or redundancy. Check the new topology",
+				"against the provisioned topology to determine the",
+				"severity of connectivity loss."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==5) ? 1 : ($v4==3 || $v4==4) ? 3 : 2"
+				},
+				"EventType" : "tmnxSvcTopoChgSdpBindState",
+				"ExpireTime" : {
+					"eval" : "($v4==5) ? 3600 : ($v4==3 || $v4==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==5) ? 0 : (($v4==3 || $v4==4) ? 2 : (($v4==6) ? 4 : 3))"
+				},
+				"SubNode" : "BindID:$v3",
+				"Summary" : "SDP binding port transition status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSvcTopoChgSdpBindState TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindTlsStpPortState i 4 TIMETRA-SERV-MIB::tmnxOldSdpBindTlsStpPortState i 7",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSvcTopoChgSdpBindState",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindTlsStpPortState indicates the port's",
+							"current state as defined by application of the Spanning Tree Protocol.",
+							"This state controls what action a port takes on reception of a frame.",
+							"If the bridge has detected a port that is malfunctioning it will place",
+							"that port into the 'broken' state. All possible states are: learning",
+							"forwarding, broken, and discarding."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "blocking",
+							"3" : "listening",
+							"4" : "learning",
+							"5" : "forwarding",
+							"6" : "broken",
+							"7" : "discarding"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindTlsStpPortState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.6.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxOldSdpBindTlsStpPortState specifies the previous state of an SDP",
+							"binding."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "blocking",
+							"3" : "listening",
+							"4" : "learning",
+							"5" : "forwarding",
+							"6" : "broken",
+							"7" : "discarding"
+						},
+						"name" : "TIMETRA-SERV-MIB::tmnxOldSdpBindTlsStpPortState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.5.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSvcSdpBindRcvdTCN",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSvcSdpBindRcvdTCN notification is generated",
+				"when a SDP binding has received TCN from another",
+				"bridge. This bridge will either have its configured",
+				"BPDU with the topology change flag set if it is a root",
+				"bridge, or it will pass TCN to its root bridge.",
+				"Eventually the address aging timer for the forwarding",
+				"database will be made shorter for a short period of",
+				"time. No recovery is needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSvcSdpBindRcvdTCN",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v3",
+				"Summary" : "SDP binding received TCN from another bridge"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSvcSdpBindRcvdTCN TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSvcSdpBindRcvdTCN",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSvcSdpBindRcvdHigherBriPrio",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSvcSdpBindRcvdHigherBriPrio notification is",
+				"generated when a customer's device has been configured",
+				"with a bridge priority equal to zero. The SDP binding",
+				"that the customer's device is connected through will",
+				"be blocked. Remove the customer's device or",
+				"reconfigure the customer's bridge priority with value",
+				"greater than zero."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSvcSdpBindRcvdHigherBriPrio",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v3",
+				"Summary" : "Customer device has configured with a bridge ($v4) priority equal to zero"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSvcSdpBindRcvdHigherBriPrio TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::tmnxCustomerBridgeId s 'EXAMPLES' TIMETRA-SERV-MIB::tmnxCustomerRootBridgeId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSvcSdpBindRcvdHigherBriPrio",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxCustomerBridgeId specifies the bridge identifier of the customer's",
+							"device "
+						],
+						"name" : "TIMETRA-SERV-MIB::tmnxCustomerBridgeId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.5.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxCustomerRootBridgeId specifies the bridge identifier of the",
+							"customer's designated root."
+						],
+						"name" : "TIMETRA-SERV-MIB::tmnxCustomerRootBridgeId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.5.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSvcSdpBindEncapPVST",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSvcSdpBindEncapPVST notification is generated",
+				"when an SDP bindings STP received a BPDU that was PVST",
+				"encapsulated. The SDP binding STP's BPDUs will be PVST",
+				"encapsulated. No recovery is needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSvcSdpBindEncapPVST",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v3",
+				"Summary" : "SDP bindings STP received PVST encapsulated BPDU"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSvcSdpBindEncapPVST TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::tmnxOtherBridgeId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSvcSdpBindEncapPVST",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxOtherBridgeId specifies the bridge identifier of the device from",
+							"which a BPDU was received."
+						],
+						"name" : "TIMETRA-SERV-MIB::tmnxOtherBridgeId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.5.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSvcSdpBindEncapDot1d",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSvcSdpBindEncapDot1d notification is generated",
+				"when a SDP binding received a BPDU that was 802.1d",
+				"encapsulated. The SDP binding BPDUs will also be",
+				"802.1d encapsulated. No recovery is needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSvcSdpBindEncapDot1d",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v3",
+				"Summary" : "SDP binding received 802.1d encapsulated BPDU"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSvcSdpBindEncapDot1d TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SERV-MIB::tmnxOtherBridgeId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSvcSdpBindEncapDot1d",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxOtherBridgeId specifies the bridge identifier of the device from",
+							"which a BPDU was received."
+						],
+						"name" : "TIMETRA-SERV-MIB::tmnxOtherBridgeId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.5.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSvcSdpActiveProtocolChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSvcSdpActiveProtocolChange notification is",
+				"generated when the spanning tree protocol on this SDP",
+				"changes from rstp to stp or vise versa. No recovery is",
+				"needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSvcSdpActiveProtocolChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "BindID:$v3",
+				"Summary" : "Spanning tree protocol on this SDP changed to $v4 protocol"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSvcSdpActiveProtocolChange TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindTlsStpOperProtocol i 2",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSvcSdpActiveProtocolChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindTlsStpOperProtocol indicates whether",
+							"stp, rstp or mstp is running on this spoke sdp. If the protocol is not",
+							"enabled on this spoke-sdp the value notApplicable is returned."
+						],
+						"enums" : {
+							"0" : "notApplicable",
+							"1" : "stp",
+							"2" : "rstp",
+							"3" : "mstp"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindTlsStpOperProtocol",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.6.1.28",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxStpMeshNotInMstRegion",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxStpMeshNotInMstRegion notification is generated when a MSTP",
+				"BPDU from outside the MST region is received on the indicated mesh",
+				"SDP.",
+				"It is up to the operator to make sure bridges connected via mesh SDPs",
+				"are in the same MST-region. If not the mesh will NOT become",
+				"operational."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxStpMeshNotInMstRegion",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "BindID:$v2",
+				"Summary" : "MSTP BPDU from outside the MST region is received on the indicated mesh SDP"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxStpMeshNotInMstRegion TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES'",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxStpMeshNotInMstRegion",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SDP-MIB::tmnxSdpBndStpExcepCondStateChng",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSdpBndStpExcepCondStateChng notification is generated when the",
+				"value of the object sdpBindTlsStpException has changed, i.e. when the",
+				"exception condition changes on the indicated SDP Bind."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 1 : 2"
+				},
+				"EventType" : "tmnxSdpBndStpExcepCondStateChng",
+				"ExpireTime" : {
+					"eval" : "($v4==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 2 : (($v4==2) ? 3 : 4)"
+				},
+				"SubNode" : "BindID:$v3",
+				"Summary" : "Exception condition on the indicated SDP bind changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SDP-MIB::tmnxSdpBndStpExcepCondStateChng TIMETRA-SERV-MIB::custId u 9999 TIMETRA-SERV-MIB::svcId u 9999 TIMETRA-SDP-MIB::sdpBindId s 'EXAMPLES' TIMETRA-SDP-MIB::sdpBindTlsStpException i 2",
+			"trap" : {
+				"name" : "TIMETRA-SDP-MIB::tmnxSdpBndStpExcepCondStateChng",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.4.5.0.38",
+				"variables" : [
+					{
+						"description" : [
+							"Customer identifier. This ID must be unique within a service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::custId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.1.3.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object svcId specifies the Service identifier. This",
+							"value should be unique within the service domain."
+						],
+						"name" : "TIMETRA-SERV-MIB::svcId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.2.2.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"SDP Binding identifier."
+						],
+						"name" : "TIMETRA-SDP-MIB::sdpBindId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.4.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object sdpBindTlsStpException indicates whether an",
+							"STP exception condition is present on this Spoke Sdp.",
+							"- none : no exception condition found.",
+							"- oneWayCommuniation : The neighbor RSTP peer on this link",
+							"is not able to detect our presence.",
+							"- downstreamLoopDetected :A loop is detected on this link."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "oneWayCommuniation",
+							"3" : "downstreamLoopDetected"
+						},
+						"name" : "TIMETRA-SDP-MIB::sdpBindTlsStpException",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.4.4.6.1.36",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

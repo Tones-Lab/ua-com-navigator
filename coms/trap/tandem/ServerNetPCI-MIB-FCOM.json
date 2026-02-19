@@ -1,0 +1,280 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ServerNetPCI-MIB::snetAdaptrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"ServerNet Controller Status Change.",
+				"The agent has detected a change in the controller",
+				"status of a ServerNet Controller. The variable",
+				"snetAdaptrStatus indicates the current controller status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1) ? 3 : 2"
+				},
+				"EventType" : "snetAdaptrStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==1) ? 1 : ($v1==3) ? 3 : 4"
+				},
+				"SubNode" : "SnetID:$v2",
+				"Summary" : "ServerNet ($v2) adapter status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ServerNetPCI-MIB::snetAdaptrStatusChange ServerNetPCI-MIB::snetAdaptrStatus i 1 ServerNetPCI-MIB::snetAdaptrSnetID s EXAMPLE",
+			"trap" : {
+				"name" : "ServerNetPCI-MIB::snetAdaptrStatusChange",
+				"oid" : "1.3.6.1.4.1.169.8.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"ServerNet adapter status.",
+							"The ServerNet board can be in one of the following states:",
+							"other(1)",
+							"The controller is in a state other than one of those listed",
+							"below.",
+							"ok(2)",
+							"Indicates normal operating mode. No user action is necessary.",
+							"degraded(3)",
+							"Indicates either the X-Port or Y-Port has failed but not both.",
+							"failed(4)",
+							"Indicates that the controller has failed because both ports have",
+							"failed or a detectable hardware failure occurred. You should bring",
+							"down the server and run Diagnostics to help identify the",
+							"problem. The ServerNet adapter may need to be replaced."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed"
+						},
+						"name" : "ServerNetPCI-MIB::snetAdaptrStatus",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ServerNet ID of the node containing the ServerNet",
+							"adapter Port 0. It is displayed as hexadecimal value"
+						],
+						"name" : "ServerNetPCI-MIB::snetAdaptrSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ServerNetPCI-MIB::snetAdaptrXPortStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"ServerNet Controller X-Port Status Change.",
+				"The agent has detected a change in the controller",
+				"status of a the X-Port of the ServerNet Controller. The",
+				"variable snetAdaptrXPortStatus indicates the current",
+				"X-Port controller status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1) ? 3 : 2"
+				},
+				"EventType" : "snetAdaptrXPortStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==1) ? 1 : ($v1==3) ? 3 : 4"
+				},
+				"SubNode" : "SnetID:$v2",
+				"Summary" : "X-Port current status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ServerNetPCI-MIB::snetAdaptrXPortStatusChange ServerNetPCI-MIB::snetAdaptrXPortStatus i 1 ServerNetPCI-MIB::snetAdaptrSnetID s EXAMPLE",
+			"trap" : {
+				"name" : "ServerNetPCI-MIB::snetAdaptrXPortStatusChange",
+				"oid" : "1.3.6.1.4.1.169.8.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The current state of the X-Port.",
+							"other(1)",
+							"The state of the X-Port could not be determined.",
+							"ok(2)",
+							"Indicates normal operating mode. No user action is necessary.",
+							"degraded(3)",
+							"Indicates the X-Port is running in a degraded mode.",
+							"failed(4)",
+							"The X-Port has failed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed"
+						},
+						"name" : "ServerNetPCI-MIB::snetAdaptrXPortStatus",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ServerNet ID of the node containing the ServerNet",
+							"adapter Port 0. It is displayed as hexadecimal value"
+						],
+						"name" : "ServerNetPCI-MIB::snetAdaptrSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ServerNetPCI-MIB::snetAdaptrYPortStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"ServerNet Controller Y-Port Status Change.",
+				"The agent has detected a change in the controller",
+				"status of a the Y-Port of the ServerNet Controller. The",
+				"variable snetAdaptrYPortStatus indicates the current",
+				"Y-Port controller status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1) ? 3 : 2"
+				},
+				"EventType" : "snetAdaptrYPortStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==1) ? 1 : ($v1==3) ? 3 : 4"
+				},
+				"SubNode" : "SnetID1:$v2",
+				"Summary" : "Y-Port current status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ServerNetPCI-MIB::snetAdaptrYPortStatusChange ServerNetPCI-MIB::snetAdaptrYPortStatus i 1 ServerNetPCI-MIB::snetAdaptrSnetID1 s EXAMPLE",
+			"trap" : {
+				"name" : "ServerNetPCI-MIB::snetAdaptrYPortStatusChange",
+				"oid" : "1.3.6.1.4.1.169.8.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The current state of the Y-Port.",
+							"other(1)",
+							"The state of the Y-Port could not be determined.",
+							"ok(2)",
+							"Indicates normal operating mode. No user action is necessary.",
+							"degraded(3)",
+							"Indicates the Y-Port is running in a degraded mode.",
+							"failed(4)",
+							"The Y-Port has failed."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "ok",
+							"3" : "degraded",
+							"4" : "failed"
+						},
+						"name" : "ServerNetPCI-MIB::snetAdaptrYPortStatus",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ServerNet ID of the node containing the ServerNet",
+							"adapter Port 1. It is displayed as hexadecimal value"
+						],
+						"name" : "ServerNetPCI-MIB::snetAdaptrSnetID1",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.105",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ServerNetPCI-MIB::snetAdaptrTimeoutErrorsChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is obsolete. It is no longer generated.",
+				"The trap number is reserved for compatibility."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetAdaptrTimeoutErrorsChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SnetID:$v3",
+				"Summary" : "ServerNet ($v3) adapter timeout errors changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ServerNetPCI-MIB::snetAdaptrTimeoutErrorsChange ServerNetPCI-MIB::snetAdaptrTimeoutErrorsLow c 9999 ServerNetPCI-MIB::snetAdaptrTimeoutErrorsHi c 9999 ServerNetPCI-MIB::snetAdaptrSnetID s EXAMPLE",
+			"trap" : {
+				"name" : "ServerNetPCI-MIB::snetAdaptrTimeoutErrorsChange",
+				"oid" : "1.3.6.1.4.1.169.8.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The number of push/pull requests that were never",
+							"acknowledged and cannot be completed. Low order 32",
+							"bits. This value is combined with snetAdaptrTimeoutErrorsHi to create",
+							"a 64 bit value.",
+							"The MIB variable snetAdaptrTimeoutErrorsLow is a calculated value. It",
+							"is the low order 32 bits of the sum of snetAdaptrXTimeoutErrors and",
+							"snetAdaptrYTimeoutErrors."
+						],
+						"name" : "ServerNetPCI-MIB::snetAdaptrTimeoutErrorsLow",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.21",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The number of push/pull requests that were never",
+							"acknowledged and cannot be completed. High order",
+							"32 bits. This value is combined with snetAdaptrTimeoutErrosHi",
+							"to create a 64 bit value.",
+							"The MIB variable snetAdaptrTimeoutErrorsHi is a calculated value. It",
+							"is the high order 32 bits of the sum of snetAdaptrXTimeoutErrors and",
+							"snetAdaptrYTimeoutErrors."
+						],
+						"name" : "ServerNetPCI-MIB::snetAdaptrTimeoutErrorsHi",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.29",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The ServerNet ID of the node containing the ServerNet",
+							"adapter Port 0. It is displayed as hexadecimal value"
+						],
+						"name" : "ServerNetPCI-MIB::snetAdaptrSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.1.2.2.1.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

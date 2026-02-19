@@ -1,0 +1,407 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201101281200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGWUpNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"GTPC Peer UP Notification"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "jnxMbgPgwGtpPeerState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Peer:$v1",
+				"Summary" : "GTP peer $v1 is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGWUpNotif JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGWUpNotif",
+				"oid" : "1.3.6.1.4.1.2636.3.66.1.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"GTP Peer Name/IP"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerDownNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"GTPC Peer Down Notification"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "jnxMbgPgwGtpPeerState",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Peer:$v1",
+				"Summary" : "GTP peer $v1 is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerDownNotif JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerDownNotif",
+				"oid" : "1.3.6.1.4.1.2636.3.66.1.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"GTP Peer Name/IP"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerDNThresPerPeerNotif",
+			"certification" : "STANDARD",
+			"description" : [
+				"Per Peer Threshold For The",
+				"Number of GTP Peer Down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==0) ? 1 : 2"
+				},
+				"EventType" : "jnxMbgPgwGtpPeerDNThresPerPeerNotif",
+				"ExpireTime" : {
+					"eval" : "($v2==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==0) ? 0 : 4"
+				},
+				"SubNode" : "Peer:$v1",
+				"Summary" : {
+					"eval" : "($v2==0) ? 'GTP peer ($v1) down count ($v3) is below threshold' : 'GTP peer ($v1) down count ($v3) is above threshold'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerDNThresPerPeerNotif JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpAlarmState i 0 JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpAlarmStatCounter u 9999",
+			"trap" : {
+				"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerDNThresPerPeerNotif",
+				"oid" : "1.3.6.1.4.1.2636.3.66.1.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"GTP Peer Name/IP"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm state:: ",
+							"0: MOBILED_ALARM_CLEARED",
+							"1: MOBILED_ALARM_RAISED"
+						],
+						"enums" : {
+							"0" : "alarmcleared",
+							"1" : "alarmraised"
+						},
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpAlarmState",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Current Value of (Alarm) Statistics Counter",
+							"eg: in jnxMbgPgwGtpPrDNTPerPrAlrmActv it spefies the number",
+							"of times peer is down with in the monitoring interval"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpAlarmStatCounter",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGwUpNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"GTPC Peer UP Notification. This trap is sent when a new peer is added",
+				"or an existing peer goes down and comes back up."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "jnxMbgPgwGtpPeerGwStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "GatewayIndex:$v1;Peer:$v4",
+				"Summary" : "GTP peer $v4 is up; Gateway: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGwUpNotify JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwIndex u 9999 JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwName s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpInterfaceType s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGwUpNotify",
+				"oid" : "1.3.6.1.4.1.2636.3.66.1.2.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Current Gateway ID value"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwIndex",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A string that indicates the gateway name"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GTP Interface Type which can be one of gn/gp/S5/S8"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpInterfaceType",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GTP Peer Name/IP"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGwDnNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"GTPC Peer Down Notification. This trap is sent when a peer connection",
+				"goes down."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "jnxMbgPgwGtpPeerGwStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "GatewayIndex:$v1;Peer:$v4",
+				"Summary" : "GTP peer $v4 is down; Gateway: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGwDnNotify JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwIndex u 9999 JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwName s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpInterfaceType s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName s EXAMPLE",
+			"trap" : {
+				"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerGwDnNotify",
+				"oid" : "1.3.6.1.4.1.2636.3.66.1.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Current Gateway ID value"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwIndex",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A string that indicates the gateway name"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GTP Interface Type which can be one of gn/gp/S5/S8"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpInterfaceType",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GTP Peer Name/IP"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPrDnTPerPrAlrmActv",
+			"certification" : "STANDARD",
+			"description" : [
+				"Peer down Threshold trap Active. This is sent when a peer connection",
+				"flaps for more than a higher threshold number of times with in a",
+				"monitor interval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "jnxMbgPgwGtpPrDnTPerPrAlrmState",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "GatewayIndex:$v1;Peer:$v4",
+				"Summary" : "GTP peer $v2 connection flaps count ($v5) exceeded high threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPrDnTPerPrAlrmActv JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwIndex u 9999 JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwName s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpInterfaceType s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpAlarmStatCounter u 9999",
+			"trap" : {
+				"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPrDnTPerPrAlrmActv",
+				"oid" : "1.3.6.1.4.1.2636.3.66.1.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Current Gateway ID value"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwIndex",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A string that indicates the gateway name"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GTP Interface Type which can be one of gn/gp/S5/S8"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpInterfaceType",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GTP Peer Name/IP"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Current Value of (Alarm) Statistics Counter",
+							"eg: in jnxMbgPgwGtpPrDNTPerPrAlrmActv it spefies the number",
+							"of times peer is down with in the monitoring interval"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpAlarmStatCounter",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPrDnTPerPrAlrmClr",
+			"certification" : "STANDARD",
+			"description" : [
+				"Peer down Threshold trap Cleared. This is sent when the number of",
+				"times a peer connection flaps in a monitor interval come down below",
+				"the lower threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "jnxMbgPgwGtpPrDnTPerPrAlrmState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "GatewayIndex:$v1;Peer:$v4",
+				"Summary" : "GTP peer $v4 connection flaps count ($v5) is below threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPrDnTPerPrAlrmClr JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwIndex u 9999 JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwName s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpInterfaceType s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName s EXAMPLE JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpAlarmStatCounter u 9999",
+			"trap" : {
+				"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPrDnTPerPrAlrmClr",
+				"oid" : "1.3.6.1.4.1.2636.3.66.1.2.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"Current Gateway ID value"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwIndex",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"A string that indicates the gateway name"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpGwName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GTP Interface Type which can be one of gn/gp/S5/S8"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpInterfaceType",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"GTP Peer Name/IP"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpPeerName",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Current Value of (Alarm) Statistics Counter",
+							"eg: in jnxMbgPgwGtpPrDNTPerPrAlrmActv it spefies the number",
+							"of times peer is down with in the monitoring interval"
+						],
+						"name" : "JUNIPER-MOBILE-GATEWAY-GTP-MIB::jnxMbgPgwGtpAlarmStatCounter",
+						"oid" : "1.3.6.1.4.1.2636.3.66.1.2.1.7.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

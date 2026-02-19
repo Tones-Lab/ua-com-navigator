@@ -1,0 +1,1942 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "Baytech-MIB-403-1::communicationLost",
+			"certification" : "STANDARD",
+			"description" : [
+				"SEVERE: Communication to the unit has been lost. Steps",
+				"to reestablish communication are in progress. Argument is timeTicks",
+				"when communication was lost."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "communicationStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "Unit has lost communications"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::communicationLost Baytech-MIB-403-1::mtrapargsTimeTicks t 31536000",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::communicationLost",
+				"oid" : "1.3.6.1.4.1.4779.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with a TimeTicks argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsTimeTicks",
+						"oid" : "1.3.6.1.4.1.4779.3.5",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::communicationEstablished",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATION: Communication with the unit has been established.",
+				"Argument is timeTicks when communication was established."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "communicationStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Unit established communications"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::communicationEstablished Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::communicationEstablished",
+				"oid" : "1.3.6.1.4.1.4779.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::outletOn",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified RPC outlet has turned on.",
+				"If sBTAOutletIndex equals zero, then all outlets have turned on."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "outletStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Module:$v1;Outlet:$v2",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'All outlets are on' : 'Outlet $v2 is on'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::outletOn Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTAOutletIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::outletOn",
+				"oid" : "1.3.6.1.4.1.4779.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"outlet in a DS module.",
+							"",
+							"Value is 1 to number of outlets controlled by the ds module. 0 represents",
+							"all outlets.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAOutletIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::outletOff",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified RPC outlet has turned off.",
+				"If sBTAOutletIndex equals zero, then all outlets have turned off."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "outletStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Module:$v1;Outlet:$v2",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'All outlets are off' : 'Outlet $v2 is off'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::outletOff Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTAOutletIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::outletOff",
+				"oid" : "1.3.6.1.4.1.4779.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"outlet in a DS module.",
+							"",
+							"Value is 1 to number of outlets controlled by the ds module. 0 represents",
+							"all outlets.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAOutletIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::outletReboot",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified RPC outlet has rebooted.",
+				"If sBTAOutletIndex equals zero, then all outlets have rebooted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "outletReboot",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Module:$v1;Outlet:$v2",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'All outlets have rebooted' : 'Outlet $v2 has rebooted'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::outletReboot Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTAOutletIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::outletReboot",
+				"oid" : "1.3.6.1.4.1.4779.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"outlet in a DS module.",
+							"",
+							"Value is 1 to number of outlets controlled by the ds module. 0 represents",
+							"all outlets.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAOutletIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::outletLocked",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified RPC outlet has been locked.",
+				"If sBTAOutletIndex equals zero, then all outlets have been locked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "outletLockAlert",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Module:$v1;Outlet:$v2",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'All outlets are locked' : 'Outlet $v2 is locked'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::outletLocked Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTAOutletIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::outletLocked",
+				"oid" : "1.3.6.1.4.1.4779.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"outlet in a DS module.",
+							"",
+							"Value is 1 to number of outlets controlled by the ds module. 0 represents",
+							"all outlets.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAOutletIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::outletUnlocked",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified RPC outlet has been unlocked.",
+				"If sBTAOutletIndex equals zero, then all outlets have been unlocked."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "outletLockAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Module:$v1;Outlet:$v2",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'All outlets are unlocked' : 'Outlet $v2 is unlocked'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::outletUnlocked Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTAOutletIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::outletUnlocked",
+				"oid" : "1.3.6.1.4.1.4779.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"outlet in a DS module.",
+							"",
+							"Value is 1 to number of outlets controlled by the ds module. 0 represents",
+							"all outlets.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAOutletIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::configChangeSNMP",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The SNMP configuration has been changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "configChangeSNMP",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "SNMP configuration changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::configChangeSNMP ",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::configChangeSNMP",
+				"oid" : "1.3.6.1.4.1.4779.0.8"
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::configChangeOutlet",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified outlet has changed configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "configChangeOutlet",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Module:$v1;Outlet:$v2",
+				"Summary" : {
+					"eval" : "($v2 == 0) ? 'Configuration changed on all outlets' : 'Configuration changed on outlet $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::configChangeOutlet Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTAOutletIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::configChangeOutlet",
+				"oid" : "1.3.6.1.4.1.4779.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"outlet in a DS module.",
+							"",
+							"Value is 1 to number of outlets controlled by the ds module. 0 represents",
+							"all outlets.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAOutletIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::accessViolationConsole",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Someone has attempted to login via the console with the incorrect password."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "accessViolationConsole",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Three unsuccessful logins attempted via console"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::accessViolationConsole Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::accessViolationConsole",
+				"oid" : "1.3.6.1.4.1.4779.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::accessViolationNetwork",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Someone has attempted to login via the network with the incorrect password."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "accessViolationNetwork",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Three unsuccessful logins attempted via network"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::accessViolationNetwork Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::accessViolationNetwork",
+				"oid" : "1.3.6.1.4.1.4779.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::userPasswordChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The password for the specified user has been changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "userPasswordChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "User password changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::userPasswordChange Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::userPasswordChange",
+				"oid" : "1.3.6.1.4.1.4779.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::userAdded",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified user has been added."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "userAdded",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "User added"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::userAdded Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::userAdded",
+				"oid" : "1.3.6.1.4.1.4779.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::userLoggedIn",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATIONAL: The specified user has logged in. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "userLoggedIn",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "User logged in"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::userLoggedIn Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::userLoggedIn",
+				"oid" : "1.3.6.1.4.1.4779.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::temperatureThresholdViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: A temperature threshold has been violated. The argument is the rpc index."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "temperatureThresholdViolationAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Temperature threshold violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::temperatureThresholdViolation Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::temperatureThresholdViolation",
+				"oid" : "1.3.6.1.4.1.4779.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::temperatureThresholdViolationCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATIONAL: A temperature threshold violated has been cleared. The argument is the rpc index."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "temperatureThresholdViolationAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Temperature threshold violation cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::temperatureThresholdViolationCleared Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::temperatureThresholdViolationCleared",
+				"oid" : "1.3.6.1.4.1.4779.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::currentThresholdViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The preset current threshold has been violated. The argument is the rpc index."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "currentThresholdViolationAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Current threshold violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::currentThresholdViolation Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::currentThresholdViolation",
+				"oid" : "1.3.6.1.4.1.4779.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::currentThresholdViolationCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATIONAL: A current threshold violation has been cleared. The argument is the rpc index."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "currentThresholdViolationAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Current threshold violation cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::currentThresholdViolationCleared Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::currentThresholdViolationCleared",
+				"oid" : "1.3.6.1.4.1.4779.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::resetModulesEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: A reset modules (RM) command has been executed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "resetModulesEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Reset modules command executed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::resetModulesEvent Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::resetModulesEvent",
+				"oid" : "1.3.6.1.4.1.4779.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::resetModulesComplete",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: A reset modules (RM) command has been completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "resetModulesComplete",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Reset module command is complete"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::resetModulesComplete Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::resetModulesComplete",
+				"oid" : "1.3.6.1.4.1.4779.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::errorExecutingSNMPCommand",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: unable to execute SNMP command. String contains reason and command."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "errorExecutingSNMPCommand",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SNMP command execution failed. $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::errorExecutingSNMPCommand Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::errorExecutingSNMPCommand",
+				"oid" : "1.3.6.1.4.1.4779.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::fileTransferComplete",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATIONAL: file transfer to unit complete."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "fileTransferComplete",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "File transfer is complete"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::fileTransferComplete ",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::fileTransferComplete",
+				"oid" : "1.3.6.1.4.1.4779.0.22"
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::userTerminated",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: user terminated. Argument specifies user."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "userTerminated",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "User $v1 terminated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::userTerminated Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::userTerminated",
+				"oid" : "1.3.6.1.4.1.4779.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::voltageOverThresholdViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Over voltage. Argument specifies rpc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "voltageOverThresholdViolationAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Over voltage"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::voltageOverThresholdViolation Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::voltageOverThresholdViolation",
+				"oid" : "1.3.6.1.4.1.4779.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::voltageOverThresholdViolationCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATIONAL: Over voltage cleared. Argument specifies rpc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "voltageOverThresholdViolationAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Over voltage cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::voltageOverThresholdViolationCleared Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::voltageOverThresholdViolationCleared",
+				"oid" : "1.3.6.1.4.1.4779.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::voltageUnderThresholdViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Under voltage. Argument specifies rpc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "voltageUnderThresholdViolationAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Under voltage"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::voltageUnderThresholdViolation Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::voltageUnderThresholdViolation",
+				"oid" : "1.3.6.1.4.1.4779.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::voltageUnderThresholdViolationCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATIONAL: Under voltage cleared. Argument specifies rpc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "voltageUnderThresholdViolationAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Under voltage cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::voltageUnderThresholdViolationCleared Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::voltageUnderThresholdViolationCleared",
+				"oid" : "1.3.6.1.4.1.4779.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::circuitBreakerAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Circuit breaker is blown. Argument specifies rpc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "circuitBreakerAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Circuit breaker is blown"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::circuitBreakerAlarm Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::circuitBreakerAlarm",
+				"oid" : "1.3.6.1.4.1.4779.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::rpcFailureAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Unable to communicate to an RPC. Argument specifies port number of RPC."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "rpcFailureAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Unable to communicate to RPC $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::rpcFailureAlarm Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::rpcFailureAlarm",
+				"oid" : "1.3.6.1.4.1.4779.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::userDeleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATIONAL: The specified user has logged in. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "userDeleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "User deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::userDeleted Baytech-MIB-403-1::mtrapargsString s EXAMPLE",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::userDeleted",
+				"oid" : "1.3.6.1.4.1.4779.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an octet string argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return a NULL string."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsString",
+						"oid" : "1.3.6.1.4.1.4779.3.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::warningThresholdViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				" "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "warningThresholdViolationAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Group current exceeded warning threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::warningThresholdViolation Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::warningThresholdViolation",
+				"oid" : "1.3.6.1.4.1.4779.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::warningThresholdViolationClear",
+			"certification" : "STANDARD",
+			"description" : [
+				" "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "warningThresholdViolationAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Group current dropped below warning threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::warningThresholdViolationClear Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::warningThresholdViolationClear",
+				"oid" : "1.3.6.1.4.1.4779.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::emergencyThresholdViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				" "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "emergencyThresholdViolation",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Group current exceeded emergency threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::emergencyThresholdViolation Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::emergencyThresholdViolation",
+				"oid" : "1.3.6.1.4.1.4779.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::emergencyThresholdViolationClear",
+			"certification" : "STANDARD",
+			"description" : [
+				" "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "emergencyThresholdViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Group current emergency threshold violation cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::emergencyThresholdViolationClear Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::emergencyThresholdViolationClear",
+				"oid" : "1.3.6.1.4.1.4779.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::circuitBreakerAlarmClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Circuit breaker has been reset. Argument specifies rpc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "circuitBreakerAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Circuit breaker reset"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::circuitBreakerAlarmClearTrap Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::circuitBreakerAlarmClearTrap",
+				"oid" : "1.3.6.1.4.1.4779.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::currentUnderThresholdViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Low current. Argument specifies rpc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "currentUnderThresholdViolation",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Low current"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::currentUnderThresholdViolation Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::currentUnderThresholdViolation",
+				"oid" : "1.3.6.1.4.1.4779.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::currentUnderThresholdViolationCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"INFORMATIONAL: Low current cleared. Argument specifies rpc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "currentUnderThresholdViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "RPCIndex:$v1",
+				"Summary" : "Low current alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::currentUnderThresholdViolationCleared Baytech-MIB-403-1::mtrapargsInteger i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::currentUnderThresholdViolationCleared",
+				"oid" : "1.3.6.1.4.1.4779.0.37",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::mtrapargsInteger",
+						"oid" : "1.3.6.1.4.1.4779.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::voltageSourceChangeAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: RPC voltage source has changed. Arguments specify modules index, current voltage source, and count of number of times source has been switched."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "voltageSourceChangeAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Module:$v1",
+				"Summary" : "RPC voltage source changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::voltageSourceChangeAlarm Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTAVoltageSource i 9999 Baytech-MIB-403-1::sBTASourceSwitchCount i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::voltageSourceChangeAlarm",
+				"oid" : "1.3.6.1.4.1.4779.0.38",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is the number associated",
+							"with the voltage source in an RPC.",
+							"",
+							"Value is 1 or 2, depending on which voltage source is powering the RPC.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAVoltageSource",
+						"oid" : "1.3.6.1.4.1.4779.3.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is the number associated",
+							"with the number of voltage source transitions in an RPC.",
+							"",
+							"Value is 0 to 255, an 8-bit w/rollover count of number of times voltage",
+							"source has been switched from one source to another.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTASourceSwitchCount",
+						"oid" : "1.3.6.1.4.1.4779.3.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::sensorTempThreshHiAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Hi threshold exceeded. Arguments specify module, sensor number"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "sensorTempThreshHiAlarmTrap",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Module:$v1;Sensor:$v2",
+				"Summary" : "Sensor ($v2) high threshold exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::sensorTempThreshHiAlarmTrap Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTASensorIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::sensorTempThreshHiAlarmTrap",
+				"oid" : "1.3.6.1.4.1.4779.0.39",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"sensor in a DS module.",
+							"",
+							"Value is 1 to number of sensors controlled by the ds module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTASensorIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::sensorTempThreshHiAlarmClearedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Hi threshold alarm cleared. Arguments specify module, sensor number"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sensorTempThreshHiAlarmClearedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Module:$v1;Sensor:$v2",
+				"Summary" : "Sensor ($v2) high threshold alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::sensorTempThreshHiAlarmClearedTrap Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTASensorIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::sensorTempThreshHiAlarmClearedTrap",
+				"oid" : "1.3.6.1.4.1.4779.0.40",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"sensor in a DS module.",
+							"",
+							"Value is 1 to number of sensors controlled by the ds module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTASensorIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::sensorTempThreshLoAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Lo threshold alarm cleared. Arguments specify module, sensor number"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "sensorTempThreshLoAlarmTrap",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Module:$v1;Sensor:$v2",
+				"Summary" : "Low sensor ($v2) threshold violated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::sensorTempThreshLoAlarmTrap Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTASensorIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::sensorTempThreshLoAlarmTrap",
+				"oid" : "1.3.6.1.4.1.4779.0.41",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"sensor in a DS module.",
+							"",
+							"Value is 1 to number of sensors controlled by the ds module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTASensorIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::sensorTempThreshLoAlarmClearedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Lo threshold alarm cleared. Arguments specify module, sensor number"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sensorTempThreshLoAlarmTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Module:$v1;Sensor:$v2",
+				"Summary" : "Low sensor ($v2) threshold alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::sensorTempThreshLoAlarmClearedTrap Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTASensorIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::sensorTempThreshLoAlarmClearedTrap",
+				"oid" : "1.3.6.1.4.1.4779.0.42",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"sensor in a DS module.",
+							"",
+							"Value is 1 to number of sensors controlled by the ds module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTASensorIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::sensorStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: Sensor state (contact, detector, etc) has changed. Arguments specify module, sensor number"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sensorStateChangeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Module:$v1;Sensor:$v2",
+				"Summary" : "Sensor ($v2) state changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::sensorStateChangeTrap Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTASensorIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::sensorStateChangeTrap",
+				"oid" : "1.3.6.1.4.1.4779.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"sensor in a DS module.",
+							"",
+							"Value is 1 to number of sensors controlled by the ds module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTASensorIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::configChangeSensor",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified environmental sensor has changed configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "configChangeSensor",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Module:$v1;Sensor:$v2",
+				"Summary" : "Sensor ($v2) configuration changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::configChangeSensor Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTASensorIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::configChangeSensor",
+				"oid" : "1.3.6.1.4.1.4779.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"sensor in a DS module.",
+							"",
+							"Value is 1 to number of sensors controlled by the ds module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTASensorIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "Baytech-MIB-403-1::sensorTypeChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"WARNING: The specified environmental sensor is now a different type."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sensorTypeChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Module:$v1;Sensor:$v2",
+				"Summary" : "Sensor ($v2) type changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD Baytech-MIB-403-1::sensorTypeChange Baytech-MIB-403-1::sBTAModuleIndex i 9999 Baytech-MIB-403-1::sBTASensorIndex i 9999",
+			"trap" : {
+				"name" : "Baytech-MIB-403-1::sensorTypeChange",
+				"oid" : "1.3.6.1.4.1.4779.0.45",
+				"variables" : [
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"DS module. Value will equal the slot of the module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTAModuleIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This OID allows baytech traps to be sent with an integer argument",
+							"that may not be defined in the baytech MIB. This is an index to a specific",
+							"sensor in a DS module.",
+							"",
+							"Value is 1 to number of sensors controlled by the ds module.",
+							"",
+							"A get of this OID will return 0."
+						],
+						"name" : "Baytech-MIB-403-1::sBTASensorIndex",
+						"oid" : "1.3.6.1.4.1.4779.3.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

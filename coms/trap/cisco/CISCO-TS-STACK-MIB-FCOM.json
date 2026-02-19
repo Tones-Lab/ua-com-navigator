@@ -1,0 +1,803 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsStackCfgChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when there is a change in the ",
+				"stack configuration i.e. when either a new switch is ",
+				"added to the stack or a switch leaves a stack.",
+				"ciscoTsNumSwitches indicates the current number of switches",
+				"which are part of the stack. The management station should ",
+				"update its stack information according to the stack table."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsStackCfgChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Stack count has changed and now includes $v3 switches"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsStackCfgChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsNumSwitches i 9999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsStackCfgChange",
+				"oid" : "1.3.6.1.4.1.9.5.32.1.1.0.1",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsNumSwitches",
+						"oid" : "1.3.6.1.4.1.9.5.32.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsStackProStackMatrixChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when the stack switches over",
+				"from primary to secondary Matrix or from ",
+				"secondary back to primary Matrix."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsStackProStackMatrixChange",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1 <= 2) ? 2 : (($v1 == 4) ? 4 : 3)"
+				},
+				"SubNode" : "$v1",
+				"Summary" : {
+					"eval" : "($v3 <= 2) ? 'Stack has switched over to $v3 Matrix' : 'Stack switching to/from Matrix produced $v3 status'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsStackProStackMatrixChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsProStackMatrixStatus i 1",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsStackProStackMatrixChange",
+				"oid" : "1.3.6.1.4.1.9.5.32.1.1.0.2",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "primary",
+							"2" : "secondary",
+							"3" : "none",
+							"4" : "failed"
+						},
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsProStackMatrixStatus",
+						"oid" : "1.3.6.1.4.1.9.5.32.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsStackTempChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when the temperature in a ",
+				"switch exceeds normal or returns to normal. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsStackTempChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 temperature is currently at $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsStackTempChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsStackSwitchTemperature i 9999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsStackTempChange",
+				"oid" : "1.3.6.1.4.1.9.5.32.2.0.3",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsStackSwitchTemperature",
+						"oid" : "1.3.6.1.4.1.9.5.32.2.1.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsStackPwrStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when the status of the power supply",
+				"changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsStackPwrStatusChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Switch $v1 power supply is currently in the $v3 state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsStackPwrStatusChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsStackSwitchPwrSupplyStatus i 1",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsStackPwrStatusChange",
+				"oid" : "1.3.6.1.4.1.9.5.32.2.0.4",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "internal-only",
+							"3" : "internal-no-backup",
+							"4" : "internal-backup-will-reset",
+							"5" : "external-no-backup",
+							"6" : "external-backup-no-reset"
+						},
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsStackSwitchPwrSupplyStatus",
+						"oid" : "1.3.6.1.4.1.9.5.32.2.1.1.30",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsPortStrNFwdEntry",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a port automatically",
+				"enters store and forward mode when the error rate ",
+				"exceeds the threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsPortStrNFwdEntry",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Port on $v1 is currently in the $v3 state"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsPortStrNFwdEntry RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsPortCfgActualForwardingMode i 1",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsPortStrNFwdEntry",
+				"oid" : "1.3.6.1.4.1.9.5.32.4.0.1",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "storeandforward",
+							"2" : "cutthru",
+							"3" : "unknown"
+						},
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsPortCfgActualForwardingMode",
+						"oid" : "1.3.6.1.4.1.9.5.32.4.1.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsPortCfgLossTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap occurs when a port is disabled because",
+				"it has exceeded its Configuration Loss Threshold",
+				"within the configured Sampling Period."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsPortCfgLossTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Port on $v1 disabled due to exceeding it's configuration loss threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsPortCfgLossTrap RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsPortStatsCfgLoss i 9999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsPortCfgLossTrap",
+				"oid" : "1.3.6.1.4.1.9.5.32.4.0.2",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsPortStatsCfgLoss",
+						"oid" : "1.3.6.1.4.1.9.5.32.4.2.1.24",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsBeaconStart",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a port or a station local to a",
+				"port begins to beacon. It is sent out only when a ring status",
+				"change indicates that a station is beaconing. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ciscoTsBeaconStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "$v1 : Port $v3",
+				"Summary" : "Port $v3 on $v1 has begun to beacon"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsBeaconStart RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsPortCfgNumber i 9",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsBeaconStart",
+				"oid" : "1.3.6.1.4.1.9.5.32.4.0.3",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsPortCfgNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.4.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsBeaconEnd",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when the ring status change indicates",
+				"that a ring is no longer beaconing. This trap only occurs only",
+				"once when the status actually changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ciscoTsBeaconStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v1 : Port $v3",
+				"Summary" : "Port $v3 on $v1 is no longer beaconing"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsBeaconEnd RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsPortCfgNumber i 9",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsBeaconEnd",
+				"oid" : "1.3.6.1.4.1.9.5.32.4.0.4",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsPortCfgNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.4.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsDuplicateMACAddr",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a duplicate MAC address is detected",
+				"on a port in a TrCRF which already has learned that MAC address."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsDuplicateMACAddr",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1 : Port $v3",
+				"Summary" : "Duplicate MAC address detected on Port $v3 on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsDuplicateMACAddr RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsPortCfgNumber i 9",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsDuplicateMACAddr",
+				"oid" : "1.3.6.1.4.1.9.5.32.4.0.5",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsPortCfgNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.4.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsPortSoftErrExceededTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is generated when a station local to a port",
+				"exceeds its Soft Error Threshold within the configured ",
+				"interval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsPortSoftErrExceededTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1 : $v7",
+				"Summary" : "Station $v6 on $v1 has exceeded it's Soft Error threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsPortSoftErrExceededTrap RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsStackSwitchNumber i 8 CISCO-TS-STACK-MIB::ciscoTsPortCfgNumber i 9 TOKEN-RING-RMON-MIB::ringStationIfIndex i 9999 TOKEN-RING-RMON-MIB::ringStationMacAddress s 999999 IF-MIB::ifName s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsPortSoftErrExceededTrap",
+				"oid" : "1.3.6.1.4.1.9.5.32.4.0.6",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsStackSwitchNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsPortCfgNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.4.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "TOKEN-RING-RMON-MIB::ringStationIfIndex",
+						"oid" : "1.3.6.1.2.1.16.10.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "TOKEN-RING-RMON-MIB::ringStationMacAddress",
+						"oid" : "1.3.6.1.2.1.16.10.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "IF-MIB::ifName",
+						"oid" : "1.3.6.1.2.1.31.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsTrCRFNewRoot",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is a TrCRF specific version of the",
+				"newRoot trap as described in RFC1493.",
+				"The newRoot trap indicates that the sending agent",
+				"has become the new root of the Spanning Tree; the",
+				"trap is sent by a bridge soon after its election",
+				"as the new root, e.g., upon expiration of the",
+				"Topology Change Timer immediately subsequent to",
+				"its election. Implementation of this trap is",
+				"optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsTrCRFNewRoot",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "TrCRF ID $v3 - $v1 is now the new root of the Spanning Tree"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsTrCRFNewRoot RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsTrCRFInfoTrCRFNumber i 999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsTrCRFNewRoot",
+				"oid" : "1.3.6.1.4.1.9.5.32.6.0.1",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsTrCRFInfoTrCRFNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.6.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsTrCRFTopologyChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is a TrCRF specific version of the",
+				"topologyChange trap as described in RFC1493.",
+				"A topologyChange trap is sent by a bridge when",
+				"any of its configured ports transitions from the",
+				"Learning state to the Forwarding state, or from",
+				"the Forwarding state to the Blocking state. The",
+				"trap is not sent if a newRoot trap is sent for the",
+				"same transition. Implementation of this trap is",
+				"optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsTrCRFTopologyChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "TrCRF ID $v3 - Topology of $v1 has changed due to port transition between Learning/Forwarding/Blocking"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsTrCRFTopologyChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsTrCRFInfoTrCRFNumber i 999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsTrCRFTopologyChange",
+				"oid" : "1.3.6.1.4.1.9.5.32.6.0.2",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsTrCRFInfoTrCRFNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.6.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsTrBRFNewRoot",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is a TrBRF specific version of the",
+				"newRoot trap as described in RFC1493.",
+				"The newRoot trap indicates that the sending agent",
+				"has become the new root of the Spanning Tree; the",
+				"trap is sent by a bridge soon after its election",
+				"as the new root, e.g., upon expiration of the",
+				"Topology Change Timer immediately subsequent to",
+				"its election. Implementation of this trap is",
+				"optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsTrBRFNewRoot",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "TrBRF ID $v3 - $v1 is now the new root of the Spanning Tree"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsTrBRFNewRoot RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsTrBRFInfoTrBRFNumber i 999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsTrBRFNewRoot",
+				"oid" : "1.3.6.1.4.1.9.5.32.6.0.3",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsTrBRFInfoTrBRFNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.6.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsTrBRFTopologyChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is a TrBRF specific version of the",
+				"topologyChange trap as described in RFC1493.",
+				"A topologyChange trap is sent by a bridge when",
+				"any of its configured ports transitions from the",
+				"Learning state to the Forwarding state, or from",
+				"the Forwarding state to the Blocking state. The",
+				"trap is not sent if a newRoot trap is sent for the",
+				"same transition. Implementation of this trap is",
+				"optional."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsTrBRFTopologyChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "TrBRF ID $v3 - Topology of $v1 has changed due to port transition between Learning/Forwarding/Blocking"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsTrBRFTopologyChange RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsTrBRFInfoTrBRFNumber i 999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsTrBRFTopologyChange",
+				"oid" : "1.3.6.1.4.1.9.5.32.6.0.4",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsTrBRFInfoTrBRFNumber",
+						"oid" : "1.3.6.1.4.1.9.5.32.6.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsTokenChannelFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when one of the links in an",
+				"TokenChannel fail. The variable ciscoTsTCPorts",
+				"contains the ports which are operational in the",
+				"TokenChannel. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoTsTokenChannelFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Links in a TokenChannel have failed effecting $v3 ports on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsTokenChannelFailed RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsTCPorts s 9999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsTokenChannelFailed",
+				"oid" : "1.3.6.1.4.1.9.5.32.7.0.1",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsTCPorts",
+						"oid" : "1.3.6.1.4.1.9.5.32.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-TS-STACK-MIB::ciscoTsTokenChannelStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent to report a TokenChannel or ",
+				"ISLChannel status change. The variable ciscoTsTCStatus",
+				"contains the current channel status. The variable ",
+				"ciscoTsTCPorts contains the ports which are configured ",
+				"in the channel. The variable ciscoTsTCActivePorts ",
+				"contains the ports which are active in the channel."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : 2"
+				},
+				"EventType" : "ciscoTsTokenChannelStatus",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 0 : (($v3 == 2) ? 3 : 2)"
+				},
+				"SubNode" : "$v1",
+				"Summary" : "TokenChannel or ISLChannel status change to $v3 with $v4 configured and $v5 active ports on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-TS-STACK-MIB::ciscoTsTokenChannelStatus RFC1213-MIB::sysName s EXAMPLE RFC1213-MIB::sysLocation s EXAMPLE CISCO-TS-STACK-MIB::ciscoTsTCStatus i 1 CISCO-TS-STACK-MIB::ciscoTsTCPorts s 9999 CISCO-TS-STACK-MIB::ciscoTsTCActivePorts s 9999",
+			"trap" : {
+				"name" : "CISCO-TS-STACK-MIB::ciscoTsTokenChannelStatus",
+				"oid" : "1.3.6.1.4.1.9.5.32.7.0.2",
+				"variables" : [
+					{
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "RFC1213-MIB::sysLocation",
+						"oid" : "1.3.6.1.2.1.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "reduced"
+						},
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsTCStatus",
+						"oid" : "1.3.6.1.4.1.9.5.32.7.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsTCPorts",
+						"oid" : "1.3.6.1.4.1.9.5.32.7.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-TS-STACK-MIB::ciscoTsTCActivePorts",
+						"oid" : "1.3.6.1.4.1.9.5.32.7.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

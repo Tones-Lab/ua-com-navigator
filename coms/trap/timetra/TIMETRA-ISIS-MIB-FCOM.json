@@ -1,0 +1,1854 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201504010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisDatabaseOverload",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisDatabaseOverload."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "(($v1==1 && $v2==0) || ($v1==2 && $v3==0)) ? 1 : (($v1==1 && $v2==3) || ($v1==2 && $v3==3) || (($v1==3) && (($v2==2 && $v3==3) || ($v2==3 && $v3==2)))) ? 3 : 2"
+				},
+				"EventType" : "vRtrIsisDatabaseOverload",
+				"ExpireTime" : {
+					"eval" : "(($v1==1 && $v2==0) || ($v1==2 && $v3==0)) ? 3600 : (($v1==1 && $v2==3) || ($v1==2 && $v3==3) || (($v1==3) && (($v2==2 && $v3==3) || ($v2==3 && $v3==2)))) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? (($v2==1) ? 4 : ($v2==2) ? 0 : 2) : ($v1==2) ? (($v3==1) ? 4 : ($v3==2) ? 0 : 2) : (($v2==1 && $v3==1) ? 4 : (($v2==2 && $v3==3) || ($v2==3 && $v3==2)) ? 2 :  ($v2==2 && $v3==2) ? 0 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'ISIS database overload state: Level 1: $v2' : (($v1==2) ? 'ISIS database overload state: Level 2: $v3' : 'ISIS database overload state: Level 1: $v2; Level 2: $v3')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisDatabaseOverload TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 ISIS-MIB::isisSysL1State i 1 ISIS-MIB::isisSysL2State i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisDatabaseOverload",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the Level 1 database."
+						],
+						"enums" : {
+							"1" : "off",
+							"2" : "on",
+							"3" : "waiting"
+						},
+						"name" : "ISIS-MIB::isisSysL1State",
+						"oid" : "1.3.6.1.3.37.1.1.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The state of the Level 2 database."
+						],
+						"enums" : {
+							"1" : "off",
+							"2" : "on",
+							"3" : "waiting"
+						},
+						"name" : "ISIS-MIB::isisSysL2State",
+						"oid" : "1.3.6.1.3.37.1.1.1.1.24",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisManualAddressDrops",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisManualAddressDrops."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<isisManAreaAddr>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : ($v1==2 || $v1==3) ? 2 : 3"
+				},
+				"EventType" : "vRtrIsisManualAddressDrops",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : ($v1==2 || $v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : ($v1==2 || $v1==3) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "ISIS Manual address: $isisManAreaAddr dropped"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisManualAddressDrops ISIS-MIB::isisManAreaAddrExistState i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisManualAddressDrops",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The state of the isisManAreaAddrEntry. This object",
+							"follows the Row Status behaviour. If an attempt is",
+							"made to set this object to the value destroy when the",
+							"corresponding isisManAreaAddrEntry is the only valid",
+							"entry for this instance and when the corresponding ISIS",
+							"instance has isisSysAdminState set to 'on' then the",
+							"attempt to delete the row is rejected."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "ISIS-MIB::isisManAreaAddrExistState",
+						"oid" : "1.3.6.1.3.37.1.1.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisCorruptedLSPDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisCorruptedLSPDetected."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisCorruptedLSPDetected",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "LSP: $v2 is corrupted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisCorruptedLSPDetected TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID s EXAMPLEE",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisCorruptedLSPDetected",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An Octet String that uniquely identifies a Link State PDU."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisMaxSeqExceedAttempt",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisMaxSeqExceedAttempt."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisMaxSeqExceedAttempt",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "ISIS maximum sequence number exceeded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisMaxSeqExceedAttempt TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID s EXAMPLEE",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisMaxSeqExceedAttempt",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An Octet String that uniquely identifies a Link State PDU."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisIDLenMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisIDLenMismatch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisIDLenMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v2",
+				"Summary" : "Received a PDU system ID length : $v1 mismatched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisIDLenMismatch TIMETRA-ISIS-MIB::vRtrIsisFieldLen i 0 TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisPDUFragment s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisIDLenMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"Holds the System ID length reported in PDU we received."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisFieldLen",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Holds up to the first 64 bytes of a PDU that triggered the",
+							"notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisPDUFragment",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisMaxAreaAddrsMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisMaxAreaAddrsMismatch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisMaxAreaAddrsMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v1",
+				"Summary" : "Received PDU with different maximum area address: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisMaxAreaAddrsMismatch TIMETRA-ISIS-MIB::vRtrIsisMaxAreaAddress i 0 TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisPDUFragment s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisMaxAreaAddrsMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Holds the Max Area Addresses reported in a PDU we received."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisMaxAreaAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Holds up to the first 64 bytes of a PDU that triggered the",
+							"notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisPDUFragment",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisOwnLSPPurge",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisOwnLSPPurge."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisOwnLSPPurge",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v1",
+				"Summary" : "ISIS own LSP: $v2 purged"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisOwnLSPPurge TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID s EXAMPLEE TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisOwnLSPPurge",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"An Octet String that uniquely identifies a Link State PDU."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisSequenceNumberSkip",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisSequenceNumberSkip."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisSequenceNumberSkip",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v2",
+				"Summary" : "ISIS received LSP without sequence number"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisSequenceNumberSkip TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID s EXAMPLEE TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisSequenceNumberSkip",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"An Octet String that uniquely identifies a Link State PDU."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisAutTypeFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisAutTypeFail."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisAutTypeFail",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v3",
+				"Summary" : "ISIS authentication type failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisAutTypeFail TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisPDUFragment s EXAMPLE TIMETRA-VRTR-MIB::vRtrIfIndex i 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisAutTypeFail",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Holds up to the first 64 bytes of a PDU that triggered the",
+							"notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisPDUFragment",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisAuthFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisAuthFail."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisAuthFail",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v3",
+				"Summary" : "ISIS authentication failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisAuthFail TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisPDUFragment s EXAMPLE TIMETRA-VRTR-MIB::vRtrIfIndex i 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisAuthFail",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Holds up to the first 64 bytes of a PDU that triggered the",
+							"notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisPDUFragment",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisVersionSkew",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisVersionSkew."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisVersionSkew",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v3",
+				"Summary" : "Received PDU from IS running a different version of IS-IS protocol"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisVersionSkew TIMETRA-ISIS-MIB::vRtrIsisProtocolVersion i 0 TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisPDUFragment s EXAMPLE TIMETRA-VRTR-MIB::vRtrIfIndex i 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisVersionSkew",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"Holds the Protocol version reported in PDU we received."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisProtocolVersion",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Holds up to the first 64 bytes of a PDU that triggered the",
+							"notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisPDUFragment",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisAreaMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisAreaMismatch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisAreaMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v3",
+				"Summary" : "ISIS received PDU from IS that does not share any area"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisAreaMismatch TIMETRA-ISIS-MIB::vRtrIsisLSPSize i 9999 TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisPDUFragment s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisAreaMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"Holds the size of LSP we received that is too big to forward."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisLSPSize",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Holds up to the first 64 bytes of a PDU that triggered the",
+							"notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisPDUFragment",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisRejectedAdjacency",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisRejectedAdjacency."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisRejectedAdjacency",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v2",
+				"Summary" : "ISIS adjacency rejected for received PDUs"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisRejectedAdjacency TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-VRTR-MIB::vRtrIfIndex i 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisRejectedAdjacency",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisLSPTooLargeToPropagate",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisLSPTooLargeToPropagate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisLSPTooLargeToPropagate",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v4",
+				"Summary" : "ISIS LSP size: $v1 is too big to forward"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisLSPTooLargeToPropagate TIMETRA-ISIS-MIB::vRtrIsisLSPSize i 9999 TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID s EXAMPLEE TIMETRA-VRTR-MIB::vRtrIfIndex i 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisLSPTooLargeToPropagate",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"Holds the size of LSP we received that is too big to forward."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisLSPSize",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An Octet String that uniquely identifies a Link State PDU."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisOrigLSPBufSizeMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisOrigLSPBufSizeMismatch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisOrigLSPBufSizeMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v4",
+				"Summary" : "ISIS LSP buffer size does not match with originating buffer size: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisOrigLSPBufSizeMismatch TIMETRA-ISIS-MIB::vRtrIsisOriginatingBufferSize i 9999 TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID s EXAMPLEE TIMETRA-VRTR-MIB::vRtrIfIndex i 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisOrigLSPBufSizeMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"Holds the size of vRtrIsisSysOrigL1LSPBuffSize or",
+							"vRtrIsisSysOrigL2LSPBuffSize advertised by peer in TLV."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisOriginatingBufferSize",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An Octet String that uniquely identifies a Link State PDU."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisProtoSuppMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisProtoSuppMismatch."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisProtoSuppMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v4",
+				"Summary" : "ISIS protocol does not match with adjacent system protocol"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisProtoSuppMismatch TIMETRA-ISIS-MIB::vRtrIsisProtocolsSupported s EXAMPLE TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID s EXAMPLEE TIMETRA-VRTR-MIB::vRtrIfIndex i 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisProtoSuppMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The list of protocols supported by an adjacent system. This",
+							"may be empty."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisProtocolsSupported",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An Octet String that uniquely identifies a Link State PDU."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisAdjacencyChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisAdjacencyChange."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid4",
+						"pattern" : "\\.(?P<isisCircIndex>[0-9]+)\\.(?P<isisISAdjIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 1 : ($v4==3 || $v4==4) ? 2 : 3"
+				},
+				"EventType" : "vRtrIsisAdjacencyChange",
+				"ExpireTime" : {
+					"eval" : "($v4==2) ? 3600 : ($v4==3 || $v4==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 0 : ($v4==3 || $v4==4) ? 4 : 2"
+				},
+				"SubNode" : "vRouterIfIndex:$v2;AdjacencyIndex:$isisISAdjIndex",
+				"Summary" : "ISIS adjacency: $isisISAdjIndex state: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisAdjacencyChange TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID s EXAMPLEE ISIS-MIB::isisISAdjState i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisAdjacencyChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"An Octet String that uniquely identifies a Link State PDU."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisTrapLSPID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The state of the adjacency"
+						],
+						"enums" : {
+							"1" : "initializing",
+							"2" : "up",
+							"3" : "failed",
+							"4" : "down"
+						},
+						"name" : "ISIS-MIB::isisISAdjState",
+						"oid" : "1.3.6.1.3.37.1.5.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisCircIdExhausted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisCircIdExhausted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisCircIdExhausted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v1",
+				"Summary" : "ISIS circuit ID exhausted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisCircIdExhausted TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisCircIdExhausted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisAdjRestartStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisAdjRestartStatusChange."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==3) ? 1 : ($v3==2) ? 2 : 3"
+				},
+				"EventType" : "vRtrIsisAdjRestartStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==3) ? 3600 : ($v3==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==3) ? 0 : ($v3==2) ? 3 : 2"
+				},
+				"SubNode" : "vRouterIfIndex:$v2",
+				"Summary" : "ISIS adjacency graceful restart status is $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisAdjRestartStatusChange TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisISAdjRestartStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisAdjRestartStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"vRtrIsisISAdjRestartStatus indicates the graceful restart status of",
+							"the adjacency."
+						],
+						"enums" : {
+							"1" : "notHelping",
+							"2" : "restarting",
+							"3" : "restart-complete",
+							"4" : "helping"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisISAdjRestartStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.3.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisLdpSyncTimerStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisLdpSyncTimerStarted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisLdpSyncStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "vRouterIfIndex:$v1",
+				"Summary" : "ISIS LDP sync timer state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisLdpSyncTimerStarted TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisIfLdpSyncTimerState i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisLdpSyncTimerStarted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrIsisIfLdpSyncTimerState indicates the state of the",
+							"vRtrIsisIfLdpSyncTimeLeft on this ISIS interface."
+						],
+						"enums" : {
+							"1" : "waitForLdpAdj",
+							"2" : "timerActive",
+							"3" : "ldpExchgDone",
+							"4" : "timerExpired",
+							"5" : "manualExit",
+							"6" : "disabled"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisIfLdpSyncTimerState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.2.1.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisLdpSyncExit",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisLdpSyncExit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisLdpSyncStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "vRouterIfIndex:$v1",
+				"Summary" : "ISIS LDP sync exit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisLdpSyncExit TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisIfLdpSyncTimerState i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisLdpSyncExit",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrIsisIfLdpSyncTimerState indicates the state of the",
+							"vRtrIsisIfLdpSyncTimeLeft on this ISIS interface."
+						],
+						"enums" : {
+							"1" : "waitForLdpAdj",
+							"2" : "timerActive",
+							"3" : "ldpExchgDone",
+							"4" : "timerExpired",
+							"5" : "manualExit",
+							"6" : "disabled"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisIfLdpSyncTimerState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.2.1.1.19",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisExportLimitReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisExportLimitReached."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrIsisExportLimitStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Number of routes or prefixes exported into ISIS reached the max limit ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisExportLimitReached TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisExportLimit u 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisExportLimitReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrIsisExportLimit specifies the maximum number of",
+							"routes or prefixes that can be exported into ISIS from the route",
+							"table.",
+							"",
+							"A value of 0 indicates that the export limit for routes or prefixes",
+							"has been disabled."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisExportLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.1.1.1.50",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisExportLimitWarning",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisExportLimitWarning."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrIsisExportLimitStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Number of routes or prefixes exported into ISIS is over $v3% of max limit ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisExportLimitWarning TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisExportLimit u 9999 TIMETRA-ISIS-MIB::vRtrIsisExportLimitLogPercent u 0",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisExportLimitWarning",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrIsisExportLimit specifies the maximum number of",
+							"routes or prefixes that can be exported into ISIS from the route",
+							"table.",
+							"",
+							"A value of 0 indicates that the export limit for routes or prefixes",
+							"has been disabled."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisExportLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.1.1.1.50",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of vRtrIsisExportLimitLogPercent specifies the percentage of",
+							"the export-limit at which a warning log message and SNMP notification",
+							"would be sent. This would only be a warning and additional routes will",
+							"be learned up to 100% of vRtrIsisExportLimit.",
+							"",
+							"A value of 0 indicates that vRtrIsisExportLimitLogPercent is disabled",
+							"and no log message or SNMP notification would be sent."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisExportLimitLogPercent",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.1.1.1.51",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisRoutesExpLmtDropped",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is obsoleted in release 12.0. It is replaced with",
+				"tmnxIsisRoutesExpLmtDropped."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrIsisExportLimitStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "ISIS routes export limit dropped"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisRoutesExpLmtDropped TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisExportLimit u 9999",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisRoutesExpLmtDropped",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrIsisExportLimit specifies the maximum number of",
+							"routes or prefixes that can be exported into ISIS from the route",
+							"table.",
+							"",
+							"A value of 0 indicates that the export limit for routes or prefixes",
+							"has been disabled."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisExportLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.1.1.1.50",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisSpbNbrMultAdjExists",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A vRtrIsisSpbNbrMultAdjExists notification is sent when IS-IS",
+				"SPB instance detects a neighbor to which it already has a direct",
+				"adjacency on another interface.",
+				"[EFFECT] During SPF IS-IS SPB instance will have incorrect neighbor",
+				"information and hence path computations will be incorrect.",
+				"[RECOVERY] Check number of links to neighbor to make sure there is",
+				"only one link."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vRtrIsisSpbNbrMultAdjStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "vRouterIfIndex:$v1;NeighborSystemID:$v3",
+				"Summary" : "IS-IS SPB detected neighbor with multiple adjacency"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisSpbNbrMultAdjExists TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisNbrSysId s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisSpbNbrMultAdjExists",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrIsisNbrSysId indicates the system-id of the neighbor",
+							"associated with the notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisNbrSysId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisSpbNbrMultAdjExistsClear",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A vRtrIsisSpbNbrMultAdjExistsClear notification is sent when",
+				"an IS-IS SPB instance clears the condition raised by",
+				"vRtrIsisSpbNbrMultAdjExists notification.",
+				"[EFFECT] During SPF IS-IS SPB instance will have correct neighbor",
+				"information and hence path computations will be correct.",
+				"[RECOVERY] None required."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vRtrIsisSpbNbrMultAdjStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "vRouterIfIndex:$v1;NeighborSystemID:$v3",
+				"Summary" : "IS-IS neighbor with multiple adjacency alert cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisSpbNbrMultAdjExistsClear TIMETRA-VRTR-MIB::vRtrIfIndex i 9999 TIMETRA-ISIS-MIB::vRtrIsisSystemLevel i 1 TIMETRA-ISIS-MIB::vRtrIsisNbrSysId s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisSpbNbrMultAdjExistsClear",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this interface of this virtual",
+							"router in the Tmnx system. This field provides an identifier for",
+							"virtual router interfaces similar to the ifIndex values used in the",
+							"mib-2 interfaces table for physical interfaces. The vRtrIfIndex values",
+							"can be reused for different virtual routers, but are unique within",
+							"those entries with the same vRtrID.",
+							"",
+							"The vRtrIfIndex value for each virtual interface must remain constant",
+							"at least from one re-initialization of the system management processor",
+							"to the next."
+						],
+						"name" : "TIMETRA-VRTR-MIB::vRtrIfIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.3.4.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Identifies the level the notification applies to."
+						],
+						"enums" : {
+							"1" : "l1",
+							"2" : "l2",
+							"3" : "l1l2"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisSystemLevel",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of vRtrIsisNbrSysId indicates the system-id of the neighbor",
+							"associated with the notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisNbrSysId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrSpbEctFidCfgChg",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A vRtrSpbEctFidCfgChg notification is sent when a",
+				"configuration change is made to vRtrSpbEctFidTable affecting",
+				"forwarding database identifiers in the range from vRtrSpbEctFidStart",
+				"to vRtrSpbEctFidEnd.",
+				"[EFFECT] There are changes in the vRtrSpbEctFidTable which may be",
+				"out-of-sync with management application.",
+				"[RECOVERY] Management application may need to synchronize with changes",
+				"in the vRtrSpbEctFidTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrSpbEctFidCfgChg",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Configuration change in vRtrSpbEctFidTable affected forwarding database identifiers; Identifiers range: [$v1 $v2] ; Algorithm used: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrSpbEctFidCfgChg TIMETRA-ISIS-MIB::vRtrSpbEctFidStart i 1 TIMETRA-ISIS-MIB::vRtrSpbEctFidEnd i 1 TIMETRA-ISIS-MIB::vRtrSpbEctFidAlgorithm i 0",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrSpbEctFidCfgChg",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrSpbEctFidStart indicates the forwarding database",
+							"starting identifier associated with vRtrSpbEctFidCfgChg notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrSpbEctFidStart",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrSpbEctFidEnd indicates the forwarding database ending",
+							"identifier associated with vRtrSpbEctFidCfgChg notification."
+						],
+						"name" : "TIMETRA-ISIS-MIB::vRtrSpbEctFidEnd",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of vRtrSpbEctFidAlgorithm specifies the algorithm used by",
+							"the entry."
+						],
+						"enums" : {
+							"0" : "lowPathId",
+							"1" : "highPathId"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrSpbEctFidAlgorithm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.1.16.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-ISIS-MIB::vRtrIsisFailureDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] A vRtrIsisFailureDisabled notification is generated when ISIS",
+				"is operationally brought down. Reason for the failure is indicated by",
+				"vRtrIsisFailureReasonCode.",
+				"[EFFECT] ISIS is now operationally down.",
+				"[RECOVERY] ISIS will auto restart."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vRtrIsisFailureDisabled",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "ISIS operational state: down; Reason: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-ISIS-MIB::vRtrIsisFailureDisabled TIMETRA-ISIS-MIB::vRtrIsisFailureReasonCode i 1",
+			"trap" : {
+				"name" : "TIMETRA-ISIS-MIB::vRtrIsisFailureDisabled",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.10.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"The value of vRtrIsisFailureReasonCode indicates the reason for the",
+							"last ISIS failure which resulted in it being marked operationally",
+							"down.This object is used by the vRtrIsisFailureDisabled notification.",
+							"",
+							"This object is obsoleted in release 12.0. It is replaced with",
+							"tmnxIsisFailureReasonCode."
+						],
+						"enums" : {
+							"1" : "outOfResources"
+						},
+						"name" : "TIMETRA-ISIS-MIB::vRtrIsisFailureReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.10.4.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

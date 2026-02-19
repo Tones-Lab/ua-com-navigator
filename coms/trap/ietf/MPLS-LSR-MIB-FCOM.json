@@ -1,0 +1,167 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200712060000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MPLS-LSR-MIB::mplsXCUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the",
+				"mplsXCOperStatus object for one or more contiguous",
+				"entries in mplsXCTable are about to enter the up(1)",
+				"state from some other state. The included values of",
+				"mplsXCOperStatus MUST both be set equal to this",
+				"new state (i.e: up(1)). The two instances of",
+				"mplsXCOperStatus in this notification indicate the range",
+				"of indexes that are affected. Note that all the indexes",
+				"of the two ends of the range can be derived from the",
+				"instance identifiers of these two objects. For",
+				"cases where a contiguous range of cross-connects",
+				"have transitioned into the up(1) state at roughly",
+				"the same time, the device SHOULD issue a single",
+				"notification for each range of contiguous indexes in",
+				"an effort to minimize the emission of a large number",
+				"of notifications. If a notification has to be",
+				"issued for just a single cross-connect entry, then",
+				"the instance identifier (and values) of the two",
+				"mplsXCOperStatus objects MUST be the identical."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "mplsXCStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "MplsXC table entries is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MPLS-LSR-MIB::mplsXCUp MPLS-LSR-MIB::mplsXCOperStatus i 1 MPLS-LSR-MIB::mplsXCOperStatus i 1",
+			"trap" : {
+				"name" : "MPLS-LSR-MIB::mplsXCUp",
+				"oid" : "1.3.6.1.3.96.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"The actual operational status of this cross-connect."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-LSR-MIB::mplsXCOperStatus",
+						"oid" : "1.3.6.1.3.96.1.9.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The actual operational status of this cross-connect."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-LSR-MIB::mplsXCOperStatus",
+						"oid" : "1.3.6.1.3.96.1.9.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MPLS-LSR-MIB::mplsXCDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the",
+				"mplsXCOperStatus object for one or more contiguous",
+				"entries in mplsXCTable are about to enter the",
+				"down(2) state from some other state. The included values",
+				"of mplsXCOperStatus MUST both be set equal to this",
+				"down(2) state. The two instances of mplsXCOperStatus",
+				"in this notification indicate the range of indexes",
+				"that are affected. Note that all the indexes of the",
+				"two ends of the range can be derived from the",
+				"instance identifiers of these two objects. For",
+				"cases where a contiguous range of cross-connects",
+				"have transitioned into the down(2) state at roughly",
+				"the same time, the device SHOULD issue a single",
+				"notification for each range of contiguous indexes in",
+				"an effort to minimize the emission of a large number",
+				"of notifications. If a notification has to be",
+				"issued for just a single cross-connect entry, then",
+				"the instance identifier (and values) of the two",
+				"mplsXCOperStatus objects MUST be identical."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "mplsXCStatus",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1==2 || $v1==6) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "MplsXC table entries is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MPLS-LSR-MIB::mplsXCDown MPLS-LSR-MIB::mplsXCOperStatus i 1 MPLS-LSR-MIB::mplsXCOperStatus i 2",
+			"trap" : {
+				"name" : "MPLS-LSR-MIB::mplsXCDown",
+				"oid" : "1.3.6.1.3.96.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"The actual operational status of this cross-connect."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-LSR-MIB::mplsXCOperStatus",
+						"oid" : "1.3.6.1.3.96.1.9.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The actual operational status of this cross-connect."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "testing",
+							"4" : "unknown",
+							"5" : "dormant",
+							"6" : "notPresent",
+							"7" : "lowerLayerDown"
+						},
+						"name" : "MPLS-LSR-MIB::mplsXCOperStatus",
+						"oid" : "1.3.6.1.3.96.1.9.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

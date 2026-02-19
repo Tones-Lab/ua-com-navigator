@@ -1,0 +1,103 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200601160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-SP-MIB::ciscoSpLinksetStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when a linkset",
+				"changes to a new state. The value of",
+				"cSpLinksetState indicates the new state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : (($v1 == 2) ? 2 : 3)"
+				},
+				"EventType" : "ciscoSpLinksetStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : (($v1 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 2) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Linkset status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SP-MIB::ciscoSpLinksetStateChange CISCO-SP-MIB::cSpLinksetState i 1",
+			"trap" : {
+				"name" : "CISCO-SP-MIB::ciscoSpLinksetStateChange",
+				"oid" : "1.3.6.1.4.1.9.10.73.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive",
+							"3" : "inhibited",
+							"4" : "uninhibited",
+							"5" : "shut",
+							"6" : "noshut"
+						},
+						"name" : "CISCO-SP-MIB::cSpLinksetState",
+						"oid" : "1.3.6.1.4.1.9.10.73.1.2.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-SP-MIB::ciscoSpLinkStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification generated when a SP ",
+				"link changes state. The value of",
+				"cSpLinkState indicates the new state. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : (($v1 == 2) ? 2 : 3)"
+				},
+				"EventType" : "ciscoSpLinkStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : (($v1 == 2) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 2) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SP link status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-SP-MIB::ciscoSpLinkStateChange CISCO-SP-MIB::cSpLinkState i 1",
+			"trap" : {
+				"name" : "CISCO-SP-MIB::ciscoSpLinkStateChange",
+				"oid" : "1.3.6.1.4.1.9.10.73.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "active",
+							"2" : "inactive",
+							"3" : "inhibited",
+							"4" : "uninhibited",
+							"5" : "shut",
+							"6" : "noshut"
+						},
+						"name" : "CISCO-SP-MIB::cSpLinkState",
+						"oid" : "1.3.6.1.4.1.9.10.73.1.3.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,215 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202107210349Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ENDACE-EDA-MIB::eventNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An eventNotification trap indicates that an application",
+				"integrated with Shogun has generated an Event that requires the",
+				"attention of the system administrator."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "eventNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "agentId:$v1",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? '$v3' : 'Event has occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENDACE-EDA-MIB::eventNotification ENDACE-EDA-MIB::agentId s EXAMPLE ENDACE-EDA-MIB::eventId s EXAMPLE ENDACE-EDA-MIB::eventDescr s EXAMPLE",
+			"trap" : {
+				"name" : "ENDACE-EDA-MIB::eventNotification",
+				"oid" : "1.3.6.1.4.1.18418.9.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Unique ID of the Agent that generated the event"
+						],
+						"name" : "ENDACE-EDA-MIB::agentId",
+						"oid" : "1.3.6.1.4.1.18418.9.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique ID of the Event that the Agent generated."
+						],
+						"name" : "ENDACE-EDA-MIB::eventId",
+						"oid" : "1.3.6.1.4.1.18418.9.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Textual description of the Event that the Agent generated."
+						],
+						"name" : "ENDACE-EDA-MIB::eventDescr",
+						"oid" : "1.3.6.1.4.1.18418.9.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ENDACE-EDA-MIB::alarmRaisedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An alarmRaisedNotification trap indicates that an alarm that",
+				"requires the attention of the system administrator was",
+				"raised."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "alarmNotification:$v6",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Rule $v3 has generated an alarm"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENDACE-EDA-MIB::alarmRaisedNotification ENDACE-EDA-MIB::alarmCriteria u 9999 ENDACE-EDA-MIB::alarmDescr s EXAMPLE ENDACE-EDA-MIB::alarmName s EXAMPLE ENDACE-EDA-MIB::alarmSeverity u 9999 ENDACE-EDA-MIB::alarmTrigger C 9999 ENDACE-EDA-MIB::alarmType u 9999",
+			"trap" : {
+				"name" : "ENDACE-EDA-MIB::alarmRaisedNotification",
+				"oid" : "1.3.6.1.4.1.18418.9.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The criteria that generated the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmCriteria",
+						"oid" : "1.3.6.1.4.1.18418.9.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Description of the Rule that generated the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmDescr",
+						"oid" : "1.3.6.1.4.1.18418.9.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique Name of the Rule that generated the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmName",
+						"oid" : "1.3.6.1.4.1.18418.9.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity of the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.18418.9.1.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The trigger that generated the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmTrigger",
+						"oid" : "1.3.6.1.4.1.18418.9.1.6",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The type of the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmType",
+						"oid" : "1.3.6.1.4.1.18418.9.1.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ENDACE-EDA-MIB::alarmClearedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"An alarmClearedNotification trap indicates that an alarm that",
+				"was raised previously was cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "alarmNotification:$v6",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Alarm $v3 has been cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENDACE-EDA-MIB::alarmClearedNotification ENDACE-EDA-MIB::alarmCriteria u 9999 ENDACE-EDA-MIB::alarmDescr s EXAMPLE ENDACE-EDA-MIB::alarmName s EXAMPLE ENDACE-EDA-MIB::alarmSeverity u 9999 ENDACE-EDA-MIB::alarmTrigger C 9999 ENDACE-EDA-MIB::alarmType u 9999",
+			"trap" : {
+				"name" : "ENDACE-EDA-MIB::alarmClearedNotification",
+				"oid" : "1.3.6.1.4.1.18418.9.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The criteria that generated the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmCriteria",
+						"oid" : "1.3.6.1.4.1.18418.9.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Description of the Rule that generated the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmDescr",
+						"oid" : "1.3.6.1.4.1.18418.9.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Unique Name of the Rule that generated the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmName",
+						"oid" : "1.3.6.1.4.1.18418.9.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity of the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmSeverity",
+						"oid" : "1.3.6.1.4.1.18418.9.1.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The trigger that generated the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmTrigger",
+						"oid" : "1.3.6.1.4.1.18418.9.1.6",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The type of the alarm"
+						],
+						"name" : "ENDACE-EDA-MIB::alarmType",
+						"oid" : "1.3.6.1.4.1.18418.9.1.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,483 @@
+######################################################################################################
+#       _Name_  collection/event/H3A/common/H3A_LibEnrichDCI.pm
+######################################################################################################
+# 
+# DCI functions
+#
+# Source Control:
+#       1.0		2023-12-14	aignerma	<STORY>		initial version
+#
+######################################################################################################
+
+sub LibEnrichDCI_MsgGroup {
+	my $eventRef = shift;
+    my $myDBH = shift;
+   
+    my $trace = 'LibEnrichDCI_MsgGroup';
+    $Log->Message('DEBUG', $trace . " started...");
+
+    my @result=();
+    my $table = "DCI.t_aaa_groupmapping";
+    my $filter = "Status = 'active' and MsgGroup = '".$eventRef->{'MsgGroup'}."'";
+    my @columns = qw(MsgGroup Visible_To_NOC OnCall TicketSystem TicketCategoryLevel1 TicketCategoryLevel2 
+    		TicketCategoryLevel3 Company RemedyGroupAlias);
+    my ($cnt,$msg) = LibMySQL_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef);
+    
+    if (defined $cnt) {
+
+		if ($cnt == 1) {
+    	    $eventRef->{'OnCall'} 				= $result[0]->{'OnCall'} 				if ($eventRef->{'OnCall'} eq '');
+            $eventRef->{'TicketSystem'} 		= $result[0]->{'TicketSystem'} 			if ($eventRef->{'TicketSystem'} eq '');
+            $eventRef->{'TicketCategoryLevel1'} = $result[0]->{'TicketCategoryLevel1'} 	if ($eventRef->{'TicketCategoryLevel1'} eq '');
+            $eventRef->{'TicketCategoryLevel2'} = $result[0]->{'TicketCategoryLevel2'} 	if ($eventRef->{'TicketCategoryLevel2'} eq '');
+            $eventRef->{'TicketCategoryLevel3'} = $result[0]->{'TicketCategoryLevel3'} 	if ($eventRef->{'TicketCategoryLevel3'} eq '');
+            $eventRef->{'Company'} 				= $result[0]->{'Company'} 				if ($eventRef->{'Company'} eq '');
+            $eventRef->{'TicketAssignedGroup'} 	= $result[0]->{'RemedyGroupAlias'} 		if ($eventRef->{'TicketAssignedGroup'} eq '');
+            if ( $result[0]->{'Visible_To_NOC'} eq 'FALSE' ) {
+            	LibUtil_AddSuppression($eventRef,'Hidden From NOC', 'MsgGroup', 0, 'Visible_To_NOC is FALSE', 'LibEnrichDCI_MsgGroup');
+            }
+        } else {
+            $Log->Message('ERROR', $trace . " MsgGroup '".$eventRef->{'MsgGroup'}."' found ". $cnt . "times in " . $table);
+        }
+        
+	} else {
+        my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+   	$Log->Message('DEBUG', $trace . " ...done");
+
+}
+
+sub LibEnrichDCI_InsertActiveSuppression {
+    my ($mydbh, $suppressionName, $suppressionKey, $location, $node, $refEventKey, $maxSeverity, $expireTime, $additionalInfo) = @_;
+
+	my $trace = 'LibEnrichDCI_InsertActiveSuppression';
+    
+    my $rc = 1;
+    my $message = "";
+    $Log->Message('DEBUG', $trace . " started...");
+
+	
+	$creationTime = time();
+    $additionalInfo	= '' 	if (!defined($additionalInfo));
+    $location		= '*'	if (!defined($location));
+    $node 			= '*'	if (!defined($node));
+    
+    if (! defined($expireTime) ) {
+        my $errTxt = $trace . " no expireTime given. Verify function arguments";
+		$Log->Message('ERROR', $errTxt);
+       	$Log->Message('DEBUG', $trace . " ...done (incomplete see error)");
+        return ($rc, $errTxt);
+    }
+
+	if ($mydbh) {
+        my $tableName = 'DCI.t_fm_active_suppressions';
+        my $fields =
+          '(SuppressionName, SuppressionKey, Location, Node, EventKey, MaxSeverity, expireTime, CreationTime, AdditionalInfo)';
+        my $values = '(?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        my $suppression_sql = "INSERT INTO $tableName $fields VALUES $values;";
+
+        # Use placeholders in the query
+        my $sth = $mydbh->prepare($suppression_sql);
+
+        if (!$sth) {
+            $message = "SQL-ERR012 in prepare: return code: " . $mydbh->errstr;
+            $Log->Message('ERROR', $trace . " " . $message);
+        } else {
+            if ($sth->execute($suppressionName, $suppressionKey, $location, $node, $refEventKey, $maxSeverity, $expireTime, $creationTime, $additionalInfo)) {
+            	$message = " New active suppression successfully inserted to " . $tableName . ".";
+                $rc = 0;
+                $Log->Message('INFO', $trace . " " . $message); 
+            } else {
+                $message = "SQL-ERR014 in execute: error msg: " . $sth->errstr;
+                $Log->Message('ERROR', $trace . " " . $message);
+            }
+            $sth->finish;
+        }
+	} else {
+		$message = "DB-ERR007: Not able to connect to DB. No valid database handle given. Error: " . DBI->errstr;
+        $Log->Message('ERROR', $trace . " " . $message);
+	}
+	$Log->Message('DEBUG', $trace . " ...done");
+    
+    return ($rc, $message);
+
+}
+
+sub LibEnrichDCI_InsertActiveSuppression_v2 {
+    my ($mydbh, $suppressionName, $suppressionKey, $msggroup, $location, $node, $refEventKey, $maxSeverity, $expireTime, $additionalInfo) = @_;
+
+	my $trace = 'LibEnrichDCI_InsertActiveSuppression_v2';
+    $Log->Message('DEBUG', $trace . " started...");
+
+	
+	$creationTime = time();
+    $additionalInfo	= '' 	if (!defined($additionalInfo));
+	$msggroup		= '*'	if (!defined($msggroup));
+	$location		= '*'	if (!defined($location));
+    $node 			= '*'	if (!defined($node));
+    
+    if (! defined($expireTime) ) {
+        my $errTxt = $trace . " no expireTime given. Verify function arguments";
+		$Log->Message('ERROR', $errTxt);
+       	$Log->Message('DEBUG', $trace . " ...done (incomplete see error)");
+        return;
+    }
+
+	if ($mydbh) {
+        my $tableName = 'DCI.t_fm_active_suppressions';
+        my $fields =
+          '(Active, SuppressionName, SuppressionKey, MsgGroup, Location, Node, EventKey, MaxSeverity, expireTime, CreationTime, AdditionalInfo)';
+        my $values = '(1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        my $suppression_sql = "INSERT INTO $tableName $fields VALUES $values;";
+
+        # Use placeholders in the query
+        my $sth = $mydbh->prepare($suppression_sql);
+
+        if (!$sth) {
+            $message = "SQL-ERR012 in prepare: return code: " . $mydbh->errstr;
+            $Log->Message('ERROR', $trace . " " . $message);
+        } else {
+            if ($sth->execute($suppressionName, $suppressionKey, $msggroup, $location, $node, $refEventKey, $maxSeverity, $expireTime, $creationTime, $additionalInfo)) {
+                $Log->Message('INFO', $trace . " New active suppression successfully inserted to " . $tableName . ".");
+            } else {
+                $message = "SQL-ERR014 in execute: error msg: " . $sth->errstr;
+                $Log->Message('ERROR', $trace . " " . $message);
+            }
+            $sth->finish;
+        }
+	} else {
+		$message = "DB-ERR007: Not able to connect to DB. No valid database handle given. Error: " . DBI->errstr;
+        $Log->Message('ERROR', $trace . " " . $message);
+	}
+	$Log->Message('DEBUG', $trace . " ...done");
+
+}
+
+sub LibEnrichDCI_CheckActiveSuppression {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichDCI_CheckActiveSuppression';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    $Log->Message('DEBUG', $trace . " EventID: " . $eventRef->{'EventID'});
+    $Log->Message('DEBUG', $trace . " MsgGroup: " . $eventRef->{'MsgGroup'});
+    $Log->Message('DEBUG', $trace . " Location: " . $eventRef->{'Location'});
+    $Log->Message('DEBUG', $trace . " Node: " . $eventRef->{'Node'});
+    $Log->Message('DEBUG', $trace . " Severity: " . $eventRef->{'Severity'});
+    
+    my @result=();
+    my $table = "DCI.t_fm_active_suppressions";
+    my $filter = "Active = TRUE and 
+                  (MsgGroup = '".$eventRef->{'MsgGroup'}."' or MsgGroup = '*') and
+    			  (Location = '".$eventRef->{'Location'}."' or Location = '*') and
+      			  (Node =     '".$eventRef->{'Node'}."'     or Node = '*') and 
+                  MaxSeverity >= ".$eventRef->{'Severity'}." and expireTime > unix_timestamp()";
+    my @columns = qw(SuppressionName SuppressionKey expireTime AdditionalInfo);
+
+    my ($cnt,$msg) = LibMySQL_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef);
+    
+    if (defined $cnt) {
+    	if ($cnt == 0) {
+        	# nothing to do. no events found for given Location.
+		} else {
+        	# Multiple Event Suppressions found. 
+			foreach my $row (@result) {
+				LibUtil_AddSuppression($eventRef,$row->{SuppressionName} , $row->{SuppressionKey}, $row->{expireTime}, $row->{AdditionalInfo}, $trace);
+        	}
+        }
+	} else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+        LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+	}
+    
+    $Log->Message('DEBUG', $trace . " SuppressionList: " . $eventRef->{SuppressionList} );
+    
+    $Log->Message('DEBUG', $trace . " ...done");
+}
+
+
+sub LibEnrichDCI_VIPSite {
+	my $eventRef = shift;
+    my $myDBH = shift;
+    my $trace = 'LibEnrichDCI_VIPSite';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+	my $sitePrio = LibUtil_GetAdditionalInfo($eventRef,'Osiris SitePrio');
+    if (defined $sitePrio) {
+    	if ( $sitePrio = 'Large-Enterprise' ) {
+        	my @result=();
+			my $table = "DCI.t_fm_events_customeraffecting";
+			my $filter = "EMSKey = '".$EMSKey."' and HelpKey = '".$eventRef->{'HelpKey'}."'";
+			my ($cnt,$msg) = LibMySQL_GetByFilter_v2($myDBH,$table, $filter, \@result, undef,'CountOnly');
+    
+    		if (defined $cnt) {
+    			if ($cnt > 0 ) {
+        			$eventRef->{'Customer'} = 'LE';
+            		$eventRef->{'TicketUrgency'} = 1000;   # Critical
+		        }
+    		} else {
+    			my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+				$Log->Message('ERROR', $errTxt);
+				LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+    		}
+        }
+    } else {
+    	#nothing todo SitePrio not defined. 
+    }
+
+	$Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEnrichDCI_Company {
+	my $eventRef = shift;
+	my $myDBH = shift;
+	my $trace = 'LibEnrichDCI_Company';
+    
+	$Log->Message('DEBUG', $trace . " started...");
+    
+	my $siteOwnerGroup = LibUtil_GetAdditionalInfo($eventRef,'Osiris SiteOwnerGroup');
+
+	# Verify Company only if Osiris SiteOwnerGroup was successfully enriched...
+	if ( defined $siteOwnerGroup ) {
+		my @result=();
+		my $table = "DCI.t_fm_events_towerco";
+		my $filter = "EMSKey = '".$EMSKey."' and HelpKey = '".$eventRef->{'HelpKey'}."'"; 
+		my ($cnt,$msg) = LibMySQL_GetByFilter_v2($myDBH,$table, $filter, \@result, undef,'CountOnly');
+
+		if ( defined $cnt ) {
+			if ( $cnt > 0 ) {
+				# this alarm belongs to towerco!! 
+				if ( $eventRef->{'Company'} ne $siteOwnerGroup ) {
+					my $txt = $trace . " Company changed from '".$eventRef->{'Company'}."' to '".$siteOwnerGroup."'. HelpKey matched!";
+					$Log->Message('INFO', $txt);
+					$eventRef->{'Company'} = $siteOwnerGroup;
+				}
+			}
+
+		} else {
+			my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+			$Log->Message('ERROR', $errTxt);
+			LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+		}
+	} else {
+		my $txt = $trace . " No SiteOwnerGroup key found in AddtionalInfo. Check SiteData enrichment.";
+		$Log->Message('DEBUG', $txt);
+	}
+                
+	if ($eventRef->{'Company'} eq 'TOWERCO' ) {
+		$eventRef->{'TicketCategoryLevel2'}.=' TCO';
+      	}
+   
+	$Log->Message('DEBUG', $trace . " ...done");
+}
+
+sub LibEnrichDCI_GPL {
+	my $eventRef = shift;
+    my $myDBH = shift;
+
+    my $trace = 'LibEnrichDCI_GPL';
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    if ( ! defined $EMSKey ) {
+    	my $txt = $trace . " No EMSKey defined. Check base.load if EMSKey is global (our). Usually the EMSKey is set by the function LibEventDefault_setDefaultEventFields. ";
+		$Log->Message('WARN', $txt);
+		LibUtil_AddDetails($eventRef,'EnrichmentLog',$txt);
+	}
+
+	my @result=();
+    my $table = "DCI.t_fm_gpl";
+    my $filter = "EMSKey = '".$EMSKey."' and HelpKey = '".$eventRef->{HelpKey}."' and Verified = 'rule active' order by HelpKey";
+
+    if ( $EMSKey eq 'NetMaster') {
+        my $wildcardHelpKey = $eventRef->{HelpKey};
+        $wildcardHelpKey =~ s/^(.*? \- )(.+?)(?= \- |$)/$1*/;  # replace second part with wildcard
+        $filter = "EMSKey = '".$EMSKey."' and (HelpKey = '".$eventRef->{HelpKey}."' or HelpKey = '".$wildcardHelpKey."') and Verified = 'rule active'";
+    }
+
+    my @columns = qw(EventCategory MsgGroup Severity Suppression Delay Expire TicketUrgency TicketCategoryLevel1 
+    				 TicketCategoryLevel2 TicketCategoryLevel3 RequestID OSSComment);
+    my ($cnt,$msg) = LibMySQL_GetByFilter_v2($myDBH,$table, $filter, \@result, \@columns,undef);
+    
+    if (defined $cnt) {
+    		if ($cnt == 0) {
+            	# nothing to do no GPL rule found.
+                
+            } else {
+                foreach my $row (@result) {
+                    $eventRef->{MsgGroup} 				= $row->{MsgGroup} 				if ( defined $row->{MsgGroup} );
+                    $eventRef->{TicketUrgency} 			= $row->{TicketUrgency} 		if ( defined $row->{TicketUrgency} );
+                    $eventRef->{TicketCategoryLevel1} 	= $row->{TicketCategoryLevel1} 	if ( defined $row->{TicketCategoryLevel1} );
+                    $eventRef->{TicketCategoryLevel2} 	= $row->{TicketCategoryLevel2} 	if ( defined $row->{TicketCategoryLevel2} );
+                    $eventRef->{TicketCategoryLevel3} 	= $row->{TicketCategoryLevel3} 	if ( defined $row->{TicketCategoryLevel3} );
+                    $eventRef->{Severity} 				= $row->{Severity} 				if ( defined $row->{Severity} );
+                    $eventRef->{ExpireTime} 			= $row->{Expire} 				if ( defined $row->{Expire} );
+
+                    # Overwrite EventCategory
+                    if ( defined $row->{EventCategory} ) {
+                        if    ( $row->{EventCategory} eq 'Problem' )   { $eventRef->{EventCategory} = 1; }
+                        elsif ( $row->{EventCategory} eq 'Discrete' )  { $eventRef->{EventCategory} = 3; }
+                        elsif ( $row->{EventCategory} eq 'Heartbeat' ) { $eventRef->{EventCategory} = 10; }
+                        elsif ( $row->{EventCategory} eq 'State' )     { $eventRef->{EventCategory} = 11; }
+                        elsif ( $row->{EventCategory} eq 'NAC' )       { $eventRef->{EventCategory} = 12; }
+                        else {
+                                my $txt = $trace . " Unknown EventCategory (".$row->{EventCategory}.") found in table " . $table . " with filter '" . $filter . "'";
+                                $Log->Message('WARN', $txt);
+                                LibUtil_AddDetails($eventRef,'EnrichmentLog',$txt);
+                        }
+                    }
+
+                    # Set Suppression
+                    if ( defined $row->{Suppression} ) {
+                        if    ( $row->{Suppression} eq 'Hidden from NOC' ) 	{ LibUtil_AddSuppression($eventRef,'Hidden from NOC' , 'GPL', 0, 'RequestID: ' . $row->{RequestID} , $trace); }
+                        elsif ( $row->{Suppression} eq 'LogOnly' )  		{ LibUtil_AddSuppression($eventRef,'LogOnly'         , 'GPL', 0, 'RequestID: ' . $row->{RequestID} , $trace);  }
+                        elsif ( $row->{Suppression} eq 'Discard' )  		{ $discard_flag = 1; }
+                        else  {
+                                my $txt = $trace . " Unknown Suppression (".$row->{Suppression}.") found in table " . $table . " with filter '" . $filter . "'";
+                                $Log->Message('WARN', $txt);
+                                LibUtil_AddDetails($eventRef,'EnrichmentLog',$txt);
+                        }
+                    }
+
+                    #Delay
+                    if ( defined $row->{Delay} ) {
+                        LibUtil_AddSuppression($eventRef,'Delay' , 'GPL', (time() + $row->{Delay}), 'RequestID: ' . $row->{RequestID} , $trace);
+                    }
+
+                } # end foreach
+            } # end cnt > 0
+    } else {
+    	my $errTxt = $trace . " could not query table '".$table."' with filter '".$filter."'. Received error: " . $msg;
+		$Log->Message('ERROR', $errTxt);
+		LibUtil_AddDetails($eventRef,'EnrichmentError',$errTxt);
+    }
+    
+    
+            	
+
+	$Log->Message('DEBUG', $trace . " ...done");
+
+}
+
+sub LibEnrichDCI_EndActiveSuppression {
+ 	my $myDBH = shift;
+    my $suppName = shift;
+    my $suppKey = shift;
+        
+	my $rc = 1;
+	my $message = "";
+    
+    my $trace = 'LibEnrichDCI_EndActiveSuppression';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    
+	if ($myDBH) {
+    	# update affected events
+        
+        my $SQL = "update DCI.t_fm_active_suppressions set 
+        				Active = FALSE,
+                        Deactivated_At = UNIX_TIMESTAMP(NOW(3))
+                   where
+                   		Active = TRUE and SuppressionName = ? and SuppressionKey = ?";
+                        
+		# Use placeholders
+        my $sth = $myDBH->prepare($SQL);
+        
+        if (!$sth) {
+            $message = "SQL-ERR012 in prepare: return code: " . $myDBH->errstr;
+            $Log->Message('ERROR', $trace . " " . $message);
+        } else {
+        	# remove active suppressions
+        	my ($retruncode, $returnmessage) = LibEnrichDCI_RemoveActiveSuppressionOnEvents($myDBH,$suppName,$suppKey);
+            
+            if ($retruncode == 0 ) {
+            
+        		if ($sth->execute($suppName, $suppKey)) {
+           		 	$message = "Update performed successfully. Affected rows: " . $sth->rows;
+           		     $rc = 0;
+           		     $Log->Message('INFO', $trace . " " . $message); 
+           		 } else {
+           		     $message = "SQL-ERR014 in execute: error msg: " . $sth->errstr;
+           		     $Log->Message('ERROR', $trace . " " . $message);
+           		 }
+           		 $sth->finish;
+            } else {
+            	# update of events failed. Suppression not removed. 
+            	$message = $returnmessage;
+            }
+        }
+	} else {
+		$message = "DB-ERR007: Not able to connect to DB. No valid database handle given. Error: " . DBI->errstr;
+        $Log->Message('ERROR', $trace . " " . $message);
+	}
+	$Log->Message('DEBUG', $trace . " ...done");
+    
+    return ($rc, $message);
+}
+
+sub LibEnrichDCI_RemoveActiveSuppressionOnEvents {
+    my $myDBH = shift;
+    my $suppName = shift;
+    my $suppKey = shift;
+        
+	my $rc = 1;
+	my $message = "";
+    
+    my $trace = 'LibEnrichDCI_RemoveActiveSuppression';
+    
+    $Log->Message('DEBUG', $trace . " started...");
+    
+    
+	if ($myDBH) {
+    	# update affected events
+        
+        my $SQL = "update Event.Events set 
+        				Actor       = ?,
+    					Action      = 'Active Suppression removed.',
+    					LastChanged = UNIX_TIMESTAMP(NOW(3)),
+    					SuppressionList = if(
+                			json_length(json_keys(SuppressionList, '\$.\"" . ($suppName =~ s/'/''/gr) . "\"')) > 1,  /* Check if multiple suppression keys are found */
+                			json_merge_patch(SuppressionList,json_object(?,json_object(?,null))), /* remove only the suppression key */
+                			json_merge_patch(SuppressionList,json_object(?,null))  /* remove also the suppression name */
+        				),
+     					Suppression = if(SuppressionList=json_object(),0,Suppression)  /* the updated SuppressionList is considered not the Orig value!! */
+					where 
+                    	JSON_CONTAINS_PATH(SuppressionList, 'one', '\$.\"" . ($suppName =~ s/'/''/gr). "\".\"" . ($suppKey =~ s/'/''/gr) . "\"') = 1";
+
+ 		$Log->Message('DEBUG', $trace . " Used SQL: " . $SQL);
+        $Log->Message('DEBUG', $trace . " Used Values: " . $trace .", ". $suppName.", ".  $suppKey.", ". $suppName);
+        
+                        
+		# Use placeholders
+        my $sth = $myDBH->prepare($SQL);
+        
+        if (!$sth) {
+            $message = "SQL-ERR012 in prepare: return code: " . $myDBH->errstr;
+            $Log->Message('ERROR', $trace . " " . $message);
+        } else {
+        	if ($sth->execute($trace, $suppName,  $suppKey, $suppName)) {
+            	$message = "Update performed successfully. Affected rows: " . $sth->rows;
+                $rc = 0;
+                $Log->Message('INFO', $trace . " " . $message); 
+            } else {
+                $message = "SQL-ERR014 in execute: error msg: " . $sth->errstr;
+                $Log->Message('ERROR', $trace . " " . $message);
+            }
+            $sth->finish;
+        }
+	} else {
+		$message = "DB-ERR007: Not able to connect to DB. No valid database handle given. Error: " . DBI->errstr;
+        $Log->Message('ERROR', $trace . " " . $message);
+	}
+	$Log->Message('DEBUG', $trace . " ...done");
+    
+    return ($rc, $message);
+    
+}
+
+1;

@@ -1,0 +1,429 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemOverTemperatureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when the system temperature",
+				"exceeds a certain threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : (($v1==2) ? 1 : 3)"
+				},
+				"EventType" : "lpsSystemOverTemperatureEvent",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : (($v1==2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 4 : (($v1==2) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'System overtemperature detected' : (($v1==2) ? 'System overtemperature cleared' : 'System overtemperature detection not supported')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemOverTemperatureEvent LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemOvertemperature i 1",
+			"trap" : {
+				"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemOverTemperatureEvent",
+				"oid" : "1.3.6.1.4.1.114.1.4.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the current overtemperature",
+							"status for the system. If the system does not support",
+							"overtemperature detection, this object returns",
+							"notSupported."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false",
+							"3" : "notSupported"
+						},
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemOvertemperature",
+						"oid" : "1.3.6.1.4.1.114.1.4.1.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyFailureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when a power supply unit",
+				"fails."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpsPowerSupplyFailureEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PowerSupplyIndex:$v1",
+				"Summary" : {
+					"eval" : "($v2==0) ? 'AC failure' : (($v2==1) ? 'Plus 5 failure' : (($v2==2) ? 'Plus 12 failure' : 'Over temperature failure'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyFailureEvent LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyStatusIndex i 9999 LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyStatus i 9999 LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyStatusSupported i 9999",
+			"trap" : {
+				"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyFailureEvent",
+				"oid" : "1.3.6.1.4.1.114.1.4.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The unique index of the power supply identified by this",
+							"entry."
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyStatusIndex",
+						"oid" : "1.3.6.1.4.1.114.1.4.4.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the power supply status. The",
+							"value is a sum. It initially takes on the value 0, then",
+							"for each failure type which is active, 2 raised to a power",
+							"is added to the sum. The powers are according to the",
+							"following table:",
+							"",
+							"Failure Type Power",
+							"AC Failure 0",
+							"Plus 5 Failure 1",
+							"Plus 12 Failure 2",
+							"Over Temperature Failure 3"
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.114.1.4.4.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the various power supply failure",
+							"types which are supported. The value is a sum. It",
+							"initially takes on the value 0, then for each failure type",
+							"which is supported, 2 raised to a power is added to the",
+							"sum. The powers are according to the following table:",
+							"",
+							"Failure Type Power",
+							"AC Failure 0",
+							"Plus 5 Failure 1",
+							"Plus 12 Failure 2",
+							"Over Temperature Failure 3",
+							"",
+							"This object used in conjunction with the",
+							"lpsPowerSupplyStatus object for a given power supply",
+							"provide a complete picture of the status of the power",
+							"supply."
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsPowerSupplyStatusSupported",
+						"oid" : "1.3.6.1.4.1.114.1.4.4.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotOverTemperatureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when the temperature of a",
+				"board in a particular slot exceeds a certain threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==1) ? 2 : (($v5==2) ? 1 : 3)"
+				},
+				"EventType" : "lpsChassisSlotOverTemperatureEvent",
+				"ExpireTime" : {
+					"eval" : "($v5==1) ? 86400 : (($v5==2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v5==1) ? 4 : (($v5==2) ? 0 : 2)"
+				},
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : {
+					"eval" : "($v5==1) ? '$v2 overtemperature detected' : (($v5==2) ? '$v2 overtemperature cleared' : '$v2 overtemperature not supported')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotOverTemperatureEvent LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotIndex i 9999 LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardType i 1 LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardRevision s E LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardStatus i 1 LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotOvertemperature i 1",
+			"trap" : {
+				"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotOverTemperatureEvent",
+				"oid" : "1.3.6.1.4.1.114.1.4.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the slot identified by this entry."
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotIndex",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of board residing in the slot identified by",
+							"this entry."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "emptyLocation",
+							"7" : "esmBoard",
+							"8" : "fcmBoard",
+							"9" : "lmmBoard",
+							"10" : "efsmBoard",
+							"11" : "trsmBoard"
+						},
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardType",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The revision number of the board in the slot identified",
+							"by this entry. If the slot is empty, or the revision is",
+							"unknown this object returns a zero length string."
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardRevision",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The status of the board in the slot identified by this",
+							"entry."
+						],
+						"enums" : {
+							"1" : "notPresent",
+							"2" : "testing",
+							"3" : "offline",
+							"4" : "online"
+						},
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardStatus",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the current overtemperature status",
+							"for the slot. If the slot does not support overtemperature",
+							"detection, this object returns notSupported."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false",
+							"3" : "notSupported"
+						},
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotOvertemperature",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotInsertEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when a board is inserted into a",
+				"particular slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpsChassisSlotInsertEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "$v2 inserted into slot $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotInsertEvent LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotIndex i 9999 LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardType i 1 LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardRevision s E",
+			"trap" : {
+				"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotInsertEvent",
+				"oid" : "1.3.6.1.4.1.114.1.4.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the slot identified by this entry."
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotIndex",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The type of board residing in the slot identified by",
+							"this entry."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "emptyLocation",
+							"7" : "esmBoard",
+							"8" : "fcmBoard",
+							"9" : "lmmBoard",
+							"10" : "efsmBoard",
+							"11" : "trsmBoard"
+						},
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardType",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The revision number of the board in the slot identified",
+							"by this entry. If the slot is empty, or the revision is",
+							"unknown this object returns a zero length string."
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotBoardRevision",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotExtractEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when a board is extracted",
+				"from a particular slot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpsChassisSlotExtractEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SlotIndex:$v1",
+				"Summary" : "Board is extracted from slot $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotExtractEvent LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotIndex i 9999",
+			"trap" : {
+				"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsChassisSlotExtractEvent",
+				"oid" : "1.3.6.1.4.1.114.1.4.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the slot identified by this entry."
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSlotIndex",
+						"oid" : "1.3.6.1.4.1.114.1.4.2.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsBridgeAddressThresholdEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when the number of addresses",
+				"stored in the bridge reaches lpsBridgeAddressThreshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "lpsBridgeAddressThresholdEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "BridgeIndex:$v1",
+				"Summary" : "Bridge address threshold reached"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-SYSTEMS-MIB-1-2-2::lpsBridgeAddressThresholdEvent LANPLEX-SYSTEMS-MIB-1-2-2::lpsBridgeIndex i 9999",
+			"trap" : {
+				"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsBridgeAddressThresholdEvent",
+				"oid" : "1.3.6.1.4.1.114.1.4.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the bridge identified by this entry",
+							"relative to this agent."
+						],
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsBridgeIndex",
+						"oid" : "1.3.6.1.4.1.114.1.4.10.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemFanFailureEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"The trap that is generated when one of the system fans",
+				"fails."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 2 : (($v1==2) ? 1 : 3)"
+				},
+				"EventType" : "lpsSystemFanFailureEvent",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 86400 : (($v1==2) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 4 : (($v1==2) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'System fan failure detected' : (($v1==2) ? 'System fan failure cleared' : 'System fan failure detection not supported')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemFanFailureEvent LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemFanFailure i 1",
+			"trap" : {
+				"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemFanFailureEvent",
+				"oid" : "1.3.6.1.4.1.114.1.4.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object indicates the current fan status for the",
+							"system. If the system does not support fan failure",
+							"detection, this object returns notSupported."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false",
+							"3" : "notSupported"
+						},
+						"name" : "LANPLEX-SYSTEMS-MIB-1-2-2::lpsSystemFanFailure",
+						"oid" : "1.3.6.1.4.1.114.1.4.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,255 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202004210000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-PROCESS-MIB::cpmCPURisingThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cpmCPURisingThreshold notification is sent",
+				"when configured rising CPU utilization threshold",
+				"(cpmCPURisingThresholdValue) is reached and",
+				"CPU utilization remained above the threshold ",
+				"for configured interval(cpmCPURisingThresholdPeriod)",
+				"and such a notification is requested. ",
+				"The cpmProcExtUtil5SecRev and cpmProcessTimeCreated ",
+				"objects can be repeated multiple times",
+				"in a notification indicating the top users of CPU."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpmCPUThresholdStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "CPU usage is above configured threshold $v1&#37;"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PROCESS-MIB::cpmCPURisingThreshold CISCO-PROCESS-MIB::cpmCPURisingThresholdValue u 1 CISCO-PROCESS-MIB::cpmCPUTotalMonIntervalValue u 0 CISCO-PROCESS-MIB::cpmCPUInterruptMonIntervalValue u 0 CISCO-PROCESS-MIB::cpmProcExtUtil5SecRev u 0 CISCO-PROCESS-MIB::cpmProcessTimeCreated t 31536000",
+			"trap" : {
+				"name" : "CISCO-PROCESS-MIB::cpmCPURisingThreshold",
+				"oid" : "1.3.6.1.4.1.9.9.109.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The percentage rising threshold value configured by",
+							"the user. The value indicates, ",
+							"if the percentage CPU utilization is equal to or above",
+							"this value for cpmCPURisingThresholdPeriod duration ",
+							"then send a cpmCPURisingThreshold notification to",
+							"the NMS."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmCPURisingThresholdValue",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.2.4.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The overall CPU busy percentage in the last",
+							"cpmCPUMonInterval period. ",
+							"This object deprecates the object cpmCPUTotal5secRev."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmCPUTotalMonIntervalValue",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.1.1.1.10",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The overall CPU busy percentage in the",
+							"interrupt context in the last cpmCPUMonInterval",
+							"period."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmCPUInterruptMonIntervalValue",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.1.1.1.11",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"This object provides a general idea of how busy",
+							"a process caused the processor to be over a 5 ",
+							"second period. It is determined as a weighted ",
+							"decaying average of the current idle time over ",
+							"the longest idle time. Note that this information ",
+							"should be used as an estimate only. This object",
+							"deprecates cpmProcExtUtil5Sec and increases the ",
+							"value range to (0..100)."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmProcExtUtil5SecRev",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.2.3.1.5",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The time when the process was created. The process ID",
+							"and the time when the process was created, uniquely ",
+							"identifies a process."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmProcessTimeCreated",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.2.1.1.5",
+						"valueType" : "TICKS"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-PROCESS-MIB::cpmCPUFallingThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cpmCPUFallingThresholdTrap is sent when the",
+				"configured falling threshold",
+				"(cpmCPURisingThresholdValue) ",
+				"is reached and CPU utilization remained under ",
+				"threshold for configured ",
+				"interval (cpmCPUFallingThresholdPeriod) ",
+				"and such a notification is requested."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpmCPUThresholdStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "CPU usage fallen below configured threshold $v1&#37;"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PROCESS-MIB::cpmCPUFallingThreshold CISCO-PROCESS-MIB::cpmCPUFallingThresholdValue u 1 CISCO-PROCESS-MIB::cpmCPUTotalMonIntervalValue u 0 CISCO-PROCESS-MIB::cpmCPUInterruptMonIntervalValue u 0",
+			"trap" : {
+				"name" : "CISCO-PROCESS-MIB::cpmCPUFallingThreshold",
+				"oid" : "1.3.6.1.4.1.9.9.109.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The percentage falling threshold value configured by",
+							"the user. The value indicates, if the percentage ",
+							"CPU utilization is equal to or below this value for ",
+							"cpmCPUFallingThresholdPeriod duration",
+							"then send a cpmCPUFallingThreshold notification ",
+							"to the NMS."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmCPUFallingThresholdValue",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.2.4.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The overall CPU busy percentage in the last",
+							"cpmCPUMonInterval period. ",
+							"This object deprecates the object cpmCPUTotal5secRev."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmCPUTotalMonIntervalValue",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.1.1.1.10",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The overall CPU busy percentage in the",
+							"interrupt context in the last cpmCPUMonInterval",
+							"period."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmCPUInterruptMonIntervalValue",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.1.1.1.11",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-PROCESS-MIB::cpmProcessStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cpmProcessStateTrap is sent when a critical",
+				"process of interest has seen a state change for whatever reason ",
+				"and such a notification is requested.",
+				"This trap is not applicable to all processes running on the system",
+				"but for the critical ones pre-determined by the system software. ",
+				"A PID=0 in this trap implies that a PID wasn't available when",
+				"this notification was generated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpmProcessStateTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==0 || $v3==6) ? 4 : (($v3==7) ? 1 : (($v3==1 || $v3==2) ? 2 : 3))"
+				},
+				"SubNode" : "ProcessPID:$v1",
+				"Summary" : "Process $v2 state changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-PROCESS-MIB::cpmProcessStateTrap CISCO-PROCESS-MIB::cpmProcessPID u 9999 CISCO-PROCESS-MIB::cpmProcessName s EXAMPLE CISCO-PROCESS-MIB::cpmProcessState i 0",
+			"trap" : {
+				"name" : "CISCO-PROCESS-MIB::cpmProcessStateTrap",
+				"oid" : "1.3.6.1.4.1.9.9.109.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object contains the process ID. cpmTimeCreated",
+							"should be checked against the last time it was polled",
+							"and if it has changed the PID has been reused and the",
+							"entire entry should be polled again."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmProcessPID",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.2.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The name associated with this process. If the name is",
+							"longer than 32 characters, it will be truncated to the first",
+							"31 characters, and a `*' will be appended as the last",
+							"character to imply this is a truncated process name."
+						],
+						"name" : "CISCO-PROCESS-MIB::cpmProcessName",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.2.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates the current state of a process.",
+							"Running state means that the process is actively ",
+							"consuming CPU. All the other states are just waiting ",
+							"states. The valid states are:",
+							"other - Any other state apart from the ",
+							"ones listed.",
+							"down - The process is not operational.",
+							"running - Actively running on a core.",
+							"started - The process is just forked.",
+							"waiting - The ProcessMgr config for this process specifies a delay before the",
+							"process moves to running.",
+							"disabled - The process is not enabled in the ProcessMgr configuration. ",
+							"userdisabled - The process is put to disabled state by admin.",
+							"locked - Implies that if the process exits, it will not be restarted until ",
+							"the lock is released."
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "running",
+							"2" : "started",
+							"3" : "waiting",
+							"4" : "disabled",
+							"5" : "userdisabled",
+							"6" : "locked",
+							"7" : "other"
+						},
+						"name" : "CISCO-PROCESS-MIB::cpmProcessState",
+						"oid" : "1.3.6.1.4.1.9.9.109.1.2.1.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

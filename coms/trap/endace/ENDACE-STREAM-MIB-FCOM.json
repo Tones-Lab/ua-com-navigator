@@ -1,0 +1,110 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202107210349Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ENDACE-STREAM-MIB::streamInDropFault",
+			"certification" : "STANDARD",
+			"description" : [
+				"A streamInDropFault notification signifies that the SNMP",
+				"entity, acting in an agent role, has detected that the",
+				"streamInDropPackets or streamInHCDropPackets has exceeded the",
+				"streamInDropThreshold value for an interval of one second.",
+				"Will contain information pertaining to identity of the dropping",
+				"stream."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "streamInDropStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "streamInNum:$v1",
+				"Summary" : "Stream $v2 drop packets has exceeded the threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENDACE-STREAM-MIB::streamInDropFault ENDACE-STREAM-MIB::streamInNum i 9999 ENDACE-STREAM-MIB::streamInName s EXAMPLE",
+			"trap" : {
+				"name" : "ENDACE-STREAM-MIB::streamInDropFault",
+				"oid" : "1.3.6.1.4.1.18418.10.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"An integer value identifying a unique stream on a system. It",
+							"is unique for all streams in the system. This value is the same",
+							"as that of streamInIndex."
+						],
+						"name" : "ENDACE-STREAM-MIB::streamInNum",
+						"oid" : "1.3.6.1.4.1.18418.10.1.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique string identifying a stream on a system. It is unique",
+							"for all streams on the system."
+						],
+						"name" : "ENDACE-STREAM-MIB::streamInName",
+						"oid" : "1.3.6.1.4.1.18418.10.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ENDACE-STREAM-MIB::streamInDropNormal",
+			"certification" : "STANDARD",
+			"description" : [
+				"A streamInDropNormal notification signifies that the SNMP",
+				"entity, acting in an agent role, has detected that the",
+				"streamInDropPackets or streamInHCDropPackets value is less than",
+				"the streamDropThreshold value for an interval of one second",
+				"after it was in streamInDropFault condition. Will contain",
+				"information pertaining to the identity of the dropping",
+				"stream."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "streamInDropStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "streamInNum:$v1",
+				"Summary" : "Stream $v2 drop packets is within the threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ENDACE-STREAM-MIB::streamInDropNormal ENDACE-STREAM-MIB::streamInNum i 9999 ENDACE-STREAM-MIB::streamInName s EXAMPLE",
+			"trap" : {
+				"name" : "ENDACE-STREAM-MIB::streamInDropNormal",
+				"oid" : "1.3.6.1.4.1.18418.10.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"An integer value identifying a unique stream on a system. It",
+							"is unique for all streams in the system. This value is the same",
+							"as that of streamInIndex."
+						],
+						"name" : "ENDACE-STREAM-MIB::streamInNum",
+						"oid" : "1.3.6.1.4.1.18418.10.1.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique string identifying a stream on a system. It is unique",
+							"for all streams on the system."
+						],
+						"name" : "ENDACE-STREAM-MIB::streamInName",
+						"oid" : "1.3.6.1.4.1.18418.10.1.2.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

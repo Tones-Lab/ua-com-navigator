@@ -1,0 +1,3035 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201703010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetMinFreeExc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrSubnetMinFreeExc notification is generated when the",
+				"actual number of free addresses in a subnet falls below the desired",
+				"minimum number.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpServerPoolName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpSvrSubnetAddrType>[0-9]+)\\.(?P<tmnxDhcpSvrSubnetAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.(?P<tmnxDhcpSvrSubnetPrefixLength>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrSubnetMinFreeExc",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$vRtrID",
+				"Summary" : {
+					"eval" : "($v3==1) ? 'Number of free addresses: $v1 in a subnet: $tmnxDhcpSvrSubnetAddress is below the minimum limit: $v2' : 'Number of free addresses in a subnet is $v1; Desired minimum percentage is $v2'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetMinFreeExc TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetStatsFree c 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetMinFree u 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetMinFreeType i 0",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetMinFreeExc",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxDhcpSvrSubnetStatsFree indicates the number of",
+							"addresses in this subnet that are free."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetStatsFree",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.17.1.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrSubnetMinFree specifies the desired",
+							"minimum number of free addresses in this subnet.",
+							"",
+							"The actual number of free addresses in this subnet is indicated in the",
+							"column tmnxDhcpSvrSubnetStatsFree in the augmentation row of the",
+							"tmnxDhcpSvrSubnetStatsTable.",
+							"",
+							"If the actual number of free addresses in this subnet falls below this",
+							"configured minimum, a notification is generated.",
+							"",
+							"The value zero specifies 'no minimum'."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetMinFree",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.8.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrSubnetMinFreeType specifies whether",
+							"tmnxDhcpSvrSubnetMinFree is expressed as an absolute number or as a",
+							"percentage.",
+							"",
+							"When the value of this object is set to 'percent(1)', the accepted",
+							"range for tmnxDhcpSvrSubnetMinFree is limited between 0 and 100.",
+							"",
+							"Default value is 'absolute(0)'."
+						],
+						"enums" : {
+							"0" : "absolute",
+							"1" : "percent"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetMinFreeType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.8.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrHostConflict",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrHostConflict notification can be generated for hosts",
+				"configured with a fixed IP address in the local user database.",
+				"If such a host requests an IP address and the system detects that this",
+				"IP address has already been handed out to another (dynamic) host, then",
+				"the tmnxDhcpSvrHostConflict notification is generated.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrHostConflict",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "HostMAC:$v9",
+				"Summary" : "$v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrHostConflict TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifUserDatabaseName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifHostType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifHostName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrHostConflict",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrType indicates",
+							"the address type of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddr indicates the",
+							"client IP address of this lease."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifUserDatabaseName indicates the",
+							"name of this local user database."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifUserDatabaseName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifHostType indicates the type of",
+							"the host."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "dhcp",
+							"2" : "pppoe"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifHostType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifHostName indicates the name of",
+							"this host or set of hosts."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifHostName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifDescription is a printable character string",
+							"which contains information about the problem that occurred."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolUnknown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrPoolUnknown notification is generated when the lookup",
+				"in the local user database for a host returns a poolname which is not",
+				"defined within the local DHCP server or the DHCP message contains an",
+				"unknown pool name.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrPoolUnknown",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$v1",
+				"Summary" : "$v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolUnknown TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifUnknownPoolName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolUnknown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifUnknownPoolName indicates the pppoe pool",
+							"name which is not defined in the system."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifUnknownPoolName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifDescription is a printable character string",
+							"which contains information about the problem that occurred."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseNotOwner",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrLeaseNotOwner notification is generated when a DHCP",
+				"message is received from a DHCP client that does not own the lease",
+				"indicated by the IP address from the message.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrLeaseNotOwner",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ClientIP:$v4",
+				"Summary" : "$v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseNotOwner TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgOption82 s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrLen u 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseNotOwner",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrType indicates",
+							"the address type of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddr indicates the",
+							"client IP address of this lease."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgOption82 indicates the content",
+							"of option 82 from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgOption82",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifDescription is a printable character string",
+							"which contains information about the problem that occurred."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrLen indicates",
+							"the prefix length of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrLen",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.15",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrDeclineStaticAddr",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrDeclineStaticAddr notification is generated when a DHCP",
+				"decline message is received from a DHCP client that has a static IP",
+				"address assigned.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrDeclineStaticAddr",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ClientIP:$v4",
+				"Summary" : "DHCP decline message received from DHCP client; Assigned static IP address: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrDeclineStaticAddr TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgOption82 s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrDeclineStaticAddr",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrType indicates",
+							"the address type of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddr indicates the",
+							"client IP address of this lease."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgOption82 indicates the content",
+							"of option 82 from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgOption82",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.11",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrMsgTooLong",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrMsgTooLong notification is generated when a DHCP",
+				"message is built, but the message size either exceeds the maximum DHCP",
+				"message size or the size provided by the client in the option maximum",
+				"DHCP message size. A reason can be that too many options are defined",
+				"on host, pool and subnet levels.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrMsgTooLong",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$v1",
+				"Summary" : "DHCP message size limit ($v5) exceeded on server $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrMsgTooLong TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgOption82 s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgSizeLimit u 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrMsgTooLong",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgOption82 indicates the content",
+							"of option 82 from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgOption82",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifMsgSizeLimit indicates the",
+							"minimum of either the maximum DHCP message size or the size provided",
+							"by the client in the option maximum DHCP message size."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgSizeLimit",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpsFoStateChange notification is generated when the failover",
+				"state of the DHCP server instance changes.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6) ? 1 : ($v1==7 || $v1==5 || $v1==4) ? 2 : 3"
+				},
+				"EventType" : "tmnxDhcpsFoStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==6) ? 3600 : ($v1==7 || $v1==5 || $v1==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==6) ? 0 : ($v1==1) ? 1 : ($v1==7 || $v1==5) ? 4 : ($v1==4) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Failover state of DHCP server instance is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoStateChange TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoState i 1",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxDhcpsFoState indicates the failover state of the DHCP",
+							"server instance."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "init",
+							"3" : "startUp",
+							"4" : "noCommunication",
+							"5" : "partnerDown",
+							"6" : "normal",
+							"7" : "shutdown",
+							"8" : "transition",
+							"9" : "preNormal"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.18.2.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoLeaseUpdateFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpsFoLeaseUpdateFailed notification is generated when a",
+				"Binding Database Update (BNDUPD) packet received from the failover",
+				"peer, cannot be processed successfully.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpsFoLeaseUpdateFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "LeaseClientAddress:$v4",
+				"Summary" : "Binding Database Update (BNDUPD) packet from the failover peer failed to process because of $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoLeaseUpdateFailed TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoLeaseFailureReason i 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoLeaseUpdateFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrType indicates",
+							"the address type of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddr indicates the",
+							"client IP address of this lease."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsFoLeaseFailureReason indicates the",
+							"reason of a lease update failure that occurred in the failover",
+							"facility of a DHCP Server instance."
+						],
+						"enums" : {
+							"1" : "foShutdown",
+							"2" : "expired",
+							"3" : "maxReached",
+							"4" : "subnetNotFound",
+							"5" : "rangeNotFound",
+							"6" : "hostConflict",
+							"7" : "addressConflict",
+							"8" : "peerConflict",
+							"9" : "persistenceCongested",
+							"10" : "noLeaseHoldTime",
+							"11" : "invalidPfxLen"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoLeaseFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrUserDbUnknown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrUserDbUnknown notification is generated when the local",
+				"DHCP server instance drops a DHCP message because a local user",
+				"database with the name specified for this server instance could not be",
+				"found.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<IMPLIEDtmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrUserDbUnknown",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$vRtrID",
+				"Summary" : "Local user DB $v1 for the server instance $IMPLIEDtmnxDhcpServerCfgServerName is not found"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrUserDbUnknown TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerCfgUserDatabase s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrUserDbUnknown",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpServerCfgUserDatabase specifies the",
+							"local user database to use for authentication.",
+							"",
+							"If no authentication is required, the value of this object must be set",
+							"to the empty string, and tmnxDhcpServerCfgUseGiAddress must be set to",
+							"'true(1)' in order for the DHCP server to operate."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerCfgUserDatabase",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.2.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrMaxLeasesReached",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrMaxLeasesReached notification is generated when any",
+				"local DHCP server instance drops a DHCP message because the maximum",
+				"number of leases was reached.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrMaxLeasesReached",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "DHCP leases reached the maximum limit: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrMaxLeasesReached TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrMaxLeases u 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrMaxLeasesReached",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxDhcpSvrMaxLeases indicates the maximum number of",
+							"addresses that can be leased at any given time."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrMaxLeases",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.22",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNoSubnetFixAddr",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrNoSubnetFixAddr notification can be generated for hosts",
+				"configured with a fixed IP address in the local user database.",
+				"If such a host requests an IP address and the system cannot find a",
+				"matching subnet in this server instance for this IP address, then the",
+				"tmnxDhcpSvrNoSubnetFixAddr notification is generated, and the request",
+				"is dropped.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrNoSubnetFixAddr",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "No subnet address found for $v4 host: $v5 configured with fixed IP address"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNoSubnetFixAddr TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifUserDatabaseName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifHostType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifHostName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNoSubnetFixAddr",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifUserDatabaseName indicates the",
+							"name of this local user database."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifUserDatabaseName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifHostType indicates the type of",
+							"the host."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "dhcp",
+							"2" : "pppoe"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifHostType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifHostName indicates the name of",
+							"this host or set of hosts."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifHostName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrType indicates",
+							"the address type of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddr indicates the",
+							"client IP address of this lease."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseDefaultTimers",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrLeaseDefaultTimers notification is generated when, for",
+				"a particular DHCP client, the system has reverted to default lease",
+				"timer values, because the configuration of the lease timers was",
+				"inconsistent.",
+				"The lease renew time T1 and lease rebind time T2 have been reverted to",
+				"the default values of 1/2 and 2/3 of the lease time.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrLeaseDefaultTimers",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "LeaseClientAddress:$v4",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseDefaultTimers TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrLen u 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseDefaultTimers",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrType indicates",
+							"the address type of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddr indicates the",
+							"client IP address of this lease."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifDescription is a printable character string",
+							"which contains information about the problem that occurred."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrLen indicates",
+							"the prefix length of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrLen",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.15",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolMinFreeExc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrPoolMinFreeExc notification is generated when the",
+				"actual number of free addresses in a pool falls below the desired",
+				"minimum number.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpServerPoolName>[A-Za-z0-9_]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrPoolMinFreeExc",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "The number of free addresses in DHCP pool $tmnxDhcpServerPoolName is below the minimum limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolMinFreeExc TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPoolFree u 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerPoolMinFree u 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerPoolMinFreeType i 0",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolMinFreeExc",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifPoolFree indicates the actual",
+							"number of free addresses in the pool."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPoolFree",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.14",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpServerPoolMinFree specifies the",
+							"desired minimum number of free addresses in this pool.",
+							"",
+							"If the actual number of free addresses in this pool falls below this",
+							"configured minimum, a notification is generated.",
+							"",
+							"The value zero specifies 'no minimum'."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerPoolMinFree",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.4.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpServerPoolMinFreeType specifies",
+							"whether tmnxDhcpServerPoolMinFree is expressed as an absolute number",
+							"or as a percentage.",
+							"",
+							"When the value of this object is set to 'percent(1)', the accepted",
+							"range for tmnxDhcpServerPoolMinFree is limited between 0 and 100.",
+							"",
+							"Default value is 'absolute(0)'."
+						],
+						"enums" : {
+							"0" : "absolute",
+							"1" : "percent"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerPoolMinFreeType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.4.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetDepleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrSubnetDepleted notification is generated when the",
+				"actual number of free addresses becomes zero.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpServerPoolName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpSvrSubnetAddrType>[0-9]+)\\.(?P<tmnxDhcpSvrSubnetAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.(?P<tmnxDhcpSvrSubnetPrefixLength>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrSubnetDepleted",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "No free addresses in subnet $tmnxDhcpSvrSubnetAddress on DHCP server $tmnxDhcpServerCfgServerName"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetDepleted TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetRowStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetDepleted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrSubnetRowStatus specifies the row",
+							"status of this row."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetRowStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.8.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolDepleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrPoolDepleted notification is generated when the actual",
+				"number of free addresses becomes zero.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpServerPoolName>[A-Za-z0-9_]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrPoolDepleted",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "No free addresses in pool $tmnxDhcpServerPoolName on DHCP server $tmnxDhcpServerCfgServerName"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolDepleted TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerPoolRowStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPoolDepleted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpServerPoolRowStatus specifies the row",
+							"status of this row."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerPoolRowStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.4.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrIntLseConflict",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrIntLseConflict notification is generated for DHCP hosts",
+				"trying to acquire an IP address that was handed through the local",
+				"address assignment infrastructure, or the local address assignment",
+				"infrastructure tries to use an IP address that was handed out to a",
+				"DHCP client.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrIntLseConflict",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ServerName:$v2",
+				"Summary" : "$v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrIntLseConflict TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrIntLseConflict",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrType indicates",
+							"the address type of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddr indicates the",
+							"client IP address of this lease."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifDescription is a printable character string",
+							"which contains information about the problem that occurred."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifDescription",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseModify",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrLeaseModify notification is generated when a DHCP host",
+				"is modified.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpSvrLeaseClientAddrType>[0-9]+)\\.(?P<tmnxDhcpSvrLeaseClientAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrLeaseModify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "DHCP server lease modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseModify TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseStart s EXAMPLEE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseModify",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrLeaseStart indicates when this lease",
+							"was created."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseStart",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.13.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseCreate",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrLeaseCreate notification is generated when a DHCP host",
+				"is created.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpSvrLeaseClientAddrType>[0-9]+)\\.(?P<tmnxDhcpSvrLeaseClientAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrLeaseCreate",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "LeaseClientAddress:$tmnxDhcpSvrLeaseClientAddress",
+				"Summary" : "DHCP server host:$tmnxDhcpSvrLeaseClientAddress is created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseCreate TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseStart s EXAMPLEE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseCreate",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrLeaseStart indicates when this lease",
+							"was created."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseStart",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.13.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseDelete",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrLeaseDelete notification is generated when a DHCP host",
+				"is deleted.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpSvrLeaseClientAddrType>[0-9]+)\\.(?P<tmnxDhcpSvrLeaseClientAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrLeaseDelete",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "LeaseClientAddress:$tmnxDhcpSvrLeaseClientAddress",
+				"Summary" : "DHCP server host: $tmnxDhcpSvrLeaseClientAddress is deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseDelete TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseStart s EXAMPLEE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseDelete",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrLeaseStart indicates when this lease",
+							"was created."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseStart",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.13.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNoContFreeBlocks",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrNoContFreeBlocks notification is generated when a lease",
+				"cannot be created because not enough contiguous blocks are found for",
+				"the requested delegated prefix size.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv6(2)'.",
+				"More detailed information about the failure is indicated in the",
+				"tmnxDhcpSvrNotifString object."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<IMPLIEDtmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrNoContFreeBlocks",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$vRtrID",
+				"Summary" : "Lease cannot be created because of unavailability of contiguous free blocks"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNoContFreeBlocks TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerCfgUseGiAddress i 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerCfgUseClientPool i 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLinkAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPrimaryPool s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSecondaryPool s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNoContFreeBlocks",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpServerCfgUseGiAddress specifies",
+							"whether GI address matching is enabled.",
+							"",
+							"If tmnxDhcpServerCfgUseGiAddress is set to 'true(1)', then an IP",
+							"address will be provided based on the Gateway IP address from the DHCP",
+							"message, even when authentication fails or when there is no local user",
+							"database configured in tmnxDhcpServerCfgUserDatabase."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerCfgUseGiAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.2.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpServerCfgUseClientPool specifies",
+							"whether the IP address pool selection is based on the relay",
+							"information in the DHCP packet.",
+							"",
+							"If the value of tmnxDhcpServerCfgUseClientPool is set to 'true (1)'",
+							"the IP address pool selection is determined by the relay information.",
+							"",
+							"If the value of tmnxDhcpServerCfgUseClientPool is set to 'false (2)'",
+							"or if the DHCP message does not contain the to be used information",
+							"the pool selection is specified by the value of",
+							"tmnxDhcpServerCfgUseGiAddress.",
+							"",
+							"When the value of tmnxDhcpServerCfgAddrType is set to 'ipv4 (1), the",
+							"used relay information is the value of the vendor-specific sub-option",
+							"13 of the DHCP option 82.",
+							"",
+							"When the value of tmnxDhcpServerCfgAddrType is set to 'ipv6 (2), the",
+							"used relay information is the value of the vendor-specific sub-option",
+							"1 for the IA_NA address pool and sub-option 2 for the IA_PD address",
+							"pool."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerCfgUseClientPool",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.2.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxDhcpSvrNotifLinkAddr indicates the link address from",
+							"the RELAY-FORWARD message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLinkAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxDhcpSvrNotifPrimaryPool indicates the primary pool",
+							"name from the RELAY-FORWARD message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPrimaryPool",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxDhcpSvrNotifSecondaryPool indicates the secondary",
+							"pool name from the RELAY-FORWARD message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSecondaryPool",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.19",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifString is a string."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrSubnetBindingFailed notification is obsolete."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrSubnetBindingFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "DHCP server subnet binding failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingFailed TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerPoolSubnetBindKey i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSystemId s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServiceId s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpServerPoolSubnetBindKey specifies the",
+							"key to be used for subnet binding.",
+							"",
+							"Default value is 'none' (0), disabling the subnet binding.",
+							"",
+							"The value cannot be changed into 'none' when",
+							"tmnxDhcpServerPoolSubnetBindDly is not set to it's default value."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "sysIdSvcId",
+							"2" : "sysId",
+							"3" : "string"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpServerPoolSubnetBindKey",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.4.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSystemId indicates a system-id",
+							"provided by an access node to which this subnet is bound."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSystemId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServiceId indicates a",
+							"service-id provided by an access node."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServiceId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifString is a string."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpsPoolFoStateChange notification is generated when the",
+				"failover state of the DHCP server instance pool changes.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==6) ? 1 : ($v1==4 || $v1==5 || $v1==7) ? 2 : 3"
+				},
+				"EventType" : "tmnxDhcpsPoolFoStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1==6) ? 3600 : ($v1==4 || $v1==5 || $v1==7) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : ($v1==6) ? 0 : ($v1==4) ? 3 : ($v1==5 || $v1==7) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "The failover state of DHCP server instance pool is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoStateChange TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoState i 1",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxDhcpsPoolFoState indicates the failover state of the",
+							"IP pool instance."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "init",
+							"3" : "startUp",
+							"4" : "noCommunication",
+							"5" : "partnerDown",
+							"6" : "normal",
+							"7" : "shutdown",
+							"8" : "transition",
+							"9" : "preNormal"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.18.6.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoLeaseUpdateFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpsPoolFoLeaseUpdateFailed notification is generated when a",
+				"Binding Database Update (BNDUPD) packet received from the failover",
+				"peer, cannot be processed successfully.",
+				"This notification is only generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpsPoolFoLeaseUpdateFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "LeaseClientAddress:$v3",
+				"Summary" : "DHCP Binding Database Update (BNDUPD) packet received from the failover peer failed to process"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoLeaseUpdateFailed TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoLastChanged t 31536000 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoLeaseFailureReason i 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoLeaseUpdateFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxDhcpsPoolFoLastChanged indicates the sysUpTime at the",
+							"time of the last modification of this entry.",
+							"",
+							"If no changes were made to the entry since the last re-initialization",
+							"of the local network management subsystem, then this object contains a",
+							"zero value."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPoolFoLastChanged",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.18.6.1.1",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddrType indicates",
+							"the address type of tmnxDhcpSvrNotifLeaseClientAddr."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifLeaseClientAddr indicates the",
+							"client IP address of this lease."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifLeaseClientAddr",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsFoLeaseFailureReason indicates the",
+							"reason of a lease update failure that occurred in the failover",
+							"facility of a DHCP Server instance."
+						],
+						"enums" : {
+							"1" : "foShutdown",
+							"2" : "expired",
+							"3" : "maxReached",
+							"4" : "subnetNotFound",
+							"5" : "rangeNotFound",
+							"6" : "hostConflict",
+							"7" : "addressConflict",
+							"8" : "peerConflict",
+							"9" : "persistenceCongested",
+							"10" : "noLeaseHoldTime",
+							"11" : "invalidPfxLen"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsFoLeaseFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingCreate",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrSubnetBindingCreate notification is obsolete."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrSubnetBindingCreate",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "DHCP server subnet binding created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingCreate TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPoolName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfx s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfxlen u 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSystemId s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServiceId s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingCreate",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifPoolName indicates the pppoe pool name in",
+							"the system."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPoolName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetAddrType indicates the",
+							"address type of the address that follows."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetPfx specifies a subnet."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfx",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetPfxlen specifies the",
+							"length of tmnxDhcpSvrNotifSubnetPfx."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfxlen",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.26",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSystemId indicates a system-id",
+							"provided by an access node to which this subnet is bound."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSystemId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServiceId indicates a",
+							"service-id provided by an access node."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServiceId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifString is a string."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingUnbind",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrSubnetBindingUnbind notification is obsolete."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrSubnetBindingUnbind",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "DHCP server subnet unbound"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingUnbind TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPoolName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfx s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfxlen u 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSystemId s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServiceId s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifUnbindTime u 9999",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingUnbind",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifPoolName indicates the pppoe pool name in",
+							"the system."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPoolName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetAddrType indicates the",
+							"address type of the address that follows."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetPfx specifies a subnet."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfx",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetPfxlen specifies the",
+							"length of tmnxDhcpSvrNotifSubnetPfx."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfxlen",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.26",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSystemId indicates a system-id",
+							"provided by an access node to which this subnet is bound."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSystemId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServiceId indicates a",
+							"service-id provided by an access node."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServiceId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifString is a string."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.22",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifUnbindTime indicates the time",
+							"left before this binding expires."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifUnbindTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.27",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingDelete",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrSubnetBindingDelete notification is obsolete."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrSubnetBindingDelete",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "DHCP server subnet binding deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingDelete TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPoolName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetAddrType i 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfx s EXAM TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfxlen u 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSystemId s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServiceId s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetBindingDelete",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxDhcpSvrNotifPoolName indicates the pppoe pool name in",
+							"the system."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifPoolName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.23",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetAddrType indicates the",
+							"address type of the address that follows."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetPfx specifies a subnet."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfx",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.25",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSubnetPfxlen specifies the",
+							"length of tmnxDhcpSvrNotifSubnetPfx."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSubnetPfxlen",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.26",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifSystemId indicates a system-id",
+							"provided by an access node to which this subnet is bound."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifSystemId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.20",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServiceId indicates a",
+							"service-id provided by an access node."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServiceId",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifString is a string."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetFailCtrlError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrSubnetFailCtrlError notification is obsolete."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpSvrSubnetFailCtrlError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "DHCP server subnet control error"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetFailCtrlError TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetRowStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetFailCtrlError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrSubnetRowStatus specifies the row",
+							"status of this row."
+						],
+						"enums" : {
+							"1" : "active",
+							"2" : "notInService",
+							"3" : "notReady",
+							"4" : "createAndGo",
+							"5" : "createAndWait",
+							"6" : "destroy"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrSubnetRowStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.8.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPlThTooLowV6",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrPlThTooLowV6 notification is generated when the number",
+				"of free prefixes with the minimum free threshold length available in",
+				"the pool is below the configured number of prefixes with the minimum",
+				"free threshold length.",
+				"[CAUSE] The tmnxDhcpSvrPlThTooLowV6 notification is generated when the",
+				"actual number of free prefixes with minimum free threshold length",
+				"available in the pool is becoming too low.",
+				"[EFFECT] Only a limited number of free prefixes with minimum free",
+				"threshold length are available in the pool.",
+				"[RECOVERY]",
+				"The operator may create additional prefixes in the pool",
+				"to prevent a shortage of available prefixes with minimum",
+				"free threshold length. Alternatively, examination of",
+				"the leases in the pool may reveal that the distribution",
+				"is not appropriate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : 2"
+				},
+				"EventType" : "tmnxDhcpSvrPlThTooLowV6",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Number of free prefixes with minimum free threshold length available in the pool is below threshold' : 'Number of free prefixes with minimum free threshold length available in the pool is above threshold'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPlThTooLowV6 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlThCurrFreeTooLow i 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlThCurrFreeBlksHw C 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlThCurrFreeBlksLw C 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlMinFreePercent u 0",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPlThTooLowV6",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPlThCurrFreeTooLow equals '1' if the",
+							"number of free prefixes with the minimum free threshold length",
+							"available in the pool is below the configured number of prefixes with",
+							"the minimum free threshold length. Otherwise the value equals '2'."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlThCurrFreeTooLow",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.36.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPlThCurrFreeBlksHw indicates the",
+							"higher 64-bits word of the number of free blocks in this pool with a",
+							"prefix length defined by the value of tmnxDhcpsPlMinFreePrefixLen.",
+							"",
+							"The value of this object reflects the part of the address space in",
+							"this pool that is actually in use by this server instance.",
+							"",
+							"If the value of the object tmnxDhcpsFoAdminState of this server is",
+							"equal to 'inService (2)' and the value of the object tmnxDhcpsFoState",
+							"of this server is equal to 'partnerDown (5)', or the value of the",
+							"object tmnxDhcpsPoolFoAdminState of this pool is equal to 'inService",
+							"(2)' and the value of the object tmnxDhcpsPoolFoState of this pool is",
+							"equal to 'partnerDown (5)', the value of this object is the sum of the",
+							"corresponding local and remote objects. Otherwise the value of this",
+							"object equals the value of corresponding local object only."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlThCurrFreeBlksHw",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.36.1.5",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPlThCurrFreeBlksLw indicates the",
+							"lower 64-bits word of the number of used blocks in this pool with a",
+							"prefix length defined by the value of tmnxDhcpsPlMinFreePrefixLen.",
+							"",
+							"The value of this object reflects the part of the address space in",
+							"this pool that is actually in use by this server instance.",
+							"",
+							"If the value of the object tmnxDhcpsFoAdminState of this server is",
+							"equal to 'inService (2)' and the value of the object tmnxDhcpsFoState",
+							"of this server is equal to 'partnerDown (5)', or the value of the",
+							"object tmnxDhcpsPoolFoAdminState of this pool is equal to 'inService",
+							"(2)' and the value of the object tmnxDhcpsPoolFoState of this pool is",
+							"equal to 'partnerDown (5)', the value of this object is the sum of the",
+							"corresponding local and remote objects. Otherwise the value of this",
+							"object equals the value of corresponding local object only."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlThCurrFreeBlksLw",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.36.1.6",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPlMinFreePercent specifies the",
+							"desired minimum ratio of free prefixes with the prefix length equal to",
+							"tmnxDhcpsPlMinFreePrefixLen."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlMinFreePercent",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.32.1.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPlThDepletedV6",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrPlThDepletedV6 notification is generated when there are",
+				"no more prefixes with the minimum free threshold length available in",
+				"the pool.",
+				"[CAUSE] The tmnxDhcpSvrPlThDepletedV6 notification is generated when",
+				"the actual number of free prefixes with minimum free threshold length",
+				"available in the pool becomes zero.",
+				"[EFFECT] No more free prefixes with minimum free threshold length are",
+				"available in the pool.",
+				"[RECOVERY] The operator may create additional prefixes in the pool.",
+				"Alternatively, examination of the leases in the pool may reveal that",
+				"the distribution is not appropriate."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpServerPoolName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpsPlMinFreePrefixLen>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : 2"
+				},
+				"EventType" : "tmnxDhcpSvrPlThDepletedV6",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'No more prefixes with minimum free threshold length available in the pool ($tmnxDhcpServerPoolName)' : 'Pool has prefixes with minimum free threshold'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPlThDepletedV6 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlThCurrFreeDepleted i 1",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPlThDepletedV6",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPlThCurrFreeDepleted equals '1' if",
+							"there are no more prefixes with the minimum free threshold length",
+							"available in the pool. Otherwise the value equals '2'."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPlThCurrFreeDepleted",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.36.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPfxThTooLowV6",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrPfxThTooLowV6 notification is generated when the number",
+				"of free prefixes with the minimum free threshold length available in",
+				"the considered prefix is below the configured number of prefixes with",
+				"the minimum free threshold length.",
+				"[CAUSE] The tmnxDhcpSvrPfxThTooLowV6 notification is generated when",
+				"the actual number of free prefixes with minimum free threshold length",
+				"available in the considered prefix is becoming too low.",
+				"[EFFECT] Only a limited number of free prefixes with minimum free",
+				"threshold length are available in the considered prefix.",
+				"[RECOVERY] The operator may create additional prefixes in the",
+				"considered prefix to prevent a shortage of available prefixes with",
+				"minimum free threshold length. Alternatively, examination of the",
+				"leases in the prefix may reveal that the distribution is not",
+				"appropriate."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : 2"
+				},
+				"EventType" : "tmnxDhcpSvrPfxThTooLowV6",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Number of free prefixes with minimum free threshold length available in the considered prefix is less than the configured minimum limit' : 'Number of free prefixes with minimum free threshold length available in the considered prefix is above the configured minimum limit'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPfxThTooLowV6 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxThCurrFreeTooLow i 1 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxThCurrFreeBlksHw C 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxThCurrFreeBlksLw C 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxMinFreePercent u 0 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxMinFreeNumber u 9999",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPfxThTooLowV6",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPfxThCurrFreeTooLow equals '1' if the",
+							"number of free prefixes with the minimum free threshold length",
+							"available in the considered prefix is below the configured number of",
+							"prefixes with the minimum free threshold length. Otherwise the value",
+							"equals '2'."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxThCurrFreeTooLow",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.38.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPfxThCurrFreeBlksHw indicates the",
+							"higher 64-bits word of the number of free blocks in this configured",
+							"prefix with a prefix length defined by the value of",
+							"tmnxDhcpsPfxMinFreePrefixLen.",
+							"",
+							"The value of this object reflects the part of the address space in",
+							"this prefix that is actually in use by this server instance.",
+							"",
+							"If the value of the object tmnxDhcpSvrSubnetFailCtrl of this prefix",
+							"equals 'local (1)' or 'access-driven (3)', the value of this object",
+							"reflects the value of the object tmnxDhcpsPfxThLclFreeBlksHw.",
+							"",
+							"If the value of the object tmnxDhcpSvrSubnetFailCtrl of this prefix",
+							"equals 'remote (2)' and the value of the object tmnxDhcpsFoAdminState",
+							"of this server is equal to 'inService (2)' and the value of the object",
+							"tmnxDhcpsFoState of this server is equal to 'partnerDown (5)', or the",
+							"value of the object tmnxDhcpsPoolFoAdminState of this pool is equal to",
+							"'inService (2)' and the value of the object tmnxDhcpsPoolFoState of",
+							"this pool is equal to 'partnerDown (5)', the value of this object",
+							"reflects the value of the object tmnxDhcpsPfxThRemFreeBlksHw.",
+							"",
+							"Otherwise the value of this object is 0."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxThCurrFreeBlksHw",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.38.1.5",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPfxThCurrFreeBlksLw indicates the",
+							"lower 64-bits word of the number of free blocks in this configured",
+							"prefix with a prefix length defined by the value of",
+							"tmnxDhcpsPfxMinFreePrefixLen.",
+							"",
+							"The value of this object reflects the part of the address space in",
+							"this prefix that is actually in use by this server instance.",
+							"",
+							"If the value of the object tmnxDhcpSvrSubnetFailCtrl of this prefix",
+							"equals 'local (1)' or 'access-driven (3)', the value of this object",
+							"reflects the value of the object tmnxDhcpsPfxThLclFreeBlksLw.",
+							"",
+							"If the value of the object tmnxDhcpSvrSubnetFailCtrl of this prefix",
+							"equals 'remote (2)' and the value of the object tmnxDhcpsFoAdminState",
+							"of this server is equal to 'inService (2)' and the value of the object",
+							"tmnxDhcpsFoState of this server is equal to 'partnerDown (5)', or the",
+							"value of the object tmnxDhcpsPoolFoAdminState of this pool is equal to",
+							"'inService (2)' and the value of the object tmnxDhcpsPoolFoState of",
+							"this pool is equal to 'partnerDown (5)', the value of this object",
+							"reflects the value of the object tmnxDhcpsPfxThRemFreeBlksLw.",
+							"",
+							"Otherwise the value of this object is 0."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxThCurrFreeBlksLw",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.38.1.6",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPfxMinFreePercent specifies the",
+							"desired minimum ratio of free prefixes with the prefix length equal to",
+							"tmnxDhcpsPfxMinFreePrefixLen.",
+							"",
+							"While the value of tmnxDhcpsPfxMinFreeNumber is not zero, the value of",
+							"tmnxDhcpsPfxMinFreePercent must be zero."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxMinFreePercent",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.34.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPfxMinFreeNumber specifies the",
+							"desired minimum number of free prefixes with the prefix length equal",
+							"to tmnxDhcpsPfxMinFreePrefixLen.",
+							"",
+							"While the value of tmnxDhcpsPfxMinFreePercent is not zero, the value",
+							"of tmnxDhcpsPfxMinFreeNumber must be zero."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxMinFreeNumber",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.34.1.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPfxThDepletedV6",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpSvrPfxThDepletedV6 notification is generated when there",
+				"are no more free prefixes with the minimum free threshold length",
+				"available in the considered prefix.",
+				"[CAUSE] The tmnxDhcpSvrPfxThDepletedV6 notification is generated when",
+				"the actual number of free prefixes with minimum free threshold length",
+				"available in the considered prefix becomes zero.",
+				"[EFFECT] No more prefixes with minimum free threshold length are",
+				"available in considered prefix.",
+				"[RECOVERY] The operator may create additional prefixes in the",
+				"considered prefix. Alternatively, examination of the leases in the",
+				"pool may reveal that the distribution is not appropriate."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpServerPoolName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpSvrSubnetAddrType>[0-9]+)\\.(?P<tmnxDhcpSvrSubnetAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)\\.(?P<tmnxDhcpSvrSubnetPrefixLength>[0-9]+)\\.(?P<tmnxDhcpsPfxMinFreePrefixLen>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : 2"
+				},
+				"EventType" : "tmnxDhcpSvrPfxThDepletedV6",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : 4"
+				},
+				"SubNode" : "vRouterID:$vRtrID",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'DHCP server has no more free prefixes with minimum free threshold length available in considered prefix' : 'DHCP server has free prefixes with minimum free threshold length available in considered prefix'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPfxThDepletedV6 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxThCurrFreeDepleted i 1",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrPfxThDepletedV6",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"The value of the object tmnxDhcpsPfxThCurrFreeDepleted equals '1' if",
+							"there are no more prefixes with the minimum free threshold length",
+							"available in the considered prefix. Otherwise the value equals '2'."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPfxThCurrFreeDepleted",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.38.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsLeaseOfferedExpired",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpsLeaseOfferedExpired notification is generated when an",
+				"offered DHCP lease expires in the 'offered' state.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'",
+				"[CAUSE] The tmnxDhcpsLeaseOfferedExpired notification is generated",
+				"when a DHCP lease that this system had offered to a client, expires",
+				"while it is still in the 'offered' state, because this system did not",
+				"receive a DHCP request message from the client.",
+				"[EFFECT] The client does not get a lease this time. The client will",
+				"have to try again if it needs a lease from this system.",
+				"[RECOVERY] The recovery action, if any, will depend on the reason of",
+				"the expiry."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<vRtrID>[0-9]+)\\.(?P<tmnxDhcpServerCfgServerName>[A-Za-z0-9_]+)\\.(?P<tmnxDhcpSvrLeaseClientAddrType>[0-9]+)\\.(?P<tmnxDhcpSvrLeaseClientAddress>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpsLeaseOfferedExpired",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "LeaseClientAddress:$tmnxDhcpSvrLeaseClientAddress",
+				"Summary" : "DHCP lease offer to client $v3 expired"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsLeaseOfferedExpired TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseStart s EXAMPLEE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsLeaseOfferedExpired",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrLeaseStart indicates when this lease",
+							"was created."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrLeaseStart",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.1.13.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsAddrAllocationFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpsAddrAllocationFailure notification is generated when a",
+				"DHCP server instance could not allocate an address for a client.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)'.",
+				"The tmnxDhcpSvrNotifMsgHwAddress object indicates the MAC address of",
+				"the client.",
+				"The tmnxDhcpSvrNotifString object indicates the reason.",
+				"[CAUSE] The tmnxDhcpsAddrAllocationFailure notification is generated",
+				"when a DHCP server instance could not allocate an address for a",
+				"client.",
+				"The reason could be that the DHCP server instance could not find a",
+				"free address, or it could be a configuration issue.",
+				"[EFFECT] The client does not get an IP address lease this time. The",
+				"client will have to try again if it needs a lease from this system.",
+				"[RECOVERY] The recovery action, if any, will depend on the reason."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpsAddrAllocationFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$v1",
+				"Summary" : "DHCP server instance $v2 could not allocate address for a client"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsAddrAllocationFailure TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsAddrAllocationFailure",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifString is a string."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPacketDropped",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxDhcpsPacketDropped notification is generated when a DHCP",
+				"server instance dropped a DHCP packet it received.",
+				"This notification is generated for DHCP server instances with the",
+				"value of tmnxDhcpServerCfgAddrType set to 'ipv4(1)' or 'ipv6(2)'",
+				"The tmnxDhcpSvrNotifMsgHwAddress object indicates the MAC address of",
+				"the client; the tmnxDhcpSvrNotifClientDUID object indicates the DUID",
+				"of the client; either of these objects, or both, may be empty.",
+				"The tmnxDhcpSvrNotifString object indicates the reason.",
+				"[CAUSE] The tmnxDhcpsPacketDropped notification is generated when a",
+				"DHCP server instance dropped a DHCP packet it received.",
+				"[EFFECT] Some client request fails. The client will have to try again.",
+				"[RECOVERY] The recovery action, if any, will depend on the reason."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxDhcpsPacketDropped",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "vRouterID:$v1;MAC:$v3",
+				"Summary" : "Client requests failed as the DHCP server: $v2 dropped a DHCP packet"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPacketDropped TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID i 9999 TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress s EXAMPL TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID s EXAMPLE TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpsPacketDropped",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.47.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"The unique value which identifies this virtual router in the Tmnx",
+							"system. "
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifVRtrID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifServerName indicates the name",
+							"of this local DHCP server instance."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifMsgHwAddress indicates the MAC",
+							"address from the received DHCP message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifMsgHwAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of object tmnxDhcpSvrNotifClientDUID indicates the content",
+							"of option 0x01 from the received DHCPv6 message."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifClientDUID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of the object tmnxDhcpSvrNotifString is a string."
+						],
+						"name" : "TIMETRA-DHCP-SERVER-MIB::tmnxDhcpSvrNotifString",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.47.2.22",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

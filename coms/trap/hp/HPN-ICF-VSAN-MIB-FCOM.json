@@ -1,0 +1,208 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201403041550Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmDomainIdNotAssignedNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This event will be triggered if a Domain ID is not",
+				"assigned or configured, then the E_ports may be isolated",
+				"in the VSAN. The conditions are listed as follows:",
+				"1. If the switch has enabled the fabric configuration and",
+				"a request for a configured static Domain ID is rejected",
+				"or no other Domain ID is assigned, the E_ports will be",
+				"isolated in the particular VSAN.",
+				"2. If the switch does not enable the fabric configuration",
+				"and a Domain ID is not configured, all of its E_ports",
+				"will be isolated in the particular VSAN.",
+				"The notification contains the WWN of the Switch and",
+				"the index of the VSAN in which the event occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfVsanDmDomainIdNotAssignedNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "VsanIndex:$v1",
+				"Summary" : "Domain ID is not assigned or configured"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-VSAN-MIB::hpnicfVsanDmDomainIdNotAssignedNotify HPN-ICF-VSAN-MIB::hpnicfVsanIndex u 1 HPN-ICF-VSAN-MIB::hpnicfVsanDmLocalSwitchWWN s EXAMPLEE",
+			"trap" : {
+				"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmDomainIdNotAssignedNotify",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The identifier of the VSAN."
+						],
+						"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanIndex",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the WWN of the local switch in this VSAN."
+						],
+						"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmLocalSwitchWWN",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.1.2.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmNewPrincipalSwitchNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"If a switch becomes the new Principal Switch in a VSAN, this",
+				"notification is sent immediately after the election.",
+				"The notification contains the WWN of the new Principal Switch",
+				"and the index of the VSAN in which the transition occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfVsanDmNewPrincipalSwitchNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "VsanIndex:$v1",
+				"Summary" : "New principal switch detected in a VSAN $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-VSAN-MIB::hpnicfVsanDmNewPrincipalSwitchNotify HPN-ICF-VSAN-MIB::hpnicfVsanIndex u 1 HPN-ICF-VSAN-MIB::hpnicfVsanDmLocalSwitchWWN s EXAMPLEE",
+			"trap" : {
+				"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmNewPrincipalSwitchNotify",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The identifier of the VSAN."
+						],
+						"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanIndex",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the WWN of the local switch in this VSAN."
+						],
+						"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmLocalSwitchWWN",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.1.2.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmFabricChangeNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This event will be triggered if a switch sends or receives a",
+				"Build Fabric (BF) or a Reconfigure Fabric (RCF) message in a",
+				"VSAN.",
+				"The conditions a switch can receive or send a BF or a RCF are",
+				"listed as follows:",
+				"1. Two isolated fabrics in a VSAN merge into one fabric. If",
+				"the Domain ID lists do not overlap, the sent or received",
+				"message is BF, other cases, it is RCF.",
+				"2. If an upstream principal link which connects to principal",
+				"switch and other switches become disconnected, the sent or",
+				"received message is BF.",
+				"3. A BF or RCF process is triggered manually by configuration.",
+				"The notification contains the index of the VSAN in which a BF",
+				"or a RCF was sent or received."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfVsanDmFabricChangeNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "VsanIndex:$v1",
+				"Summary" : "Switch sent or received a BF or RCF message in VSAN $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-VSAN-MIB::hpnicfVsanDmFabricChangeNotify HPN-ICF-VSAN-MIB::hpnicfVsanIndex u 1",
+			"trap" : {
+				"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmFabricChangeNotify",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The identifier of the VSAN."
+						],
+						"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanIndex",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmDomainIdChangeNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"This event will be triggered if the Domain ID of the local switch",
+				"changed in a VSAN."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpnicfVsanDmDomainIdChangeNotify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "VsanIndex:$v1",
+				"Summary" : "Domain ID $v2 of the local switch changed in VSAN"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-VSAN-MIB::hpnicfVsanDmDomainIdChangeNotify HPN-ICF-VSAN-MIB::hpnicfVsanIndex u 1 HPN-ICF-VSAN-MIB::hpnicfVsanDmDomainIdAssigned i 0 HPN-ICF-VSAN-MIB::hpnicfVsanDmLocalSwitchWWN s EXAMPLEE",
+			"trap" : {
+				"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmDomainIdChangeNotify",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The identifier of the VSAN."
+						],
+						"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanIndex",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.1.1.1.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Indicates the Domain ID of the local switch in this",
+							"VSAN or zero if no Domain ID has been assigned."
+						],
+						"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmDomainIdAssigned",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.1.2.1.10",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Indicates the WWN of the local switch in this VSAN."
+						],
+						"name" : "HPN-ICF-VSAN-MIB::hpnicfVsanDmLocalSwitchWWN",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.127.1.1.1.2.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,2383 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200703220000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irNotifyEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent to indicate a system event. ",
+				"irTextString object provides a description of the event."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irNotifyEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Notify event : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irNotifyEvent MRV-IR-TRAP-MIB::irTextString s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irNotifyEvent",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.1",
+				"variables" : [
+					{
+						"description" : [
+							"An ascii text string."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irTextString",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irTempHighTholdAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current temp value has gone ",
+				"above the value set in irTempThresholdHigh object.",
+				"irTempValue object indicates the current temp value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irTempHighTholdAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v4==6) ? 5 : (($v4==5) ? 4 : (($v4==4 || $v4==3) ? 3 : (($v4==1) ? 0 : 1)))"
+				},
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Current temperature value ($v2) exceeded high threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irTempHighTholdAlarmRaised MRV-IR-CHAR-MIB::irCharPortIndex i 9999 MRV-IR-CHAR-MIB::irTempValue i 9999 MRV-IR-CHAR-MIB::irTempThresholdHigh i 9999 MRV-IR-CHAR-MIB::irTempTrapSeverity i 5",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irTempHighTholdAlarmRaised",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.2",
+				"variables" : [
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current temperature value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irTempValue",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The high temperature threhsold value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irTempThresholdHigh",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity value to be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irTempTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irTempHighTholdAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current temp value has dropped ",
+				"below the value set in irTempThresholdHigh object after having",
+				"gone above that value. irTempValue object indicates the ",
+				"current temp value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irTempHighTholdAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Current temperature value ($v2) droppped below high threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irTempHighTholdAlarmCleared MRV-IR-CHAR-MIB::irCharPortIndex i 9999 MRV-IR-CHAR-MIB::irTempValue i 9999 MRV-IR-CHAR-MIB::irTempThresholdHigh i 9999 MRV-IR-CHAR-MIB::irTempTrapSeverity i 1",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irTempHighTholdAlarmCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.3",
+				"variables" : [
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current temperature value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irTempValue",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The high temperature threhsold value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irTempThresholdHigh",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity value to be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irTempTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irTempLowTholdAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current temp value has dropped ",
+				"below the value set in irTempThresholdLow object.",
+				"irTempValue object indicates the current temp value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irTempLowTholdAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v4==6) ? 5 : (($v4==5) ? 4 : (($v4==4 || $v4==3) ? 3 : (($v4==1) ? 0 : 1)))"
+				},
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Current temperature value ($v2) dropped below low threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irTempLowTholdAlarmRaised MRV-IR-CHAR-MIB::irCharPortIndex i 9999 MRV-IR-CHAR-MIB::irTempValue i 9999 MRV-IR-CHAR-MIB::irTempThresholdLow i 9999 MRV-IR-CHAR-MIB::irTempTrapSeverity i 5",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irTempLowTholdAlarmRaised",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.4",
+				"variables" : [
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current temperature value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irTempValue",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The low temperature threhsold value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irTempThresholdLow",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity value to be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irTempTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irTempLowTholdAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current temp value has returned ",
+				"above the value set in irTempThresholdLow object after having",
+				"fallen below that value. irTempValue object indicates the ",
+				"current temp value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irTempLowTholdAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Current temperature value ($v2) raised above low threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irTempLowTholdAlarmCleared MRV-IR-CHAR-MIB::irCharPortIndex i 9999 MRV-IR-CHAR-MIB::irTempValue i 9999 MRV-IR-CHAR-MIB::irTempThresholdLow i 9999 MRV-IR-CHAR-MIB::irTempTrapSeverity i 1",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irTempLowTholdAlarmCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.5",
+				"variables" : [
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current temperature value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irTempValue",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The low temperature threhsold value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irTempThresholdLow",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity value to be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irTempTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.4.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHumidityHighTholdAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current humidity value has gone ",
+				"above the value set in irHumidityThresholdHigh object.",
+				"irHumidityValue object indicates the current humidity value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irHumidityHighTholdAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v4==6) ? 5 : (($v4==5) ? 4 : (($v4==4 || $v4==3) ? 3 : (($v4==1) ? 0 : 1)))"
+				},
+				"SubNode" : "PortIndex;$v1",
+				"Summary" : "Current humidity value ($v2) exceeded high threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHumidityHighTholdAlarmRaised MRV-IR-CHAR-MIB::irCharPortIndex i 9999 MRV-IR-CHAR-MIB::irHumidityValue i 9999 MRV-IR-CHAR-MIB::irHumidityThresholdHigh i 9999 MRV-IR-CHAR-MIB::irHumidityTrapSeverity i 5",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHumidityHighTholdAlarmRaised",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.6",
+				"variables" : [
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current humidity value (as a percentage)."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irHumidityValue",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The high humidity threhsold value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irHumidityThresholdHigh",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity value to be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irHumidityTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHumidityHighTholdAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current temp value has dropped ",
+				"below the value set in irHumidityThresholdHigh object after having",
+				"gone above that value. irHumidityValue object indicates the ",
+				"current humidity value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irHumidityHighTholdAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Current humidity ($v2) dropped below high threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHumidityHighTholdAlarmCleared MRV-IR-CHAR-MIB::irCharPortIndex i 9999 MRV-IR-CHAR-MIB::irHumidityValue i 9999 MRV-IR-CHAR-MIB::irHumidityThresholdHigh i 9999 MRV-IR-CHAR-MIB::irHumidityTrapSeverity i 1",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHumidityHighTholdAlarmCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.7",
+				"variables" : [
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current humidity value (as a percentage)."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irHumidityValue",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The high humidity threhsold value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irHumidityThresholdHigh",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity value to be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irHumidityTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHumidityLowTholdAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current humidity value has dropped ",
+				"below the value set in irHumidityThresholdLow object. ",
+				"irHumidityValue object indicates the current humidity value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irHumidityLowTholdAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v4==6) ? 5 : (($v4==5) ? 4 : (($v4==4 || $v4==3) ? 3 : (($v4==1) ? 0 : 1)))"
+				},
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Current humidity ($v2) dropped below low threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHumidityLowTholdAlarmRaised MRV-IR-CHAR-MIB::irCharPortIndex i 9999 MRV-IR-CHAR-MIB::irHumidityValue i 9999 MRV-IR-CHAR-MIB::irHumidityThresholdLow i 9999 MRV-IR-CHAR-MIB::irHumidityTrapSeverity i 5",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHumidityLowTholdAlarmRaised",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.8",
+				"variables" : [
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current humidity value (as a percentage)."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irHumidityValue",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The low humidity threhsold value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irHumidityThresholdLow",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity value to be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irHumidityTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHumidityLowTholdAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the current humidity value has gone ",
+				"above the value set in irHumidityThresholdLow object after having",
+				"gone below that value. irHumidityValue object indicates the ",
+				"current humidity value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irHumidityLowTholdAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Current humidity value ($v2) raised above low threshold ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHumidityLowTholdAlarmCleared MRV-IR-CHAR-MIB::irCharPortIndex i 9999 MRV-IR-CHAR-MIB::irHumidityValue i 9999 MRV-IR-CHAR-MIB::irHumidityThresholdLow i 9999 MRV-IR-CHAR-MIB::irHumidityTrapSeverity i 1",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHumidityLowTholdAlarmCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.9",
+				"variables" : [
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The current humidity value (as a percentage)."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irHumidityValue",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The low humidity threhsold value."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irHumidityThresholdLow",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The severity value to be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irHumidityTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.5.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irClusterSyncStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a cluster config synch has started."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irClusterSyncStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Cluster configuration synch started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irClusterSyncStarted MRV-IR-TRAP-MIB::irTimeStamp s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irClusterSyncStarted",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.10",
+				"variables" : [
+					{
+						"description" : [
+							"A text string containing timestamp."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irTimeStamp",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irClusterSyncCompleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a cluster config synch has completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irClusterSyncCompleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Cluster configuration synch completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irClusterSyncCompleted MRV-IR-TRAP-MIB::irTimeStamp s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irClusterSyncCompleted",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.11",
+				"variables" : [
+					{
+						"description" : [
+							"A text string containing timestamp."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irTimeStamp",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irClusterSoftwareUpdateStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a cluster system software update ",
+				"has started."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irClusterSoftwareUpdateStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Cluster system software update started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irClusterSoftwareUpdateStarted MRV-IR-TRAP-MIB::irTimeStamp s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irClusterSoftwareUpdateStarted",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.12",
+				"variables" : [
+					{
+						"description" : [
+							"A text string containing timestamp."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irTimeStamp",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irClusterSoftwareUpdateCompleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a cluster system software update ",
+				"has completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irClusterSoftwareUpdateCompleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Cluster system software update completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irClusterSoftwareUpdateCompleted MRV-IR-TRAP-MIB::irTimeStamp s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irClusterSoftwareUpdateCompleted",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.13",
+				"variables" : [
+					{
+						"description" : [
+							"A text string containing timestamp."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irTimeStamp",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irClusterBootloaderUpdateStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a cluster boot loader software update ",
+				"has started."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irClusterBootloaderUpdateStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Cluster boot loader software update started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irClusterBootloaderUpdateStarted MRV-IR-TRAP-MIB::irTimeStamp s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irClusterBootloaderUpdateStarted",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.14",
+				"variables" : [
+					{
+						"description" : [
+							"A text string containing timestamp."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irTimeStamp",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irClusterBootloaderUpdateCompleted",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a cluster boot loader software update ",
+				"has completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irClusterBootloaderUpdateCompleted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Cluster boot loader software update completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irClusterBootloaderUpdateCompleted MRV-IR-TRAP-MIB::irTimeStamp s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irClusterBootloaderUpdateCompleted",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.15",
+				"variables" : [
+					{
+						"description" : [
+							"A text string containing timestamp."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irTimeStamp",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irPowerSupplyStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a power supply status has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "irPowerSupplyStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : (($v2==2) ? 3 : 4)"
+				},
+				"SubNode" : "PowerIndex:$v1",
+				"Summary" : "Power supply status : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD MRV-IR-TRAP-MIB::irPowerSupplyStatusChanged MRV-IR-SYSTEM-MIB::irPowerIndex i 9999 MRV-IR-SYSTEM-MIB::irPowerStatus i 1",
+				"$SNMPTRAPCMD MRV-IR-TRAP-MIB::irPowerSupplyStatusChanged MRV-IR-SYSTEM-MIB::irPowerIndex i 9999 MRV-IR-SYSTEM-MIB::irPowerStatus i 3"
+			],
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irPowerSupplyStatusChanged",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.16",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the power unit."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irPowerIndex",
+						"oid" : "1.3.6.1.4.1.33.100.1.6.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The overall status of the power unit."
+						],
+						"enums" : {
+							"1" : "on",
+							"2" : "off",
+							"3" : "failed"
+						},
+						"name" : "MRV-IR-SYSTEM-MIB::irPowerStatus",
+						"oid" : "1.3.6.1.4.1.33.100.1.6.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irLoginFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that a user attempted to login and failed.",
+				"irCharPortIndex indicates the physical or tcp port.",
+				"irUserName indicates the user name.",
+				"irIpAddress indicates the ip address of the remote machine",
+				"from which the user attempted the login. If the IP address values is ",
+				"non-zero, it indicates a network connection and irCharPortIndex ",
+				"indicates the tcp port. If the IP address is zero, it indicates ",
+				"login attemp was local and irCharPortIndex indicates the physical ",
+				"port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irLoginFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PortIndex:$v3",
+				"Summary" : "User $v1 login attempt failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irLoginFailed MRV-IR-TRAP-MIB::irUserName s EXAMPLE MRV-IR-TRAP-MIB::irIpAddress s EXAMPLE MRV-IR-CHAR-MIB::irCharPortIndex i 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irLoginFailed",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.17",
+				"variables" : [
+					{
+						"description" : [
+							"A text string used for a user name."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irUserName",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A text string used for an ip address."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irIpAddress",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the HDAM unit generated an alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irHdamAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v6==6) ? 5 : (($v6==5) ? 4 : (($v6==4 || $v6==3) ? 3 : (($v6==1) ? 0 : 1)))"
+				},
+				"SubNode" : "SlotIndex:$v2;PortIndex:$v1",
+				"Summary" : "$v4 : $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamAlarmRaised MRV-IR-HDAM-MIB::irAlarmPortIndex i 1 MRV-IR-HDAM-MIB::irAlarmSlotIndex i 1 MRV-IR-HDAM-MIB::irAlarmPointIndex i 1 MRV-IR-HDAM-MIB::irAlarmName s EXAMPLE MRV-IR-HDAM-MIB::irAlarmContactState i 1 MRV-IR-HDAM-MIB::irAlarmTrapSeverity i 5 MRV-IR-HDAM-MIB::irAlarmCount c 9999 MRV-IR-HDAM-MIB::irAlarmDescription s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamAlarmRaised",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.18",
+				"variables" : [
+					{
+						"description" : [
+							"The port index on which the alarm unit is attached."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in the alarm unit which identifies this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmSlotIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An integer which uniquely identifies an alarm on this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmPointIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name assigned to the alarm."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmName",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state of the alarm contacts."
+						],
+						"enums" : {
+							"1" : "open",
+							"2" : "closed"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irAlarmContactState",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The trap severity assigned to this alarm. This value will be sent ",
+							"when an alarm fires and an snmp trap is generated."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irAlarmTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the alarm has been generated since the unit",
+							"was started."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmCount",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.11",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"A user configurable alarm description string."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmDescription",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the HDAM unit has cleared an alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irHdamAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "SlotIndex:$v2;PortIndex:$v1",
+				"Summary" : "$v4 : $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamAlarmCleared MRV-IR-HDAM-MIB::irAlarmPortIndex i 1 MRV-IR-HDAM-MIB::irAlarmSlotIndex i 1 MRV-IR-HDAM-MIB::irAlarmPointIndex i 1 MRV-IR-HDAM-MIB::irAlarmName s EXAMPLE MRV-IR-HDAM-MIB::irAlarmContactState i 1 MRV-IR-HDAM-MIB::irAlarmTrapSeverity i 1 MRV-IR-HDAM-MIB::irAlarmCount c 9999 MRV-IR-HDAM-MIB::irAlarmDescription s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamAlarmCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.19",
+				"variables" : [
+					{
+						"description" : [
+							"The port index on which the alarm unit is attached."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in the alarm unit which identifies this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmSlotIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An integer which uniquely identifies an alarm on this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmPointIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name assigned to the alarm."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmName",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state of the alarm contacts."
+						],
+						"enums" : {
+							"1" : "open",
+							"2" : "closed"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irAlarmContactState",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The trap severity assigned to this alarm. This value will be sent ",
+							"when an alarm fires and an snmp trap is generated."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irAlarmTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the alarm has been generated since the unit",
+							"was started."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmCount",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.11",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"A user configurable alarm description string."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAlarmDescription",
+						"oid" : "1.3.6.1.4.1.33.100.4.2.1.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamContactLost",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the LX has lost contact with the ",
+				"HDAM unit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irHdamContactStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "LX has lost contact with HDAM unit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamContactLost MRV-IR-HDAM-MIB::irHdamPortIndex i 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamContactLost",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.20",
+				"variables" : [
+					{
+						"description" : [
+							"The port index to which this hdam unit is connected."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irHdamPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.1.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamContactRegained",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the LX has regained contact with the ",
+				"HDAM unit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irHdamContactStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "LX regained contact with HDAM unit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamContactRegained MRV-IR-HDAM-MIB::irHdamPortIndex i 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamContactRegained",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.21",
+				"variables" : [
+					{
+						"description" : [
+							"The port index to which this hdam unit is connected."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irHdamPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.1.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamPowerStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the HDAM power status has changed. ",
+				"irHdamPowerIndex indicates the power index (A or B).",
+				"irHdamPowerStatus indicates the new power status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : 2"
+				},
+				"EventType" : "irHdamPowerStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : (($v3==2) ? 3 : 4)"
+				},
+				"SubNode" : "PortIndex:$v1;PowerIndex:$v2",
+				"Summary" : "Power status : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamPowerStatusChanged MRV-IR-HDAM-MIB::irHdamPowerPortIndex i 9999 MRV-IR-HDAM-MIB::irHdamPowerIndex i 1 MRV-IR-HDAM-MIB::irHdamPowerStatus i 1",
+				"$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamPowerStatusChanged MRV-IR-HDAM-MIB::irHdamPowerPortIndex i 9999 MRV-IR-HDAM-MIB::irHdamPowerIndex i 1 MRV-IR-HDAM-MIB::irHdamPowerStatus i 3"
+			],
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamPowerStatusChanged",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.22",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the port to which the hdam unit is attached."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irHdamPowerPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The index of the hdam power unit."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irHdamPowerIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The overall status of the power unit."
+						],
+						"enums" : {
+							"1" : "on",
+							"2" : "off",
+							"3" : "failed"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irHdamPowerStatus",
+						"oid" : "1.3.6.1.4.1.33.100.4.1.3.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irOnBoardLowTempExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the onboard temperature has exceeded the ",
+				"configured low temperature threshold (plus hysteresis) value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irOnBoardLowTempStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Onboard temperature ($v1 celsius) exceeded low threshold ($v2 celsius)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irOnBoardLowTempExceeded MRV-IR-SYSTEM-MIB::irSysCurrentTemp i 9999 MRV-IR-SYSTEM-MIB::irSysTempThresholdLow i 9999 MRV-IR-SYSTEM-MIB::irSysTempHysteresis i 0",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irOnBoardLowTempExceeded",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.24",
+				"variables" : [
+					{
+						"description" : [
+							"The current temp reading (in celsius) for the onboard temperature",
+							"sensor."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysCurrentTemp",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The low threshold temp setting (in celsius) for the device."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysTempThresholdLow",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The hysteresis setting applied to the temp thresholds for the device."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysTempHysteresis",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irOnBoardLowTempCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the onboard temperature has fallen back",
+				"below the configured low temperature threshold (plus hysteresis) ",
+				"value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irOnBoardLowTempStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Onboard temperature ($v1 celsius) is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irOnBoardLowTempCleared MRV-IR-SYSTEM-MIB::irSysCurrentTemp i 9999 MRV-IR-SYSTEM-MIB::irSysTempThresholdLow i 9999 MRV-IR-SYSTEM-MIB::irSysTempHysteresis i 0",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irOnBoardLowTempCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.25",
+				"variables" : [
+					{
+						"description" : [
+							"The current temp reading (in celsius) for the onboard temperature",
+							"sensor."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysCurrentTemp",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The low threshold temp setting (in celsius) for the device."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysTempThresholdLow",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The hysteresis setting applied to the temp thresholds for the device."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysTempHysteresis",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irOnBoardHighTempExceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the onboard temperature has exceeded the ",
+				"configured high temperature threshold (minus hysteresis) value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irOnBoardHighTempStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Onboard temperature ($v1 celsius) exceeded high threshold ($v2 celsius)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irOnBoardHighTempExceeded MRV-IR-SYSTEM-MIB::irSysCurrentTemp i 9999 MRV-IR-SYSTEM-MIB::irSysTempThresholdHigh i 9999 MRV-IR-SYSTEM-MIB::irSysTempHysteresis i 0",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irOnBoardHighTempExceeded",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.26",
+				"variables" : [
+					{
+						"description" : [
+							"The current temp reading (in celsius) for the onboard temperature",
+							"sensor."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysCurrentTemp",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The high threshold temp setting (in celsius) for the device."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysTempThresholdHigh",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The hysteresis setting applied to the temp thresholds for the device."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysTempHysteresis",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irOnBoardHighTempCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the onboard temperature has fallen back",
+				"below the configured high temperature threshold (minus hysteresis) ",
+				"value."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irOnBoardHighTempStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Onboard temperature ($v1 celsius) is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irOnBoardHighTempCleared MRV-IR-SYSTEM-MIB::irSysCurrentTemp i 9999 MRV-IR-SYSTEM-MIB::irSysTempThresholdHigh i 9999 MRV-IR-SYSTEM-MIB::irSysTempHysteresis i 0",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irOnBoardHighTempCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.27",
+				"variables" : [
+					{
+						"description" : [
+							"The current temp reading (in celsius) for the onboard temperature",
+							"sensor."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysCurrentTemp",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The high threshold temp setting (in celsius) for the device."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysTempThresholdHigh",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The hysteresis setting applied to the temp thresholds for the device."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irSysTempHysteresis",
+						"oid" : "1.3.6.1.4.1.33.100.1.1.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irAdminLoginFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that an administrator login failed.",
+				"irUserName indicates the user name.",
+				"irCharPortIndex indicates the port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irAdminLoginFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PortIndex:$v2",
+				"Summary" : "Administrator login failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irAdminLoginFailed MRV-IR-TRAP-MIB::irUserName s EXAMPLE MRV-IR-CHAR-MIB::irCharPortIndex i 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irAdminLoginFailed",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.28",
+				"variables" : [
+					{
+						"description" : [
+							"A text string used for a user name."
+						],
+						"name" : "MRV-IR-TRAP-MIB::irUserName",
+						"oid" : "1.3.6.1.4.1.33.100.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"An index value that uniquely identifies a port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irCharPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irEnetPortBondLinkStatusChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the enet port bonding link status has ",
+				"changed. This trap is generated only on systems with multiple enet",
+				"ports.",
+				"irEnetPortIndex is the index of the ethernet port in question. ",
+				"irEnetPortLinkStatus is the new link status of the ethernet port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "irEnetPortBondLinkStatusChanged",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "PortIndex:$v1",
+				"Summary" : "Ethernet port bonding link status : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD MRV-IR-TRAP-MIB::irEnetPortBondLinkStatusChanged MRV-IR-SYSTEM-MIB::irEnetPortIndex i 9999 MRV-IR-SYSTEM-MIB::irEnetPortLinkStatus i 1",
+				"$SNMPTRAPCMD MRV-IR-TRAP-MIB::irEnetPortBondLinkStatusChanged MRV-IR-SYSTEM-MIB::irEnetPortIndex i 9999 MRV-IR-SYSTEM-MIB::irEnetPortLinkStatus i 2"
+			],
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irEnetPortBondLinkStatusChanged",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.29",
+				"variables" : [
+					{
+						"description" : [
+							"The port index for this enthernet port entry."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::irEnetPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.1.5.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ethernet port link status."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "MRV-IR-SYSTEM-MIB::irEnetPortLinkStatus",
+						"oid" : "1.3.6.1.4.1.33.100.1.5.1.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamAnalogHighAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the HDAM analog loop module generated ",
+				"a high threshold raised alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irHdamAnalogHighAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v7==3 || $v7==4) ? 3 : (($v7==5) ? 4 : (($v7==6) ? 5 : (($v7==1) ? 0 : 1)))"
+				},
+				"SubNode" : "SlotIndex:$v2;PortIndex:$v1;AnalogPointIndex:$v3",
+				"Summary" : "HDAM analog $v4 high threshold alarm. Count : $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamAnalogHighAlarmRaised MRV-IR-HDAM-MIB::irAnalogPortIndex i 1 MRV-IR-HDAM-MIB::irAnalogSlotIndex i 1 MRV-IR-HDAM-MIB::irAnalogPointIndex i 1 MRV-IR-HDAM-MIB::irAnalogName s EXAMPLE MRV-IR-HDAM-MIB::irAnalogDescription s EXAMPLE MRV-IR-HDAM-MIB::irAnalogCalValue s EXAMPLE MRV-IR-HDAM-MIB::irAnalogThresholdSeverity i 1 MRV-IR-HDAM-MIB::irAnalogThresholdHighAlarmCount c 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamAnalogHighAlarmRaised",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.30",
+				"variables" : [
+					{
+						"description" : [
+							"The port index on which the analog unit is attached."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in the analog unit which identifies this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogSlotIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An integer which uniquely identifies an analog point on this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogPointIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name assigned to the analog."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogName",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A user configurable analog description string."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogDescription",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current analog sensor calibrated value."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogCalValue",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity value of the analog sensor assigned to the low threshold. ",
+							"This value will be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irAnalogThresholdSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the analog sensor high threshold has been ",
+							"crossed since the unit was started."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogThresholdHighAlarmCount",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.17",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamAnalogHighAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the HDAM analog loop module generated ",
+				"a high threshold cleared alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irHdamAnalogHighAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "SlotIndex:$v2;PortIndex:$v1;AnalogPointIndex:$v3",
+				"Summary" : "HDAM analog $v4 high threshold alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamAnalogHighAlarmCleared MRV-IR-HDAM-MIB::irAnalogPortIndex i 1 MRV-IR-HDAM-MIB::irAnalogSlotIndex i 1 MRV-IR-HDAM-MIB::irAnalogPointIndex i 1 MRV-IR-HDAM-MIB::irAnalogName s EXAMPLE MRV-IR-HDAM-MIB::irAnalogDescription s EXAMPLE MRV-IR-HDAM-MIB::irAnalogCalValue s EXAMPLE MRV-IR-HDAM-MIB::irAnalogThresholdSeverity i 1 MRV-IR-HDAM-MIB::irAnalogThresholdHighAlarmCount c 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamAnalogHighAlarmCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.31",
+				"variables" : [
+					{
+						"description" : [
+							"The port index on which the analog unit is attached."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in the analog unit which identifies this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogSlotIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An integer which uniquely identifies an analog point on this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogPointIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name assigned to the analog."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogName",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A user configurable analog description string."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogDescription",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current analog sensor calibrated value."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogCalValue",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity value of the analog sensor assigned to the low threshold. ",
+							"This value will be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irAnalogThresholdSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the analog sensor high threshold has been ",
+							"crossed since the unit was started."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogThresholdHighAlarmCount",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.17",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamAnalogLowAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the HDAM analog loop module generated ",
+				"a low threshold raised alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irHdamAnalogLowAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v7==3 || $v7==4) ? 3 : (($v7==5) ? 4 : (($v7==6) ? 5 : (($v7==1) ? 0 : 1)))"
+				},
+				"SubNode" : "SlotIndex:$v2;PortIndex:$v1;AnalogPointIndex:$v3",
+				"Summary" : "HDAM analog $v4 low threshold alarm. Count : $v8"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamAnalogLowAlarmRaised MRV-IR-HDAM-MIB::irAnalogPortIndex i 1 MRV-IR-HDAM-MIB::irAnalogSlotIndex i 1 MRV-IR-HDAM-MIB::irAnalogPointIndex i 1 MRV-IR-HDAM-MIB::irAnalogName s EXAMPLE MRV-IR-HDAM-MIB::irAnalogDescription s EXAMPLE MRV-IR-HDAM-MIB::irAnalogCalValue s EXAMPLE MRV-IR-HDAM-MIB::irAnalogThresholdSeverity i 1 MRV-IR-HDAM-MIB::irAnalogThresholdLowAlarmCount c 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamAnalogLowAlarmRaised",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.32",
+				"variables" : [
+					{
+						"description" : [
+							"The port index on which the analog unit is attached."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in the analog unit which identifies this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogSlotIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An integer which uniquely identifies an analog point on this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogPointIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name assigned to the analog."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogName",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A user configurable analog description string."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogDescription",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current analog sensor calibrated value."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogCalValue",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity value of the analog sensor assigned to the low threshold. ",
+							"This value will be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irAnalogThresholdSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the analog sensor low threshold has been ",
+							"crossed since the unit was started."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogThresholdLowAlarmCount",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.18",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irHdamAnalogLowAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the HDAM analog loop module generated ",
+				"a low threshold cleared alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irHdamAnalogLowAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "SlotIndex:$v2;PortIndex:$v1;AnalogPointIndex:$v3",
+				"Summary" : "HDAM analog $v4 low threshold alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irHdamAnalogLowAlarmCleared MRV-IR-HDAM-MIB::irAnalogPortIndex i 1 MRV-IR-HDAM-MIB::irAnalogSlotIndex i 1 MRV-IR-HDAM-MIB::irAnalogPointIndex i 1 MRV-IR-HDAM-MIB::irAnalogName s EXAMPLE MRV-IR-HDAM-MIB::irAnalogDescription s EXAMPLE MRV-IR-HDAM-MIB::irAnalogCalValue s EXAMPLE MRV-IR-HDAM-MIB::irAnalogThresholdSeverity i 1 MRV-IR-HDAM-MIB::irAnalogThresholdLowAlarmCount c 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irHdamAnalogLowAlarmCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.33",
+				"variables" : [
+					{
+						"description" : [
+							"The port index on which the analog unit is attached."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in the analog unit which identifies this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogSlotIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An integer which uniquely identifies an analog point on this module."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogPointIndex",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name assigned to the analog."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogName",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A user configurable analog description string."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogDescription",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current analog sensor calibrated value."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogCalValue",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The severity value of the analog sensor assigned to the low threshold. ",
+							"This value will be sent in the threshold trap."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-HDAM-MIB::irAnalogThresholdSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the analog sensor low threshold has been ",
+							"crossed since the unit was started."
+						],
+						"name" : "MRV-IR-HDAM-MIB::irAnalogThresholdLowAlarmCount",
+						"oid" : "1.3.6.1.4.1.33.100.4.4.1.1.18",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irLdamAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the LDAM alarm point generated an alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "irLdamAlarm",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v6==3 || $v6==4) ? 3 : (($v6==5) ? 4 : (($v6==6) ? 5 : (($v6==1) ? 0 : 1)))"
+				},
+				"SubNode" : "SlotIndex:$v2;PortIndex:$v1;LdPointIndex:$v3",
+				"Summary" : "LDAM alarm. Count : $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irLdamAlarmRaised MRV-IR-CHAR-MIB::irLdAlarmPortIndex i 1 MRV-IR-CHAR-MIB::irLdAlarmPointIndex i 1 MRV-IR-CHAR-MIB::irLdAlarmName s EXAMPLE MRV-IR-CHAR-MIB::irLdAlarmDescription s EXAMPLE MRV-IR-CHAR-MIB::irLdAlarmContactState i 1 MRV-IR-CHAR-MIB::irLdAlarmTrapSeverity i 1 MRV-IR-CHAR-MIB::irLdAlarmCount c 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irLdamAlarmRaised",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.34",
+				"variables" : [
+					{
+						"description" : [
+							"The alarm port index."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An integer which uniquely identifies an alarm point on this port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmPointIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name assigned to the alarm point."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmName",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A user configurable alarm point description string."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmDescription",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state of the alarm point contacts."
+						],
+						"enums" : {
+							"1" : "open",
+							"2" : "closed"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmContactState",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The trap severity assigned to this alarm point. This value will ",
+							"be sent when an alarm fires and an snmp trap is generated."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the alarm point has been generated since the ",
+							"LX was started."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmCount",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.9",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irLdamAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the LDAM alarm point has been cleared."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "irLdamAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "SlotIndex:$v2;PortIndex:$v1;LdPointIndex:$v3",
+				"Summary" : "LDAM alarm cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irLdamAlarmCleared MRV-IR-CHAR-MIB::irLdAlarmPortIndex i 1 MRV-IR-CHAR-MIB::irLdAlarmPointIndex i 1 MRV-IR-CHAR-MIB::irLdAlarmName s EXAMPLE MRV-IR-CHAR-MIB::irLdAlarmDescription s EXAMPLE MRV-IR-CHAR-MIB::irLdAlarmContactState i 1 MRV-IR-CHAR-MIB::irLdAlarmTrapSeverity i 1 MRV-IR-CHAR-MIB::irLdAlarmCount c 9999",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irLdamAlarmCleared",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.35",
+				"variables" : [
+					{
+						"description" : [
+							"The alarm port index."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmPortIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An integer which uniquely identifies an alarm point on this port."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmPointIndex",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The name assigned to the alarm point."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmName",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A user configurable alarm point description string."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmDescription",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state of the alarm point contacts."
+						],
+						"enums" : {
+							"1" : "open",
+							"2" : "closed"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmContactState",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The trap severity assigned to this alarm point. This value will ",
+							"be sent when an alarm fires and an snmp trap is generated."
+						],
+						"enums" : {
+							"1" : "cleared",
+							"2" : "informational",
+							"3" : "warning",
+							"4" : "minor",
+							"5" : "major",
+							"6" : "critical"
+						},
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmTrapSeverity",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the alarm point has been generated since the ",
+							"LX was started."
+						],
+						"name" : "MRV-IR-CHAR-MIB::irLdAlarmCount",
+						"oid" : "1.3.6.1.4.1.33.100.2.10.1.9",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irIpmiDiscreteDeassertEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that an IPMI discrete sensor Deassert event ",
+				"has occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irIpmiDiscreteDeassertEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SensorName:$v2",
+				"Summary" : "IPMI discrete sensor $v2 deasserted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irIpmiDiscreteDeassertEvent MRV-IR-SYSTEM-MIB::ipmiDiscreteOffset i 0 MRV-IR-SYSTEM-MIB::ipmiDiscreteSensorName s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irIpmiDiscreteDeassertEvent",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.36",
+				"variables" : [
+					{
+						"description" : [
+							"The offset within the discrete sensor for which the event occurred."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::ipmiDiscreteOffset",
+						"oid" : "1.3.6.1.4.1.33.100.1.9.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An Ascii string indicating the name of the IPMI discrete sensor ",
+							"for which the event occurred."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::ipmiDiscreteSensorName",
+						"oid" : "1.3.6.1.4.1.33.100.1.9.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irIpmiDiscreteAssertEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that an IPMI discrete sensor Assert event ",
+				"has occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irIpmiDiscreteAssertEvent",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SensorName:$v2",
+				"Summary" : "IPMI discrete sensor $v2 asserted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irIpmiDiscreteAssertEvent MRV-IR-SYSTEM-MIB::ipmiDiscreteOffset i 0 MRV-IR-SYSTEM-MIB::ipmiDiscreteSensorName s EXAMPLE",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irIpmiDiscreteAssertEvent",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.37",
+				"variables" : [
+					{
+						"description" : [
+							"The offset within the discrete sensor for which the event occurred."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::ipmiDiscreteOffset",
+						"oid" : "1.3.6.1.4.1.33.100.1.9.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An Ascii string indicating the name of the IPMI discrete sensor ",
+							"for which the event occurred."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::ipmiDiscreteSensorName",
+						"oid" : "1.3.6.1.4.1.33.100.1.9.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MRV-IR-TRAP-MIB::irIpmiThresholdEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that an IPMI threshold sensor event has occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "irIpmiThresholdEvent",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==4) ? 3 :($v1==2 || $v1==5) ? 4 : 5"
+				},
+				"SubNode" : "SensorName:$v2",
+				"Summary" : "IPMI threshold status : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MRV-IR-TRAP-MIB::irIpmiThresholdEvent MRV-IR-SYSTEM-MIB::ipmiThresholdType i 1 MRV-IR-SYSTEM-MIB::ipmiThresholdSensorName s EXAMPLE MRV-IR-SYSTEM-MIB::ipmiThresholdDirection i 1 MRV-IR-SYSTEM-MIB::ipmiThresholdAssert i 1",
+			"trap" : {
+				"name" : "MRV-IR-TRAP-MIB::irIpmiThresholdEvent",
+				"oid" : "1.3.6.1.4.1.33.100.3.2.38",
+				"variables" : [
+					{
+						"description" : [
+							"The type of threshold sensor event."
+						],
+						"enums" : {
+							"1" : "lowerNonCritical",
+							"2" : "lowerCritical",
+							"3" : "lowerNonRecoverable",
+							"4" : "upperNonCritical",
+							"5" : "upperCritical",
+							"6" : "upperNonRecoverable"
+						},
+						"name" : "MRV-IR-SYSTEM-MIB::ipmiThresholdType",
+						"oid" : "1.3.6.1.4.1.33.100.1.9.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"An Ascii string indicating the name of the IPMI threshold sensor ",
+							"for which the event occurred."
+						],
+						"name" : "MRV-IR-SYSTEM-MIB::ipmiThresholdSensorName",
+						"oid" : "1.3.6.1.4.1.33.100.1.9.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The direction of the threshold sensor event."
+						],
+						"enums" : {
+							"1" : "goingLow",
+							"2" : "goingHigh"
+						},
+						"name" : "MRV-IR-SYSTEM-MIB::ipmiThresholdDirection",
+						"oid" : "1.3.6.1.4.1.33.100.1.9.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The assertion value of the threshold sensor event."
+						],
+						"enums" : {
+							"1" : "assertion",
+							"2" : "deassertion"
+						},
+						"name" : "MRV-IR-SYSTEM-MIB::ipmiThresholdAssert",
+						"oid" : "1.3.6.1.4.1.33.100.1.9.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

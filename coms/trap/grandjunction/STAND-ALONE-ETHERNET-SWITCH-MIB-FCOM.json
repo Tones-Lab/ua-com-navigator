@@ -1,0 +1,260 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9708040000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "STAND-ALONE-ETHERNET-SWITCH-MIB::logonIntruder",
+			"certification" : "STANDARD",
+			"description" : [
+				"A user is repeatedly trying to logon using an invalid",
+				"password. The number of attempts exceeds the preset",
+				"limit given in netMgmtConsolePasswordThresh.",
+				"Depending on how the object netMgmtConsoleSilentTime",
+				"is configured, the switch may shut down the",
+				"Management Console following the generation of this trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "logonIntruder",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Failed logon attempts exceeded max threshold on node $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD STAND-ALONE-ETHERNET-SWITCH-MIB::logonIntruder SNMPv2-MIB::sysName s EXAMPLE",
+			"trap" : {
+				"name" : "STAND-ALONE-ETHERNET-SWITCH-MIB::logonIntruder",
+				"oid" : "1.3.6.1.4.1.437.1.1.3.0.0",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "STAND-ALONE-ETHERNET-SWITCH-MIB::switchDiagnostic",
+			"certification" : "STANDARD",
+			"description" : [
+				"The switch issues this trap when its Power On",
+				"Self Test (POST) code does not pass all tests. Some",
+				"failures are catastrophic and may prevent the generation",
+				"of this trap, as well as the system's operations."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "switchDiagnostic",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Power On Self Test (POST) failed on node $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD STAND-ALONE-ETHERNET-SWITCH-MIB::switchDiagnostic SNMPv2-MIB::sysName s EXAMPLE",
+			"trap" : {
+				"name" : "STAND-ALONE-ETHERNET-SWITCH-MIB::switchDiagnostic",
+				"oid" : "1.3.6.1.4.1.437.1.1.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "STAND-ALONE-ETHERNET-SWITCH-MIB::addressViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The addressViolation trap is issued when an address",
+				"violation is detected on a secured port.",
+				"The generation of the addressViolation trap can be",
+				"enabled or suppressed using the object",
+				"sysConfigAddressViolationAlert."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "addressViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Address violation detected on port $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD STAND-ALONE-ETHERNET-SWITCH-MIB::addressViolation IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "STAND-ALONE-ETHERNET-SWITCH-MIB::addressViolation",
+				"oid" : "1.3.6.1.4.1.437.1.1.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "STAND-ALONE-ETHERNET-SWITCH-MIB::broadcastStorm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The broadcastStorm trap is issued when broadcast storm control",
+				"is enabled and the number of broadcast packets received in a",
+				"second from a port is higher than the broadcast threshold.",
+				"The generation of this trap can be enabled or suppressed using",
+				"the object sysConfigBroadcastStormAlert."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "broadcastStorm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Broadcast packets received from port $v1 exceeded threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD STAND-ALONE-ETHERNET-SWITCH-MIB::broadcastStorm IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "STAND-ALONE-ETHERNET-SWITCH-MIB::broadcastStorm",
+				"oid" : "1.3.6.1.4.1.437.1.1.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "STAND-ALONE-ETHERNET-SWITCH-MIB::rpsFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"A redundant power source is connected to the switch but a failure",
+				"exists in the power system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "rpsFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Failure in redundant power source on node $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD STAND-ALONE-ETHERNET-SWITCH-MIB::rpsFailed SNMPv2-MIB::sysName s EXAMPLE",
+			"trap" : {
+				"name" : "STAND-ALONE-ETHERNET-SWITCH-MIB::rpsFailed",
+				"oid" : "1.3.6.1.4.1.437.1.1.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "STAND-ALONE-ETHERNET-SWITCH-MIB::ipAddressChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ipAddressChange trap is issued when the switch",
+				"is unable to complete its DHCPDISCOVER/ DHCPREQUEST",
+				"process, or when it fails to extend the lease for the",
+				"current address, or when it accepts an address change",
+				"from the user."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ipAddressChange",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "IP address changed on node $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD STAND-ALONE-ETHERNET-SWITCH-MIB::ipAddressChange SNMPv2-MIB::sysName s EXAMPLE",
+			"trap" : {
+				"name" : "STAND-ALONE-ETHERNET-SWITCH-MIB::ipAddressChange",
+				"oid" : "1.3.6.1.4.1.437.1.1.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this managed",
+							"node. By convention, this is the node's fully-qualified",
+							"domain name. If the name is unknown, the value is",
+							"the zero-length string."
+						],
+						"name" : "SNMPv2-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

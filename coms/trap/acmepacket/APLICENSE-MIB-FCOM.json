@@ -1,0 +1,121 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202408200000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "APLICENSE-MIB::apLicenseApproachingCapacityNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent if the total sessions is approaching",
+				"the license capacity allowed. (98% or higher)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "apLicenseApproachingCapacityStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Session usage approaching licensed capacity"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APLICENSE-MIB::apLicenseApproachingCapacityNotification ",
+			"trap" : {
+				"name" : "APLICENSE-MIB::apLicenseApproachingCapacityNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.5.3.0.1"
+			}
+		},
+		{
+			"@objectName" : "APLICENSE-MIB::apLicenseNotApproachingCapacityNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent if the total sessions is no longer",
+				"approaching the license capacity allowed. (less than 90%)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "apLicenseApproachingCapacityStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Session usage fell below licensed capacity"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APLICENSE-MIB::apLicenseNotApproachingCapacityNotification ",
+			"trap" : {
+				"name" : "APLICENSE-MIB::apLicenseNotApproachingCapacityNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.5.3.0.2"
+			}
+		},
+		{
+			"@objectName" : "APLICENSE-MIB::apLicenseExpirationWarningNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is sent when a license is within 7 days",
+				"of expiration"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "apLicenseExpirationWarningNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "License $v3 expires in $v4 days"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD APLICENSE-MIB::apLicenseExpirationWarningNotification APLICENSE-MIB::apLicenseExpirationWarningAcliIndex i 9999 APLICENSE-MIB::apLicenseExpirationWarningSnmpIndex i 9999 APLICENSE-MIB::apLicenseExpirationWarningKey s EXAMPLE APLICENSE-MIB::apLicenseExpirationWarningDays u 9999",
+			"trap" : {
+				"name" : "APLICENSE-MIB::apLicenseExpirationWarningNotification",
+				"oid" : "1.3.6.1.4.1.9148.3.5.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The index of the License which is going to expire as",
+							"represented in the ACLI"
+						],
+						"name" : "APLICENSE-MIB::apLicenseExpirationWarningAcliIndex",
+						"oid" : "1.3.6.1.4.1.9148.3.5.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The index of the License which is going to expire as",
+							"represented in the SNMP license table"
+						],
+						"name" : "APLICENSE-MIB::apLicenseExpirationWarningSnmpIndex",
+						"oid" : "1.3.6.1.4.1.9148.3.5.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Key which represents the license that is going to expire"
+						],
+						"name" : "APLICENSE-MIB::apLicenseExpirationWarningKey",
+						"oid" : "1.3.6.1.4.1.9148.3.5.2.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Days until the license will expire"
+						],
+						"name" : "APLICENSE-MIB::apLicenseExpirationWarningDays",
+						"oid" : "1.3.6.1.4.1.9148.3.5.2.4",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

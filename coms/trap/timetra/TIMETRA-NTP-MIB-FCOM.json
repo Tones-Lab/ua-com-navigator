@@ -1,0 +1,386 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0801010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-NTP-MIB::tmnxNtpAuthMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxNtpAuthMismatch notification is generated when",
+				"tmnxNtpAuthCheck has a value of true and an NTP message",
+				"is received with an incorrect authentication key, key id",
+				"or key type.",
+				"tmnxNtpPeersPeerAddrType and tmnxNtpPeersPeerAddress",
+				"indicate the Internet address of the peer that sent",
+				"the message that failed authentication."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxNtpPeersVarAssocId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxNtpAuthMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "PeerID:$tmnxNtpPeersVarAssocId",
+				"Summary" : "NTP message is received with incorrect authentication key ($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-NTP-MIB::tmnxNtpAuthMismatch TIMETRA-NTP-MIB::tmnxNtpPeersPeerAddrType.2 i 1 TIMETRA-NTP-MIB::tmnxNtpPeersPeerAddress x 0x7f000001 TIMETRA-NTP-MIB::tmnxNtpAuthKeyFailType i 1",
+			"trap" : {
+				"name" : "TIMETRA-NTP-MIB::tmnxNtpAuthMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.38.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxNtpPeersPeerAddrType indicates the address type",
+							"of the tmnxNtpPeersPeerAddress Internet address."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpPeersPeerAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.3.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxNtpPeersPeerAddress specifies the Internet",
+							"address of this peer."
+						],
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpPeersPeerAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.3.2.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxNtpAuthKeyFailType is used by tmnxNtpAuthMismatch to specify if",
+							"invalid authentication key, key id, or key type was the cause for its",
+							"generation."
+						],
+						"enums" : {
+							"1" : "invalidAuthKeyType",
+							"2" : "invalidAuthKey",
+							"3" : "invalidAuthKeyId"
+						},
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpAuthKeyFailType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.6.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-NTP-MIB::tmnxNtpNoServersAvail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxNtpNoServersAvail notification is generated when no NTP",
+				"servers are available."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxNtpServersStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "No NTP servers are available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-NTP-MIB::tmnxNtpNoServersAvail ",
+			"trap" : {
+				"name" : "TIMETRA-NTP-MIB::tmnxNtpNoServersAvail",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.38.0.2"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-NTP-MIB::tmnxNtpServersAvail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxNtpServersAvail notification is generated when NTP servers",
+				"are available."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxNtpServersStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "NTP servers are available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-NTP-MIB::tmnxNtpServersAvail ",
+			"trap" : {
+				"name" : "TIMETRA-NTP-MIB::tmnxNtpServersAvail",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.38.0.3"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-NTP-MIB::tmnxNtpMaxFreqDftExceed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxNtpMaxFreqDftExceed notification is generated when",
+				"tmnxNtpDriftAmount has exceeded the maximum frequency drift of + or -",
+				"500 parts per million."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxNtpMaxFreqDftExceed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "NTP drift amount exceeded the maximum frequency drift"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-NTP-MIB::tmnxNtpMaxFreqDftExceed ",
+			"trap" : {
+				"name" : "TIMETRA-NTP-MIB::tmnxNtpMaxFreqDftExceed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.38.0.4"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-NTP-MIB::tmnxNtpUtcOffsetExThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxNtpUtcOffsetExThreshold event is generated when",
+				"tmnxNtpUTCOffset has exceeded the threshold as specified in",
+				"tmnxNtpUTCOffsetThreshold.",
+				"This notification was made obsolete in 4.0 R-12 release and",
+				"5.0 R-2 release."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxNtpUtcOffsetThreshold",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "NTP UTC offset exceeded the threshold ($v2)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-NTP-MIB::tmnxNtpUtcOffsetExThreshold TIMETRA-NTP-MIB::tmnxNtpUTCOffset x 07cc09010F1E0000 TIMETRA-NTP-MIB::tmnxNtpUTCOffsetThreshold x 07cc09010F1E0000",
+			"trap" : {
+				"name" : "TIMETRA-NTP-MIB::tmnxNtpUtcOffsetExThreshold",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.38.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxNtpUTCOffset is used by tmnxNtpUtcOffsetExThreshold to",
+							"specify the estimated offset of the local clock relative to UTC",
+							"(Universal Coordinated Time), in seconds."
+						],
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpUTCOffset",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.6.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxNtpUTCOffsetThreshold is used by tmnxNtpUtcOffsetExThreshold to",
+							"specify the threshold, in seconds, which the UTC (Universal",
+							"Coordinated Time) offset must not exceed."
+						],
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpUTCOffsetThreshold",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.6.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-NTP-MIB::tmnxNtpUtcOffsetInThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxNtpUtcOffsetInThreshold event is generated when",
+				"tmnxNtpUTCOffset is back within the threshold as specified in",
+				"tmnxNtpUTCOffsetThreshold.",
+				"This notification was made obsolete in 4.0 R-12 release and",
+				"5.0 R-2 release."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxNtpUtcOffsetThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "NTP UTC offset is back within threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-NTP-MIB::tmnxNtpUtcOffsetInThreshold TIMETRA-NTP-MIB::tmnxNtpUTCOffset x 07cc09010F1E0000 TIMETRA-NTP-MIB::tmnxNtpUTCOffsetThreshold x 07cc09010F1E0000",
+			"trap" : {
+				"name" : "TIMETRA-NTP-MIB::tmnxNtpUtcOffsetInThreshold",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.38.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxNtpUTCOffset is used by tmnxNtpUtcOffsetExThreshold to",
+							"specify the estimated offset of the local clock relative to UTC",
+							"(Universal Coordinated Time), in seconds."
+						],
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpUTCOffset",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.6.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxNtpUTCOffsetThreshold is used by tmnxNtpUtcOffsetExThreshold to",
+							"specify the threshold, in seconds, which the UTC (Universal",
+							"Coordinated Time) offset must not exceed."
+						],
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpUTCOffsetThreshold",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.6.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-NTP-MIB::tmnxNtpOperChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxNtpOperChange notification is generated whenever there",
+				"is a change in the operational state of NTP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxNtpOperChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : ($v1==3) ? 4 : 1"
+				},
+				"SubNode" : "Device",
+				"Summary" : "NTP operational state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-NTP-MIB::tmnxNtpOperChange TIMETRA-NTP-MIB::tmnxNtpOperState i 1",
+			"trap" : {
+				"name" : "TIMETRA-NTP-MIB::tmnxNtpOperChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.38.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxNtpOperState indicates the current",
+							"operational state for NTP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.1.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-NTP-MIB::tmnxNtpServerChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxNtpServerChange notification is generated when",
+				"more than one NTP servers are configured in a system and a",
+				"different NTP server is selected because the operational status",
+				"of the earlier NTP server has changed.",
+				"The value of tmnxNtpPeersPeerAddress indicates the address of the",
+				"new NTP server."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxNtpPeersVarAssocId>\\d+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxNtpServerChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "PeerID:$tmnxNtpPeersVarAssocId",
+				"Summary" : "NTP server changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-NTP-MIB::tmnxNtpServerChange TIMETRA-NTP-MIB::tmnxNtpPeersPeerAddrType.2 i 1 TIMETRA-NTP-MIB::tmnxNtpPeersPeerAddress x 0x7f000001",
+			"trap" : {
+				"name" : "TIMETRA-NTP-MIB::tmnxNtpServerChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.38.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxNtpPeersPeerAddrType indicates the address type",
+							"of the tmnxNtpPeersPeerAddress Internet address."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpPeersPeerAddrType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.3.2.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxNtpPeersPeerAddress specifies the Internet",
+							"address of this peer."
+						],
+						"name" : "TIMETRA-NTP-MIB::tmnxNtpPeersPeerAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.38.3.2.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

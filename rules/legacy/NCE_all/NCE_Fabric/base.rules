@@ -1,0 +1,123 @@
+# ------------------------------------------------------------------------------------------------------------- #
+#
+#
+#
+#  █████╗ ██╗   ██╗████████╗ ██████╗       ██████╗ ███████╗██████╗ ██╗      ██████╗ ██╗   ██╗███████╗██████╗ 
+#  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗      ██╔══██╗██╔════╝██╔══██╗██║     ██╔═══██╗╚██╗ ██╔╝██╔════╝██╔══██╗
+#  ███████║██║   ██║   ██║   ██║   ██║█████╗██║  ██║█████╗  ██████╔╝██║     ██║   ██║ ╚████╔╝ █████╗  ██║  ██║
+#  ██╔══██║██║   ██║   ██║   ██║   ██║╚════╝██║  ██║██╔══╝  ██╔═══╝ ██║     ██║   ██║  ╚██╔╝  ██╔══╝  ██║  ██║
+#  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝      ██████╔╝███████╗██║     ███████╗╚██████╔╝   ██║   ███████╗██████╔╝
+#  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝       ╚═════╝ ╚══════╝╚═╝     ╚══════╝ ╚═════╝    ╚═╝   ╚══════╝╚═════╝ 
+#  
+#
+#
+#  Added by         D E P L O Y M E N T
+#
+#    Changes via the UI get's overwritten on the next deployment.
+#
+# ------------------------------------------------------------------------------------------------------------- #
+#------------------------------------------------------------------
+# Name:				Huawei_iMaster_NCE_Fabric
+# Documentation:	
+#------------------------------------------------------------------
+ 
+=head1 VARIABLES AVAILABLE
+ 
+$count        = Message Counter
+$timestamp    = Human readable time of Trap
+$ip           = Sender IP Address
+$node         = Sender DNS Resolved Name
+$cstring      = Community String
+$enterprise   = Enterprise Identifier
+$agent        = SNMP Agent IP Address
+$generic      = Generic Trap ID
+$specific     = Specific Trap ID
+$trapoid      = The full Trap OID (use recommended instead of $generic, $enterprise, $specific)
+$vars         = Varbind Hash reference i.e. $value = $vars->{'1.3.6.3.4.5.3.3.3.1'};
+@varbinds     = Array containing the varbind OIDs in the order received (not values). i.e. $varbinds[0] returns the first received varbind OID
+$discard_flag = Flag for discard (0=No, 1=Yes)
+ 
+=cut
+
+
+my $rulesfile = "base.rules";
+$Log->Message('DEBUG', $rulesfile . " started...");
+ 
+# -----------------------------------------------------------------------------
+# 1. set Event default fields, updates also the global $EMSKey.
+# -----------------------------------------------------------------------------
+LibEventDefault_setDefaultEventFields($Event);	# updates also the global $EMSKey.
+LibUtil_AddRaw2Details($Event);					# optional: store RAW Event fields in Details
+
+# init DB connections
+unless (defined $DATASOURCES{UMSDB}->{dbh}) {
+    $DATASOURCES{UMSDB}->{host}      	= $envRef->{'umsdb-host'};
+    $DATASOURCES{UMSDB}->{service_name} = $envRef->{'umsdb-service_name'};
+    $DATASOURCES{UMSDB}->{port}      	= $envRef->{'umsdb-port'};
+    $DATASOURCES{UMSDB}->{user}      	= $envRef->{'umsdb-user'};
+    $DATASOURCES{UMSDB}->{passwd}		= $Config->passwordDecrypt($envRef->{'umsdb-password'});
+    $DATASOURCES{UMSDB}->{dbh}			;    # used and set by LibOracle_GetDBH_v2
+}
+$DATASOURCES{DCI}->{dbh}			;    # used and set by LibMySQL_GetDBH_v2
+
+# -----------------------------------------------------------------------------
+# 2. EMS specific rules
+# -----------------------------------------------------------------------------
+
+if (($enterprise eq "1.3.6.1.4.1.2011.2.15.1.7.1") or ($enterprise eq "1.3.6.1.4.1.2011.2.15.1.7.7.2" )){
+	$Log->Message('DEBUG', "calling  hwNmNorthboundEventTrap()");
+    hwNmNorthboundEventTrap();
+} 
+elsif ($enterprise eq "1.3.6.1.4.1.2011.2.15.1.7.2") {
+	$Log->Message('DEBUG', "calling  hwNmNorthboundEventKeepAliveInfo()");
+	hwNmNorthboundEventKeepAliveInfo();
+} 
+elsif ($enterprise eq "1.3.6.1.4.1.2011.2.15.1.7.7.1") {
+	$Log->Message('DEBUG', "calling  hwNmNorthboundEventSynchronizationStart()");
+	hwNmNorthboundEventSynchronizationStart();
+} 
+elsif ($enterprise eq "1.3.6.1.4.1.2011.2.15.1.7.7.3") {
+	$Log->Message('DEBUG', "calling  hwNmNorthboundEventSynchronizationEnd()");
+	hwNmNorthboundEventSynchronizationEnd();
+}
+elsif ($enterprise eq "1.3.6.1.4.1.2011.2.15.2.4.3.3") {
+	$Log->Message('DEBUG', "calling  iMAPNorthboundFaultAlarmNotification()");
+	iMAPNorthboundFaultAlarmNotification();
+} 
+elsif ($enterprise eq "1.3.6.1.4.1.2011.2.15.2.1.2.1.1.1") {
+	$Log->Message('DEBUG', "calling  iMAPNorthboundHeartbeatNotificationType()");
+	iMAPNorthboundHeartbeatNotificationType();
+}
+
+# EventKey Rules
+hwNmEventKey();
+
+# -----------------------------------------------------------------------------
+# 3. Floodcontrol (2023-01-12, Pending by Oracle)
+# -----------------------------------------------------------------------------
+# optional
+ 
+# -----------------------------------------------------------------------------
+# 4. GPL: Generic Probe Lookup Enrichment. Can modify the MsgGroup as well!
+# -----------------------------------------------------------------------------
+# get DB handle. updates the global $DATASOURCES{xxx}->{dbh}
+LibMySQL_GetDBH_v2(\%{$DATASOURCES{DCI}});
+LibEnrichDCI_GPL($Event,$DATASOURCES{DCI}->{dbh});
+ 
+# -----------------------------------------------------------------------------
+# 5. EMS Customized event rules (Any Rules which can't be covered by GPL or are general for the EMS...)
+# -----------------------------------------------------------------------------
+ems_customized_event_rules();
+ 
+# -----------------------------------------------------------------------------
+# 6. Enrichment of MsgGroup, Osiris, Remedy, DCI, ATI
+# -----------------------------------------------------------------------------
+LibBroker_Enrichment($Event);
+ 
+# -----------------------------------------------------------------------------
+# 7. POST steps
+# -----------------------------------------------------------------------------
+# set EMS Severity suppression, delay extension in Summary.
+LibEventDefault_PostRules($Event);
+ 
+$Log->Message('DEBUG', $rulesfile . " ...done");

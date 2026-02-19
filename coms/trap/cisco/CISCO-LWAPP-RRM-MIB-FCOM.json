@@ -1,0 +1,886 @@
+{
+	"metaData" : {
+		"sourceRevision" : "202010120000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-LWAPP-RRM-MIB::ciscoLwappDot11ClientCoverageHolePreAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the AP receives at least",
+				"'packet count' packets, represented by clrRrmParametersVoicePktCount",
+				"for voice or clrRrmParametersDataPktCount for data, from a client",
+				"in any given 5 second interval and 'packet percent' of the packets",
+				"represented by clrRrmParametersVoicePktCount for voice and",
+				"clrRrmParametersDataPktCount for data, from the client are below",
+				"the 'RSSI threshold' represented by",
+				"clrRrmParametersVoiceRssiThreshold for voice and",
+				"clrRrmParametersDataRssiThreshold for data."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoLwappDot11ClientCoverageHolePreAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ApName:$v4",
+				"Summary" : "AP $v4 received low $v7 packets below RSSI threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-RRM-MIB::ciscoLwappDot11ClientCoverageHolePreAlarm CISCO-LWAPP-DOT11-CLIENT-MIB::cldcClientMacAddress x 000eaa12ddff CISCO-LWAPP-DOT11-CLIENT-MIB::cldcApMacAddress x 000eaa12ddff CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType i 1 CISCO-LWAPP-AP-MIB::cLApName s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmApTransmitPowerLevel i -200 CISCO-LWAPP-RRM-MIB::clrRrmTimeStamp t 31536000 CISCO-LWAPP-RRM-MIB::clrRrmClientType i 1 CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramLength u 9999 CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramMaxIndex i 9999 CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramMinIndex i 9999 CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramValues s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmNeighborApCount u 9999 CISCO-LWAPP-RRM-MIB::clrRrmNeighborApMacAddress s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmNeighborApRssi s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmNeighborApIfType s EXAMPLE CISCO-LWAPP-WLAN-MIB::cLWlanChdEnable i 1",
+			"trap" : {
+				"name" : "CISCO-LWAPP-RRM-MIB::ciscoLwappDot11ClientCoverageHolePreAlarm",
+				"oid" : "1.3.6.1.4.1.9.9.615.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the MAC address of the",
+							"client for this entry and uniquely identifies ",
+							"this entry."
+						],
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcClientMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.1",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the radio MAC address",
+							"of a LWAPP AP."
+						],
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcApMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.8",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the wireless interface type."
+						],
+						"enums" : {
+							"1" : "dot11bg",
+							"2" : "dot11a",
+							"3" : "uwb",
+							"4" : "dot11abgn",
+							"5" : "unknown"
+						},
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies the administrative name",
+							"assigned to the AP by the user. If an AP is not configured, ",
+							"its factory default name will be ap:<last three byte ",
+							"of MACAddress> eg. ap:af:12:be."
+						],
+						"name" : "CISCO-LWAPP-AP-MIB::cLApName",
+						"oid" : "1.3.6.1.4.1.9.9.513.1.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This indicates represents the transmit power level for the AP."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmApTransmitPowerLevel",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the time when coverage",
+							"pre alarm was first reported to controller by an",
+							"access point. After receiving this alert, ",
+							"controller will try to mitigate the coverage hole ",
+							"by increasing the transmit power of that access",
+							"point. After doing above step for stipulated time",
+							"if coverage hole cannot be corrected by controller, ",
+							"a final notification would be generated from",
+							"controller , informing the administrator",
+							"about the existence of a coverage hole."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmTimeStamp",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.2",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"This object indicates the client type for which this",
+							"notification was sent. ",
+							"",
+							"data(1) - coverage hole has been detected for a data ",
+							"client(client which is meant for data services). ",
+							"",
+							"voice(2) - coverage hole has been detected for a voice ",
+							"client(client which is meant for voice services)."
+						],
+						"enums" : {
+							"1" : "data",
+							"2" : "voice"
+						},
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmClientType",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the number of values on the histogram.",
+							"At present it is 31 entries."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramLength",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the maximum value on the histogram."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramMaxIndex",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the minimum value on the histogram."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramMinIndex",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object returns a comma seperated string of histogram",
+							"values. The number of values sent out is represented by the",
+							"clrRrmRssiHistogramLength."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramValues",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the number of 'clrRrmNeighborApMac",
+							"clrRrmNeighborApRssi' appended to this notification.",
+							"This count is 5 and includes the AP itself."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmNeighborApCount",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the neighbor MAC address for this",
+							"client. This is a comma seperated values for clrRrmNeighborApCount",
+							"values."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmNeighborApMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the neighbor RSSI values for this",
+							"client. This is a comma seperated values for clrRrmNeighborApCount",
+							"values."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmNeighborApRssi",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the neighbor AP radio type for this",
+							"client. This is a comma seperated values for clrRrmNeighborApCount",
+							"values."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmNeighborApIfType",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates whether Coverage Hole Detection",
+							"(CHD) is enabled on the controller. A value of 'true'",
+							"indicates CHD is on and a value of 'false' indicates ",
+							"CHD is turned off for this WLAN."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-LWAPP-WLAN-MIB::cLWlanChdEnable",
+						"oid" : "1.3.6.1.4.1.9.9.512.1.1.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupLeaderChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification would be generated",
+				"from the controller that is elected as the ",
+				"new leader, when RF Grouping is done. ",
+				"It has MAC address and details of the new Group Leader."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoLwappRrmRfGroupLeaderChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SysIdentifier:$v4",
+				"Summary" : "RF group leader changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupLeaderChange CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType i 1 CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddress x 000eaa12ddff CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmSysIdentifier s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupLeaderChange",
+				"oid" : "1.3.6.1.4.1.9.9.615.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the wireless interface type."
+						],
+						"enums" : {
+							"1" : "dot11bg",
+							"2" : "dot11a",
+							"3" : "uwb",
+							"4" : "dot11abgn",
+							"5" : "unknown"
+						},
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the MAC Address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.12",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the IPv4 and IPv6 address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the unique identifier for the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIdentifier",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberAdded",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated from the group leader",
+				"when a new member is added to the RF group.",
+				"This notification has MAC address and details of ",
+				"new group member."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoLwappRrmRfGroupMemberAdded",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SysIdentifier:$v4",
+				"Summary" : "New RF group member added"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberAdded CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType i 1 CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddress x 000eaa12ddff CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmSysIdentifier s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberAdded",
+				"oid" : "1.3.6.1.4.1.9.9.615.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the wireless interface type."
+						],
+						"enums" : {
+							"1" : "dot11bg",
+							"2" : "dot11a",
+							"3" : "uwb",
+							"4" : "dot11abgn",
+							"5" : "unknown"
+						},
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the MAC Address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.12",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the IPv4 and IPv6 address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the unique identifier for the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIdentifier",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification is generated from the group leader",
+				"when a member is removed from the RF group.",
+				"This notification has MAC address and details of ",
+				"removed group member."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoLwappRrmRfGroupMemberRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SysIdentifier:$v4",
+				"Summary" : "New RF group member removed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberRemoved CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType i 1 CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddress x 000eaa12ddff CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmSysIdentifier s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberRemoved",
+				"oid" : "1.3.6.1.4.1.9.9.615.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the wireless interface type."
+						],
+						"enums" : {
+							"1" : "dot11bg",
+							"2" : "dot11a",
+							"3" : "uwb",
+							"4" : "dot11abgn",
+							"5" : "unknown"
+						},
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the MAC Address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.12",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the IPv4 and IPv6 address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the unique identifier for the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIdentifier",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LWAPP-RRM-MIB::ciscoLwappDot11ClientCoverageHolePreAlarmRev",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system generates this notification when the",
+				"RRM coverage hole detection algorithm detects areas of radio",
+				"coverage in a wireless LAN that are below the level needed for",
+				"robust radio performance.",
+				"If clients on a access point are detected at",
+				"threshold levels (RSSI, percentage of failed",
+				"packets, and number of failed packets) specified in RRM",
+				"configuration, the access point sends a 'coverage hole'",
+				"alert to the controller.",
+				"This notification is generated in any of the following",
+				"conditions",
+				"1)When the failed packet count",
+				"is more than failed packet count threshold represented by",
+				"clrRrmParametersVoicePktCountThreshold for voice and",
+				"clrRrmParametersDataPktCountThreshold for data.",
+				"2)When the percentage of failed packet count is more than",
+				"the failed packet count threshold represented by",
+				"clrRrmParametersVoicePktPercentThreshold for voice and",
+				"clrRrmParametersDataPktPercentThreshold for data.",
+				"3)When RSSI value is lower than the RSSI threshold represented",
+				"by clrRrmParametersVoiceRssiThreshold for voice and",
+				"clrRrmParametersDataRssiThreshold for data."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoLwappDot11ClientCoverageHolePreAlarmRev",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ApName:$v4",
+				"Summary" : "Coverage hole alarm detected due to weak WLAN performance"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-RRM-MIB::ciscoLwappDot11ClientCoverageHolePreAlarmRev CISCO-LWAPP-DOT11-CLIENT-MIB::cldcClientMacAddress x 000eaa12ddff CISCO-LWAPP-DOT11-CLIENT-MIB::cldcApMacAddress x 000eaa12ddff CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType i 1 CISCO-LWAPP-AP-MIB::cLApName s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmApTransmitPowerLevel i -200 CISCO-LWAPP-RRM-MIB::clrRrmTimeStamp t 31536000 CISCO-LWAPP-RRM-MIB::clrRrmClientType i 1 CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramLength u 9999 CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramMaxIndex i 9999 CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramMinIndex i 9999 CISCO-LWAPP-RRM-MIB::clrRrmNeighborApCountRev u 9999 CISCO-LWAPP-RRM-MIB::clrRrmNeighborApMacAddressRev s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmNeighborApRssiRev s EXAMPLE CISCO-LWAPP-RRM-MIB::clrRrmNeighborApIfTypeRev s EXAMPLE CISCO-LWAPP-WLAN-MIB::cLWlanChdEnable i 1 CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramValuesRev u 9999",
+			"trap" : {
+				"name" : "CISCO-LWAPP-RRM-MIB::ciscoLwappDot11ClientCoverageHolePreAlarmRev",
+				"oid" : "1.3.6.1.4.1.9.9.615.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the MAC address of the",
+							"client for this entry and uniquely identifies ",
+							"this entry."
+						],
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcClientMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.1",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the radio MAC address",
+							"of a LWAPP AP."
+						],
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcApMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.8",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the wireless interface type."
+						],
+						"enums" : {
+							"1" : "dot11bg",
+							"2" : "dot11a",
+							"3" : "uwb",
+							"4" : "dot11abgn",
+							"5" : "unknown"
+						},
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies the administrative name",
+							"assigned to the AP by the user. If an AP is not configured, ",
+							"its factory default name will be ap:<last three byte ",
+							"of MACAddress> eg. ap:af:12:be."
+						],
+						"name" : "CISCO-LWAPP-AP-MIB::cLApName",
+						"oid" : "1.3.6.1.4.1.9.9.513.1.1.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This indicates represents the transmit power level for the AP."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmApTransmitPowerLevel",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object indicates the time when coverage",
+							"pre alarm was first reported to controller by an",
+							"access point. After receiving this alert, ",
+							"controller will try to mitigate the coverage hole ",
+							"by increasing the transmit power of that access",
+							"point. After doing above step for stipulated time",
+							"if coverage hole cannot be corrected by controller, ",
+							"a final notification would be generated from",
+							"controller , informing the administrator",
+							"about the existence of a coverage hole."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmTimeStamp",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.2",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"This object indicates the client type for which this",
+							"notification was sent. ",
+							"",
+							"data(1) - coverage hole has been detected for a data ",
+							"client(client which is meant for data services). ",
+							"",
+							"voice(2) - coverage hole has been detected for a voice ",
+							"client(client which is meant for voice services)."
+						],
+						"enums" : {
+							"1" : "data",
+							"2" : "voice"
+						},
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmClientType",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the number of values on the histogram.",
+							"At present it is 31 entries."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramLength",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the maximum value on the histogram."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramMaxIndex",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the minimum value on the histogram."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramMinIndex",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This object represents the number of 'clrRrmNeighborApMac",
+							"clrRrmNeighborApRssi' appended to this notification."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmNeighborApCountRev",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.15",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"This object represents the neighbor MAC address for this",
+							"client. This is a comma seperated values for clrRrmNeighborApCount",
+							"values."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmNeighborApMacAddressRev",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the neighbor RSSI values for this",
+							"client. This is a comma seperated values for clrRrmNeighborApCount",
+							"values."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmNeighborApRssiRev",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object represents the neighbor AP radio type for this",
+							"client. This is a comma seperated values for clrRrmNeighborApCount",
+							"values."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmNeighborApIfTypeRev",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.18",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object indicates whether Coverage Hole Detection",
+							"(CHD) is enabled on the controller. A value of 'true'",
+							"indicates CHD is on and a value of 'false' indicates ",
+							"CHD is turned off for this WLAN."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-LWAPP-WLAN-MIB::cLWlanChdEnable",
+						"oid" : "1.3.6.1.4.1.9.9.512.1.1.1.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the histogram value.",
+							"When notfication is being sent, there would",
+							"as many instances of this object as the vlaue of",
+							"'clrRrmRssiHistogramLength'."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmRssiHistogramValuesRev",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.14",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupLeaderChangeRev",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification would be generated",
+				"from the controller that is elected as the ",
+				"new leader, when RF Grouping is done. ",
+				"It has MAC address and details of the new Group Leader."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoLwappRrmRfGroupLeaderChangeRev",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "RF group leader changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupLeaderChangeRev CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType i 1 CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddressRev x 000eaa12ddff CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddressType i 0 CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupLeaderChangeRev",
+				"oid" : "1.3.6.1.4.1.9.9.615.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the wireless interface type."
+						],
+						"enums" : {
+							"1" : "dot11bg",
+							"2" : "dot11a",
+							"3" : "uwb",
+							"4" : "dot11abgn",
+							"5" : "unknown"
+						},
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the MAC Address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddressRev",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.19",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the type of clrRrmSysIpAddress."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the IPv4 and IPv6 address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.21",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberAddedRev",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated from the group leader",
+				"when a new member is added to the RF group.",
+				"This notification has MAC address and details of ",
+				"new group member."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoLwappRrmRfGroupMemberAddedRev",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New RF group member added"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberAddedRev CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType i 1 CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddressRev x 000eaa12ddff CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddressType i 0 CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberAddedRev",
+				"oid" : "1.3.6.1.4.1.9.9.615.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the wireless interface type."
+						],
+						"enums" : {
+							"1" : "dot11bg",
+							"2" : "dot11a",
+							"3" : "uwb",
+							"4" : "dot11abgn",
+							"5" : "unknown"
+						},
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the MAC Address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddressRev",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.19",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the type of clrRrmSysIpAddress."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the IPv4 and IPv6 address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.21",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberRemovedRev",
+			"certification" : "STANDARD",
+			"description" : [
+				"The notification is generated from the group leader",
+				"when a member is removed from the RF group.",
+				"This notification has MAC address and details of ",
+				"removed group member."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciscoLwappRrmRfGroupMemberRemovedRev",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "New RF group member removed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberRemovedRev CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType i 1 CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddressRev x 000eaa12ddff CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddressType i 0 CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-LWAPP-RRM-MIB::ciscoLwappRrmRfGroupMemberRemovedRev",
+				"oid" : "1.3.6.1.4.1.9.9.615.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"This object represents the wireless interface type."
+						],
+						"enums" : {
+							"1" : "dot11bg",
+							"2" : "dot11a",
+							"3" : "uwb",
+							"4" : "dot11abgn",
+							"5" : "unknown"
+						},
+						"name" : "CISCO-LWAPP-DOT11-CLIENT-MIB::cldcIfType",
+						"oid" : "1.3.6.1.4.1.9.9.599.1.3.1.1.9",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the MAC Address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysMacAddressRev",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.19",
+						"valueType" : "MacAddress"
+					},
+					{
+						"description" : [
+							"This object represents the type of clrRrmSysIpAddress."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddressType",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.20",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object represents the IPv4 and IPv6 address of the controller."
+						],
+						"name" : "CISCO-LWAPP-RRM-MIB::clrRrmSysIpAddress",
+						"oid" : "1.3.6.1.4.1.9.9.615.1.2.21",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,1672 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201204201226Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::dataPortStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Current status of the data Ethernet link. NB: a change ",
+				"of state may generate an SNMP trap and/or SMTP email ",
+				"alert "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1 || $v1==2) ? 1 : 2"
+				},
+				"EventType" : "dataPortStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1 || $v1==2) ? 0 : (($v1==0) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of data ethernet link: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::dataPortStatusTrap CAMBIUM-PTP800-MIB::dataPortStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::dataPortStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"Current status of the data Ethernet link. NB: a change ",
+							"of state may generate an SNMP trap and/or SMTP email ",
+							"alert"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "copperLinkUp",
+							"2" : "fiberLinkUp",
+							"3" : "fiberYInactive"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::dataPortStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.6.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::linkNameMismatchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Signaling was received with the wrong Link Name. Either ",
+				"the Link Name is configured differently at each end of ",
+				"the wireless link, or this unit is aligned to the wrong ",
+				"link partner. NB: A change of value during operation may ",
+				"generate an SNMP trap and/or SMTP email alert "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "linkNameMismatchTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'Link name mismatch alarm cleared' : 'Link name mismatch occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::linkNameMismatchTrap CAMBIUM-PTP800-MIB::linkNameMismatch i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::linkNameMismatchTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"Signaling was received with the wrong Link Name. Either ",
+							"the Link Name is configured differently at each end of ",
+							"the wireless link, or this unit is aligned to the wrong ",
+							"link partner. NB: A change of value during operation may ",
+							"generate an SNMP trap and/or SMTP email alert"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "linkNameMismatch"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::linkNameMismatch",
+						"oid" : "1.3.6.1.4.1.17713.8.9.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::alignmentModeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates if the unit is undergoing alignment. NB: a ",
+				"change of state during operation may generate an SNMP ",
+				"trap and/or SMTP email alert "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "alignmentModeTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Alignment mode: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::alignmentModeTrap CAMBIUM-PTP800-MIB::alignmentMode i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::alignmentModeTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"Indicates if the unit is undergoing alignment. NB: a ",
+							"change of state during operation may generate an SNMP ",
+							"trap and/or SMTP email alert"
+						],
+						"enums" : {
+							"0" : "normal",
+							"1" : "aligning"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::alignmentMode",
+						"oid" : "1.3.6.1.4.1.17713.8.9.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::unitOutOfCalibrationTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The unit is out of calibration "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "unitOutOfCalibrationTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : ($v1==1 || $v1==2) ? 3 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of unit calibration: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::unitOutOfCalibrationTrap CAMBIUM-PTP800-MIB::unitOutOfCalibration i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::unitOutOfCalibrationTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The unit is out of calibration"
+						],
+						"enums" : {
+							"0" : "calibrated",
+							"1" : "partialCalibration",
+							"2" : "invalidCalibration",
+							"3" : "bandwidthvariantunsupportedPAsShutdown",
+							"4" : "outOfCalibrationPAsShutdown"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::unitOutOfCalibration",
+						"oid" : "1.3.6.1.4.1.17713.8.13.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::encryptionEnabledMismatchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Encryption has been enabled on one end of the wireless ",
+				"link but not the other "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "encryptionEnabledMismatchTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'Encryption enable mismatch alarm cleared' : 'Encryption enable mismatch alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::encryptionEnabledMismatchTrap CAMBIUM-PTP800-MIB::encryptionEnabledMismatch i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::encryptionEnabledMismatchTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"Encryption has been enabled on one end of the wireless ",
+							"link but not the other"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "encryptionEnabledMismatch"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::encryptionEnabledMismatch",
+						"oid" : "1.3.6.1.4.1.17713.8.13.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::wirelessLinkDisabledWarningTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP ifAdminStatus of the wireless interface has ",
+				"disabled wireless traffic "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "wirelessLinkDisabledWarningTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Wireless traffic: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::wirelessLinkDisabledWarningTrap CAMBIUM-PTP800-MIB::wirelessLinkDisabledWarning i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::wirelessLinkDisabledWarningTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"The SNMP ifAdminStatus of the wireless interface has ",
+							"disabled wireless traffic"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "disabledBySNMPifAdminStatus"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::wirelessLinkDisabledWarning",
+						"oid" : "1.3.6.1.4.1.17713.8.13.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::dataPortDisabledWarningTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP ifAdminStatus of the data Ethernet interface ",
+				"has disabled Ethernet traffic "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "dataPortDisabledWarningTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Ethernet traffic: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::dataPortDisabledWarningTrap CAMBIUM-PTP800-MIB::dataPortDisabledWarning i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::dataPortDisabledWarningTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"The SNMP ifAdminStatus of the data Ethernet interface ",
+							"has disabled Ethernet traffic"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "disabledBySNMPifAdminStatus"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::dataPortDisabledWarning",
+						"oid" : "1.3.6.1.4.1.17713.8.13.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::dataPortFiberStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"If the fiber interface on the data Ethernet port is not ",
+				"OK, there are three possible causes: 1) the fiber ",
+				"interface has been installed but disabled, 2) the ",
+				"interface could not be established even though no LOS was ",
+				"detected (i.e. an optical carrier was detected, which ",
+				"could be due to a broken TX fiber, or because the ",
+				"interface is disabled at the other end of the fiber ",
+				"link), or 3) the interface could not be established and ",
+				"LOS is detected (i.e. no optical carrier is detected). ",
+				"NB: a change of status may generate an SNMP trap and/or ",
+				"SMTP email alert "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "dataPortFiberStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Data port fiber status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::dataPortFiberStatusTrap CAMBIUM-PTP800-MIB::dataPortFiberStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::dataPortFiberStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"If the fiber interface on the data Ethernet port is not ",
+							"OK, there are three possible causes: 1) the fiber ",
+							"interface has been installed but disabled, 2) the ",
+							"interface could not be established even though no LOS was ",
+							"detected (i.e. an optical carrier was detected, which ",
+							"could be due to a broken TX fiber, or because the ",
+							"interface is disabled at the other end of the fiber ",
+							"link), or 3) the interface could not be established and ",
+							"LOS is detected (i.e. no optical carrier is detected). ",
+							"NB: a change of status may generate an SNMP trap and/or ",
+							"SMTP email alert"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "installedFiberNotLicensed",
+							"2" : "noFiberLinkEstablishedButLOSNotDetected",
+							"3" : "noFiberLinkEstablishedAndLOSDetected"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::dataPortFiberStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.13.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::dataPortConfigurationMismatchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The detection of Ethernet fragments (runt packets) on ",
+				"the data Ethernet port when the link is in full duplex is ",
+				"an indication of an auto-negotiation or forced ",
+				"configuration mismatch "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "dataPortConfigurationMismatchTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'Data port configuration mismatch alarm cleared' : 'Data port configuration mismatch alarm occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::dataPortConfigurationMismatchTrap CAMBIUM-PTP800-MIB::dataPortConfigurationMismatch i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::dataPortConfigurationMismatchTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"The detection of Ethernet fragments (runt packets) on ",
+							"the data Ethernet port when the link is in full duplex is ",
+							"an indication of an auto-negotiation or forced ",
+							"configuration mismatch"
+						],
+						"enums" : {
+							"0" : "noError",
+							"1" : "mismatchDetected"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::dataPortConfigurationMismatch",
+						"oid" : "1.3.6.1.4.1.17713.8.13.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::sNTPSyncTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"If SNTP Sync fails then check the server settings in the ",
+				"Remote Management page, or disable SNTP. NB: a change of ",
+				"state may generate an SNMP trap and/or SMTP email alert "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 2 : 1"
+				},
+				"EventType" : "sNTPSyncTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 3 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'SNTP sync failure alarm cleared' : 'SNTP sync failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::sNTPSyncTrap CAMBIUM-PTP800-MIB::sNTPSync i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::sNTPSyncTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"If SNTP Sync fails then check the server settings in the ",
+							"Remote Management page, or disable SNTP. NB: a change of ",
+							"state may generate an SNMP trap and/or SMTP email alert"
+						],
+						"enums" : {
+							"0" : "noSync",
+							"1" : "inSync"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::sNTPSync",
+						"oid" : "1.3.6.1.4.1.17713.8.17.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::managementPortStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Current status of the out-of-band management Ethernet ",
+				"link "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 2 : 1"
+				},
+				"EventType" : "managementPortStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 4 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of out-of-band management ethernet link: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::managementPortStatusTrap CAMBIUM-PTP800-MIB::managementPortStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::managementPortStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"Current status of the out-of-band management Ethernet ",
+							"link"
+						],
+						"enums" : {
+							"0" : "down",
+							"1" : "copperLinkUp"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::managementPortStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.6.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::managementPortDisabledWarningTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The SNMP ifAdminStatus of the out-of-band management ",
+				"Ethernet interface has disabled Ethernet traffic "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "managementPortDisabledWarningTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Ethernet traffic status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::managementPortDisabledWarningTrap CAMBIUM-PTP800-MIB::managementPortDisabledWarning i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::managementPortDisabledWarningTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"The SNMP ifAdminStatus of the out-of-band management ",
+							"Ethernet interface has disabled Ethernet traffic"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "disabledBySNMPifAdminStatus"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::managementPortDisabledWarning",
+						"oid" : "1.3.6.1.4.1.17713.8.13.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::rFUStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Current status of the RFU. A state of 'ok' indicates ",
+				"that the RFU is fully operational, although may not be ",
+				"transmitting. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : (($v1==4 || $v1==7 || $v1==11) ? 3 :  2)"
+				},
+				"EventType" : "rFUStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0 || $v1==4 || $v1==7 || $v1==11) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : (($v1==2) ? 1 : (($v1==4 || $v1==7 || $v1==11) ? 2 : (($v1==9 || $v1==10) ? 4 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'State of RFU is fully operational' : 'State of RFU is not fully operational'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::rFUStatusTrap CAMBIUM-PTP800-MIB::rFUStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::rFUStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"Current status of the RFU. A state of 'ok' indicates ",
+							"that the RFU is fully operational, although may not be ",
+							"transmitting."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "fault",
+							"2" : "unknown3",
+							"3" : "inReset",
+							"4" : "downloadInProgress",
+							"5" : "incompatibleFirmwareVersion",
+							"6" : "incompatibleDevice",
+							"7" : "iFICardAttached",
+							"8" : "noResponse",
+							"9" : "powerSupplyFault",
+							"10" : "powerSupplyDisabled",
+							"11" : "switchingmemorybanks"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::rFUStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.13.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::managementPortConfigurationMismatchTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The detection of Ethernet fragments (runt packets) on ",
+				"the out-of-band management Ethernet port when the link is ",
+				"in full duplex is an indication of an auto-negotiation or ",
+				"forced configuration mismatch "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "managementPortConfigurationMismatchTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'Management port configuration mismatch cleared' : 'Management port configuration mismatch occured'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::managementPortConfigurationMismatchTrap CAMBIUM-PTP800-MIB::managementPortConfigurationMismatch i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::managementPortConfigurationMismatchTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"The detection of Ethernet fragments (runt packets) on ",
+							"the out-of-band management Ethernet port when the link is ",
+							"in full duplex is an indication of an auto-negotiation or ",
+							"forced configuration mismatch"
+						],
+						"enums" : {
+							"0" : "noError",
+							"1" : "mismatchDetected"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::managementPortConfigurationMismatch",
+						"oid" : "1.3.6.1.4.1.17713.8.13.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::wirelessLinkStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Current status of the wireless link "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "wirelessLinkStatusTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Current status of the wireless link: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::wirelessLinkStatusTrap CAMBIUM-PTP800-MIB::wirelessLinkStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::wirelessLinkStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"Current status of the wireless link"
+						],
+						"enums" : {
+							"0" : "up",
+							"1" : "registering",
+							"2" : "searching",
+							"3" : "acquiring",
+							"4" : "radarCAC",
+							"5" : "initialising"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::wirelessLinkStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.20.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::protectionAvailabilityStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"In a 1+1 Hot Standby configuration, the Protection ",
+				"Availability Status attribute indicates whether the ",
+				"Active unit is currently being protected by the Inactive ",
+				"unit. If it isn't being protected, the Active unit will ",
+				"report Not Protected and the Inactive unit will report ",
+				"Not Protecting. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "protectionAvailabilityStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of protection availability: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::protectionAvailabilityStatusTrap CAMBIUM-PTP800-MIB::protectionAvailabilityStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::protectionAvailabilityStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"In a 1+1 Hot Standby configuration, the Protection ",
+							"Availability Status attribute indicates whether the ",
+							"Active unit is currently being protected by the Inactive ",
+							"unit. If it isn't being protected, the Active unit will ",
+							"report Not Protected and the Inactive unit will report ",
+							"Not Protecting."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "notProtected",
+							"2" : "notProtecting"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::protectionAvailabilityStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::protectionConfigurationStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"In a 1+1 Hot Standby configuration, this attribute will ",
+				"indicate whether the configuration will support ",
+				"protection. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "protectionConfigurationStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Current status of protection configuration: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::protectionConfigurationStatusTrap CAMBIUM-PTP800-MIB::protectionConfigurationStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::protectionConfigurationStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"In a 1+1 Hot Standby configuration, this attribute will ",
+							"indicate whether the configuration will support ",
+							"protection."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "configurationNotProtecting"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::protectionConfigurationStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::protectionStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"In a 1+1 Hot Standby configuration, only one CMU / RFU ",
+				"at a given end of the link is Active at any one time, the ",
+				"neighbor CMU / RFU being Inactive. The Protection State ",
+				"attribute indicates whether a CMU / RFU is in the Active ",
+				"or Inactive state. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "protectionStateTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "CMU / RFU state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::protectionStateTrap CAMBIUM-PTP800-MIB::protectionState i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::protectionStateTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"In a 1+1 Hot Standby configuration, only one CMU / RFU ",
+							"at a given end of the link is Active at any one time, the ",
+							"neighbor CMU / RFU being Inactive. The Protection State ",
+							"attribute indicates whether a CMU / RFU is in the Active ",
+							"or Inactive state."
+						],
+						"enums" : {
+							"0" : "inactive",
+							"1" : "active"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::protectionState",
+						"oid" : "1.3.6.1.4.1.17713.8.26.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::wirelessReceiveSignalStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Wireless Receive Signal Status indicates if the ",
+				"receiver is able to demodulate the transmit signal from ",
+				"the remote end of the link. If it cannot demodulate the ",
+				"signal, a protection switch may occur in a system ",
+				"configured for 1+1 Hot Standby. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "wirelessReceiveSignalStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of wireless receive signal: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::wirelessReceiveSignalStatusTrap CAMBIUM-PTP800-MIB::wirelessReceiveSignalStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::wirelessReceiveSignalStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"The Wireless Receive Signal Status indicates if the ",
+							"receiver is able to demodulate the transmit signal from ",
+							"the remote end of the link. If it cannot demodulate the ",
+							"signal, a protection switch may occur in a system ",
+							"configured for 1+1 Hot Standby."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "notDetected"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::wirelessReceiveSignalStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::licensedTransmitCapacityStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"In a 1+1 Hot Standby configuration, the Licensed ",
+				"Transmit Capacity Status attribute indicates when the ",
+				"Licensed Transmit Capacity is below that of its ",
+				"neighbor. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "licensedTransmitCapacityStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of licensed transmit capacity: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::licensedTransmitCapacityStatusTrap CAMBIUM-PTP800-MIB::licensedTransmitCapacityStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::licensedTransmitCapacityStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"In a 1+1 Hot Standby configuration, the Licensed ",
+							"Transmit Capacity Status attribute indicates when the ",
+							"Licensed Transmit Capacity is below that of its ",
+							"neighbor."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "lessThanNeighbor"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::licensedTransmitCapacityStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::dataPortEthernetSpeedStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"In a 1+1 Hot Standby configuration, the Data Port ",
+				"Ethernet Speed Status attribute indicates if the Ethernet ",
+				"Speed of the Data Port is below that of its neighbor. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "dataPortEthernetSpeedStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of data port ethernet speed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::dataPortEthernetSpeedStatusTrap CAMBIUM-PTP800-MIB::dataPortEthernetSpeedStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::dataPortEthernetSpeedStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.37",
+				"variables" : [
+					{
+						"description" : [
+							"In a 1+1 Hot Standby configuration, the Data Port ",
+							"Ethernet Speed Status attribute indicates if the Ethernet ",
+							"Speed of the Data Port is below that of its neighbor."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "lessThanNeighbor"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::dataPortEthernetSpeedStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::managementPortEthernetSpeedStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"In a 1+1 Hot Standby configuration, the Management Port ",
+				"Ethernet Speed Status attribute indicates if the Ethernet ",
+				"Speed of the Management Port is below that of its ",
+				"neighbor. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "managementPortEthernetSpeedStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of management port ethernet speed: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::managementPortEthernetSpeedStatusTrap CAMBIUM-PTP800-MIB::managementPortEthernetSpeedStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::managementPortEthernetSpeedStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.38",
+				"variables" : [
+					{
+						"description" : [
+							"In a 1+1 Hot Standby configuration, the Management Port ",
+							"Ethernet Speed Status attribute indicates if the Ethernet ",
+							"Speed of the Management Port is below that of its ",
+							"neighbor."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "lessThanNeighbor"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::managementPortEthernetSpeedStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::protectionInterfaceStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"In a 1+1 Hot Standby configuration, information is ",
+				"shared between neighbor CMUs over the Protection ",
+				"Interface. The Protection Interface Status attribute ",
+				"reports whether the neighbor CMU is successfully ",
+				"responding, physically disconnected or whether it is ",
+				"physically connected but not responding, e.g. powered ",
+				"down. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "protectionInterfaceStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of protection interface: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::protectionInterfaceStatusTrap CAMBIUM-PTP800-MIB::protectionInterfaceStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::protectionInterfaceStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.39",
+				"variables" : [
+					{
+						"description" : [
+							"In a 1+1 Hot Standby configuration, information is ",
+							"shared between neighbor CMUs over the Protection ",
+							"Interface. The Protection Interface Status attribute ",
+							"reports whether the neighbor CMU is successfully ",
+							"responding, physically disconnected or whether it is ",
+							"physically connected but not responding, e.g. powered ",
+							"down."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "neighborNotResponding",
+							"2" : "neighborNotConnected"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::protectionInterfaceStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.17",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::syslogStateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The syslog service has been enabled or disabled "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "syslogStateTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Syslog state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::syslogStateTrap CAMBIUM-PTP800-MIB::syslogState i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::syslogStateTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.40",
+				"variables" : [
+					{
+						"description" : [
+							"The syslog service has been enabled or disabled"
+						],
+						"enums" : {
+							"0" : "disabled",
+							"1" : "enabled"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::syslogState",
+						"oid" : "1.3.6.1.4.1.17713.8.28.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::syslogLocalNearlyFullTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The syslog local log is nearly full (90%)"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "syslogLocalNearlyFullTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Syslog local log nearly full (90&#37;)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::syslogLocalNearlyFullTrap ",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::syslogLocalNearlyFullTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.41"
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::syslogLocalWrappedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The syslog local log has wrapped"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "syslogLocalWrappedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Syslog local log wrapped"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::syslogLocalWrappedTrap ",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::syslogLocalWrappedTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.42"
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::secureModeAlarmTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The secure mode (e.g. FIPS, UC-APL) state of the unit. ",
+				"The secure mode is not configured(1) state indicates that ",
+				"the unit is capable of secure mode operation, and one or ",
+				"more of the following security materials has not been ",
+				"configured: Key Of Keys, Private Key, Public Certificate, ",
+				"DRNG Entropy Status, Wireless Encryption Key. The secure ",
+				"mode mode is configured but not active(2) state indicates ",
+				"that the unit is capable of secure mode operation, and ",
+				"the security material has been configured, but the ",
+				"configuration of interfaces is not consistent with secure ",
+				"mode operation. The secure mode is not supported(3) state ",
+				"indicates that the unit is not capable of secure mode ",
+				"operation. The secure mode capability requires ",
+				"appropriate hardware compatibility, license key and ",
+				"software image. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "secureModeAlarmTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : (($v1==3) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==0) ? 'Secure mode alarm cleared' : 'Secure mode alarm occured'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::secureModeAlarmTrap CAMBIUM-PTP800-MIB::secureModeAlarm i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::secureModeAlarmTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"The secure mode (e.g. FIPS, UC-APL) state of the unit. ",
+							"The secure mode is not configured(1) state indicates that ",
+							"the unit is capable of secure mode operation, and one or ",
+							"more of the following security materials has not been ",
+							"configured: Key Of Keys, Private Key, Public Certificate, ",
+							"DRNG Entropy Status, Wireless Encryption Key. The secure ",
+							"mode mode is configured but not active(2) state indicates ",
+							"that the unit is capable of secure mode operation, and ",
+							"the security material has been configured, but the ",
+							"configuration of interfaces is not consistent with secure ",
+							"mode operation. The secure mode is not supported(3) state ",
+							"indicates that the unit is not capable of secure mode ",
+							"operation. The secure mode capability requires ",
+							"appropriate hardware compatibility, license key and ",
+							"software image."
+						],
+						"enums" : {
+							"0" : "secureModeIsActive",
+							"1" : "secureModeIsNotConfigured",
+							"2" : "secureModeIsConfiguredButNotActive",
+							"3" : "secureModeIsNotSupported"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::secureModeAlarm",
+						"oid" : "1.3.6.1.4.1.17713.8.13.18",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::endWirelessReceiveSignalStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The End Wireless Receive Signal Status indicates if the ",
+				"end of a link is unable to demodulate the signal ",
+				"transmitted from the remote end of the link. When ",
+				"Protection is set to 1+1 Hot Standby, this attribute will ",
+				"indicate Not Detected if the Active CMU is unable to ",
+				"demodulate the wireless signal. When Receive Diversity is ",
+				"enabled, this attribute will indicate Not Detected if ",
+				"both the Active and Inactive CMUs are unable to ",
+				"demodulate the wireless signal. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "endWirelessReceiveSignalStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of end wireless receive signal : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::endWirelessReceiveSignalStatusTrap CAMBIUM-PTP800-MIB::endWirelessReceiveSignalStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::endWirelessReceiveSignalStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"The End Wireless Receive Signal Status indicates if the ",
+							"end of a link is unable to demodulate the signal ",
+							"transmitted from the remote end of the link. When ",
+							"Protection is set to 1+1 Hot Standby, this attribute will ",
+							"indicate Not Detected if the Active CMU is unable to ",
+							"demodulate the wireless signal. When Receive Diversity is ",
+							"enabled, this attribute will indicate Not Detected if ",
+							"both the Active and Inactive CMUs are unable to ",
+							"demodulate the wireless signal."
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "notDetected"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::endWirelessReceiveSignalStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.26",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::rxDiversityDataPortStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"When Receive Diversity is enabled, the Inactive CMU ",
+				"sends Rx Diversity Ethernet Frames to the Active CMU. ",
+				"Before sending these frames, the Data Port MUST be ",
+				"negotiated at 1000 Mbps. This attribute indicates if this ",
+				"is not the case "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "rxDiversityDataPortStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of Rx diversity data port: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::rxDiversityDataPortStatusTrap CAMBIUM-PTP800-MIB::rxDiversityDataPortStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::rxDiversityDataPortStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.45",
+				"variables" : [
+					{
+						"description" : [
+							"When Receive Diversity is enabled, the Inactive CMU ",
+							"sends Rx Diversity Ethernet Frames to the Active CMU. ",
+							"Before sending these frames, the Data Port MUST be ",
+							"negotiated at 1000 Mbps. This attribute indicates if this ",
+							"is not the case"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "notProtecting"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::rxDiversityDataPortStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.27",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::rxDiversityAvailabilityStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Rx Diversity Availability Status attribute will ",
+				"indicate when Receive Diversity is not operating ",
+				"correctly, either due to a fault or due to an incorrect ",
+				"configuration "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "rxDiversityAvailabilityStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of Rx diversity availability: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::rxDiversityAvailabilityStatusTrap CAMBIUM-PTP800-MIB::rxDiversityAvailabilityStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::rxDiversityAvailabilityStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.46",
+				"variables" : [
+					{
+						"description" : [
+							"The Rx Diversity Availability Status attribute will ",
+							"indicate when Receive Diversity is not operating ",
+							"correctly, either due to a fault or due to an incorrect ",
+							"configuration"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "notProtected",
+							"2" : "notProtecting"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::rxDiversityAvailabilityStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.28",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::rxDiversityConfigurationStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"For Receive Diversity to operate correctly, certain ",
+				"attributes must be configured correctly on both neighbor ",
+				"CMUs. The Rx Diversity Configuration Status attribute ",
+				"will indicate when this is not the case "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "rxDiversityConfigurationStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of Rx diversity configuration: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::rxDiversityConfigurationStatusTrap CAMBIUM-PTP800-MIB::rxDiversityConfigurationStatus i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::rxDiversityConfigurationStatusTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.47",
+				"variables" : [
+					{
+						"description" : [
+							"For Receive Diversity to operate correctly, certain ",
+							"attributes must be configured correctly on both neighbor ",
+							"CMUs. The Rx Diversity Configuration Status attribute ",
+							"will indicate when this is not the case"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "configurationNotProtecting"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::rxDiversityConfigurationStatus",
+						"oid" : "1.3.6.1.4.1.17713.8.26.29",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::rFUPowerButtonPressedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"IRFU power button have been pressed, IFRU has powered ",
+				"down unexpectedly "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 1 : 2"
+				},
+				"EventType" : "rFUPowerButtonPressedTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'IFRU powered down unexpectedly' : 'IFRU powered up'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::rFUPowerButtonPressedTrap CAMBIUM-PTP800-MIB::rFUPowerButtonPressed i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::rFUPowerButtonPressedTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.48",
+				"variables" : [
+					{
+						"description" : [
+							"IRFU power button have been pressed, IFRU has powered ",
+							"down unexpectedly"
+						],
+						"enums" : {
+							"0" : "ok",
+							"1" : "iRFUPowerButtonwaspressed"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::rFUPowerButtonPressed",
+						"oid" : "1.3.6.1.4.1.17713.8.23.31",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CAMBIUM-PTP800-MIB::syslogClientTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Enable or disable the syslog client "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==0) ? 2 : 1"
+				},
+				"EventType" : "syslogClientTrap",
+				"ExpireTime" : {
+					"eval" : "($v1==0) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==0) ? 3 : 0"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Syslog client: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CAMBIUM-PTP800-MIB::syslogClientTrap CAMBIUM-PTP800-MIB::syslogClient i 0",
+			"trap" : {
+				"name" : "CAMBIUM-PTP800-MIB::syslogClientTrap",
+				"oid" : "1.3.6.1.4.1.17713.8.99.0.49",
+				"variables" : [
+					{
+						"description" : [
+							"Enable or disable the syslog client"
+						],
+						"enums" : {
+							"0" : "disabled",
+							"1" : "enabled"
+						},
+						"name" : "CAMBIUM-PTP800-MIB::syslogClient",
+						"oid" : "1.3.6.1.4.1.17713.8.28.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

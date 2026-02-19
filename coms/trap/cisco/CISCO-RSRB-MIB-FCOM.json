@@ -1,0 +1,58 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9508210000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-RSRB-MIB::rsrbPeerStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the state of an RSRB remote peer",
+				"has transitioned to active (psConnected) or inactive",
+				"(psDead or psClosed)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 <= 8) ? 2 : 1"
+				},
+				"EventType" : "rsrbPeerStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 <= 8) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 9) ? 0 : (($v1 <= 2) ? 4 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "RSRB remote peer state is now $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-RSRB-MIB::rsrbPeerStateChangeNotification CISCO-RSRB-MIB::rsrbRemotePeerState i 1",
+			"trap" : {
+				"name" : "CISCO-RSRB-MIB::rsrbPeerStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.9.9.29.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "dead",
+							"2" : "closed",
+							"3" : "opening",
+							"4" : "openWaitXport",
+							"5" : "waitRemoteRsp",
+							"6" : "remoteResponded",
+							"7" : "remoteOpened",
+							"8" : "draining",
+							"9" : "connected"
+						},
+						"name" : "CISCO-RSRB-MIB::rsrbRemotePeerState",
+						"oid" : "1.3.6.1.4.1.9.9.29.1.2.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

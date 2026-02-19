@@ -1,0 +1,409 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200706140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DOT3-OAM-MIB::dot3OamThresholdEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"A dot3OamThresholdEvent notification is sent when a local or",
+				"remote threshold crossing event is detected. A local",
+				"threshold crossing event is detected by the local entity",
+				"while a remote threshold crossing event is detected by the",
+				"reception of an Ethernet OAM Event Notification OAMPDU",
+				"that indicates a threshold event.",
+				"This notification should not be sent more than once per",
+				"second.",
+				"The OAM entity can be derived from extracting the ifIndex from",
+				"the variable bindings. The objects in the notification",
+				"correspond to the values in a row instance in the",
+				"dot3OamEventLogTable.",
+				"The management entity should periodically check",
+				"dot3OamEventLogTable to detect any missed events."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dot3OamEvent:$v3",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 1) ? 'OAM $v4 errored symbol threshold exceeded' : (($v3 == 2) ? 'OAM $v4 errored frame period threshold exceeded' : (($v3 == 3) ? 'OAM $v4 errored frame threshold exceeded' : 'OAM $v4 errored frame seconds threshold exceeded'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD DOT3-OAM-MIB::dot3OamThresholdEvent DOT3-OAM-MIB::dot3OamEventLogTimestamp t 31536000 DOT3-OAM-MIB::dot3OamEventLogOui s EXA DOT3-OAM-MIB::dot3OamEventLogType u 1 DOT3-OAM-MIB::dot3OamEventLogLocation i 1 DOT3-OAM-MIB::dot3OamEventLogWindowHi u 9999 DOT3-OAM-MIB::dot3OamEventLogWindowLo u 9999 DOT3-OAM-MIB::dot3OamEventLogThresholdHi u 9999 DOT3-OAM-MIB::dot3OamEventLogThresholdLo u 9999 DOT3-OAM-MIB::dot3OamEventLogValue C 9999 DOT3-OAM-MIB::dot3OamEventLogRunningTotal C 9999 DOT3-OAM-MIB::dot3OamEventLogEventTotal u 9999",
+				"$SNMPTRAPCMD DOT3-OAM-MIB::dot3OamThresholdEvent DOT3-OAM-MIB::dot3OamEventLogTimestamp t 31536000 DOT3-OAM-MIB::dot3OamEventLogOui s EXA DOT3-OAM-MIB::dot3OamEventLogType u 2 DOT3-OAM-MIB::dot3OamEventLogLocation i 2 DOT3-OAM-MIB::dot3OamEventLogWindowHi u 9999 DOT3-OAM-MIB::dot3OamEventLogWindowLo u 9999 DOT3-OAM-MIB::dot3OamEventLogThresholdHi u 9999 DOT3-OAM-MIB::dot3OamEventLogThresholdLo u 9999 DOT3-OAM-MIB::dot3OamEventLogValue C 9999 DOT3-OAM-MIB::dot3OamEventLogRunningTotal C 9999 DOT3-OAM-MIB::dot3OamEventLogEventTotal u 9999",
+				"$SNMPTRAPCMD DOT3-OAM-MIB::dot3OamThresholdEvent DOT3-OAM-MIB::dot3OamEventLogTimestamp t 31536000 DOT3-OAM-MIB::dot3OamEventLogOui s EXA DOT3-OAM-MIB::dot3OamEventLogType u 3 DOT3-OAM-MIB::dot3OamEventLogLocation i 1 DOT3-OAM-MIB::dot3OamEventLogWindowHi u 9999 DOT3-OAM-MIB::dot3OamEventLogWindowLo u 9999 DOT3-OAM-MIB::dot3OamEventLogThresholdHi u 9999 DOT3-OAM-MIB::dot3OamEventLogThresholdLo u 9999 DOT3-OAM-MIB::dot3OamEventLogValue C 9999 DOT3-OAM-MIB::dot3OamEventLogRunningTotal C 9999 DOT3-OAM-MIB::dot3OamEventLogEventTotal u 9999",
+				"$SNMPTRAPCMD DOT3-OAM-MIB::dot3OamThresholdEvent DOT3-OAM-MIB::dot3OamEventLogTimestamp t 31536000 DOT3-OAM-MIB::dot3OamEventLogOui s EXA DOT3-OAM-MIB::dot3OamEventLogType u 4 DOT3-OAM-MIB::dot3OamEventLogLocation i 2 DOT3-OAM-MIB::dot3OamEventLogWindowHi u 9999 DOT3-OAM-MIB::dot3OamEventLogWindowLo u 9999 DOT3-OAM-MIB::dot3OamEventLogThresholdHi u 9999 DOT3-OAM-MIB::dot3OamEventLogThresholdLo u 9999 DOT3-OAM-MIB::dot3OamEventLogValue C 9999 DOT3-OAM-MIB::dot3OamEventLogRunningTotal C 9999 DOT3-OAM-MIB::dot3OamEventLogEventTotal u 9999"
+			],
+			"trap" : {
+				"name" : "DOT3-OAM-MIB::dot3OamThresholdEvent",
+				"oid" : "1.3.6.1.2.1.158.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sysUpTime at the time of the logged event. For",
+							"locally generated events, the time of the event can be",
+							"accurately retrieved from sysUpTime. For remotely generated",
+							"events, the time of the event is indicated by the reception of",
+							"the Event Notification OAMPDU indicating that the event",
+							"occurred on the peer. A system may attempt to adjust the",
+							"timestamp value to more accurately reflect the time of the",
+							"event at the peer OAM entity by using other information, such",
+							"as that found in the timestamp found of the Event Notification",
+							"TLVs, which provides an indication of the relative time",
+							"between events at the peer entity. "
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogTimestamp",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.2",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The OUI of the entity defining the object type. All IEEE",
+							"802.3 defined events (as appearing in [802.3ah] except for the",
+							"Organizationally Unique Event TLVs) use the IEEE 802.3 OUI of",
+							"0x0180C2. Organizations defining their own Event Notification",
+							"TLVs include their OUI in the Event Notification TLV that",
+							"gets reflected here. "
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogOui",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of event that generated this entry in the event log.",
+							"When the OUI is the IEEE 802.3 OUI of 0x0180C2, the following",
+							"event types are defined:",
+							"erroredSymbolEvent(1)",
+							"erroredFramePeriodEvent(2)",
+							"erroredFrameEvent(3)",
+							"erroredFrameSecondsEvent(4)",
+							"linkFault(256)",
+							"dyingGaspEvent(257)",
+							"criticalLinkEvent(258)",
+							"The first four are considered threshold crossing events, as",
+							"they are generated when a metric exceeds a given value within",
+							"a specified window. The other three are not threshold",
+							"crossing events.",
+							"",
+							"When the OUI is not 71874 (0x0180C2 in hex), then some other",
+							"organization has defined the event space. If event subtyping",
+							"is known to the implementation, it may be reflected here.",
+							"Otherwise, this value should return all F's (2^32 - 1).",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogType",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Whether this event occurred locally (local(1)), or was",
+							"received from the OAM peer via Ethernet OAM (remote(2)).",
+							""
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogLocation",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"If the event represents a threshold crossing event, the two",
+							"objects dot3OamEventWindowHi and dot3OamEventWindowLo, form",
+							"an unsigned 64-bit integer yielding the window over which the",
+							"value was measured for the threshold crossing event (for",
+							"example, 5, when 11 occurrences happened in 5 seconds while",
+							"the threshold was 10). The two objects are combined as:",
+							"dot3OamEventLogWindow = ((2^32) * dot3OamEventLogWindowHi)",
+							"+ dot3OamEventLogWindowLo",
+							"",
+							"Otherwise, this value is returned as all F's (2^32 - 1) and",
+							"adds no useful information.",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogWindowHi",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"If the event represents a threshold crossing event, the two",
+							"objects dot3OamEventWindowHi and dot3OamEventWindowLo form an",
+							"unsigned 64-bit integer yielding the window over which the",
+							"value was measured for the threshold crossing event (for",
+							"example, 5, when 11 occurrences happened in 5 seconds while",
+							"the threshold was 10). The two objects are combined as:",
+							"",
+							"dot3OamEventLogWindow = ((2^32) * dot3OamEventLogWindowHi)",
+							"+ dot3OamEventLogWindowLo",
+							"",
+							"Otherwise, this value is returned as all F's (2^32 - 1) and",
+							"adds no useful information.",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogWindowLo",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.7",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"If the event represents a threshold crossing event, the two",
+							"objects dot3OamEventThresholdHi and dot3OamEventThresholdLo",
+							"form an unsigned 64-bit integer yielding the value that was",
+							"crossed for the threshold crossing event (for example, 10",
+							"when 11 occurrences happened in 5 seconds while the threshold",
+							"was 10). The two objects are combined as:",
+							"",
+							"dot3OamEventLogThreshold = ((2^32) * dot3OamEventLogThresholdHi)",
+							"+ dot3OamEventLogThresholdLo",
+							"",
+							"Otherwise, this value is returned as all F's (2^32 -1) and",
+							"adds no useful information.",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogThresholdHi",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"If the event represents a threshold crossing event, the two",
+							"objects dot3OamEventThresholdHi and dot3OamEventThresholdLo",
+							"form an unsigned 64-bit integer yielding the value that was",
+							"crossed for the threshold crossing event (for example, 10",
+							"when 11 occurrences happened in 5 seconds while the threshold",
+							"was 10). The two objects are combined as:",
+							"",
+							"dot3OamEventLogThreshold = ((2^32) * dot3OamEventLogThresholdHi)",
+							"+ dot3OamEventLogThresholdLo",
+							"",
+							"Otherwise, this value is returned as all F's (2^32 - 1) and",
+							"adds no useful information.",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogThresholdLo",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"If the event represents a threshold crossing event, this",
+							"value indicates the value of the parameter within the given",
+							"window that generated this event (for example, 11, when 11",
+							"occurrences happened in 5 seconds while the threshold was 10).",
+							"",
+							"Otherwise, this value is returned as all F's",
+							"(2^64 - 1) and adds no useful information.",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogValue",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.10",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"Each Event Notification TLV contains a running total of the",
+							"number of times an event has occurred, as well as the number",
+							"of times an Event Notification for the event has been",
+							"transmitted. For non-threshold crossing events, the number of",
+							"events (dot3OamLogRunningTotal) and the number of resultant",
+							"Event Notifications (dot3OamLogEventTotal) should be",
+							"identical.",
+							"",
+							"For threshold crossing events, since multiple occurrences may",
+							"be required to cross the threshold, these values are likely",
+							"different. This value represents the total number of times",
+							"this event has happened since the last reset (for example",
+							"3253, when 3253 symbol errors have occurred since the last",
+							"reset, which has resulted in 51 symbol error threshold",
+							"crossing events since the last reset).",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogRunningTotal",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.11",
+						"valueType" : "COUNTER64"
+					},
+					{
+						"description" : [
+							"Each Event Notification TLV contains a running total of the",
+							"number of times an event has occurred, as well as the number",
+							"of times an Event Notification for the event has been",
+							"transmitted. For non-threshold crossing events, the number of",
+							"events (dot3OamLogRunningTotal) and the number of resultant",
+							"Event Notifications (dot3OamLogEventTotal) should be",
+							"identical.",
+							"",
+							"For threshold crossing events, since multiple occurrences may",
+							"be required to cross the threshold, these values are likely",
+							"different. This value represents the total number of times",
+							"one or more of these occurrences have resulted in an Event",
+							"Notification (for example, 51 when 3253 symbol errors have",
+							"occurred since the last reset, which has resulted in 51 symbol",
+							"error threshold crossing events since the last reset).",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogEventTotal",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.12",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DOT3-OAM-MIB::dot3OamNonThresholdEvent",
+			"certification" : "STANDARD",
+			"description" : [
+				"A dot3OamNonThresholdEvent notification is sent when a local",
+				"or remote non-threshold crossing event is detected. A local",
+				"event is detected by the local entity, while a remote event is",
+				"detected by the reception of an Ethernet OAM Event",
+				"Notification OAMPDU that indicates a non-threshold crossing",
+				"event.",
+				"This notification should not be sent more than once per",
+				"second.",
+				"The OAM entity can be derived from extracting the ifIndex from",
+				"the variable bindings. The objects in the notification",
+				"correspond to the values in a row instance of the",
+				"dot3OamEventLogTable.",
+				"The management entity should periodically check",
+				"dot3OamEventLogTable to detect any missed events."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dot3OamEvent:$v3",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3 == 256) ? 4 : 5"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v3 == 256) ? 'OAM $v4 link fault event detected' : (($v3 == 257) ? 'OAM $v4 dying gasp event detected' : 'OAM $v4 critical link event detected')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD DOT3-OAM-MIB::dot3OamNonThresholdEvent DOT3-OAM-MIB::dot3OamEventLogTimestamp t 31536000 DOT3-OAM-MIB::dot3OamEventLogOui s EXA DOT3-OAM-MIB::dot3OamEventLogType u 256 DOT3-OAM-MIB::dot3OamEventLogLocation i 1 DOT3-OAM-MIB::dot3OamEventLogEventTotal u 9999",
+				"$SNMPTRAPCMD DOT3-OAM-MIB::dot3OamNonThresholdEvent DOT3-OAM-MIB::dot3OamEventLogTimestamp t 31536000 DOT3-OAM-MIB::dot3OamEventLogOui s EXA DOT3-OAM-MIB::dot3OamEventLogType u 257 DOT3-OAM-MIB::dot3OamEventLogLocation i 2 DOT3-OAM-MIB::dot3OamEventLogEventTotal u 9999",
+				"$SNMPTRAPCMD DOT3-OAM-MIB::dot3OamNonThresholdEvent DOT3-OAM-MIB::dot3OamEventLogTimestamp t 31536000 DOT3-OAM-MIB::dot3OamEventLogOui s EXA DOT3-OAM-MIB::dot3OamEventLogType u 258 DOT3-OAM-MIB::dot3OamEventLogLocation i 1 DOT3-OAM-MIB::dot3OamEventLogEventTotal u 9999"
+			],
+			"trap" : {
+				"name" : "DOT3-OAM-MIB::dot3OamNonThresholdEvent",
+				"oid" : "1.3.6.1.2.1.158.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sysUpTime at the time of the logged event. For",
+							"locally generated events, the time of the event can be",
+							"accurately retrieved from sysUpTime. For remotely generated",
+							"events, the time of the event is indicated by the reception of",
+							"the Event Notification OAMPDU indicating that the event",
+							"occurred on the peer. A system may attempt to adjust the",
+							"timestamp value to more accurately reflect the time of the",
+							"event at the peer OAM entity by using other information, such",
+							"as that found in the timestamp found of the Event Notification",
+							"TLVs, which provides an indication of the relative time",
+							"between events at the peer entity. "
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogTimestamp",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.2",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The OUI of the entity defining the object type. All IEEE",
+							"802.3 defined events (as appearing in [802.3ah] except for the",
+							"Organizationally Unique Event TLVs) use the IEEE 802.3 OUI of",
+							"0x0180C2. Organizations defining their own Event Notification",
+							"TLVs include their OUI in the Event Notification TLV that",
+							"gets reflected here. "
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogOui",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of event that generated this entry in the event log.",
+							"When the OUI is the IEEE 802.3 OUI of 0x0180C2, the following",
+							"event types are defined:",
+							"erroredSymbolEvent(1)",
+							"erroredFramePeriodEvent(2)",
+							"erroredFrameEvent(3)",
+							"erroredFrameSecondsEvent(4)",
+							"linkFault(256)",
+							"dyingGaspEvent(257)",
+							"criticalLinkEvent(258)",
+							"The first four are considered threshold crossing events, as",
+							"they are generated when a metric exceeds a given value within",
+							"a specified window. The other three are not threshold",
+							"crossing events.",
+							"",
+							"When the OUI is not 71874 (0x0180C2 in hex), then some other",
+							"organization has defined the event space. If event subtyping",
+							"is known to the implementation, it may be reflected here.",
+							"Otherwise, this value should return all F's (2^32 - 1).",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogType",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Whether this event occurred locally (local(1)), or was",
+							"received from the OAM peer via Ethernet OAM (remote(2)).",
+							""
+						],
+						"enums" : {
+							"1" : "local",
+							"2" : "remote"
+						},
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogLocation",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Each Event Notification TLV contains a running total of the",
+							"number of times an event has occurred, as well as the number",
+							"of times an Event Notification for the event has been",
+							"transmitted. For non-threshold crossing events, the number of",
+							"events (dot3OamLogRunningTotal) and the number of resultant",
+							"Event Notifications (dot3OamLogEventTotal) should be",
+							"identical.",
+							"",
+							"For threshold crossing events, since multiple occurrences may",
+							"be required to cross the threshold, these values are likely",
+							"different. This value represents the total number of times",
+							"one or more of these occurrences have resulted in an Event",
+							"Notification (for example, 51 when 3253 symbol errors have",
+							"occurred since the last reset, which has resulted in 51 symbol",
+							"error threshold crossing events since the last reset).",
+							""
+						],
+						"name" : "DOT3-OAM-MIB::dot3OamEventLogEventTotal",
+						"oid" : "1.3.6.1.2.1.158.1.6.1.12",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

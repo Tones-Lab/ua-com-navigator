@@ -1,0 +1,367 @@
+{
+	"metaData" : {
+		"sourceRevision" : "9405120900Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SNA-NAU-MIB::snaNodeStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the operational state",
+				"(i.e., value of the snaNodeOperState object) of a Node",
+				"has changed. The following variables are returned:",
+				"snaNodeOperName - current name of the Node",
+				"with the instance identifying the Node; and",
+				"snaNodeOperState - current state after",
+				"the change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v2==1) ? 2 : 3"
+				},
+				"EventType" : "snaNodeStateChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v2==1) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : ($v2==1) ? 3 : 2"
+				},
+				"SubNode" : "snaNodeOperName:$v1",
+				"Summary" : "Node $v1 state changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SNA-NAU-MIB::snaNodeStateChangeTrap SNA-NAU-MIB::snaNodeOperName s EXAMPLE SNA-NAU-MIB::snaNodeOperState i 1",
+			"trap" : {
+				"name" : "SNA-NAU-MIB::snaNodeStateChangeTrap",
+				"oid" : "1.3.6.1.2.1.34.1.1.10.1",
+				"variables" : [
+					{
+						"description" : [
+							"The value identifies the current name of the Node.",
+							"In Type 2.1 networks, this",
+							"is a fully-qualified name, meaning that the Node name",
+							"is preceded by the NetId (if present) with a period",
+							"as the delimiter."
+						],
+						"name" : "SNA-NAU-MIB::snaNodeOperName",
+						"oid" : "1.3.6.1.2.1.34.1.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state of the Node.",
+							"The values have the following meanings:",
+							"inactive (1), a row representing the Node has",
+							"been created in the AdminTable",
+							"and, the Node is ready for activation -or-",
+							"an active Node has been stopped -or-",
+							"a waiting Node has returned to the inactive",
+							"state.",
+							"waiting (3), a request to have the Node activated",
+							"has been issued, and the Node is pending",
+							"activation.",
+							"active (2), the Node is ready and operating.",
+							"stopping (4), the request to stop the Node has",
+							"been issued while the StopMethod normal",
+							"or immediate is used."
+						],
+						"enums" : {
+							"1" : "inactive",
+							"2" : "active",
+							"3" : "waiting",
+							"4" : "stopping"
+						},
+						"name" : "SNA-NAU-MIB::snaNodeOperState",
+						"oid" : "1.3.6.1.2.1.34.1.1.3.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SNA-NAU-MIB::snaNodeActFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates a Node activation failure.",
+				"The value of snaNodeOperState indicates the current",
+				"state after the activation attempt.",
+				"The value of snaNodeOperActFailureReason indicates",
+				"the failure reason."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snaNodeActFailTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "snaNodeOperName:$v1",
+				"Summary" : "Node $v1 activation failed because of $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SNA-NAU-MIB::snaNodeActFailTrap SNA-NAU-MIB::snaNodeOperName s EXAMPLE SNA-NAU-MIB::snaNodeOperState i 1 SNA-NAU-MIB::snaNodeOperActFailureReason i 1",
+			"trap" : {
+				"name" : "SNA-NAU-MIB::snaNodeActFailTrap",
+				"oid" : "1.3.6.1.2.1.34.1.1.10.2",
+				"variables" : [
+					{
+						"description" : [
+							"The value identifies the current name of the Node.",
+							"In Type 2.1 networks, this",
+							"is a fully-qualified name, meaning that the Node name",
+							"is preceded by the NetId (if present) with a period",
+							"as the delimiter."
+						],
+						"name" : "SNA-NAU-MIB::snaNodeOperName",
+						"oid" : "1.3.6.1.2.1.34.1.1.3.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The current state of the Node.",
+							"The values have the following meanings:",
+							"inactive (1), a row representing the Node has",
+							"been created in the AdminTable",
+							"and, the Node is ready for activation -or-",
+							"an active Node has been stopped -or-",
+							"a waiting Node has returned to the inactive",
+							"state.",
+							"waiting (3), a request to have the Node activated",
+							"has been issued, and the Node is pending",
+							"activation.",
+							"active (2), the Node is ready and operating.",
+							"stopping (4), the request to stop the Node has",
+							"been issued while the StopMethod normal",
+							"or immediate is used."
+						],
+						"enums" : {
+							"1" : "inactive",
+							"2" : "active",
+							"3" : "waiting",
+							"4" : "stopping"
+						},
+						"name" : "SNA-NAU-MIB::snaNodeOperState",
+						"oid" : "1.3.6.1.2.1.34.1.1.3.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value indicates the reason for the activation",
+							"failure. The value 'other (1)' indicates a reason",
+							"not listed in the enumeration. This object",
+							"will be sent in the trap snaNodeActFailTrap."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "linkFailure",
+							"3" : "noResources",
+							"4" : "badConfiguration",
+							"5" : "internalError"
+						},
+						"name" : "SNA-NAU-MIB::snaNodeOperActFailureReason",
+						"oid" : "1.3.6.1.2.1.34.1.1.3.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SNA-NAU-MIB::snaLuStateChangeTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the operational state",
+				"(i.e., snaLuOperState value) of the LU has changed.",
+				"The value of snaLuOperName indicates the name of the",
+				"LU.",
+				"The value of snaLuOperSnaName indicates the SNA name",
+				"of LU.",
+				"The value of snaLuOperState indicates the current",
+				"state after change."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : 2"
+				},
+				"EventType" : "snaLuStateChangeTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : 3"
+				},
+				"SubNode" : "snaLuOperName:$v1",
+				"Summary" : "LU $v1 state changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SNA-NAU-MIB::snaLuStateChangeTrap SNA-NAU-MIB::snaLuOperName s EXAMPLE SNA-NAU-MIB::snaLuOperSnaName s EXAMPLE SNA-NAU-MIB::snaLuOperState i 1",
+			"trap" : {
+				"name" : "SNA-NAU-MIB::snaLuStateChangeTrap",
+				"oid" : "1.3.6.1.2.1.34.1.2.5.1",
+				"variables" : [
+					{
+						"description" : [
+							"User configurable name for this LU. If a name",
+							"is not assigned, then this object contains a",
+							"zero length string."
+						],
+						"name" : "SNA-NAU-MIB::snaLuOperName",
+						"oid" : "1.3.6.1.2.1.34.1.2.2.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value identifies the current SNA LU name."
+						],
+						"name" : "SNA-NAU-MIB::snaLuOperSnaName",
+						"oid" : "1.3.6.1.2.1.34.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value identifies the current operational state of",
+							"this LU.",
+							"It has different meanings for dependent and independent",
+							"LUs.",
+							"For dependent LUs the values indicate the following:",
+							"inactive (1) - LU didn't receive ACTLU, or",
+							"it received DACTLU, or received ACTLU and sent",
+							"negative response.",
+							"active (2) - LU received ACTLU and acknowledged",
+							"positively.",
+							"",
+							"For independent LUs the values indicate the following:",
+							"active (2) - the LU is defined and is able to send",
+							"and receive BIND.",
+							"inactive (1) - the LU has a session count equal",
+							"to 0."
+						],
+						"enums" : {
+							"1" : "inactive",
+							"2" : "active"
+						},
+						"name" : "SNA-NAU-MIB::snaLuOperState",
+						"oid" : "1.3.6.1.2.1.34.1.2.2.1.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SNA-NAU-MIB::snaLuSessnBindFailTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates the failure of a BIND.",
+				"The value of snaLuSessnLocalApplName indicates the local",
+				"application name.",
+				"The value of snaLuSessnPartnerName indicates the partner",
+				"name.",
+				"The value of snaLuSessnOperState indicates the current",
+				"state after change.",
+				"The value of snaLuSessnBindFailureReason",
+				"indicates the failure reason.",
+				"The Agent should not generate more than 1 trap of this",
+				"type per minute to minimize the level of management",
+				"traffic on the network."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snaLuSessnBindFailTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "LuName:$v2",
+				"Summary" : "LU session bind failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SNA-NAU-MIB::snaLuSessnBindFailTrap SNA-NAU-MIB::snaLuSessnLocalApplName s EXAMPLE SNA-NAU-MIB::snaLuSessnRemoteLuName s EXAMPLE SNA-NAU-MIB::snaLuSessnOperState i 1 SNA-NAU-MIB::snaLuSessnSenseData s EXAMPLE",
+			"trap" : {
+				"name" : "SNA-NAU-MIB::snaLuSessnBindFailTrap",
+				"oid" : "1.3.6.1.2.1.34.1.2.5.2",
+				"variables" : [
+					{
+						"description" : [
+							"The name of the local application using this LU.",
+							"If the local application is unknown, then this object",
+							"contains a zero length string."
+						],
+						"name" : "SNA-NAU-MIB::snaLuSessnLocalApplName",
+						"oid" : "1.3.6.1.2.1.34.1.2.3.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"For dependent LUs which are indicated by the",
+							"snaLuOperDepType object containing the value",
+							"'dependent (1)', this object contains the Primary",
+							"LU (PLU) name. For independent LUs",
+							"this object contains the fully-qualified remote LU",
+							"name of this 6.2 session.",
+							"A fully qualified name is an SNA NAU entity name",
+							"preceded by the NetId and a period as the delimiter."
+						],
+						"name" : "SNA-NAU-MIB::snaLuSessnRemoteLuName",
+						"oid" : "1.3.6.1.2.1.34.1.2.3.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value indicates the current operational state of",
+							"the session.",
+							"",
+							"'unbound (1)' - session has been unbound;",
+							"in this state it will be removed from the",
+							"session table by the Agent.",
+							"",
+							"'pendingBind (2)' - this state has different",
+							"meanings for dependent and independent LUs;",
+							"for dependent LU - waiting for BIND from",
+							"the host, for independent LU - waiting for",
+							"BIND response. When a session enters this",
+							"state, the corresponding entry in the",
+							"session table is created by the Agent.",
+							"",
+							"'bound (3)' - session has been successfully bound.",
+							"",
+							"'pendingUnbind (4)' - session enters this state",
+							"when an UNBIND is sent and before the",
+							"rsp(UNBIND) is received."
+						],
+						"enums" : {
+							"1" : "unbound",
+							"2" : "pendingBind",
+							"3" : "bound",
+							"4" : "pendingUnbind"
+						},
+						"name" : "SNA-NAU-MIB::snaLuSessnOperState",
+						"oid" : "1.3.6.1.2.1.34.1.2.3.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value identifies the sense code when there is",
+							"a BIND failure. It is taken from the negative BIND",
+							"response or UNBIND request.",
+							"This is displayed as 8 hexadecimal digits."
+						],
+						"name" : "SNA-NAU-MIB::snaLuSessnSenseData",
+						"oid" : "1.3.6.1.2.1.34.1.2.3.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,118 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200711270000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "PRVT-DRY-CONTACTS-MIB::stateChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Send notification when operational status of the input changes"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5==1) ? 1 : 2"
+				},
+				"EventType" : "stateChanged",
+				"ExpireTime" : {
+					"eval" : "($v5==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v5==1) ? 0 : (($v6==4) ? 5 : (($v6==3) ? 4 : (($v6==2) ? 3 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v4 ne '') ? '$v4' : (($v5==1) ? 'Alarm $v3 cleared' : 'Alarm $v3 occurred')"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD PRVT-DRY-CONTACTS-MIB::stateChanged PRVT-DRY-CONTACTS-MIB::prvtAlarmID i 6 PRVT-DRY-CONTACTS-MIB::prvtSensorType i 1 PRVT-DRY-CONTACTS-MIB::prvtName s EXAMPLE PRVT-DRY-CONTACTS-MIB::prvtDescription s EXAMPLE PRVT-DRY-CONTACTS-MIB::prvtAlarmStatus i 2 PRVT-DRY-CONTACTS-MIB::prvtAlarmSeverity i 3",
+				"$SNMPTRAPCMD PRVT-DRY-CONTACTS-MIB::stateChanged PRVT-DRY-CONTACTS-MIB::prvtAlarmID i 6 PRVT-DRY-CONTACTS-MIB::prvtSensorType i 1 PRVT-DRY-CONTACTS-MIB::prvtName s EXAMPLE PRVT-DRY-CONTACTS-MIB::prvtDescription s EXAMPLE PRVT-DRY-CONTACTS-MIB::prvtAlarmStatus i 1 PRVT-DRY-CONTACTS-MIB::prvtAlarmSeverity i 1"
+			],
+			"trap" : {
+				"name" : "PRVT-DRY-CONTACTS-MIB::stateChanged",
+				"oid" : "1.3.6.1.4.1.738.1.5.112.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"External and internal alarm index uniquely identifies this row.",
+							"T-Metro 200 ES platform has four dry-contacts sensor inputs.",
+							"T5C-XG platform has four dry-contact sensor inputs and two dry-contact sensor outputs. ",
+							"An integer with supported range of values 1-6 for T5C-XG and 1-4 for T-Metro 200 ES. Index. Not-accessible"
+						],
+						"name" : "PRVT-DRY-CONTACTS-MIB::prvtAlarmID",
+						"oid" : "1.3.6.1.4.1.738.1.5.112.1.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Sensor type. An enumeration with two values: input(1), output(2). ",
+							"T-Metro 200 ES platform has four dry-contacts sensor inputs.",
+							"T5C-XG platform has four dry-contact sensor inputs and two dry-contact sensor outputs.",
+							"Read-only."
+						],
+						"enums" : {
+							"1" : "input",
+							"2" : "output"
+						},
+						"name" : "PRVT-DRY-CONTACTS-MIB::prvtSensorType",
+						"oid" : "1.3.6.1.4.1.738.1.5.112.1.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Name of alarm. An OCTET-STRING with max. 16 OCTETS.",
+							"Default value null string. Read-write"
+						],
+						"name" : "PRVT-DRY-CONTACTS-MIB::prvtName",
+						"oid" : "1.3.6.1.4.1.738.1.5.112.1.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm description. An OCTET-STRING with max. 64 OCTETS.",
+							"Default value null string. Read-write"
+						],
+						"name" : "PRVT-DRY-CONTACTS-MIB::prvtDescription",
+						"oid" : "1.3.6.1.4.1.738.1.5.112.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Alarm status. An enumeration with two values: no-alarm(1), alarm(2).",
+							"Default value is no-alarm(1). Read-only."
+						],
+						"enums" : {
+							"1" : "no-alarm",
+							"2" : "alarm"
+						},
+						"name" : "PRVT-DRY-CONTACTS-MIB::prvtAlarmStatus",
+						"oid" : "1.3.6.1.4.1.738.1.5.112.1.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Configured alarm severity. An enumeration with 4 values:",
+							"info(1), minor(2), major(3) and critical(4).",
+							"Default value is info(1). Read-write"
+						],
+						"enums" : {
+							"1" : "info",
+							"2" : "minor",
+							"3" : "major",
+							"4" : "critical"
+						},
+						"name" : "PRVT-DRY-CONTACTS-MIB::prvtAlarmSeverity",
+						"oid" : "1.3.6.1.4.1.738.1.5.112.1.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

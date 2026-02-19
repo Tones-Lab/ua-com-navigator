@@ -1,0 +1,131 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201301151536Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HPN-ICF-ISSU-MIB::hpnicfIssuUpgradeOpCompletionNotify",
+			"certification" : "STANDARD",
+			"description" : [
+				"An hpnicfIssuUpgradeOpCompletionNotify is sent at the",
+				"completion of upgrade operation denoted by",
+				"hpnicfIssuOp object, if such a notification",
+				"was requested when the operation was initiated.",
+				"hpnicfIssuOpType indicates the type of the",
+				"operation. hpnicfIssuOpStatus indicates the",
+				"result of the operation. hpnicfIssuFailedReason",
+				"indicates the operation failure reason.",
+				"hpnicfIssuOpTimeCompleted indicates the time",
+				"when the operation was completed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 2 : ($v2==4) ? 1 : 3"
+				},
+				"EventType" : "hpnicfIssuUpgradeOpCompletionNotify",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 86400 : ($v2==4) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 4 : ($v2==4) ? 0 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "ISSU update operation status $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-ISSU-MIB::hpnicfIssuUpgradeOpCompletionNotify HPN-ICF-ISSU-MIB::hpnicfIssuOpType i 1 HPN-ICF-ISSU-MIB::hpnicfIssuOpStatus i 1 HPN-ICF-ISSU-MIB::hpnicfIssuFailedReason s EXAMPLE HPN-ICF-ISSU-MIB::hpnicfIssuOpTimeCompleted s EXAMPLE",
+			"trap" : {
+				"name" : "HPN-ICF-ISSU-MIB::hpnicfIssuUpgradeOpCompletionNotify",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.133.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Command to be executed.",
+							"The 'test' command must be performed before the 'install'",
+							"command can be executed. The 'install'",
+							"command is allowed only if a read of",
+							"this object returns 'test' and the value of object",
+							"hpnicfIssuOpStatus is 'success'.",
+							"",
+							"Command Remarks",
+							"",
+							"none If the user sets this object to 'none', the agent will return a success",
+							"without performing an upgrade operation.",
+							"done If this object returns any value other than",
+							"'none', setting this to 'done' will do",
+							"the required cleanup of the previous upgrade",
+							"operation and get the system ready for a new",
+							"upgrade operation.",
+							"test Check the version compatibility and upgrade method",
+							"for the given set of image files.",
+							"install For all the image entities listed in the",
+							"hpnicfIssuUpgradeImageTable, perform the required",
+							"upgrade operation listed in that table.",
+							"rollback Abort the current 'install' operation and roll back",
+							"to the previous version.",
+							""
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "done",
+							"3" : "test",
+							"4" : "install",
+							"5" : "rollback"
+						},
+						"name" : "HPN-ICF-ISSU-MIB::hpnicfIssuOpType",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.133.1.1.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Status of the specified operation.",
+							"none - No operation was performed.",
+							"failure - Specified operation has failed.",
+							"inProgress - Specified operation is in progress.",
+							"success - Specified operation completed successfully.",
+							"rollbackInProgress - Rollback operation is in progress.",
+							"rollbackSuccess - Rollback operation completed successfully.",
+							""
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "failure",
+							"3" : "inProgress",
+							"4" : "success",
+							"5" : "rollbackInProgress",
+							"6" : "rollbackSuccess"
+						},
+						"name" : "HPN-ICF-ISSU-MIB::hpnicfIssuOpStatus",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.133.1.1.2.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Indicates the the cause of 'failure' state",
+							"of the object 'hpnicfIssuOpStatus'.",
+							"This object would be a null string if the value of",
+							"'hpnicfIssuOpStatus' is not 'failure'."
+						],
+						"name" : "HPN-ICF-ISSU-MIB::hpnicfIssuFailedReason",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.133.1.1.2.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the time when the upgrade operation was completed.",
+							"This object would be a null string if hpnicfIssuOpType is",
+							"'none'. "
+						],
+						"name" : "HPN-ICF-ISSU-MIB::hpnicfIssuOpTimeCompleted",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.133.1.1.2.6",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

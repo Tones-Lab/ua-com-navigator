@@ -1,0 +1,681 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200602062200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "NETSCOUT-SERVER-MIB::serverBasedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The nGenius Server based trap that is generated when ",
+				"one of the alerting facilities within nGenius triggers an alert.",
+				"This could be a pass through of a probe-based alert or an Analytics generated",
+				"alert."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "\\.(?P<ifIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "serverBasedTrap",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v11 eq 'Critical') ? 5 : (($v11 eq 'Warning') ? 3 : 1)"
+				},
+				"SubNode" : {
+					"eval" : "($ifIndex == 0) ? 'Device' : 'ifIndex:$ifIndex'"
+				},
+				"Summary" : {
+					"eval" : "($v4 eq '') ? 'Server-based alarm raised on nGenius server' : '$v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD NETSCOUT-SERVER-MIB::serverBasedTrap NETSCOUT-SERVER-MIB::serverAlarmsDataSource o 1.3.6.1.4.1.8072.2.1.1.0 NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsThreshold c 9999 NETSCOUT-SERVER-MIB::serverAlarmsDescription s \"wan103\\\\ ifn4\\\\ DLCI-321\\\\ TOTAL\\\\ Octets\\\\ Falling\\\\ threshold\\\\ reached\\\\ 83727\\\\ bytes\" NETSCOUT-SERVER-MIB::serverAlarmsValue i 9999 NETSCOUT-SERVER-MIB::serverAlarmsInterval i 9999 NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsURL s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsEvidence s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsAlertID s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsSeverity s Critical NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType i 0",
+				"$SNMPTRAPCMD NETSCOUT-SERVER-MIB::serverBasedTrap NETSCOUT-SERVER-MIB::serverAlarmsDataSource o 1.3.6.1.4.1.8072.2.1.1.9 NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsThreshold c 9999 NETSCOUT-SERVER-MIB::serverAlarmsDescription s \"Probe107\\\\ ifn3\\\\ IN\\\\ UTIL\\\\ Rising\\\\ threshold\\\\ reached\\\\ 80%\" NETSCOUT-SERVER-MIB::serverAlarmsValue i 9999 NETSCOUT-SERVER-MIB::serverAlarmsInterval i 9999 NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsURL s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsEvidence s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsAlertID s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsSeverity s Warning NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType i 0"
+			],
+			"trap" : {
+				"name" : "NETSCOUT-SERVER-MIB::serverBasedTrap",
+				"oid" : "1.3.6.1.4.1.141.50.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The Device interface which caused this alarm to be generated. ",
+							"",
+							"For example If interface #3 caused this then this object ",
+							"should be set to ifIndex.3",
+							"If this alarm was set on a device variable for example, ",
+							"Memory Utilization, then this object should be set to ",
+							"ifIndex.0."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDataSource",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The internet address of the device which caused this alarm to be ",
+							"generated."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The threshold value which was configured for this alarm."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsThreshold",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.3",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The alarms description providing useful information about the ",
+							"alarm. It is recommended to provide information such as",
+							"device-name ,interface-name, virtual-Interface, complete ",
+							"variable name indicating IN/OUT, unit of threshold value ",
+							"For example",
+							"Probe107 ifn3 IN UTIL Rising threshold reached 80%",
+							"wan103 ifn4 DLCI-321 TOTAL Octets Falling threshold reached 83727 bytes",
+							"wan104 ifn4 DLCI-421 Total FTP-DATA Utilization exceeds 70%",
+							"."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDescription",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The actual value which caused this alarm to be triggered."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsValue",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The interval in seconds over which the data is sampled ."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsInterval",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Display Name of the source of the trap. This can be of the following",
+							"format Device(probe/link) Name:Interface Name:Virtual Id:QOS level."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The URL String that can be used to launch with context back into the nGenius Product."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsURL",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A key-value pair string separated by commas used to convey evidence. The specifc keys and ",
+							"values would be dependent on the trap type. The following keys are initially supported:",
+							"App=HTTP,RouterAddress=x.x.x.x, RouterIfn=x, RouterMAC=x.x.x.x.x.x, clientAddress=x.x.x.x, ",
+							"serverAddress=y.y.y.y, Metric=IN-UTIL"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsEvidence",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique string ID representing this alert. It is garaunteed to be unique across distributed",
+							"nGenius servers "
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsAlertID",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A string value representing the severity of the alert. Possible values are Critical, Warning."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsSeverity",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The internet address type for the device which caused this alarm to be ",
+							"generated."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NETSCOUT-SERVER-MIB::serverBasedClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The nGenius Server based cleartrap that is generated when ",
+				"an an alarm entry has been cleared."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "\\.(?P<ifIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "serverBasedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : {
+					"eval" : "($ifIndex == 0) ? 'Device' : 'ifIndex:$ifIndex'"
+				},
+				"Summary" : {
+					"eval" : "($v4 eq '') ? 'Server-based alarm cleared on nGenius server' : '$v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD NETSCOUT-SERVER-MIB::serverBasedClearTrap NETSCOUT-SERVER-MIB::serverAlarmsDataSource o 1.3.6.1.4.1.8072.2.1.1.0 NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsThreshold c 9999 NETSCOUT-SERVER-MIB::serverAlarmsDescription s \"wan103\\\\ ifn4\\\\ DLCI-321\\\\ TOTAL\\\\ Octets\\\\ Falling\\\\ threshold\\\\ reached\\\\ 83727\\\\ bytes\" NETSCOUT-SERVER-MIB::serverAlarmsValue i 9999 NETSCOUT-SERVER-MIB::serverAlarmsInterval i 9999 NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsURL s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsEvidence s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsAlertID s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsSeverity s Critical NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType i 0",
+				"$SNMPTRAPCMD NETSCOUT-SERVER-MIB::serverBasedClearTrap NETSCOUT-SERVER-MIB::serverAlarmsDataSource o 1.3.6.1.4.1.8072.2.1.1.9 NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsThreshold c 9999 NETSCOUT-SERVER-MIB::serverAlarmsDescription s \"Probe107\\\\ ifn3\\\\ IN\\\\ UTIL\\\\ Rising\\\\ threshold\\\\ reached\\\\ 80%\" NETSCOUT-SERVER-MIB::serverAlarmsValue i 9999 NETSCOUT-SERVER-MIB::serverAlarmsInterval i 9999 NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsURL s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsEvidence s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsAlertID s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsSeverity s Warning NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType i 0"
+			],
+			"trap" : {
+				"name" : "NETSCOUT-SERVER-MIB::serverBasedClearTrap",
+				"oid" : "1.3.6.1.4.1.141.50.2.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The Device interface which caused this alarm to be generated. ",
+							"",
+							"For example If interface #3 caused this then this object ",
+							"should be set to ifIndex.3",
+							"If this alarm was set on a device variable for example, ",
+							"Memory Utilization, then this object should be set to ",
+							"ifIndex.0."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDataSource",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The internet address of the device which caused this alarm to be ",
+							"generated."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The threshold value which was configured for this alarm."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsThreshold",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.3",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The alarms description providing useful information about the ",
+							"alarm. It is recommended to provide information such as",
+							"device-name ,interface-name, virtual-Interface, complete ",
+							"variable name indicating IN/OUT, unit of threshold value ",
+							"For example",
+							"Probe107 ifn3 IN UTIL Rising threshold reached 80%",
+							"wan103 ifn4 DLCI-321 TOTAL Octets Falling threshold reached 83727 bytes",
+							"wan104 ifn4 DLCI-421 Total FTP-DATA Utilization exceeds 70%",
+							"."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDescription",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The actual value which caused this alarm to be triggered."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsValue",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The interval in seconds over which the data is sampled ."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsInterval",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Display Name of the source of the trap. This can be of the following",
+							"format Device(probe/link) Name:Interface Name:Virtual Id:QOS level."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The URL String that can be used to launch with context back into the nGenius Product."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsURL",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A key-value pair string separated by commas used to convey evidence. The specifc keys and ",
+							"values would be dependent on the trap type. The following keys are initially supported:",
+							"App=HTTP,RouterAddress=x.x.x.x, RouterIfn=x, RouterMAC=x.x.x.x.x.x, clientAddress=x.x.x.x, ",
+							"serverAddress=y.y.y.y, Metric=IN-UTIL"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsEvidence",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique string ID representing this alert. It is garaunteed to be unique across distributed",
+							"nGenius servers "
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsAlertID",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A string value representing the severity of the alert. Possible values are Critical, Warning."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsSeverity",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The internet address type for the device which caused this alarm to be ",
+							"generated."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NETSCOUT-SERVER-MIB::situationTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The nGenius Server based trap that is generated when ",
+				"one of the situation facilities within nGenius triggers a situation. "
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "\\.(?P<ifIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "situationTrap",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : {
+					"eval" : "($ifIndex == 0) ? 'Device' : 'ifIndex:$ifIndex'"
+				},
+				"Summary" : {
+					"eval" : "($v3 eq '') ? 'Situation triggered on nGenius server' : '$v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD NETSCOUT-SERVER-MIB::situationTrap NETSCOUT-SERVER-MIB::serverAlarmsDataSource o 1.3.6.1.4.1.8072.2.1.1.1 NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsDescription s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsInterval i 9999 NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsURL s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsAlertID s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType i 0 NETSCOUT-SERVER-MIB::situationCauseEvidence s EXAMPLE NETSCOUT-SERVER-MIB::situationImpactEvidence s EXAMPLE NETSCOUT-SERVER-MIB::situationTriggerAddressType s EXAMPLE NETSCOUT-SERVER-MIB::situationTriggerAddress s EXAMPLE",
+				"$SNMPTRAPCMD NETSCOUT-SERVER-MIB::situationTrap NETSCOUT-SERVER-MIB::serverAlarmsDataSource o 1.3.6.1.4.1.8072.2.1.1.0 NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsDescription s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsInterval i 9999 NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsURL s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsAlertID s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType i 0 NETSCOUT-SERVER-MIB::situationCauseEvidence s EXAMPLE NETSCOUT-SERVER-MIB::situationImpactEvidence s EXAMPLE NETSCOUT-SERVER-MIB::situationTriggerAddressType s EXAMPLE NETSCOUT-SERVER-MIB::situationTriggerAddress s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "NETSCOUT-SERVER-MIB::situationTrap",
+				"oid" : "1.3.6.1.4.1.141.50.2.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The Device interface which caused this alarm to be generated. ",
+							"",
+							"For example If interface #3 caused this then this object ",
+							"should be set to ifIndex.3",
+							"If this alarm was set on a device variable for example, ",
+							"Memory Utilization, then this object should be set to ",
+							"ifIndex.0."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDataSource",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The internet address of the device which caused this alarm to be ",
+							"generated."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The alarms description providing useful information about the ",
+							"alarm. It is recommended to provide information such as",
+							"device-name ,interface-name, virtual-Interface, complete ",
+							"variable name indicating IN/OUT, unit of threshold value ",
+							"For example",
+							"Probe107 ifn3 IN UTIL Rising threshold reached 80%",
+							"wan103 ifn4 DLCI-321 TOTAL Octets Falling threshold reached 83727 bytes",
+							"wan104 ifn4 DLCI-421 Total FTP-DATA Utilization exceeds 70%",
+							"."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDescription",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interval in seconds over which the data is sampled ."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsInterval",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Display Name of the source of the trap. This can be of the following",
+							"format Device(probe/link) Name:Interface Name:Virtual Id:QOS level."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The URL String that can be used to launch with context back into the nGenius Product."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsURL",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique string ID representing this alert. It is garaunteed to be unique across distributed",
+							"nGenius servers "
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsAlertID",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The internet address type for the device which caused this alarm to be ",
+							"generated."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The situation cause evidence information as JSON"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::situationCauseEvidence",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The situation impact evidence information as JSON"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::situationImpactEvidence",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The situation trigger address type"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::situationTriggerAddressType",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The situation trigger address type can be Server or UCCommunity"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::situationTriggerAddress",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "NETSCOUT-SERVER-MIB::situationClearTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"The situation cleartrap that is generated when ",
+				"a situation has been cleared."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$v1",
+						"pattern" : "\\.(?P<ifIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "situationTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : {
+					"eval" : "($ifIndex == 0) ? 'Device' : 'ifIndex:$ifIndex'"
+				},
+				"Summary" : {
+					"eval" : "($v3 eq '') ? 'Situation cleared on nGenius server' : '$v3'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD NETSCOUT-SERVER-MIB::situationClearTrap NETSCOUT-SERVER-MIB::serverAlarmsDataSource o 1.3.6.1.4.1.8072.2.1.1.1 NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsDescription s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsInterval i 9999 NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsURL s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsAlertID s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType i 0 NETSCOUT-SERVER-MIB::situationCauseEvidence s EXAMPLE NETSCOUT-SERVER-MIB::situationImpactEvidence s EXAMPLE NETSCOUT-SERVER-MIB::situationTriggerAddressType s EXAMPLE NETSCOUT-SERVER-MIB::situationTriggerAddress s EXAMPLE",
+				"$SNMPTRAPCMD NETSCOUT-SERVER-MIB::situationClearTrap NETSCOUT-SERVER-MIB::serverAlarmsDataSource o 1.3.6.1.4.1.8072.2.1.1.0 NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsDescription s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsInterval i 9999 NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsURL s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsAlertID s EXAMPLE NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType i 0 NETSCOUT-SERVER-MIB::situationCauseEvidence s EXAMPLE NETSCOUT-SERVER-MIB::situationImpactEvidence s EXAMPLE NETSCOUT-SERVER-MIB::situationTriggerAddressType s EXAMPLE NETSCOUT-SERVER-MIB::situationTriggerAddress s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "NETSCOUT-SERVER-MIB::situationClearTrap",
+				"oid" : "1.3.6.1.4.1.141.50.2.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The Device interface which caused this alarm to be generated. ",
+							"",
+							"For example If interface #3 caused this then this object ",
+							"should be set to ifIndex.3",
+							"If this alarm was set on a device variable for example, ",
+							"Memory Utilization, then this object should be set to ",
+							"ifIndex.0."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDataSource",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The internet address of the device which caused this alarm to be ",
+							"generated."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddress",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The alarms description providing useful information about the ",
+							"alarm. It is recommended to provide information such as",
+							"device-name ,interface-name, virtual-Interface, complete ",
+							"variable name indicating IN/OUT, unit of threshold value ",
+							"For example",
+							"Probe107 ifn3 IN UTIL Rising threshold reached 80%",
+							"wan103 ifn4 DLCI-321 TOTAL Octets Falling threshold reached 83727 bytes",
+							"wan104 ifn4 DLCI-421 Total FTP-DATA Utilization exceeds 70%",
+							"."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDescription",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The interval in seconds over which the data is sampled ."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsInterval",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Display Name of the source of the trap. This can be of the following",
+							"format Device(probe/link) Name:Interface Name:Virtual Id:QOS level."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDataSourceName",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The URL String that can be used to launch with context back into the nGenius Product."
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsURL",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A unique string ID representing this alert. It is garaunteed to be unique across distributed",
+							"nGenius servers "
+						],
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsAlertID",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The internet address type for the device which caused this alarm to be ",
+							"generated."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "NETSCOUT-SERVER-MIB::serverAlarmsDeviceAddressType",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The situation cause evidence information as JSON"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::situationCauseEvidence",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The situation impact evidence information as JSON"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::situationImpactEvidence",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The situation trigger address type"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::situationTriggerAddressType",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.15",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The situation trigger address type can be Server or UCCommunity"
+						],
+						"name" : "NETSCOUT-SERVER-MIB::situationTriggerAddress",
+						"oid" : "1.3.6.1.4.1.141.50.1.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

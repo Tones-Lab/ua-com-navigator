@@ -1,0 +1,598 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200307170000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ERI-DNX-NEST-SYS-MIB::slotConfigTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has ",
+				"updated the configuration for a given slot entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==101) ? 1 : (($v3>=200 && $v3<=205) || $v3==207 || $v3==208 || $v3==450 || ($v3>=500 && $v3<=500)) ? 2 : 3"
+				},
+				"EventType" : "slotConfigTrap",
+				"ExpireTime" : {
+					"eval" : "($v3==101 || ($v3>=200 && $v3<=205) || $v3==207 || $v3==208 || $v3==450 || ($v3>=500 && $v3<=500)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==101) ? 0 : (($v3>=200 && $v3<=205) || $v3==207 || $v3==208 || $v3==450 || ($v3>=500 && $v3<=500)) ? 3 : 2"
+				},
+				"SubNode" : "SlotNumber:$v2",
+				"Summary" : "Configuration update on slot $v2 . Command status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-NEST-SYS-MIB::slotConfigTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-NEST-SYS-MIB::slotNbr i 1 ERI-DNX-NEST-SYS-MIB::slotConfigCmdStatus i 0 ERI-DNX-NEST-SYS-MIB::xNestIndex i 0",
+			"trap" : {
+				"name" : "ERI-DNX-NEST-SYS-MIB::slotConfigTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The slot number in the node."
+						],
+						"name" : "ERI-DNX-NEST-SYS-MIB::slotNbr",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The command status for this slot configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"Slot Device Commands used in SET Command (1..99) ",
+							"update-slot-config (1)",
+							"change an aspect of current slot configuration",
+							"delete-slot-config (2)",
+							"remove existing Slot Configuration. Deleting the Slot ",
+							"Configuration using the Slot Command Status will result ",
+							"in the removal of all configured connections associated ",
+							"with that slot number.",
+							"ndr-switchover (10)",
+							"force a switchover to the Standby device",
+							"ndr-restore (11)",
+							"force a restore back to the original device",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"slot data has been successfully changed",
+							"delete-successful (102)",
+							"slot data has been successfully removed",
+							"switch-successful (110)",
+							"Slot N+1 Redundancy device has been successfully",
+							"switched over to Standby device",
+							"restore-successful (111)",
+							"Slot N+1 Redundancy device has been successfully",
+							"restored back to Primary device",
+							"",
+							"Slot Config Error Codes used in GET RESPONSE Command (200..799)",
+							"err-general-slot-config-error (200)",
+							"Unknown slot configuration error occurred.",
+							"err-invalid-slot-type (201)",
+							"Configured slot type not in valid range",
+							"err-invalid-slot-command (202) ",
+							"Unrecognized slot command-action",
+							"err-invalid-slot-name (203)",
+							"Configured slot name too long",
+							"err-redundancy-disabled (204)",
+							"Redundancy disabled on this system or does not apply to ",
+							"device type",
+							"err-cannot-chg-sys-device (205)",
+							"System Device type does not support configuration change ",
+							"err-invalid-redundancy-state (207)",
+							"Redundancy state does not apply or invalid",
+							"err-cannot-delete-online-device (208)",
+							"Device cannot be present when deleting configuration",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update-slot-config",
+							"2" : "delete-slot-config",
+							"10" : "ndr-switchover",
+							"11" : "ndr-restore",
+							"101" : "update-successful",
+							"102" : "delete-successful",
+							"110" : "switch-successful",
+							"111" : "restore-successful",
+							"200" : "err-general-slot-config-error",
+							"201" : "err-invalid-slot-type",
+							"202" : "err-invalid-slot-command",
+							"203" : "err-invalid-slot-name",
+							"204" : "err-redundancy-disabled",
+							"205" : "err-cannot-chg-sys-device",
+							"207" : "err-invalid-redundancy-state",
+							"208" : "err-cannot-delete-online-device",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-NEST-SYS-MIB::slotConfigCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.3.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The nest index number in the node. Nests are indexed",
+							"0 through 7 but correspond to Nests 1 to 8."
+						],
+						"name" : "ERI-DNX-NEST-SYS-MIB::xNestIndex",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.11.1.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-NEST-SYS-MIB::ndrGroupStatusTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that due to an alarm",
+				"condition or system state change, the N+1 Redundancy",
+				"Groups have been modified. This means the one or more",
+				"devices have been removed or added to the actual N+1",
+				"Redundancy Groups and this will affect which cards will",
+				"be protected (switched) in the event of a failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2 || $v2==3) ? 2 : 3"
+				},
+				"EventType" : "ndrGroupStatusTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==2 || $v2==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 4 : ($v2==3) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Current state of N+1 redundancy device is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-NEST-SYS-MIB::ndrGroupStatusTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-NEST-SYS-MIB::ndrState i 1 ERI-DNX-NEST-SYS-MIB::ndrBroadbandGroup1 i 9999 ERI-DNX-NEST-SYS-MIB::ndrNarrowbandGroup i 9999 ERI-DNX-NEST-SYS-MIB::ndrBroadbandGroup2 i 9999 ERI-DNX-NEST-SYS-MIB::xNdrNestIndex i 0",
+			"trap" : {
+				"name" : "ERI-DNX-NEST-SYS-MIB::ndrGroupStatusTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"This is the current N+1 Device Redundancy state.",
+							"",
+							"disabled (1) N+1 Redundancy disabled by the user.",
+							"frozen (2) N+1 Redundancy is not active due to missing",
+							"hardware components.",
+							"delayed (3) N+1 Redundancy is delayed due to switchover.",
+							"enabled (4) N+1 Redundancy enabled and ready."
+						],
+						"enums" : {
+							"1" : "disabled",
+							"2" : "frozen",
+							"3" : "delayed",
+							"4" : "enabled"
+						},
+						"name" : "ERI-DNX-NEST-SYS-MIB::ndrState",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.9.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This is a 2 byte bit field reflecting the slots that",
+							"are part of the current active NDR Broadband Group 1. The ",
+							"first 11 bits represent each of the slot numbers. If any of",
+							"the bits are set, those slots are currently part of the Group 1",
+							"N+1 Redundancy Group."
+						],
+						"name" : "ERI-DNX-NEST-SYS-MIB::ndrBroadbandGroup1",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.9.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is a 2 byte bit field reflecting the slots that",
+							"are part of the current active NDR Narrowband Group. ",
+							"The first 11 bits represent each of the slot numbers. ",
+							"If any of the bits are set, those slots are currently part ",
+							"of the Narrowband N+1 Redundancy Group."
+						],
+						"name" : "ERI-DNX-NEST-SYS-MIB::ndrNarrowbandGroup",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.9.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is a 2 byte bit field reflecting the slots that",
+							"are part of the current active NDR Broadband Group 2. The ",
+							"first 11 bits represent each of the slot numbers. If any of",
+							"the bits are set, those slots are currently part of the Group 2 ",
+							"N+1 Redundancy Group."
+						],
+						"name" : "ERI-DNX-NEST-SYS-MIB::ndrBroadbandGroup2",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.9.12",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The nest index number in the node. Nests are indexed",
+							"0 through 7 but correspond to Nests 1 to 8."
+						],
+						"name" : "ERI-DNX-NEST-SYS-MIB::xNdrNestIndex",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.11.3.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-NEST-SYS-MIB::nestConfigTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that a user has ",
+				"updated the configuration for a given nest entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==101) ? 1 : (($v4>=200 && $v4<=208) || $v4==450 || ($v4>=500 && $v4<=502)) ? 2 : 3"
+				},
+				"EventType" : "nestConfigTrap",
+				"ExpireTime" : {
+					"eval" : "($v4==101 || ($v4>=200 && $v4<=208) || $v4==450 || ($v4>=500 && $v4<=502)) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4==101) ? 0 : (($v4>=200 && $v4<=208) || $v4==450 || ($v4>=500 && $v4<=502)) ? 3 : 2"
+				},
+				"SubNode" : "xNestIndex:$v2",
+				"Summary" : "Configuration update on nest $v2 . Command status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-NEST-SYS-MIB::nestConfigTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-NEST-SYS-MIB::xNestIndex i 0 ERI-DNX-NEST-SYS-MIB::xNestType i 0 ERI-DNX-NEST-SYS-MIB::xNestCmdStatus i 0 ERI-DNX-NEST-SYS-MIB::xNestUnitName s EXAMPLE",
+			"trap" : {
+				"name" : "ERI-DNX-NEST-SYS-MIB::nestConfigTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The nest index number in the node. Nests are indexed",
+							"0 through 7 but correspond to Nests 1 to 8."
+						],
+						"name" : "ERI-DNX-NEST-SYS-MIB::xNestIndex",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.11.1.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"This is the nest type configured by the user. The",
+							"value, notConfig(0), is the default type for an unconfigured",
+							"device. Note, if notConfig(0) or stm1X-oc3X(3) is used in a Set ",
+							"Request, the agent will return an error status of 'badValue'.",
+							"Virtual stm1X-oc3X Nests are configured automatically by the system",
+							"whenever the user Assigns an available Nest to an STM1X or OC3X ",
+							"Device pair. This can be done via the opticalDevConfigTable after a",
+							"STM1X or OC3X card has been configured in a Even numbered slot."
+						],
+						"enums" : {
+							"0" : "notConfig",
+							"1" : "dnx4",
+							"2" : "dnx11",
+							"3" : "stm1X-oc3X"
+						},
+						"name" : "ERI-DNX-NEST-SYS-MIB::xNestType",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.11.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The command status for this nest configuration row/record.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"Nest Device Commands used in SET Command (1..99) ",
+							"update-nest-config (1)",
+							"change an aspect of current nest configuration",
+							"delete-nest-config (2)",
+							"remove existing Nest Configuration. Deleting the Nest ",
+							"Configuration using the Nest Command Status will result ",
+							"in the removal of all configured connections associated ",
+							"with that nest number.",
+							"switch-mgr-cards (3)",
+							"Perform Switchover to Standby SMC/XNM card in associated",
+							"Nest",
+							"reset-device-cards (4)",
+							"Reset all device cards in associated Nest",
+							"clear-device-errors (5)",
+							"Clear error counters for all channel cards in ",
+							"associated Nest",
+							"switch-xcc-cards (6)",
+							"Perform Switchover to Standby XCC card in associated",
+							"Nest",
+							"switch-xlink-cards (7)",
+							"Perform Switchover to Standby XLC card in associated Nest.",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"nest data has been successfully changed",
+							"delete-successful (102)",
+							"nest data has been successfully removed",
+							"switch-mgr-successful (103)",
+							"nest system managers has been successfully switched",
+							"reset-successful (104)",
+							"nest device cards have been issued reset requests",
+							"clear-successful (105)",
+							"nest device cards have been issued clear error requests",
+							"switch-xcc-successful (106)",
+							"nest xcc's has been successfully switched",
+							"switch-xlink-successful (107)",
+							"nest xlink cards has been successfully switched",
+							"",
+							"Nest Config Error Codes used in GET RESPONSE Command (200..799)",
+							"err-general-nest-config-error (200)",
+							"Unknown nest configuration error occurred.",
+							"err-invalid-nest-type (201)",
+							"Configured nest type not in valid range",
+							"err-invalid-nest-command (202) ",
+							"Unrecognized nest command-action",
+							"err-invalid-nest-name (203)",
+							"Configured nest name too long",
+							"err-invalid-nest-alrm (204)",
+							"Configured nest alarm contacts not in valid range ",
+							"err-invalid-nest-ndr (205)",
+							"N+1 Redundancy not supported for nest ",
+							"err-invalid-nest-option (206)",
+							"Dual XCC/XLC or Dual SMC option not valid",
+							"err-cannot-delete-online-nest (207)",
+							"Nest cannot be online when deleting configuration",
+							"err-nest-not-present (208)",
+							"Nest not ready for command",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update-nest-config",
+							"2" : "delete-nest-config",
+							"3" : "switch-mgr-cards",
+							"4" : "reset-device-cards",
+							"5" : "clear-device-errors",
+							"6" : "switch-xcc-cards",
+							"7" : "switch-xlink-cards",
+							"101" : "update-successful",
+							"102" : "delete-successful",
+							"103" : "switch-mgr-successful",
+							"104" : "reset-successful",
+							"105" : "clear-successful",
+							"106" : "switch-xcc-successful",
+							"107" : "switch-xlink-successful",
+							"200" : "err-general-nest-config-error",
+							"201" : "err-invalid-nest-type",
+							"202" : "err-invalid-nest-command",
+							"203" : "err-invalid-nest-name",
+							"204" : "err-invalid-nest-alrm",
+							"205" : "err-invalid-nest-ndr",
+							"206" : "err-invalid-nest-option",
+							"207" : "err-cannot-delete-online-nest",
+							"208" : "err-nest-not-present",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-NEST-SYS-MIB::xNestCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.11.1.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The user defined name for this nest."
+						],
+						"name" : "ERI-DNX-NEST-SYS-MIB::xNestUnitName",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.11.1.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "ERI-DNX-NEST-SYS-MIB::dbSyncProgressTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap is used to notify a NMS that the system ",
+				"has either started or just completed the Database",
+				"synchronization process."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : ($v2==2) ? 2 : 3"
+				},
+				"EventType" : "dbSyncProgressTrap",
+				"ExpireTime" : {
+					"eval" : "($v2==1 || $v2==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==2) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Current status of System DB synchronization is $v2. Command-line status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ERI-DNX-NEST-SYS-MIB::dbSyncProgressTrap ERI-DNX-SMC-MIB::trapSequence c 9999 ERI-DNX-NEST-SYS-MIB::dbSyncStatus i 1 ERI-DNX-NEST-SYS-MIB::dbSyncCmdStatus i 0",
+			"trap" : {
+				"name" : "ERI-DNX-NEST-SYS-MIB::dbSyncProgressTrap",
+				"oid" : "1.3.6.1.4.1.644.2.4.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"A number used to identify the last generated trap ",
+							"message. This is also included in each Trap PDU",
+							"to help allow the NMS to realize if a trap has ",
+							"been missed."
+						],
+						"name" : "ERI-DNX-SMC-MIB::trapSequence",
+						"oid" : "1.3.6.1.4.1.644.2.4.3.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The current status of the System DB Synchronization."
+						],
+						"enums" : {
+							"1" : "inSync",
+							"2" : "notInSync",
+							"3" : "syncInProgress",
+							"4" : "autoSyncOff",
+							"5" : "standByNotPresent"
+						},
+						"name" : "ERI-DNX-NEST-SYS-MIB::dbSyncStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.12.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The command status for this DB Synchronization.",
+							"The value used in a SET will be replaced by a response",
+							"value in the GET RESPONSE indicating success or failure.",
+							"",
+							"Default Response State used in GET RESPONSE Command",
+							"ready-for-command (0)",
+							"initial default status for a row ",
+							"",
+							"DB Sync Commands used in SET Command (1..99) ",
+							"update (1)",
+							"Change the auto sync mode",
+							"startDBSync (2)",
+							"Starts the DB synchronization process",
+							"",
+							"Response States used in GET RESPONSE Command (100..199)",
+							"update-successful (101)",
+							"Auto Sync data has been successfully changed",
+							"sync-start-successful (102)",
+							"DB Sync process has been successfully started",
+							"sync-completed-successful (120)",
+							"DB Sync process has been successfully finished",
+							"",
+							"DB Sync Error Codes used in GET RESPONSE Command (200..799)",
+							"err-gen-dbsync-cfg-error (200)",
+							"Unknown DB Sync configuration error occurred.",
+							"err-standby-not-present (201)",
+							"DB Synchronization cannot be started without standby",
+							"systemManager Device.",
+							"err-dbsync-failed (202)",
+							"DB Synchronization process has failed",
+							"err-invalid-dbsync-command (203",
+							"Unrecognized DB Sync command action",
+							"err-invalid-dbsync-mode (204)",
+							"Unrecognized auto sync setting ",
+							"err-data-locked-by-another-user (450)",
+							"Another administrative user is making changes to this",
+							"part of the system via a terminal session. Check Event",
+							"Log for user name",
+							"err-snmp-parse-failed (500)",
+							"Agent could not parse variable",
+							"err-invalid-snmp-type (501)",
+							"Variable ASN type does not match Agent defined type ",
+							"err-invalid-snmp-var-size (502)",
+							"Variable size is too big"
+						],
+						"enums" : {
+							"0" : "ready-for-command",
+							"1" : "update",
+							"2" : "startDBSync",
+							"101" : "update-successful",
+							"102" : "sync-start-successful",
+							"120" : "sync-completed-successful",
+							"200" : "err-gen-dbsync-cfg-error",
+							"201" : "err-standby-not-present",
+							"202" : "err-dbsync-failed",
+							"203" : "err-invalid-dbsync-command",
+							"204" : "err-invalid-dbsync-mode",
+							"450" : "err-data-locked-by-another-user",
+							"500" : "err-snmp-parse-failed",
+							"501" : "err-invalid-snmp-type",
+							"502" : "err-invalid-snmp-var-size"
+						},
+						"name" : "ERI-DNX-NEST-SYS-MIB::dbSyncCmdStatus",
+						"oid" : "1.3.6.1.4.1.644.2.4.1.12.1.2.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

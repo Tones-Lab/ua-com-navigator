@@ -1,0 +1,101 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200509150000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-WDS-INFO-MIB::cwdsiLcpStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification will be sent when a LCP status",
+				"changes from 'down' to 'up' or from 'up' to 'down'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : 2"
+				},
+				"EventType" : "cwdsiLcpStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "LCP status is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WDS-INFO-MIB::cwdsiLcpStatusChange CISCO-WDS-INFO-MIB::cwdsiLcpStatus i 1",
+			"trap" : {
+				"name" : "CISCO-WDS-INFO-MIB::cwdsiLcpStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.509.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "down",
+							"2" : "up",
+							"3" : "inTransition"
+						},
+						"name" : "CISCO-WDS-INFO-MIB::cwdsiLcpStatus",
+						"oid" : "1.3.6.1.4.1.9.9.509.1.6.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WDS-INFO-MIB::cwdsiHsrpStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification will be sent when HSRP state",
+				"changes from 'standby' to 'active' or from 'active' to",
+				"'standby'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 8) ? 1 : 2"
+				},
+				"EventType" : "cwdsiHsrpStateChang",
+				"ExpireTime" : {
+					"eval" : "($v1 == 8) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 8) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "HSRP state is currently $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WDS-INFO-MIB::cwdsiHsrpStateChange CISCO-WDS-INFO-MIB::cwdsiHsrpState i 1",
+			"trap" : {
+				"name" : "CISCO-WDS-INFO-MIB::cwdsiHsrpStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.509.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "unknown",
+							"2" : "disabled",
+							"3" : "initial",
+							"4" : "learn",
+							"5" : "backup",
+							"6" : "speak",
+							"7" : "standby",
+							"8" : "active"
+						},
+						"name" : "CISCO-WDS-INFO-MIB::cwdsiHsrpState",
+						"oid" : "1.3.6.1.4.1.9.9.509.1.6.8",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

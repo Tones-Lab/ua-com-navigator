@@ -1,0 +1,473 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "MIB-Dell-OME::omeTestAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"Test alert forwarded from OM Essentials. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "omeTestAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "DeviceName:$v2",
+				"Summary" : "OME test alert : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIB-Dell-OME::omeTestAlert MIB-Dell-OME::omeAlertMessage s EXAMPLE MIB-Dell-OME::omeAlertDevice s EXAMPLE MIB-Dell-OME::omeAlertSeverity s EXAMPLE",
+			"trap" : {
+				"name" : "MIB-Dell-OME::omeTestAlert",
+				"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"Message in the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertMessage",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the device where alert originated."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDevice",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Original severity of the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertSeverity",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIB-Dell-OME::omeAlertSystemUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"System up message from OM Essentials. Sent when OM Essentials detects a device has come online."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "omeAlertSystemStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "DeviceName:$v2",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'System up'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIB-Dell-OME::omeAlertSystemUp MIB-Dell-OME::omeAlertMessage s EXAMPLE MIB-Dell-OME::omeAlertDevice s EXAMPLE",
+			"trap" : {
+				"name" : "MIB-Dell-OME::omeAlertSystemUp",
+				"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.0.1000",
+				"variables" : [
+					{
+						"description" : [
+							"Message in the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertMessage",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the device where alert originated."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDevice",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIB-Dell-OME::omeAlertSystemDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"System down message from OM Essentials. Sent when OM Essentials detects a device has gone offline. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "omeAlertSystemStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "DeviceName:$v2",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'System down'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIB-Dell-OME::omeAlertSystemDown MIB-Dell-OME::omeAlertMessage s EXAMPLE MIB-Dell-OME::omeAlertDevice s EXAMPLE",
+			"trap" : {
+				"name" : "MIB-Dell-OME::omeAlertSystemDown",
+				"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.0.1001",
+				"variables" : [
+					{
+						"description" : [
+							"Message in the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertMessage",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the device where alert originated."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDevice",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIB-Dell-OME::omeAlertForwardedAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"Forwarded alert from OM Essentials. The event may have originated as an SNMP trap or CIM indication to the OM Essentials Console. The alert format is normalized. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "omeAlertForwardedAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "DeviceName:$v2",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'Forwarded alert'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIB-Dell-OME::omeAlertForwardedAlert MIB-Dell-OME::omeAlertMessage s EXAMPLE MIB-Dell-OME::omeAlertDevice s EXAMPLE MIB-Dell-OME::omeAlertSeverity s EXAMPLE",
+			"trap" : {
+				"name" : "MIB-Dell-OME::omeAlertForwardedAlert",
+				"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.0.2000",
+				"variables" : [
+					{
+						"description" : [
+							"Message in the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertMessage",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the device where alert originated."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDevice",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Original severity of the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertSeverity",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIB-Dell-OME::omeAlertUnknownStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"System monitoring alert from Essentials. Sent when status of the remote device is Unknown. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "omeAlertStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 1,
+				"SubNode" : "DeviceName:$v2",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'System monitoring status is unknown'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIB-Dell-OME::omeAlertUnknownStatus MIB-Dell-OME::omeAlertMessage s EXAMPLE MIB-Dell-OME::omeAlertDevice s EXAMPLE MIB-Dell-OME::omeAlertDataSources s EXAMPLE MIB-Dell-OME::omeRawAlertInfo s EXAMPLE",
+			"trap" : {
+				"name" : "MIB-Dell-OME::omeAlertUnknownStatus",
+				"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.0.3001",
+				"variables" : [
+					{
+						"description" : [
+							"Message in the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertMessage",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the device where alert originated."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDevice",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"List of the data sources for which change in health status has been observed."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDataSources",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Message string capturing the overall status update indication. ",
+							"It is a combination of global status|agent Id,from status,to status ",
+							"('|' delimited further for each data source) attributes. Agent Id is a ",
+							"unique identifier for every data source. Global/from/to status attributes ",
+							"identify every health state (e.g. 2-Unknown, 4-OK, 8-Warning, 16-Critical). ",
+							"These attributes are integer type and are specific to OpenManage Essentials only. ",
+							"Format - <global-status>|<agentId-1>,<from-status>,<to-status>|... ",
+							"Example - 8|2,4,8|7,4,8"
+						],
+						"name" : "MIB-Dell-OME::omeRawAlertInfo",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIB-Dell-OME::omeAlertNormalStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"System monitoring alert from Essentials. Sent when status of the remote device is Normal. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "omeAlertStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "DeviceName:$v2",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'System monitoring is normal'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIB-Dell-OME::omeAlertNormalStatus MIB-Dell-OME::omeAlertMessage s EXAMPLE MIB-Dell-OME::omeAlertDevice s EXAMPLE MIB-Dell-OME::omeAlertDataSources s EXAMPLE MIB-Dell-OME::omeRawAlertInfo s EXAMPLE",
+			"trap" : {
+				"name" : "MIB-Dell-OME::omeAlertNormalStatus",
+				"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.0.3002",
+				"variables" : [
+					{
+						"description" : [
+							"Message in the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertMessage",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the device where alert originated."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDevice",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"List of the data sources for which change in health status has been observed."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDataSources",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Message string capturing the overall status update indication. ",
+							"It is a combination of global status|agent Id,from status,to status ",
+							"('|' delimited further for each data source) attributes. Agent Id is a ",
+							"unique identifier for every data source. Global/from/to status attributes ",
+							"identify every health state (e.g. 2-Unknown, 4-OK, 8-Warning, 16-Critical). ",
+							"These attributes are integer type and are specific to OpenManage Essentials only. ",
+							"Format - <global-status>|<agentId-1>,<from-status>,<to-status>|... ",
+							"Example - 8|2,4,8|7,4,8"
+						],
+						"name" : "MIB-Dell-OME::omeRawAlertInfo",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIB-Dell-OME::omeAlertWarningStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"System monitoring alert from Essentials. Sent when status of the remote device is Warning. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "omeAlertStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "DeviceName:$v2",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'System monitoring warning detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIB-Dell-OME::omeAlertWarningStatus MIB-Dell-OME::omeAlertMessage s EXAMPLE MIB-Dell-OME::omeAlertDevice s EXAMPLE MIB-Dell-OME::omeAlertDataSources s EXAMPLE MIB-Dell-OME::omeRawAlertInfo s EXAMPLE",
+			"trap" : {
+				"name" : "MIB-Dell-OME::omeAlertWarningStatus",
+				"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.0.3003",
+				"variables" : [
+					{
+						"description" : [
+							"Message in the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertMessage",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the device where alert originated."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDevice",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"List of the data sources for which change in health status has been observed."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDataSources",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Message string capturing the overall status update indication. ",
+							"It is a combination of global status|agent Id,from status,to status ",
+							"('|' delimited further for each data source) attributes. Agent Id is a ",
+							"unique identifier for every data source. Global/from/to status attributes ",
+							"identify every health state (e.g. 2-Unknown, 4-OK, 8-Warning, 16-Critical). ",
+							"These attributes are integer type and are specific to OpenManage Essentials only. ",
+							"Format - <global-status>|<agentId-1>,<from-status>,<to-status>|... ",
+							"Example - 8|2,4,8|7,4,8"
+						],
+						"name" : "MIB-Dell-OME::omeRawAlertInfo",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "MIB-Dell-OME::omeAlertCriticalStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"System monitoring alert from Essentials. Sent when status of the remote device is Critical. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "omeAlertStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "DeviceName:$v2",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'System monitoring status is critical'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD MIB-Dell-OME::omeAlertCriticalStatus MIB-Dell-OME::omeAlertMessage s EXAMPLE MIB-Dell-OME::omeAlertDevice s EXAMPLE MIB-Dell-OME::omeAlertDataSources s EXAMPLE MIB-Dell-OME::omeRawAlertInfo s EXAMPLE",
+			"trap" : {
+				"name" : "MIB-Dell-OME::omeAlertCriticalStatus",
+				"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.0.3004",
+				"variables" : [
+					{
+						"description" : [
+							"Message in the alert."
+						],
+						"name" : "MIB-Dell-OME::omeAlertMessage",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the device where alert originated."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDevice",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"List of the data sources for which change in health status has been observed."
+						],
+						"name" : "MIB-Dell-OME::omeAlertDataSources",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Message string capturing the overall status update indication. ",
+							"It is a combination of global status|agent Id,from status,to status ",
+							"('|' delimited further for each data source) attributes. Agent Id is a ",
+							"unique identifier for every data source. Global/from/to status attributes ",
+							"identify every health state (e.g. 2-Unknown, 4-OK, 8-Warning, 16-Critical). ",
+							"These attributes are integer type and are specific to OpenManage Essentials only. ",
+							"Format - <global-status>|<agentId-1>,<from-status>,<to-status>|... ",
+							"Example - 8|2,4,8|7,4,8"
+						],
+						"name" : "MIB-Dell-OME::omeRawAlertInfo",
+						"oid" : "1.3.6.1.4.1.674.11000.1000.100.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

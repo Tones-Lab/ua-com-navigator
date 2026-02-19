@@ -1,0 +1,138 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201002230000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapNewMaster",
+			"certification" : "STANDARD",
+			"description" : [
+				"The newMaster trap indicates that the sending agent",
+				"has transitioned to 'Master' state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "c07vrrpTrapNewMaster",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Agent $v1 has transitioned to 'Master' state for reason: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-VRRP-07-MIB::c07vrrpTrapNewMaster CISCO-IETF-VRRP-07-MIB::c07vrrpOperationsMasterIpAddr s EXAMPLE CISCO-IETF-VRRP-07-MIB::c07vrrpNewMasterReason i 0",
+			"trap" : {
+				"name" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapNewMaster",
+				"oid" : "1.3.6.1.4.1.9.10.143.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-VRRP-07-MIB::c07vrrpOperationsMasterIpAddr",
+						"oid" : "1.3.6.1.4.1.9.10.143.1.7.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"0" : "notmaster",
+							"1" : "priority",
+							"2" : "preempted",
+							"3" : "masterNoResponse"
+						},
+						"name" : "CISCO-IETF-VRRP-07-MIB::c07vrrpNewMasterReason",
+						"oid" : "1.3.6.1.4.1.9.10.143.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"A vrrpAuthFailure trap signifies that a packet has",
+				"been received from a router whose authentication key",
+				"or authentication type conflicts with this router's",
+				"authentication key or authentication type. Implementation",
+				"of this trap is optional.",
+				"This object is has been deprecated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "c07vrrpTrapAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "Auth Falure packet received from $v1: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-VRRP-07-MIB::c07vrrpTrapAuthFailure CISCO-IETF-VRRP-07-MIB::c07vrrpTrapPacketSrc a 192.168.2.1 CISCO-IETF-VRRP-07-MIB::c07vrrpTrapAuthErrorType i 1",
+			"trap" : {
+				"name" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapAuthFailure",
+				"oid" : "1.3.6.1.4.1.9.10.143.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapPacketSrc",
+						"oid" : "1.3.6.1.4.1.9.10.143.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"enums" : {
+							"1" : "invalidAuthType",
+							"2" : "authTypeMismatch",
+							"3" : "authFailure"
+						},
+						"name" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapAuthErrorType",
+						"oid" : "1.3.6.1.4.1.9.10.143.1.6",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapProtoError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The error trap indicates that the sending agent has",
+				"encountered the protocol error indicated by",
+				"vrrpTrapProtoErrorReason."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "c07vrrpTrapProtoError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Protocol error: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-VRRP-07-MIB::c07vrrpTrapProtoError CISCO-IETF-VRRP-07-MIB::c07vrrpTrapProtoErrReason i 0",
+			"trap" : {
+				"name" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapProtoError",
+				"oid" : "1.3.6.1.4.1.9.10.143.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "ipTtlError",
+							"1" : "versionError",
+							"2" : "checksumError",
+							"3" : "vridError"
+						},
+						"name" : "CISCO-IETF-VRRP-07-MIB::c07vrrpTrapProtoErrReason",
+						"oid" : "1.3.6.1.4.1.9.10.143.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

@@ -1,0 +1,281 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200601110000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "BGP4-MIB::bgpEstablished",
+			"certification" : "STANDARD",
+			"description" : [
+				"The BGP Established event is generated when",
+				"the BGP FSM enters the ESTABLISHED state."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<bgpPeerRemoteAddr>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "bgpPeerState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "bgpPeerRemoteAddr:$bgpPeerRemoteAddr",
+				"Summary" : "BGP peer FSM state: established"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BGP4-MIB::bgpEstablished BGP4-MIB::bgpPeerLastError s EX BGP4-MIB::bgpPeerState.192.168.112.10 i 1",
+			"trap" : {
+				"name" : "BGP4-MIB::bgpEstablished",
+				"oid" : "1.3.6.1.2.1.15.7.1",
+				"variables" : [
+					{
+						"description" : [
+							"The last error code and subcode seen by this",
+							"peer on this connection. If no error has",
+							"occurred, this field is zero. Otherwise, the",
+							"first byte of this two byte OCTET STRING",
+							"contains the error code, and the second byte",
+							"contains the subcode."
+						],
+						"name" : "BGP4-MIB::bgpPeerLastError",
+						"oid" : "1.3.6.1.2.1.15.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The BGP peer connection state."
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "connect",
+							"3" : "active",
+							"4" : "opensent",
+							"5" : "openconfirm",
+							"6" : "established"
+						},
+						"name" : "BGP4-MIB::bgpPeerState",
+						"oid" : "1.3.6.1.2.1.15.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "BGP4-MIB::bgpBackwardTransition",
+			"certification" : "STANDARD",
+			"description" : [
+				"The BGPBackwardTransition Event is generated",
+				"when the BGP FSM moves from a higher numbered",
+				"state to a lower numbered state."
+			],
+			"domain" : "FAULT",
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<bgpPeerRemoteAddr>[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "bgpPeerState",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v2==1) ? 4 : 3"
+				},
+				"SubNode" : "bgpPeerRemoteAddr:$bgpPeerRemoteAddr",
+				"Summary" : "BGP peer FSM state: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BGP4-MIB::bgpBackwardTransition BGP4-MIB::bgpPeerLastError s EX BGP4-MIB::bgpPeerState.192.168.112.10 i 1",
+			"trap" : {
+				"name" : "BGP4-MIB::bgpBackwardTransition",
+				"oid" : "1.3.6.1.2.1.15.7.2",
+				"variables" : [
+					{
+						"description" : [
+							"The last error code and subcode seen by this",
+							"peer on this connection. If no error has",
+							"occurred, this field is zero. Otherwise, the",
+							"first byte of this two byte OCTET STRING",
+							"contains the error code, and the second byte",
+							"contains the subcode."
+						],
+						"name" : "BGP4-MIB::bgpPeerLastError",
+						"oid" : "1.3.6.1.2.1.15.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The BGP peer connection state."
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "connect",
+							"3" : "active",
+							"4" : "opensent",
+							"5" : "openconfirm",
+							"6" : "established"
+						},
+						"name" : "BGP4-MIB::bgpPeerState",
+						"oid" : "1.3.6.1.2.1.15.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "BGP4-MIB::bgpEstablishedNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The bgpEstablishedNotification event is generated",
+				"when the BGP FSM enters the established state.",
+				"This Notification replaces the bgpEstablished",
+				"Notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "bgpPeerState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "bgpPeerRemoteAddr:$v1",
+				"Summary" : "BGP peer FSM state: established"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BGP4-MIB::bgpEstablishedNotification BGP4-MIB::bgpPeerRemoteAddr a 192.0.2.1 BGP4-MIB::bgpPeerLastError s EX BGP4-MIB::bgpPeerState i 6",
+			"trap" : {
+				"name" : "BGP4-MIB::bgpEstablishedNotification",
+				"oid" : "1.3.6.1.2.1.15.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The remote IP address of this entry's BGP",
+							"peer."
+						],
+						"name" : "BGP4-MIB::bgpPeerRemoteAddr",
+						"oid" : "1.3.6.1.2.1.15.3.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The last error code and subcode seen by this",
+							"peer on this connection. If no error has",
+							"occurred, this field is zero. Otherwise, the",
+							"first byte of this two byte OCTET STRING",
+							"contains the error code, and the second byte",
+							"contains the subcode."
+						],
+						"name" : "BGP4-MIB::bgpPeerLastError",
+						"oid" : "1.3.6.1.2.1.15.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The BGP peer connection state."
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "connect",
+							"3" : "active",
+							"4" : "opensent",
+							"5" : "openconfirm",
+							"6" : "established"
+						},
+						"name" : "BGP4-MIB::bgpPeerState",
+						"oid" : "1.3.6.1.2.1.15.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "BGP4-MIB::bgpBackwardTransNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"The bgpBackwardTransNotification event is",
+				"generated when the BGP FSM moves from a higher",
+				"numbered state to a lower numbered state.",
+				"This Notification replaces the",
+				"bgpBackwardsTransition Notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "bgpPeerState",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v3==1) ? 4 : 3"
+				},
+				"SubNode" : "bgpPeerRemoteAddr:$v1",
+				"Summary" : "BGP peer FSM state: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD BGP4-MIB::bgpBackwardTransNotification BGP4-MIB::bgpPeerRemoteAddr a 192.0.2.1 BGP4-MIB::bgpPeerLastError s EX BGP4-MIB::bgpPeerState i 1",
+			"trap" : {
+				"name" : "BGP4-MIB::bgpBackwardTransNotification",
+				"oid" : "1.3.6.1.2.1.15.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The remote IP address of this entry's BGP",
+							"peer."
+						],
+						"name" : "BGP4-MIB::bgpPeerRemoteAddr",
+						"oid" : "1.3.6.1.2.1.15.3.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The last error code and subcode seen by this",
+							"peer on this connection. If no error has",
+							"occurred, this field is zero. Otherwise, the",
+							"first byte of this two byte OCTET STRING",
+							"contains the error code, and the second byte",
+							"contains the subcode."
+						],
+						"name" : "BGP4-MIB::bgpPeerLastError",
+						"oid" : "1.3.6.1.2.1.15.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The BGP peer connection state."
+						],
+						"enums" : {
+							"1" : "idle",
+							"2" : "connect",
+							"3" : "active",
+							"4" : "opensent",
+							"5" : "openconfirm",
+							"6" : "established"
+						},
+						"name" : "BGP4-MIB::bgpPeerState",
+						"oid" : "1.3.6.1.2.1.15.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

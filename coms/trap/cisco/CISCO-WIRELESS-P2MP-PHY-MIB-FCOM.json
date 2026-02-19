@@ -1,0 +1,464 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200010221910Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRadioPhyFailNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A p2mpRadioPhyFailNotification is sent if the value of",
+				"p2mpLastPhyFailureType changes due to the new failure ",
+				"being detected in the Radio interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "p2mpRadioPhyFailNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 ne '') ? 'Physical failure $v1 detected due to $v2' : 'Physical failure $v1 detected'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRadioPhyFailNotification CISCO-WIRELESS-P2MP-PHY-MIB::p2mpLastPhyFailureType i 1 CISCO-WIRELESS-P2MP-PHY-MIB::p2mpLastPhyFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRadioPhyFailNotification",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "p2mpHwConfigUnsupported",
+							"3" : "p2mpHwConfigMismatch",
+							"4" : "p2mpHwInitFailure",
+							"5" : "p2mpHostIfCommLinkError",
+							"6" : "p2mpAutoCableCompFailure"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpLastPhyFailureType",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.1.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpLastPhyFailureReason",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.1.1.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfSupplyVoltage",
+			"certification" : "STANDARD",
+			"description" : [
+				"The supply voltage to the RF resource has changed. ",
+				"The p2mpRfSupplyVoltageState specifies whether the supply ",
+				"voltage is in spec or not."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "p2mpTrapRfSupplyVoltage",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Supply voltage to the RF resource has changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfSupplyVoltage CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfSupplyVoltageState i 1",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfSupplyVoltage",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "withinSpecification",
+							"2" : "outsideSpecification"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfSupplyVoltageState",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.2.1.1.13",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfRxOsc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The RF receive frequency oscillator has changed state.",
+				"The p2mpRfRxOscState specifies the current state of ",
+				"the oscillator."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "p2mpTrapRfRxOsc",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Frequency oscillator has changed state to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfRxOsc CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfRxOscState i 1",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfRxOsc",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "oscillatorOk",
+							"2" : "osccillatorBad"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfRxOscState",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.2.1.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfTxOsc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The RF transmit frequency oscillator has changed state.",
+				"The p2mpRfRxOscState specifies the state of the ",
+				"oscillator."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "p2mpTrapRfTxOsc",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "RF transmit frequency oscillator has changed state to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfTxOsc CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfTxOscState i 1",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfTxOsc",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "oscillatorOk",
+							"2" : "osccillatorBad"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfTxOscState",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.2.1.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfTemp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature of the RF module identified by p2mpRfIndex",
+				"has exceeded a defined reference."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "p2mpTrapRfTemp",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "The temperature of the RF module $v1 degrees exceeds limit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfTemp CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfTemperature i 99",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfTemp",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfTemperature",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.2.1.1.10",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfCommLinkError",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the host and the IF module cannot ",
+				"communicate with the RF resource identified by p2mpRfType."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "p2mpTrapRfCommLinkError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Host and the IF module cannot communicate with RF resource $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfCommLinkError CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfType i 0",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfCommLinkError",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "main",
+							"1" : "diversity"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfType",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapTxPower",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the transmit power for the RF resource ",
+				"identified by p2mpRfType exceeded a predefined threshold."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "p2mpTrapTxPower",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "Transmit power for the RF resource $v1 exceeded a predefined threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapTxPower CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfType i 0",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapTxPower",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.7",
+				"variables" : [
+					{
+						"enums" : {
+							"0" : "main",
+							"1" : "diversity"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfType",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.2.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"This trap indicates that the RF resource either came online(1)",
+				"or went offline(2). "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "p2mpTrapRfStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "RF resource is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfStatusChange CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfStatus i 1",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapRfStatusChange",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.8",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "online",
+							"2" : "offline"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpRfStatus",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.1.2.1.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfRxOsc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The IF receive frequency oscillator has changed state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "p2mpTrapHeIfRxOsc",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "IF receive frequency oscillator is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfRxOsc CISCO-WIRELESS-P2MP-PHY-MIB::p2mpHeIfRxOscState i 1",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfRxOsc",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.9",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "oscillatorOk",
+							"2" : "osccillatorBad"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpHeIfRxOscState",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.3.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfTxOsc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The IF transmit frequency oscillator has changed state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "p2mpTrapHeIfTxOsc",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "The IF transmit frequency oscillator is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfTxOsc CISCO-WIRELESS-P2MP-PHY-MIB::p2mpHeIfTxOscState i 1",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfTxOsc",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.10",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "oscillatorOk",
+							"2" : "osccillatorBad"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpHeIfTxOscState",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.3.2.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfExtRefOsc",
+			"certification" : "STANDARD",
+			"description" : [
+				"The IF Reference Frequency oscillator has changed state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "p2mpTrapHeIfExtRefOsc",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "The IF Reference Frequency oscillator is $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfExtRefOsc CISCO-WIRELESS-P2MP-PHY-MIB::p2mpHeIfRefOscState i 1",
+			"trap" : {
+				"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpTrapHeIfExtRefOsc",
+				"oid" : "1.3.6.1.4.1.9.9.170.2.0.11",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "oscillatorOk",
+							"2" : "osccillatorBad"
+						},
+						"name" : "CISCO-WIRELESS-P2MP-PHY-MIB::p2mpHeIfRefOscState",
+						"oid" : "1.3.6.1.4.1.9.9.170.1.3.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

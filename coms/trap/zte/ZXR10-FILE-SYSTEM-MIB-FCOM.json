@@ -1,0 +1,144 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201504140000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyCompletion",
+			"certification" : "STANDARD",
+			"description" : [
+				"A copyCompletion trap is sent at the completion",
+				"of a config-copy request. The copyFailCause is not",
+				"instantiated, and hence not included in a trap, when ",
+				"the copyState is success."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 4) ? 2 : ($v5 == 3) ? 1 : 3"
+				},
+				"EventType" : "zxr10FSCopyCompletion",
+				"ExpireTime" : {
+					"eval" : "($v5 == 4) ? 86400 : ($v5 == 3) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v5 == 4) ? 5 : ($v5 == 3) ? 0 : 2"
+				},
+				"SubNode" : "zxr10FSCopySrcCpuNode:$v2",
+				"Summary" : {
+					"eval" : "($v5==4) ? 'Config-copy failed due to $v8' : 'Config-copy status : $v5'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyCompletion ZXR10-FILE-SYSTEM-MIB::zxr10FSCopySrcFileName s EXAMPLE ZXR10-FILE-SYSTEM-MIB::zxr10FSCopySrcCpuNode s EXAMPLE ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyDstFileName s EXAMPLE ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyDstCpuNode s EXAMPLE ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyState i 1 ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyTimeStarted t 31536000 ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyTimeCompleted t 31536000 ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyFailCause i 1",
+			"trap" : {
+				"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyCompletion",
+				"oid" : "1.3.6.1.4.1.3902.3.6000.5.5.1",
+				"variables" : [
+					{
+						"description" : [
+							"The source file name (including the path, if applicable) of",
+							"the file. This object must be created when either the",
+							"copySourceFileType or copyDestFileType has the value",
+							"networkFile or localFile."
+						],
+						"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopySrcFileName",
+						"oid" : "1.3.6.1.4.1.3902.3.6000.5.4.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The cpu-node of source file."
+						],
+						"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopySrcCpuNode",
+						"oid" : "1.3.6.1.4.1.3902.3.6000.5.4.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The destination file name (including the path, if applicable) of",
+							"the file. This object must be created when either the",
+							"copySourceFileType or copyDestFileType has the value",
+							"networkFile or localFile."
+						],
+						"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyDstFileName",
+						"oid" : "1.3.6.1.4.1.3902.3.6000.5.4.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The cpu-node of destination file."
+						],
+						"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyDstCpuNode",
+						"oid" : "1.3.6.1.4.1.3902.3.6000.5.4.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Specifies the state of this config-copy request.",
+							"This value of this object is instantiated only after ",
+							"the row has been instantiated, i.e. after the ",
+							"copyEntryRowStatus has been made active."
+						],
+						"enums" : {
+							"1" : "waiting",
+							"2" : "running",
+							"3" : "successful",
+							"4" : "failed"
+						},
+						"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyState",
+						"oid" : "1.3.6.1.4.1.3902.3.6000.5.4.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies the time the copyState last transitioned",
+							"to running, or 0 if the state has never transitioned to",
+							"running (for e.g., stuck in waiting state).",
+							"This object is instantiated only after the row has been",
+							"instantiated."
+						],
+						"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyTimeStarted",
+						"oid" : "1.3.6.1.4.1.3902.3.6000.5.4.1.8",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"Specifies the time the copyState last transitioned",
+							"from running to successful or failed states. This",
+							"object is instantiated only after the row has been ",
+							"instantiated.",
+							"Its value will remain 0 until he request has completed."
+						],
+						"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyTimeCompleted",
+						"oid" : "1.3.6.1.4.1.3902.3.6000.5.4.1.9",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The reason why the config-copy operation failed.",
+							"This object is instantiated only when the copyState ",
+							"for this entry is in the failed state."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "badFileName",
+							"3" : "fileNameTooLong",
+							"4" : "fileLevelTooLong",
+							"5" : "fileOprForbid",
+							"6" : "srcNotExist",
+							"7" : "dstExist",
+							"8" : "dstDirNotExist"
+						},
+						"name" : "ZXR10-FILE-SYSTEM-MIB::zxr10FSCopyFailCause",
+						"oid" : "1.3.6.1.4.1.3902.3.6000.5.4.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

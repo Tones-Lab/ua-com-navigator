@@ -1,0 +1,83 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201305230000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HPN-ICF-FLASH-MAN-MIB::hpnicfFlhOperNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A hpnicfFlhOperNotification is sent at the completion of a flash",
+				"copy operation if hpnicfFlhOperEndNotification is true.",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : ($v1==2) ? 1 : 2"
+				},
+				"EventType" : "hpnicfFlhOperNotification",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : ($v1==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : ($v1==2) ? 0 : ($v1==16 || $v1==19 || $v1==28 || $v1==29 || $v1==30 || $v1==31) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Status of operation: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPN-ICF-FLASH-MAN-MIB::hpnicfFlhOperNotification HPN-ICF-FLASH-MAN-MIB::hpnicfFlhOperStatus i 1",
+			"trap" : {
+				"name" : "HPN-ICF-FLASH-MAN-MIB::hpnicfFlhOperNotification",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.5.1.3.1",
+				"variables" : [
+					{
+						"description" : [
+							"The status of operation."
+						],
+						"enums" : {
+							"1" : "opInProgress",
+							"2" : "opSuccess",
+							"3" : "opInvalid",
+							"4" : "opInvalidProtocol",
+							"5" : "opInvalidSourceName",
+							"6" : "opInvalidDestName",
+							"7" : "opInvalidServerAddress",
+							"8" : "opDeviceBusy",
+							"9" : "opDeviceOpenError",
+							"10" : "opDeviceError",
+							"11" : "opDeviceNotProgrammable",
+							"12" : "opDeviceFull",
+							"13" : "opFileOpenError",
+							"14" : "opFileTransferError",
+							"15" : "opFileChecksumError",
+							"16" : "opNoMemory",
+							"17" : "opAuthFail",
+							"18" : "opTimeout",
+							"19" : "opUnknownFailure",
+							"20" : "opDeleteFileOpenError",
+							"21" : "opDeleteInvalidDevice",
+							"22" : "opDeleteInvalidFunction",
+							"23" : "opDeleteOperationError",
+							"24" : "opDeleteInvalidFileName",
+							"25" : "opDeleteDeviceBusy",
+							"26" : "opDeleteParaError",
+							"27" : "opDeleteInvalidPath",
+							"28" : "opDeleteFileNotExistInSlave",
+							"29" : "opDeleteFileFailedInSlave",
+							"30" : "opSlaveFull",
+							"31" : "opCopyToSlaveFailure"
+						},
+						"name" : "HPN-ICF-FLASH-MAN-MIB::hpnicfFlhOperStatus",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.15.2.5.1.2.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

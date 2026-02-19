@@ -1,0 +1,70 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200812090000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HP-ICF-SNMP-MIB::hpicfSnmpAuthFail",
+			"certification" : "STANDARD",
+			"description" : [
+				"The switch sends this notification when an SNMP ",
+				"SET command fails at the authorization check stage.",
+				"This notification applies to SETs within the hpicf tree that ",
+				"are network security related. This object is controlled",
+				"by hpicfSnmpAuthNotifyEnable"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hpicfSnmpAuthFail",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "IPAddress:$v3",
+				"Summary" : "SNMP authentication failed (count:$v1) on switch($v3)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HP-ICF-SNMP-MIB::hpicfSnmpAuthFail HP-ICF-SNMP-MIB::hpicfSnmpAuthFailCount c 9999 HP-ICF-SNMP-MIB::hpicfSnmpAuthFailIPType i 0 HP-ICF-SNMP-MIB::hpicfSnmpAuthFailIP s EXAMPLE",
+			"trap" : {
+				"name" : "HP-ICF-SNMP-MIB::hpicfSnmpAuthFail",
+				"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.38.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A count of SNMP authorization failures detected by the SNMP entity."
+						],
+						"name" : "HP-ICF-SNMP-MIB::hpicfSnmpAuthFailCount",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.38.1.2.1",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Type of IP address contained in hpicfSnmpAuthFailIP."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "HP-ICF-SNMP-MIB::hpicfSnmpAuthFailIPType",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.38.1.2.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"IP address of sender of message that failed authentication."
+						],
+						"name" : "HP-ICF-SNMP-MIB::hpicfSnmpAuthFailIP",
+						"oid" : "1.3.6.1.4.1.11.2.14.11.5.1.38.1.2.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

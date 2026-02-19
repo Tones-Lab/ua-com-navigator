@@ -1,0 +1,626 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200809170955Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SHE-TSSM-MIB::sheTssmControlResult",
+			"certification" : "STANDARD",
+			"description" : [
+				"Notification sent at the end of long running command.",
+				"The possible values of sheTssmControlReqResult are:",
+				"wrongIpAddress(2), -- IP address of FTP servre is incorrect",
+				"wrongUserPassword(3), -- The user name or password is wrong",
+				"permissionDenied(4), -- The user name has no permission to create dir/file",
+				"commandSucceeded(37)",
+				""
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheTssmControlResult",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v3==1 || $v3==30 || $v3==32 || $v3==37) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "TSSM control request $v2 result: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-TSSM-MIB::sheTssmControlResult SHE-TSSM-MIB::sheTssmControlTimeStamp u 9999 SHE-TSSM-MIB::sheTssmControlRequest i 1 SHE-TSSM-MIB::sheTssmControlReqResult i 37",
+				"$SNMPTRAPCMD SHE-TSSM-MIB::sheTssmControlResult SHE-TSSM-MIB::sheTssmControlTimeStamp u 9999 SHE-TSSM-MIB::sheTssmControlRequest i 1 SHE-TSSM-MIB::sheTssmControlReqResult i 34"
+			],
+			"trap" : {
+				"name" : "SHE-TSSM-MIB::sheTssmControlResult",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.2.1.1",
+				"variables" : [
+					{
+						"description" : [
+							"The time stamp of the last command (end of command)."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmControlTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.2.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Command (setTssmGlobalParameters) to configure the global TSSM",
+							"parameters. It must be the last member in the varBindList of",
+							"the SNMP set request. The parameters of this command are:",
+							"sheTssmControlFtpRootDir",
+							"sheTssmControlFtpIp",
+							"sheTssmControlFtpUser",
+							"sheTssmControlFtpPassword",
+							"sheTssmControlUploadInterval",
+							"sheTssmControlUploadEnabled",
+							"sheTssmControlLogEnabled",
+							"sheTssmControlMissTargetRateCriteria",
+							"They are optional in the varBindList of set PDU, but at least one",
+							"of them should be there.",
+							"Notifications:",
+							"sheTssmControlResult at the command ending in case of long running command.",
+							"The long running command refers to the case that sheTssmUploadEnabled",
+							"is changed from disable to enable. NE will verify the FTP connection at the",
+							"enabling moment. Besides, the RootDir is created if it does not exist yet.",
+							"EM should GET sheTssmControlReqResult when the Response of the SET PDU",
+							"is received, and the error status is noError. If the value of",
+							"sheTssmControlReqResult is comExecStarted(30), which means the SET operation",
+							"is a long running command, EM must issue another GET operation on",
+							"sheTssmControlTimer. A timer should start on EM with the expire time equals",
+							"to the value of sheTssmControlTimer. The sheTssmControlResult trap is expected",
+							"to reach EM within the specified time.",
+							"When the trap is received by EM, EM can optionally GET",
+							"sheTssmControlReqResult, sheTssmControlStatus, and sheTssmControlTimeStamp.",
+							""
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"2" : "setTssmGlobalParameters",
+							"3" : "setTssmPortParameters"
+						},
+						"name" : "SHE-TSSM-MIB::sheTssmControlRequest",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.2.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The result of the last user command."
+						],
+						"enums" : {
+							"1" : "noRequest",
+							"2" : "wrongIpAddress",
+							"3" : "wrongUserPassword",
+							"4" : "permissionDenied",
+							"30" : "comExecStarted",
+							"31" : "paramFaulty",
+							"32" : "requestBusy",
+							"34" : "setDataFailed",
+							"35" : "aswTimeout",
+							"36" : "commandFailed",
+							"37" : "commandSucceeded"
+						},
+						"name" : "SHE-TSSM-MIB::sheTssmControlReqResult",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.2.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-TSSM-MIB::sheTssmUploadFailedTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that an FTP upload failure occurred."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sheTssmUploadFailedTrap",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==1) ? 2 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'FTP upload succeeded' : 'FTP upload failed: $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD SHE-TSSM-MIB::sheTssmUploadFailedTrap SHE-TSSM-MIB::sheTssmLastUploadStatus i 1 SHE-TSSM-MIB::sheTssmLastUploadTimeStamp t 31536000 SHE-TSSM-MIB::sheTssmLastUploadFileName s EXAMPLE SHE-TSSM-MIB::sheTssmLastUploadErrorString s EXAMPLE",
+				"$SNMPTRAPCMD SHE-TSSM-MIB::sheTssmUploadFailedTrap SHE-TSSM-MIB::sheTssmLastUploadStatus i 2 SHE-TSSM-MIB::sheTssmLastUploadTimeStamp t 31536000 SHE-TSSM-MIB::sheTssmLastUploadFileName s EXAMPLE SHE-TSSM-MIB::sheTssmLastUploadErrorString s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "SHE-TSSM-MIB::sheTssmUploadFailedTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.2.1.2",
+				"variables" : [
+					{
+						"description" : [
+							"The status of last FTP upload operation.",
+							"It could be uploadSuccess(1) or uploadFail(2)."
+						],
+						"enums" : {
+							"1" : "uploadSuccess",
+							"2" : "uploadFail"
+						},
+						"name" : "SHE-TSSM-MIB::sheTssmLastUploadStatus",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp of the last FTP upload operation",
+							"(end of operation)."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastUploadTimeStamp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.3.2",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The file name of last FTP upload operation."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastUploadFileName",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.3.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The text that describes the FTP upload failure. If",
+							"upload succeeded, this string is empty."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastUploadErrorString",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.3.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-TSSM-MIB::sheTssmMissTargetRateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates that the stable link rate does not meet the target rate on",
+				"the ADSL port specified by ifIndex. The EM will show an alarm on this port.",
+				"The corresponding parameters are included in the trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "sheTssmTargetRateStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Stable link rate has not reached target rate"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-TSSM-MIB::sheTssmMissTargetRateTrap IF-MIB::ifIndex i 9999 SHE-TSSM-MIB::sheTssmMissTargetRateCriteria i 1 SHE-TSSM-MIB::sheTssmLastLinkUpLogLinkTime s EXAMPLEE SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTxRate u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTxRate u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucSnrMgn i -640 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturSnrMgn i -640 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucAtn u 0 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturAtn u 0 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucAttainableRate u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturAttainableRate u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogConfiguredRateDown u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogConfiguredRateUp u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucChanInterleaveDelay u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturChanInterleaveDelay u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTargetSnrMgn i 0 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTargetSnrMgn i 0 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTxRateThreshold u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTxRateThreshold u 9999",
+			"trap" : {
+				"name" : "SHE-TSSM-MIB::sheTssmMissTargetRateTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.2.1.3",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The criteria of when the miss tartget rate trap should",
+							"be sent."
+						],
+						"enums" : {
+							"1" : "missUpOrDownTargetRate",
+							"2" : "missUpTargetRate",
+							"3" : "missDownTargetRate"
+						},
+						"name" : "SHE-TSSM-MIB::sheTssmMissTargetRateCriteria",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time when the link up happened last time on this port."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogLinkTime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The stable downstream transmit rate on the channel.",
+							"It is the value of sheAdslAtucChanCurrTxRate when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTxRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The stable upstream transmit rate on the channel. It is the",
+							"value of sheAdslAturChanCurrTxRate when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTxRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Noise Margin as seen by this ATU with respect to its",
+							"received signal in tenth dB. It is the value of",
+							"sheAdslAtucPhysCurrSnrMgn when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucSnrMgn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Noise Margin as seen by this ATU with respect to its",
+							"received signal in tenth dB. It is the value of",
+							"sheAdslAturPhysCurrSnrMgn when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturSnrMgn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Measured difference in the total power transmitted by",
+							"the peer ATU and the total power received by this ATU.",
+							"It is the value of sheAdslAtucPhysCurrAtn when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucAtn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.6",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Measured difference in the total power transmitted by",
+							"the peer ATU and the total power received by this ATU.",
+							"It is the value of sheAdslAturPhysCurrAtn when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturAtn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.7",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Indicates the maximum attainable data rate by the ATU.",
+							"It is the value of sheAdslAtucPhysCurrAttainableRate",
+							"when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucAttainableRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.8",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Indicates the maximum attainable data rate by the ATU.",
+							"It is the value of sheAdslAturPhysCurrAttainableRate",
+							"when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturAttainableRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.9",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Configured downstream transmit rate for the channel on this line, in kbps.",
+							"It is the value of sheAdslLineConfProfileAtucChanConfFastMaxTxRate or",
+							"sheAdslLineConfProfileAtucChanConfInterleaveMaxTxRate, depending on",
+							"the mode of the channel is fast or interleave.",
+							""
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogConfiguredRateDown",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.16",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Configured upstream transmit rate for the channel on this line, in kbps.",
+							"It is the value of sheAdslLineConfProfileAturChanConfFastMaxTxRate or",
+							"sheAdslLineConfProfileAturChanConfInterleaveMaxTxRate, depending on",
+							"the mode of the channel is fast or interleave."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogConfiguredRateUp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.17",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Interleave Delay for this channel. It is the value of",
+							"sheAdslAtucChanInterleaveDelay when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucChanInterleaveDelay",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.12",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Interleave Delay for this channel. It is the value of",
+							"sheAdslAturChanInterleaveDelay when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturChanInterleaveDelay",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.13",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Configured Target Signal/Noise Margin on this line.",
+							"It is the value of sheAdslLineConfProfileAtucConfTargetSnrMgn",
+							"when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTargetSnrMgn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Configured Target Signal/Noise Margin on this line.",
+							"It is the value of sheAdslLineConfProfileAturConfTargetSnrMgn",
+							"when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTargetSnrMgn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The configured threshold of downstream transmit rate on the channel."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTxRateThreshold",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.10",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The configured threshold of upstream transmit rate on the channel."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTxRateThreshold",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.11",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SHE-TSSM-MIB::sheTssmReachTargetRateTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"If at last time, the ADSL port that specified by ifIndex missed the target",
+				"rate, and the sheTssmMissTargetRateTrap was sent, but it met the target rate",
+				"at this link up, this trap is sent. The EM can clear the alarm then.",
+				"The corresponding parameters are included in the trap."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "sheTssmTargetRateStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Stable link rate has reached target rate"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SHE-TSSM-MIB::sheTssmReachTargetRateTrap IF-MIB::ifIndex i 9999 SHE-TSSM-MIB::sheTssmMissTargetRateCriteria i 1 SHE-TSSM-MIB::sheTssmLastLinkUpLogLinkTime s EXAMPLEE SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTxRate u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTxRate u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucSnrMgn i -640 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturSnrMgn i -640 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucAtn u 0 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturAtn u 0 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucAttainableRate u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturAttainableRate u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogConfiguredRateDown u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogConfiguredRateUp u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucChanInterleaveDelay u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturChanInterleaveDelay u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTargetSnrMgn i 0 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTargetSnrMgn i 0 SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTxRateThreshold u 9999 SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTxRateThreshold u 9999",
+			"trap" : {
+				"name" : "SHE-TSSM-MIB::sheTssmReachTargetRateTrap",
+				"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.2.1.4",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The criteria of when the miss tartget rate trap should",
+							"be sent."
+						],
+						"enums" : {
+							"1" : "missUpOrDownTargetRate",
+							"2" : "missUpTargetRate",
+							"3" : "missDownTargetRate"
+						},
+						"name" : "SHE-TSSM-MIB::sheTssmMissTargetRateCriteria",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time when the link up happened last time on this port."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogLinkTime",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The stable downstream transmit rate on the channel.",
+							"It is the value of sheAdslAtucChanCurrTxRate when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTxRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.2",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The stable upstream transmit rate on the channel. It is the",
+							"value of sheAdslAturChanCurrTxRate when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTxRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.3",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Noise Margin as seen by this ATU with respect to its",
+							"received signal in tenth dB. It is the value of",
+							"sheAdslAtucPhysCurrSnrMgn when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucSnrMgn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Noise Margin as seen by this ATU with respect to its",
+							"received signal in tenth dB. It is the value of",
+							"sheAdslAturPhysCurrSnrMgn when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturSnrMgn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Measured difference in the total power transmitted by",
+							"the peer ATU and the total power received by this ATU.",
+							"It is the value of sheAdslAtucPhysCurrAtn when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucAtn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.6",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Measured difference in the total power transmitted by",
+							"the peer ATU and the total power received by this ATU.",
+							"It is the value of sheAdslAturPhysCurrAtn when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturAtn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.7",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Indicates the maximum attainable data rate by the ATU.",
+							"It is the value of sheAdslAtucPhysCurrAttainableRate",
+							"when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucAttainableRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.8",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Indicates the maximum attainable data rate by the ATU.",
+							"It is the value of sheAdslAturPhysCurrAttainableRate",
+							"when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturAttainableRate",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.9",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Configured downstream transmit rate for the channel on this line, in kbps.",
+							"It is the value of sheAdslLineConfProfileAtucChanConfFastMaxTxRate or",
+							"sheAdslLineConfProfileAtucChanConfInterleaveMaxTxRate, depending on",
+							"the mode of the channel is fast or interleave.",
+							""
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogConfiguredRateDown",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.16",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Configured upstream transmit rate for the channel on this line, in kbps.",
+							"It is the value of sheAdslLineConfProfileAturChanConfFastMaxTxRate or",
+							"sheAdslLineConfProfileAturChanConfInterleaveMaxTxRate, depending on",
+							"the mode of the channel is fast or interleave."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogConfiguredRateUp",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.17",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Interleave Delay for this channel. It is the value of",
+							"sheAdslAtucChanInterleaveDelay when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucChanInterleaveDelay",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.12",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Interleave Delay for this channel. It is the value of",
+							"sheAdslAturChanInterleaveDelay when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturChanInterleaveDelay",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.13",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"Configured Target Signal/Noise Margin on this line.",
+							"It is the value of sheAdslLineConfProfileAtucConfTargetSnrMgn",
+							"when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTargetSnrMgn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Configured Target Signal/Noise Margin on this line.",
+							"It is the value of sheAdslLineConfProfileAturConfTargetSnrMgn",
+							"when the link up is stable."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTargetSnrMgn",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The configured threshold of downstream transmit rate on the channel."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAtucTxRateThreshold",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.10",
+						"valueType" : "GAUGE"
+					},
+					{
+						"description" : [
+							"The configured threshold of upstream transmit rate on the channel."
+						],
+						"name" : "SHE-TSSM-MIB::sheTssmLastLinkUpLogAturTxRateThreshold",
+						"oid" : "1.3.6.1.4.1.231.7.1.2.2.1.34.1.6.1.11",
+						"valueType" : "GAUGE"
+					}
+				]
+			}
+		}
+	]
+}

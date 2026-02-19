@@ -1,0 +1,1580 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201203290000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfVirtIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when the state of a virtual",
+				"interface changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcOspfVirtIfStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 4 : (($v4 == 3 || $v4 == 6 || $v4 == 7) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Virtual interface state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfVirtIfStateChange DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtIfAreaId a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtIfNeighbor a 192.0.2.1 DC-OSPF-MIB::ospfPmVirtIfState i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfVirtIfStateChange",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtIfAreaId used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtIfAreaId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtIfNeighbor used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtIfNeighbor",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"OSPF virtual interface state."
+						],
+						"enums" : {
+							"1" : "ifDown",
+							"2" : "ifLoopback",
+							"3" : "ifWaiting",
+							"4" : "ifPointToPoint",
+							"5" : "ifDesignatedRouter",
+							"6" : "ifBackupDesignatedRouter",
+							"7" : "ifOtherDesignatedRouter",
+							"8" : "ifStandby"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmVirtIfState",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.9.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfNbrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when the state of a neighbor",
+				"changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "(($v5 == 1) || ($v5 == 8)) ? 2 : ($v5 == 5) ? 1 : 3"
+				},
+				"EventType" : "dcOspfNbrStateChange",
+				"ExpireTime" : {
+					"eval" : "(($v5 == 1) || ($v5 == 8)) ? 86400 : ($v5 == 5) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v5 == 1) ? 4 : ($v5 == 5) ? 0 : ($v5 == 8) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "State of a neighbor changed to $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfNbrStateChange DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapNbrIpAddr a 192.0.2.1 DC-OSPF-MIB::ospfTrapNbrAddressLessIndex i 9999 DC-OSPF-MIB::ospfPmNbrRtrId a 192.0.2.1 DC-OSPF-MIB::ospfPmNbrState i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfNbrStateChange",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmNbrIpAddr used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapNbrIpAddr",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmNbrAddressLessIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapNbrAddressLessIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A 32-bit integer (represented as a type",
+							"IpAddress) uniquely identifying the neighboring",
+							"router in the Autonomous System."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmNbrRtrId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.10.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The State of the relationship with this Neighbor."
+						],
+						"enums" : {
+							"1" : "nbrDown",
+							"2" : "nbrAttempt",
+							"3" : "nbrInit",
+							"4" : "nbrTwoWay",
+							"5" : "nbrExchangeStart",
+							"6" : "nbrExchange",
+							"7" : "nbrLoading",
+							"8" : "nbrFull"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmNbrState",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.10.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfVirtNbrStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when the state of a virtual",
+				"neighbor changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "(($v4 == 1) || ($v4 == 8)) ? 2 : ($v4 == 5) ? 1 : 3"
+				},
+				"EventType" : "dcOspfVirtNbrStateChange",
+				"ExpireTime" : {
+					"eval" : "(($v4 == 1) || ($v4 == 8)) ? 86400 : ($v4 == 5) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 4 : ($v4 == 5) ? 0 : ($v4 == 8) ? 3 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Virtual neighbor state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfVirtNbrStateChange DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtNbrArea a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtNbrRtrId a 192.0.2.1 DC-OSPF-MIB::ospfPmVirtNbrState i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfVirtNbrStateChange",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtNbrArea used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtNbrArea",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.9",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtNbrRtrId used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtNbrRtrId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.10",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The state of the Virtual Neighbor Relationship."
+						],
+						"enums" : {
+							"1" : "nbrDown",
+							"2" : "nbrAttempt",
+							"3" : "nbrInit",
+							"4" : "nbrTwoWay",
+							"5" : "nbrExchangeStart",
+							"6" : "nbrExchange",
+							"7" : "nbrLoading",
+							"8" : "nbrFull"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmVirtNbrState",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.11.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfIfConfigError",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when a packet is received",
+				"matched to a network interface and then dropped because of",
+				"mismatching configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcOspfIfConfigError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Packet configuration mismatched and dropped, config error type $v5, packet type $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfIfConfigError DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapIfIpAddress a 192.0.2.1 DC-OSPF-MIB::ospfTrapAddressLessIf i 9999 DC-OSPF-MIB::ospfPacketSrc a 192.0.2.1 DC-OSPF-MIB::ospfConfigErrorType i 1 DC-OSPF-MIB::ospfPacketType i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999 DC-OSPF-MIB::ospfTrapNmEntIndexValid i 1 DC-OSPF-MIB::ospfTrapNmEntIndex u 9999 DC-OSPF-MIB::ospfPmIfState i 1",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfIfConfigError",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmIfIpAddress used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapIfIpAddress",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.13",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmAddressLessIf used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapAddressLessIf",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The IP address of an inbound packet that cannot",
+							"be identified by a neighbor instance. When",
+							"the last value of a trap using this object is",
+							"needed, but no traps of that type have been sent",
+							"this value pertaining to this object should",
+							"be returned as 0.0.0.0."
+						],
+						"name" : "DC-OSPF-MIB::ospfPacketSrc",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and",
+							"ospfConfigVirtError traps. When the last value",
+							"of a trap using this object is needed, but no",
+							"traps of that type have been sent, this value",
+							"pertaining to this object should be returned as",
+							"noError."
+						],
+						"enums" : {
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch",
+							"11" : "mtuMismatch",
+							"12" : "duplicateRouterId",
+							"14" : "badPacket",
+							"15" : "nbrAdminDown",
+							"16" : "changedRouterId",
+							"19" : "packetFromLclAddr"
+						},
+						"name" : "DC-OSPF-MIB::ospfConfigErrorType",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types. When the last value of a trap",
+							"using this object is needed, but no traps of",
+							"that type have been sent, this value pertaining",
+							"to this object should be returned as nullPacket."
+						],
+						"enums" : {
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "DC-OSPF-MIB::ospfPacketType",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Whether the trap was generated by OSPF-NM or not."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DC-OSPF-MIB::ospfTrapNmEntIndexValid",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfNmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapNmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The OSPF Interface State."
+						],
+						"enums" : {
+							"1" : "ifDown",
+							"2" : "ifLoopback",
+							"3" : "ifWaiting",
+							"4" : "ifPointToPoint",
+							"5" : "ifDesignatedRouter",
+							"6" : "ifBackupDesignatedRouter",
+							"7" : "ifOtherDesignatedRouter",
+							"8" : "ifStandby"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmIfState",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.7.1.12",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfVirtIfConfigError",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when a packet is received",
+				"matched to a virtual interface and then dropped because of",
+				"mismatching configuration."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcOspfVirtIfConfigError",
+				"ExpireTime" : 36400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Packet dropped due to mismatched configuration, config error of type $v4, packet type $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfVirtIfConfigError DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtIfAreaId a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtIfNeighbor a 192.0.2.1 DC-OSPF-MIB::ospfConfigErrorType i 1 DC-OSPF-MIB::ospfPacketType i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999 DC-OSPF-MIB::ospfTrapNmEntIndexValid i 1 DC-OSPF-MIB::ospfTrapNmEntIndex u 9999 DC-OSPF-MIB::ospfPmVirtIfState i 1",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfVirtIfConfigError",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtIfAreaId used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtIfAreaId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtIfNeighbor used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtIfNeighbor",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and",
+							"ospfConfigVirtError traps. When the last value",
+							"of a trap using this object is needed, but no",
+							"traps of that type have been sent, this value",
+							"pertaining to this object should be returned as",
+							"noError."
+						],
+						"enums" : {
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch",
+							"11" : "mtuMismatch",
+							"12" : "duplicateRouterId",
+							"14" : "badPacket",
+							"15" : "nbrAdminDown",
+							"16" : "changedRouterId",
+							"19" : "packetFromLclAddr"
+						},
+						"name" : "DC-OSPF-MIB::ospfConfigErrorType",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types. When the last value of a trap",
+							"using this object is needed, but no traps of",
+							"that type have been sent, this value pertaining",
+							"to this object should be returned as nullPacket."
+						],
+						"enums" : {
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "DC-OSPF-MIB::ospfPacketType",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Whether the trap was generated by OSPF-NM or not."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "DC-OSPF-MIB::ospfTrapNmEntIndexValid",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.11",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfNmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapNmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"OSPF virtual interface state."
+						],
+						"enums" : {
+							"1" : "ifDown",
+							"2" : "ifLoopback",
+							"3" : "ifWaiting",
+							"4" : "ifPointToPoint",
+							"5" : "ifDesignatedRouter",
+							"6" : "ifBackupDesignatedRouter",
+							"7" : "ifOtherDesignatedRouter",
+							"8" : "ifStandby"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmVirtIfState",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.9.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfIfAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when a packet is received that",
+				"fails to authenticate over a network interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcOspfIfAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Packet authentication failed on network interface, config error of type $v5, packet type $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfIfAuthFailure DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapIfIpAddress a 192.0.2.1 DC-OSPF-MIB::ospfTrapAddressLessIf i 9999 DC-OSPF-MIB::ospfPacketSrc a 192.0.2.1 DC-OSPF-MIB::ospfConfigErrorType i 1 DC-OSPF-MIB::ospfPacketType i 1 DC-OSPF-MIB::ospfTrapNmEntIndex u 9999 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfIfAuthFailure",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmIfIpAddress used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapIfIpAddress",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.13",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmAddressLessIf used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapAddressLessIf",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The IP address of an inbound packet that cannot",
+							"be identified by a neighbor instance. When",
+							"the last value of a trap using this object is",
+							"needed, but no traps of that type have been sent",
+							"this value pertaining to this object should",
+							"be returned as 0.0.0.0."
+						],
+						"name" : "DC-OSPF-MIB::ospfPacketSrc",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and",
+							"ospfConfigVirtError traps. When the last value",
+							"of a trap using this object is needed, but no",
+							"traps of that type have been sent, this value",
+							"pertaining to this object should be returned as",
+							"noError."
+						],
+						"enums" : {
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch",
+							"11" : "mtuMismatch",
+							"12" : "duplicateRouterId",
+							"14" : "badPacket",
+							"15" : "nbrAdminDown",
+							"16" : "changedRouterId",
+							"19" : "packetFromLclAddr"
+						},
+						"name" : "DC-OSPF-MIB::ospfConfigErrorType",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types. When the last value of a trap",
+							"using this object is needed, but no traps of",
+							"that type have been sent, this value pertaining",
+							"to this object should be returned as nullPacket."
+						],
+						"enums" : {
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "DC-OSPF-MIB::ospfPacketType",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfNmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapNmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfVirtIfAuthFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when a packet is received that",
+				"fails to authenticate over a virtual interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcOspfVirtIfAuthFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Packet authentication failed on virtual interface, config error of type $v4, packet type $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfVirtIfAuthFailure DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtIfAreaId a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtIfNeighbor a 192.0.2.1 DC-OSPF-MIB::ospfConfigErrorType i 1 DC-OSPF-MIB::ospfPacketType i 1 DC-OSPF-MIB::ospfTrapNmEntIndex u 9999 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfVirtIfAuthFailure",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtIfAreaId used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtIfAreaId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtIfNeighbor used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtIfNeighbor",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.5",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Potential types of configuration conflicts.",
+							"Used by the ospfConfigError and",
+							"ospfConfigVirtError traps. When the last value",
+							"of a trap using this object is needed, but no",
+							"traps of that type have been sent, this value",
+							"pertaining to this object should be returned as",
+							"noError."
+						],
+						"enums" : {
+							"1" : "badVersion",
+							"2" : "areaMismatch",
+							"3" : "unknownNbmaNbr",
+							"4" : "unknownVirtualNbr",
+							"5" : "authTypeMismatch",
+							"6" : "authFailure",
+							"7" : "netMaskMismatch",
+							"8" : "helloIntervalMismatch",
+							"9" : "deadIntervalMismatch",
+							"10" : "optionMismatch",
+							"11" : "mtuMismatch",
+							"12" : "duplicateRouterId",
+							"14" : "badPacket",
+							"15" : "nbrAdminDown",
+							"16" : "changedRouterId",
+							"19" : "packetFromLclAddr"
+						},
+						"name" : "DC-OSPF-MIB::ospfConfigErrorType",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"OSPF packet types. When the last value of a trap",
+							"using this object is needed, but no traps of",
+							"that type have been sent, this value pertaining",
+							"to this object should be returned as nullPacket."
+						],
+						"enums" : {
+							"1" : "hello",
+							"2" : "dbDescript",
+							"3" : "lsReq",
+							"4" : "lsUpdate",
+							"5" : "lsAck"
+						},
+						"name" : "DC-OSPF-MIB::ospfPacketType",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfNmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapNmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfIfStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when the state of a network",
+				"interface changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcOspfIfStateChange",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 4 : (($v4 == 3 || $v4 == 6 || $v4 == 7) ? 3 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Interface state changed to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfIfStateChange DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapIfIpAddress a 192.0.2.1 DC-OSPF-MIB::ospfTrapAddressLessIf i 9999 DC-OSPF-MIB::ospfPmIfState i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfIfStateChange",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmIfIpAddress used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapIfIpAddress",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.13",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmAddressLessIf used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapAddressLessIf",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.14",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The OSPF Interface State."
+						],
+						"enums" : {
+							"1" : "ifDown",
+							"2" : "ifLoopback",
+							"3" : "ifWaiting",
+							"4" : "ifPointToPoint",
+							"5" : "ifDesignatedRouter",
+							"6" : "ifBackupDesignatedRouter",
+							"7" : "ifOtherDesignatedRouter",
+							"8" : "ifStandby"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmIfState",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.7.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfNssaTranslatorStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when the local router's ability",
+				"to translate type-5 LSAs changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcOspfNssaTranslatorStatusChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Local router's ability to translate type-5 LSAs changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfNssaTranslatorStatusChange DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapAreaId a 192.0.2.1 DC-OSPF-MIB::ospfPmAreaNssaTranslatorState i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfNssaTranslatorStatusChange",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmAreaId used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapAreaId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.15",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Indicates if and how an NSSA Border router is",
+							"performing NSSA translation of type-7 LSAs into type-5",
+							"LSAs. When this object set to enabled, the NSSA Border",
+							"router's OspfPmAreaNssaTranslatorRole has been set to",
+							"always. When this object is set to elected, a candidate",
+							"NSSA Border router is Translating type-7 LSAs into type-5.",
+							"When this object is set to disabled, a candidate NSSA",
+							"Border router is NOT translating type-7 LSAs into type-5."
+						],
+						"enums" : {
+							"1" : "stateEnabled",
+							"2" : "stateElected",
+							"3" : "stateDisabled"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmAreaNssaTranslatorState",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.2.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfNbrRestartHelperStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF PM generates this trap when it enters or leaves",
+				"graceful restart helper state for a neighbor on a network",
+				"interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "((($v7==1) && ($v5==1)) || (($v7==2) && ($v5==1)) || (($v7==3) && ($v5==1)) || (($v7==4) && ($v5==1)) || (($v7==5) && ($v5==1))) ? 2 : ((($v7==2) && ($v5==2)) || (($v7==3) && ($v5==2))) ? 1 : 3"
+				},
+				"EventType" : "dcOspfNbrRestartHelperStatusChange",
+				"ExpireTime" : {
+					"eval" : "((($v7==1) && ($v5==1)) || (($v7==2) && ($v5==1)) || (($v7==3) && ($v5==1)) || (($v7==4) && ($v5==1)) || (($v7==5) && ($v5==1))) ? 86400 : ((($v7==2) && ($v5==2)) || (($v7==3) && ($v5==2))) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "((($v7==1) && ($v5==1)) || (($v7==2) && ($v5==1)) || (($v7==3) && ($v5==1))) ? 3 : ((($v7==4) && ($v5==1)) || (($v7==5) && ($v5==1))) ? 4 : ((($v7==2) && ($v5==2)) || (($v7==3) && ($v5==2))) ? 0 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v5==1) ? 'Device enters or leaves graceful restart hitless helper state' : 'Device enters or leaves graceful restart w/o hitless helper state of reason $v7'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfNbrRestartHelperStatusChange DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapNbrIpAddr a 192.0.2.1 DC-OSPF-MIB::ospfTrapNbrAddressLessIndex i 9999 DC-OSPF-MIB::ospfPmNbrRtrId a 192.0.2.1 DC-OSPF-MIB::ospfPmNbrRestartHelperStatus i 1 DC-OSPF-MIB::ospfPmNbrRestartHelperAge i 0 DC-OSPF-MIB::ospfPmNbrRestartHelperExitReason i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfNbrRestartHelperStatusChange",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmNbrIpAddr used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapNbrIpAddr",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.7",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmNbrAddressLessIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapNbrAddressLessIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A 32-bit integer (represented as a type",
+							"IpAddress) uniquely identifying the neighboring",
+							"router in the Autonomous System."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmNbrRtrId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.10.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Indicates whether the router is acting as a hitless",
+							"restart helper for the neighbor."
+						],
+						"enums" : {
+							"1" : "notHelping",
+							"2" : "helping"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmNbrRestartHelperStatus",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.10.1.19",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Remaining time in current OSPF hitless restart interval",
+							"if the router is acting as a restart helper for the",
+							"neighbor. Set to zero if OSPF is not currently acting as",
+							"a restart helper for the neighbor."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmNbrRestartHelperAge",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.10.1.20",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Describes the outcome of the last attempt at acting as a",
+							"hitless restart helper for the neighbor."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "inProgress",
+							"3" : "completed",
+							"4" : "timedOut",
+							"5" : "topologyChanged"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmNbrRestartHelperExitReason",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.10.1.21",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfVirtNbrRstrtHelperStatusChng",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF PM generates this trap when it enters or leaves",
+				"graceful restart helper state for a virtual neighbor."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "((($v6==1) && ($v4==1)) || (($v6==2) && ($v4==1)) || (($v6==3) && ($v4==1)) || (($v6==4) && ($v4==1)) || (($v6==5) && ($v4==1))) ? 2 : ((($v6==2) && ($v4==2)) || (($v6==3) && ($v4==2))) ? 1 : 3"
+				},
+				"EventType" : "dcOspfVirtNbrRstrtHelperStatusChng",
+				"ExpireTime" : {
+					"eval" : "((($v6==1) && ($v4==1)) || (($v6==2) && ($v4==1)) || (($v6==3) && ($v4==1)) || (($v6==4) && ($v4==1)) || (($v6==5) && ($v4==1))) ? 86400 : ((($v6==2) && ($v4==2)) || (($v6==3) && ($v4==2))) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "((($v6==1) && ($v4==1)) || (($v6==2) && ($v4==1)) || (($v6==3) && ($v4==1))) ? 3 : ((($v6==4) && ($v4==1)) || (($v6==5) && ($v4==1))) ? 4 : ((($v6==2) && ($v4==2)) || (($v6==3) && ($v4==2))) ? 0 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v6==1) ? 'Device enters or leaves graceful restart hitless helper state' : 'Device enters or leaves graceful restart w/o hitless helper state of reason $v7'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfVirtNbrRstrtHelperStatusChng DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtNbrArea a 192.0.2.1 DC-OSPF-MIB::ospfTrapVirtNbrRtrId a 192.0.2.1 DC-OSPF-MIB::ospfPmVirtNbrRestartHelperStatus i 1 DC-OSPF-MIB::ospfPmVirtNbrRestartHelperAge i 0 DC-OSPF-MIB::ospfPmVirtNbrRestartHelperExit i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfVirtNbrRstrtHelperStatusChng",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtNbrArea used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtNbrArea",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.9",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Version of ospfPmVirtNbrRtrId used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapVirtNbrRtrId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.10",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Indicates whether the router is acting as a hitless",
+							"restart helper for the neighbor."
+						],
+						"enums" : {
+							"1" : "notHelping",
+							"2" : "helping"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmVirtNbrRestartHelperStatus",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.11.1.12",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Remaining time in current OSPF hitless restart interval",
+							"if the router is acting as a restart helper for the",
+							"neighbor. Set to zero if OSPF is not currently acting as",
+							"a restart helper for the neighbor."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmVirtNbrRestartHelperAge",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.11.1.13",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Describes the outcome of the last attempt at acting as a",
+							"hitless restart helper for the neighbor."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "inProgress",
+							"3" : "completed",
+							"4" : "timedOut",
+							"5" : "topologyChanged"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmVirtNbrRestartHelperExit",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.11.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfPmOperStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF generates this trap when the operational state of",
+				"OSPF-PM enters UP, DOWN or ACT_FAILED state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "(($v2 == 2) || ($v2 == 5)) ? 2 : ($v2 == 1) ? 1 : 3"
+				},
+				"EventType" : "dcOspfPmOperStateChange",
+				"ExpireTime" : {
+					"eval" : "(($v2 == 2) || ($v2 == 5)) ? 86400 : ($v2 == 1) ? 3600 : 3600"
+				},
+				"Severity" : {
+					"eval" : "(($v2 == 2) ||  ($v2 == 5)) ? 4 : ($v2 == 1) ? 0 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Operational state of OSPFV3-PM changed to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfPmOperStateChange DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfPmEntOperStatus i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfPmOperStateChange",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The current operational state of the OSPF Protocol Manager entity."
+						],
+						"enums" : {
+							"1" : "operStatusUp",
+							"2" : "operStatusDown",
+							"3" : "operStatusGoingUp",
+							"4" : "operStatusGoingDown",
+							"5" : "operStatusActFailed"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmEntOperStatus",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.19",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "DC-OSPF-MIB::ospfRestartStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"DC-OSPF PM generates this trap when its graceful restart",
+				"status changes."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "dcOspfRestartStatusChange",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Restart helper status is $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD DC-OSPF-MIB::ospfRestartStatusChange DC-OSPF-MIB::ospfPmEntRouterId a 192.0.2.1 DC-OSPF-MIB::ospfPmEntRestartStatus i 1 DC-OSPF-MIB::ospfPmEntRestartExitReason i 1 DC-OSPF-MIB::ospfTrapPmEntIndex u 9999",
+			"trap" : {
+				"name" : "DC-OSPF-MIB::ospfRestartStatusChange",
+				"oid" : "1.2.826.0.1.1578918.5.62.1.3.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"The configured Router ID.",
+							"",
+							"This is a 32-bit integer uniquely identifying the router in the",
+							"Autonomous System. For example, it is usually set to the",
+							"smallest IP address belonging to the router.",
+							"",
+							"If this field is set to the default value of zero (0.0.0.0) then",
+							"DC-OSPF will choose a Router ID. Otherwise, DC-OSPF will use",
+							"this MIB configured value.",
+							"",
+							"ospfPmEntCurrentRouterId displays the Router ID currently in use",
+							"by DC-OSPF.",
+							"",
+							"When the Router ID is chosen by DC-OSPF, it is equal to the",
+							"highest loopback address on the router, or the highest active",
+							"interface if there are no loopback addresses.",
+							"",
+							"This field cannot be changed if the row is admin status up and",
+							"row status active."
+						],
+						"name" : "DC-OSPF-MIB::ospfPmEntRouterId",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.1",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Current status of OSPF hitless restart."
+						],
+						"enums" : {
+							"1" : "notRestarting",
+							"2" : "plannedRestart",
+							"3" : "unplannedRestart"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmEntRestartStatus",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.42",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Describes the outcome of the last attempt at a hitless",
+							"restart. If the value is 'none', no restart has yet been",
+							"attempted. If the value is 'inProgress', a restart",
+							"attempt is currently underway."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "inProgress",
+							"3" : "completed",
+							"4" : "timedOut",
+							"5" : "topologyChanged"
+						},
+						"name" : "DC-OSPF-MIB::ospfPmEntRestartExitReason",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.1.1.1.44",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Version of ospfPmEntIndex used for traps."
+						],
+						"name" : "DC-OSPF-MIB::ospfTrapPmEntIndex",
+						"oid" : "1.2.826.0.1.1578918.5.62.1.3.1.6",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

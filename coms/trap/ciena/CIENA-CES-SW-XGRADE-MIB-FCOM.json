@@ -1,0 +1,179 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201706070000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeCompletion",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesSwXgradeCompletion notification is sent at the ",
+				"completion of a cienaCesSwXgradeOp (download/install/activate/",
+				"... etc). To enable the device to send this trap, ",
+				"cienaCesSwXgradeCompletionTrapState must be set to enabled. The",
+				"cienaCesSwXgradeCompletionTrapState is enabled by default. Variable ",
+				"bindings include: cienaGlobalSeverity, cienaGlobalMacAddress, ",
+				"cienaCesSwXgradeOp, cienaCesSwXgradeStatus, and ",
+				"cienaCesSwXgradeGracefulUpgrade."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==1) ? 1 : (($v4==3 || $v4==4) ? 3 : 2)"
+				},
+				"EventType" : "cienaCesSwXgradeCompletion",
+				"ExpireTime" : {
+					"eval" : "($v4==1 || $v4==3 || $v4==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==1) ? 0 : (($v4==3) ? 1 : (($v4==4) ? 2 : (($v4==2 || $v4==7 || $v4==10 || $v4==13 || $v4==17 || $v4==22) ? 4 : 3)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Software $v3 operation status: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeCompletion CIENA-GLOBAL-MIB::cienaGlobalSeverity i 8 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeOp i 2 CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeStatus i 1 CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeGracefulUpgrade i 1",
+			"trap" : {
+				"name" : "CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeCompletion",
+				"oid" : "1.3.6.1.4.1.1271.2.2.13.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The possible operations for upgrading the software, including:",
+							"",
+							"none: No upgrade operation is selected.",
+							"",
+							"download: This operation is to initiate the file transfer of the software package ",
+							"from the TFTP server specified by cienaCesSwXgradePackagePath to ",
+							"cienaCesSwXgradeDestPath. The default TFTP server is used for file transfer ",
+							"if the cienaCesSwXgradeTftpServer is set to an empty string.",
+							"",
+							"install: This operation is to install the software to the standby CTM (if present)",
+							"and all line modules. The image files are either stored in the TFTP server ",
+							"specified by cienaCesSwXgradePackagePath and cienaCesSwXgradeTftpServer or in ",
+							"the compact flash of the active CTM.",
+							"",
+							"activate: This operation is to activate any new software installed on all the modules. ",
+							"The system automatically reverts to the previous software package if a protect operation ",
+							"is not set within a time period specified by cienaCesSwXgradeRevertTimeout. If no time ",
+							"period is specified (cienaCesSwXgradeRevertTimeout value 0), then the system does not ",
+							"revert automatically and remains in the unprotected state indefinitely. ",
+							"WARNING: Activating software requires a system restart.",
+							"",
+							"protect: This operation protects a new software package. If the protect operation ",
+							"is not entered before the protect timeout is reached (specified by ",
+							"cienaCesSwXgradeReverTimeout), the system automatically reverts to the previous",
+							"software package. ",
+							"",
+							"revert: This operation reverts to the previous software package.",
+							"",
+							"validate: This operation validates the software package at the location specified by ",
+							"the cienaCesSwXgradePackagePath. Setting the cienaCesSwXgradePackagePath to an empty ",
+							"string validates the installed software.",
+							"",
+							"run: This operation refers to the downloading, parsing, and executing of a specified ",
+							"command file as initiated through CLI, DHCP, or the file transfer MIB module. This is ",
+							"used in appropriate notifications to report the completion of such event. An error is ",
+							"returned when this object is attempted to be set to this value using an SNMP set-request.",
+							"",
+							"remove: This operation is to remove an installed software package from the CTMs and ",
+							"all line modules."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "download",
+							"2" : "install",
+							"3" : "activate",
+							"4" : "protect",
+							"5" : "validate",
+							"6" : "revert",
+							"7" : "configure",
+							"8" : "run",
+							"9" : "remove"
+						},
+						"name" : "CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeOp",
+						"oid" : "1.3.6.1.4.1.1271.2.1.13.1.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Display the result of the last cienaCesSwXgradeOp. "
+						],
+						"enums" : {
+							"1" : "success",
+							"2" : "failed",
+							"3" : "unknown",
+							"4" : "processing",
+							"5" : "invalidCfgRule",
+							"6" : "invalidFileName",
+							"7" : "fileSystemError",
+							"8" : "cannotResolveHostName",
+							"9" : "tftpClientTimeout",
+							"10" : "tftpServerError",
+							"11" : "tftpBadTag",
+							"12" : "tftpBadValue",
+							"13" : "networkError",
+							"14" : "platformTypeNotSupported",
+							"15" : "swMgrBusy",
+							"16" : "needBackupSw",
+							"17" : "internalError",
+							"18" : "fileNotExist",
+							"19" : "missingAttribute",
+							"20" : "invalidXgradeOp",
+							"21" : "noDefaultTftpConfigured",
+							"22" : "completedWithFailures"
+						},
+						"name" : "CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeStatus",
+						"oid" : "1.3.6.1.4.1.1271.2.1.13.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object specifies whether a graceful upgrade",
+							"was issued. Returns True(1) if a graceful upgrade was issued. False(2) otherwise."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CIENA-CES-SW-XGRADE-MIB::cienaCesSwXgradeGracefulUpgrade",
+						"oid" : "1.3.6.1.4.1.1271.2.1.13.1.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

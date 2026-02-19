@@ -1,0 +1,1008 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200508161200Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiDatabaseOverload",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when the system",
+				"enters or leaves the Overload state. The number",
+				"of times this has be generated and cleared is kept",
+				"track of by ciiSysStatLSPDbaseOloads."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2 == 2) ? 1 : (($v2 == 4) ? 2 : 3)"
+				},
+				"EventType" : "ciiDatabaseOverload",
+				"ExpireTime" : {
+					"eval" : "($v2 == 2) ? 3600 : (($v2 == 4) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v2 == 2) ? 0 : (($v2 == 4) ? 5 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v2 == 1) ? 'IS-IS is not active at $v1' : (($v2 == 2) ? 'IS-IS is active at this level $v1, and not overloaded' : (($v2 == 3) ? 'Database is low on an essential resource' : 'Database is overloaded'))"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiDatabaseOverload CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiSysLevelOverloadState i 1",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiDatabaseOverload",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "off",
+							"2" : "on",
+							"3" : "waiting",
+							"4" : "overloaded"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiSysLevelOverloadState",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.2.1.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiManualAddressDrops",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when one of the",
+				"manual areaAddresses assigned to this system is",
+				"ignored when computing routes. The object",
+				"ciiNotifManualAddress describes the area that",
+				"has been dropped.",
+				"The number of times this event has been generated",
+				"is counted by ciiSysStatManAddrDropFromAreas.",
+				"This notification is edge triggered, and should not",
+				"be regenerated until an address that was used in",
+				"the previous computation has been dropped."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiManualAddressDrops",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "$v1 has been ignored when computing routes"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiManualAddressDrops CISCO-IETF-ISIS-MIB::ciiNotifManualAddress s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiManualAddressDrops",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifManualAddress",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.12",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiCorruptedLSPDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when we find that",
+				"an LSP that was stored in memory has become",
+				"corrupted. The number of times this has been",
+				"generated is counted by ciiSysStatCorrLSPs.",
+				"We forward an LSP ID. We may have independent",
+				"knowledge of the ID, but in some implementations",
+				"there is a chance that the ID itself will be",
+				"corrupted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiCorruptedLSPDetected",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v2",
+				"Summary" : "LSP stored in memory has become corrupted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiCorruptedLSPDetected CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiCorruptedLSPDetected",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.3",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiAttemptToExceedMaxSequence",
+			"certification" : "STANDARD",
+			"description" : [
+				"When the sequence number on an LSP we generate",
+				"wraps the 32 bit sequence counter, we purge and",
+				"wait to re-announce this information. This",
+				"notification describes that event. Since these",
+				"should not be generated rapidly, we generate",
+				"an event each time this happens.",
+				"While the first 6 bytes of the LSPID are ours",
+				"the other two contain useful information."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiAttemptToExceedMaxSequence",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v2",
+				"Summary" : "Sequence counter has wrapped"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiAttemptToExceedMaxSequence CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiAttemptToExceedMaxSequence",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.4",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiIDLenMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we receive a PDU",
+				"with a different value of the System ID Length.",
+				"This notification includes an index to identify",
+				"the circuit where we saw the PDU and the header of",
+				"the PDU which may help a network manager identify",
+				"the source of the confusion.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received on the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiIDLenMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v3",
+				"Summary" : "Mismatch system ID length of $v3 detected on $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiIDLenMismatch CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiPduFieldLen u 9999 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiIDLenMismatch",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.5",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFieldLen",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.3",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiMaxAreaAddressesMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we receive a PDU",
+				"with a different value of the Maximum Area",
+				"Addresses. This notification includes the",
+				"header of the packet, which may help a",
+				"network manager identify the source of the",
+				"confusion.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiMaxAreaAddressesMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex: $v3",
+				"Summary" : "Mismatch on $v1 with Max Area Address of $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiMaxAreaAddressesMismatch CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiPduMaxAreaAddress u 9999 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiMaxAreaAddressesMismatch",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.6",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduMaxAreaAddress",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.4",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiOwnLSPPurge",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we receive a PDU",
+				"with our systemID and zero age. This",
+				"notification includes the circuit Index",
+				"and router ID from the LSP, if available",
+				"which may help a network manager",
+				"identify the source of the confusion."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiOwnLSPPurge",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "Purging $v3 from $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiOwnLSPPurge CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiOwnLSPPurge",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.7",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiSequenceNumberSkip",
+			"certification" : "STANDARD",
+			"description" : [
+				"When we receive an LSP with our System ID",
+				"and different contents, we may need to reissue",
+				"the LSP with a higher sequence number.",
+				"We send this notification if we need to increase",
+				"the sequence number by more than one. If two",
+				"Intermediate Systems are configured with the same",
+				"System ID, this notification will fire."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiSequenceNumberSkip",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "$v3 on $v1 has skipped ahead in sequence"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiSequenceNumberSkip CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiSequenceNumberSkip",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.8",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiAuthenticationTypeFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we receive a PDU",
+				"with the wrong authentication type field.",
+				"This notification includes the header of the",
+				"packet, which may help a network manager",
+				"identify the source of the confusion.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiAuthenticationTypeFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "$v1 indicated PDU recieved with incorrect authentication type field"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiAuthenticationTypeFailure CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiAuthenticationTypeFailure",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.9",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiAuthenticationFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we receive a PDU",
+				"with incorrect authentication information",
+				"field. This notification includes the header",
+				"of the packet, which may help a network manager",
+				"identify the source of the confusion.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiAuthenticationFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "$v1 indicated PDU recieved with incorrect authentication information field"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiAuthenticationFailure CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiAuthenticationFailure",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.10",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiVersionSkew",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we receive a Hello",
+				"PDU from an IS running a different version",
+				"of the protocol. This notification includes",
+				"the header of the packet, which may help a",
+				"network manager identify the source of the",
+				"confusion.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiVersionSkew",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "$v1 indicated PDU is running different version of the protocol $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiVersionSkew CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduProtocolVersion u 9999 CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiVersionSkew",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.11",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduProtocolVersion",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.5",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiAreaMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we receive a Hello",
+				"PDU from an IS which does not share any",
+				"area address. This notification includes",
+				"the header of the packet, which may help a",
+				"network manager identify the source of the",
+				"confusion.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiAreaMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v1",
+				"Summary" : "PDU does not share any area addresses"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiAreaMismatch CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiAreaMismatch",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.12",
+				"variables" : [
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiRejectedAdjacency",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we receive a Hello",
+				"PDU from an IS, but do not establish an",
+				"adjacency for some reason.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiRejectedAdjacency",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "$v1 detected adjacency not established"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiRejectedAdjacency CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiRejectedAdjacency",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.13",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiLSPTooLargeToPropagate",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when we attempt to propagate",
+				"an LSP which is larger than the dataLinkBlockSize",
+				"for the circuit.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiLSPTooLargeToPropagate",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "$v1 has detected unable to propagate LSP due to larger dataLinkBlockSize ($v3) than the circuit"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiLSPTooLargeToPropagate CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduLspSize i 9999 CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiLSPTooLargeToPropagate",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.14",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspSize",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.6",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiOrigLSPBuffSizeMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when a Level 1 LSP or Level",
+				"2 LSP is received which is larger than the local",
+				"value for ciiSysLevelOrigLSPBuffSize, or when an",
+				"LSP is received containing the originatingLSPBufferSize",
+				"option and the value in the PDU option field does",
+				"not match the local value for ciiSysLevelOrigLSPBuffSize.",
+				"We pass up the size from the option field or the",
+				"size of the LSP that exceeds our configuration.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiOrigLSPBuffSizeMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "$v1 detected buffer size of $v4 to be a mismatch for PDU LSP $v3 "
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiOrigLSPBuffSizeMismatch CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE CISCO-IETF-ISIS-MIB::ciiPduOriginatingBufferSize u 9999",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiOrigLSPBuffSizeMismatch",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.15",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduOriginatingBufferSize",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.7",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiProtocolsSupportedMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when a non-pseudonode",
+				"segment 0 LSP is received that has no matching",
+				"protocols supported.",
+				"This may be because the system does not generate",
+				"the field, or because there are no common elements.",
+				"The list of protocols supported should be included",
+				"in the notification: it may be empty if the TLV",
+				"is not supported, or if the TLV is empty.",
+				"This should be an edge-triggered notification.",
+				"We should not send a second notification about",
+				"PDUs received from the same circuit."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiProtocolsSupportedMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : {
+					"eval" : "($v3 ne '') ? '$v1 did not detect a matching protocol to the following : $v3' : '$v1 has detected no matching protocol supported'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiProtocolsSupportedMismatch CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduProtocolsSupported s EXAMPLE CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiProtocolsSupportedMismatch",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.16",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduProtocolsSupported",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiAdjacencyChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A notification sent when an adjacency changes",
+				"state, entering or leaving state up.",
+				"The first 6 bytes of the ciiPduLspId are the",
+				"SystemID of the adjacent IS.",
+				"The ciiAdjState is the new state of the adjacency."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 3) ? 1 : (($v4 == 1) ? 2 : 3)"
+				},
+				"EventType" : "ciiAdjacencyChange",
+				"ExpireTime" : {
+					"eval" : "($v4 == 3) ? 3600 : (($v4 == 1) ? 86400 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 3) ? 0 : (($v4 == 1) ? 4 : 2)"
+				},
+				"SubNode" : "ifIndex: $v2",
+				"Summary" : "Current adjacency state is $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiAdjacencyChange CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE CISCO-IETF-ISIS-MIB::ciiAdjState i 1",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiAdjacencyChange",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.17",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "down",
+							"2" : "initializing",
+							"3" : "up",
+							"4" : "failed"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiAdjState",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-IETF-ISIS-MIB::ciiLSPErrorDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when we receive",
+				"an LSP with a parse error. The ciiCircIfIndex",
+				"holds in index of the circuit on which the PDU",
+				"arrived. The ciiPduFragment holds start of the LSP",
+				"and the ciiErrorOffset points to the problem.",
+				"If the problem is a mal-formed TLV, ciiErrorOffset",
+				"points to start of the TLV and ciiErrorTLVType",
+				"holds the value of the type.",
+				"If the problem is with the LSP header, ciiErrorOffset",
+				"points to the suspicious byte.",
+				"The number of such LSPs is accumulated in",
+				"ciiSysStatLSPErrors."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ciiLSPErrorDetected",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex: $v3",
+				"Summary" : "$v1 has detect LSP was recieved with parse error"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-IETF-ISIS-MIB::ciiLSPErrorDetected CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex i 1 CISCO-IETF-ISIS-MIB::ciiPduLspId s EXAMPLEE CISCO-IETF-ISIS-MIB::ciiCircIfIndex i 9999 CISCO-IETF-ISIS-MIB::ciiPduFragment s EXAMPLE CISCO-IETF-ISIS-MIB::ciiErrorOffset u 9999 CISCO-IETF-ISIS-MIB::ciiErrorTLVType u 9999",
+			"trap" : {
+				"name" : "CISCO-IETF-ISIS-MIB::ciiLSPErrorDetected",
+				"oid" : "1.3.6.1.4.1.9.10.118.0.18",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS"
+						},
+						"name" : "CISCO-IETF-ISIS-MIB::ciiNotifIsLevelIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.13",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduLspId",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiCircIfIndex",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.3.2.1.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiPduFragment",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiErrorOffset",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.10",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-IETF-ISIS-MIB::ciiErrorTLVType",
+						"oid" : "1.3.6.1.4.1.9.10.118.1.10.1.11",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		}
+	]
+}

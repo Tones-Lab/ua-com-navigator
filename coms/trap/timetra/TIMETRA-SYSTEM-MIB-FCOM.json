@@ -1,0 +1,5475 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201701010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::stiDateAndTimeChanged",
+			"certification" : "STANDARD",
+			"description" : [
+				"The date and time changed event is generated when the time on the",
+				"system is modified either by explicit setting or automatic update in",
+				"case of SNTP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "stiDateAndTimeChanged",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "STI date and time changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::stiDateAndTimeChanged TIMETRA-SYSTEM-MIB::stiDateAndTime x 07cc09010F1E00002b011E",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::stiDateAndTimeChanged",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The current date and time (in UTC) maintained in this managed system."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::stiDateAndTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.2.1",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSaveConfigSucceeded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The save config succeeded event is generated when the saving of",
+				"configuration finishes without errors."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ssiSaveConfig",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Configuration saved successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSaveConfigSucceeded ",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSaveConfigSucceeded",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.2"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSaveConfigFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The save config failed event is generated when the saving of",
+				"configuration is stopped due to errors."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ssiSaveConfig",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Saving of configuration is failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSaveConfigFailed ",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSaveConfigFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.3"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::sbiBootConfig",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sbiBootConfig notification is generated upon completion of the",
+				"configuration phase following a system reboot."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==1 || $v1==6) ? 3 : 2"
+				},
+				"EventType" : "sbiBootConfig",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==1 || $v1==6) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==1 || $v1==6) ? 2 : (($v3==3) ? 3 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SBI boot configuration status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::sbiBootConfig TIMETRA-SYSTEM-MIB::sbiConfigStatus i 1 TIMETRA-SYSTEM-MIB::sbiPersistStatus i 1 TIMETRA-SYSTEM-MIB::sbiPersistIndex i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::sbiBootConfig",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sbiConfigStatus indicates the result of the",
+							"last attempt to execute the configuration file upon reboot",
+							"of the system.",
+							"configRead (1) - The configuration file is being read.",
+							"configOK (2) - The configuration file was successfully",
+							"executed.",
+							"defaultBooted (3) - There was no configuration file and",
+							"the system booted using a minimal",
+							"default configuration.",
+							"bootConfigFailed (4) - An error occurred while the",
+							"configuration file was being executed.",
+							"The system configuration is incomplete.",
+							"bootRestoreFailed (5) - An error occurred while the",
+							"restoration was being performed. The system",
+							"configuration is incomplete.",
+							"auto-provisioning (6) - Auto-Boot feature running to",
+							"automatically provision and retrieve configuration",
+							"from network. Execution of boot configuration file",
+							"skipped."
+						],
+						"enums" : {
+							"1" : "configRead",
+							"2" : "configOK",
+							"3" : "defaultBooted",
+							"4" : "bootConfigFailed",
+							"5" : "bootRestoreFailed",
+							"6" : "auto-provisioning"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiConfigStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sbiPersistStatus indicates the state of the",
+							"rebuild of the SNMP persistent index database upon reboot of the",
+							"system.",
+							"persistOK (1) - The persistent index database was",
+							"successfully created. Persistent SNMP managed",
+							"objects were recreated with the same SNMP",
+							"indexes they had prior to the system reboot.",
+							"noPersistFile (2) - There was no persistent index file with",
+							"the same pathname as the configuration file.",
+							"persistMismatch (3) -The headers in the persistent index",
+							"file and the configuration file with the same name",
+							"do not match.",
+							"persistIndexFailure (4) - An error occurred while creating",
+							"the persistent index database.",
+							"persistDisabled (5) - The system was administratively",
+							"reconfigured without maintaining persistent SNMP index",
+							"values because sbiPersistIndex has a value of 'false'.",
+							"persistInvalid (6) - Persistent index database was not",
+							"initialized.",
+							"persistBoot(7) - The persistent index database was in the",
+							"pre-initial bootup state.",
+							"persistInit(8) - The persistent index database is initializing.",
+							"persistInProgress(9) - The initial bootup file is loading, using the",
+							"persist index database. Once complete, the",
+							"persist state will go to 'persistOk (1)' if",
+							"successful.",
+							"",
+							"If sbiConfigStatus has a value of 'configOK' and",
+							"sbiPersistStatus has any value other than 'persistOK', the",
+							"system was reconfigured without maintaining persistent SNMP index",
+							"values. Unless sbiPersistIndex has a value of 'false'",
+							"sbiSnmpdOperStatus returns 'disabled' and the SNMP daemon will not",
+							"receive SNMP requests until sbiSnmpdAdminStatus variable has",
+							"been set to 'inService'."
+						],
+						"enums" : {
+							"1" : "persistOK",
+							"2" : "noPersistFile",
+							"3" : "persistMismatch",
+							"4" : "persistIndexFailure",
+							"5" : "persistDisabled",
+							"6" : "persistInvalid",
+							"7" : "persistBoot",
+							"8" : "persistInit",
+							"9" : "persistInProgress"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiPersistStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"When sbiPersistIndex has a value of 'true', the SNMP persistent index",
+							"database was rebuilt when the system was rebooted. If there was an",
+							"error during the processing of the configuration file the system may",
+							"have been reconfigured without persistent SNMP indexes and the SNMP",
+							"daemon will be suspended until it is manually enabled by setting",
+							"sbiSnmpdAdminStatus to 'inService. When sbiPersistIndex has a",
+							"value of 'false' the system was reconfigured without maintaining",
+							"persistent SNMP index values and the SNMP daemon was enabled."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiPersistIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::sbiBootSnmpd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sbiBootSnmpd notification is generated upon completion of the SNMP",
+				"daemon initialization following a system reboot. Some system",
+				"configuration and initialization errors may result in the SNMP daemon",
+				"being suspended."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : ($v3==1 || $v3==4) ? 3 : 2"
+				},
+				"EventType" : "sbiBootSnmpd",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : ($v3==1 || $v3==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : ($v3==1) ? 1 : ($v3==3) ? 4 : 2"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SBI snmp daemon operation status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::sbiBootSnmpd TIMETRA-SYSTEM-MIB::sbiPersistIndex i 1 TIMETRA-SYSTEM-MIB::sbiSnmpdAdminStatus i 1 TIMETRA-SYSTEM-MIB::sbiSnmpdOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::sbiBootSnmpd",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"When sbiPersistIndex has a value of 'true', the SNMP persistent index",
+							"database was rebuilt when the system was rebooted. If there was an",
+							"error during the processing of the configuration file the system may",
+							"have been reconfigured without persistent SNMP indexes and the SNMP",
+							"daemon will be suspended until it is manually enabled by setting",
+							"sbiSnmpdAdminStatus to 'inService. When sbiPersistIndex has a",
+							"value of 'false' the system was reconfigured without maintaining",
+							"persistent SNMP index values and the SNMP daemon was enabled."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiPersistIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sbiSnmpdAdminStatus is the desired administrative state",
+							"for the SNMP daemon. When sbiSnmpdAdminStatus is set to 'inService'",
+							"the SNMP daemon will begin receiving SNMP requests from external",
+							"SNMP managers. When sbiSnmpdAdminStatus is set to 'outOfService'",
+							"the SNMP daemon is suspended and will no longer receive SNMP requests",
+							"from external SNMP managers."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiSnmpdAdminStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"When sbiSnmpdOperStatus has a value of 'inService', the SNMP daemon",
+							"will receive SNMP requests from external SNMP managers. When",
+							"sbiSnmpdOperStatus has a value of 'outOfService', the SNMP daemon is",
+							"suspended and will not receive SNMP requests from external SNMP",
+							"managers."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiSnmpdOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::radiusServerOperStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The radiusServerOperStatusChange notification is generated when the",
+				"operational status of a RADIUS server has transitioned either from",
+				"'up' to 'down' or from 'down' to 'up'.",
+				"This object was made obsolete in the 5.0 release."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<radiusServerIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "radiusServerOperStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "radiusServerEntry:$radiusServerIndex",
+				"Summary" : "Radius server operational status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::radiusServerOperStatusChange TIMETRA-SYSTEM-MIB::radiusServerAddress.1 a 1.1.1.1 TIMETRA-SYSTEM-MIB::radiusServerOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::radiusServerOperStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"The IP address of the RADIUS server.",
+							"This object was made obsolete in the 5.0 release."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::radiusServerAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.6.2.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Current status of the RADIUS server."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::radiusServerOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.6.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::radiusOperStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The radiusOperStatusChange notification is generated when the",
+				"radiusOperStatus has transitioned either from 'up' to 'down' or from",
+				"'down' to 'up'"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "radiusOperStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Radius operational status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::radiusOperStatusChange TIMETRA-SYSTEM-MIB::radiusOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::radiusOperStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"The radiusOperStatus will have a value of 'up' if any one of the",
+							"RADIUS servers in the radiusServerTable has the radiusServerOperStatus",
+							"value of 'up'. It will have a value of 'down' if all the RADIUS",
+							"servers in the radiusServerTable have the radiusServerOperStatus value",
+							"of 'down'."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::radiusOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.6.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxConfigModify",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxConfigModify notification is generated when a configuration",
+				"attribute associated with a row entry in a MIB table is modified. It",
+				"can be used by the NMS to trigger maintenance polls of the",
+				"configuration information."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxConfigModify",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "table:$v2;row:$v1",
+				"Summary" : "Configuration of $v3 has been modified"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxConfigModify TIMETRA-SYSTEM-MIB::tmnxNotifyRow o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxConfigModify",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxNotifyRow is used by the configuration modify, create and delete",
+							"traps. tmnxNotifyRow specifies the OID of the MIB table entry that was",
+							"changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyRow",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyEntryOID is used by the configuration modify, create and",
+							"delete traps. tmnxNotifyEntryOID specifies the OID of the MIB table",
+							"that was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.9",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyObjectName is used by the configuration modify, create",
+							"delete and state change traps. tmnxNotifyObjectName specifies the",
+							"human readable name of the OID instance of the MIB table entry that",
+							"was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxConfigCreate",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxConfigCreate notification is generated when a new row entry is",
+				"created in one of the MIB tables. It can be used by the NMS to trigger",
+				"maintenance polls of the configuration information."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxConfigCreate",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New row entry $v3 created"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxConfigCreate TIMETRA-SYSTEM-MIB::tmnxNotifyRow o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxConfigCreate",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.9",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxNotifyRow is used by the configuration modify, create and delete",
+							"traps. tmnxNotifyRow specifies the OID of the MIB table entry that was",
+							"changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyRow",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyEntryOID is used by the configuration modify, create and",
+							"delete traps. tmnxNotifyEntryOID specifies the OID of the MIB table",
+							"that was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.9",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyObjectName is used by the configuration modify, create",
+							"delete and state change traps. tmnxNotifyObjectName specifies the",
+							"human readable name of the OID instance of the MIB table entry that",
+							"was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxConfigDelete",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxConfigDelete notification is generated when an existing row",
+				"entry in one of the MIB tables is deleted. It can be used by the NMS",
+				"to trigger maintenance polls of the configuration information."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxConfigDelete",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "table:$v2;row:$v1",
+				"Summary" : "Existing row entry $v3 deleted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxConfigDelete TIMETRA-SYSTEM-MIB::tmnxNotifyRow o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxConfigDelete",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.10",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxNotifyRow is used by the configuration modify, create and delete",
+							"traps. tmnxNotifyRow specifies the OID of the MIB table entry that was",
+							"changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyRow",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyEntryOID is used by the configuration modify, create and",
+							"delete traps. tmnxNotifyEntryOID specifies the OID of the MIB table",
+							"that was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.9",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyObjectName is used by the configuration modify, create",
+							"delete and state change traps. tmnxNotifyObjectName specifies the",
+							"human readable name of the OID instance of the MIB table entry that",
+							"was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxStateChange notification is generated when there is a change in",
+				"either the administrative or operational state of a MIB table entry."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==2) ? 1 : ($v3==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxStateChange",
+				"ExpireTime" : {
+					"eval" : "($v3==2) ? 3600 : ($v3==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v3==2) ? 0 : (($v3==1) ? 1 : (($v3==4) ? 2 : 4))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "MIB table entry operational status changed to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxStateChange TIMETRA-SYSTEM-MIB::tmnxNotifyRow o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyRowAdminState i 1 TIMETRA-SYSTEM-MIB::tmnxNotifyRowOperState i 1 TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxNotifyRow is used by the configuration modify, create and delete",
+							"traps. tmnxNotifyRow specifies the OID of the MIB table entry that was",
+							"changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyRow",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyRowAdminState is used by the state change notification to",
+							"specify the administrative state of the MIB table entry reported in",
+							"the notification."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyRowAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxNotifyRowOperState is used by the state change notification to",
+							"specify the operational state of the MIB table entry reported in the",
+							"notification."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyRowOperState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxNotifyEntryOID is used by the configuration modify, create and",
+							"delete traps. tmnxNotifyEntryOID specifies the OID of the MIB table",
+							"that was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.9",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyObjectName is used by the configuration modify, create",
+							"delete and state change traps. tmnxNotifyObjectName specifies the",
+							"human readable name of the OID instance of the MIB table entry that",
+							"was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxModuleMallocFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxModuleMallocFailed notification is generated when a request to",
+				"allocate memory from a particular module fails because the memory",
+				"module is short on memory and cannot support the size that was",
+				"requested."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxModuleMallocFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Memory allocation failed because module ($v1) is short on memory"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxModuleMallocFailed TIMETRA-SYSTEM-MIB::tmnxMemoryModule s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxModuleMallocSize u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxModuleMallocFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxMemoryModule is used by the module malloc failed notification to",
+							"specify the memory module for which the trap is generated."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxMemoryModule",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxModuleMallocSize is used by the module malloc failed notification",
+							"to specify the memory size (in bytes) requested in the failed malloc",
+							"call."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxModuleMallocSize",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.5",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxTrapDropped",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxTrapDropped notification is generated when a trap is dropped for",
+				"the reason specified by the reason code. The tmnxTrapDroppedEntryID",
+				"identifies the table entry associated with the dropped trap.",
+				"A nonzero value of the object tmnxTrapDroppedCount indicates the",
+				"number of traps dropped for the current flow of traps, identified by",
+				"the values of tmnxDroppedTrapID, tmnxTrapDroppedReasonCode and",
+				"tmnxTrapDroppedEntryID."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxTrapDropped",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "$v4 trap dropped due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxTrapDropped TIMETRA-SYSTEM-MIB::tmnxDroppedTrapID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxTrapDroppedReasonCode i 1 TIMETRA-SYSTEM-MIB::tmnxTrapDroppedEntryID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxTrapDroppedCount u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxTrapDropped",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxDroppedTrapID is used by the trap dropped notification to specify",
+							"the NOTIFICATION-TYPE object identifier of the dropped trap."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxDroppedTrapID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.6",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxTrapDroppedReasonCode is used by the trap dropped notification to",
+							"specify the reason for which a trap is dropped."
+						],
+						"enums" : {
+							"1" : "frequencyExceeded"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxTrapDroppedReasonCode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxTrapDroppedEntryID is used by the trap dropped notification to",
+							"specify the table entry associated with the dropped trap."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxTrapDroppedEntryID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.8",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The object tmnxTrapDroppedCount is used by the tmnxTrapDropped",
+							"notification to indicate the number of traps dropped.",
+							"The value zero indicates that the number of traps dropped is purposely",
+							"not included in the notification, for example because it is not",
+							"accurately known."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxTrapDroppedCount",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.25",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSyncConfigOK",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiSyncConfigOK event is generated when the synchronization of",
+				"configuration files between the primary and secondary CPMs finishes",
+				"without errors."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ssiSyncConfig",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Configuration files synchronization finished successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSyncConfigOK ",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSyncConfigOK",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.14"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSyncConfigFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiSyncConfigFailed event is generated when the synchronization of",
+				"configuration files between the primary and secondary CPMs is stopped",
+				"due to errors. The tmnxSyncFailureReason will state reason for",
+				"failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ssiSyncConfig",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Configuration files synchronization failed due to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSyncConfigFailed TIMETRA-SYSTEM-MIB::tmnxSyncFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSyncConfigFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSyncFailureReason is used by the ssiSyncConfigFailed",
+							"ssiSyncBootEnvFailed, and ssiSyncRollbackFailed traps to specify the",
+							"reason for synchronization failure."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSyncFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.20",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSyncBootEnvOK",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiSyncBootEnvOK event is generated when the synchronization of",
+				"boot environment files between the primary and secondary CPMs finishes",
+				"without errors."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ssiSyncBootEnv",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Boot environment files synchronization finished successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSyncBootEnvOK ",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSyncBootEnvOK",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.16"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSyncBootEnvFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiSyncBootEnvFailed event is generated when the synchronization",
+				"of boot environment files between the primary and secondary CPMs is",
+				"stopped due to errors. The tmnxSyncFailureReason will state reason for",
+				"failure."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ssiSyncBootEnv",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Boot environment files synchronization failed due to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSyncBootEnvFailed TIMETRA-SYSTEM-MIB::tmnxSyncFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSyncBootEnvFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSyncFailureReason is used by the ssiSyncConfigFailed",
+							"ssiSyncBootEnvFailed, and ssiSyncRollbackFailed traps to specify the",
+							"reason for synchronization failure."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSyncFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.20",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::sntpTimeDiffExceedsThreshold",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sntpTimeDiffExceedsThreshold event is generated when the time",
+				"differential between the system and the SNTP server is more than 10",
+				"seconds. In this case the system clock is not automatically adjusted."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sntpTimeDiffExceedsThreshold",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Time difference between system and SNTP server is greater than 10s"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::sntpTimeDiffExceedsThreshold TIMETRA-SYSTEM-MIB::sntpAdminState i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::sntpTimeDiffExceedsThreshold",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"The desired administrative state for SNTP."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sntpAdminState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tacplusServerOperStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tacplusServerOperStatusChange notification is generated when the",
+				"operational status of a TACACS+ server has transitioned either from",
+				"'up' to 'down' or from 'down' to 'up'.",
+				"This object was made obsolete in the 5.0 release."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tacplusServerIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : 2"
+				},
+				"EventType" : "tacplusServerOperStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : 4"
+				},
+				"SubNode" : "tacplusServerEntry:$tacplusServerIndex",
+				"Summary" : "TACACS+ server operational status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tacplusServerOperStatusChange TIMETRA-SYSTEM-MIB::tacplusServerAddress.1 a 1.1.1.1 TIMETRA-SYSTEM-MIB::tacplusServerOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tacplusServerOperStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"The IP address of the TACACS+ server.",
+							"This object was made obsolete in the 5.0 release."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tacplusServerAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.10.2.1.2",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"Current status of the TACACS+ server."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tacplusServerOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.10.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tacplusOperStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tacplusOperStatusChange notification is generated when the",
+				"tacplusOperStatus has transitioned either from 'up' to 'down' or from",
+				"'down' to 'up'"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "tacplusOperStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "TACplus operational status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tacplusOperStatusChange TIMETRA-SYSTEM-MIB::tacplusOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tacplusOperStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"The tacplusOperStatus will have a value of 'up' if any one of the",
+							"TACACS+ servers in the tacplusServerTable has the",
+							"tacplusServerOperStatus value of 'up'. It will have a value of 'down'",
+							"if all the TACACS+ servers in the tacplusServerTable have the",
+							"tacplusServerOperStatus value of 'down'."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tacplusOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.10.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSnmpdError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSnmpdError notification is generated when the SNMP daemon",
+				"detects an error condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSnmpdError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SNMP daemon error ($v1) detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSnmpdError TIMETRA-SYSTEM-MIB::tmnxSnmpdErrorMsg s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSnmpdError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSnmpdErrorMsg is used by the tmnxSnmpdError notification to",
+							"indicate the type of SNMP daemon error detected."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSnmpdErrorMsg",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSsiMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSsiMismatch notification is generated by a system with",
+				"redundant CPM cards after the processing of the bootup",
+				"configuration has completed when ssiSyncMode has a value of 'none'",
+				"and sbiPersist has a value of 'true'. This can result in SNMP",
+				"indexes having different values following a system failover."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSsiMismatch",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SSI mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSsiMismatch TIMETRA-SYSTEM-MIB::ssiSyncMode i 1 TIMETRA-SYSTEM-MIB::sbiPersist i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSsiMismatch",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"The value of ssiSyncMode specifies the type of synchronization",
+							"operation to perform between the primary and secondary CPMs after a",
+							"change has been made to the configuration files or the boot",
+							"environment information contained in the boot options file (bof)."
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "config",
+							"3" : "bootEnv"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::ssiSyncMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.4.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sbiPersist specifies whether or not the system will",
+							"preserve SNMP indexes between reboots. When set to 'true', persistent",
+							"indexing is enabled."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiPersist",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.11.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSnmpdStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSnmpdStateChange notification is generated whenever there is a",
+				"change in either the administrative or operational state of the SNMP",
+				"agent."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==2) ? 1 : ($v2==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxSnmpdStateChange",
+				"ExpireTime" : {
+					"eval" : "($v2==2) ? 3600 : ($v2==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==2) ? 0 : (($v2==1) ? 1 : (($v2==3) ? 4 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SNMP operational status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSnmpdStateChange TIMETRA-SYSTEM-MIB::sbiSnmpdAdminStatus i 1 TIMETRA-SYSTEM-MIB::sbiSnmpdOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSnmpdStateChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.23",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sbiSnmpdAdminStatus is the desired administrative state",
+							"for the SNMP daemon. When sbiSnmpdAdminStatus is set to 'inService'",
+							"the SNMP daemon will begin receiving SNMP requests from external",
+							"SNMP managers. When sbiSnmpdAdminStatus is set to 'outOfService'",
+							"the SNMP daemon is suspended and will no longer receive SNMP requests",
+							"from external SNMP managers."
+						],
+						"enums" : {
+							"1" : "noop",
+							"2" : "inService",
+							"3" : "outOfService"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiSnmpdAdminStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"When sbiSnmpdOperStatus has a value of 'inService', the SNMP daemon",
+							"will receive SNMP requests from external SNMP managers. When",
+							"sbiSnmpdOperStatus has a value of 'outOfService', the SNMP daemon is",
+							"suspended and will not receive SNMP requests from external SNMP",
+							"managers."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiSnmpdOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiRedStandbySyncing",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiRedStandbySyncing notification is generated when",
+				"synchronization of redundancy information onto the standby",
+				"CPM is started. tmnxChassisNotifyHwIndex identifies the",
+				"standby CPM."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ssiRedStandbySyncing",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Synchronization of redundancy information to the standby CPM has started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiRedStandbySyncing TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex i 9999 TIMETRA-CHASSIS-MIB::tmnxHwID.1.2 o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-CHASSIS-MIB::tmnxHwClass i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiRedStandbySyncing",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.24",
+				"variables" : [
+					{
+						"description" : [
+							"Used by tmnx chassis and port Notifications, indicates the entry in",
+							"the tmnxHwTable for the hardware component associated with an alarm."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.6.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwID is an object identifier that points to the table",
+							"and row entry with additional management information specific to this",
+							"hardware component's class. If there is no additional information",
+							"specific to such component then the the tmnxHwID is set to 0.0."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiRedStandbyReady",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiRedStandbyReady notification is generated when the",
+				"synchronization of redundancy information onto the standby CPM",
+				"has completed. The standby CPM is now ready to take over",
+				"control of the system if the active CPM fails or a manual",
+				"switchover command is issued. tmnxChassisNotifyHwIndex",
+				"identifies the standby CPM."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ssiRedStandby",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Synchronization of redundancy information onto the standby CPM has completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiRedStandbyReady TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex i 9999 TIMETRA-CHASSIS-MIB::tmnxHwID.1.2 o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-CHASSIS-MIB::tmnxHwClass i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiRedStandbyReady",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.25",
+				"variables" : [
+					{
+						"description" : [
+							"Used by tmnx chassis and port Notifications, indicates the entry in",
+							"the tmnxHwTable for the hardware component associated with an alarm."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.6.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwID is an object identifier that points to the table",
+							"and row entry with additional management information specific to this",
+							"hardware component's class. If there is no additional information",
+							"specific to such component then the the tmnxHwID is set to 0.0."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiRedStandbySyncLost",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiRedStandbySyncLost notification is generated when the active",
+				"CPM looses communication with the standby CPM.",
+				"tmnxChassisNotifyHwIndex identifies the lost standby CPM."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ssiRedStandby",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Active CPM lost communication with the standby CPM"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiRedStandbySyncLost TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex i 9999 TIMETRA-CHASSIS-MIB::tmnxHwID.1.2 o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-CHASSIS-MIB::tmnxHwClass i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiRedStandbySyncLost",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.26",
+				"variables" : [
+					{
+						"description" : [
+							"Used by tmnx chassis and port Notifications, indicates the entry in",
+							"the tmnxHwTable for the hardware component associated with an alarm."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.6.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwID is an object identifier that points to the table",
+							"and row entry with additional management information specific to this",
+							"hardware component's class. If there is no additional information",
+							"specific to such component then the the tmnxHwID is set to 0.0."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiRedSwitchover",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiRedSwitchover notification is generated when the standby",
+				"CPM detects that the active CPM has failed and the standby prepares",
+				"to take over as the new active CPM. tmnxChassisNotifyHwIndex",
+				"identifies the new active CPM."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ssiRedSwitchover",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Active CPM failed - switchover in progress"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiRedSwitchover TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex i 9999 TIMETRA-CHASSIS-MIB::tmnxHwID.1.2 o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-CHASSIS-MIB::tmnxHwClass i 1 TIMETRA-SYSTEM-MIB::ssiRedFailoverTime t 999 TIMETRA-SYSTEM-MIB::ssiRedFailoverReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiRedSwitchover",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.27",
+				"variables" : [
+					{
+						"description" : [
+							"Used by tmnx chassis and port Notifications, indicates the entry in",
+							"the tmnxHwTable for the hardware component associated with an alarm."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.6.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwID is an object identifier that points to the table",
+							"and row entry with additional management information specific to this",
+							"hardware component's class. If there is no additional information",
+							"specific to such component then the the tmnxHwID is set to 0.0."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of ssiRedFailoverTime is the timestamp when the last",
+							"redundancy failover occurred causing a switchover from active",
+							"to standby CPM. If there is no redundant CPM card in this system",
+							"or no failover has occurred since the system last booted",
+							"ssiRedFailoverTime will always return 0."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::ssiRedFailoverTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.4.27",
+						"valueType" : "TICKS"
+					},
+					{
+						"description" : [
+							"The value of ssiRedFailoverReason is a text string giving an",
+							"explanation of the cause of the last redundancy failover. If no",
+							"failover has occurred, the empty string, ''H, will be returned."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::ssiRedFailoverReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.4.28",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiRedCpmActive",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiRedCpmActive notification is generated following a",
+				"redundancy switchover when the new active CPM has completed",
+				"its audit and is ready to accept management commands via CLI",
+				"or SNMP SET requests. tmnxChassisNotifyHwIndex identifies",
+				"the new active CPM."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ssiRedCpmActive",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "New active CPM is ready"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiRedCpmActive TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex i 9999 TIMETRA-CHASSIS-MIB::tmnxHwID.1.2 o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-CHASSIS-MIB::tmnxHwClass i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiRedCpmActive",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.28",
+				"variables" : [
+					{
+						"description" : [
+							"Used by tmnx chassis and port Notifications, indicates the entry in",
+							"the tmnxHwTable for the hardware component associated with an alarm."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.6.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwID is an object identifier that points to the table",
+							"and row entry with additional management information specific to this",
+							"hardware component's class. If there is no additional information",
+							"specific to such component then the the tmnxHwID is set to 0.0."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiRedSingleCpm",
+			"certification" : "STANDARD",
+			"description" : [
+				"The ssiRedSingleCpm notification is generated by a system with",
+				"a chassis with two CPM slots when the active CPM cannot detect a",
+				"standby CPM in the chassis. When the operating state of",
+				"TIMETRA-CHASSIS-MIB::tmnxCpmCardRedundant for the active CPM card",
+				"transitions to a value of 'singleton (1)', this notification is",
+				"generated. tmnxChassisNotifyHwIndex identifies the singleton CPM.",
+				"When the active CPM later detects a standby CPM in the chassis, the",
+				"ssiRedStandbySyncing event will be generated followed by a",
+				"ssiRedStandbyReady event to indicate clearing of the CPM singleton",
+				"state. The value of tmnxCpmCardRedundant will then transition to",
+				"'redundantActive (2)'."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid2",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "ssiRedSingleCpm",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Active CPM failed to detect a standby CPM in the chassis"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiRedSingleCpm TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex i 9999 TIMETRA-CHASSIS-MIB::tmnxHwID.1.2 o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-CHASSIS-MIB::tmnxHwClass i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiRedSingleCpm",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.29",
+				"variables" : [
+					{
+						"description" : [
+							"Used by tmnx chassis and port Notifications, indicates the entry in",
+							"the tmnxHwTable for the hardware component associated with an alarm."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxChassisNotifyHwIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.6.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwID is an object identifier that points to the table",
+							"and row entry with additional management information specific to this",
+							"hardware component's class. If there is no additional information",
+							"specific to such component then the the tmnxHwID is set to 0.0."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.2",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::persistencyClosedAlarmRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"The persistencyClosedAlarmRaised notification is generated when the",
+				"system is unable to store persistency data (e.g. because the device is",
+				"inaccessible, or full)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "persistencyClosedAlarmStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Persistency ($v3) closed alarm raised. $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::persistencyClosedAlarmRaised TIMETRA-SYSTEM-MIB::tmnxPersistenceAffectedCpm s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyClient s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyFileLocator s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::persistencyClosedAlarmRaised",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.30",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxPersistenceAffectedCpm is used by the",
+							"persistencyClosedAlarmRaised, persistencyClosedAlarmCleared",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to indicate the affected CPM."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistenceAffectedCpm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyClient is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyFileSysThresRaised and",
+							"persistencyFileSysThresCleared notification to indicate the affected",
+							"persistent application."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyClient",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyFileLocator is used by the",
+							"persistencyClosedAlarmRaised, persistencyClosedAlarmCleared",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to indicate the affected file used to store persistence",
+							"data."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyFileLocator",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyNotifyMsg is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyEventReport",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to provide additional information related to the event",
+							"that occurred."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::persistencyClosedAlarmCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The persistencyClosedAlarmCleared notification is generated when the",
+				"output device used to store the persistence data is available for use",
+				"again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "persistencyClosedAlarmStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Persistency ($v3) closed alarm cleared. $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::persistencyClosedAlarmCleared TIMETRA-SYSTEM-MIB::tmnxPersistenceAffectedCpm s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyClient s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyFileLocator s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::persistencyClosedAlarmCleared",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.31",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxPersistenceAffectedCpm is used by the",
+							"persistencyClosedAlarmRaised, persistencyClosedAlarmCleared",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to indicate the affected CPM."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistenceAffectedCpm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyClient is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyFileSysThresRaised and",
+							"persistencyFileSysThresCleared notification to indicate the affected",
+							"persistent application."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyClient",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyFileLocator is used by the",
+							"persistencyClosedAlarmRaised, persistencyClosedAlarmCleared",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to indicate the affected file used to store persistence",
+							"data."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyFileLocator",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyNotifyMsg is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyEventReport",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to provide additional information related to the event",
+							"that occurred."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSntpOperChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSntpOperChange notification is generated whenever there is a",
+				"change in the operational state of SNTP."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==2) ? 1 : ($v1==3) ? 2 : 3"
+				},
+				"EventType" : "tmnxSntpOperChange",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 3600 : ($v1==3) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==2) ? 0 : (($v1==3) ? 4 : (($v1==4) ? 2 : 1))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "SNTP operational state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSntpOperChange TIMETRA-SYSTEM-MIB::sntpOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSntpOperChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.32",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sntpOperStatus indicates the current operational status",
+							"of SNTP."
+						],
+						"enums" : {
+							"1" : "unknown",
+							"2" : "inService",
+							"3" : "outOfService",
+							"4" : "transition"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sntpOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.3.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysTimeSet",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxSysTimeSet notification is generated whenever system time is",
+				"set by NTP, SNTP, SNMP, Real Time Clock(RTC) or if it was set",
+				"manually."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysTimeSet",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System time ($v1) is set by $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysTimeSet TIMETRA-SYSTEM-MIB::stiDateAndTime x 07cc09010F1E00002b011E TIMETRA-SYSTEM-MIB::tmnxSysTimeSetBy i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysTimeSet",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.33",
+				"variables" : [
+					{
+						"description" : [
+							"The current date and time (in UTC) maintained in this managed system."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::stiDateAndTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.2.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxSysTimeSetBy is used by tmnxSysTimeSetBy notification to indicate",
+							"who set the time."
+						],
+						"enums" : {
+							"1" : "ntp",
+							"2" : "sntp",
+							"3" : "snmp",
+							"4" : "manually",
+							"5" : "rtc"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysTimeSetBy",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.15",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxFtpClientFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tmnxFtpClientFailure notification is generated when a file",
+				"transfer operation initiated by the FTP client fails."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxFtpClientFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 ne '') ? '$v1' : 'File transfer operation initiated by the FTP client failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxFtpClientFailure TIMETRA-SYSTEM-MIB::tmnxFtpFailureMsg s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxFtpFailureDestAddressType i 0 TIMETRA-SYSTEM-MIB::tmnxFtpFailureDestAddress s 9999",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxFtpClientFailure",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.34",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxFtpFailureMsg is used by tmnxFtpClientFailure notification to",
+							"indicate FTP error."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxFtpFailureMsg",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxFtpFailureDestAddressType is used by tmnxFtpClientFailure",
+							"notification to indicate the IP address type of the remote host."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxFtpFailureDestAddressType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.17",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxFtpFailureDestAddress indicates the IP address of the",
+							"remote host to which an ftp operation is being attempted on. The value",
+							"of tmnxFtpFailureDestAddress is used by tmnxFtpClientFailure",
+							"notification."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxFtpFailureDestAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.18",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tacplusInetSrvrOperStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The tacplusInetSrvrOperStatusChange notification is generated when the",
+				"operational status of a TACACS+ server has transitioned either from",
+				"'up' to 'down' or from 'down' to 'up'."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tacplusServerIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : 2"
+				},
+				"EventType" : "tacplusInetSrvrOperStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : 4"
+				},
+				"SubNode" : "tacplusServerEntry:$tacplusServerIndex",
+				"Summary" : "TACACS+ server operational status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tacplusInetSrvrOperStatusChange TIMETRA-SYSTEM-MIB::tacPlusServerInetAddressType.1 i 0 TIMETRA-SYSTEM-MIB::tacPlusServerInetAddress s 9999 TIMETRA-SYSTEM-MIB::tacplusServerOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tacplusInetSrvrOperStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.35",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tacPlusServerInetAddressType indicates the address type",
+							"of tacPlusServerInetAddress address."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tacPlusServerInetAddressType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.10.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tacPlusServerInetAddress indicates the address of the",
+							"Tacplus server."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tacPlusServerInetAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.10.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Current status of the TACACS+ server."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tacplusServerOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.10.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::radiusInetServerOperStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The radiusInetServerOperStatusChange notification is generated when",
+				"the operational status of a Radius server has transitioned either from",
+				"'up' to 'down' or from 'down' to 'up'."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<radiusServerIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : 2"
+				},
+				"EventType" : "radiusInetServerOperStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : 4"
+				},
+				"SubNode" : "radiusServerEntry:$radiusServerIndex",
+				"Summary" : "Radius server operational status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::radiusInetServerOperStatusChange TIMETRA-SYSTEM-MIB::radiusServerInetAddressType i 0 TIMETRA-SYSTEM-MIB::radiusServerInetAddress s 9999 TIMETRA-SYSTEM-MIB::radiusServerOperStatus i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::radiusInetServerOperStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.36",
+				"variables" : [
+					{
+						"description" : [
+							"The value of radiusServerInetAddressType indicates the address type of",
+							"radiusServerInetAddress address."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "ipv4",
+							"2" : "ipv6",
+							"3" : "ipv4z",
+							"4" : "ipv6z",
+							"16" : "dns"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::radiusServerInetAddressType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.6.2.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of radiusServerInetAddress indicates the address of the",
+							"Radius server."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::radiusServerInetAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.6.2.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Current status of the RADIUS server."
+						],
+						"enums" : {
+							"1" : "up",
+							"2" : "down"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::radiusServerOperStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.6.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::persistencyEventReport",
+			"certification" : "STANDARD",
+			"description" : [
+				"The persistencyEventReport notification is generated when a",
+				"client-specific persistence event occurs (e.g. the start and",
+				"completion of a recover action after system startup)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "persistencyEventReport",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Client-specific persistence event occurred. $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::persistencyEventReport TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::persistencyEventReport",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.37",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxPersistencyNotifyMsg is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyEventReport",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to provide additional information related to the event",
+							"that occurred."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::sbiBootConfigFailFileError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sbiBootConfigFailFileError notification is generated when",
+				"sbiBootConfigFailScript file cannot be accessed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sbiBootConfigFailFileError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SBI boot config fail script ($v1) file cannot be accessed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::sbiBootConfigFailFileError TIMETRA-SYSTEM-MIB::sbiBootConfigFailScript s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::sbiBootConfigFailFileError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.38",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sbiBootConfigFailScript specifies the location and",
+							"name of the CLI script file executed following failure of the",
+							"boot-up configuration file execution. I.e. sbiPersistStatus",
+							"has a value other than 'configOK'. When this object has the empty",
+							"string value, ''H, no CLI script file is executed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::sbiBootConfigFailScript",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::sbiBootConfigOKFileError",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sbiBootConfigOKFileError notification is generated when",
+				"sbiBootConfigOKScript file cannot be accessed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sbiBootConfigOKFileError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "SBI boot config OK script ($v1) file cannot be accessed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::sbiBootConfigOKFileError TIMETRA-SYSTEM-MIB::sbiBootConfigOKScript s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::sbiBootConfigOKFileError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.39",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sbiBootConfigOKScript specifies the location and name of",
+							"the CLI script file executed following successful completion",
+							"of the boot-up configuration file execution. I.e. sbiPersistStatus",
+							"has a value of 'configOK'. When this object has the empty string",
+							"value, ''H, no CLI script file is executed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::sbiBootConfigOKScript",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.5.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::sbiBootLiConfig",
+			"certification" : "STANDARD",
+			"description" : [
+				"The sbiBootLiConfig notification is generated upon completion of",
+				"the Lawful Intercept (LI) configuration phase following a system",
+				"reboot. This notification is generated periodically, about once",
+				"an hour.",
+				"This event is generated only from the LI context."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : 2"
+				},
+				"EventType" : "sbiBootLiConfig",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : ($v1==2) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Lawful Intercept (LI) configuration completion status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::sbiBootLiConfig TIMETRA-SYSTEM-MIB::sliConfigStatus i 0 TIMETRA-SYSTEM-MIB::sbiLiSeparate i 1 TIMETRA-SYSTEM-MIB::sbiLiLocalSave i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::sbiBootLiConfig",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.40",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sliConfigStatus indicates the results of restoring the",
+							"Lawful Intercept (LI) configuration at boot-up time."
+						],
+						"enums" : {
+							"0" : "notRun",
+							"1" : "success",
+							"2" : "fail"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sliConfigStatus",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.13.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sbiLiSeparate specifies whether or not a non-LI user has",
+							"access to Lawful Intercept (LI) information. When sbiLiSeparate has",
+							"a value of 'true', a user who does not have the TIMETRA-SECURITY-MIB::",
+							"tmnxUserAccess 'li' bit set will not be allowed to access CLI or",
+							"SNMP objects in the 'li' context.",
+							"A change to the value of this object does not take affect until the",
+							"system is rebooted."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiLiSeparate",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.11.30",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of sbiLiLocalSave specifies whether or not Lawful Intercept",
+							"(LI) configuration is allowed to be save to a local file.",
+							"A change to the value of this object does not take affect until the",
+							"system is rebooted."
+						],
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sbiLiLocalSave",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.11.31",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::persistenceRestoreProblem",
+			"certification" : "STANDARD",
+			"description" : [
+				"The persistenceRestoreProblem notification is generated when an error",
+				"is detected while processing a persistence record."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "persistenceRestoreProblem",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Persistence ($v1) record processing failed. $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::persistenceRestoreProblem TIMETRA-SYSTEM-MIB::tmnxPersistencyClient s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::persistenceRestoreProblem",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.41",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxPersistencyClient is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyFileSysThresRaised and",
+							"persistencyFileSysThresCleared notification to indicate the affected",
+							"persistent application."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyClient",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyNotifyMsg is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyEventReport",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to provide additional information related to the event",
+							"that occurred."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysRollbackStarted notification is generated when the",
+				"user initiates a revert of the rollback checkpoint file specified by",
+				"tmnxSysRollbackIndex and tmnxSysRollbackFileType. The value of",
+				"tmnxLogExecRollbackOpIndex indicates the row entry in the",
+				"TIMETRA-LOG-MIB::tmnxLogExecRollbackOpTable for this rollback revert",
+				"operation.",
+				"[EFFECT] The specified file is executed and system configuration may",
+				"change.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysRollbackStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "User initiated a revert of the rollback $v1 checkpoint file"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysRollbackStarted TIMETRA-SYSTEM-MIB::tmnxSysRollbackIndex u 9999 TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType i 1 TIMETRA-LOG-MIB::tmnxLogExecRollbackOpIndex u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackStarted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.42",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysRollbackIndex specifies a specific rollback",
+							"checkpoint file to which a rollback action can be taken.",
+							"The value of the tmnxSysRollbackIndex corresponds to a rollback",
+							"checkpoint file with suffix .rb.index.",
+							"The maximum checkpoint file that can be specified is determined by the",
+							"rollback location as specified by tmnxSysRollbackLocation. If the",
+							"location is on a compact flash, then the maximum value of",
+							"tmnxSysRollbackIndex can be tmnxSysRollbackMaxLocalFiles minus 1. If",
+							"the location is a remote ftp location, then the maximum value of",
+							"tmnxSysRollbackIndex can be tmnxSysRollbackMaxRemoteFiles minus 1.",
+							"This index is SET along with another action object, including",
+							"tmnxSysRollbackStart to initiate a rollback revert of a file and",
+							"tmnxSysRollbackFileDelete to delete a rollback file.",
+							"An SNMP GET request on this object should return the last SET value."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.17.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"tmnxSysRollbackFileType is used by tmnxSysRollbackStarted",
+							"tmnxSysRollbackSaveStarted, tmnxSysRollbackDeleteStarted",
+							"tmnxSysRollbackStatusChange, tmnxSysRollbackSaveStatusChange, and",
+							"tmnxSysRollbackFileDeleteStatus notifications to indicate the type of",
+							"file involved in a rollback operation."
+						],
+						"enums" : {
+							"1" : "rollback",
+							"2" : "rescue"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogExecRollbackOpIndex is a unique value that",
+							"indicates a row entry instance of an exec, load, rollback revert",
+							"or vsd operation in the tmnxLogExecRollbackOpTable. It is included",
+							"in the 'exec', 'load' and rollback revert start and end notifications."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogExecRollbackOpIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.26.5.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysRollbackStatusChange notification is",
+				"generated upon the completion of a rollback revert as specified",
+				"by tmnxSysRollbackIndex and tmnxSysRollbackFileType. The value",
+				"of tmnxLogExecRollbackOpIndex indicates the row entry in the",
+				"TIMETRA-LOG-MIB::tmnxLogExecRollbackOpTable for this rollback",
+				"revert operation.",
+				"[EFFECT] The result is indicated by the value of",
+				"tmnxSysRollbackResult.",
+				"[RECOVERY] When the value of tmnxSysRollbackResult is none, inProgress",
+				"or success no recovery is required. When the value is failed, the user",
+				"should try to determine the reason for the failure. The user can",
+				"attempt a recovery by reverting back to a known good checkpoint. The",
+				"user may reboot the system with the bof pointing to a saved",
+				"configuration file."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3) ? 1 : ($v2==1 || $v2==2) ? 3 : 2"
+				},
+				"EventType" : "tmnxSysRollbackStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v2==3) ? 3600 : ($v2==1 || $v2==2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v2==4) ? 4 : (($v2==5) ? 3 : (($v2==3) ? 0 : (($v2==1) ? 1 : 2)))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System rollback status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysRollbackStatusChange TIMETRA-SYSTEM-MIB::tmnxSysRollbackIndex u 9999 TIMETRA-SYSTEM-MIB::tmnxSysRollbackResult i 1 TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType i 1 TIMETRA-LOG-MIB::tmnxLogExecRollbackOpIndex u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.43",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysRollbackIndex specifies a specific rollback",
+							"checkpoint file to which a rollback action can be taken.",
+							"The value of the tmnxSysRollbackIndex corresponds to a rollback",
+							"checkpoint file with suffix .rb.index.",
+							"The maximum checkpoint file that can be specified is determined by the",
+							"rollback location as specified by tmnxSysRollbackLocation. If the",
+							"location is on a compact flash, then the maximum value of",
+							"tmnxSysRollbackIndex can be tmnxSysRollbackMaxLocalFiles minus 1. If",
+							"the location is a remote ftp location, then the maximum value of",
+							"tmnxSysRollbackIndex can be tmnxSysRollbackMaxRemoteFiles minus 1.",
+							"This index is SET along with another action object, including",
+							"tmnxSysRollbackStart to initiate a rollback revert of a file and",
+							"tmnxSysRollbackFileDelete to delete a rollback file.",
+							"An SNMP GET request on this object should return the last SET value."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.17.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxSysRollbackResult indicates the result of the last",
+							"tmnxSysRollbackStart action.",
+							"none(1) None of the following apply",
+							"inProgress(2) The action is still in progress",
+							"success(3) The action completed successfully",
+							"failed(4) The action failed",
+							"interrupted (5) The action was interrupted"
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "inProgress",
+							"3" : "success",
+							"4" : "failed",
+							"5" : "interrupted"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackResult",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.17.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxSysRollbackFileType is used by tmnxSysRollbackStarted",
+							"tmnxSysRollbackSaveStarted, tmnxSysRollbackDeleteStarted",
+							"tmnxSysRollbackStatusChange, tmnxSysRollbackSaveStatusChange, and",
+							"tmnxSysRollbackFileDeleteStatus notifications to indicate the type of",
+							"file involved in a rollback operation."
+						],
+						"enums" : {
+							"1" : "rollback",
+							"2" : "rescue"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.23",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogExecRollbackOpIndex is a unique value that",
+							"indicates a row entry instance of an exec, load, rollback revert",
+							"or vsd operation in the tmnxLogExecRollbackOpTable. It is included",
+							"in the 'exec', 'load' and rollback revert start and end notifications."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogExecRollbackOpIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.26.5.1",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackSaveStatusChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysRollbackSaveStatusChange notification is generated",
+				"upon the completion of a rollback save as specified by",
+				"tmnxSysRollbackFileType.",
+				"[EFFECT] The result is indicated by value of",
+				"tmnxSysRollbackSaveResult.",
+				"[RECOVERY] When the value of tmnxSysRollbackSaveResult is none",
+				"inProgress or success no recovery is required. When the value is",
+				"failed, the user should try to determine the reason for the failure.",
+				"The user can attempt a recovery by attempting the rollback save again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==3) ? 1 : ($v1==4) ? 2 : 3"
+				},
+				"EventType" : "tmnxSysRollbackSaveStatusChange",
+				"ExpireTime" : {
+					"eval" : "($v1==3) ? 3600 : ($v1==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1==4) ? 4 : (($v1==3) ? 0 : (($v1==1) ? 1 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System rollback save completion status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysRollbackSaveStatusChange TIMETRA-SYSTEM-MIB::tmnxSysRollbackSaveResult i 1 TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackSaveStatusChange",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.44",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysRollbackSaveResult indicates the result of the",
+							"last tmnxSysRollbackSave action.",
+							"none(1) None of the following apply",
+							"inProgress(2) The action is still in progress",
+							"success(3) The action completed successfully",
+							"failed(4) The action failed"
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "inProgress",
+							"3" : "success",
+							"4" : "failed"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackSaveResult",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.17.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxSysRollbackFileType is used by tmnxSysRollbackStarted",
+							"tmnxSysRollbackSaveStarted, tmnxSysRollbackDeleteStarted",
+							"tmnxSysRollbackStatusChange, tmnxSysRollbackSaveStatusChange, and",
+							"tmnxSysRollbackFileDeleteStatus notifications to indicate the type of",
+							"file involved in a rollback operation."
+						],
+						"enums" : {
+							"1" : "rollback",
+							"2" : "rescue"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.23",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileDeleteStatus",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysRollbackFileDeleteStatus notification is generated",
+				"upon the completion of a rollback file delete as specified by",
+				"tmnxSysRollbackIndex and tmnxSysRollbackFileType.",
+				"[EFFECT] The result is indicated by the value of",
+				"tmnxSysRollbackFileDeleteResult.",
+				"[RECOVERY] When the value of tmnxSysRollbackFileDeleteResult is none",
+				"inProgress or success no recovery is required. When the value is",
+				"failed, the user should try to determine the reason for the failure.",
+				"The user can attempt a recovery by deleting the file again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==3) ? 1 : ($v2==4) ? 2 : 3"
+				},
+				"EventType" : "tmnxSysRollbackFileDeleteStatus",
+				"ExpireTime" : {
+					"eval" : "($v2==3) ? 3600 : ($v2==4) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==4) ? 4 : (($v2==3) ? 0 : (($v2==1) ? 1 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System rollback file ($v3) deletion status: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileDeleteStatus TIMETRA-SYSTEM-MIB::tmnxSysRollbackIndex u 9999 TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileDeleteResult i 1 TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileDeleteStatus",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.45",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysRollbackIndex specifies a specific rollback",
+							"checkpoint file to which a rollback action can be taken.",
+							"The value of the tmnxSysRollbackIndex corresponds to a rollback",
+							"checkpoint file with suffix .rb.index.",
+							"The maximum checkpoint file that can be specified is determined by the",
+							"rollback location as specified by tmnxSysRollbackLocation. If the",
+							"location is on a compact flash, then the maximum value of",
+							"tmnxSysRollbackIndex can be tmnxSysRollbackMaxLocalFiles minus 1. If",
+							"the location is a remote ftp location, then the maximum value of",
+							"tmnxSysRollbackIndex can be tmnxSysRollbackMaxRemoteFiles minus 1.",
+							"This index is SET along with another action object, including",
+							"tmnxSysRollbackStart to initiate a rollback revert of a file and",
+							"tmnxSysRollbackFileDelete to delete a rollback file.",
+							"An SNMP GET request on this object should return the last SET value."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.17.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxSysRollbackFileDeleteResult indicates the result of",
+							"the last tmnxSysRollbackFileDelete action.",
+							"none(1) None of the following apply",
+							"inProgress(2) The action is still in progress",
+							"success(3) The action completed successfully",
+							"failed(4) The action failed"
+						],
+						"enums" : {
+							"1" : "none",
+							"2" : "inProgress",
+							"3" : "success",
+							"4" : "failed"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileDeleteResult",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.17.15",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxSysRollbackFileType is used by tmnxSysRollbackStarted",
+							"tmnxSysRollbackSaveStarted, tmnxSysRollbackDeleteStarted",
+							"tmnxSysRollbackStatusChange, tmnxSysRollbackSaveStatusChange, and",
+							"tmnxSysRollbackFileDeleteStatus notifications to indicate the type of",
+							"file involved in a rollback operation."
+						],
+						"enums" : {
+							"1" : "rollback",
+							"2" : "rescue"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.23",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSyncRollbackOK",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The ssiSyncRollbackOK event is generated when the",
+				"synchronization of rollback files between the primary",
+				"and secondary CPMs finishes without errors.",
+				"[EFFECT] Rollback files are synchronized.",
+				"[RECOVERY] No recovery is necessary."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ssiSyncRollback",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Synchronization of rollback files finished successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSyncRollbackOK ",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSyncRollbackOK",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.46"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSyncRollbackFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The ssiSyncRollbackFailed event is generated when the",
+				"synchronization of rollback files between the primary and secondary",
+				"CPMs is stopped due to errors. The tmnxSyncFailureReason will state",
+				"the reason for the failure.",
+				"[EFFECT] Rollback files are not synchronized.",
+				"[RECOVERY] The user should try to determine the cause of the failure",
+				"and can attempt synchronizing the files again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ssiSyncRollback",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Synchronization of rollback files failed due to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSyncRollbackFailed TIMETRA-SYSTEM-MIB::tmnxSyncFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSyncRollbackFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.47",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSyncFailureReason is used by the ssiSyncConfigFailed",
+							"ssiSyncBootEnvFailed, and ssiSyncRollbackFailed traps to specify the",
+							"reason for synchronization failure."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSyncFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.20",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSyncCertOK",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The ssiSyncCertOK event is generated when the",
+				"synchronization of certificate files between the primary",
+				"and secondary CPMs finishes without errors.",
+				"[EFFECT] Certificate files are synchronized.",
+				"[RECOVERY] No recovery is necessary."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "ssiSyncCert",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Synchronization of certificate files finished successfully"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSyncCertOK ",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSyncCertOK",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.48"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::ssiSyncCertFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The ssiSyncCertFailed event is generated when the",
+				"synchronization of certificate files between the primary and secondary",
+				"CPMs is stopped due to errors. The tmnxSyncFailureReason will state",
+				"the reason for the failure.",
+				"[EFFECT] Certificate files are not synchronized.",
+				"[RECOVERY] The user should try to determine the cause of the failure",
+				"and can attempt synchronizing the files again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "ssiSyncCert",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Synchronization of certificate files failed due to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::ssiSyncCertFailed TIMETRA-SYSTEM-MIB::tmnxSyncFailureReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::ssiSyncCertFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.49",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSyncFailureReason is used by the ssiSyncConfigFailed",
+							"ssiSyncBootEnvFailed, and ssiSyncRollbackFailed traps to specify the",
+							"reason for synchronization failure."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSyncFailureReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.20",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::persistencyFileSysThresRaised",
+			"certification" : "STANDARD",
+			"description" : [
+				"The persistencyFileSysThresRaised notification is generated when the",
+				"filesystem reaches 90 percent occupation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "persistencyFileSysThresStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "File system ($v3) reached 90&#37; occupation. $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::persistencyFileSysThresRaised TIMETRA-SYSTEM-MIB::tmnxPersistenceAffectedCpm s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyClient s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyFileLocator s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::persistencyFileSysThresRaised",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.50",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxPersistenceAffectedCpm is used by the",
+							"persistencyClosedAlarmRaised, persistencyClosedAlarmCleared",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to indicate the affected CPM."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistenceAffectedCpm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyClient is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyFileSysThresRaised and",
+							"persistencyFileSysThresCleared notification to indicate the affected",
+							"persistent application."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyClient",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyFileLocator is used by the",
+							"persistencyClosedAlarmRaised, persistencyClosedAlarmCleared",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to indicate the affected file used to store persistence",
+							"data."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyFileLocator",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyNotifyMsg is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyEventReport",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to provide additional information related to the event",
+							"that occurred."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::persistencyFileSysThresCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"The persistencyFileSysThresCleared notification is generated when the",
+				"filesystem drops below 90 percent occupation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "persistencyFileSysThresStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "File system ($v3) dropped below 90&#37; occupation. $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::persistencyFileSysThresCleared TIMETRA-SYSTEM-MIB::tmnxPersistenceAffectedCpm s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyClient s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyFileLocator s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::persistencyFileSysThresCleared",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.51",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxPersistenceAffectedCpm is used by the",
+							"persistencyClosedAlarmRaised, persistencyClosedAlarmCleared",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to indicate the affected CPM."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistenceAffectedCpm",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyClient is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyFileSysThresRaised and",
+							"persistencyFileSysThresCleared notification to indicate the affected",
+							"persistent application."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyClient",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyFileLocator is used by the",
+							"persistencyClosedAlarmRaised, persistencyClosedAlarmCleared",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to indicate the affected file used to store persistence",
+							"data."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyFileLocator",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"tmnxPersistencyNotifyMsg is used by the persistencyClosedAlarmRaised",
+							"persistencyClosedAlarmCleared, persistencyEventReport",
+							"persistencyFileSysThresRaised and persistencyFileSysThresCleared",
+							"notification to provide additional information related to the event",
+							"that occurred."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPersistencyNotifyMsg",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysExecStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysExecStarted notification is generated when the user",
+				"initiates a CLI 'exec' operation to process a file of SROS CLI",
+				"commands or processing of 'vsd' configuration messages have been",
+				"initiated.",
+				"The value of tmnxSysExecScript indicates the command file when the",
+				"value of tmnxLogExecRollbackOpType is 'exec' or an empty string when",
+				"the value of tmnxLogExecRollbackOpType is 'vsd'. The value of",
+				"tmnxLogExecRollbackOpIndex indicates the row entry in",
+				"TIMETRA-LOG-MIB::tmnxLogExecRollbackOpTable for this CLI 'exec' or",
+				"'vsd' operation.",
+				"[EFFECT] All change notifications generated after the generation of",
+				"this notification and before the tmnxSysExecFinished will be logged in",
+				"the TIMETRA-LOG-MIB::tmnxLogExecRollbackEventEntry. Once the",
+				"tmnxSysExecFinished notification is triggered, a Network Management",
+				"System (NMS) is able to walk the aforementioned log table to retrieve",
+				"the list of all objects that have been modified during this",
+				"transaction.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysExecStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System execution ($v1) started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysExecStarted TIMETRA-SYSTEM-MIB::tmnxSysExecScript s EXAMPLE TIMETRA-LOG-MIB::tmnxLogExecRollbackOpIndex u 9999 TIMETRA-LOG-MIB::tmnxLogExecRollbackOpType i 0",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysExecStarted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.52",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysExecScript specifies the location and name of the",
+							"CLI command script file executed by a SROS CLI 'exec' command when the",
+							"value of tmnxLogExRbkOpType is 'exec (1)'.",
+							"When the value of tmnxLogExRbkOpType is 'vsd (4)', then the value of",
+							"tmnxSysExecScript specifies an empty string.",
+							"It is used by the tmnxSysExecStarted and tmnxSysExecFinished",
+							"notifications."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysExecScript",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogExecRollbackOpIndex is a unique value that",
+							"indicates a row entry instance of an exec, load, rollback revert",
+							"or vsd operation in the tmnxLogExecRollbackOpTable. It is included",
+							"in the 'exec', 'load' and rollback revert start and end notifications."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogExecRollbackOpIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.26.5.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogExecRollbackOpType indicates the type of",
+							"operation being performed. It is included in the 'exec', 'load'",
+							"and rollback revert start and end notifications."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "exec",
+							"2" : "rollback",
+							"3" : "vsd",
+							"4" : "load"
+						},
+						"name" : "TIMETRA-LOG-MIB::tmnxLogExecRollbackOpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.26.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysExecFinished",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysExecFinished notification is generated upon the",
+				"completion of the execution of a CLI command file or execution of vsd",
+				"configuration messages is completed.",
+				"The value of tmnxSysExecScript indicates the command file when the",
+				"value of tmnxLogExecRollbackOpType is 'exec' or an empty string when",
+				"the value of tmnxLogExecRollbackOpType is 'vsd'. The value of",
+				"tmnxLogExecRollbackOpIndex indicates the row entry in",
+				"TIMETRA-LOG-MIB::tmnxLogExecRollbackOpTable for this CLI 'exec' or",
+				"'vsd' operation.",
+				"[EFFECT] The effect is that the entry for the specified",
+				"tmnxLogExecRollbackOpIndex won't be updated, and no further",
+				"notifications will be added to the specified index in the logger.",
+				"[RECOVERY] When the value of tmnxSysExecResult is 'none' or 'success'",
+				"no recovery is required.",
+				"When the value is 'fail', the system may be left in an inconsistent",
+				"state and the user should try to determine the reason for the failure.",
+				"The user can attempt a recovery by manually entering CLI commands to",
+				"reverse the failed configuration. The user can attempt a recovery by",
+				"performing a rollback revert to a known good checkpoint. The user can",
+				"attempt a recovery by rebooting the system with the bof pointing to a",
+				"saved configuration file."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v2==1) ? 1 : ($v2==2) ? 2 : 3"
+				},
+				"EventType" : "tmnxSysExecFinished",
+				"ExpireTime" : {
+					"eval" : "($v2==1) ? 3600 : ($v2==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v2==1) ? 0 : ($v2==2) ? 4 : 1"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System execution ($v1) result: $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysExecFinished TIMETRA-SYSTEM-MIB::tmnxSysExecScript s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxSysExecResult i 0 TIMETRA-LOG-MIB::tmnxLogExecRollbackOpIndex u 9999 TIMETRA-LOG-MIB::tmnxLogExecRollbackOpType i 0",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysExecFinished",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.53",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysExecScript specifies the location and name of the",
+							"CLI command script file executed by a SROS CLI 'exec' command when the",
+							"value of tmnxLogExRbkOpType is 'exec (1)'.",
+							"When the value of tmnxLogExRbkOpType is 'vsd (4)', then the value of",
+							"tmnxSysExecScript specifies an empty string.",
+							"It is used by the tmnxSysExecStarted and tmnxSysExecFinished",
+							"notifications."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysExecScript",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.21",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxSysExecResult indicates the results of executing the",
+							"CLI script file specified in tmnxSysExecScript. It is used by the",
+							"tmnxSysExecFinished notification."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "success",
+							"2" : "fail"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysExecResult",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.22",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogExecRollbackOpIndex is a unique value that",
+							"indicates a row entry instance of an exec, load, rollback revert",
+							"or vsd operation in the tmnxLogExecRollbackOpTable. It is included",
+							"in the 'exec', 'load' and rollback revert start and end notifications."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxLogExecRollbackOpIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.26.5.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxLogExecRollbackOpType indicates the type of",
+							"operation being performed. It is included in the 'exec', 'load'",
+							"and rollback revert start and end notifications."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "exec",
+							"2" : "rollback",
+							"3" : "vsd",
+							"4" : "load"
+						},
+						"name" : "TIMETRA-LOG-MIB::tmnxLogExecRollbackOpType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.26.5.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackSaveStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysRollbackSaveStarted notification is generated when",
+				"the user initiates a rollback save as specified by",
+				"tmnxSysRollbackFileType.",
+				"[EFFECT] The specified configuration file is saved.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysRollbackSaveStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System $v1 file rollback save started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysRollbackSaveStarted TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackSaveStarted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.54",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSysRollbackFileType is used by tmnxSysRollbackStarted",
+							"tmnxSysRollbackSaveStarted, tmnxSysRollbackDeleteStarted",
+							"tmnxSysRollbackStatusChange, tmnxSysRollbackSaveStatusChange, and",
+							"tmnxSysRollbackFileDeleteStatus notifications to indicate the type of",
+							"file involved in a rollback operation."
+						],
+						"enums" : {
+							"1" : "rollback",
+							"2" : "rescue"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.23",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackDeleteStarted",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysRollbackDeleteStarted notification is generated",
+				"when the user initiates a rollback delete as specified by",
+				"tmnxSysRollbackIndex and tmnxSysRollbackFileType.",
+				"[EFFECT] The specified configuration file is deleted.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysRollbackDeleteStarted",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "System $v2 file rollback delete started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysRollbackDeleteStarted TIMETRA-SYSTEM-MIB::tmnxSysRollbackIndex u 9999 TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackDeleteStarted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.55",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysRollbackIndex specifies a specific rollback",
+							"checkpoint file to which a rollback action can be taken.",
+							"The value of the tmnxSysRollbackIndex corresponds to a rollback",
+							"checkpoint file with suffix .rb.index.",
+							"The maximum checkpoint file that can be specified is determined by the",
+							"rollback location as specified by tmnxSysRollbackLocation. If the",
+							"location is on a compact flash, then the maximum value of",
+							"tmnxSysRollbackIndex can be tmnxSysRollbackMaxLocalFiles minus 1. If",
+							"the location is a remote ftp location, then the maximum value of",
+							"tmnxSysRollbackIndex can be tmnxSysRollbackMaxRemoteFiles minus 1.",
+							"This index is SET along with another action object, including",
+							"tmnxSysRollbackStart to initiate a rollback revert of a file and",
+							"tmnxSysRollbackFileDelete to delete a rollback file.",
+							"An SNMP GET request on this object should return the last SET value."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackIndex",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.17.1",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"tmnxSysRollbackFileType is used by tmnxSysRollbackStarted",
+							"tmnxSysRollbackSaveStarted, tmnxSysRollbackDeleteStarted",
+							"tmnxSysRollbackStatusChange, tmnxSysRollbackSaveStatusChange, and",
+							"tmnxSysRollbackFileDeleteStatus notifications to indicate the type of",
+							"file involved in a rollback operation."
+						],
+						"enums" : {
+							"1" : "rollback",
+							"2" : "rescue"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysRollbackFileType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.23",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysNvsysFileError",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysNvsysFileError notification is generated when there",
+				"is a failure in accessing the nvsys file as specified by",
+				"tmnxSysFileErrorType.",
+				"[EFFECT] The specified nvsys file operation is unsuccessful.",
+				"[RECOVERY] The user should investigate why the failure occurred. A",
+				"failure can indicate a problem with the compact flash."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysNvsysFileError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Nvsys file $v1 error detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysNvsysFileError TIMETRA-SYSTEM-MIB::tmnxSysFileErrorType i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNvsysFileError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.56",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxSysFileErrorType is used by tmnxSysNvsysFileError notification to",
+							"indicate the type of file error occurred."
+						],
+						"enums" : {
+							"1" : "read",
+							"2" : "write"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysFileErrorType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.24",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::sysDNSSecFailedAuthentication",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The sysDNSSecFailedAuthentication notification is generated",
+				"when a DNS response PDU is received with an unset AD-bit and",
+				"sysDNSSecAdValidation is set to 'true (1)'.",
+				"[EFFECT] This notification is informational only. The message will",
+				"vary depending on the state of sysDNSSecRespCtrl.",
+				"[RECOVERY] There is no recovery required for this notification."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "sysDNSSecFailedAuthentication",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "DNSSEC authentication failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::sysDNSSecFailedAuthentication TIMETRA-SYSTEM-MIB::sysDNSSecRespCtrl i 1 TIMETRA-SYSTEM-MIB::tmnxSysDNSSecDomainName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::sysDNSSecFailedAuthentication",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.57",
+				"variables" : [
+					{
+						"description" : [
+							"The value of sysDNSSecRespCtrl specifies whether the system will",
+							"permit or reject DNS responses that do not pass DNSSEC validation. The",
+							"value of this object is ignored if sysDNSSecAdValidation is set to",
+							"'false (2)'.",
+							"When sysDNSSecRespCtrl is set to 'fallThrough (1)', the system will",
+							"permit DNS responses that do not pass DNSSEC validation, allowing the",
+							"resolution to complete.",
+							"When sysDNSSecRespCtrl is set to 'drop (2)', the system will reject",
+							"DNS responses that do not pass DNSSEC validation, and the resolution",
+							"will appear to fail."
+						],
+						"enums" : {
+							"1" : "fallThrough",
+							"2" : "drop"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::sysDNSSecRespCtrl",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.14.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"tmnxSysDNSSecDomainName is used by the sysDNSSecFailedAuthentication",
+							"notification to indicate the domain name of the DNS query."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysDNSSecDomainName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.26",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxConfigConflict",
+			"certification" : "STANDARD",
+			"description" : [
+				"A tmnxConfigConflict notification is generated when a configuration",
+				"attribute associated with a row entry in a MIB table is in conflict",
+				"with another attribute.",
+				"It can be used by the NMS to trigger maintenance polls of the",
+				"configuration information."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxConfigConflict",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "table:$v2;row:$v1",
+				"Summary" : "A configuration attribute of $v3 is in conflict with another attribute"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxConfigConflict TIMETRA-SYSTEM-MIB::tmnxNotifyRow o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID o 1.3.6.1.4.1.8072.2.1.1 TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxConfigConflict",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.58",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxNotifyRow is used by the configuration modify, create and delete",
+							"traps. tmnxNotifyRow specifies the OID of the MIB table entry that was",
+							"changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyRow",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.1",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyEntryOID is used by the configuration modify, create and",
+							"delete traps. tmnxNotifyEntryOID specifies the OID of the MIB table",
+							"that was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyEntryOID",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.9",
+						"valueType" : "OBJECTID"
+					},
+					{
+						"description" : [
+							"tmnxNotifyObjectName is used by the configuration modify, create",
+							"delete and state change traps. tmnxNotifyObjectName specifies the",
+							"human readable name of the OID instance of the MIB table entry that",
+							"was changed."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifyObjectName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.19",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseInvalid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysLicenseInvalid notification is generated when the",
+				"license becomes invalid for the reason specified in",
+				"tmnxSysLicenseErrorReason.",
+				"[EFFECT] The CPM or system will reboot at the end of the time",
+				"remaining, as specified by tmnxSysLicenseTimeLeft and",
+				"tmnxSysLicenseErrorAction.",
+				"[RECOVERY] Configure a valid license file location and file name",
+				"given the value of tmnxSysLicenseErrorReason."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSysLicensevalid",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "System license is invalid due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysLicenseInvalid TIMETRA-CHASSIS-MIB::tmnxHwClass.1.2 i 1 TIMETRA-SYSTEM-MIB::tmnxSysLicenseErrorReason s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxSysLicenseTimeLeft u 9999 TIMETRA-SYSTEM-MIB::tmnxSysLicenseErrorAction s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseInvalid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.59",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object tmnxSysLicenseErrorReason indicates the reason for an",
+							"invalid license."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseErrorReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.27",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxSysLicenseTimeLeft indicates the time remaining for the",
+							"system to reboot as the result of an invalid license."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseTimeLeft",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.28",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The object tmnxSysLicenseErrorAction indicates the system action taken",
+							"as a result of tmnxSysLicenseErrorReason."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseErrorAction",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.32",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseExpiresSoon",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysLicenseExpiresSoon notification is generated when",
+				"the license is due to expire soon.",
+				"[EFFECT] The system will reboot at the end of the time remaining, as",
+				"specified by tmnxSysLicenseTimeLeft.",
+				"[RECOVERY] Configure a valid license file location and file name."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysLicenseExpiresSoon",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "License is expire soon in $v2 time"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysLicenseExpiresSoon TIMETRA-CHASSIS-MIB::tmnxHwClass.1.2 i 1 TIMETRA-SYSTEM-MIB::tmnxSysLicenseTimeLeft u 9999",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseExpiresSoon",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.60",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object tmnxSysLicenseTimeLeft indicates the time remaining for the",
+							"system to reboot as the result of an invalid license."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseTimeLeft",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.28",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysVsdServerAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysVsdServerAvailable notification is generated when",
+				"system discover a new VSD server.",
+				"[EFFECT] System will use this information to establish communication",
+				"with new VSD server as needed.",
+				"[RECOVERY] None needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSysVsdServerStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ServerName:$v1",
+				"Summary" : "System discovered a new VSD server ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysVsdServerAvailable TIMETRA-SYSTEM-MIB::tmnxSysNotifVsdServerName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysVsdServerAvailable",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.63",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysNotifVsdServerName specifies the VSD server name."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNotifVsdServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.30",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysVsdServerUnavailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysVsdServerAvailable notification is generated when",
+				"system loses connection to VSD.",
+				"[EFFECT] System will use this information and stop communication with",
+				"this VSD server as needed.",
+				"[RECOVERY] None needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSysVsdServerStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ServerName:$v1",
+				"Summary" : "System lost connection to VSD ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysVsdServerUnavailable TIMETRA-SYSTEM-MIB::tmnxSysNotifVsdServerName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysVsdServerUnavailable",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.64",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysNotifVsdServerName specifies the VSD server name."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNotifVsdServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.30",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysXmppServerFunctional",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysXmppServerFunctional notification is generated when",
+				"system discover a new XMPP server.",
+				"[EFFECT] System will use this information to establish communication",
+				"with new XMPP server as needed.",
+				"[RECOVERY] None needed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSysXmppServerFunctional",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ServerName:$v1",
+				"Summary" : "System XMPP server ($v1) functional"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysXmppServerFunctional TIMETRA-SYSTEM-MIB::tmnxSysNotifXmppServerName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysXmppServerFunctional",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.65",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysNotifXmppServerName indicates the name associated",
+							"with the XMPP Server."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNotifXmppServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.31",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysXmppServerNotFunctional",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysXmppServerNotFunctional notification is generated",
+				"when system can not communicate with XMPP server.",
+				"[EFFECT] Communication with XMPP server will stop.",
+				"[RECOVERY] Check to see why XMPP server has stopped communicating."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSysXmppServerFunctional",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ServerName:$v1",
+				"Summary" : "System XMPP server ($v1) not functional"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysXmppServerNotFunctional TIMETRA-SYSTEM-MIB::tmnxSysNotifXmppServerName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysXmppServerNotFunctional",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.66",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysNotifXmppServerName indicates the name associated",
+							"with the XMPP Server."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNotifXmppServerName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.31",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseValid",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysLicenseValid notification is generated once after",
+				"the system boots up and the license is determined by the system to be",
+				"valid.",
+				"[EFFECT] The system is running with the license specified in",
+				"tmnxSysLicenseName.",
+				"[RECOVERY] No recovery."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSysLicenseValid",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "System license is valid"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysLicenseValid TIMETRA-CHASSIS-MIB::tmnxHwClass.1.2 i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseValid",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.67",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysBaseMacAddressNotSet",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysBaseMacAddressNotSet notification is generated once",
+				"after the system boots up and the value of sbiSystemBaseMacAddress is",
+				"all zeroes.",
+				"[EFFECT] The system software is using the base MAC address specified",
+				"in tmnxChassisBaseMacAddress which may not be unique.",
+				"[RECOVERY] Configure sbiSystemBaseMacAddress to a value other than all",
+				"zeroes."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysBaseMacAddressNotSet",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "tmnxChassisEntry:$tmnxChassisIndex",
+				"Summary" : "System base MAC address ($v1) not set"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysBaseMacAddressNotSet TIMETRA-CHASSIS-MIB::tmnxChassisBaseMacAddress.1 x 000eaa12ddff",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysBaseMacAddressNotSet",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.68",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxChassisBaseMacAddress indicates the base system",
+							"ethernet MAC address. Special purpose MAC addresses used by the system",
+							"software are constructed as offsets from this base address."
+						],
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxChassisBaseMacAddress",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.3.1.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSmLaunchStartFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSmLaunchStartFailed notification is generated when the",
+				"launch start fails because of one of the following reasons:",
+				"1. The values of smLaunchScriptOwner and smLaunchScriptName don't",
+				"have an existing entry in the smScriptTable.",
+				"2. The value of smScriptOperStatus is not 'enabled'.",
+				"3. The smScriptSource value is NULL.",
+				"4. The value of smLaunchOperStatus object in smLaunchTable is not",
+				"'enabled'.",
+				"5. The check to see if the run Index is already in use fails.",
+				"6. The number of currently executing scripts invoked from this",
+				"smLaunchTable entry is greater than smLaunchMaxRunning.",
+				"[EFFECT] The result is indicated by incrementing the value of",
+				"tmnxEhsHEntryStatsErrLaunch.",
+				"[RECOVERY] No recovery is necessary."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxEhsHandlerName>[0-9]+)\\.(?P<tmnxEhsHEntryId>[0-9]+)$",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<smLaunchOwner>[0-9]+)\\.(?P<smLaunchName>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSmLaunchStartFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5'  : '$v4 launch start failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSmLaunchStartFailed TIMETRA-LOG-MIB::tmnxEhsHEntryScriptPlcyOwner.1.2 s EXAMPLE TIMETRA-LOG-MIB::tmnxEhsHEntryScriptPlcyName s EXAMPLE DISMAN-SCRIPT-MIB::smLaunchScriptOwner.1.2 s EXAMPLE DISMAN-SCRIPT-MIB::smLaunchScriptName s EXAMPLE DISMAN-SCRIPT-MIB::smLaunchError s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxSmLaunchExtAuthType i 0 TIMETRA-SYSTEM-MIB::tmnxSmRunExtAuthType i 0 TIMETRA-SYSTEM-MIB::tmnxSmRunExtUserName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSmLaunchStartFailed",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.69",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxEhsHEntryScriptPlcyOwner in combination with the",
+							"value of tmnxEhsHEntryScriptPlcyName specifies the script policy that",
+							"can be launched from this tmnxEhsHEntryTable row. The zero-length",
+							"string may be used to point to a non-existing script policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxEhsHEntryScriptPlcyOwner",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.29.4.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxEhsHEntryScriptPlcyName in combination with the value",
+							"of tmnxEhsHEntryScriptPlcyOwner specifies the script policy that can",
+							"be launched from this tmnxEhsHEntryTable row. The zero-length string",
+							"may be used to point to a non-existing script policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxEhsHEntryScriptPlcyName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.29.4.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object in combination with the value of",
+							"smLaunchScriptName identifies the script that can be",
+							"launched from this smLaunchTable entry. Attempts to write",
+							"this object will fail with an inconsistentValue error if",
+							"the value of smLaunchOperStatus is `enabled'."
+						],
+						"name" : "DISMAN-SCRIPT-MIB::smLaunchScriptOwner",
+						"oid" : "1.3.6.1.2.1.64.1.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object in combination with the value of",
+							"the smLaunchScriptOwner identifies the script that can be",
+							"launched from this smLaunchTable entry. The zero-length",
+							"string may be used to point to a non-existing script.",
+							"Attempts to write this object will fail with an",
+							"inconsistentValue error if the value of smLaunchOperStatus",
+							"is `enabled'."
+						],
+						"name" : "DISMAN-SCRIPT-MIB::smLaunchScriptName",
+						"oid" : "1.3.6.1.2.1.64.1.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"This object contains a descriptive error message if an",
+							"attempt to launch a script fails. Implementations must reset",
+							"the error message to a zero-length string when a new attempt",
+							"to launch a script is started."
+						],
+						"name" : "DISMAN-SCRIPT-MIB::smLaunchError",
+						"oid" : "1.3.6.1.2.1.64.1.4.1.1.17",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxSmLaunchExtAuthType indicates the module",
+							"that last started a script by writing to",
+							"DISMAN-SCRIPT-MIB::smLaunchStart. If no script has yet",
+							"been started the value 'none(0)' is returned."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cron",
+							"2" : "xmpp",
+							"3" : "event-script",
+							"4" : "vsd"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSmLaunchExtAuthType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.35.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSmRunExtAuthType indicates the module",
+							"that started this run of a script by writing to",
+							"DISMAN-SCRIPT-MIB::smLaunchStart. If no script has yet",
+							"been started the value 'none(0)' is returned."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cron",
+							"2" : "xmpp",
+							"3" : "event-script",
+							"4" : "vsd"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSmRunExtAuthType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.35.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSmRunExtUserName indicates the name of",
+							"the user account used to check access to CLI commands while",
+							"executing the script. If no script has yet been started",
+							"the empty string is returned."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSmRunExtUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.35.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxEhsHandlerInvoked",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxEhsHandlerInvoked notification is generated when the",
+				"following checks pass: 1. A check to see if a event trigger is present",
+				"for a particular log event based on the log event application-id and",
+				"event-id/event name. 2. Evaluation of the log filter associated with",
+				"the trigger-entry.",
+				"[EFFECT] This may create a run entry to execute scripts.",
+				"[RECOVERY] No recovery is necessary."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxEhsHandlerName>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxEhsHandlerInvoked",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "EHS handler invoked. $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxEhsHandlerInvoked TIMETRA-LOG-MIB::tmnxEhsHandlerDescription.1 s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxSmRunExtAuthType i 0 TIMETRA-SYSTEM-MIB::tmnxSmRunExtUserName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxEhsHandlerInvoked",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.70",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxEhsHandlerDescription specifies a user provided",
+							"description string for an EHS Handler. It can consist of any",
+							"printable, seven-bit ASCII characters up to 80 characters in length."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxEhsHandlerDescription",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.29.2.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxSmRunExtAuthType indicates the module",
+							"that started this run of a script by writing to",
+							"DISMAN-SCRIPT-MIB::smLaunchStart. If no script has yet",
+							"been started the value 'none(0)' is returned."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cron",
+							"2" : "xmpp",
+							"3" : "event-script",
+							"4" : "vsd"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSmRunExtAuthType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.35.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSmRunExtUserName indicates the name of",
+							"the user account used to check access to CLI commands while",
+							"executing the script. If no script has yet been started",
+							"the empty string is returned."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSmRunExtUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.35.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxEhsDroppedByMinDelay",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxEhsDroppedByMinDelay is generated when two consecutive",
+				"executions of script policy specified by the same event handler entry",
+				"occurs within the time period specified by tmnxEhsHEntryMinDelay.",
+				"[EFFECT] The value of tmnxEhsHEntryStatsErrMinDelay gets incremented.",
+				"[RECOVERY] No recovery is necessary."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxEhsHandlerName>[0-9]+)\\.(?P<tmnxEhsHEntryId>[0-9]+)$",
+						"capture" : true
+					}
+				},
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<smLaunchOwner>[0-9]+)\\.(?P<smLaunchName>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxEhsDroppedByMinDelay",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Script policy $v2 executed twice within minimum delay period"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxEhsDroppedByMinDelay TIMETRA-LOG-MIB::tmnxEhsHEntryScriptPlcyOwner.1.2 s EXAMPLE TIMETRA-LOG-MIB::tmnxEhsHEntryScriptPlcyName s EXAMPLE DISMAN-SCRIPT-MIB::smLaunchScriptOwner.1.2 s EXAMPLE DISMAN-SCRIPT-MIB::smLaunchScriptName s EXAMPLE TIMETRA-LOG-MIB::tmnxEhsHEntryMinDelay u 9999 TIMETRA-LOG-MIB::tmnxEhsHEntryMinDelayInterval u 9999 TIMETRA-SYSTEM-MIB::tmnxSmRunExtAuthType i 0 TIMETRA-SYSTEM-MIB::tmnxSmRunExtUserName s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxEhsDroppedByMinDelay",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.71",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxEhsHEntryScriptPlcyOwner in combination with the",
+							"value of tmnxEhsHEntryScriptPlcyName specifies the script policy that",
+							"can be launched from this tmnxEhsHEntryTable row. The zero-length",
+							"string may be used to point to a non-existing script policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxEhsHEntryScriptPlcyOwner",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.29.4.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxEhsHEntryScriptPlcyName in combination with the value",
+							"of tmnxEhsHEntryScriptPlcyOwner specifies the script policy that can",
+							"be launched from this tmnxEhsHEntryTable row. The zero-length string",
+							"may be used to point to a non-existing script policy."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxEhsHEntryScriptPlcyName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.29.4.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object in combination with the value of",
+							"smLaunchScriptName identifies the script that can be",
+							"launched from this smLaunchTable entry. Attempts to write",
+							"this object will fail with an inconsistentValue error if",
+							"the value of smLaunchOperStatus is `enabled'."
+						],
+						"name" : "DISMAN-SCRIPT-MIB::smLaunchScriptOwner",
+						"oid" : "1.3.6.1.2.1.64.1.4.1.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of this object in combination with the value of",
+							"the smLaunchScriptOwner identifies the script that can be",
+							"launched from this smLaunchTable entry. The zero-length",
+							"string may be used to point to a non-existing script.",
+							"Attempts to write this object will fail with an",
+							"inconsistentValue error if the value of smLaunchOperStatus",
+							"is `enabled'."
+						],
+						"name" : "DISMAN-SCRIPT-MIB::smLaunchScriptName",
+						"oid" : "1.3.6.1.2.1.64.1.4.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxEhsHEntryMinDelay specifies the minimum",
+							"time, in seconds, between executions of the script policy",
+							"specified by this EHS Event Handler Entry. A '0' value means",
+							"no delay is imposed."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxEhsHEntryMinDelay",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.29.4.1.9",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxEhsHEntryMinDelayInterval indicates the difference",
+							"between the current time and the time as mentioned in",
+							"tmnxEhsHEntryLastExecuted."
+						],
+						"name" : "TIMETRA-LOG-MIB::tmnxEhsHEntryMinDelayInterval",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.12.1.17",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"description" : [
+							"The value of tmnxSmRunExtAuthType indicates the module",
+							"that started this run of a script by writing to",
+							"DISMAN-SCRIPT-MIB::smLaunchStart. If no script has yet",
+							"been started the value 'none(0)' is returned."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cron",
+							"2" : "xmpp",
+							"3" : "event-script",
+							"4" : "vsd"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSmRunExtAuthType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.35.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSmRunExtUserName indicates the name of",
+							"the user account used to check access to CLI commands while",
+							"executing the script. If no script has yet been started",
+							"the empty string is returned."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSmRunExtUserName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.35.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysAppStats24HrsAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The system generates the tmnxSysAppStats24HrsAvailable",
+				"notification when new rows are available in the",
+				"tmnxSysAppStats24HrsTable.",
+				"The value of tmnxSysNotifAppStatsTime indicates the time the system",
+				"collected the values in the new rows.",
+				"A non-zero value of tmnxSysNotifAppStatsApplication indicates the",
+				"application; a zero value of tmnxSysNotifAppStatsApplication indicates",
+				"that new values are available for all active applications.",
+				"A non-zero value of tmnxSysNotifAppStatsType indicates the type of",
+				"statistics; a zero value of tmnxSysNotifAppStatsType indicates that",
+				"new values are available for all active types.",
+				"[EFFECT] None.",
+				"[RECOVERY] No recovery is necessary."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysAppStats24HrsAvailable",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "System $v2 application $v3 statistics 24hrs available"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysAppStats24HrsAvailable TIMETRA-SYSTEM-MIB::tmnxSysNotifAppStatsTime s 09:10:55 TIMETRA-SYSTEM-MIB::tmnxSysNotifAppStatsApplication i 0 TIMETRA-SYSTEM-MIB::tmnxSysNotifAppStatsType i 0",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysAppStats24HrsAvailable",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.72",
+				"variables" : [
+					{
+						"description" : [
+							"The object tmnxSysNotifAppStatsTime indicates the time that the system",
+							"collected statistics' values."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNotifAppStatsTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.35",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The object tmnxSysNotifAppStatsApplication indicates an application in",
+							"a virtual machine implementation that is subject to licensing."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "nat",
+							"2" : "wlanGw",
+							"3" : "lns",
+							"4" : "subMgmt",
+							"5" : "aa",
+							"6" : "ipsec"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNotifAppStatsApplication",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.33",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object tmnxSysNotifAppStatsType indicates a type of statistics",
+							"collected about an application in a virtual machine implementation",
+							"subject to licensing."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "lsnSubscribers",
+							"2" : "lsnBandwidth",
+							"1000" : "wlanGwUserEquipment",
+							"1001" : "wlanGwGtpBearers",
+							"2000" : "lnsTunnels",
+							"2001" : "lnsSessions",
+							"3000" : "subscriberHosts",
+							"4000" : "aaSubscribers",
+							"4001" : "aaBandwidth",
+							"5000" : "ipsecTunnels",
+							"5001" : "ipsecTnlBandwidth",
+							"5002" : "ipTunnels",
+							"5003" : "ipTnlBandwidth"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNotifAppStatsType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.34",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysAppStatsWeekAvailable",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The system generates the tmnxSysAppStatsWeekAvailable",
+				"notification when new rows are available in the",
+				"tmnxSysAppStatsWeekTable.",
+				"The value of tmnxSysNotifAppStatsTime indicates the time the system",
+				"collected the values in the new rows.",
+				"[EFFECT] None.",
+				"[RECOVERY] No recovery is necessary."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysAppStatsWeekAvailable",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "New rows are available in the system app stats week table"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysAppStatsWeekAvailable TIMETRA-SYSTEM-MIB::tmnxSysNotifAppStatsTime s 09:10:55",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysAppStatsWeekAvailable",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.73",
+				"variables" : [
+					{
+						"description" : [
+							"The object tmnxSysNotifAppStatsTime indicates the time that the system",
+							"collected statistics' values."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysNotifAppStatsTime",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.35",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseActivated",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysLicenseActivated notification is generated each",
+				"time a license is activated by the system.",
+				"[EFFECT] The system is running with the license specified in",
+				"tmnxSysLicenseName.",
+				"[RECOVERY] No recovery."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysLicenseActivated",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "License is activated by the system"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysLicenseActivated TIMETRA-CHASSIS-MIB::tmnxHwClass.1.2 i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseActivated",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.75",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysStandbyLicensingError",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysStandbyLicensingError notification is generated",
+				"when a licensing issue has been detected by the standby. The reason is",
+				"specified in tmnxSysLicenseErrorReason.",
+				"[EFFECT] The Standby CPM may not synchronized and may be put into a",
+				"failed state depending on the failure.",
+				"[RECOVERY] Ensure a valid license file location and file name",
+				"given the value of tmnxSysLicenseErrorReason. Reset the Standby CPM or activate",
+				"a valid license."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSysStandbyLicensing",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Licensing issue has detected by the standby due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysStandbyLicensingError TIMETRA-CHASSIS-MIB::tmnxHwClass.1.2 i 1 TIMETRA-SYSTEM-MIB::tmnxSysLicenseErrorReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysStandbyLicensingError",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.76",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object tmnxSysLicenseErrorReason indicates the reason for an",
+							"invalid license."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseErrorReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.27",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysStandbyLicensingReady",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysStandbyLicensingReady notification is generated",
+				"when a licensing has been successfully activated by the standby.",
+				"[EFFECT] Any licensing errors detected by the Standby CPM are cleared.",
+				"[RECOVERY] None."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid1",
+						"pattern" : "\\.(?P<tmnxChassisIndex>[0-9]+)\\.(?P<tmnxHwIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSysStandbyLicensing",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "tmnxHwEntry:$tmnxChassisIndex;HwIndex:$tmnxHwIndex",
+				"Summary" : "Licensing has successfully activated by the standby"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysStandbyLicensingReady TIMETRA-CHASSIS-MIB::tmnxHwClass.1.2 i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysStandbyLicensingReady",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.77",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeStart",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysMgmtIfModeChangeStart notification is generated",
+				"when a management interface configuration mode change request is sent.",
+				"[EFFECT] Switching modes between any configuration mode will lock the",
+				"configuration datastores from operator input until the mode switch has",
+				"completed.",
+				"[RECOVERY] None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysMgmtIfModeChangeStart",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Management interface $v1 configuration mode change started due to $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeStart TIMETRA-SYSTEM-MIB::tmnxNotifySysMgmtIfOriginalMode i 1 TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfWriteMode i 1 TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfWriteSwitchReason i 0",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeStart",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.78",
+				"variables" : [
+					{
+						"description" : [
+							"tmnxNotifySysMgmtIfOriginalMode indicates the active system interface",
+							"management mode the system was in when the configuration mode change",
+							"request was sent."
+						],
+						"enums" : {
+							"1" : "classic",
+							"2" : "modelDriven",
+							"3" : "mixed"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxNotifySysMgmtIfOriginalMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.36",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSysMgmtIfWriteMode specifies the router",
+							"configuration mode's requested provisional state.",
+							"classic (1) - configuration is managed by classic",
+							"interfaces only (e.g. classic CLI and",
+							"SNMP).",
+							"modelDriven (2) - configuration is managed by",
+							"model-driven interfaces only",
+							"(e.g. MD-CLI, Netconf, and gNMI).",
+							"mixed (3) - configuration is managed (with",
+							"restrictions) with both classic and",
+							"model-driven interfaces.",
+							"When the value of tmnxSysMgmtIfWriteOperMode is in 'modelDriven (2)'",
+							"mode, SNMP Set-PDUs are rejected (ResourceUnavailable(13))). To",
+							"re-enable SNMP access an operator MUST have write-access to CLI or a",
+							"newer interface such as Netconf or gNMI and set the mode to either",
+							"'classic (1)' or 'mixed (3)'."
+						],
+						"enums" : {
+							"1" : "classic",
+							"2" : "modelDriven",
+							"3" : "mixed"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfWriteMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.43.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxSysMgmtIfWriteSwitchReason indicates the",
+							"origin cause of the router configuration mode switch.",
+							"boot(0) - The system booted in the current mode.",
+							"manual (1) - An operator manually switched to the",
+							"current mode.",
+							"validation (2) - Validation failure was detected",
+							"causing the mode switch."
+						],
+						"enums" : {
+							"0" : "boot",
+							"1" : "manual",
+							"2" : "validation"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfWriteSwitchReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.43.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeComplete",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysMgmtIfModeChangeComplete notification is generated",
+				"when a management interface configuration mode change request is",
+				"complete.",
+				"[EFFECT] Switching modes between any configuration mode will lock the",
+				"configuration datastores from operator input until the mode switch has",
+				"completed. Once this event is triggered the configuration datastores",
+				"are unlocked for operator input.",
+				"[RECOVERY] None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "tmnxSysMgmtIfModeChange",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Management interface $v1 configuration mode change request is completed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeComplete TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfWriteMode i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeComplete",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.79",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysMgmtIfWriteMode specifies the router",
+							"configuration mode's requested provisional state.",
+							"classic (1) - configuration is managed by classic",
+							"interfaces only (e.g. classic CLI and",
+							"SNMP).",
+							"modelDriven (2) - configuration is managed by",
+							"model-driven interfaces only",
+							"(e.g. MD-CLI, Netconf, and gNMI).",
+							"mixed (3) - configuration is managed (with",
+							"restrictions) with both classic and",
+							"model-driven interfaces.",
+							"",
+							"When the value of tmnxSysMgmtIfWriteOperMode is in 'modelDriven (2)'",
+							"mode, SNMP Set-PDUs are rejected (ResourceUnavailable(13))). To",
+							"re-enable SNMP access an operator MUST have write-access to CLI or a",
+							"newer interface such as Netconf or gNMI and set the mode to either",
+							"'classic (1)' or 'mixed (3)'."
+						],
+						"enums" : {
+							"1" : "classic",
+							"2" : "modelDriven",
+							"3" : "mixed"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfWriteMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.43.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysMgmtIfModeChangeFailure notification is generated",
+				"when a management interface configuration mode change request fails to",
+				"complete.",
+				"[EFFECT] Switching modes between any configuration mode will lock the",
+				"configuration datastores from operator input until the mode switch has",
+				"completed. When this event is triggered the mode change is declared",
+				"unsuccessful; the effective configuration mode will be indicated in",
+				"this notification. The configuration datastores are unlocked for",
+				"operator input.",
+				"[RECOVERY] None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "tmnxSysMgmtIfModeChange",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Management interface $v1 configuration mode change request completion failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeFailure TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfWriteMode i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfModeChangeFailure",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.80",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxSysMgmtIfWriteMode specifies the router",
+							"configuration mode's requested provisional state.",
+							"classic (1) - configuration is managed by classic",
+							"interfaces only (e.g. classic CLI and",
+							"SNMP).",
+							"modelDriven (2) - configuration is managed by",
+							"model-driven interfaces only",
+							"(e.g. MD-CLI, Netconf, and gNMI).",
+							"mixed (3) - configuration is managed (with",
+							"restrictions) with both classic and",
+							"model-driven interfaces.",
+							"When the value of tmnxSysMgmtIfWriteOperMode is in 'modelDriven (2)'",
+							"mode, SNMP Set-PDUs are rejected (ResourceUnavailable(13))). To",
+							"re-enable SNMP access an operator MUST have write-access to CLI or a",
+							"newer interface such as Netconf or gNMI and set the mode to either",
+							"'classic (1)' or 'mixed (3)'."
+						],
+						"enums" : {
+							"1" : "classic",
+							"2" : "modelDriven",
+							"3" : "mixed"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfWriteMode",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.43.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysAppLicenseInsufficient",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysAppLicenseInsufficient notification is generated periodically",
+				"when licensing for an application is detected to be insufficient. The details",
+				"of the error is specified in tmnxSysLicenseErrorReason.",
+				"This notification cannot be suppressed.",
+				"[EFFECT] Notification generated periodically while the application",
+				"remains in this condition.",
+				"[RECOVERY] Activate a system license containing sufficient license",
+				"entitlements for this application."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 1 : ($v3==0) ? 3 : 2"
+				},
+				"EventType" : "tmnxSysAppLicenseInsufficient",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : ($v3==0) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 0 : (($v3==0) ? 1 : 4)"
+				},
+				"SubNode" : "AppName:$v2",
+				"Summary" : {
+					"eval" : "($v3==1) ? 'Application ($v2) license is valid' : 'Licensing for an application ($v2) is insufficient due to $v4'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysAppLicenseInsufficient TIMETRA-SYSTEM-MIB::tmnxSysLicensingNotifyGroup i 0 TIMETRA-SYSTEM-MIB::tmnxSysLicensedNotifyAppName s EXAMPLE TIMETRA-SYSTEM-MIB::tmnxSysAppLicenseState i 0 TIMETRA-SYSTEM-MIB::tmnxSysLicenseErrorReason s EXAMPLE",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysAppLicenseInsufficient",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.81",
+				"variables" : [
+					{
+						"description" : [
+							"The object tmnxSysLicensingNotifyGroup specifies the licensing group",
+							"of an application license"
+						],
+						"enums" : {
+							"0" : "system",
+							"1" : "services",
+							"2" : "nsp",
+							"3" : "isa",
+							"4" : "iom",
+							"5" : "mda"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicensingNotifyGroup",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.37",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object tmnxSysLicensedNotifyAppName specifies the name of the",
+							"licensed application"
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicensedNotifyAppName",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.38",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The value of tmnxSysAppLicenseState indicates the state",
+							"of the license for this application.",
+							"valid - No issue with application license",
+							"error - Insufficient licensing has been detected.",
+							"violation - License violation has been detected."
+						],
+						"enums" : {
+							"0" : "unknown",
+							"1" : "valid",
+							"2" : "error",
+							"3" : "violation"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysAppLicenseState",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.30.16.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The object tmnxSysLicenseErrorReason indicates the reason for an",
+							"invalid license."
+						],
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseErrorReason",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.27",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfLiIncorrectFormat",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysMgmtIfLiIncorrectFormat notification is generated",
+				"when a format (classic or model-driven) of the Lawful Intercept (LI)",
+				"configuration file does not match primary configuration file format.",
+				"[EFFECT] The Lawful Intercept (LI) configuration file is not loaded",
+				"during the boot.",
+				"[RECOVERY] Reboot with the correct Lawful Intercept (LI) configuration",
+				"file"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysMgmtIfLiIncorrectFormat",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "$v2 format of the lawful intercept (LI) configuration file mismatch detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfLiIncorrectFormat TIMETRA-SYSTEM-MIB::tmnxPrimaryConfigFileFormatType i 1 TIMETRA-SYSTEM-MIB::tmnxLiConfigFileFormatType i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfLiIncorrectFormat",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.82",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxPrimaryConfigFileFormatType specifies format of the",
+							"primary configuration file."
+						],
+						"enums" : {
+							"1" : "classicCli",
+							"2" : "mdCli"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxPrimaryConfigFileFormatType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.39",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The value of tmnxLiConfigFileFormatType specifies format of the li",
+							"configuration file."
+						],
+						"enums" : {
+							"1" : "classicCli",
+							"2" : "mdCli"
+						},
+						"name" : "TIMETRA-SYSTEM-MIB::tmnxLiConfigFileFormatType",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.1.7.40",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfLiCfgNotEncrypted",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysMgmtIfLiCfgNotEncrypted notification is generated",
+				"when the Lawful Intercept (LI) configuration file is not encrypted.",
+				"[EFFECT] The Lawful Intercept (LI) configuration file is not loaded",
+				"during the boot.",
+				"[RECOVERY] Reboot with the correct Lawful Intercept (LI) configuration",
+				"file"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysMgmtIfLiCfgNotEncrypted",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Lawful intercept (LI) configuration file is not encrypted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfLiCfgNotEncrypted ",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysMgmtIfLiCfgNotEncrypted",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.83"
+			}
+		},
+		{
+			"@objectName" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseUpdateRequired",
+			"certification" : "STANDARD",
+			"description" : [
+				"[CAUSE] The tmnxSysLicenseUpdateRequired notification is generated once after",
+				"the system boots up and the license is determined by the system to be valid, but",
+				"requires to be updated to the correct software version.",
+				"[EFFECT] The system will use the license until it is updated.",
+				"[RECOVERY] Update and activate the updated license."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "tmnxSysLicenseUpdateRequired",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "System licence is valid, but requires update to correct version"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD TIMETRA-SYSTEM-MIB::tmnxSysLicenseUpdateRequired TIMETRA-CHASSIS-MIB::tmnxHwClass i 1",
+			"trap" : {
+				"name" : "TIMETRA-SYSTEM-MIB::tmnxSysLicenseUpdateRequired",
+				"oid" : "1.3.6.1.4.1.6527.3.1.3.1.0.84",
+				"variables" : [
+					{
+						"description" : [
+							"The value of tmnxHwClass indicates the general hardware type of this",
+							"component. If no appropriate enumeration exists for this hardware",
+							"identify this hardware component then the value 'unknown (2)' is",
+							"used."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "physChassis",
+							"4" : "container",
+							"5" : "powerSupply",
+							"6" : "fan",
+							"7" : "sensor",
+							"8" : "ioModule",
+							"9" : "cpmModule",
+							"10" : "fabricModule",
+							"11" : "mdaModule",
+							"12" : "flashDiskModule",
+							"13" : "port",
+							"14" : "mcm",
+							"15" : "ccm",
+							"19" : "alarmInputModule",
+							"20" : "pcm",
+							"21" : "powerShelf",
+							"22" : "powerShelfController",
+							"23" : "cpmCarrier",
+							"24" : "reserved24"
+						},
+						"name" : "TIMETRA-CHASSIS-MIB::tmnxHwClass",
+						"oid" : "1.3.6.1.4.1.6527.3.1.2.2.1.8.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

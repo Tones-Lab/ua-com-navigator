@@ -1,0 +1,243 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201509210000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-QP-LBG-MIB::cqlQpStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when a QP state",
+				"has changed and the value of cqlQpNotifyEnable is 'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 3) ? 1 : 2"
+				},
+				"EventType" : "cqlQpStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 3) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 3 : (($v1 == 2) ? 2 : 3)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "QP state has changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-QP-LBG-MIB::cqlQpStateChange CISCO-QP-LBG-MIB::cqlqpState i 1",
+			"trap" : {
+				"name" : "CISCO-QP-LBG-MIB::cqlQpStateChange",
+				"oid" : "1.3.6.1.4.1.9.9.824.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "inactive",
+							"2" : "init",
+							"3" : "active"
+						},
+						"name" : "CISCO-QP-LBG-MIB::cqlqpState",
+						"oid" : "1.3.6.1.4.1.9.9.824.1.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-QP-LBG-MIB::cqlQamAdd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when a qam has",
+				"been added to QP and the value of cqlQamNotifyEnable ",
+				"is 'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cqlQamAdd",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v2",
+				"Summary" : "A qam has been added to QP on interface $v2 with ID: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-QP-LBG-MIB::cqlQamAdd CISCO-QP-LBG-MIB::cqlqpId u 9999 IF-MIB::ifDescr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-QP-LBG-MIB::cqlQamAdd",
+				"oid" : "1.3.6.1.4.1.9.9.824.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-QP-LBG-MIB::cqlqpId",
+						"oid" : "1.3.6.1.4.1.9.9.824.1.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "IF-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-QP-LBG-MIB::cqlQamDelete",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when a qam has",
+				"been deleted from QP and the value of cqlQamNotifyEnable ",
+				"is 'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cqlQamDelete",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v2",
+				"Summary" : "A qam has been removed from the QP on interface $v2 with ID: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-QP-LBG-MIB::cqlQamDelete CISCO-QP-LBG-MIB::cqlqpId u 9999 IF-MIB::ifDescr s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-QP-LBG-MIB::cqlQamDelete",
+				"oid" : "1.3.6.1.4.1.9.9.824.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-QP-LBG-MIB::cqlqpId",
+						"oid" : "1.3.6.1.4.1.9.9.824.1.1.1.2",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "IF-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-QP-LBG-MIB::cqlLbgRouteAdd",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when a route has",
+				"been added to QP and the value of cqlRouteNotifyEnable ",
+				"is 'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cqlLbgRouteAdd",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "A route with the following details has been added to QP: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-QP-LBG-MIB::cqlLbgRouteAdd CISCO-QP-LBG-MIB::cqlqpRouteDetails s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-QP-LBG-MIB::cqlLbgRouteAdd",
+				"oid" : "1.3.6.1.4.1.9.9.824.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-QP-LBG-MIB::cqlqpRouteDetails",
+						"oid" : "1.3.6.1.4.1.9.9.824.1.1.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-QP-LBG-MIB::cqlLbgRouteDelete",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when a route has been",
+				"deleted from QP and the value of cqlRouteNotifyEnable is",
+				"'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cqlLbgRouteDelete",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "A route with the following details has been deleted from QP: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-QP-LBG-MIB::cqlLbgRouteDelete CISCO-QP-LBG-MIB::cqlqpRouteDetails s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-QP-LBG-MIB::cqlLbgRouteDelete",
+				"oid" : "1.3.6.1.4.1.9.9.824.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-QP-LBG-MIB::cqlqpRouteDetails",
+						"oid" : "1.3.6.1.4.1.9.9.824.1.1.1.16",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-QP-LBG-MIB::cqlQamOverSubscribedAlert",
+			"certification" : "STANDARD",
+			"description" : [
+				"The device generates this notification when a qam",
+				"has been oversubscribed or cleared. This will be",
+				"enabled when the object cqlQamOverSubscribedEnable ",
+				"is set to 'true'."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cqlQamOverSubscribedAlert",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : {
+					"eval" : "( $v2 == 1 ) ? 'The qam has been over subscribed on interface $v1' : 'The qam is no longer over subscribed on interface $v1' "
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-QP-LBG-MIB::cqlQamOverSubscribedAlert IF-MIB::ifDescr s EXAMPLE CISCO-QP-LBG-MIB::cqlqpQamOversubscribedStatus i 1",
+			"trap" : {
+				"name" : "CISCO-QP-LBG-MIB::cqlQamOverSubscribedAlert",
+				"oid" : "1.3.6.1.4.1.9.9.824.0.6",
+				"variables" : [
+					{
+						"name" : "IF-MIB::ifDescr",
+						"oid" : "1.3.6.1.2.1.2.2.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "true",
+							"2" : "false"
+						},
+						"name" : "CISCO-QP-LBG-MIB::cqlqpQamOversubscribedStatus",
+						"oid" : "1.3.6.1.4.1.9.9.824.1.1.1.26",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

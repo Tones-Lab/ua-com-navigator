@@ -1,0 +1,77 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201712010000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CIENA-CES-MCAST-FILTER-MIB::cienaCesMcastAddrOverlapNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesMcastAddrOverlapNotification is sent whenever ",
+				"several multicast IP addresses overlap (matches the ",
+				"same L2 address).",
+				"Marking it deprecated as in case of overlapping IP ",
+				"addresses, no report is sent to user as the groups ",
+				"are registered in any case and traffic for these ",
+				"groups will be forwarded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 1 : (($v1==0 || $v1==2 || $v1==7 || $v1==8 || $v1==9 || $v1==10) ? 3 : 2)"
+				},
+				"EventType" : "cienaCesMcastAddrOverlapNotification",
+				"ExpireTime" : {
+					"eval" : "($v1==1 || $v1==0 || $v1==2 || $v1==7 || $v1==8 || $v1==9 || $v1==10) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 0 : (($v1==3) ? 5 : (($v1==4) ? 4 : (($v1==5 || $v1==6) ? 3 : (($v1==0) ? 1 : 2))))"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1==1) ? 'Multicast IP addresses overlap notification cleared' : 'Multicast IP addresses overlap notification occurred'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-MCAST-FILTER-MIB::cienaCesMcastAddrOverlapNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 0 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff",
+			"trap" : {
+				"name" : "CIENA-CES-MCAST-FILTER-MIB::cienaCesMcastAddrOverlapNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.100.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

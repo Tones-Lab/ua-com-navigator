@@ -1,0 +1,719 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200809160000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModuleDomainRoleChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The VCM role of the VC module has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModuleDomainRoleChange",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==2 || $v1==5) ? 2 : ($v1==3) ? 4 : 3"
+				},
+				"SubNode" : "Device",
+				"Summary" : "VCM role of the VC module changed to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModuleDomainRoleChange HPVCMODULE-MIB::vcModuleRole i 1",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModuleDomainRoleChange",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The VC domain role of this VC module."
+						],
+						"enums" : {
+							"1" : "unintegrated",
+							"2" : "primaryProtected",
+							"3" : "primaryUnprotected",
+							"4" : "standby",
+							"5" : "other"
+						},
+						"name" : "HPVCMODULE-MIB::vcModuleRole",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortInputUtilizationUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The port input utilization rate has exceeded high threshold.",
+				"The input line utilization on a port has exceeded its threshold",
+				"for longer than the threshold averaging period. The ifIndex",
+				"is the index of the affected port in ifTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModPortInputUtilizationUp",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port input utilization rate exceeded high threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortInputUtilizationUp IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortInputUtilizationUp",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.11",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortInputUtilizationDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The port input utilization rate has dropped below low watermark.",
+				"The input line utilization on a port has dropped below its low ",
+				"watermark for longer than the threshold averaging period. The ifIndex",
+				"is the index of the affected port in ifTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModPortInputUtilizationDown",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port input utilization rate dropped below low watermark"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortInputUtilizationDown IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortInputUtilizationDown",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.12",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortOutputUtilizationUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The port output utilization rate has exceeded high threshold.",
+				"The output line utilization on a port has exceeded its high watermark",
+				"for longer than the threshold averaging period. The ifIndex",
+				"is the index of the affected port in ifTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModPortOutputUtilizationUp",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port output utilization rate exceeded high threshold"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortOutputUtilizationUp IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortOutputUtilizationUp",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.13",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortOutputUtilizationDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The port output utilization rate has dropped below low watermark.",
+				"The output line utilization on a port has dropped below its low watermark",
+				"for longer than the threshold averaging period. The ifIndex",
+				"is the index of the affected port in ifTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModPortOutputUtilizationDown",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port output utilization rate dropped below low watermark"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortOutputUtilizationDown IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortOutputUtilizationDown",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.14",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortInputErrorsUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The input error count on a port has exceeded high watermark.",
+				"The input error count on a port has exceeded its high watermark for",
+				"longer than the error averaging period. The port is identified by",
+				"ifIndex in ifTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModPortInputErrorsUp",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port input error count exceeded high watermark"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortInputErrorsUp IF-MIB::ifIndex i 9999 IF-MIB::ifInErrors c 9999",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortInputErrorsUp",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.15",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"For packet-oriented interfaces, the number of inbound",
+							"packets that contained errors preventing them from being",
+							"deliverable to a higher-layer protocol. For character-",
+							"oriented or fixed-length interfaces, the number of inbound",
+							"transmission units that contained errors preventing them",
+							"from being deliverable to a higher-layer protocol.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"ifCounterDiscontinuityTime."
+						],
+						"name" : "IF-MIB::ifInErrors",
+						"oid" : "1.3.6.1.2.1.2.2.1.14",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortInputErrorsDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The input error count on a port has dropped below low watermark.",
+				"The input error count on a port has dropped below its low watermark for",
+				"longer than the error averaging period. The port is identified by",
+				"ifIndex in ifTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModPortInputErrorsDown",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port input error count dropped below low watermark"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortInputErrorsDown IF-MIB::ifIndex i 9999 IF-MIB::ifInErrors c 9999",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortInputErrorsDown",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.16",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"For packet-oriented interfaces, the number of inbound",
+							"packets that contained errors preventing them from being",
+							"deliverable to a higher-layer protocol. For character-",
+							"oriented or fixed-length interfaces, the number of inbound",
+							"transmission units that contained errors preventing them",
+							"from being deliverable to a higher-layer protocol.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"ifCounterDiscontinuityTime."
+						],
+						"name" : "IF-MIB::ifInErrors",
+						"oid" : "1.3.6.1.2.1.2.2.1.14",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortOutputErrorsUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"The output error count on a port has exceeded its high watermark.",
+				"The output error count on a port has exceeded its high watermark for",
+				"longer than the error averaging period. The port is identified by",
+				"ifIndex in ifTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModPortOutputErrorsUp",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Output error count on a port exceeded the high watermark"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortOutputErrorsUp IF-MIB::ifIndex i 9999 IF-MIB::ifOutErrors c 9999",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortOutputErrorsUp",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.17",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"For packet-oriented interfaces, the number of outbound",
+							"packets that could not be transmitted because of errors.",
+							"For character-oriented or fixed-length interfaces, the",
+							"number of outbound transmission units that could not be",
+							"transmitted because of errors.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"ifCounterDiscontinuityTime."
+						],
+						"name" : "IF-MIB::ifOutErrors",
+						"oid" : "1.3.6.1.2.1.2.2.1.20",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortOutputErrorsDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"The output error count on a port has dropped below its low watermark.",
+				"The output error count on a port has dropped below its low watermark for",
+				"longer than the error averaging period. The port is identified by",
+				"ifIndex in ifTable."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "vcModPortOutputErrorsDown",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Output error count on a port dropped below the low watermark"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortOutputErrorsDown IF-MIB::ifIndex i 9999 IF-MIB::ifOutErrors c 9999",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortOutputErrorsDown",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.18",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"For packet-oriented interfaces, the number of outbound",
+							"packets that could not be transmitted because of errors.",
+							"For character-oriented or fixed-length interfaces, the",
+							"number of outbound transmission units that could not be",
+							"transmitted because of errors.",
+							"",
+							"Discontinuities in the value of this counter can occur at",
+							"re-initialization of the management system, and at other",
+							"times as indicated by the value of",
+							"ifCounterDiscontinuityTime."
+						],
+						"name" : "IF-MIB::ifOutErrors",
+						"oid" : "1.3.6.1.2.1.2.2.1.20",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortBpduLoopDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"A BPDU loop condition is detected on this port.",
+				"If the port is configured for loop protection, the port is ",
+				"disabled to protect against network loops. The port remains disabled",
+				"until administrative action is taken."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vcModPortBpduLoopStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "BPDU loop condition is detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortBpduLoopDetected IF-MIB::ifIndex i 9999 HPVCMODULE-MIB::vcModulePort i 9999 HPVCMODULE-MIB::vcModulePortBpduLoopStatus i 1",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortBpduLoopDetected",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.19",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port number of the port for which this entry",
+							"contains management information."
+						],
+						"name" : "HPVCMODULE-MIB::vcModulePort",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.6.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The BPDU loop detection status for this port."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "loop-dectected"
+						},
+						"name" : "HPVCMODULE-MIB::vcModulePortBpduLoopStatus",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.6.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortBpduLoopCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"A previous BPDU loop condition is cleared.",
+				"This trap is only sent when the agent detects transition from 'loop",
+				"detected' state to 'ok' state on a given port."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vcModPortBpduLoopStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "BPDU loop condition is cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortBpduLoopCleared IF-MIB::ifIndex i 9999 HPVCMODULE-MIB::vcModulePort i 9999 HPVCMODULE-MIB::vcModulePortBpduLoopStatus i 1",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortBpduLoopCleared",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.20",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port number of the port for which this entry",
+							"contains management information."
+						],
+						"name" : "HPVCMODULE-MIB::vcModulePort",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.6.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The BPDU loop detection status for this port."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "loop-dectected"
+						},
+						"name" : "HPVCMODULE-MIB::vcModulePortBpduLoopStatus",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.6.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortProtectionConditionDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"A port protection condition is detected on this port.",
+				"If the new port protection status is a value other than ok",
+				"the port may be disabled to protect the VC module from further",
+				"service degradation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "vcModPortProtectionConditionStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port protection condition is detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortProtectionConditionDetected IF-MIB::ifIndex i 9999 HPVCMODULE-MIB::vcModulePort i 9999 HPVCMODULE-MIB::vcModulePortProtectionStatus i 1",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortProtectionConditionDetected",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.21",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port number of the port for which this entry",
+							"contains management information."
+						],
+						"name" : "HPVCMODULE-MIB::vcModulePort",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.6.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port protection status for this port."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "pause-flood-detected"
+						},
+						"name" : "HPVCMODULE-MIB::vcModulePortProtectionStatus",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.6.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HPVCMODULE-MIB::vcModPortProtectionConditionCleared",
+			"certification" : "STANDARD",
+			"description" : [
+				"Port is recovered from port protection codition.",
+				"The port is recovered from port protection condition to normal",
+				"operational state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "vcModPortProtectionConditionStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port protection condition is cleared"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HPVCMODULE-MIB::vcModPortProtectionConditionCleared IF-MIB::ifIndex i 9999 HPVCMODULE-MIB::vcModulePort i 9999 HPVCMODULE-MIB::vcModulePortProtectionStatus i 1",
+			"trap" : {
+				"name" : "HPVCMODULE-MIB::vcModPortProtectionConditionCleared",
+				"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.2.0.22",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port number of the port for which this entry",
+							"contains management information."
+						],
+						"name" : "HPVCMODULE-MIB::vcModulePort",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.6.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The port protection status for this port."
+						],
+						"enums" : {
+							"1" : "ok",
+							"2" : "pause-flood-detected"
+						},
+						"name" : "HPVCMODULE-MIB::vcModulePortProtectionStatus",
+						"oid" : "1.3.6.1.4.1.11.5.7.5.2.3.1.1.6.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

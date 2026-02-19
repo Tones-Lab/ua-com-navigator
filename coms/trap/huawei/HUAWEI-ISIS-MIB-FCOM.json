@@ -1,0 +1,1095 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200306110000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisCorruptedLSPDetected",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Corrupted LSP Detected Notification is generated when",
+				"a corrupted Link State PDU is detected in memory."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisCorruptedLSPDetected",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Link State PDU corruption detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisCorruptedLSPDetected ",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisCorruptedLSPDetected",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.1"
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisCorruptedLSPReceived",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Corrupted LSP Received Notification is generated when",
+				"a corrupted Link State PDU is Received. The occurance of",
+				"this event is counted by the isisSysCorrLSPscounter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisCorruptedLSPReceived",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Corrupted Link State PDU received"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisCorruptedLSPReceived HUAWEI-ISIS-MIB::hwIsisTrapCorruptedLSPID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysCorrLSPs c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisCorruptedLSPReceived",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.2",
+				"variables" : [
+					{
+						"description" : [
+							"The ID of the LSP that was found to be Corrupted."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapCorruptedLSPID",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of corrupted LSPs detected."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysCorrLSPs",
+						"oid" : "1.3.6.1.3.37.1.1.1.15",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisLSPL1DatabaseOverload",
+			"certification" : "STANDARD",
+			"description" : [
+				"The LSP L1 Database Overload Notification is generated when the",
+				"l1State of the system changes between On and Waiting or Waiting",
+				"and On. The isisSysL1State argument is set to indicate the",
+				"resulting state, and in the case of Waiting the isisSysID is",
+				"set to indicate the source of the LSP which precipitated the",
+				"overload. The occurance of this event is counted by the",
+				"isisSysLSPL1DbaseOloads counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : (($v1 == 2) ? 2 : 3)"
+				},
+				"EventType" : "hwIsisLSPL1DatabaseOverload",
+				"ExpireTime" : {
+					"eval" : "($v1==2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 3) ? 2 : 4)"
+				},
+				"SubNode" : "SysID:$v2",
+				"Summary" : "Level 1 database status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisLSPL1DatabaseOverload ISIS-EXPERIMENTAL-V3-MIB::isisSysL1State i 1 ISIS-EXPERIMENTAL-V3-MIB::isisSysID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysLSPL1DbaseOloads c 9999",
+				"$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisLSPL1DatabaseOverload ISIS-EXPERIMENTAL-V3-MIB::isisSysL1State i 2 ISIS-EXPERIMENTAL-V3-MIB::isisSysID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysLSPL1DbaseOloads c 9999"
+			],
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisLSPL1DatabaseOverload",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.3",
+				"variables" : [
+					{
+						"description" : [
+							"The state of the Level 1 database."
+						],
+						"enums" : {
+							"1" : "off",
+							"2" : "on",
+							"3" : "waiting"
+						},
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysL1State",
+						"oid" : "1.3.6.1.3.37.1.1.1.14",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for this instance of the Integrated IS-IS",
+							"protocol. This value is appended to each of the",
+							"instance's area addresses to form the Network Entity",
+							"Titles valid for this instance. The derivation of a value",
+							"for this object is implementation-specific. Some",
+							"implementations may assign values and not permit write",
+							"MAX-ACCESS, others may require the value to be set manually."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysID",
+						"oid" : "1.3.6.1.3.37.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of times the LSP L1 database has become",
+							"overloaded."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysLSPL1DbaseOloads",
+						"oid" : "1.3.6.1.3.37.1.1.1.16",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisLSPL2DatabaseOverload",
+			"certification" : "STANDARD",
+			"description" : [
+				"The LSP L2 Database Overload Notification is generated when the",
+				"l2State of the system changes between On and Waiting or Waiting and",
+				"On. The isisSysL2State argument is set to indicate the",
+				"resulting state, and in the case of Waiting the isisSysID is set to",
+				"indicate the source of the LSP which precipitated the overload.",
+				"The occurance of this event is counted by the",
+				"isisSysLSPL2DbaseOloads counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : (($v1 == 2) ? 2 : 3)"
+				},
+				"EventType" : "hwIsisLSPL2DatabaseOverload",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2) ? 86400 : 3600"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : (($v1 == 3) ? 2 : 4)"
+				},
+				"SubNode" : "SysID:$v2",
+				"Summary" : "Level 2 database status: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisLSPL2DatabaseOverload ISIS-EXPERIMENTAL-V3-MIB::isisSysL2State i 1 ISIS-EXPERIMENTAL-V3-MIB::isisSysID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysLSPL2DbaseOloads c 9999",
+				"$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisLSPL2DatabaseOverload ISIS-EXPERIMENTAL-V3-MIB::isisSysL2State i 2 ISIS-EXPERIMENTAL-V3-MIB::isisSysID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysLSPL2DbaseOloads c 9999"
+			],
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisLSPL2DatabaseOverload",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.4",
+				"variables" : [
+					{
+						"description" : [
+							"The state of the Level 2 database."
+						],
+						"enums" : {
+							"1" : "off",
+							"2" : "on",
+							"3" : "waiting"
+						},
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysL2State",
+						"oid" : "1.3.6.1.3.37.1.1.1.24",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The ID for this instance of the Integrated IS-IS",
+							"protocol. This value is appended to each of the",
+							"instance's area addresses to form the Network Entity",
+							"Titles valid for this instance. The derivation of a value",
+							"for this object is implementation-specific. Some",
+							"implementations may assign values and not permit write",
+							"MAX-ACCESS, others may require the value to be set manually."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysID",
+						"oid" : "1.3.6.1.3.37.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of times the Level 2 LSP database has become",
+							"overloaded."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysLSPL2DbaseOloads",
+						"oid" : "1.3.6.1.3.37.1.1.1.25",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisAuthenticationFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when a PDU is received with an incorrect",
+				"Authentication information field"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisAuthenticationFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysID:$v1",
+				"Summary" : "PDU received incorrect authentication information"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisAuthenticationFailure ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID s EXAMPLE HUAWEI-ISIS-MIB::hwIsisTrapAuthErrorType i 9999 HUAWEI-ISIS-MIB::hwIsisTrapAuthErrorInfo s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysAuthFails c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisAuthenticationFailure",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.5",
+				"variables" : [
+					{
+						"description" : [
+							"The system ID and circuit ID of the neighboring",
+							"Intermediate System set from the source ID field",
+							"of the neighbor's IIH PDUs."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID",
+						"oid" : "1.3.6.1.3.37.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of Authentication Error."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapAuthErrorType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The Information Pertaining to the Authentication error."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapAuthErrorInfo",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The number of authentication failures recognized by this",
+							"instance of the protocol."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysAuthFails",
+						"oid" : "1.3.6.1.3.37.1.1.1.26",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisWrongSysType",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when a Adjacency Request for Wrong/unsupported",
+				"adjacency type is made."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisWrongSysType",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysID:$v1",
+				"Summary" : "IS-IS wrong system type detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisWrongSysType ISIS-EXPERIMENTAL-V3-MIB::isisSysID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysType i 1 HUAWEI-ISIS-MIB::hwIsisTrapRecdSysType i 9999 HUAWEI-ISIS-MIB::hwIsisSysWrongSysTypes c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisWrongSysType",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.6",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for this instance of the Integrated IS-IS",
+							"protocol. This value is appended to each of the",
+							"instance's area addresses to form the Network Entity",
+							"Titles valid for this instance. The derivation of a value",
+							"for this object is implementation-specific. Some",
+							"implementations may assign values and not permit write",
+							"MAX-ACCESS, others may require the value to be set manually."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysID",
+						"oid" : "1.3.6.1.3.37.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The type of this instance of the Integrated IS-IS",
+							"protocol. This object follows the",
+							"replaceOnlyWhileDisabled behaviour."
+						],
+						"enums" : {
+							"1" : "level1IS",
+							"2" : "level2IS",
+							"3" : "level1l2IS"
+						},
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysType",
+						"oid" : "1.3.6.1.3.37.1.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Received system Type."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapRecdSysType",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.9",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Number of Times Wrong System Types requested for Adjacencies."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisSysWrongSysTypes",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.1.1.1.1",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisVersionSkew",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when a PDU of Wrong/different version is received"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisVersionSkew",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "PDU different version ($v3) received"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisVersionSkew ISIS-EXPERIMENTAL-V3-MIB::isisSysVersion s EXAMPLE HUAWEI-ISIS-MIB::hwIsisTrapRecdVersion s EXAMPLE HUAWEI-ISIS-MIB::hwIsisCircVersionSkews c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisVersionSkew",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.7",
+				"variables" : [
+					{
+						"description" : [
+							"The version number of the IS-IS protocol to which this",
+							"instance conforms. This value must be set by the",
+							"implementation when the row is valid."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysVersion",
+						"oid" : "1.3.6.1.3.37.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The version number of the IS-IS protocol that was received."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapRecdVersion",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The number of PDUs of different version was received"
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisCircVersionSkews",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.2.1.1.11",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisIDFieldLengthMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"The hwIsisIDFieldLengthMismatch Notification is generated when a PDU is",
+				"received with a different value for ID field length to that of the",
+				"receiving Intermediate system. The occurance of this",
+				"event is counted by the isisSysIDFieldLenMismatches."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisIDFieldLengthMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "IS-IS ID field length ($v1) mismatched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisIDFieldLengthMismatch HUAWEI-ISIS-MIB::hwIsisTrapSysIDLength i 9999 HUAWEI-ISIS-MIB::hwIsisTrapRecdSysIDLength i 9999 ISIS-EXPERIMENTAL-V3-MIB::isisSysIDFieldLenMismatches c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisIDFieldLengthMismatch",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.8",
+				"variables" : [
+					{
+						"description" : [
+							"The Length of the SystemID of current system."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapSysIDLength",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.4",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The Receined systemID Length"
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapRecdSysIDLength",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Number of times a PDU is received with a different value",
+							"for ID field length to that of the receiving system."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysIDFieldLenMismatches",
+						"oid" : "1.3.6.1.3.37.1.1.1.21",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisAreaMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when a PDU is received from Wrong/different",
+				"area not recognised by this system"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisAreaMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SysID:$v1",
+				"Summary" : "IS-IS area mismatched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisAreaMismatch ISIS-EXPERIMENTAL-V3-MIB::isisSysID s EXAMPLE HUAWEI-ISIS-MIB::hwIsisTrapRecdAreaAddr s EXAMPLE HUAWEI-ISIS-MIB::hwIsisCircAreaMismatches c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisAreaMismatch",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.9",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for this instance of the Integrated IS-IS",
+							"protocol. This value is appended to each of the",
+							"instance's area addresses to form the Network Entity",
+							"Titles valid for this instance. The derivation of a value",
+							"for this object is implementation-specific. Some",
+							"implementations may assign values and not permit write",
+							"MAX-ACCESS, others may require the value to be set manually."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysID",
+						"oid" : "1.3.6.1.3.37.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Received Area Address"
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapRecdAreaAddr",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.6",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The number PDUs from an unrecognised area was received"
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisCircAreaMismatches",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.2.1.1.13",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisMaxAreaAddrMismatch",
+			"certification" : "STANDARD",
+			"description" : [
+				"Generated when a PDU is received from Wrong/different",
+				"area not recognised by this system"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisMaxAreaAddrMismatch",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "SysID:$v1",
+				"Summary" : "IS-IS maximum area address mismatched"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisMaxAreaAddrMismatch ISIS-EXPERIMENTAL-V3-MIB::isisSysID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysMaxAreaAddresses i 0 HUAWEI-ISIS-MIB::hwIsisTrapRecdMaxAreaAddr i 9999 ISIS-EXPERIMENTAL-V3-MIB::isisSysMaxAreaAddrMismatches c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisMaxAreaAddrMismatch",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.10",
+				"variables" : [
+					{
+						"description" : [
+							"The ID for this instance of the Integrated IS-IS",
+							"protocol. This value is appended to each of the",
+							"instance's area addresses to form the Network Entity",
+							"Titles valid for this instance. The derivation of a value",
+							"for this object is implementation-specific. Some",
+							"implementations may assign values and not permit write",
+							"MAX-ACCESS, others may require the value to be set manually."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysID",
+						"oid" : "1.3.6.1.3.37.1.1.1.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The maximum number of area addresses to be permitted for",
+							"the area in which this instance exists. Note that all",
+							"Intermediate Systems in the same area must have the same",
+							"value configured for this attribute if correct operation",
+							"is to be assumed. This object follows the",
+							"replaceOnlyWhileDisabled behaviour."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysMaxAreaAddresses",
+						"oid" : "1.3.6.1.3.37.1.1.1.8",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The Max Area Address Count in a received PDU."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapRecdMaxAreaAddr",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.11",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Number of times a PDU is received with a different value",
+							"for MaximumAreaAddresses from that of the receiving",
+							"system."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysMaxAreaAddrMismatches",
+						"oid" : "1.3.6.1.3.37.1.1.1.22",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisManualAddressDroppedFromArea",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Manual Address Dropped From Area Notification is generated ",
+				"when one of the manualAreaAddresses (specified on this system) is ",
+				"ignored when computing partitionAreaAddresses or areaAddresses ",
+				"because there are more than MaximumAreaAddresses distinct ",
+				"Area Addresses. The hwIsisTrapDroppedAreaAddr argument ",
+				"is set to the ignored Area Address. It is generated once for ",
+				"each Area Address in manualAreaAddresses which is dropped. ",
+				"The occurance of this event is counted by the ",
+				"isisSysManAddrDropFromAreas counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisManualAddressDroppedFromArea",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "IS-IS manual address dropped from area ($v1)"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisManualAddressDroppedFromArea HUAWEI-ISIS-MIB::hwIsisTrapDroppedAreaAddr s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisSysManAddrDropFromAreas c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisManualAddressDroppedFromArea",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.11",
+				"variables" : [
+					{
+						"description" : [
+							"The Area Address that was dropped by ",
+							"the system when the count of area ",
+							"addresses exceeded the Maximum ."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisTrapDroppedAreaAddr",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.5.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Number of times a manual address has been dropped from",
+							"the area."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysManAddrDropFromAreas",
+						"oid" : "1.3.6.1.3.37.1.1.1.17",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisAttemptToExceedMaximumSequenceNumber",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Attempt To Exceed Maximum Sequence Number Notification is ",
+				"generated when an attempt is made to increment the sequence ",
+				"number of an LSP beyond the maximum sequence number. ",
+				"Following the generation of this event the operation of the ",
+				"Routeing state machine shall be disabled for atleast",
+				"(MaxAge + ZeroAgeLifetime) seconds. The occurance of this",
+				"event is counted by the isisSysAttmptToExMaxSeqNums ",
+				"counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisAttemptToExceedMaximumSequenceNumber",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "Attempted sequence number overflow"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisAttemptToExceedMaximumSequenceNumber ISIS-EXPERIMENTAL-V3-MIB::isisSysAttmptToExMaxSeqNums c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisAttemptToExceedMaximumSequenceNumber",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.12",
+				"variables" : [
+					{
+						"description" : [
+							"Number of times the IS has attempted to exceed the",
+							"maximum sequence number."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysAttmptToExMaxSeqNums",
+						"oid" : "1.3.6.1.3.37.1.1.1.18",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisSequenceNumberSkip",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Sequence Number Skipped Notification is generated when the ",
+				"sequence number of an LSP is incremented by more than one. The ",
+				"occurance of this event is counted by the isisSysSeqNumSkips ",
+				"counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisSequenceNumberSkip",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Sequence number of LSP incremented by more than one"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisSequenceNumberSkip ISIS-EXPERIMENTAL-V3-MIB::isisSysSeqNumSkips c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisSequenceNumberSkip",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.13",
+				"variables" : [
+					{
+						"description" : [
+							"Number of times a sequence number skip has occurred."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysSeqNumSkips",
+						"oid" : "1.3.6.1.3.37.1.1.1.19",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisOwnLSPPurge",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Own LSP Purged Notification is generated when a zero aged copy ",
+				"of a system's own LSP is received from some other system. This ",
+				"represents an erroneous attempt to purge the local system's LSP.",
+				"The occurance of this event is counted by the isisSysOwnLSPPurges ",
+				"counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisOwnLSPPurge",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Received zero-aged copy of own LSP from another system"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisOwnLSPPurge ISIS-EXPERIMENTAL-V3-MIB::isisSysOwnLSPPurges c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisOwnLSPPurge",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.14",
+				"variables" : [
+					{
+						"description" : [
+							"Number of times a zero-aged copy of the system's own LSP",
+							"is received from some other node."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisSysOwnLSPPurges",
+						"oid" : "1.3.6.1.3.37.1.1.1.20",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisCircuitChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Circuit Change Notification is generated when the state of ",
+				"the Circuit changes from On to Off or from Off to On. The relative ",
+				"order of events relating to the same Circuit must be preserved."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : 2"
+				},
+				"EventType" : "hwIsisCircuitChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : "State of circuit: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisCircuitChange HUAWEI-ISIS-MIB::hwIsisCircFuncState i 1 HUAWEI-ISIS-MIB::hwIsisCircStateChanges c 9999",
+				"$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisCircuitChange HUAWEI-ISIS-MIB::hwIsisCircFuncState i 2 HUAWEI-ISIS-MIB::hwIsisCircStateChanges c 9999"
+			],
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisCircuitChange",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.15",
+				"variables" : [
+					{
+						"description" : [
+							"The functional state of the circuit. This specifies",
+							"whether the circuit is currently active or not."
+						],
+						"enums" : {
+							"1" : "off",
+							"2" : "on"
+						},
+						"name" : "HUAWEI-ISIS-MIB::hwIsisCircFuncState",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times the circuit has changed the state."
+						],
+						"name" : "HUAWEI-ISIS-MIB::hwIsisCircStateChanges",
+						"oid" : "1.3.6.1.4.1.2011.5.25.24.2.1.1.12",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisAdjacencyStateChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Adjacency State Change Notification is generated when the state ",
+				"of an Adjacency on the Circuit changes from Up to Down or Down to ",
+				"Up. For these purposes the states Up and Up/dormant are considered ",
+				"to be Up, and any other state is considered to be Down. The occurance ",
+				"of this event is counted by the isisCircAdjChanges counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 2) ? 1 : (($v1 == 1) ? 3 : 2)"
+				},
+				"EventType" : "hwIsisAdjacencyStateChange",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1 || $v1 == 2) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 2) ? 0 : (($v1 == 1) ? 2 : 4)"
+				},
+				"SubNode" : "SysID:$v3",
+				"Summary" : "IS-IS adjacency state: $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisAdjacencyStateChange ISIS-EXPERIMENTAL-V3-MIB::isisISAdjState i 3 ISIS-EXPERIMENTAL-V3-MIB::isisCircAdjChanges c 9999 ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID s EXAMPLE",
+				"$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisAdjacencyStateChange ISIS-EXPERIMENTAL-V3-MIB::isisISAdjState i 2 ISIS-EXPERIMENTAL-V3-MIB::isisCircAdjChanges c 9999 ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID s EXAMPLE"
+			],
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisAdjacencyStateChange",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.16",
+				"variables" : [
+					{
+						"description" : [
+							"The state of the adjacency"
+						],
+						"enums" : {
+							"1" : "initializing",
+							"2" : "up",
+							"3" : "failed",
+							"4" : "down"
+						},
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisISAdjState",
+						"oid" : "1.3.6.1.3.37.3.1.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of times an adjacency state change has",
+							"occurred on this circuit."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisCircAdjChanges",
+						"oid" : "1.3.6.1.3.37.2.1.1.14",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"The system ID and circuit ID of the neighboring",
+							"Intermediate System set from the source ID field",
+							"of the neighbor's IIH PDUs."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID",
+						"oid" : "1.3.6.1.3.37.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisInitializationFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Initialisation Failure Notification is ",
+				"generated when an attempt to initialise with an adjacent system fails ",
+				"as a result of either Version Skew or Area Mismatch. In the case of ",
+				"Version Skew, the Adjacent system argument is not present. The ",
+				"occurance of this event is counted by the isisCircInitFails counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisInitializationFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysID:$v1",
+				"Summary" : "IS-IS initialization failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisInitializationFailure ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisCircInitFails c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisInitializationFailure",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.17",
+				"variables" : [
+					{
+						"description" : [
+							"The system ID and circuit ID of the neighboring",
+							"Intermediate System set from the source ID field",
+							"of the neighbor's IIH PDUs."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID",
+						"oid" : "1.3.6.1.3.37.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The number of times initialization of this circuit has",
+							"failed."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisCircInitFails",
+						"oid" : "1.3.6.1.3.37.2.1.1.15",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisRejectedAdjacency",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Rejected Adjacency Notification is generated when an attempt ",
+				"to create a new adjacency is rejected, because of a lack of resources. The occurance of this event is counted by the isisCircRejAdjs counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisRejectedAdjacency",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SysID:$v1",
+				"Summary" : "IS-IS adjacency rejected due to lack of resources"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisRejectedAdjacency ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID s EXAMPLE ISIS-EXPERIMENTAL-V3-MIB::isisCircRejAdjs c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisRejectedAdjacency",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.18",
+				"variables" : [
+					{
+						"description" : [
+							"The system ID and circuit ID of the neighboring",
+							"Intermediate System set from the source ID field",
+							"of the neighbor's IIH PDUs."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisISAdjNeighSysID",
+						"oid" : "1.3.6.1.3.37.3.1.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The number of times an adjacency has been rejected on",
+							"this circuit."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisCircRejAdjs",
+						"oid" : "1.3.6.1.3.37.2.1.1.16",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisLanL1DesignatedIntermediateSystemChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The LAN L1 Designated Intermediate System Change Notification ",
+				"is generated when the local system either elects itself or resigns as ",
+				"being the LAN L1 Designated Intermediate System on this ",
+				"circuit. The relative order of these events must be ",
+				"preserved. The occurance of this event is counted by ",
+				"the isisCircLANL1DesISChanges counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisLanL1DesignatedIntermediateSystemChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "LAN L1 designated intermediate system changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisLanL1DesignatedIntermediateSystemChange ISIS-EXPERIMENTAL-V3-MIB::isisCircLANL1DesISChanges c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisLanL1DesignatedIntermediateSystemChange",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.19",
+				"variables" : [
+					{
+						"description" : [
+							"The number of times the LAN Level 1 Designated",
+							"Intermediate System has changed."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisCircLANL1DesISChanges",
+						"oid" : "1.3.6.1.3.37.2.1.1.28",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-ISIS-MIB::hwIsisLanL2DesignatedIntermediateSystemChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The LAN L2 Designated Intermediate System Change Notification ",
+				"is generated when the local system either elects itself or resigns as ",
+				"being the LAN L2 Designated Intermediate System on this ",
+				"circuit. The relative order of these events must be ",
+				"preserved. The occurance of this event is counted by ",
+				"the isisCircLANL2DesISChanges counter."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwIsisLanL2DesignatedIntermediateSystemChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "LAN L2 designated intermediate system changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-ISIS-MIB::hwIsisLanL2DesignatedIntermediateSystemChange ISIS-EXPERIMENTAL-V3-MIB::isisCircLANL2DesISChanges c 9999",
+			"trap" : {
+				"name" : "HUAWEI-ISIS-MIB::hwIsisLanL2DesignatedIntermediateSystemChange",
+				"oid" : "1.3.6.1.4.1.2011.5.25.24.4.20",
+				"variables" : [
+					{
+						"description" : [
+							"The number of times the LAN Level 2 Designated",
+							"Intermediate System has changed."
+						],
+						"name" : "ISIS-EXPERIMENTAL-V3-MIB::isisCircLANL2DesISChanges",
+						"oid" : "1.3.6.1.3.37.2.1.1.32",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		}
+	]
+}

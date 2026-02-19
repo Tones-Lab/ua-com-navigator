@@ -1,0 +1,794 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201201090000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSCqtOnlineTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"CQT unit online status trap.",
+				"This notification indicates alarm when CQT unit online. ",
+				"enumFirst: ",
+				"explain: CQT module communication OK",
+				"resolving method:NA."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "hwBTSSCqtStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "CQT unit online"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCqtOnlineTrap IF-MIB::ifIndex i 9999",
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtOnlineTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.2.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSCqtOfflineTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"CQT unit offline status trap.",
+				"This notification indicates alarm when CQT unit offline."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "hwBTSSCqtStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "CQT unit offline due to $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCqtOfflineTrap IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSCqtOfflineReason i 1",
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtOfflineTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.2.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Cqt module offline reason.",
+							"Options:",
+							"1. commFail(1) - CQT module communication fail. Resolving method:Check CQT module running normal",
+							"2. userReset(2) - User reset command "
+						],
+						"enums" : {
+							"1" : "commFail",
+							"2" : "userReset"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtOfflineReason",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.2.1.2.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSCoStartTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Start Co test trap.",
+				"This notification indicates alarm when starting Co test."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwBTSSCoStartTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "CO testing started"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCoStartTrap IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSCoOperType i 1 HUAWEI-BTEST-MIB::hwBTSSCoTestResult i 2",
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSCoStartTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.3.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"CO emulational operation type.",
+							"Options:",
+							"1. stop(1) - Stop CO emulational ",
+							"2. start(2) - Start CO emulational"
+						],
+						"enums" : {
+							"1" : "stop",
+							"2" : "start"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCoOperType",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"CO emulational test result.",
+							"Options:",
+							"1. normal(1) - The test of CO emulational is successful",
+							"2. testfail(2) - Fail in test of CO emulational"
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "testfail"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCoTestResult",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSCoStopTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Stop Co test trap.",
+				"This notification indicates alarm when stopping Co test."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwBTSSCoStopTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "CO testing halted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCoStopTrap IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSCoOperType i 1 HUAWEI-BTEST-MIB::hwBTSSCoTestResult i 1",
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSCoStopTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.3.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"CO emulational operation type.",
+							"Options:",
+							"1. stop(1) - Stop CO emulational ",
+							"2. start(2) - Start CO emulational"
+						],
+						"enums" : {
+							"1" : "stop",
+							"2" : "start"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCoOperType",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"CO emulational test result.",
+							"Options:",
+							"1. normal(1) - The test of CO emulational is successful",
+							"2. testfail(2) - Fail in test of CO emulational"
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "testfail"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCoTestResult",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.2.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSTestedPortOperTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Tested port operation trap.",
+				"This notification indicates alarm when tested port operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4 == 1) ? 1 : 2"
+				},
+				"EventType" : "hwBTSSTestedPortOperTrap",
+				"ExpireTime" : {
+					"eval" : "($v4 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4 == 1) ? 0 : (($v4 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port operation tested result: $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSTestedPortOperTrap IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperType i -1 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperMode i 1 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperResult i 2",
+				"$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSTestedPortOperTrap IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperType i -1 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperMode i 1 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperResult i 1"
+			],
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSTestedPortOperTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.3.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Operation type of BTSS tested port.",
+							"Options:",
+							"1. capture(1) - Capture",
+							"2. release(2) - Release",
+							"3. startmonitor(3) - Start monitor",
+							"4. stopmonitor(4) - Stop monitor",
+							"5. resumeport(5) - Resume port",
+							"6. invalid(-1) - Invalid value"
+						],
+						"enums" : {
+							"-1" : "invalid",
+							"1" : "capture",
+							"2" : "release",
+							"3" : "startmonitor",
+							"4" : "stopmonitor",
+							"5" : "resumeport"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSTestedPortOperType",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.18.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operation mode of BTSS tested port.",
+							"Options:",
+							"1. inline(1) - BTSS tested port in test",
+							"2. outline(2) - BTSS tested port out test",
+							"3. monitor(3) - Monitoring BTSS tested port",
+							"4. both(4) - Capture for circuit and loop-line test ",
+							"5. meltNoCutxDSL(5) - Capture for melt chip test with co and cpe connecting",
+							"6. meltForceCutxDSL(6) - Capture for melt chip test with co and cpe disconnecting ",
+							"7. testLineLoopback(7) - Capture for test line loopback",
+							"8. internalResistorLoopback(8) - Capture for internal resistor loopback",
+							"9. passthroughmode(9) - No capture",
+							"Default: passthroughmode(9)"
+						],
+						"enums" : {
+							"1" : "inline",
+							"2" : "outline",
+							"3" : "monitor",
+							"4" : "both",
+							"5" : "meltNoCutxDSL",
+							"6" : "meltForceCutxDSL",
+							"7" : "testLineLoopback",
+							"8" : "internalResistorLoopback",
+							"9" : "passthroughmode"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSTestedPortOperMode",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.18.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Test result of BTSS tested port.",
+							"Options:",
+							"1. normal(1) - The test of BTSS tested port is successful",
+							"2. fail(2) - Fail in test of BTSS tested port",
+							"3. timeout(4) - The test of BTSS tested port is timeout"
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "fail",
+							"4" : "timeout"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSTestedPortOperResult",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.18.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Cqt transparent test trap.",
+				"This notification indicates alarm when starting or stoping Cqt transparent test. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3 == 1) ? 1 : 2"
+				},
+				"EventType" : "hwBTSSCqtTransTestOperResultTrap",
+				"ExpireTime" : {
+					"eval" : "($v3 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3 == 1) ? 0 : (($v3 == 3) ? 3 : 4)"
+				},
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "CQT transparent operation result: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperResultTrap IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperType i 1 HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperResult i 4",
+				"$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperResultTrap IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperType i 1 HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperResult i 1"
+			],
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperResultTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.3.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"CQT transparent Operation type",
+							"Options:",
+							"1. stop(1) - Stop CQT transparent test",
+							"2. start(2) - Start CQT transparent test"
+						],
+						"enums" : {
+							"1" : "stop",
+							"2" : "start"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperType",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.19.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"CQT transparent Operation result.",
+							"Options:",
+							"1. normal(1) - The CQT transparent test is successful",
+							"2. fail(2) - The CQT transparent test fails",
+							"3. abort(3) - The CQT transparent test aborts",
+							"4. powerfeed(4) - The CQT transparent test power feeds "
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "fail",
+							"3" : "abort",
+							"4" : "powerfeed"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestOperResult",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.19.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResultTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"Cqt transparent test trap.",
+				"This notification indicates alarm when reporting the result after Cqt transparent test."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwBTSSCqtTransTestResultTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : {
+					"eval" : "($v4 ne '') ? '$v4' : 'CQT transparent test completed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResultTrap IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResultLastFlag i 0 HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResultNo i 1 HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResult s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResultTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.3.0.5",
+				"variables" : [
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Last package flag for test result.",
+							"Options:",
+							"1. false(0) - This is not the last package",
+							"2. true(1) - The last package"
+						],
+						"enums" : {
+							"0" : "false",
+							"1" : "true"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResultLastFlag",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.19.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Test result No.",
+							"Range: 1-255"
+						],
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResultNo",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.19.1.5",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"CQT transparent Test result."
+						],
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSCqtTransTestResult",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.19.1.7",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSLoopLineToneOperTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"loop line tone test result trap: 1:hwBTSSLoopLineToneResult.",
+				"This notification indicates alarm when reporting the test result of Loop Line Tone. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 == 1) ? 1 : 2"
+				},
+				"EventType" : "hwBTSSLoopLineToneOperTrap",
+				"ExpireTime" : {
+					"eval" : "($v1 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1 == 1) ? 0 : 4"
+				},
+				"SubNode" : "Device",
+				"Summary" : {
+					"eval" : "($v1 == 1) ? 'BTSS loop line tone test successful' : 'BTSS loop line tone test failed'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSLoopLineToneOperTrap HUAWEI-BTEST-MIB::hwBTSSLoopLineToneResult i 2",
+				"$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSLoopLineToneOperTrap HUAWEI-BTEST-MIB::hwBTSSLoopLineToneResult i 1"
+			],
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSLoopLineToneOperTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.3.0.6",
+				"variables" : [
+					{
+						"description" : [
+							"Operate result of BTSS loop line tone. ",
+							"Options:",
+							"1. succeed(1) - The test of BTSS loop line tone is successful",
+							"2. failed(2) - Failed in BTSS loop line tone test"
+						],
+						"enums" : {
+							"1" : "succeed",
+							"2" : "failed"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSLoopLineToneResult",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.23.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSCaptureTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"BTSS capture trap.",
+				"This trap is sent when BTSS capture result reported."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v5 == 1) ? 1 : 2"
+				},
+				"EventType" : "hwBTSSCaptureTrap",
+				"ExpireTime" : {
+					"eval" : "($v5 == 1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v5 == 1) ? 0 : (($v5 == 2) ? 4 : 3)"
+				},
+				"SubNode" : "ifIndex:$v2",
+				"Summary" : "BTSS capture result: $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"tests" : [
+				"$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCaptureTrap HUAWEI-BTEST-MIB::hwBTSSRequestID i 9999 IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperType i -1 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperMode i 1 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperResult i 2",
+				"$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSCaptureTrap HUAWEI-BTEST-MIB::hwBTSSRequestID i 9999 IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperType i -1 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperMode i 1 HUAWEI-BTEST-MIB::hwBTSSTestedPortOperResult i 1"
+			],
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSCaptureTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.3.0.7",
+				"variables" : [
+					{
+						"description" : [
+							"NMS request ID."
+						],
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSRequestID",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.2.1.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Operation type of BTSS tested port.",
+							"Options:",
+							"1. capture(1) - Capture",
+							"2. release(2) - Release",
+							"3. startmonitor(3) - Start monitor",
+							"4. stopmonitor(4) - Stop monitor",
+							"5. resumeport(5) - Resume port",
+							"6. invalid(-1) - Invalid value"
+						],
+						"enums" : {
+							"-1" : "invalid",
+							"1" : "capture",
+							"2" : "release",
+							"3" : "startmonitor",
+							"4" : "stopmonitor",
+							"5" : "resumeport"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSTestedPortOperType",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.18.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Operation mode of BTSS tested port.",
+							"Options:",
+							"1. inline(1) - BTSS tested port in test",
+							"2. outline(2) - BTSS tested port out test",
+							"3. monitor(3) - Monitoring BTSS tested port",
+							"4. both(4) - Capture for circuit and loop-line test ",
+							"5. meltNoCutxDSL(5) - Capture for melt chip test with co and cpe connecting",
+							"6. meltForceCutxDSL(6) - Capture for melt chip test with co and cpe disconnecting ",
+							"7. testLineLoopback(7) - Capture for test line loopback",
+							"8. internalResistorLoopback(8) - Capture for internal resistor loopback",
+							"9. passthroughmode(9) - No capture",
+							"Default: passthroughmode(9)",
+							""
+						],
+						"enums" : {
+							"1" : "inline",
+							"2" : "outline",
+							"3" : "monitor",
+							"4" : "both",
+							"5" : "meltNoCutxDSL",
+							"6" : "meltForceCutxDSL",
+							"7" : "testLineLoopback",
+							"8" : "internalResistorLoopback",
+							"9" : "passthroughmode"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSTestedPortOperMode",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.18.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Test result of BTSS tested port.",
+							"Options:",
+							"1. normal(1) - The test of BTSS tested port is successful",
+							"2. fail(2) - Fail in test of BTSS tested port",
+							"3. timeout(4) - The test of BTSS tested port is timeout"
+						],
+						"enums" : {
+							"1" : "normal",
+							"2" : "fail",
+							"4" : "timeout"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSTestedPortOperResult",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.18.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "HUAWEI-BTEST-MIB::hwBTSSDeltResultDataTrap",
+			"certification" : "STANDARD",
+			"description" : [
+				"BTSS delt result trap.",
+				"This notification indicates alarm when captures result data of BTSS delt test."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "hwBTSSDeltResultDataTrap",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v3",
+				"Summary" : {
+					"eval" : "($v5 ne '') ? '$v5' : 'Captured BTSS DELT test result'"
+				}
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD HUAWEI-BTEST-MIB::hwBTSSDeltResultDataTrap HUAWEI-BTEST-MIB::hwBTSSAdslDeltTestResultNo i 1 HUAWEI-BTEST-MIB::hwBTSSRequestID i 9999 IF-MIB::ifIndex i 9999 HUAWEI-BTEST-MIB::hwBTSSAdslDeltTestResultLastFlag i 0 HUAWEI-BTEST-MIB::hwBTSSAdslDeltTestResult s EXAMPLE",
+			"trap" : {
+				"name" : "HUAWEI-BTEST-MIB::hwBTSSDeltResultDataTrap",
+				"oid" : "1.3.6.1.4.1.2011.6.21.3.2.3.0.8",
+				"variables" : [
+					{
+						"description" : [
+							"Delt test result serial number.",
+							"Range: 1-255"
+						],
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSAdslDeltTestResultNo",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.22.1.3",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"NMS request ID."
+						],
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSRequestID",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.2.1.2.2",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"A unique value, greater than zero, for each interface. It",
+							"is recommended that values are assigned contiguously",
+							"starting from 1. The value for each interface sub-layer",
+							"must remain constant at least from one re-initialization of",
+							"the entity's network management system to the next re-",
+							"initialization."
+						],
+						"name" : "IF-MIB::ifIndex",
+						"oid" : "1.3.6.1.2.1.2.2.1.1",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"Last package flag for test result.",
+							"Options:",
+							"1. false(0) - This is not the last package",
+							"2. true(1) - The last package"
+						],
+						"enums" : {
+							"0" : "false",
+							"1" : "true"
+						},
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSAdslDeltTestResultLastFlag",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.22.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Delt test result data."
+						],
+						"name" : "HUAWEI-BTEST-MIB::hwBTSSAdslDeltTestResult",
+						"oid" : "1.3.6.1.4.1.2011.6.21.3.1.1.22.1.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

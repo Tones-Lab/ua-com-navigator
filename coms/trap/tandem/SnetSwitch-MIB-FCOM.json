@@ -1,0 +1,832 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchLinkAliveChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"The switch has detected a change in the status of a port. ",
+				"Possible Cause / Solution: ",
+				"If Port is nonfunctional",
+				"Disconnected, loose or defective SAN Cable: Reattach or replace cable. ",
+				"Distant switch or node powered off: apply power to switch or node. ",
+				"Distant daughter card defective: replace defective daughter card. ",
+				"If Port is functional",
+				"Port is now active: No action necessary. ",
+				"If Port is intermittent",
+				"Intermittent problems could be caused by a defective switch, cable or",
+				"daughter card. Replace components until problem is isolated. ",
+				"-- port %d. Status is %d. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==4) ? 1 : 2"
+				},
+				"EventType" : "snetSwitchLinkAliveChange",
+				"ExpireTime" : {
+					"eval" : "($v4==4) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v4==4) ? 0 : ($v4==1 || $v4==2) ? 3 : 4"
+				},
+				"SubNode" : "PortNumber:$v3",
+				"Summary" : "Port $v3 status : $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchLinkAliveChange SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE SnetSwitch-MIB::snetSwitchPortErrorStatusIndex i 0 SnetSwitch-MIB::snetSwitchPortStatus i 1",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchLinkAliveChange",
+				"oid" : "1.3.6.1.4.1.169.8.0.100",
+				"variables" : [
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the switch port number. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPortErrorStatusIndex",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Current state of the specified port.",
+							"Valid values are ",
+							"Unavailable(1), ",
+							"Uninstalled(2), ",
+							"NoLinkAlive(3), ",
+							"Alive(4). "
+						],
+						"enums" : {
+							"1" : "unavailable",
+							"2" : "uninstalled",
+							"3" : "noLinkAlive",
+							"4" : "alive"
+						},
+						"name" : "SnetSwitch-MIB::snetSwitchPortStatus",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchNeighborValidationFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"A ServerNet Switch failed neighbor validation on one of its ports.",
+				"The offending node will not be able to receive or transmit ",
+				"ServerNet data packets until the situation is corrected.",
+				"Possible Cause / Solution: ",
+				"Ports not configured: If a port is not configured or disabled",
+				"this event is generated whenever the topology is changed, or",
+				"firmware is updated. The snetSwitchNeighborID will indicate that",
+				"the link is down with LD. If the snetSwitchNeighborID is AF, this ",
+				"indicates the specified port is disabled and assumed failed. ",
+				"If the specified port is not configured, this event may be ignored. ",
+				"Bad Node: Run diagnostics to validate offending nodes. ",
+				"Incorrect cabling: verify cabling and correct if necessary. ",
+				"Incorrect configuration: switch configruation may be incorrect.",
+				"Reconfigure switch.",
+				"Node not added to SAN: Offending node may not have been added to ",
+				"the SAN. Run ServerNet II Administrative Utility to add node.",
+				"Incorrect SAN installation: Offending node may not have been correctly",
+				"added to SAN. Run Administrator GUI to verify status and add if ",
+				"necessary.",
+				"To force the switch to rerun neighbor checks, the user may have to",
+				"manually cycle the power on the offending node. ",
+				"-- by the Switch. NeighborID found was %d. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchNeighborValidationFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortNumber:$v3",
+				"Summary" : "ServerNet switch ($v1) neighbor ($v4) validation failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchNeighborValidationFailed SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE SnetSwitch-MIB::snetSwitchPortErrorStatusIndex i 0 SnetSwitch-MIB::snetSwitchNeighborID s EXAMPLE",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchNeighborValidationFailed",
+				"oid" : "1.3.6.1.4.1.169.8.0.101",
+				"variables" : [
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the switch port number. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPortErrorStatusIndex",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This field contains the latest value of the Neighbor ID ",
+							"which has changed. Whenever a change in a neighbor ID is",
+							"detected by a switch, the switch generates an asynchronous ",
+							"event. The neighbor ID which was detected by the switch is",
+							"saved here. It is valid only for the last event which ",
+							"occurred. If no neighbor ID changes have occurred, the ",
+							"value will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchNeighborID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.5.1.1.4",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchLinkLevelError",
+			"certification" : "STANDARD",
+			"description" : [
+				"ServerNet Switch has detected link level errors.",
+				"Possible Cause / Solution: ",
+				"Bad node: Run diagnostics to validate offending nodes are ",
+				"operating correctly.",
+				"Loose cable: Check cable connections.",
+				"Bad cable: Check for link error and replace cable.",
+				"Incorrect configuration: Switch configuration may be incorrect.",
+				"Check EFIFO register to make sure it is set correctly for",
+				"cable type/length. Reconfigure switch if necessary.",
+				"Blabbering Node: Run diagnostics to ensure that nodes at both",
+				"ends of the cable are communicating properly. Replace if necessary. ",
+				"-- errors. Packet Level Errors are %d, IBC Level Errors are %d. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchLinkLevelError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortNumber:$v3",
+				"Summary" : "ServerNet switch ($v1) detected link level errors"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchLinkLevelError SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE SnetSwitch-MIB::snetSwitchPortErrorStatusIndex i 0 SnetSwitch-MIB::snetSwitchLinkErrorCounter c 9999 SnetSwitch-MIB::snetSwitchPacketErrorCounter c 9999 SnetSwitch-MIB::snetSwitchIBCErrorCounter c 9999",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchLinkLevelError",
+				"oid" : "1.3.6.1.4.1.169.8.0.102",
+				"variables" : [
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the switch port number. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPortErrorStatusIndex",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Number of link errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchLinkErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Number of packet errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPacketErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.3",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Number of IBC errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchIBCErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.4",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchPacketLevelError",
+			"certification" : "STANDARD",
+			"description" : [
+				"ServerNet Switch has detected packet level errors.",
+				"Possible Cause / Solution: ",
+				"Bad node: Run diagnostics to validate offending nodes are ",
+				"operating correctly.",
+				"Loose cable: Check cable connections.",
+				"Bad cable: Check for link error and replace cable.",
+				"Incorrect configuration: Switch configuration may be incorrect.",
+				"Check router table to make sure it is set. Reconfigure switch ",
+				"if necessary.",
+				"Blabbering Node: Run diagnostics to ensure that nodes at both",
+				"ends of the cable are communicating properly. Replace if necessary.",
+				"Probing node: A node may be trying to break into the network. ",
+				"Isolate the node and verify SAN membership. ",
+				"-- errors exceeding the threshold. Link Level Errors",
+				"-- are %d, Packet Level Errors are %d, IBC Level Errors are %d. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchPacketLevelError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortNumber:$v3",
+				"Summary" : "ServerNet switch ($v1) detected packet level errors"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchPacketLevelError SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE SnetSwitch-MIB::snetSwitchPortErrorStatusIndex i 0 SnetSwitch-MIB::snetSwitchLinkErrorCounter c 9999 SnetSwitch-MIB::snetSwitchPacketErrorCounter c 9999 SnetSwitch-MIB::snetSwitchIBCErrorCounter c 9999",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchPacketLevelError",
+				"oid" : "1.3.6.1.4.1.169.8.0.103",
+				"variables" : [
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the switch port number. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPortErrorStatusIndex",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Number of link errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchLinkErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Number of packet errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPacketErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.3",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Number of IBC errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchIBCErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.4",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchIBCError",
+			"certification" : "STANDARD",
+			"description" : [
+				"ServerNet Switch has detected IBC errors.",
+				"Possible Cause / Solution: ",
+				"Firmware upgrade or Configuration change: This event can be",
+				"safely ignored if preceding events indicate a firmware upgrade ",
+				"or configuration change caused the event to be generated.",
+				"Bad node: Run diagnostics to validate offending nodes are ",
+				"operating correctly.",
+				"Loose cable: Check cable connections.",
+				"Bad cable: Check for link error and replace cable.",
+				"Incompatible software version: Ensure that compatible versions",
+				"of software and firmware are installed on the offending nodes.",
+				"Blabbering node: Run diagnostics to ensure that nodes at both",
+				"ends of the cable are communicating properly. Replace if necessary.",
+				"Probing node: A node may be trying to break into the network. ",
+				"Isolate the node and verify SAN membership.",
+				"Switch ownership may be incorrect: Check ownership; cycle power on",
+				"the offending switch to cause ownership update.",
+				"-- errors. Link Level Errors are %d, Packet Level Errors are %d.",
+				"-- IBC Level Errors are %d. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchIBCError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortNumber:$v3",
+				"Summary" : "ServerNet switch ($v1) detected IBC errors"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchIBCError SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE SnetSwitch-MIB::snetSwitchPortErrorStatusIndex i 0 SnetSwitch-MIB::snetSwitchLinkErrorCounter c 9999 SnetSwitch-MIB::snetSwitchPacketErrorCounter c 9999 SnetSwitch-MIB::snetSwitchIBCErrorCounter c 9999",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchIBCError",
+				"oid" : "1.3.6.1.4.1.169.8.0.104",
+				"variables" : [
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the switch port number. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPortErrorStatusIndex",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Number of link errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchLinkErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.2",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Number of packet errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPacketErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.3",
+						"valueType" : "COUNTER"
+					},
+					{
+						"description" : [
+							"Number of IBC errors which have occurred on the selected port. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchIBCErrorCounter",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.4",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchAccessViolation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The switch has detected a request to or from an invalid id.",
+				"Possible Cause / Solution: ",
+				"Blabbering node: Run diagnostics to ensure that nodes at both",
+				"ends of the cable are communicating properly. Replace if necessary.",
+				"Probing node: A node may be trying to break into the network. ",
+				"Isolate the node and verify SAN membership.",
+				"Switch ownership may be incorrect: Check ownership; cycle power on",
+				"the offending switch to cause ownership update. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchAccessViolation",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "PortNumber:$v3",
+				"Summary" : "ServerNet switch ($v1) access violation ($v4) occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchAccessViolation SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE SnetSwitch-MIB::snetSwitchPortErrorStatusIndex i 0 SnetSwitch-MIB::snetSwitchAccessViolationID i 9999",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchAccessViolation",
+				"oid" : "1.3.6.1.4.1.169.8.0.105",
+				"variables" : [
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the switch port number. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPortErrorStatusIndex",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.2.1.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This field contains the latest value for the invalid ID ",
+							"which was detected by the switch. Whenever an invalid",
+							"id is detected by a switch, the switch generates an ",
+							"asynchronous event. The ID which was detected by the ",
+							"switch is saved here. It is valid only for the last event ",
+							"which occurred. If no invalid IDs have been detected, the ",
+							"value will be zero(0). "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchAccessViolationID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.5.1.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchOwnerChange",
+			"certification" : "STANDARD",
+			"description" : [
+				"ServerNet Switch Primary Administrative node change.",
+				"Possible Cause / Solution: ",
+				"Primary node failed over: If this was by user request, this is a notification",
+				"only and no action is needed. Refer to snetSwitchSANManFailover for other",
+				"possibilities.",
+				"Administrator changed primary Administrative node: Notification only. No action ",
+				"is necessary. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchOwnerChange",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SnetID:$v1",
+				"Summary" : "ServerNet switch ($v1) primary administrative node ($v3) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchOwnerChange SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE SnetSwitch-MIB::snetSwitchSANManSNetID s EXAMPLE",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchOwnerChange",
+				"oid" : "1.3.6.1.4.1.169.8.0.106",
+				"variables" : [
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"ServerNet ID of the primary administrative node. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSANManSNetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchFirmwareUpgrade",
+			"certification" : "STANDARD",
+			"description" : [
+				"A firmware upgrade has been performed on the specified switch.",
+				"Possible Cause / Solution: ",
+				"Switch firmware has been upgraded. Notification only. No action ",
+				"in needed. ",
+				"-- Firmware upgrade to %d.%d."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchFirmwareUpgrade",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "SnetID:$v2",
+				"Summary" : "Firmware upgraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchFirmwareUpgrade SnetSwitch-MIB::snetSwitchSANManSNetID s EXAMPLE SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE SnetSwitch-MIB::snetSwitchFWRelease i 9999 SnetSwitch-MIB::snetSwitchFWMajorRev i 9999 SnetSwitch-MIB::snetSwitchFWMinorRev i 9999",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchFirmwareUpgrade",
+				"oid" : "1.3.6.1.4.1.169.8.0.107",
+				"variables" : [
+					{
+						"description" : [
+							"ServerNet ID of the primary administrative node. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSANManSNetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Switch Firmware Release"
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchFWRelease",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Switch Firmware Major Revision"
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchFWMajorRev",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.8",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Switch Firmware Minor Revision"
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchFWMinorRev",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.9",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchSANManFailover",
+			"certification" : "STANDARD",
+			"description" : [
+				"Administrative node failover has been detected. ",
+				"The type of failure detected is reflected in the event type.",
+				"Possible Cause / Solution: ",
+				"Primary or backup administrative node has failed: if powered off, apply power.",
+				"If hung, reboot node. If doing maintenance, this is a notification",
+				"message only. Restart node when maintenance is complete.",
+				"Backup administrative node not configured: use the ServerNet II Administrative Utility ",
+				"to define a backup. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchSANManFailover",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v5==2) ? 3 : ($v5==4) ? 4 : 2"
+				},
+				"SubNode" : "SNetID:$v1",
+				"Summary" : "Administrative node failover ($v5) detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchSANManFailover SnetSwitch-MIB::snetSwitchPrimarySANManSNetID s EXAMPLE SnetSwitch-MIB::snetSwitchPrimarySANManName s EXAMPLE SnetSwitch-MIB::snetSwitchBackupSANManSNetID s EXAMPLE SnetSwitch-MIB::snetSwitchBackupSANManName s EXAMPLE SnetSwitch-MIB::snetSwitchFailoverEventType i 1",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchSANManFailover",
+				"oid" : "1.3.6.1.4.1.169.8.0.108",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies the ServerNet ID of the current primary",
+							"administrative node in the ServerNet SAN. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPrimarySANManSNetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.1.8",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the current primary administrative node in the ServerNet SAN. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchPrimarySANManName",
+						"oid" : "1.3.6.1.4.1.169.8.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Identifies the ServerNet ID of the current backup",
+							"administrative node in the ServerNet SAN. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchBackupSANManSNetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Name of the current backup administrative node in the ServerNet SAN. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchBackupSANManName",
+						"oid" : "1.3.6.1.4.1.169.8.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Indicates the most recent failover event type. ",
+							"Valid values include",
+							"NoFailoversDetected(1), ",
+							"BackupNotReachable(2), ",
+							"BackupTookOver(3)",
+							"PrimaryNotReachable(4)",
+							"PrimaryTookOver(5). "
+						],
+						"enums" : {
+							"1" : "noFailoversDetected",
+							"2" : "backupNotReachable",
+							"3" : "backupTookOver",
+							"4" : "primaryNotReachable",
+							"5" : "primaryTookOver"
+						},
+						"name" : "SnetSwitch-MIB::snetSwitchFailoverEventType",
+						"oid" : "1.3.6.1.4.1.169.8.3.1.10",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchTopologyConfigUpdate",
+			"certification" : "STANDARD",
+			"description" : [
+				"Configuration of the ServerNet topology has changed.",
+				"Possible Cause / Solution: ",
+				"Switch or end node configuration has been updated. Notification only",
+				"no action required. May also be generated when switch firmware is upgraded or",
+				"new primary or backup nodes are designated."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchTopologyConfigUpdate",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "ServerNet topology updated"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchTopologyConfigUpdate ",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchTopologyConfigUpdate",
+				"oid" : "1.3.6.1.4.1.169.8.0.109"
+			}
+		},
+		{
+			"@objectName" : "SnetSwitch-MIB::snetSwitchFanFailure",
+			"certification" : "STANDARD",
+			"description" : [
+				"ServerNet Switch detected a fan failure. The power module should be",
+				"replaced immediately to prevent switch component damage.",
+				"Possible Cause / Solution: ",
+				"A switch fan has failed: replace switch power module to prevent switch",
+				"component damage. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "snetSwitchFanFailure",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "SnetID:$v1",
+				"Summary" : "ServerNet switch ($v2) detected fan failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD SnetSwitch-MIB::snetSwitchFanFailure SnetSwitch-MIB::snetSwitchSnetID s EXAMPLE SnetSwitch-MIB::snetSwitchName s EXAMPLE",
+			"trap" : {
+				"name" : "SnetSwitch-MIB::snetSwitchFanFailure",
+				"oid" : "1.3.6.1.4.1.169.8.0.110",
+				"variables" : [
+					{
+						"description" : [
+							"Switch Identifier. The switch id is displayed as a hexidecimal value. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchSnetID",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.1",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The switch name. If no name is defined, this field",
+							"will be blank. "
+						],
+						"name" : "SnetSwitch-MIB::snetSwitchName",
+						"oid" : "1.3.6.1.4.1.169.8.3.2.1.1.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

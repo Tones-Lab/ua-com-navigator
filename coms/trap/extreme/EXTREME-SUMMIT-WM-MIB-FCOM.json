@@ -1,0 +1,125 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200510280311Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "EXTREME-SUMMIT-WM-MIB::summitWMLogAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"Components of an alarm."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "summitWMLogAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==3) ? 3 : (($v1==2) ? 4 : (($v1==1) ? 5 : 2))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Summit WM log alarm : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-SUMMIT-WM-MIB::summitWMLogAlarm EXTREME-SUMMIT-WM-MIB::logEventSeverity i 1 EXTREME-SUMMIT-WM-MIB::logEventComponent s EXAMPLE EXTREME-SUMMIT-WM-MIB::logEventDescription s EXAMPLE",
+			"trap" : {
+				"name" : "EXTREME-SUMMIT-WM-MIB::summitWMLogAlarm",
+				"oid" : "1.3.6.1.4.1.1916.5.3.9.6",
+				"variables" : [
+					{
+						"description" : [
+							"Contains the severity of the most recently trapped summitWMLogAlarm notification."
+						],
+						"enums" : {
+							"1" : "critical",
+							"2" : "major",
+							"3" : "minor",
+							"4" : "information",
+							"5" : "trace"
+						},
+						"name" : "EXTREME-SUMMIT-WM-MIB::logEventSeverity",
+						"oid" : "1.3.6.1.4.1.1916.5.3.9.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the component which sent the most",
+							"recently trapped summitWMLogAlarm notification."
+						],
+						"name" : "EXTREME-SUMMIT-WM-MIB::logEventComponent",
+						"oid" : "1.3.6.1.4.1.1916.5.3.9.4",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Contains the description of the most recently trapped ",
+							"summitWMLogAlarm."
+						],
+						"name" : "EXTREME-SUMMIT-WM-MIB::logEventDescription",
+						"oid" : "1.3.6.1.4.1.1916.5.3.9.5",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "EXTREME-SUMMIT-WM-MIB::altitudeTunnelAlarm",
+			"certification" : "STANDARD",
+			"description" : [
+				"alarm associated with Altitude and Altitude interface."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "altitudeTunnelAlarm",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "EventId:$v1",
+				"Summary" : "Altitude tunnel alarm : $v2"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-SUMMIT-WM-MIB::altitudeTunnelAlarm EXTREME-SUMMIT-WM-MIB::altitudeEventId i 1 EXTREME-SUMMIT-WM-MIB::altitudeEventDescription s EXAMPLE EXTREME-SUMMIT-WM-MIB::altitudeEventSerialNumber s EXAMPLEEXAMPLEEX",
+			"trap" : {
+				"name" : "EXTREME-SUMMIT-WM-MIB::altitudeTunnelAlarm",
+				"oid" : "1.3.6.1.4.1.1916.5.3.19.4",
+				"variables" : [
+					{
+						"description" : [
+							"Identifies event associated with Altitude or Altitude tunnel:",
+							"",
+							"altitudePollTimeout - an event triggered when Altitude disconnects from WM"
+						],
+						"enums" : {
+							"1" : "altitudePollTimeout"
+						},
+						"name" : "EXTREME-SUMMIT-WM-MIB::altitudeEventId",
+						"oid" : "1.3.6.1.4.1.1916.5.3.19.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Contains the description of the most recently triggered event."
+						],
+						"name" : "EXTREME-SUMMIT-WM-MIB::altitudeEventDescription",
+						"oid" : "1.3.6.1.4.1.1916.5.3.19.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"16-character serial number of the Altitude."
+						],
+						"name" : "EXTREME-SUMMIT-WM-MIB::altitudeEventSerialNumber",
+						"oid" : "1.3.6.1.4.1.1916.5.3.19.3",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

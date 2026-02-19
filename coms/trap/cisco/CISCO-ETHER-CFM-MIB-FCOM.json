@@ -1,0 +1,463 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200412280000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcMepUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated in the following cases:",
+				"- when a remote MEP first comes up, that is when we receive ",
+				"a CC message from that MEP for the first time.",
+				"- when the device receives a CC message from a MEP for which ",
+				"it has an expired CCDB entry.",
+				"- when a CC message is received for a remote MEP for which",
+				"the device already has a CCDB entry and the port-state in",
+				"the received CC message is different from the cached ",
+				"previous state."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cEtherCfmCcMepUpDown",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "$v5",
+				"Summary" : "Remote MEP $v5 is up - %v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ETHER-CFM-MIB::cEtherCfmCcMepUp CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId s EXAMPLE CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMepCount u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventLclIfCount u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventCode i 1 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtPortState i 1",
+			"trap" : {
+				"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcMepUp",
+				"oid" : "1.3.6.1.4.1.9.9.461.0.0.1",
+				"variables" : [
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMepCount",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.10",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclIfCount",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.11",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "new",
+							"2" : "returning",
+							"3" : "portState",
+							"4" : "lastGasp",
+							"5" : "timeout",
+							"6" : "configClear",
+							"7" : "loopClear",
+							"8" : "xconnectClear",
+							"9" : "unknownClear"
+						},
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventCode",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.16",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "up",
+							"2" : "down",
+							"3" : "adminDown",
+							"4" : "test",
+							"5" : "remoteExcessiveErrors",
+							"6" : "localExcessiveErrors",
+							"7" : "localNoData"
+						},
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtPortState",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.14",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcMepDown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a remote MEP goes down; ",
+				"i.e. the entry in CCDB corresponding to this MEP times out ",
+				"or the device receives a CC message with zero hold-time."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cEtherCfmCcMepDown",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "$v5",
+				"Summary" : "Remote MEP $v5 is down - $v7"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ETHER-CFM-MIB::cEtherCfmCcMepDown CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId s EXAMPLE CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMepCount u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventLclIfCount u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventCode i 1",
+			"trap" : {
+				"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcMepUpDown",
+				"oid" : "1.3.6.1.4.1.9.9.461.0.0.2",
+				"variables" : [
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMepCount",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.10",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclIfCount",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.11",
+						"valueType" : "GAUGE"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"enums" : {
+							"1" : "new",
+							"2" : "returning",
+							"3" : "portState",
+							"4" : "lastGasp",
+							"5" : "timeout",
+							"6" : "configClear",
+							"7" : "loopClear",
+							"8" : "xconnectClear",
+							"9" : "unknownClear"
+						},
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventCode",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.16",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcCrossconnect",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a device receives a CC",
+				"message with the service ID not matching the one locally ",
+				"configured for the VLAN in question."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cEtherCfmCcCrossconnect",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "A cross-connect error has occurred on CFM event service $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ETHER-CFM-MIB::cEtherCfmCcCrossconnect CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId s EXAMPLE CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtServiceId s EXAMPLE",
+			"trap" : {
+				"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcCrossconnect",
+				"oid" : "1.3.6.1.4.1.9.9.461.0.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.13",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.15",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcLoop",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a device receives a CC",
+				"message with the same MEPID and MAC address as those of",
+				"the device itself, indicating that there is a forwarding",
+				"loop and that the device is receiving its own CC messages."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cEtherCfmCcLoop",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "A loop error has occurred on CFM event service $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ETHER-CFM-MIB::cEtherCfmCcLoop CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId s EXAMPLE CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMepid u 9999",
+			"trap" : {
+				"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcLoop",
+				"oid" : "1.3.6.1.4.1.9.9.461.0.0.4",
+				"variables" : [
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMepid",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.8",
+						"valueType" : "UNSIGNED32"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcConfigError",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a device receives a CC",
+				"message with the same MEPID but different MAC address as ",
+				"those of the device itself, indicating that there is a ",
+				"mis-configuration in the network where a remote device",
+				"has the same MEPID configured."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cEtherCfmCcConfigError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v1",
+				"Summary" : "A configuration error has occurred on CFM event service $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ETHER-CFM-MIB::cEtherCfmCcConfigError CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId s EXAMPLE CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMepid u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress s 09:09:09:09:09:09",
+			"trap" : {
+				"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmCcConfigError",
+				"oid" : "1.3.6.1.4.1.9.9.461.0.0.5",
+				"variables" : [
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMepid",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.8",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ETHER-CFM-MIB::cEtherCfmXCheckMissing",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when an expected ",
+				"(configured) MEP does not come up during the cross-check",
+				"start timeout interval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cEtherCfmXCheckMissing",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v3",
+				"Summary" : "Expected MEP $v3 has not come up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ETHER-CFM-MIB::cEtherCfmXCheckMissing CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId s EXAMPLE CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress s 09:09:09:09:09:09",
+			"trap" : {
+				"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmXCheckMissing",
+				"oid" : "1.3.6.1.4.1.9.9.461.0.0.6",
+				"variables" : [
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ETHER-CFM-MIB::cEtherCfmXCheckUnknown",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when an unexpected MEP",
+				"comes up."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cEtherCfmXCheckUnknown",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "$v3",
+				"Summary" : "Unexpected MEP $v3 has come up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ETHER-CFM-MIB::cEtherCfmXCheckUnknown CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId s EXAMPLE CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress s 09:09:09:09:09:09 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid u 9999 CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress s 09:09:09:09:09:09",
+			"trap" : {
+				"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmXCheckUnknown",
+				"oid" : "1.3.6.1.4.1.9.9.461.0.0.7",
+				"variables" : [
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMepid",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.12",
+						"valueType" : "UNSIGNED32"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventRmtMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.13",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-ETHER-CFM-MIB::cEtherCfmXCheckServiceUp",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when all the MEPs belonging",
+				"to a customer service instance come up before the expiration of",
+				"the cross-check start timeout interval."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cEtherCfmXCheckServiceUp",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "All MEPs belonging to customer service $v1 have come up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-ETHER-CFM-MIB::cEtherCfmXCheckServiceUp CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId s EXAMPLE CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress s 09:09:09:09:09:09",
+			"trap" : {
+				"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmXCheckServiceUp",
+				"oid" : "1.3.6.1.4.1.9.9.461.0.0.8",
+				"variables" : [
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventServiceId",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"name" : "CISCO-ETHER-CFM-MIB::cEtherCfmEventLclMacAddress",
+						"oid" : "1.3.6.1.4.1.9.9.461.1.1.2.1.9",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		}
+	]
+}

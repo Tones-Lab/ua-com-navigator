@@ -1,0 +1,5454 @@
+{
+	"metaData" : {
+		"sourceRevision" : "Unknown"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe2CorrectableMemoryError",
+			"certification" : "STANDARD",
+			"description" : [
+				"A correctable memory error occurred.",
+				"The error has been corrected. The current number of correctable",
+				"memory errors is reported in the variable cpqHeCorrMemTotalErrs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe2CorrectableMemoryError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "$v1 correctable memory error occurred"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe2CorrectableMemoryError CPQHLTH-MIB::cpqHeCorrMemTotalErrs i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe2CorrectableMemoryError",
+				"oid" : "1.3.6.1.4.1.232.0.6001",
+				"variables" : [
+					{
+						"description" : [
+							"The number of correctable memory errors that have occurred."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeCorrMemTotalErrs",
+						"oid" : "1.3.6.1.4.1.232.6.2.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe2CorrectableMemoryLogDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"Correctable memory error tracking disabled.",
+				"The frequency of errors is so high that the error tracking",
+				"logic has been temporarily disabled. The cpqHeCorrMemLogStatus",
+				"variable indicated the current tracking status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : (($v1==4) ? 1 : 2)"
+				},
+				"EventType" : "cpqHe2CorrectableMemoryLogDisabled",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : (($v1==4) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 3 : (($v1==3) ? 4 : 0))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Correctable memory error tracking status : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe2CorrectableMemoryLogDisabled CPQHLTH-MIB::cpqHeCorrMemLogStatus i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe2CorrectableMemoryLogDisabled",
+				"oid" : "1.3.6.1.4.1.232.0.6002",
+				"variables" : [
+					{
+						"description" : [
+							"This value specifies whether this system is currently tracking",
+							"correctable memory errors."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notSupported",
+							"3" : "disabled",
+							"4" : "enabled"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeCorrMemLogStatus",
+						"oid" : "1.3.6.1.4.1.232.6.2.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalTempFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to failed.",
+				"The system will be shutdown due to this thermal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHeThermalTempNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 5,
+				"SubNode" : "Device",
+				"Summary" : "System shutdown due to temperature failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalTempFailed ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalTempFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6003"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalTempDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to degraded.",
+				"The server's temperature is outside of the normal operating",
+				"range. The server will be shutdown if the",
+				"cpqHeThermalDegradedAction variable is set to shutdown(3)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : 2"
+				},
+				"EventType" : "cpqHeThermalTempNotification",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Server temperature out of range, Action : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalTempDegraded CPQHLTH-MIB::cpqHeThermalDegradedAction i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalTempDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6004",
+				"variables" : [
+					{
+						"description" : [
+							"The action to perform when the thermal condition is degraded.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"This feature is not supported by this system or driver.",
+							"",
+							"continue(2)",
+							"The system should be allowed to continue.",
+							"",
+							"shutdown(3)",
+							"The system should be shutdown."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "continue",
+							"3" : "shutdown"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeThermalDegradedAction",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalTempOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to ok.",
+				"The server's temperature has returned to the normal operating",
+				"range."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHeThermalTempNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "Server temperature is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalTempOk ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalTempOk",
+				"oid" : "1.3.6.1.4.1.232.0.6005"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalSystemFanFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system fan status has been set to failed.",
+				"A required system fan is not operating normally. The system",
+				"will be shutdown if the cpqHeThermalDegradedAction variable",
+				"is set to shutdown(3)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : 2"
+				},
+				"EventType" : "cpqHeThermalSystemFanStatus",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 3 : 4)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "System fan failed, Action : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalSystemFanFailed CPQHLTH-MIB::cpqHeThermalDegradedAction i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalSystemFanFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6006",
+				"variables" : [
+					{
+						"description" : [
+							"The action to perform when the thermal condition is degraded.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"This feature is not supported by this system or driver.",
+							"",
+							"continue(2)",
+							"The system should be allowed to continue.",
+							"",
+							"shutdown(3)",
+							"The system should be shutdown."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "continue",
+							"3" : "shutdown"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeThermalDegradedAction",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalSystemFanDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system fan status has been set to degraded.",
+				"An optional system fan is not operating normally."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHeThermalSystemFanStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "System fan degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalSystemFanDegraded ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalSystemFanDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6007"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalSystemFanOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system fan status has been set to ok.",
+				"Any previously non-operational system fans have returned to",
+				"normal operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHeThermalSystemFanStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "System fan is operational"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalSystemFanOk ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalSystemFanOk",
+				"oid" : "1.3.6.1.4.1.232.0.6008"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalCpuFanFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The CPU fan status has been set to failed.",
+				"A processor fan is not operating normally. The server will be",
+				"shutdown."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHeThermalCpuFanStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "Device",
+				"Summary" : "CPU fan failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalCpuFanFailed ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalCpuFanFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6009"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalCpuFanOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The CPU fan status has been set to ok.",
+				"Any previously non-operational processor fans have returned",
+				"to normal operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHeThermalCpuFanStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "Device",
+				"Summary" : "CPU fan is operational"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalCpuFanOk ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalCpuFanOk",
+				"oid" : "1.3.6.1.4.1.232.0.6010"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeAsrConfirmation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The server is operational again.",
+				"The server has previously been shutdown by the",
+				"Automatic Server Recovery (ASR) feature and has just",
+				"become operational again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeAsrConfirmation",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Server is operational again after ASR shutdown"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeAsrConfirmation ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeAsrConfirmation",
+				"oid" : "1.3.6.1.4.1.232.0.6011"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeThermalConfirmation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The server is operational again.",
+				"The server has previously been shutdown due to a thermal",
+				"anomaly on the server and has just become operational again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeThermalConfirmation",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "Device",
+				"Summary" : "Server is operational"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeThermalConfirmation ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeThermalConfirmation",
+				"oid" : "1.3.6.1.4.1.232.0.6012"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHePostError",
+			"certification" : "STANDARD",
+			"description" : [
+				"One or more POST errors occurred.",
+				"Power On Self-Test (POST) errors occur during the server",
+				"restart process. "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHePostError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "One or more POST errors detetcted"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHePostError ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHePostError",
+				"oid" : "1.3.6.1.4.1.232.0.6013"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeFltTolPwrSupplyDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The fault tolerant power supply sub-system condition has been",
+				"set to degraded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeFltTolPwrSupplyDegraded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "Fault tolerant power supply sub-system degraded."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeFltTolPwrSupplyDegraded ",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeFltTolPwrSupplyDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6014"
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3CorrectableMemoryError",
+			"certification" : "STANDARD",
+			"description" : [
+				"A correctable memory error occurred.",
+				"The error has been corrected. The current number of correctable",
+				"memory errors is reported in the variable cpqHeCorrMemTotalErrs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3CorrectableMemoryError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "$v3 correctable memory error occurred on node $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3CorrectableMemoryError RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeCorrMemTotalErrs i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3CorrectableMemoryError",
+				"oid" : "1.3.6.1.4.1.232.0.6015",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The number of correctable memory errors that have occurred."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeCorrMemTotalErrs",
+						"oid" : "1.3.6.1.4.1.232.6.2.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3CorrectableMemoryLogDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"Correctable memory error tracking disabled.",
+				"The frequency of errors is so high that the error tracking",
+				"logic has been temporarily disabled. The cpqHeCorrMemLogStatus",
+				"variable indicated the current tracking status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 3 : (($v3==4) ? 1 : 2)"
+				},
+				"EventType" : "cpqHe3CorrectableMemoryLogDisabled",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : (($v3==4) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 3 : (($v3==3) ? 4 : 0))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Correctable memory error tracking status : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3CorrectableMemoryLogDisabled RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeCorrMemLogStatus i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3CorrectableMemoryLogDisabled",
+				"oid" : "1.3.6.1.4.1.232.0.6016",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This value specifies whether this system is currently tracking",
+							"correctable memory errors."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notSupported",
+							"3" : "disabled",
+							"4" : "enabled"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeCorrMemLogStatus",
+						"oid" : "1.3.6.1.4.1.232.6.2.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalTempFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to failed.",
+				"The system will be shutdown due to this thermal condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHe3ThermalTempNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "System shutdown due to temperature failure"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalTempFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalTempFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6017",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalTempDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to degraded.",
+				"The server's temperature is outside of the normal operating",
+				"range. The server will be shutdown if the",
+				"cpqHeThermalDegradedAction variable is set to shutdown(3)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 3 : 2"
+				},
+				"EventType" : "cpqHe3ThermalTempNotification",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 3 : 4)"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Server temperature out of range, Action : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalTempDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeThermalDegradedAction i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalTempDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6018",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The action to perform when the thermal condition is degraded.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"This feature is not supported by this system or driver.",
+							"",
+							"continue(2)",
+							"The system should be allowed to continue.",
+							"",
+							"shutdown(3)",
+							"The system should be shutdown."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "continue",
+							"3" : "shutdown"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeThermalDegradedAction",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalTempOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to ok.",
+				"The server's temperature has returned to the normal operating",
+				"range."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHe3ThermalTempNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Server temperature is normal"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalTempOk RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalTempOk",
+				"oid" : "1.3.6.1.4.1.232.0.6019",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalSystemFanFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system fan status has been set to failed.",
+				"A required system fan is not operating normally. The system",
+				"will be shutdown if the cpqHeThermalDegradedAction variable",
+				"is set to shutdown(3)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 3 : 2"
+				},
+				"EventType" : "cpqHe3ThermalSystemFanStatus",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 3 : 4)"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "System fan failed, Action : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalSystemFanFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeThermalDegradedAction i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalSystemFanFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6020",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The action to perform when the thermal condition is degraded.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"This feature is not supported by this system or driver.",
+							"",
+							"continue(2)",
+							"The system should be allowed to continue.",
+							"",
+							"shutdown(3)",
+							"The system should be shutdown."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "continue",
+							"3" : "shutdown"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeThermalDegradedAction",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalSystemFanDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system fan status has been set to degraded.",
+				"An optional system fan is not operating normally."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHe3ThermalSystemFanStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "System fan degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalSystemFanDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalSystemFanDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6021",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalSystemFanOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The system fan status has been set to ok.",
+				"Any previously non-operational system fans have returned to",
+				"normal operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHe3ThermalSystemFanStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "System fan is operational"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalSystemFanOk RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalSystemFanOk",
+				"oid" : "1.3.6.1.4.1.232.0.6022",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalCpuFanFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The CPU fan status has been set to failed.",
+				"A processor fan is not operating normally. The server will be",
+				"shutdown."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHe3ThermalCpuFanStatus",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "CPU fan failed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalCpuFanFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalCpuFanFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6023",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalCpuFanOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The CPU fan status has been set to ok.",
+				"Any previously non-operational processor fans have returned",
+				"to normal operation."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHe3ThermalCpuFanStatus",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "CPU fan is operational"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalCpuFanOk RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalCpuFanOk",
+				"oid" : "1.3.6.1.4.1.232.0.6024",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3AsrConfirmation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The server is operational again.",
+				"The server has previously been shutdown by the",
+				"Automatic Server Recovery (ASR) feature and has just",
+				"become operational again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3AsrConfirmation",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Server is operational again after ASR shutdown"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3AsrConfirmation RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3AsrConfirmation",
+				"oid" : "1.3.6.1.4.1.232.0.6025",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3ThermalConfirmation",
+			"certification" : "STANDARD",
+			"description" : [
+				"The server is operational again.",
+				"The server has previously been shutdown due to a thermal",
+				"anomaly on the server and has just become operational again."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3ThermalConfirmation",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Server is operational"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3ThermalConfirmation RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3ThermalConfirmation",
+				"oid" : "1.3.6.1.4.1.232.0.6026",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3PostError",
+			"certification" : "STANDARD",
+			"description" : [
+				"One or more POST errors occurred.",
+				"Power On Self-Test (POST) errors occur during the server",
+				"restart process. Details of the POST error messages can ",
+				"be found in Integrated Management Log "
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3PostError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "one or more POST errors detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3PostError RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3PostError",
+				"oid" : "1.3.6.1.4.1.232.0.6027",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolPwrSupplyDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The fault tolerant power supply sub-system condition has been",
+				"set to degraded."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolPwrSupplyDegraded",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Fault tolerant power supply sub-system degraded"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolPwrSupplyDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolPwrSupplyDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6028",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3CorrMemReplaceMemModule",
+			"certification" : "STANDARD",
+			"description" : [
+				"A correctable memory log entry indicates a memory module needs",
+				"to be replaced.",
+				"The errors have been corrected, but the memory module should be",
+				"replaced. The error information is reported in the variable",
+				"cpqHeCorrMemErrDesc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3CorrMemReplaceMemModule",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Memory module replacement required"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3CorrMemReplaceMemModule RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3CorrMemReplaceMemModule",
+				"oid" : "1.3.6.1.4.1.232.0.6029",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolPowerSupplyDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The fault tolerant power supply condition has been set",
+				"to degraded for the specified chassis and bay location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolPowerSupplyDegraded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant power supply degraded on chassis $v3, Bay $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolPowerSupplyDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolPowerSupplyDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6030",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bay number to index within this chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolPowerSupplyFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The fault tolerant power supply condition has been set",
+				"to failed for the specified chassis and bay location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolPowerSupplyFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant power supply failed on chassis $v3, Bay $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolPowerSupplyFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolPowerSupplyFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6031",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bay number to index within this chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolPowerRedundancyLost",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Fault Tolerant Power Supplies have lost redundancy for",
+				"the specified chassis."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHe3FltTolPowerRedundancyNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant power supplies are no longer redundant on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolPowerRedundancyLost RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolPowerRedundancyLost",
+				"oid" : "1.3.6.1.4.1.232.0.6032",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolPowerSupplyInserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Fault Tolerant Power Supply has been inserted into the",
+				"specified chassis and bay location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolPowerSupplyInserted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant power supply inserted on chassis $v3, bay $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolPowerSupplyInserted RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolPowerSupplyInserted",
+				"oid" : "1.3.6.1.4.1.232.0.6033",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bay number to index within this chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolPowerSupplyRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Fault Tolerant Power Supply has been removed from the",
+				"specified chassis and bay location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolPowerSupplyRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant power supply removed on chassis $v3, bay $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolPowerSupplyRemoved RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolPowerSupplyRemoved",
+				"oid" : "1.3.6.1.4.1.232.0.6034",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bay number to index within this chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolFanDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Fault Tolerant Fan condition has been set to degraded",
+				"for the specified chassis and fan."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolFanDegraded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant fan $v4 degraded on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolFanDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolFanChassis i 9999 CPQHLTH-MIB::cpqHeFltTolFanIndex i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolFanDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6035",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A number that uniquely specifies this fan description."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolFanFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Fault Tolerant Fan condition has been set to failed",
+				"for the specified chassis and fan."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolFanFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant fan $v4 failed on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolFanFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolFanChassis i 9999 CPQHLTH-MIB::cpqHeFltTolFanIndex i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolFanFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6036",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A number that uniquely specifies this fan description."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolFanRedundancyLost",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Fault Tolerant Fans have lost redundancy for the",
+				"specified chassis."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHe3FltTolFanRedundancyNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant fans are no longer redundant on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolFanRedundancyLost RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolFanChassis i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolFanRedundancyLost",
+				"oid" : "1.3.6.1.4.1.232.0.6037",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolFanInserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Fault Tolerant Fan has been inserted into the specified",
+				"chassis and fan location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolFanInserted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant fan $v4 inserted on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolFanInserted RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolFanChassis i 9999 CPQHLTH-MIB::cpqHeFltTolFanIndex i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolFanInserted",
+				"oid" : "1.3.6.1.4.1.232.0.6038",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A number that uniquely specifies this fan description."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolFanRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"A Fault Tolerant Fan has been removed from the specified",
+				"chassis and fan location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3FltTolFanRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant fan $v4 removed on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolFanRemoved RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolFanChassis i 9999 CPQHLTH-MIB::cpqHeFltTolFanIndex i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolFanRemoved",
+				"oid" : "1.3.6.1.4.1.232.0.6039",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A number that uniquely specifies this fan description."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.2",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3TemperatureFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to failed in the",
+				"specified chassis and location.",
+				"The system will be shutdown due to this condition."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3Temperature:$v4",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Temperature exceeded on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3TemperatureFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeTemperatureChassis i 9999 CPQHLTH-MIB::cpqHeTemperatureLocale i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3TemperatureFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6040",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This specifies the location of the temperature sensor",
+							"present in the system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "system",
+							"4" : "systemBoard",
+							"5" : "ioBoard",
+							"6" : "cpu",
+							"7" : "memory",
+							"8" : "storage",
+							"9" : "removableMedia",
+							"10" : "powerSupply",
+							"11" : "ambient",
+							"12" : "chassis",
+							"13" : "bridgeCard"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureLocale",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3TemperatureDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to degraded in the",
+				"specified chassis and location.",
+				"The server's temperature is outside of the normal operating",
+				"range. The server will be shutdown if the",
+				"cpqHeThermalDegradedAction variable is set to shutdown(3)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v3==1) ? 3 : 2"
+				},
+				"EventType" : "cpqHe3Temperature:$v5",
+				"ExpireTime" : {
+					"eval" : "($v3==1) ? 3600 : 86400"
+				},
+				"Severity" : {
+					"eval" : "($v3==1) ? 1 : (($v3==2) ? 3 : 4)"
+				},
+				"SubNode" : "sysName:$v1;chassisNo:$v4",
+				"Summary" : "Temperature degraded on chassis $v4, Action : $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3TemperatureDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeThermalDegradedAction i 1 CPQHLTH-MIB::cpqHeTemperatureChassis i 9999 CPQHLTH-MIB::cpqHeTemperatureLocale i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3TemperatureDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6041",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The action to perform when the thermal condition is degraded.",
+							"",
+							"This value will be one of the following:",
+							"other(1)",
+							"This feature is not supported by this system or driver.",
+							"",
+							"continue(2)",
+							"The system should be allowed to continue.",
+							"",
+							"shutdown(3)",
+							"The system should be shutdown."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "continue",
+							"3" : "shutdown"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeThermalDegradedAction",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This specifies the location of the temperature sensor",
+							"present in the system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "system",
+							"4" : "systemBoard",
+							"5" : "ioBoard",
+							"6" : "cpu",
+							"7" : "memory",
+							"8" : "storage",
+							"9" : "removableMedia",
+							"10" : "powerSupply",
+							"11" : "ambient",
+							"12" : "chassis",
+							"13" : "bridgeCard"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureLocale",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3TemperatureOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The temperature status has been set to ok in the",
+				"specified chassis and location.",
+				"The server's temperature has returned to the normal operating",
+				"range."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHe3Temperature:$v4",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Temperature is normal on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3TemperatureOk RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeTemperatureChassis i 9999 CPQHLTH-MIB::cpqHeTemperatureLocale i 1",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3TemperatureOk",
+				"oid" : "1.3.6.1.4.1.232.0.6042",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This specifies the location of the temperature sensor",
+							"present in the system."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "unknown",
+							"3" : "system",
+							"4" : "systemBoard",
+							"5" : "ioBoard",
+							"6" : "cpu",
+							"7" : "memory",
+							"8" : "storage",
+							"9" : "removableMedia",
+							"10" : "powerSupply",
+							"11" : "ambient",
+							"12" : "chassis",
+							"13" : "bridgeCard"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeTemperatureLocale",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.8.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3PowerConverterDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DC-DC Power Converter condition has been set to degraded",
+				"for the specified chassis, slot and socket."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3PowerConverterDegraded",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "chassisNo:$v3;slotNo:$v4;socketNo:$v5",
+				"Summary" : "DC-DC power converter degraded on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3PowerConverterDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHePwrConvChassis i 9999 CPQHLTH-MIB::cpqHePwrConvSlot i 9999 CPQHLTH-MIB::cpqHePwrConvSocket i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3PowerConverterDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6043",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number containing the power converter",
+							"modules."
+						],
+						"name" : "CPQHLTH-MIB::cpqHePwrConvChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.13.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Power Converter Module slot number within the chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHePwrConvSlot",
+						"oid" : "1.3.6.1.4.1.232.6.2.13.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Power Converter Module socket number within the slot."
+						],
+						"name" : "CPQHLTH-MIB::cpqHePwrConvSocket",
+						"oid" : "1.3.6.1.4.1.232.6.2.13.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3PowerConverterFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DC-DC Power Converter condition has been set to failed",
+				"for the specified chassis, slot and socket."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3PowerConverterFailed",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3;slotNo:$v4;socketNo:$v5",
+				"Summary" : "DC-DC power converter failed on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3PowerConverterFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHePwrConvChassis i 9999 CPQHLTH-MIB::cpqHePwrConvSlot i 9999 CPQHLTH-MIB::cpqHePwrConvSocket i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3PowerConverterFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6044",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number containing the power converter",
+							"modules."
+						],
+						"name" : "CPQHLTH-MIB::cpqHePwrConvChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.13.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Power Converter Module slot number within the chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHePwrConvSlot",
+						"oid" : "1.3.6.1.4.1.232.6.2.13.3.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Power Converter Module socket number within the slot."
+						],
+						"name" : "CPQHLTH-MIB::cpqHePwrConvSocket",
+						"oid" : "1.3.6.1.4.1.232.6.2.13.3.1.5",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3PowerConverterRedundancyLost",
+			"certification" : "STANDARD",
+			"description" : [
+				"The DC-DC Power Converters have lost redundancy for the",
+				"specified chassis."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3PowerConverterRedundancyLost",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "DC-DC power converters are no longer redundant on chassis $v3."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3PowerConverterRedundancyLost RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHePwrConvChassis i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3PowerConverterRedundancyLost",
+				"oid" : "1.3.6.1.4.1.232.0.6045",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number containing the power converter",
+							"modules."
+						],
+						"name" : "CPQHLTH-MIB::cpqHePwrConvChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.13.3.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3CacheAccelParityError",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cache accelerator parity error indicates a cache module",
+				"needs to be replaced.",
+				"The error information is reported in the variable",
+				"cpqHeEventLogErrorDesc."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe3CacheAccelParityError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Cache accelerator errors may require a replacement module"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3CacheAccelParityError RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3CacheAccelParityError",
+				"oid" : "1.3.6.1.4.1.232.0.6046",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeResilientMemOnlineSpareEngaged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Advanced Memory Protection Online Spare Engaged.",
+				"The Advanced Memory Protection subsystem has detected a memory",
+				"fault. The Online Spare Memory has been activated.",
+				"User Action: Schedule server down-time to replace the faulty",
+				"memory."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeResilientMemOnlineSpareEngaged",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Advanced memory protection subsystem detected a memory fault"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeResilientMemOnlineSpareEngaged RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeResilientMemOnlineSpareEngaged",
+				"oid" : "1.3.6.1.4.1.232.0.6047",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe4FltTolPowerSupplyOk",
+			"certification" : "STANDARD",
+			"description" : [
+				"The fault tolerant power supply condition has been set back",
+				"to the OK state for the specified chassis and bay location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHe4FltTolPowerSupplyState",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "serialNo:$v7;chassisNo:$v3",
+				"Summary" : "Fault tolerant power supply is normal on chassis $v3, bay $v4, status $v5, model $v6, serial number $v7, firmware $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe4FltTolPowerSupplyOk RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyStatus i 1 CPQHLTH-MIB::cpqHeFltTolPowerSupplyModel s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplySerialNumber s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplyAutoRev s EXAM CPQHLTH-MIB::cpqHeFltTolPowerSupplyFirmwareRev s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplySparePartNum s EXAMPLE CPQSINFO-MIB::cpqSiServerSystemId s EXAMPLE",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe4FltTolPowerSupplyOk",
+				"oid" : "1.3.6.1.4.1.232.0.6048",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bay number to index within this chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of the power supply."
+						],
+						"enums" : {
+							"1" : "noError",
+							"2" : "generalFailure",
+							"3" : "bistFailure",
+							"4" : "fanFailure",
+							"5" : "tempFailure",
+							"6" : "interlockOpen",
+							"7" : "epromFailed",
+							"8" : "vrefFailed",
+							"9" : "dacFailed",
+							"10" : "ramTestFailed",
+							"11" : "voltageChannelFailed",
+							"12" : "orringdiodeFailed",
+							"13" : "brownOut",
+							"14" : "giveupOnStartup",
+							"15" : "nvramInvalid",
+							"16" : "calibrationTableInvalid"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The power supply model name."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyModel",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply serial number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply auto revision number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyAutoRev",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply firmware revision. This field will be left",
+							"blank if the firmware revision is unknown."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyFirmwareRev",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply part number or spare part number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplySparePartNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A Server System ID.",
+							"",
+							"This value is used to uniquely identify systems via a unique",
+							"ID on systems that do not support the EISA bus."
+						],
+						"name" : "CPQSINFO-MIB::cpqSiServerSystemId",
+						"oid" : "1.3.6.1.4.1.232.2.2.4.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe4FltTolPowerSupplyDegraded",
+			"certification" : "STANDARD",
+			"description" : [
+				"The fault tolerant power supply condition has been set",
+				"to degraded for the specified chassis and bay location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHe4FltTolPowerSupplyState",
+				"ExpireTime" : 86400,
+				"Severity" : 3,
+				"SubNode" : "serialNo:$v7;chassisNo:$v3",
+				"Summary" : "Fault tolerant power supply is degraded on chassis $v3, bay $v4, status $v5, model $v6, serial number $v7, firmware $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe4FltTolPowerSupplyDegraded RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyStatus i 1 CPQHLTH-MIB::cpqHeFltTolPowerSupplyModel s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplySerialNumber s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplyAutoRev s EXAM CPQHLTH-MIB::cpqHeFltTolPowerSupplyFirmwareRev s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplySparePartNum s EXAMPLE CPQSINFO-MIB::cpqSiServerSystemId s EXAMPLE",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe4FltTolPowerSupplyDegraded",
+				"oid" : "1.3.6.1.4.1.232.0.6049",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bay number to index within this chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of the power supply."
+						],
+						"enums" : {
+							"1" : "noError",
+							"2" : "generalFailure",
+							"3" : "bistFailure",
+							"4" : "fanFailure",
+							"5" : "tempFailure",
+							"6" : "interlockOpen",
+							"7" : "epromFailed",
+							"8" : "vrefFailed",
+							"9" : "dacFailed",
+							"10" : "ramTestFailed",
+							"11" : "voltageChannelFailed",
+							"12" : "orringdiodeFailed",
+							"13" : "brownOut",
+							"14" : "giveupOnStartup",
+							"15" : "nvramInvalid",
+							"16" : "calibrationTableInvalid"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The power supply model name."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyModel",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply serial number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply auto revision number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyAutoRev",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply firmware revision. This field will be left",
+							"blank if the firmware revision is unknown."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyFirmwareRev",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply part number or spare part number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplySparePartNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A Server System ID.",
+							"",
+							"This value is used to uniquely identify systems via a unique",
+							"ID on systems that do not support the EISA bus."
+						],
+						"name" : "CPQSINFO-MIB::cpqSiServerSystemId",
+						"oid" : "1.3.6.1.4.1.232.2.2.4.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe4FltTolPowerSupplyFailed",
+			"certification" : "STANDARD",
+			"description" : [
+				"The fault tolerant power supply condition has been set",
+				"to failed for the specified chassis and bay location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHe4FltTolPowerSupplyState",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "serialNo:$v7;chassisNo:$v3",
+				"Summary" : "Fault tolerant power supply is failed on chassis $v3, bay $v4, status $v5, model $v6, serial number $v7, firmware $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe4FltTolPowerSupplyFailed RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyStatus i 1 CPQHLTH-MIB::cpqHeFltTolPowerSupplyModel s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplySerialNumber s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplyAutoRev s EXAM CPQHLTH-MIB::cpqHeFltTolPowerSupplyFirmwareRev s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplySparePartNum s EXAMPLE CPQSINFO-MIB::cpqSiServerSystemId s EXAMPLE",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe4FltTolPowerSupplyFailed",
+				"oid" : "1.3.6.1.4.1.232.0.6050",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bay number to index within this chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of the power supply."
+						],
+						"enums" : {
+							"1" : "noError",
+							"2" : "generalFailure",
+							"3" : "bistFailure",
+							"4" : "fanFailure",
+							"5" : "tempFailure",
+							"6" : "interlockOpen",
+							"7" : "epromFailed",
+							"8" : "vrefFailed",
+							"9" : "dacFailed",
+							"10" : "ramTestFailed",
+							"11" : "voltageChannelFailed",
+							"12" : "orringdiodeFailed",
+							"13" : "brownOut",
+							"14" : "giveupOnStartup",
+							"15" : "nvramInvalid",
+							"16" : "calibrationTableInvalid"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The power supply model name."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyModel",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply serial number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply auto revision number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyAutoRev",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply firmware revision. This field will be left",
+							"blank if the firmware revision is unknown."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyFirmwareRev",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply part number or spare part number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplySparePartNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A Server System ID.",
+							"",
+							"This value is used to uniquely identify systems via a unique",
+							"ID on systems that do not support the EISA bus."
+						],
+						"name" : "CPQSINFO-MIB::cpqSiServerSystemId",
+						"oid" : "1.3.6.1.4.1.232.2.2.4.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeResilientMemMirroredMemoryEngaged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Advanced Memory Protection Mirrored Memory Engaged.",
+				"The Advanced Memory Protection subsystem has detected a memory",
+				"fault. Mirrored Memory has been activated.",
+				"User Action: Replace the faulty memory."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeResilientMemMirroredMemoryEngaged",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Advanced memory protection subsystem engaged the online spare memory"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeResilientMemMirroredMemoryEngaged RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeResilientMemMirroredMemoryEngaged",
+				"oid" : "1.3.6.1.4.1.232.0.6051",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeResilientAdvancedECCMemoryEngaged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Advanced Memory Protection Advanced ECC Memory Engaged.",
+				"The Advanced Memory Protection subsystem has detected a memory",
+				"fault. Advanced ECC has been activated.",
+				"User Action: Replace the faulty memory."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeResilientAdvancedECCMemoryEngaged",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Advanced memory protection subsystem has engaged the advanced ECC memory"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeResilientAdvancedECCMemoryEngaged RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeResilientAdvancedECCMemoryEngaged",
+				"oid" : "1.3.6.1.4.1.232.0.6052",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeResilientMemXorMemoryEngaged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Advanced Memory Protection XOR Engine Memory Engaged.",
+				"The Advanced Memory Protection subsystem has detected a memory",
+				"fault. The XOR engine has been activated.",
+				"User Action: Replace the faulty memory."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeResilientMemXorMemoryEngaged",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Advanced memory protection subsystem has engaged the XOR memory."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeResilientMemXorMemoryEngaged RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeResilientMemXorMemoryEngaged",
+				"oid" : "1.3.6.1.4.1.232.0.6053",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolPowerRedundancyRestored",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Fault Tolerant Power Supplies have returned to a redundant",
+				"state for the specified chassis."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHe3FltTolPowerRedundancyNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant power supplies are now redundant on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolPowerRedundancyRestored RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolPowerRedundancyRestored",
+				"oid" : "1.3.6.1.4.1.232.0.6054",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe3FltTolFanRedundancyRestored",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Fault Tolerant Fans have returned to a redundant state for",
+				"the specified chassis."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHe3FltTolFanRedundancyNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "chassisNo:$v3",
+				"Summary" : "Fault tolerant fans are now redundant on chassis $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe3FltTolFanRedundancyRestored RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolFanChassis i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe3FltTolFanRedundancyRestored",
+				"oid" : "1.3.6.1.4.1.232.0.6055",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The System Chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolFanChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.6.7.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe4CorrMemReplaceMemModule",
+			"certification" : "STANDARD",
+			"description" : [
+				"Corrected Memory Errors Detected",
+				"The errors have been corrected, but the memory module should be",
+				"replaced."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe4CorrMemReplaceMemModule",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "slotIndex:$v3;socketNo:$v4",
+				"Summary" : "Correctable memory errors require a replacement of the memory module in slot $v3, socket $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe4CorrMemReplaceMemModule RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeResMemBoardIndex i 9999 CPQHLTH-MIB::cpqHeResMemModuleIndex i 9999 CPQHLTH-MIB::cpqHeResMemModuleSparePartNo s EXAMPLE CPQSINFO-MIB::cpqSiMemModuleSize i 9999 CPQSINFO-MIB::cpqSiServerSystemId s EXAMPLE",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe4CorrMemReplaceMemModule",
+				"oid" : "1.3.6.1.4.1.232.0.6056",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which the memory board or cartridge is installed.",
+							"",
+							"A value of 0 indicates memory installed directly on the",
+							"system board."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMemBoardIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.11.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The memory module number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMemModuleIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.11.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The memory module's manufacturer part number.",
+							"",
+							"This field will be a null (size 0) string if the manufacturer",
+							"part number is not available."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMemModuleSparePartNo",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.11.1.3",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module memory size in kilobytes. A kilobyte of memory is",
+							"defined as 1024 bytes.",
+							"",
+							"A size of 0 indicates the module is not present."
+						],
+						"name" : "CPQSINFO-MIB::cpqSiMemModuleSize",
+						"oid" : "1.3.6.1.4.1.232.2.2.4.5.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A Server System ID.",
+							"",
+							"This value is used to uniquely identify systems via a unique",
+							"ID on systems that do not support the EISA bus."
+						],
+						"name" : "CPQSINFO-MIB::cpqSiServerSystemId",
+						"oid" : "1.3.6.1.4.1.232.2.2.4.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeResMemBoardRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"Memory board or cartridge removed.",
+				"An Advanced Memory Protection sub-system board or cartridge has",
+				"been removed from the system.",
+				"User Action: Insure the board or cartridge has memory correctly",
+				"installed and re-insert the memory board or cartridge back into",
+				"the system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeResMemBoardRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "slotIndex:$v3",
+				"Summary" : "Memory Board or Cartridge Removed from Slot $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeResMemBoardRemoved RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeResMemBoardSlotIndex i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeResMemBoardRemoved",
+				"oid" : "1.3.6.1.4.1.232.0.6057",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which the memory board or cartridge is installed."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMemBoardSlotIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.10.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeResMemBoardInserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Memory board or cartridge inserted.",
+				"An Advanced Memory Protection sub-system board or cartridge has",
+				"been inserted into the system.",
+				"User Action: None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeResMemBoardInserted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "slotIndex:$v3",
+				"Summary" : "Memory Board or Cartridge Inserted into Slot $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeResMemBoardInserted RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeResMemBoardSlotIndex i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeResMemBoardInserted",
+				"oid" : "1.3.6.1.4.1.232.0.6058",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which the memory board or cartridge is installed."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMemBoardSlotIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.10.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeResMemBoardBusError",
+			"certification" : "STANDARD",
+			"description" : [
+				"Memory board or cartridge bus error detected.",
+				"An Advanced Memory Protection sub-system board or cartridge",
+				"bus error has been detected.",
+				"User Action: Replace the indicated board or cartridge."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeResMemBoardBusError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "slotIndex:$v3",
+				"Summary" : "Memory board or cartridge bus error detected in Slot $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeResMemBoardBusError RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeResMemBoardSlotIndex i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeResMemBoardBusError",
+				"oid" : "1.3.6.1.4.1.232.0.6059",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which the memory board or cartridge is installed."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMemBoardSlotIndex",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.10.1.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeEventOccurred",
+			"certification" : "STANDARD",
+			"description" : [
+				"An event has occurred.",
+				"User Action: None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v4==2) ? 3 : (($v4==6) ? 1 : 2)"
+				},
+				"EventType" : "cpqHeEventOccurred",
+				"ExpireTime" : {
+					"eval" : "($v4==2) ? 3600 : (($v4==6) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v4==2) ? 2 : (($v4==3) ? 3 : (($v4==9) ? 4 : (($v4==6) ? 0 : 5)))"
+				},
+				"SubNode" : "sysName:$v1",
+				"Summary" : "$v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeEventOccurred RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeEventLogEntryNumber i 9999 CPQHLTH-MIB::cpqHeEventLogEntrySeverity i 2 CPQHLTH-MIB::cpqHeEventLogUpdateTime s EXAMPL CPQHLTH-MIB::cpqHeEventLogErrorDesc s EXAMPLE",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeEventOccurred",
+				"oid" : "1.3.6.1.4.1.232.0.6060",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A number that uniquely specifies this system event log",
+							"entry."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeEventLogEntryNumber",
+						"oid" : "1.3.6.1.4.1.232.6.2.11.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This value specifies the severity of the event log entry.",
+							"A caution or critical entry can have it's severity ",
+							"lowered by setting this variable to the repaired state."
+						],
+						"enums" : {
+							"2" : "informational",
+							"3" : "infoWithAlert",
+							"6" : "repaired",
+							"9" : "caution",
+							"15" : "critical"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeEventLogEntrySeverity",
+						"oid" : "1.3.6.1.4.1.232.6.2.11.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The time stamp when the event log entry was last modified.",
+							"",
+							"field octets contents range",
+							"===== ====== ======== =====",
+							"1 1-2 year 0..65536",
+							"2 3 month 1..12",
+							"3 4 day 1..31",
+							"4 5 hour 0..23",
+							"5 6 minute 0..59",
+							"",
+							"The year field is set with the most significant octet first.",
+							"A value of 0 in the year indicates an unknown time stamp."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeEventLogUpdateTime",
+						"oid" : "1.3.6.1.4.1.232.6.2.11.3.1.7",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A text description of the event log entry."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeEventLogErrorDesc",
+						"oid" : "1.3.6.1.4.1.232.6.2.11.3.1.8",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeManagementProcInReset",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Management processor is currently in reset",
+				"The management processor is currently in the process of being reset",
+				"because of a firmware update or some other event.",
+				"User action: None"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeManagementProcInReset",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Management processor being reset"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeManagementProcInReset RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeManagementProcInReset",
+				"oid" : "1.3.6.1.4.1.232.0.6061",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeManagementProcReady",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Management processor is ready",
+				"The management processor has successfully reset and is now available",
+				"again.",
+				"User action: None"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cpqHeManagementProcNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Management processor is ready"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeManagementProcReady RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeManagementProcReady",
+				"oid" : "1.3.6.1.4.1.232.0.6062",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeManagementProcFailedReset",
+			"certification" : "STANDARD",
+			"description" : [
+				"The Management processor failed reset",
+				"The management processor was not successfully reset and is not ",
+				"operational.",
+				"User action: Reset the management procesessor again or re-flash",
+				"the management processor firmware."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cpqHeManagementProcNotification",
+				"ExpireTime" : 86400,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Management processor failed reset"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeManagementProcFailedReset RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeManagementProcFailedReset",
+				"oid" : "1.3.6.1.4.1.232.0.6063",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe5CorrMemReplaceMemModule",
+			"certification" : "STANDARD",
+			"description" : [
+				"Corrected \\ uncorrected Memory Errors Detected",
+				"The errors have been corrected, but the memory module should be",
+				"replaced. Value 0 for CPU means memory is not Processor based"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe5CorrMemReplaceMemModule",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "slotNo:$v3;socketNo:$v6",
+				"Summary" : "Correctable or uncorrectable memory errors require a replacement of the memory module in slot $v3, cpu $v4, riser $v5, socket $v6"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe5CorrMemReplaceMemModule RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeResMem2BoardNum i 9999 CPQHLTH-MIB::cpqHeResMem2CpuNum i 9999 CPQHLTH-MIB::cpqHeResMem2RiserNum i 9999 CPQHLTH-MIB::cpqHeResMem2ModuleNum i 9999 CPQHLTH-MIB::cpqHeResMem2ModulePartNo s EXAMPLE CPQHLTH-MIB::cpqHeResMem2ModuleSize i 9999 CPQSINFO-MIB::cpqSiServerSystemId s EXAMPLE",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe5CorrMemReplaceMemModule",
+				"oid" : "1.3.6.1.4.1.232.0.6064",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which the memory board or cartridge is installed.",
+							"",
+							"A value of 0 indicates memory installed directly on the",
+							"system board."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.13.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The memory module CPU number. Value 0 means memory is not Processor based."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2CpuNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.13.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The memory module rasier number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2RiserNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.13.1.4",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The memory module number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2ModuleNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.13.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The memory module's manufacturer part number.",
+							"",
+							"This field will be a null (size 0) string if the manufacturer",
+							"part number is not available."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2ModulePartNo",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.13.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"Module memory size in kilobytes. A kilobyte of memory is",
+							"defined as 1024 bytes.",
+							"",
+							"A size of 0 indicates the module is not present."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2ModuleSize",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.13.1.6",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"A Server System ID.",
+							"",
+							"This value is used to uniquely identify systems via a unique",
+							"ID on systems that do not support the EISA bus."
+						],
+						"name" : "CPQSINFO-MIB::cpqSiServerSystemId",
+						"oid" : "1.3.6.1.4.1.232.2.2.4.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe5ResMemBoardRemoved",
+			"certification" : "STANDARD",
+			"description" : [
+				"",
+				"Memory board or cartridge or riser removed.",
+				"An Advanced Memory Protection sub-system board or cartridge or riser has",
+				"been removed from the system. Value 0 for CPU means memory is not processor based.",
+				"User Action: Insure the board or cartridge or riser has memory correctly",
+				"installed and re-insert the memory board or cartridge or CPU back into",
+				"the system."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe5ResMemBoardRemoved",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "slotNo:$v3;cpuNo:$v4;riserNo:$v5",
+				"Summary" : "Memory board or cartridge or riser removed from slot $v3, CPU $v4, riser $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe5ResMemBoardRemoved RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeResMem2BoardSlotNum i 9999 CPQHLTH-MIB::cpqHeResMem2BoardCpuNum i 9999 CPQHLTH-MIB::cpqHeResMem2BoardRiserNum i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe5ResMemBoardRemoved",
+				"oid" : "1.3.6.1.4.1.232.0.6065",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which the memory board or cartridge is installed."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardSlotNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Processor Number to which the memory Riser belongs. Value 0 means memory is not CPU based."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardCpuNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Riser Number on the Processor."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardRiserNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe5ResMemBoardInserted",
+			"certification" : "STANDARD",
+			"description" : [
+				"Memory board or cartridge or riser inserted.",
+				"An Advanced Memory Protection sub-system board or cartridge or riser ",
+				"Has been inserted into the system. Value 0 for CPU means memory is not processor based.",
+				"User Action: None."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe5ResMemBoardInserted",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "slotNo:$v3;cpuNo:$v4;riserNo:$v5",
+				"Summary" : "Memory board or cartridge or riser inserted into slot $v3, CPU $v4, riser $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe5ResMemBoardInserted RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeResMem2BoardSlotNum i 9999 CPQHLTH-MIB::cpqHeResMem2BoardCpuNum i 9999 CPQHLTH-MIB::cpqHeResMem2BoardRiserNum i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe5ResMemBoardInserted",
+				"oid" : "1.3.6.1.4.1.232.0.6066",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which the memory board or cartridge is installed."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardSlotNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Processor Number to which the memory Riser belongs. Value 0 means memory is not CPU based."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardCpuNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Riser Number on the Processor."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardRiserNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe5ResMemBoardBusError",
+			"certification" : "STANDARD",
+			"description" : [
+				"Memory board or cartridge or Riser bus error detected.",
+				"An Advanced Memory Protection sub-system board or cartridge or Riser",
+				"bus error has been detected. Value 0 for CPU means memory is not processor based.",
+				"User Action: Replace the indicated board or cartridge or Riser."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe5ResMemBoardBusError",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "slotNo:$v3;cpuNo:$v4;riserNo:$v5",
+				"Summary" : "Memory board or cartridge or riser bus error detected in slot $v3, CPU $v4, riser $v5"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe5ResMemBoardBusError RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeResMem2BoardSlotNum i 9999 CPQHLTH-MIB::cpqHeResMem2BoardCpuNum i 9999 CPQHLTH-MIB::cpqHeResMem2BoardRiserNum i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe5ResMemBoardBusError",
+				"oid" : "1.3.6.1.4.1.232.0.6067",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The slot in which the memory board or cartridge is installed."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardSlotNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Processor Number to which the memory Riser belongs. Value 0 means memory is not CPU based."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardCpuNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Riser Number on the Processor."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeResMem2BoardRiserNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.14.12.1.4",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeResilientMemLockStepMemoryEngaged",
+			"certification" : "STANDARD",
+			"description" : [
+				"Advanced Memory Protection LockStep Engine Memory Engaged.",
+				"The Advanced Memory Protection subsystem has detected a memory",
+				"fault. The LockStep engine has been activated.",
+				"User Action: Replace the faulty memory."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeResilientMemLockStepMemoryEngaged",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "sysName:$v1",
+				"Summary" : "Advanced memory protection subsystem has engaged the LockStep memory"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeResilientMemLockStepMemoryEngaged RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeResilientMemLockStepMemoryEngaged",
+				"oid" : "1.3.6.1.4.1.232.0.6068",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHe4FltTolPowerSupplyACpowerloss",
+			"certification" : "STANDARD",
+			"description" : [
+				"The fault tolerant power supply AC power loss for the specified chassis and bay location."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHe4FltTolPowerSupplyACpowerloss",
+				"ExpireTime" : 3600,
+				"Severity" : 4,
+				"SubNode" : "chassisNo:$v3;powerSupplyySerialNo:$v7",
+				"Summary" : "Fault tolerant power supply AC power loss in chassis $v3, bay $v4, status $v5, model $v6, serial number $v7, firmware $v9"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHe4FltTolPowerSupplyACpowerloss RFC1213-MIB::sysName s EXAMPLE CPQHOST-MIB::cpqHoTrapFlags i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay i 9999 CPQHLTH-MIB::cpqHeFltTolPowerSupplyStatus i 1 CPQHLTH-MIB::cpqHeFltTolPowerSupplyModel s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplySerialNumber s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplyAutoRev s EXAM CPQHLTH-MIB::cpqHeFltTolPowerSupplyFirmwareRev s EXAMPLE CPQHLTH-MIB::cpqHeFltTolPowerSupplySparePartNum s EXAMPLE CPQSINFO-MIB::cpqSiServerSystemId s EXAMPLE",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHe4FltTolPowerSupplyACpowerloss",
+				"oid" : "1.3.6.1.4.1.232.0.6069",
+				"variables" : [
+					{
+						"description" : [
+							"An administratively-assigned name for this",
+							"managed node. By convention, this is the node's",
+							"fully-qualified domain name."
+						],
+						"name" : "RFC1213-MIB::sysName",
+						"oid" : "1.3.6.1.2.1.1.5",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The Trap Flags.",
+							"",
+							"",
+							"This is a collection of flags used during trap delivery.",
+							"Each bit has the following meaning:",
+							"",
+							"Bit 5-31: RESERVED: Always 0.",
+							"Bit 2-4: Trap Condition",
+							"0 = Not used (for backward compatibility)",
+							"1 = Condition unknown or N/A",
+							"2 = Condition ok",
+							"3 = Condition degraded",
+							"4 = Condition failed",
+							"5-7 = reserved",
+							"Bit 1: Client IP address type",
+							"0 = static entry",
+							"1 = DHCP entry",
+							"Bit 0: Agent Type",
+							"0 = Server",
+							"1 = Client",
+							"",
+							"NOTE: bit 31 is the most significant bit, bit 0 is the least",
+							"significant."
+						],
+						"name" : "CPQHOST-MIB::cpqHoTrapFlags",
+						"oid" : "1.3.6.1.4.1.232.11.2.11.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The system chassis number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyChassis",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The bay number to index within this chassis."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyBay",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The status of the power supply."
+						],
+						"enums" : {
+							"1" : "noError",
+							"2" : "generalFailure",
+							"3" : "bistFailure",
+							"4" : "fanFailure",
+							"5" : "tempFailure",
+							"6" : "interlockOpen",
+							"7" : "epromFailed",
+							"8" : "vrefFailed",
+							"9" : "dacFailed",
+							"10" : "ramTestFailed",
+							"11" : "voltageChannelFailed",
+							"12" : "orringdiodeFailed",
+							"13" : "brownOut",
+							"14" : "giveupOnStartup",
+							"15" : "nvramInvalid",
+							"16" : "calibrationTableInvalid"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyStatus",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.5",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The power supply model name."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyModel",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.10",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply serial number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplySerialNumber",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.11",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply auto revision number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyAutoRev",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.12",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply firmware revision. This field will be left",
+							"blank if the firmware revision is unknown."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplyFirmwareRev",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.14",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The power supply part number or spare part number."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeFltTolPowerSupplySparePartNum",
+						"oid" : "1.3.6.1.4.1.232.6.2.9.3.1.16",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"A Server System ID.",
+							"",
+							"This value is used to uniquely identify systems via a unique",
+							"ID on systems that do not support the EISA bus."
+						],
+						"name" : "CPQSINFO-MIB::cpqSiServerSystemId",
+						"oid" : "1.3.6.1.4.1.232.2.2.4.17",
+						"valueType" : "OCTET STRING"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeCorrectableMemoryError",
+			"certification" : "STANDARD",
+			"description" : [
+				"A correctable memory error occurred.",
+				"The error has been corrected. The current number of correctable",
+				"memory errors is reported in the variable cpqHeCorrMemTotalErrs."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cpqHeCorrectableMemoryError",
+				"ExpireTime" : 3600,
+				"Severity" : 3,
+				"SubNode" : "Device",
+				"Summary" : "$v1 correctable memory error detected"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeCorrectableMemoryError CPQHLTH-MIB::cpqHeCorrMemTotalErrs i 9999",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeCorrectableMemoryError",
+				"oid" : "1.3.6.1.4.1.232.6.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"The number of correctable memory errors that have occurred."
+						],
+						"name" : "CPQHLTH-MIB::cpqHeCorrMemTotalErrs",
+						"oid" : "1.3.6.1.4.1.232.6.2.3.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CPQHLTH-MIB::cpqHeCorrectableMemoryLogDisabled",
+			"certification" : "STANDARD",
+			"description" : [
+				"Correctable memory error tracking disabled.",
+				"The frequency of errors is so high that the error tracking",
+				"logic has been temporarily disabled. The cpqHeCorrMemLogStatus",
+				"variable indicated the current tracking status."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1==1) ? 3 : (($v1==4) ? 1 : 2)"
+				},
+				"EventType" : "cpqHeCorrectableMemoryLogDisabled",
+				"ExpireTime" : {
+					"eval" : "($v1==1) ? 3600 : (($v1==4) ? 3600 : 86400)"
+				},
+				"Severity" : {
+					"eval" : "($v1==1) ? 1 : (($v1==2) ? 3 : (($v1==3) ? 4 : 1))"
+				},
+				"SubNode" : "Device",
+				"Summary" : "Correctable memory error tracking status : $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CPQHLTH-MIB::cpqHeCorrectableMemoryLogDisabled CPQHLTH-MIB::cpqHeCorrMemLogStatus i 3",
+			"trap" : {
+				"name" : "CPQHLTH-MIB::cpqHeCorrectableMemoryLogDisabled",
+				"oid" : "1.3.6.1.4.1.232.6.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This value specifies whether this system is currently tracking",
+							"correctable memory errors."
+						],
+						"enums" : {
+							"1" : "other",
+							"2" : "notSupported",
+							"3" : "disabled",
+							"4" : "enabled"
+						},
+						"name" : "CPQHLTH-MIB::cpqHeCorrMemLogStatus",
+						"oid" : "1.3.6.1.4.1.232.6.2.3.1",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

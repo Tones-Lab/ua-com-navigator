@@ -1,0 +1,176 @@
+{
+	"metaData" : {
+		"sourceRevision" : "200302100000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CISCO-BSTUN-MIB::bstunPeerStateChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the state of a BSTUN route",
+				"has transitioned to active (connected) or inactive",
+				"(dead or closed)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 <= 2) ? 2 : (($v1 == 5) ? 1 : 3)"
+				},
+				"EventType" : "bstunPeerStateChangeNotification",
+				"ExpireTime" : {
+					"eval" : "($v1 <= 2) ? 86400 : (($v1 == 5) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 <= 2) ? 4 : (($v1 == 5) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "The state of a BSTUN route has transitioned to $v1"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-BSTUN-MIB::bstunPeerStateChangeNotification CISCO-BSTUN-MIB::bstunRoutePeerState i 1",
+			"trap" : {
+				"name" : "CISCO-BSTUN-MIB::bstunPeerStateChangeNotification",
+				"oid" : "1.3.6.1.4.1.9.9.35.2.0.1",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "dead",
+							"2" : "closed",
+							"3" : "opening",
+							"4" : "openWait",
+							"5" : "connected",
+							"6" : "direct"
+						},
+						"name" : "CISCO-BSTUN-MIB::bstunRoutePeerState",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.7",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-BSTUN-MIB::bstunPeerStateChangeNotification2",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification indicates that the state of a BSTUN route",
+				"has transitioned to active (connected) or inactive",
+				"(dead or closed)."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : {
+					"eval" : "($v1 <= 2) ? 2 : (($v1 == 5) ? 1 : 3)"
+				},
+				"EventType" : "bstunPeerStateChangeNotification2",
+				"ExpireTime" : {
+					"eval" : "($v1 <= 2) ? 86400 : (($v1 == 5) ? 3600 : 3600)"
+				},
+				"Severity" : {
+					"eval" : "($v1 <= 2) ? 5 : (($v1 == 5) ? 0 : 2)"
+				},
+				"SubNode" : "Device",
+				"Summary" : "The state of a BSTUN route type $v2 has transitioned to $v1 (RxPackets $v3, TxPackets $v4)."
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-BSTUN-MIB::bstunPeerStateChangeNotification2 CISCO-BSTUN-MIB::bstunRoutePeerState i 1 CISCO-BSTUN-MIB::bstunRouteType i 1 CISCO-BSTUN-MIB::bstunRouteRxPackets c 9999 CISCO-BSTUN-MIB::bstunRouteTxPackets c 9999",
+			"trap" : {
+				"name" : "CISCO-BSTUN-MIB::bstunPeerStateChangeNotification2",
+				"oid" : "1.3.6.1.4.1.9.9.35.2.0.2",
+				"variables" : [
+					{
+						"enums" : {
+							"1" : "dead",
+							"2" : "closed",
+							"3" : "opening",
+							"4" : "openWait",
+							"5" : "connected",
+							"6" : "direct"
+						},
+						"name" : "CISCO-BSTUN-MIB::bstunRoutePeerState",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.7",
+						"valueType" : "INTEGER"
+					},
+					{
+						"enums" : {
+							"1" : "none",
+							"2" : "ip",
+							"3" : "serial",
+							"4" : "serialDirect",
+							"5" : "serialFrameRelay",
+							"6" : "serialLLC2",
+							"7" : "bip",
+							"8" : "apip"
+						},
+						"name" : "CISCO-BSTUN-MIB::bstunRouteType",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.3",
+						"valueType" : "INTEGER"
+					},
+					{
+						"name" : "CISCO-BSTUN-MIB::bstunRouteRxPackets",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.8",
+						"valueType" : "COUNTER"
+					},
+					{
+						"name" : "CISCO-BSTUN-MIB::bstunRouteTxPackets",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.9",
+						"valueType" : "COUNTER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CISCO-BSTUN-MIB::bstunCUStatusChangeNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"This notification is generated when a mapped BIP bisync ",
+				"device state has changed."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "bstunCUStatusChangeNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "$v1",
+				"Summary" : "The mapped BIP bisync $v1 from local port $v3 to foreign port $v2 has changed staus to $v4"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CISCO-BSTUN-MIB::bstunCUStatusChangeNotification CISCO-BSTUN-MIB::bstunRouteIP a 192.0.2.1 CISCO-BSTUN-MIB::bstunRouteBIPForeignPort i 9999 CISCO-BSTUN-MIB::bstunRouteBIPLocalPort i 9999 CISCO-BSTUN-MIB::bstunRouteBIPDeviceStatus b 1",
+			"trap" : {
+				"name" : "CISCO-BSTUN-MIB::bstunCUStatusChangeNotification",
+				"oid" : "1.3.6.1.4.1.9.9.35.2.0.3",
+				"variables" : [
+					{
+						"name" : "CISCO-BSTUN-MIB::bstunRouteIP",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.4",
+						"valueType" : "IPADDR"
+					},
+					{
+						"name" : "CISCO-BSTUN-MIB::bstunRouteBIPForeignPort",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.17",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-BSTUN-MIB::bstunRouteBIPLocalPort",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.16",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"name" : "CISCO-BSTUN-MIB::bstunRouteBIPDeviceStatus",
+						"oid" : "1.3.6.1.4.1.9.9.35.1.4.1.1.18",
+						"valueType" : "BITS"
+					}
+				]
+			}
+		}
+	]
+}

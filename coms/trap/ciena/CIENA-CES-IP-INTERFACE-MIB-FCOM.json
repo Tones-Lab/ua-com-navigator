@@ -1,0 +1,375 @@
+{
+	"metaData" : {
+		"sourceRevision" : "201812110000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceAddrChgNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesIpMgmtInterfaceAddrChgNotification is sent when the ",
+				"IP address of an interface changes. To enable the device to send",
+				"this notification, cienaCesIPMgmtInterfaceAddrChangeTrapState ",
+				"needs to be set to enabled. The cienaCesIPMgmtInterfaceAddrChangeTrapState",
+				"is set to enabled by default. Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, cienaCesIpMgmtInterfaceName, ",
+				"cienaCesIpMgmtInterfaceOperIpAddr, and cienaCesIpMgmtInterfaceOperSubnet."
+			],
+			"preprocessors" : [
+				{
+					"regex" : {
+						"value" : "$oid3",
+						"pattern" : "\\.(?P<cienaCesIpMgmtInterfaceIndex>[0-9]+)$",
+						"capture" : true
+					}
+				}
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesIpMgmtInterfaceAddrChgNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "cienaCesIpMgmtInterfaceIndex:$cienaCesIpMgmtInterfaceIndex",
+				"Summary" : "IP address of management interface ($v3) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceAddrChgNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 8 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceName.1 s EXAMPLE CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceOperIpAddr a 192.0.2.1 CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceOperSubnet a 255.255.255.0",
+			"trap" : {
+				"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceAddrChgNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.8.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The friendly and unique name for the IP interface."
+						],
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.1.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The operational IP address associated with this interface."
+						],
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceOperIpAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.1.1.3",
+						"valueType" : "IPADDR"
+					},
+					{
+						"description" : [
+							"The operational subnet mask associated with this IP address/interface."
+						],
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceOperSubnet",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.1.1.4",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceGatewayChgNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesIpMgmtInterfaceGatewayChgNotification is sent when the ",
+				"IP address of an interface gateway changes. To enable the device to send ",
+				"this notification, cienaCesIPMgmtInterfaceGatewayAddrChangeTrapState needs ",
+				"to be set to enabled. The cienaCesIPMgmtInterfaceGatewayAddrChangeTrapState",
+				"is set to enabled by default. Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, and cienaCesIpGatewayAddr."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "cienaCesIpMgmtInterfaceGatewayChgNotification",
+				"ExpireTime" : 3600,
+				"Severity" : {
+					"eval" : "($v1==3) ? 5 : (($v1==4) ? 4 : (($v1==5 || $v1==6) ? 3 : (($v1==0) ? 1 : 2)))"
+				},
+				"SubNode" : "IpGatewayAddr:$v3",
+				"Summary" : "Management interface gateway address ($v3) changed"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceGatewayChgNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 8 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-IP-INTERFACE-MIB::cienaCesIpGatewayAddr a 192.0.2.1",
+			"trap" : {
+				"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpMgmtInterfaceGatewayChgNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.8.0.2",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The gateway address."
+						],
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpGatewayAddr",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.2",
+						"valueType" : "IPADDR"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpInterfaceUpNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesIpInterfaceUpNotification trap signifies that the SNMP entity, acting in",
+				"an agent role, has detected the interface's status has become operationally up.",
+				"This object is set to enabled by default. Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, cienaCesIpDataInterfaceName, cienaCesIpDataInterfaceIfIndex",
+				"cienaCesIpDataInterfaceAdminState, cienaCesIpDataInterfaceOperState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 1,
+				"EventType" : "cienaCesIpInterfaceNotification",
+				"ExpireTime" : 3600,
+				"Severity" : 0,
+				"SubNode" : "IfIndex:$v4",
+				"Summary" : "IP interface ($v3) is up"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-IP-INTERFACE-MIB::cienaCesIpInterfaceUpNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 1 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceName s EXAMPLE CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceIfIndex i 9999 CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceAdminState i 1 CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceOperState i 1",
+			"trap" : {
+				"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpInterfaceUpNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.8.0.3",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name for this Data IP interface."
+						],
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique interface index assigned by INET."
+						],
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceIfIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.3.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The Admin State of Data IP interface."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.3.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Oper State of Data IP interface."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.3.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		},
+		{
+			"@objectName" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpInterfaceDownNotification",
+			"certification" : "STANDARD",
+			"description" : [
+				"A cienaCesIpInterfaceDownNotification trap signifies that the SNMP entity, acting in",
+				"an agent role, has detected the interface's status has become operationally up.",
+				"This object is set to enabled by default. Variable bindings include: cienaGlobalSeverity, ",
+				"cienaGlobalMacAddress, cienaCesIpDataInterfaceName, cienaCesIpDataInterfaceIfIndex",
+				"cienaCesIpDataInterfaceAdminState, cienaCesIpDataInterfaceOperState."
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 2,
+				"EventType" : "cienaCesIpInterfaceNotification",
+				"ExpireTime" : 86400,
+				"Severity" : {
+					"eval" : "($v1==3) ? 5 : (($v1==4) ? 4 : 3)"
+				},
+				"SubNode" : "IfIndex:$v4",
+				"Summary" : "IP interface ($v3) is down"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD CIENA-CES-IP-INTERFACE-MIB::cienaCesIpInterfaceDownNotification CIENA-GLOBAL-MIB::cienaGlobalSeverity i 4 CIENA-GLOBAL-MIB::cienaGlobalMacAddress x 000eaa12ddff CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceName s EXAMPLE CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceIfIndex i 9999 CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceAdminState i 1 CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceOperState i 1",
+			"trap" : {
+				"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpInterfaceDownNotification",
+				"oid" : "1.3.6.1.4.1.1271.2.2.8.0.4",
+				"variables" : [
+					{
+						"description" : [
+							"This object defines the severity of a trap and is a part of every trap defined in the system."
+						],
+						"enums" : {
+							"0" : "none",
+							"1" : "cleared",
+							"2" : "intermediate",
+							"3" : "critical",
+							"4" : "major",
+							"5" : "minor",
+							"6" : "warning",
+							"7" : "config",
+							"8" : "info",
+							"9" : "debug",
+							"10" : "internal"
+						},
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalSeverity",
+						"oid" : "1.3.6.1.4.1.1271.1.3.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"This object indicates the chassis MAC address."
+						],
+						"name" : "CIENA-GLOBAL-MIB::cienaGlobalMacAddress",
+						"oid" : "1.3.6.1.4.1.1271.1.3.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The name for this Data IP interface."
+						],
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceName",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.3.1.2",
+						"valueType" : "OCTET STRING"
+					},
+					{
+						"description" : [
+							"The unique interface index assigned by INET."
+						],
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceIfIndex",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.3.1.7",
+						"valueType" : "INTEGER32"
+					},
+					{
+						"description" : [
+							"The Admin State of Data IP interface."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceAdminState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.3.1.10",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The Oper State of Data IP interface."
+						],
+						"enums" : {
+							"1" : "enabled",
+							"2" : "disabled"
+						},
+						"name" : "CIENA-CES-IP-INTERFACE-MIB::cienaCesIpDataInterfaceOperState",
+						"oid" : "1.3.6.1.4.1.1271.2.1.8.1.1.3.1.11",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}

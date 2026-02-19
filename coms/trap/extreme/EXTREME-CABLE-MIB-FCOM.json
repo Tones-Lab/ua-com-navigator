@@ -1,0 +1,75 @@
+{
+	"metaData" : {
+		"sourceRevision" : "0007240000Z"
+	},
+	"objects" : [
+		{
+			"@objectName" : "EXTREME-CABLE-MIB::extremeTrapDiagPortDiagnostics",
+			"certification" : "STANDARD",
+			"description" : [
+				"Indicates the status of Diagnostics for a port. The status indicates ",
+				"whether Diagnostics for a particular port failed"
+			],
+			"domain" : "FAULT",
+			"event" : {
+				"EventCategory" : 3,
+				"EventType" : "extremeTrapDiagPortDiagnostics",
+				"ExpireTime" : 3600,
+				"Severity" : 2,
+				"SubNode" : "ifIndex:$v1",
+				"Summary" : "Port diagnostics status: $v3"
+			},
+			"metaData" : {
+				"certified" : true
+			},
+			"method" : "trap",
+			"test" : "$SNMPTRAPCMD EXTREME-CABLE-MIB::extremeTrapDiagPortDiagnostics EXTREME-CABLE-MIB::extremeDiagPortCfgPortIfIndex i 9999 EXTREME-CABLE-MIB::extremeDiagPortCfgMode i 1 EXTREME-CABLE-MIB::extremeDiagPortCfgStatus i 1",
+			"trap" : {
+				"name" : "EXTREME-CABLE-MIB::extremeTrapDiagPortDiagnostics",
+				"oid" : "1.3.6.1.4.1.1916.4.13.0.1",
+				"variables" : [
+					{
+						"description" : [
+							"IfIndex of the Port for which the information in this row applies"
+						],
+						"name" : "EXTREME-CABLE-MIB::extremeDiagPortCfgPortIfIndex",
+						"oid" : "1.3.6.1.4.1.1916.1.24.2.1.1",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"The mode of operation. The port can be configured to have",
+							"either manual diagnostics or auto-diagnostics collected."
+						],
+						"enums" : {
+							"1" : "auto",
+							"2" : "manual"
+						},
+						"name" : "EXTREME-CABLE-MIB::extremeDiagPortCfgMode",
+						"oid" : "1.3.6.1.4.1.1916.1.24.2.1.2",
+						"valueType" : "INTEGER"
+					},
+					{
+						"description" : [
+							"Specifies whether Diagnostics are enabled or disabled for ",
+							"the port. In the manual mode, enable and disable will disable the",
+							"corresponding bit in the manual Diag portmask. Once the run command is",
+							"given the Manual Diagnostics starts running. <diagfail> indicates the",
+							"diagnostics for the port has failed. <diagfail> is a read-only value and",
+							"cannot be used for setting the status of the port"
+						],
+						"enums" : {
+							"1" : "enable",
+							"2" : "disable",
+							"3" : "run",
+							"4" : "diagfail"
+						},
+						"name" : "EXTREME-CABLE-MIB::extremeDiagPortCfgStatus",
+						"oid" : "1.3.6.1.4.1.1916.1.24.2.1.3",
+						"valueType" : "INTEGER"
+					}
+				]
+			}
+		}
+	]
+}
