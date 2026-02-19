@@ -157,13 +157,85 @@ Purpose:
 
 Calibration command:
 
-- `npm run legacy:confidence-calibrate -- --input <legacy-processor-stubs.json|legacy-conversion-report.json> --output-dir <dir> --format both --max-items 25`
+- `npm run legacy:confidence-calibrate -- --input <legacy-processor-stubs.json|legacy-conversion-report.json> --output-dir <dir> --format both --max-items 25 --min-level medium`
 - Outputs:
   - `legacy-confidence-calibration.json`
   - `legacy-confidence-calibration.txt`
 - Behavior:
-  - prioritizes low/medium confidence stubs for triage
-  - if none exist, falls back to lowest high-confidence stubs to keep review lists non-empty
+  - filters candidates by configurable minimum confidence level (`--min-level`)
+  - ranks by lowest confidence score first, then mapping complexity
+  - if filter yields none, falls back to lowest high-confidence stubs unless strict mode is enabled
+
+### Calibration command options (detailed)
+
+- `--input <path>` (required)
+  - accepts either:
+    - `legacy-processor-stubs.json` (array form)
+    - `legacy-conversion-report.json` (extracts `stubs.processorStubs`)
+- `--output-dir <path>`
+  - output directory for text/json calibration artifacts
+- `--format json|text|both`
+  - artifact format selector (default `both`)
+- `--max-items <N>`
+  - maximum selected candidates after filtering/sorting (default `25`)
+- `--min-level low|medium|high`
+  - confidence threshold for candidate eligibility (default `medium`)
+  - semantics:
+    - `low`: include only low-confidence stubs
+    - `medium`: include low + medium confidence stubs
+    - `high`: include low + medium + high (all stubs)
+- `--strict-min-level`
+  - disables fallback behavior when no stubs match `--min-level`
+  - keeps selected list empty by design in that case
+
+### Selection algorithm
+
+1. Build risk entries for all processor stubs.
+2. Apply min-level eligibility filter.
+3. Sort eligible entries by:
+   - lowest `confidenceScore` first
+   - highest `requiredMappings` count next
+   - stable object-name tie-break
+4. Select up to `--max-items`.
+5. If selection is empty and strict mode is off:
+   - fallback to global lowest-score stubs (typically high-confidence in mature datasets).
+
+### Fallback behavior matrix
+
+- `--min-level low` + no low stubs:
+  - strict off: returns fallback list (lowest high-confidence)
+  - strict on: returns empty list
+- `--min-level medium` + no low/medium stubs:
+  - strict off: returns fallback list
+  - strict on: returns empty list
+- `--min-level high`:
+  - all stubs are eligible; fallback is effectively unnecessary
+
+### Output metadata (new)
+
+`legacy-confidence-calibration.json` includes `selectionPolicy`:
+
+- `minLevel`
+- `strictMinLevel`
+- `fallbackEnabled`
+- `usedFallback`
+- `eligibleByMinLevel`
+
+These fields make runs auditable and simplify workflow automation.
+
+### Usage examples
+
+Default triage (low+medium, with fallback):
+
+- `npm run legacy:confidence-calibrate -- --input tmp/legacy-analysis/nce/legacy-processor-stubs.json --output-dir tmp/legacy-analysis/nce --format both --max-items 25 --min-level medium`
+
+Only low-confidence stubs, strict (empty if none):
+
+- `npm run legacy:confidence-calibrate -- --input tmp/legacy-analysis/nce/legacy-processor-stubs.json --output-dir tmp/legacy-analysis/nce --format both --max-items 25 --min-level low --strict-min-level`
+
+Include entire population (score-ranked all stubs):
+
+- `npm run legacy:confidence-calibrate -- --input tmp/legacy-analysis/nce/legacy-processor-stubs.json --output-dir tmp/legacy-analysis/nce --format both --max-items 50 --min-level high`
 
 ## Safety constraints
 

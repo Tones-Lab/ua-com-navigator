@@ -26,7 +26,36 @@ type CalibrationOptions = {
   outputDir: string;
   format: 'json' | 'text' | 'both';
   maxItems: number;
+  minLevel: ConfidenceLevel;
+  strictMinLevel: boolean;
 };
+
+const HELP_TEXT = [
+  'Legacy confidence calibration',
+  '',
+  'Usage:',
+  '  npm run legacy:confidence-calibrate -- --input <path> [options]',
+  '',
+  'Required:',
+  '  --input <path>               Path to legacy-processor-stubs.json or legacy-conversion-report.json',
+  '',
+  'Optional:',
+  '  --output-dir <path>          Output directory for calibration artifacts',
+  '  --format <json|text|both>    Output format (default: both)',
+  '  --max-items <number>         Maximum selected candidates (default: 25)',
+  '  --min-level <low|medium|high> Minimum confidence level for eligibility (default: medium)',
+  '  --strict-min-level           Disable fallback when min-level filter yields no matches',
+  '  --help                       Show this help text',
+  '',
+  'Min-level semantics:',
+  '  low    => low only',
+  '  medium => low + medium',
+  '  high   => low + medium + high (all stubs)',
+  '',
+  'Fallback behavior:',
+  '  strict mode off  => if no eligible stubs, falls back to lowest-score stubs globally',
+  '  strict mode on   => if no eligible stubs, selected list remains empty',
+].join('\n');
 
 type StubRiskCause =
   | 'manual-expression-shape'
@@ -52,6 +81,13 @@ type StubRiskEntry = {
 type CalibrationReport = {
   generatedAt: string;
   inputPath: string;
+  selectionPolicy: {
+    minLevel: ConfidenceLevel;
+    strictMinLevel: boolean;
+    fallbackEnabled: boolean;
+    usedFallback: boolean;
+    eligibleByMinLevel: number;
+  };
   totals: {
     stubs: number;
     high: number;
@@ -66,10 +102,17 @@ type CalibrationReport = {
 };
 
 const parseArgs = (argv: string[]): CalibrationOptions => {
+  if (argv.includes('--help') || argv.includes('-h')) {
+    console.log(HELP_TEXT);
+    process.exit(0);
+  }
+
   let inputPath = '';
   let outputDir = path.resolve(process.cwd(), 'legacy-conversion-output', String(Date.now()));
   let format: CalibrationOptions['format'] = 'both';
   let maxItems = 25;
+  let minLevel: ConfidenceLevel = 'medium';
+  let strictMinLevel = false;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -97,6 +140,19 @@ const parseArgs = (argv: string[]): CalibrationOptions => {
         maxItems = value;
       }
       index += 1;
+      continue;
+    }
+    if (arg === '--min-level' && argv[index + 1]) {
+      const value = String(argv[index + 1]).toLowerCase();
+      if (value === 'high' || value === 'medium' || value === 'low') {
+        minLevel = value;
+      }
+      index += 1;
+      continue;
+    }
+    if (arg === '--strict-min-level') {
+      strictMinLevel = true;
+      continue;
     }
   }
 
@@ -109,7 +165,25 @@ const parseArgs = (argv: string[]): CalibrationOptions => {
     outputDir,
     format,
     maxItems,
+    minLevel,
+    strictMinLevel,
   };
+};
+
+const confidenceOrder: Record<ConfidenceLevel, number> = {
+  low: 0,
+  medium: 1,
+  high: 2,
+};
+
+const sortRiskEntries = (left: StubRiskEntry, right: StubRiskEntry) => {
+  if (left.confidenceScore !== right.confidenceScore) {
+    return left.confidenceScore - right.confidenceScore;
+  }
+  if (left.requiredMappings.length !== right.requiredMappings.length) {
+    return right.requiredMappings.length - left.requiredMappings.length;
+  }
+  return left.objectName.localeCompare(right.objectName);
 };
 
 const readProcessorStubs = (inputPath: string): ProcessorStub[] => {
@@ -172,41 +246,30 @@ const toRiskEntry = (stub: ProcessorStub): StubRiskEntry => {
   };
 };
 
-const buildCalibrationReport = (stubs: ProcessorStub[], inputPath: string, maxItems: number): CalibrationReport => {
+const buildCalibrationReport = (
+  stubs: ProcessorStub[],
+  options: Pick<CalibrationOptions, 'inputPath' | 'maxItems' | 'minLevel' | 'strictMinLevel'>,
+): CalibrationReport => {
   const entries = stubs.map(toRiskEntry);
   const high = entries.filter((entry) => entry.confidenceLevel === 'high').length;
   const medium = entries.filter((entry) => entry.confidenceLevel === 'medium').length;
   const low = entries.filter((entry) => entry.confidenceLevel === 'low').length;
 
-  const triage = entries
-    .filter((entry) => entry.confidenceLevel !== 'high')
-    .sort((left, right) => {
-      if (left.confidenceScore !== right.confidenceScore) {
-        return left.confidenceScore - right.confidenceScore;
-      }
-      if (left.requiredMappings.length !== right.requiredMappings.length) {
-        return right.requiredMappings.length - left.requiredMappings.length;
-      }
-      return left.objectName.localeCompare(right.objectName);
-    })
-    .slice(0, maxItems);
+  const threshold = confidenceOrder[options.minLevel];
+  const eligible = entries
+    .filter((entry) => confidenceOrder[entry.confidenceLevel] <= threshold)
+    .sort(sortRiskEntries);
 
-  const selected = triage.length > 0
+  const triage = eligible.slice(0, options.maxItems);
+
+  const selected = triage.length > 0 || options.strictMinLevel
     ? triage
     : entries
         .slice()
-        .sort((left, right) => {
-          if (left.confidenceScore !== right.confidenceScore) {
-            return left.confidenceScore - right.confidenceScore;
-          }
-          if (left.requiredMappings.length !== right.requiredMappings.length) {
-            return right.requiredMappings.length - left.requiredMappings.length;
-          }
-          return left.objectName.localeCompare(right.objectName);
-        })
-        .slice(0, maxItems);
+        .sort(sortRiskEntries)
+        .slice(0, options.maxItems);
 
-  const fallbackToHighConfidence = triage.length === 0;
+  const fallbackToHighConfidence = !options.strictMinLevel && triage.length === 0;
 
   const causeCounts: Record<StubRiskCause, number> = {
     'manual-expression-shape': 0,
@@ -225,7 +288,14 @@ const buildCalibrationReport = (stubs: ProcessorStub[], inputPath: string, maxIt
 
   return {
     generatedAt: new Date().toISOString(),
-    inputPath,
+    inputPath: options.inputPath,
+    selectionPolicy: {
+      minLevel: options.minLevel,
+      strictMinLevel: options.strictMinLevel,
+      fallbackEnabled: !options.strictMinLevel,
+      usedFallback: fallbackToHighConfidence,
+      eligibleByMinLevel: eligible.length,
+    },
     totals: {
       stubs: stubs.length,
       high,
@@ -245,10 +315,16 @@ const renderTextReport = (report: CalibrationReport) => {
   lines.push('Legacy Confidence Calibration Report');
   lines.push(`Generated: ${report.generatedAt}`);
   lines.push(`Input: ${report.inputPath}`);
+  lines.push(
+    `Selection policy: min-level=${report.selectionPolicy.minLevel} ` +
+      `strict-min-level=${report.selectionPolicy.strictMinLevel ? 'yes' : 'no'} ` +
+      `fallback-enabled=${report.selectionPolicy.fallbackEnabled ? 'yes' : 'no'}`,
+  );
   lines.push('');
   lines.push(
     `Stub totals: ${report.totals.stubs} (high ${report.totals.high}, medium ${report.totals.medium}, low ${report.totals.low})`,
   );
+  lines.push(`Eligible by min-level: ${report.selectionPolicy.eligibleByMinLevel}`);
   lines.push(`Triage candidates: ${report.totals.triageCandidates}`);
   if (report.fallbackToHighConfidence) {
     lines.push(`Selected candidates: ${report.totals.selectedCandidates} (fallback to lowest high-confidence stubs)`);
@@ -288,7 +364,12 @@ const writeFile = (filePath: string, content: string) => {
 const main = () => {
   const options = parseArgs(process.argv.slice(2));
   const stubs = readProcessorStubs(options.inputPath);
-  const report = buildCalibrationReport(stubs, options.inputPath, options.maxItems);
+  const report = buildCalibrationReport(stubs, {
+    inputPath: options.inputPath,
+    maxItems: options.maxItems,
+    minLevel: options.minLevel,
+    strictMinLevel: options.strictMinLevel,
+  });
 
   fs.mkdirSync(options.outputDir, { recursive: true });
 
