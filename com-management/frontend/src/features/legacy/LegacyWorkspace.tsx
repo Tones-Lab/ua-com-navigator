@@ -10,6 +10,7 @@ import LegacyMatchDiffsPanel from './components/LegacyMatchDiffsPanel';
 import LegacyFolderFileSummaryPanel from './components/LegacyFolderFileSummaryPanel';
 import LegacyObjectPreviewPanel from './components/LegacyObjectPreviewPanel';
 import LegacyReportCommandBar from './components/LegacyReportCommandBar';
+import LegacySelectedFilePanel from './components/LegacySelectedFilePanel';
 import LegacyReportSummaryCards from './components/LegacyReportSummaryCards';
 import LegacySuggestedReviewPanel from './components/LegacySuggestedReviewPanel';
 import LegacyTraversalDiagnosticsPanel from './components/LegacyTraversalDiagnosticsPanel';
@@ -788,11 +789,10 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
             onRunConversion={runConversion}
           />
           {selectedEntry && (
-            <div className="panel-section">
-              <div className="panel-section-title">Selected File</div>
-              <div className="muted">{selectedEntry.path}</div>
-              <pre className="code-block">{selectedContent || 'Loading…'}</pre>
-            </div>
+            <LegacySelectedFilePanel
+              selectedEntryPath={selectedEntry.path}
+              selectedContent={selectedContent}
+            />
           )}
           <div className="panel-section">
             <div className="panel-section-title">Report Preview (Text-Only)</div>
