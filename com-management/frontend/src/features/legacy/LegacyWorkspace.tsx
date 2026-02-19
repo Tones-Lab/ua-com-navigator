@@ -29,11 +29,17 @@ type LegacyWorkspaceProps = {
 };
 
 const LEGACY_SECTION_VISIBILITY_KEY = 'legacy.v2.sectionVisibility';
+const LEGACY_SUGGESTED_VIEW_KEY = 'legacy.v2.suggestedView';
 
 type LegacySectionVisibility = {
   traversal: boolean;
   matchDiffs: boolean;
   rawReport: boolean;
+};
+
+type LegacySuggestedView = {
+  densityMode: 'compact' | 'comfortable';
+  sortMode: 'default' | 'dirty-first' | 'generated-first' | 'name-asc';
 };
 
 export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspaceProps) {
@@ -104,6 +110,29 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
   const [suggestedGeneratedOnly, setSuggestedGeneratedOnly] = useState(false);
   const [suggestedConflictOnly, setSuggestedConflictOnly] = useState(false);
   const [suggestedSearch, setSuggestedSearch] = useState('');
+  const [suggestedView, setSuggestedView] = useState<LegacySuggestedView>(() => {
+    if (typeof window === 'undefined') {
+      return { densityMode: 'compact', sortMode: 'default' };
+    }
+    try {
+      const stored = window.sessionStorage.getItem(LEGACY_SUGGESTED_VIEW_KEY);
+      if (!stored) {
+        return { densityMode: 'compact', sortMode: 'default' };
+      }
+      const parsed = JSON.parse(stored);
+      return {
+        densityMode: parsed?.densityMode === 'comfortable' ? 'comfortable' : 'compact',
+        sortMode:
+          parsed?.sortMode === 'dirty-first' ||
+          parsed?.sortMode === 'generated-first' ||
+          parsed?.sortMode === 'name-asc'
+            ? parsed.sortMode
+            : 'default',
+      };
+    } catch {
+      return { densityMode: 'compact', sortMode: 'default' };
+    }
+  });
   const [sectionVisibility, setSectionVisibility] = useState<LegacySectionVisibility>(() => {
     if (typeof window === 'undefined') {
       return { traversal: false, matchDiffs: false, rawReport: false };
@@ -251,6 +280,13 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     }
     window.sessionStorage.setItem(LEGACY_SECTION_VISIBILITY_KEY, JSON.stringify(sectionVisibility));
   }, [sectionVisibility]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.sessionStorage.setItem(LEGACY_SUGGESTED_VIEW_KEY, JSON.stringify(suggestedView));
+  }, [suggestedView]);
 
   useEffect(() => {
     if (!selectedObjectId) {
@@ -977,6 +1013,20 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                   onConflictOnlyChange={setSuggestedConflictOnly}
                   searchValue={suggestedSearch}
                   onSearchChange={setSuggestedSearch}
+                  densityMode={suggestedView.densityMode}
+                  onDensityModeChange={(value) =>
+                    setSuggestedView((prev) => ({
+                      ...prev,
+                      densityMode: value,
+                    }))
+                  }
+                  sortMode={suggestedView.sortMode}
+                  onSortModeChange={(value) =>
+                    setSuggestedView((prev) => ({
+                      ...prev,
+                      sortMode: value,
+                    }))
+                  }
                 />
               )}
               {reportSummary ? (

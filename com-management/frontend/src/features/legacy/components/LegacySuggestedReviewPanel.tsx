@@ -27,6 +27,10 @@ type LegacySuggestedReviewPanelProps = {
   onConflictOnlyChange: (value: boolean) => void;
   searchValue: string;
   onSearchChange: (value: string) => void;
+  densityMode: 'compact' | 'comfortable';
+  onDensityModeChange: (value: 'compact' | 'comfortable') => void;
+  sortMode: 'default' | 'dirty-first' | 'generated-first' | 'name-asc';
+  onSortModeChange: (value: 'default' | 'dirty-first' | 'generated-first' | 'name-asc') => void;
 };
 
 export default function LegacySuggestedReviewPanel({
@@ -50,11 +54,15 @@ export default function LegacySuggestedReviewPanel({
   onConflictOnlyChange,
   searchValue,
   onSearchChange,
+  densityMode,
+  onDensityModeChange,
+  sortMode,
+  onSortModeChange,
 }: LegacySuggestedReviewPanelProps) {
   const normalizedSearch = searchValue.trim().toLowerCase();
 
   const visibleEntries = useMemo(() => {
-    return entries.filter((entry) => {
+    const filtered = entries.filter((entry) => {
       const dirtyMeta = getSuggestedDirtyMeta(entry);
       const hasConflict = Number(conflictCountsByObject[entry.objectName] || 0) > 0;
       if (dirtyOnly && !dirtyMeta.dirty) {
@@ -77,6 +85,30 @@ export default function LegacySuggestedReviewPanel({
         entry.sourceLabel.toLowerCase().includes(normalizedSearch)
       );
     });
+
+    if (sortMode === 'default') {
+      return filtered;
+    }
+
+    return [...filtered].sort((left, right) => {
+      if (sortMode === 'name-asc') {
+        return left.objectName.localeCompare(right.objectName);
+      }
+      if (sortMode === 'generated-first') {
+        const leftRank = left.sourceType === 'generated' ? 0 : 1;
+        const rightRank = right.sourceType === 'generated' ? 0 : 1;
+        if (leftRank !== rightRank) {
+          return leftRank - rightRank;
+        }
+        return left.objectName.localeCompare(right.objectName);
+      }
+      const leftDirty = getSuggestedDirtyMeta(left).dirty ? 0 : 1;
+      const rightDirty = getSuggestedDirtyMeta(right).dirty ? 0 : 1;
+      if (leftDirty !== rightDirty) {
+        return leftDirty - rightDirty;
+      }
+      return left.objectName.localeCompare(right.objectName);
+    });
   }, [
     conflictCountsByObject,
     conflictOnly,
@@ -85,6 +117,7 @@ export default function LegacySuggestedReviewPanel({
     generatedOnly,
     matchedOnly,
     normalizedSearch,
+    sortMode,
   ]);
 
   useEffect(() => {
@@ -169,7 +202,54 @@ export default function LegacySuggestedReviewPanel({
         />
       </div>
 
-      <div className="legacy-suggested-split">
+      <div className="legacy-filter-row">
+        <span className="legacy-report-hint">Density</span>
+        <button
+          type="button"
+          className={`legacy-filter-chip ${densityMode === 'compact' ? 'active' : ''}`}
+          onClick={() => onDensityModeChange('compact')}
+        >
+          Compact
+        </button>
+        <button
+          type="button"
+          className={`legacy-filter-chip ${densityMode === 'comfortable' ? 'active' : ''}`}
+          onClick={() => onDensityModeChange('comfortable')}
+        >
+          Comfortable
+        </button>
+        <span className="legacy-report-hint" style={{ marginLeft: 8 }}>Sort</span>
+        <button
+          type="button"
+          className={`legacy-filter-chip ${sortMode === 'default' ? 'active' : ''}`}
+          onClick={() => onSortModeChange('default')}
+        >
+          Default
+        </button>
+        <button
+          type="button"
+          className={`legacy-filter-chip ${sortMode === 'dirty-first' ? 'active' : ''}`}
+          onClick={() => onSortModeChange('dirty-first')}
+        >
+          Dirty first
+        </button>
+        <button
+          type="button"
+          className={`legacy-filter-chip ${sortMode === 'generated-first' ? 'active' : ''}`}
+          onClick={() => onSortModeChange('generated-first')}
+        >
+          Generated first
+        </button>
+        <button
+          type="button"
+          className={`legacy-filter-chip ${sortMode === 'name-asc' ? 'active' : ''}`}
+          onClick={() => onSortModeChange('name-asc')}
+        >
+          Name A→Z
+        </button>
+      </div>
+
+      <div className={`legacy-suggested-split legacy-suggested-${densityMode}`}>
         <div className="legacy-suggested-list" role="listbox" aria-label="Suggested COM entries">
           {visibleEntries.length === 0 ? (
             <div className="legacy-report-muted">No suggested entries match current filters.</div>
