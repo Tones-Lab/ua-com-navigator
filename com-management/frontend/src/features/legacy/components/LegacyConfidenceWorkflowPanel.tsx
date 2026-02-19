@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import type { LegacyConfidenceDrift, LegacyConfidenceLevel, LegacyConfidencePreview } from '../legacyConfidenceUtils';
 
 type LegacyConfidenceWorkflowPanelProps = {
@@ -21,9 +22,26 @@ export default function LegacyConfidenceWorkflowPanel({
   onMaxItemsChange,
   drift,
 }: LegacyConfidenceWorkflowPanelProps) {
+  const [causeFilter, setCauseFilter] = useState<'all' | string>('all');
+  const [searchValue, setSearchValue] = useState('');
+
   const causeEntries = Object.entries(preview.rootCauseCounts)
     .filter(([, count]) => count > 0)
     .sort((a, b) => b[1] - a[1]);
+
+  const filteredCandidates = useMemo(() => {
+    const search = searchValue.trim().toLowerCase();
+    return preview.candidates.filter((entry) => {
+      if (causeFilter !== 'all' && !entry.causes.includes(causeFilter as any)) {
+        return false;
+      }
+      if (!search) {
+        return true;
+      }
+      const sourceText = `${entry.objectName} ${entry.targetField} ${entry.sourceFile} ${entry.causes.join(' ')}`.toLowerCase();
+      return sourceText.includes(search);
+    });
+  }, [preview.candidates, causeFilter, searchValue]);
 
   const recommendedAction = (() => {
     if (preview.selection.fallbackUsed) {
@@ -51,6 +69,38 @@ export default function LegacyConfidenceWorkflowPanel({
         <div className="legacy-report-title">Confidence Workflow</div>
         <div className="legacy-report-muted">
           Triage uses confidence scoring from conversion stubs and mirrors calibration behavior (min-level + strict fallback).
+        </div>
+        <div className="legacy-confidence-presets">
+          <button
+            type="button"
+            className="ghost-button"
+            onClick={() => {
+              onMinLevelChange('low');
+              onStrictMinLevelChange(true);
+            }}
+          >
+            Risk only
+          </button>
+          <button
+            type="button"
+            className="ghost-button"
+            onClick={() => {
+              onMinLevelChange('medium');
+              onStrictMinLevelChange(false);
+            }}
+          >
+            Balanced
+          </button>
+          <button
+            type="button"
+            className="ghost-button"
+            onClick={() => {
+              onMinLevelChange('high');
+              onStrictMinLevelChange(false);
+            }}
+          >
+            Full review
+          </button>
         </div>
         <div className="legacy-confidence-controls">
           <label className="legacy-report-hint" htmlFor="legacy-confidence-min-level">
@@ -115,11 +165,40 @@ export default function LegacyConfidenceWorkflowPanel({
       </div>
       <div className="legacy-report-card">
         <div className="legacy-report-title">Top Risk Candidates</div>
-        {preview.candidates.length === 0 ? (
+        <div className="legacy-confidence-controls">
+          <label className="legacy-report-hint" htmlFor="legacy-confidence-cause-filter">
+            Cause filter
+            <select
+              id="legacy-confidence-cause-filter"
+              className="legacy-filter-input"
+              value={causeFilter}
+              onChange={(event) => setCauseFilter(event.target.value)}
+            >
+              <option value="all">all</option>
+              {causeEntries.map(([cause]) => (
+                <option key={cause} value={cause}>
+                  {cause}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="legacy-report-hint" htmlFor="legacy-confidence-search">
+            Search
+            <input
+              id="legacy-confidence-search"
+              className="legacy-filter-input"
+              value={searchValue}
+              onChange={(event) => setSearchValue(event.target.value)}
+              placeholder="Object, field, source..."
+            />
+          </label>
+          <div className="legacy-report-hint">Showing {filteredCandidates.length} / {preview.candidates.length}</div>
+        </div>
+        {filteredCandidates.length === 0 ? (
           <div className="legacy-report-muted">No candidates for current filter mode.</div>
         ) : (
           <div className="legacy-confidence-list">
-            {preview.candidates.map((entry, index) => (
+            {filteredCandidates.map((entry, index) => (
               <div key={entry.key} className="legacy-confidence-item">
                 <div className="legacy-report-line">
                   <strong>
