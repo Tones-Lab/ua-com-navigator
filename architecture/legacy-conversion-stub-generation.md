@@ -329,6 +329,7 @@ Pipeline stages:
 - `--strict-min-level`
 - `--max-items <N>`
 - `--compare-before <path-to-calibration.json>`
+- `--compare-latest` (auto-pick latest prior run calibration in output-root)
 
 ### Example workflows
 
@@ -340,6 +341,14 @@ Follow-up run with drift compare to previous baseline:
 
 - `npm run legacy:pipeline -- --input rules/legacy/uploads/NCE --run-name nce-iter-2 --min-level medium --max-items 25 --compare-before tmp/legacy-analysis/pipeline/nce-baseline/calibration/legacy-confidence-calibration.json`
 
+Auto-compare to latest prior run baseline (no manual path):
+
+- `npm run legacy:pipeline -- --input rules/legacy/uploads/NCE --run-name nce-iter-3 --min-level medium --max-items 25 --compare-latest`
+
+Shortcut variant (same behavior):
+
+- `npm run legacy:pipeline:latest -- --input rules/legacy/uploads/NCE --run-name nce-iter-4 --min-level medium --max-items 25`
+
 Strict low-only calibration in pipeline:
 
 - `npm run legacy:pipeline -- --input rules/legacy/uploads/NCE --run-name nce-strict-low --min-level low --strict-min-level --max-items 25`
@@ -350,6 +359,29 @@ Strict low-only calibration in pipeline:
 - `<output-root>/<run-name>/calibration/...`
 - `<output-root>/<run-name>/compare/...` (optional)
 - `<output-root>/<run-name>/pipeline-manifest.json`
+
+### Baseline auto-resolution details
+
+- `--compare-latest` scans sibling run directories under `--output-root`.
+- It selects the most recently modified calibration file:
+  - `<output-root>/<prior-run>/calibration/legacy-confidence-calibration.json`
+- It excludes the current run directory (`--run-name`) from candidate search.
+- If no prior calibration is found:
+  - pipeline logs a warning
+  - compare stage is skipped
+  - conversion + calibration still complete normally.
+
+Precedence rule:
+
+- If `--compare-before` is provided, it is used as-is.
+- `--compare-latest` is only used when `--compare-before` is not provided.
+
+Manifest visibility:
+
+- `pipeline-manifest.json` records:
+  - requested `compareBefore` (if explicitly provided)
+  - `compareLatest` flag
+  - `resolvedCompareBefore` (actual baseline path used, if any)
 
 ## Safety constraints
 

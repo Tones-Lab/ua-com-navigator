@@ -17,6 +17,7 @@ type PipelineOptions = {
   strictMinLevel: boolean;
   maxItems: number;
   compareBefore?: string;
+  compareLatest: boolean;
 };
 
 type PipelineManifest = {
@@ -35,6 +36,8 @@ type PipelineManifest = {
     strictMinLevel: boolean;
     maxItems: number;
     compareBefore?: string;
+    compareLatest: boolean;
+    resolvedCompareBefore?: string;
   };
   paths: {
     conversionDir: string;
@@ -72,6 +75,7 @@ const HELP_TEXT = [
   '  --strict-min-level              Disable calibration fallback when no eligible stubs',
   '  --max-items <N>                 Max selected candidates in calibration/compare (default: 25)',
   '  --compare-before <path>         Optional previous calibration JSON for drift compare',
+  '  --compare-latest                Auto-resolve compare baseline from latest prior pipeline run',
   '  --help                          Show this help text',
   '',
   'Outputs per run:',
@@ -108,6 +112,7 @@ const parseArgs = (argv: string[]): PipelineOptions => {
   let strictMinLevel = false;
   let maxItems = 25;
   let compareBefore: string | undefined;
+  let compareLatest = false;
 
   for (let index = 0; index < argv.length; index += 1) {
     const arg = argv[index];
@@ -190,6 +195,10 @@ const parseArgs = (argv: string[]): PipelineOptions => {
       index += 1;
       continue;
     }
+    if (arg === '--compare-latest') {
+      compareLatest = true;
+      continue;
+    }
   }
 
   if (inputs.length === 0) {
@@ -210,7 +219,32 @@ const parseArgs = (argv: string[]): PipelineOptions => {
     strictMinLevel,
     maxItems,
     compareBefore,
+    compareLatest,
   };
+};
+
+const resolveLatestCalibration = (outputRoot: string, excludeRunName: string) => {
+  if (!fs.existsSync(outputRoot)) {
+    return null;
+  }
+
+  const candidates = fs.readdirSync(outputRoot, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && entry.name !== excludeRunName)
+    .map((entry) => {
+      const calibrationPath = path.join(outputRoot, entry.name, 'calibration', 'legacy-confidence-calibration.json');
+      if (!fs.existsSync(calibrationPath)) {
+        return null;
+      }
+      const stats = fs.statSync(calibrationPath);
+      return {
+        calibrationPath,
+        mtimeMs: stats.mtimeMs,
+      };
+    })
+    .filter((entry): entry is { calibrationPath: string; mtimeMs: number } => Boolean(entry))
+    .sort((left, right) => right.mtimeMs - left.mtimeMs);
+
+  return candidates[0]?.calibrationPath || null;
 };
 
 const runNpmScript = (scriptName: string, args: string[]) => {
@@ -241,6 +275,16 @@ const main = () => {
   const conversionDir = path.join(runRoot, 'conversion');
   const calibrationDir = path.join(runRoot, 'calibration');
   const compareDir = path.join(runRoot, 'compare');
+
+  let resolvedCompareBefore = options.compareBefore;
+  if (!resolvedCompareBefore && options.compareLatest) {
+    resolvedCompareBefore = resolveLatestCalibration(options.outputRoot, options.runName) || undefined;
+    if (!resolvedCompareBefore) {
+      console.warn(
+        'No prior calibration baseline found for --compare-latest. Compare stage will be skipped for this run.',
+      );
+    }
+  }
 
   ensureDir(runRoot);
   ensureDir(conversionDir);
@@ -288,12 +332,12 @@ const main = () => {
 
   let compareJsonPath: string | undefined;
   let compareTextPath: string | undefined;
-  if (options.compareBefore) {
+  if (resolvedCompareBefore) {
     ensureDir(compareDir);
     const afterCalibrationPath = path.join(calibrationDir, 'legacy-confidence-calibration.json');
     runNpmScript('legacy:confidence-compare', [
       '--before',
-      options.compareBefore,
+      resolvedCompareBefore,
       '--after',
       afterCalibrationPath,
       '--output-dir',
@@ -323,11 +367,13 @@ const main = () => {
       strictMinLevel: options.strictMinLevel,
       maxItems: options.maxItems,
       compareBefore: options.compareBefore,
+      compareLatest: options.compareLatest,
+      resolvedCompareBefore,
     },
     paths: {
       conversionDir,
       calibrationDir,
-      compareDir: options.compareBefore ? compareDir : undefined,
+      compareDir: resolvedCompareBefore ? compareDir : undefined,
       conversionReportJson: path.join(conversionDir, 'legacy-conversion-report.json'),
       conversionReportText: path.join(conversionDir, 'legacy-conversion-report.txt'),
       processorStubsJson: processorStubsPath,
