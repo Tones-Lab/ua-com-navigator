@@ -155,6 +155,16 @@ Purpose:
 - Keep aggressive auto-conversion while exposing relative risk.
 - Support wizard/report prioritization by confidence rather than only direct/conditional/manual buckets.
 
+Calibration command:
+
+- `npm run legacy:confidence-calibrate -- --input <legacy-processor-stubs.json|legacy-conversion-report.json> --output-dir <dir> --format both --max-items 25`
+- Outputs:
+  - `legacy-confidence-calibration.json`
+  - `legacy-confidence-calibration.txt`
+- Behavior:
+  - prioritizes low/medium confidence stubs for triage
+  - if none exist, falls back to lowest high-confidence stubs to keep review lists non-empty
+
 ## Safety constraints
 
 - Stub generation never mutates source logic.
