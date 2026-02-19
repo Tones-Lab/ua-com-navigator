@@ -63,6 +63,27 @@ export type LegacyConfidenceDrift = {
   rootCauseDelta: Record<LegacyConfidenceCause, number>;
 };
 
+export type LegacyConfidenceCalibrationExport = {
+  generatedAt: string;
+  source: 'legacy-ui';
+  runId: string;
+  totals: LegacyConfidencePreview['totals'];
+  selectionPolicy: LegacyConfidencePreview['selection'];
+  rootCauseCounts: Record<LegacyConfidenceCause, number>;
+  topRiskStubs: LegacyConfidenceCandidate[];
+};
+
+export type LegacyConfidenceDriftExport = {
+  generatedAt: string;
+  source: 'legacy-ui';
+  runId: string;
+  beforeGeneratedAt?: string;
+  afterGeneratedAt?: string;
+  selectionChange: LegacyConfidenceDrift['selectionChange'];
+  scoreChange: LegacyConfidenceDrift['scoreChange'];
+  rootCauseDelta: LegacyConfidenceDrift['rootCauseDelta'];
+};
+
 const confidenceOrder: Record<LegacyConfidenceLevel, number> = {
   low: 0,
   medium: 1,
@@ -276,4 +297,100 @@ export const computeLegacyConfidenceDrift = (
     },
     rootCauseDelta,
   };
+};
+
+export const buildLegacyConfidenceCalibrationExport = (
+  preview: LegacyConfidencePreview,
+  runId: string,
+): LegacyConfidenceCalibrationExport => ({
+  generatedAt: new Date().toISOString(),
+  source: 'legacy-ui',
+  runId,
+  totals: { ...preview.totals },
+  selectionPolicy: { ...preview.selection },
+  rootCauseCounts: { ...preview.rootCauseCounts },
+  topRiskStubs: preview.candidates.map((entry) => ({
+    ...entry,
+    requiredMappings: [...entry.requiredMappings],
+    causes: [...entry.causes],
+  })),
+});
+
+export const renderLegacyConfidenceCalibrationText = (
+  report: LegacyConfidenceCalibrationExport,
+) => {
+  const lines: string[] = [];
+  lines.push('Legacy Confidence Calibration (UI Export)');
+  lines.push(`Generated: ${report.generatedAt}`);
+  lines.push(`Run: ${report.runId}`);
+  lines.push(
+    `Totals: ${report.totals.stubs} stubs (high ${report.totals.high}, medium ${report.totals.medium}, low ${report.totals.low})`,
+  );
+  lines.push(
+    `Statuses: direct ${report.totals.direct}, conditional ${report.totals.conditional}, manual ${report.totals.manual}`,
+  );
+  lines.push(
+    `Selection: min-level=${report.selectionPolicy.minLevel}, strict=${report.selectionPolicy.strictMinLevel}, eligible=${report.selectionPolicy.eligibleByMinLevel}, selected=${report.selectionPolicy.selectedCount}${report.selectionPolicy.fallbackUsed ? ', fallback=yes' : ''}`,
+  );
+  lines.push('');
+  lines.push('Root causes:');
+  Object.entries(report.rootCauseCounts)
+    .sort((a, b) => b[1] - a[1])
+    .forEach(([cause, count]) => {
+      lines.push(`- ${cause}: ${count}`);
+    });
+  lines.push('');
+  lines.push('Top risk candidates:');
+  report.topRiskStubs.forEach((entry, index) => {
+    lines.push(
+      `${index + 1}. ${entry.objectName} ${entry.targetField} score=${entry.confidenceScore.toFixed(2)} level=${entry.confidenceLevel}`,
+    );
+    lines.push(`   causes=${entry.causes.join('|') || 'none'}`);
+  });
+  return `${lines.join('\n')}\n`;
+};
+
+export const buildLegacyConfidenceDriftExport = (
+  runId: string,
+  drift: LegacyConfidenceDrift,
+  meta?: {
+    beforeGeneratedAt?: string;
+    afterGeneratedAt?: string;
+  },
+): LegacyConfidenceDriftExport => ({
+  generatedAt: new Date().toISOString(),
+  source: 'legacy-ui',
+  runId,
+  beforeGeneratedAt: meta?.beforeGeneratedAt,
+  afterGeneratedAt: meta?.afterGeneratedAt,
+  selectionChange: { ...drift.selectionChange },
+  scoreChange: { ...drift.scoreChange },
+  rootCauseDelta: { ...drift.rootCauseDelta },
+});
+
+export const renderLegacyConfidenceDriftText = (
+  report: LegacyConfidenceDriftExport,
+) => {
+  const lines: string[] = [];
+  lines.push('Legacy Confidence Drift (UI Export)');
+  lines.push(`Generated: ${report.generatedAt}`);
+  lines.push(`Run: ${report.runId}`);
+  if (report.beforeGeneratedAt || report.afterGeneratedAt) {
+    lines.push(`Before snapshot: ${report.beforeGeneratedAt || 'n/a'}`);
+    lines.push(`After snapshot: ${report.afterGeneratedAt || 'n/a'}`);
+  }
+  lines.push(
+    `Selection change: common ${report.selectionChange.common}, added ${report.selectionChange.added}, removed ${report.selectionChange.removed}`,
+  );
+  lines.push(
+    `Score change: improved ${report.scoreChange.improved}, regressed ${report.scoreChange.regressed}, unchanged ${report.scoreChange.unchanged}`,
+  );
+  lines.push('');
+  lines.push('Root cause delta:');
+  Object.entries(report.rootCauseDelta)
+    .sort((a, b) => Math.abs(b[1]) - Math.abs(a[1]))
+    .forEach(([cause, delta]) => {
+      lines.push(`- ${cause}: ${delta >= 0 ? '+' : ''}${delta}`);
+    });
+  return `${lines.join('\n')}\n`;
 };

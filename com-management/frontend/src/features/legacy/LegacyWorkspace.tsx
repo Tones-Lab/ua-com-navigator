@@ -22,9 +22,13 @@ import {
   type SuggestedEntry,
 } from './legacySuggestedUtils';
 import {
+  buildLegacyConfidenceCalibrationExport,
   buildLegacyConfidencePreview,
+  buildLegacyConfidenceDriftExport,
   computeLegacyConfidenceDrift,
   createLegacyConfidenceSnapshot,
+  renderLegacyConfidenceCalibrationText,
+  renderLegacyConfidenceDriftText,
   type LegacyConfidenceDrift,
   type LegacyConfidenceLevel,
   type LegacyConfidenceSnapshot,
@@ -174,6 +178,10 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
   const [previousConfidenceSnapshot, setPreviousConfidenceSnapshot] =
     useState<LegacyConfidenceSnapshot | null>(null);
   const [confidenceDrift, setConfidenceDrift] = useState<LegacyConfidenceDrift | null>(null);
+  const [confidenceDriftMeta, setConfidenceDriftMeta] = useState<{
+    beforeGeneratedAt?: string;
+    afterGeneratedAt?: string;
+  } | null>(null);
 
   const traversal = reportJson?.traversal;
   const traversalFiles = Array.isArray(traversal?.orderedFiles) ? traversal.orderedFiles : [];
@@ -502,6 +510,7 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     setReportJson(null);
     setLastRunLabel(null);
     setConfidenceDrift(null);
+    setConfidenceDriftMeta(null);
     try {
       const resp = await api.runLegacyConversion({
         paths: hasSelection ? selectedPaths : undefined,
@@ -520,9 +529,18 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
             : 10,
       });
       const nextSnapshot = createLegacyConfidenceSnapshot(nextPreview);
+      const beforeSnapshot = previousConfidenceSnapshot;
       setConfidenceDrift(
-        previousConfidenceSnapshot
-          ? computeLegacyConfidenceDrift(previousConfidenceSnapshot, nextSnapshot)
+        beforeSnapshot
+          ? computeLegacyConfidenceDrift(beforeSnapshot, nextSnapshot)
+          : null,
+      );
+      setConfidenceDriftMeta(
+        beforeSnapshot
+          ? {
+              beforeGeneratedAt: beforeSnapshot.generatedAt,
+              afterGeneratedAt: nextSnapshot.generatedAt,
+            }
           : null,
       );
       setPreviousConfidenceSnapshot(nextSnapshot);
@@ -806,6 +824,38 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     downloadText(getReportFilename('objects.csv'), content);
   };
 
+  const exportConfidenceCalibrationJson = () => {
+    if (!reportJson) {
+      return;
+    }
+    const payload = buildLegacyConfidenceCalibrationExport(confidencePreview, reportRunId);
+    downloadJson(getReportFilename('confidence-calibration.json'), payload);
+  };
+
+  const exportConfidenceCalibrationText = () => {
+    if (!reportJson) {
+      return;
+    }
+    const payload = buildLegacyConfidenceCalibrationExport(confidencePreview, reportRunId);
+    downloadText(getReportFilename('confidence-calibration.txt'), renderLegacyConfidenceCalibrationText(payload));
+  };
+
+  const exportConfidenceDriftJson = () => {
+    if (!reportJson || !confidenceDrift) {
+      return;
+    }
+    const payload = buildLegacyConfidenceDriftExport(reportRunId, confidenceDrift, confidenceDriftMeta || undefined);
+    downloadJson(getReportFilename('confidence-drift.json'), payload);
+  };
+
+  const exportConfidenceDriftText = () => {
+    if (!reportJson || !confidenceDrift) {
+      return;
+    }
+    const payload = buildLegacyConfidenceDriftExport(reportRunId, confidenceDrift, confidenceDriftMeta || undefined);
+    downloadText(getReportFilename('confidence-drift.txt'), renderLegacyConfidenceDriftText(payload));
+  };
+
   return (
     <div className="panel legacy-panel">
       <div className="panel-scroll">
@@ -852,6 +902,11 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
             onCloudyMatchThresholdChange={setCloudyMatchThreshold}
             onDownloadText={() => downloadText(getReportFilename('txt'), reportText)}
             onDownloadJson={() => downloadJson(getReportFilename('json'), reportJson)}
+            onDownloadConfidenceCalibrationJson={exportConfidenceCalibrationJson}
+            onDownloadConfidenceCalibrationText={exportConfidenceCalibrationText}
+            onDownloadConfidenceDriftJson={exportConfidenceDriftJson}
+            onDownloadConfidenceDriftText={exportConfidenceDriftText}
+            hasConfidenceDrift={Boolean(confidenceDrift)}
             traversalFilesCount={traversalFiles.length}
             traversalMissingCount={traversalMissing.length}
             onCopyTraversalOrder={copyTraversalOrder}

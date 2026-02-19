@@ -6,6 +6,11 @@ type LegacyReportCommandBarProps = {
   onCloudyMatchThresholdChange: (value: string) => void;
   onDownloadText: () => void;
   onDownloadJson: () => void;
+  onDownloadConfidenceCalibrationJson: () => void;
+  onDownloadConfidenceCalibrationText: () => void;
+  onDownloadConfidenceDriftJson: () => void;
+  onDownloadConfidenceDriftText: () => void;
+  hasConfidenceDrift: boolean;
   traversalFilesCount: number;
   traversalMissingCount: number;
   onCopyTraversalOrder: () => void;
@@ -34,6 +39,11 @@ export default function LegacyReportCommandBar({
   onCloudyMatchThresholdChange,
   onDownloadText,
   onDownloadJson,
+  onDownloadConfidenceCalibrationJson,
+  onDownloadConfidenceCalibrationText,
+  onDownloadConfidenceDriftJson,
+  onDownloadConfidenceDriftText,
+  hasConfidenceDrift,
   traversalFilesCount,
   traversalMissingCount,
   onCopyTraversalOrder,
@@ -73,6 +83,26 @@ export default function LegacyReportCommandBar({
       {reportJson && (
         <button type="button" className="ghost-button" onClick={onDownloadJson}>
           Download JSON
+        </button>
+      )}
+      {reportJson && (
+        <button type="button" className="ghost-button" onClick={onDownloadConfidenceCalibrationJson}>
+          Download confidence JSON
+        </button>
+      )}
+      {reportJson && (
+        <button type="button" className="ghost-button" onClick={onDownloadConfidenceCalibrationText}>
+          Download confidence text
+        </button>
+      )}
+      {reportJson && hasConfidenceDrift && (
+        <button type="button" className="ghost-button" onClick={onDownloadConfidenceDriftJson}>
+          Download drift JSON
+        </button>
+      )}
+      {reportJson && hasConfidenceDrift && (
+        <button type="button" className="ghost-button" onClick={onDownloadConfidenceDriftText}>
+          Download drift text
         </button>
       )}
       {traversalFilesCount > 0 && (

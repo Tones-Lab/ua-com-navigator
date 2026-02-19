@@ -15,6 +15,11 @@ type LegacyReportPreviewPanelProps = {
   onCloudyMatchThresholdChange: (value: string) => void;
   onDownloadText: () => void;
   onDownloadJson: () => void;
+  onDownloadConfidenceCalibrationJson: () => void;
+  onDownloadConfidenceCalibrationText: () => void;
+  onDownloadConfidenceDriftJson: () => void;
+  onDownloadConfidenceDriftText: () => void;
+  hasConfidenceDrift: boolean;
   traversalFilesCount: number;
   traversalMissingCount: number;
   onCopyTraversalOrder: () => void;
@@ -72,6 +77,11 @@ export default function LegacyReportPreviewPanel({
   onCloudyMatchThresholdChange,
   onDownloadText,
   onDownloadJson,
+  onDownloadConfidenceCalibrationJson,
+  onDownloadConfidenceCalibrationText,
+  onDownloadConfidenceDriftJson,
+  onDownloadConfidenceDriftText,
+  hasConfidenceDrift,
   traversalFilesCount,
   traversalMissingCount,
   onCopyTraversalOrder,
@@ -129,6 +139,11 @@ export default function LegacyReportPreviewPanel({
             onCloudyMatchThresholdChange={onCloudyMatchThresholdChange}
             onDownloadText={onDownloadText}
             onDownloadJson={onDownloadJson}
+            onDownloadConfidenceCalibrationJson={onDownloadConfidenceCalibrationJson}
+            onDownloadConfidenceCalibrationText={onDownloadConfidenceCalibrationText}
+            onDownloadConfidenceDriftJson={onDownloadConfidenceDriftJson}
+            onDownloadConfidenceDriftText={onDownloadConfidenceDriftText}
+            hasConfidenceDrift={hasConfidenceDrift}
             traversalFilesCount={traversalFilesCount}
             traversalMissingCount={traversalMissingCount}
             onCopyTraversalOrder={onCopyTraversalOrder}
