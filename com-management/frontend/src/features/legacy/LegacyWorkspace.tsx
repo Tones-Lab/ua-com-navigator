@@ -730,7 +730,7 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
               Upload rules from your machine. Files are stored in {uploadRoot || 'the legacy upload folder'}.
             </div>
             <div className="panel-section-actions">
-              <input ref={fileInputRef} type="file" multiple />
+              <input ref={fileInputRef} type="file" multiple className="legacy-file-input" />
               <button type="button" className="ghost-button" onClick={handleUpload} disabled={uploading}>
                 {uploading ? 'Uploading…' : 'Upload files'}
               </button>
