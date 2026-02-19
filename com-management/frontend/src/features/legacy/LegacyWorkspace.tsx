@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import EmptyState from '../../components/EmptyState';
-import InlineMessage from '../../components/InlineMessage';
 import PanelHeader from '../../components/PanelHeader';
 import useRequest from '../../hooks/useRequest';
 import api from '../../services/api';
@@ -9,10 +8,9 @@ import { getApiErrorMessage } from '../../utils/errorUtils';
 import LegacyMatchDiffsPanel from './components/LegacyMatchDiffsPanel';
 import LegacyFolderFileSummaryPanel from './components/LegacyFolderFileSummaryPanel';
 import LegacyObjectPreviewPanel from './components/LegacyObjectPreviewPanel';
-import LegacyReportCommandBar from './components/LegacyReportCommandBar';
+import LegacyReportPreviewPanel from './components/LegacyReportPreviewPanel';
 import LegacySelectedFilePanel from './components/LegacySelectedFilePanel';
 import LegacyReportSummaryCards from './components/LegacyReportSummaryCards';
-import LegacySuggestedReviewPanel from './components/LegacySuggestedReviewPanel';
 import LegacyTraversalDiagnosticsPanel from './components/LegacyTraversalDiagnosticsPanel';
 import LegacyUploadsPanel from './components/LegacyUploadsPanel';
 import {
@@ -794,101 +792,82 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
               selectedContent={selectedContent}
             />
           )}
-          <div className="panel-section">
-            <div className="panel-section-title">Report Preview (Text-Only)</div>
-            <div className="legacy-report-preview">
-              {reportError && <InlineMessage tone="error">{reportError}</InlineMessage>}
-              {lastRunLabel && !reportError && (
-                <div className="legacy-report-banner">{lastRunLabel}</div>
-              )}
-              {(reportText || reportJson) && (
-                <LegacyReportCommandBar
-                  reportJson={reportJson}
-                  reportText={reportText}
-                  reviewHintText={reviewHintText}
-                  cloudyMatchThreshold={cloudyMatchThreshold}
-                  onCloudyMatchThresholdChange={setCloudyMatchThreshold}
-                  onDownloadText={() => downloadText(getReportFilename('txt'), reportText)}
-                  onDownloadJson={() => downloadJson(getReportFilename('json'), reportJson)}
-                  traversalFilesCount={traversalFiles.length}
-                  traversalMissingCount={traversalMissing.length}
-                  onCopyTraversalOrder={copyTraversalOrder}
-                  onCopyMissingFunctions={copyMissingFunctions}
-                  applyingOverrides={applyingOverrides}
-                  hasSuggestedRawErrors={hasSuggestedRawErrors}
-                  onPreviewConfirmed={() => applyConfirmedOverrides(true)}
-                  onCreateConfirmed={() => applyConfirmedOverrides(false)}
-                  sectionVisibility={sectionVisibility}
-                  hasTraversal={hasTraversal}
-                  onToggleMatchDiffs={() =>
-                    setSectionVisibility((prev) => ({
-                      ...prev,
-                      matchDiffs: !prev.matchDiffs,
-                    }))
-                  }
-                  onToggleTraversal={() =>
-                    setSectionVisibility((prev) => ({
-                      ...prev,
-                      traversal: !prev.traversal,
-                    }))
-                  }
-                  onToggleRawReport={() =>
-                    setSectionVisibility((prev) => ({
-                      ...prev,
-                      rawReport: !prev.rawReport,
-                    }))
-                  }
-                  downloadHint={downloadHint}
-                />
-              )}
-              {applyOverridesError && <InlineMessage tone="error">{applyOverridesError}</InlineMessage>}
-              {applyOverridesResult && (
-                <InlineMessage tone="success">
-                  Existing FCOM matches: {applyOverridesResult.summary.matchedExistingFcomObjects} · Confirmed overrides:{' '}
-                  {applyOverridesResult.summary.confirmedObjects} · Generated COM definitions:{' '}
-                  {applyOverridesResult.summary.generatedDefinitions} · Conflict objects:{' '}
-                  {applyOverridesResult.summary.conflictObjects}
-                  {applyOverridesResult.outputPath ? ` · Saved: ${applyOverridesResult.outputPath}` : ''}
-                </InlineMessage>
-              )}
-              {suggestedEntries.length > 0 && (
-                <LegacySuggestedReviewPanel
-                  hasEditPermission={hasEditPermission}
-                  legacyObjects={legacyObjects}
-                  entries={suggestedEntries}
-                  selectedKey={selectedSuggestedKey}
-                  onSelectEntry={setSelectedSuggestedKey}
-                  rawMode={suggestedRawMode}
-                  onRawModeChange={setSuggestedRawMode}
-                  onFieldChange={updateSuggestedField}
-                  onRawChange={updateSuggestedRaw}
-                  conflictCountsByObject={conflictCountsByObject}
-                  dirtyOnly={suggestedDirtyOnly}
-                  onDirtyOnlyChange={setSuggestedDirtyOnly}
-                  matchedOnly={suggestedMatchedOnly}
-                  onMatchedOnlyChange={setSuggestedMatchedOnly}
-                  generatedOnly={suggestedGeneratedOnly}
-                  onGeneratedOnlyChange={setSuggestedGeneratedOnly}
-                  conflictOnly={suggestedConflictOnly}
-                  onConflictOnlyChange={setSuggestedConflictOnly}
-                  searchValue={suggestedSearch}
-                  onSearchChange={setSuggestedSearch}
-                  densityMode={suggestedView.densityMode}
-                  onDensityModeChange={(value) =>
-                    setSuggestedView((prev) => ({
-                      ...prev,
-                      densityMode: value,
-                    }))
-                  }
-                  sortMode={suggestedView.sortMode}
-                  onSortModeChange={(value) =>
-                    setSuggestedView((prev) => ({
-                      ...prev,
-                      sortMode: value,
-                    }))
-                  }
-                />
-              )}
+          <LegacyReportPreviewPanel
+            reportError={reportError}
+            lastRunLabel={lastRunLabel}
+            reportText={reportText}
+            reportJson={reportJson}
+            reviewHintText={reviewHintText}
+            cloudyMatchThreshold={cloudyMatchThreshold}
+            onCloudyMatchThresholdChange={setCloudyMatchThreshold}
+            onDownloadText={() => downloadText(getReportFilename('txt'), reportText)}
+            onDownloadJson={() => downloadJson(getReportFilename('json'), reportJson)}
+            traversalFilesCount={traversalFiles.length}
+            traversalMissingCount={traversalMissing.length}
+            onCopyTraversalOrder={copyTraversalOrder}
+            onCopyMissingFunctions={copyMissingFunctions}
+            applyingOverrides={applyingOverrides}
+            hasSuggestedRawErrors={hasSuggestedRawErrors}
+            onPreviewConfirmed={() => applyConfirmedOverrides(true)}
+            onCreateConfirmed={() => applyConfirmedOverrides(false)}
+            sectionVisibility={sectionVisibility}
+            hasTraversal={hasTraversal}
+            onToggleMatchDiffs={() =>
+              setSectionVisibility((prev) => ({
+                ...prev,
+                matchDiffs: !prev.matchDiffs,
+              }))
+            }
+            onToggleTraversal={() =>
+              setSectionVisibility((prev) => ({
+                ...prev,
+                traversal: !prev.traversal,
+              }))
+            }
+            onToggleRawReport={() =>
+              setSectionVisibility((prev) => ({
+                ...prev,
+                rawReport: !prev.rawReport,
+              }))
+            }
+            downloadHint={downloadHint}
+            applyOverridesError={applyOverridesError}
+            applyOverridesResult={applyOverridesResult}
+            hasEditPermission={hasEditPermission}
+            legacyObjects={legacyObjects}
+            suggestedEntries={suggestedEntries}
+            selectedSuggestedKey={selectedSuggestedKey}
+            onSelectSuggestedKey={setSelectedSuggestedKey}
+            suggestedRawMode={suggestedRawMode}
+            onSuggestedRawModeChange={setSuggestedRawMode}
+            onSuggestedFieldChange={updateSuggestedField}
+            onSuggestedRawChange={updateSuggestedRaw}
+            conflictCountsByObject={conflictCountsByObject}
+            suggestedDirtyOnly={suggestedDirtyOnly}
+            onSuggestedDirtyOnlyChange={setSuggestedDirtyOnly}
+            suggestedMatchedOnly={suggestedMatchedOnly}
+            onSuggestedMatchedOnlyChange={setSuggestedMatchedOnly}
+            suggestedGeneratedOnly={suggestedGeneratedOnly}
+            onSuggestedGeneratedOnlyChange={setSuggestedGeneratedOnly}
+            suggestedConflictOnly={suggestedConflictOnly}
+            onSuggestedConflictOnlyChange={setSuggestedConflictOnly}
+            suggestedSearch={suggestedSearch}
+            onSuggestedSearchChange={setSuggestedSearch}
+            suggestedDensityMode={suggestedView.densityMode}
+            onSuggestedDensityModeChange={(value) =>
+              setSuggestedView((prev) => ({
+                ...prev,
+                densityMode: value,
+              }))
+            }
+            suggestedSortMode={suggestedView.sortMode}
+            onSuggestedSortModeChange={(value) =>
+              setSuggestedView((prev) => ({
+                ...prev,
+                sortMode: value,
+              }))
+            }
+          >
               {reportSummary ? (
                 <>
                   <LegacyReportSummaryCards
@@ -1010,16 +989,7 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                   Run conversion to populate this preview.
                 </div>
               )}
-              {reportText && sectionVisibility.rawReport && (
-                <pre className="code-block legacy-report-raw">{reportText}</pre>
-              )}
-              {reportText && !sectionVisibility.rawReport && (
-                <div className="legacy-report-muted">
-                  Raw report hidden. Use “Show raw report” to expand.
-                </div>
-              )}
-            </div>
-          </div>
+          </LegacyReportPreviewPanel>
           <div className="panel-section">
             <div className="panel-section-title">Integration</div>
             <ul>
