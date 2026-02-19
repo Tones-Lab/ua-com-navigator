@@ -13,6 +13,7 @@ import LegacyReportCommandBar from './components/LegacyReportCommandBar';
 import LegacyReportSummaryCards from './components/LegacyReportSummaryCards';
 import LegacySuggestedReviewPanel from './components/LegacySuggestedReviewPanel';
 import LegacyTraversalDiagnosticsPanel from './components/LegacyTraversalDiagnosticsPanel';
+import LegacyUploadsPanel from './components/LegacyUploadsPanel';
 import {
   applyEventFieldsToPayload,
   buildEditedPayloadOverrides,
@@ -766,89 +767,26 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
               Upload legacy rules, analyze them, and convert to PCOM or FCOM as much as possible.
             </div>
           </div>
-          <div className="panel-section">
-            <div className="panel-section-title">Legacy Uploads</div>
-            <div className="muted">
-              Upload rules from your machine. Files are stored in {uploadRoot || 'the legacy upload folder'}.
-            </div>
-            <div className="panel-section-actions">
-              <input ref={fileInputRef} type="file" multiple className="legacy-file-input" />
-              <button type="button" className="ghost-button" onClick={handleUpload} disabled={uploading}>
-                {uploading ? 'Uploading…' : 'Upload files'}
-              </button>
-              <button type="button" className="ghost-button" onClick={loadUploads} disabled={uploadsLoading}>
-                Refresh
-              </button>
-            </div>
-            {uploadError && <InlineMessage tone="error">{uploadError}</InlineMessage>}
-            {uploadsError && <InlineMessage tone="error">{uploadsError}</InlineMessage>}
-            {uploadsLoading ? (
-              <div className="muted">Loading uploads…</div>
-            ) : fileEntries.length === 0 ? (
-              <EmptyState>No legacy files uploaded yet.</EmptyState>
-            ) : (
-              <div className="legacy-upload-layout">
-                <ul className="browse-list legacy-upload-list">
-                  <li className="legacy-upload-toolbar">
-                    <button type="button" className="ghost-button" onClick={toggleSelectAll}>
-                      {selectedPaths.length === fileEntries.length ? 'Clear selection' : 'Select all'}
-                    </button>
-                    <span className="muted">
-                      Selected {selectedPaths.length || fileEntries.length} of {fileEntries.length}
-                    </span>
-                  </li>
-                  {fileEntries.map((entry) => (
-                    <li key={entry.path}>
-                      <div className="legacy-upload-row">
-                        <input
-                          type="checkbox"
-                          checked={selectedPaths.includes(entry.path)}
-                          onChange={() => toggleSelectedPath(entry.path)}
-                        />
-                        <button
-                          type="button"
-                          className="browse-link file-link"
-                          onClick={() => openEntry(entry)}
-                        >
-                          {entry.path}
-                        </button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-                <div className="legacy-upload-meta">
-                  <div className="panel-section-title">Conversion Run</div>
-                  <div className="muted">
-                    {isReadyToConvert
-                      ? 'Files are ready. Start a conversion run to generate a report.'
-                      : 'Upload files to enable conversion.'}
-                  </div>
-                  <div className="legacy-action-row">
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      disabled={!isReadyToConvert || conversionStatus === 'running'}
-                      onClick={() => runConversion('run')}
-                    >
-                      {conversionStatus === 'running' ? 'Converting…' : 'Run conversion'}
-                    </button>
-                    <button
-                      type="button"
-                      className="ghost-button"
-                      disabled={!isReadyToConvert}
-                      onClick={() => runConversion('preview')}
-                    >
-                      Preview report
-                    </button>
-                  </div>
-                  <div className="legacy-status">
-                    <span className={`legacy-status-pill legacy-status-${conversionStatusTone}`} />
-                    {conversionStatusText}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          <LegacyUploadsPanel
+            uploadRoot={uploadRoot}
+            fileInputRef={fileInputRef}
+            uploading={uploading}
+            uploadsLoading={uploadsLoading}
+            uploadError={uploadError}
+            uploadsError={uploadsError}
+            fileEntries={fileEntries}
+            selectedPaths={selectedPaths}
+            conversionStatus={conversionStatus}
+            conversionStatusTone={conversionStatusTone}
+            conversionStatusText={conversionStatusText}
+            isReadyToConvert={isReadyToConvert}
+            onUpload={handleUpload}
+            onRefresh={loadUploads}
+            onToggleSelectAll={toggleSelectAll}
+            onToggleSelectedPath={toggleSelectedPath}
+            onOpenEntry={openEntry}
+            onRunConversion={runConversion}
+          />
           {selectedEntry && (
             <div className="panel-section">
               <div className="panel-section-title">Selected File</div>
