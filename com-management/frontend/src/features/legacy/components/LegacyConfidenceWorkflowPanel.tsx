@@ -25,6 +25,25 @@ export default function LegacyConfidenceWorkflowPanel({
     .filter(([, count]) => count > 0)
     .sort((a, b) => b[1] - a[1]);
 
+  const recommendedAction = (() => {
+    if (preview.selection.fallbackUsed) {
+      return 'Recommended next action: switch min-level to high or disable strict mode only when you need a full ranked review.';
+    }
+    if (preview.rootCauseCounts['heuristic-alias-mapping'] > 0) {
+      return 'Recommended next action: review heuristic alias mappings first (for example HelpKey/generic cases) before bulk apply.';
+    }
+    if (preview.rootCauseCounts['unresolved-variable-mappings'] > 0) {
+      return 'Recommended next action: resolve required variable mappings and rerun conversion to move conditional stubs toward direct.';
+    }
+    if (preview.rootCauseCounts['regex-branch-complexity'] > 0) {
+      return 'Recommended next action: validate regex branch candidates with sample payloads to confirm capture and fallback behavior.';
+    }
+    if (preview.rootCauseCounts['manual-expression-shape'] > 0) {
+      return 'Recommended next action: handle manual-expression candidates first and capture any reusable parser pattern.';
+    }
+    return 'Recommended next action: rerun after new rule examples and track drift to confirm confidence is improving.';
+  })();
+
   return (
     <>
       <div className="legacy-report-divider" aria-hidden="true" />
@@ -80,6 +99,7 @@ export default function LegacyConfidenceWorkflowPanel({
           Eligible: {preview.selection.eligibleByMinLevel} · Selected: {preview.selection.selectedCount}
           {preview.selection.fallbackUsed ? ' · Fallback used (lowest global risk set)' : ''}
         </div>
+        <div className="legacy-report-banner legacy-confidence-next-action">{recommendedAction}</div>
         {causeEntries.length > 0 && (
           <div className="legacy-report-line legacy-report-muted">
             Root causes: {causeEntries.map(([cause, count]) => `${cause} (${count})`).join(' · ')}
