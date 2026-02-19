@@ -13,6 +13,7 @@ import LegacySelectedFilePanel from './components/LegacySelectedFilePanel';
 import LegacyReportSummaryCards from './components/LegacyReportSummaryCards';
 import LegacyTraversalDiagnosticsPanel from './components/LegacyTraversalDiagnosticsPanel';
 import LegacyUploadsPanel from './components/LegacyUploadsPanel';
+import LegacyConfidenceWorkflowPanel from './components/LegacyConfidenceWorkflowPanel';
 import {
   applyEventFieldsToPayload,
   buildEditedPayloadOverrides,
@@ -20,6 +21,14 @@ import {
   extractEventFields,
   type SuggestedEntry,
 } from './legacySuggestedUtils';
+import {
+  buildLegacyConfidencePreview,
+  computeLegacyConfidenceDrift,
+  createLegacyConfidenceSnapshot,
+  type LegacyConfidenceDrift,
+  type LegacyConfidenceLevel,
+  type LegacyConfidenceSnapshot,
+} from './legacyConfidenceUtils';
 
 type LegacyUploadEntry = {
   path: string;
@@ -159,6 +168,12 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
   const [reviewHintText, setReviewHintText] = useState(
     'Preview runs a dry-run and jumps to Match diffs (FCOM + Only diffs) for review.',
   );
+  const [confidenceMinLevel, setConfidenceMinLevel] = useState<LegacyConfidenceLevel>('medium');
+  const [confidenceStrictMinLevel, setConfidenceStrictMinLevel] = useState(false);
+  const [confidenceMaxItems, setConfidenceMaxItems] = useState('10');
+  const [previousConfidenceSnapshot, setPreviousConfidenceSnapshot] =
+    useState<LegacyConfidenceSnapshot | null>(null);
+  const [confidenceDrift, setConfidenceDrift] = useState<LegacyConfidenceDrift | null>(null);
 
   const traversal = reportJson?.traversal;
   const traversalFiles = Array.isArray(traversal?.orderedFiles) ? traversal.orderedFiles : [];
@@ -221,6 +236,22 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
   const traversalCountText = Object.entries(traversalCounts)
     .map(([key, value]) => `${key}: ${value}`)
     .join(' · ');
+  const processorStubs = Array.isArray(reportJson?.stubs?.processorStubs)
+    ? reportJson.stubs.processorStubs
+    : [];
+  const confidenceMaxItemsValue = Number(confidenceMaxItems);
+  const confidencePreview = useMemo(
+    () =>
+      buildLegacyConfidencePreview(processorStubs, {
+        minLevel: confidenceMinLevel,
+        strictMinLevel: confidenceStrictMinLevel,
+        maxItems:
+          Number.isFinite(confidenceMaxItemsValue) && confidenceMaxItemsValue > 0
+            ? Math.floor(confidenceMaxItemsValue)
+            : 10,
+      }),
+    [processorStubs, confidenceMinLevel, confidenceStrictMinLevel, confidenceMaxItemsValue],
+  );
 
   const loadUploads = async () => {
     const resp = await runUploadsRequest(() => api.listLegacyUploads(), {
@@ -470,12 +501,31 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     setReportText('');
     setReportJson(null);
     setLastRunLabel(null);
+    setConfidenceDrift(null);
     try {
       const resp = await api.runLegacyConversion({
         paths: hasSelection ? selectedPaths : undefined,
       });
       setReportText(String(resp.data?.textReport || ''));
       setReportJson(resp.data?.report || null);
+      const nextProcessorStubs = Array.isArray(resp.data?.report?.stubs?.processorStubs)
+        ? resp.data.report.stubs.processorStubs
+        : [];
+      const nextPreview = buildLegacyConfidencePreview(nextProcessorStubs, {
+        minLevel: confidenceMinLevel,
+        strictMinLevel: confidenceStrictMinLevel,
+        maxItems:
+          Number.isFinite(confidenceMaxItemsValue) && confidenceMaxItemsValue > 0
+            ? Math.floor(confidenceMaxItemsValue)
+            : 10,
+      });
+      const nextSnapshot = createLegacyConfidenceSnapshot(nextPreview);
+      setConfidenceDrift(
+        previousConfidenceSnapshot
+          ? computeLegacyConfidenceDrift(previousConfidenceSnapshot, nextSnapshot)
+          : null,
+      );
+      setPreviousConfidenceSnapshot(nextSnapshot);
       const summary = resp.data?.report?.summary;
       if (summary) {
         setReportSummary({
@@ -885,6 +935,16 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                     traversalMissingIncludesCount={traversalMissingIncludes.length}
                     traversalMissingLookupsCount={traversalMissingLookups.length}
                     traversalCountText={traversalCountText}
+                  />
+                  <LegacyConfidenceWorkflowPanel
+                    preview={confidencePreview}
+                    minLevel={confidenceMinLevel}
+                    strictMinLevel={confidenceStrictMinLevel}
+                    maxItems={confidenceMaxItems}
+                    onMinLevelChange={setConfidenceMinLevel}
+                    onStrictMinLevelChange={setConfidenceStrictMinLevel}
+                    onMaxItemsChange={setConfidenceMaxItems}
+                    drift={confidenceDrift}
                   />
                   {hasTraversal && (
                     <LegacyTraversalDiagnosticsPanel
