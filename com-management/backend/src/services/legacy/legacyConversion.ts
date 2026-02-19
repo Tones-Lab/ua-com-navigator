@@ -1441,25 +1441,46 @@ const buildAnalysisIndex = (analyses: LegacyFileAnalysis[]) => {
   return byFile;
 };
 
+type ResolvedVariableMapping = {
+  kind: 'path' | 'literal';
+  value: string | number | boolean;
+  note?: string;
+};
+
 const resolveVariableMapping = (
   proposal: LegacyOverrideProposal,
   variableName: string,
   analysisIndex: Map<string, LegacyFileAnalysis>,
-) => {
+): ResolvedVariableMapping | null => {
   const analysis = analysisIndex.get(proposal.sourceFile);
-  if (!analysis) {
-    return null;
+  if (analysis) {
+    const byFunction = analysis.variableMappingsByFunction || {};
+    const functionScoped = byFunction[proposal.ruleFunction] || {};
+    if (functionScoped[variableName]) {
+      return { kind: 'path', value: functionScoped[variableName] };
+    }
+
+    const globalScoped = byFunction.__global__ || {};
+    if (globalScoped[variableName]) {
+      return { kind: 'path', value: globalScoped[variableName] };
+    }
   }
 
-  const byFunction = analysis.variableMappingsByFunction || {};
-  const functionScoped = byFunction[proposal.ruleFunction] || {};
-  if (functionScoped[variableName]) {
-    return functionScoped[variableName];
+  const normalizedVar = variableName.toLowerCase();
+  if (normalizedVar === 'ip') {
+    return {
+      kind: 'path',
+      value: '$.source.ip',
+      note: 'Resolved legacy runtime alias $ip to source.ip from trap ingress payload.',
+    };
   }
 
-  const globalScoped = byFunction.__global__ || {};
-  if (globalScoped[variableName]) {
-    return globalScoped[variableName];
+  if (normalizedVar === 'generic') {
+    return {
+      kind: 'literal',
+      value: 6,
+      note: 'Mapped $generic to best-effort literal 6 (enterpriseSpecific heuristic for SNMPv2c trap flows).',
+    };
   }
 
   return null;
@@ -1525,18 +1546,39 @@ const buildProcessorStubForField = (
     const variableName = directVarRef[1];
     const resolvedSource = resolveVariableMapping(proposal, variableName, analysisIndex);
     if (resolvedSource) {
+      if (resolvedSource.kind === 'literal') {
+        return {
+          ...base,
+          status: 'direct',
+          recommendedProcessor: 'set',
+          template: {
+            set: {
+              source: resolvedSource.value,
+              targetField,
+            },
+          },
+          requiredMappings: [],
+          notes: [
+            'Variable reference resolved via built-in heuristic alias mapping and converted to set processor.',
+            ...(resolvedSource.note ? [resolvedSource.note] : []),
+          ],
+        };
+      }
       return {
         ...base,
         status: 'direct',
         recommendedProcessor: 'copy',
         template: {
           copy: {
-            source: resolvedSource,
+            source: String(resolvedSource.value),
             targetField,
           },
         },
         requiredMappings: [],
-        notes: ['Variable reference resolved via lineage mapping and converted to copy processor.'],
+        notes: [
+          'Variable reference resolved via lineage/alias mapping and converted to copy processor.',
+          ...(resolvedSource.note ? [resolvedSource.note] : []),
+        ],
       };
     }
     return {
@@ -1572,10 +1614,15 @@ const buildProcessorStubForField = (
       if (varMatch) {
         const variableName = varMatch[1];
         const resolvedSource = resolveVariableMapping(proposal, variableName, analysisIndex);
-        formatParts.push('%s');
         if (resolvedSource) {
-          args.push(resolvedSource);
+          if (resolvedSource.kind === 'literal') {
+            formatParts.push(String(resolvedSource.value));
+          } else {
+            formatParts.push('%s');
+            args.push(String(resolvedSource.value));
+          }
         } else {
+          formatParts.push('%s');
           args.push(`<map:${variableName}>`);
           requiredMappings.add(variableName);
         }
@@ -1592,23 +1639,30 @@ const buildProcessorStubForField = (
       unresolvedParts.push(part);
     });
 
-    if (unresolvedParts.length === 0 && args.length > 0) {
+    if (unresolvedParts.length === 0 && formatParts.length > 0) {
+      const sourceValue = formatParts.join('');
       return {
         ...base,
         status: requiredMappings.size > 0 ? 'conditional' : 'direct',
         recommendedProcessor: 'set',
         template: {
-          set: {
-            source: formatParts.join(''),
-            args,
-            targetField,
-          },
+          set:
+            args.length > 0
+              ? {
+                  source: sourceValue,
+                  args,
+                  targetField,
+                }
+              : {
+                  source: sourceValue,
+                  targetField,
+                },
         },
         requiredMappings: Array.from(requiredMappings),
         notes:
           requiredMappings.size > 0
             ? ['String composition converted to set+args with variable mapping placeholders.']
-            : ['String composition converted to set+args.'],
+            : ['String composition converted to set processor.'],
       };
     }
   }

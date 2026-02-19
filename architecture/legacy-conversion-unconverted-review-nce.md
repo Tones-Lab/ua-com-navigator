@@ -85,6 +85,33 @@ This is a substantial reduction in unresolved conditional stubs versus the prior
 5. For extract-then-compose patterns (`$x =~ /.../; ... $x ...`), emit `regex` + `if` + `set` chain.
 6. Convert lookup-like `.pl` dictionaries into lookup COM files and emit `lookup` processor usage instead of raw variable strings.
 
+## Runtime evidence and known gaps
+
+From sampled `fcom-processor` logs during trap testing:
+
+- `source.ip` is present and should be treated as authoritative ingress IP.
+- `event.IPAddress` appears as a mapped event field (derived from runtime input).
+- `trap.variables[]` can be empty, which blocks semantic `$vX` mapping in that run.
+- `event.Node` may be DNS/host-style and not equal to raw source IP.
+
+Known unresolved mapping classes:
+
+1. `$ip` aliases
+- If not explicitly assigned in local rule function scope, they may come from runtime/base context.
+- Prefer runtime source mapping (`source.ip`) when available.
+
+2. `$vX` semantics without MIB
+- Conversion can map positional source paths, but semantic naming depends on MIB/varbind metadata.
+- User-assisted rerun with uploaded MIBs is recommended.
+
+3. `$generic` in legacy logic
+- Current logs do not reliably expose a direct generic trap value for these flows.
+- If legacy behavior depends on `$generic`, treat as conditional/manual unless runtime source is confirmed.
+
+4. `$specific`
+- Can be approximated by trap OID suffix in common enterprise-specific patterns.
+- Keep as best-effort heuristic and flag for validation.
+
 ## Example normalized output for the heartbeat case
 
 Legacy:

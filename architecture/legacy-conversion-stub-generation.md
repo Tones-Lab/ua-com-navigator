@@ -106,6 +106,43 @@ This is intended to support large-batch triage and prioritization.
 - Conditional/manual statuses are explicit to avoid false confidence.
 - Placeholder mappings (`<map:varName>`) are required to be resolved before production apply.
 
+## Runtime field mapping facts (from processor logs)
+
+The converter should prefer runtime source facts observed in `fcom-processor` logs:
+
+- `source.ip` is the authoritative inbound IP from the collector payload.
+- `$.event.IPAddress` is typically mapped/derived from runtime source input (often from `source.ip` or equivalent trap context).
+- `$.event.Node` may be host/DNS-formatted and should not be assumed to equal raw source IP.
+- `trap.variables[]` may be empty for some test traps; in that case, `$vX` lineage cannot be resolved from payload alone.
+
+Practical implication:
+
+- When resolving legacy `$ip`, prefer mapping to runtime source (`source.ip`) where available, and treat event-level IP fields as derived outputs unless explicitly guaranteed by rule logic.
+
+## `$vX`, OID, and MIB limitations
+
+- Legacy `$vX` references depend on trap varbind ordering and OID semantics.
+- Without MIB context (or equivalent varbind metadata), `$vX` to semantic-field mapping can be ambiguous.
+- If MIBs are missing, the pipeline should mark those mappings as conditional/manual and request user intervention.
+
+Recommended user workflow for unresolved `$vX` mappings:
+
+1. Upload MIBs to the app/tooling context.
+2. Re-run conversion (or re-run mapping-only step when available).
+3. Review updated stubs/lookups and accept/adjust remaining manual mappings.
+
+## `$specific` and `$generic` notes
+
+- `$specific` can often be approximated from trap OID suffix (last numeric arc) for enterprise-specific trap patterns.
+- This should be treated as a best-effort heuristic and documented as such.
+- `$generic` value is not reliably visible in current observed `fcom-processor` logs for SNMPv2c-style payloads.
+- If legacy logic depends on `$generic` (for example, linkDown/coldStart style branching), manual mapping/review may still be required unless runtime explicitly exposes that value.
+
+Current implementation note:
+
+- Stub generation now includes a best-effort alias heuristic that maps legacy `$generic` to literal `6` (enterpriseSpecific) when no explicit runtime generic value is discoverable.
+- This is intentionally marked as heuristic behavior and should be user-reviewed for rule sets that rely on SNMPv1 generic semantics.
+
 ## Next evolution (recommended)
 
 1. Variable mapping graph
