@@ -56,6 +56,7 @@ export type LegacyObject = {
   classificationHints: string[];
   traversal?: LegacyObjectTraversal;
   severityAssignments: Array<{ severity?: string; eventCategory?: string }>;
+  directFieldAssignments: Record<string, string>;
 };
 
 export type LegacyOverrideProposal = {
@@ -96,6 +97,35 @@ export type LegacyLookupStub = {
   template: Record<string, any>;
   notes: string[];
   documentationRefs: string[];
+};
+
+type LookupCatalogShape = 'scalar_map' | 'object_map' | 'unknown';
+
+type LookupCatalogEntry = {
+  tableName: string;
+  sourceFiles: string[];
+  shape: LookupCatalogShape;
+  scalarEntries: Record<string, string>;
+  objectEntries: Record<string, Record<string, string>>;
+  knownKeys: string[];
+  knownProperties: string[];
+  confidence: number;
+};
+
+type LookupKeyResolution =
+  | { kind: 'path'; value: string }
+  | { kind: 'literal'; value: string | number | boolean }
+  | { kind: 'unresolved'; token: string; reasonCode: string; requiredMapping?: string };
+
+type LookupUsageContext = 'assign' | 'concat' | 'conditional';
+
+type LookupAccessIr = {
+  table: string;
+  keyExpr: string;
+  property?: string;
+  targetField: string;
+  context: LookupUsageContext;
+  expression: string;
 };
 
 export type LegacyConversionStubs = {
@@ -311,6 +341,22 @@ const perlVarRegex = /^\$([A-Za-z_][A-Za-z0-9_]*)$/;
 const perlSigilRegex = /\$Event\s*->|\$[A-Za-z_][A-Za-z0-9_]*/;
 const concatRegex = /\s\.\s/;
 const lookupPairRegex = /['"]([^'"]+)['"]\s*=>\s*['"]([^'"]+)['"]/g;
+const eventAssignmentRegex = /\$Event\s*->\s*\{\s*['"]?([A-Za-z0-9_]+)['"]?\s*}\s*=\s*(.+?);/g;
+const hashDeclRegex = /(?:our|my)?\s*%([A-Za-z_][A-Za-z0-9_]*)\s*=\s*\(([^]*?)\);/g;
+const objectLookupEntryRegex = /['"]([^'"]+)['"]\s*=>\s*\{([^]*?)\}\s*,?/g;
+const scalarLookupEntryRegex = /['"]([^'"]+)['"]\s*=>\s*(?:['"]([^'"]*)['"]|(-?\d+)|\b(true|false)\b)/gi;
+const lookupDerefFullRegex = /^\$([A-Za-z_][A-Za-z0-9_]*)\s*\{\s*([^}]+?)\s*\}(?:\s*\{\s*([^}]+?)\s*\})?$/;
+const hashAssignmentRegex = /\$([A-Za-z_][A-Za-z0-9_]*)\s*\{\s*([^}]+?)\s*\}(?:\s*\{\s*([^}]+?)\s*\})?\s*=\s*(.+?)\s*;/g;
+const fillLookupCallRegex = /\bfill_lookup\s*\(([^)]*)\)\s*;/g;
+const quotedTokenRegex = /['"]([^'"]*)['"]/g;
+const lookupTableRowRegex = /\{\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]*)['"]\s*\}/g;
+
+const LOOKUP_REASON_CODES = {
+  TABLE_UNKNOWN: 'lookup_table_unknown',
+  KEY_UNRESOLVED: 'lookup_key_unresolved',
+  PROPERTY_UNKNOWN: 'lookup_property_unknown',
+  EXPRESSION_UNSUPPORTED: 'lookup_expression_unsupported',
+} as const;
 
 const normalizeList = (values: string[]) => Array.from(new Set(values)).filter(Boolean);
 
@@ -365,6 +411,506 @@ const extractLookupPairs = (content: string) => {
     match = lookupPairRegex.exec(content);
   }
   return Array.from(pairs.entries()).map(([key, value]) => ({ key, value }));
+};
+
+const extractDirectEventAssignments = (content: string) => {
+  const assignments: Record<string, string> = {};
+  eventAssignmentRegex.lastIndex = 0;
+  let match = eventAssignmentRegex.exec(content);
+  while (match) {
+    const field = String(match[1] || '').trim();
+    const expression = String(match[2] || '').trim();
+    if (field && expression) {
+      assignments[field] = expression;
+    }
+    match = eventAssignmentRegex.exec(content);
+  }
+  return assignments;
+};
+
+const parseScalarLookupValue = (
+  quoted: string | undefined,
+  numeric: string | undefined,
+  boolWord: string | undefined,
+) => {
+  if (quoted !== undefined) {
+    return quoted;
+  }
+  if (numeric !== undefined) {
+    return numeric;
+  }
+  if (boolWord !== undefined) {
+    return boolWord.toLowerCase();
+  }
+  return '';
+};
+
+const normalizeLookupToken = (token: string) => {
+  return stripOuterQuotes(String(token || '').trim());
+};
+
+type ParsedLookupDeclaration = {
+  tableName: string;
+  scalarEntries: Record<string, string>;
+  objectEntries: Record<string, Record<string, string>>;
+  knownProperties: string[];
+  observedDynamicAssignments: boolean;
+};
+
+const parseFillLookupCalls = (content: string) => {
+  const calls: Array<{ lookupFile: string; tableName: string; defaults: string[] }> = [];
+  fillLookupCallRegex.lastIndex = 0;
+  let match = fillLookupCallRegex.exec(content);
+  while (match) {
+    const args = String(match[1] || '');
+    const tokens: string[] = [];
+    quotedTokenRegex.lastIndex = 0;
+    let tokenMatch = quotedTokenRegex.exec(args);
+    while (tokenMatch) {
+      tokens.push(String(tokenMatch[1] || '').trim());
+      tokenMatch = quotedTokenRegex.exec(args);
+    }
+    if (tokens.length >= 2) {
+      calls.push({
+        lookupFile: tokens[0],
+        tableName: tokens[1],
+        defaults: tokens.slice(2),
+      });
+    }
+    match = fillLookupCallRegex.exec(content);
+  }
+  return calls;
+};
+
+const parseLookupFileDeclaration = (
+  lookupFilePath: string,
+  tableName: string,
+  defaults: string[] = [],
+): ParsedLookupDeclaration | null => {
+  let content = '';
+  try {
+    content = fs.readFileSync(lookupFilePath, 'utf8');
+  } catch {
+    return null;
+  }
+  if (!content) {
+    return null;
+  }
+
+  const scalarEntries: Record<string, string> = {};
+  const objectEntries: Record<string, Record<string, string>> = {};
+  const knownProperties = new Set<string>();
+
+  lookupTableRowRegex.lastIndex = 0;
+  let rowMatch = lookupTableRowRegex.exec(content);
+  while (rowMatch) {
+    const key = String(rowMatch[1] || '').trim();
+    const value = String(rowMatch[2] || '').trim();
+    if (key) {
+      scalarEntries[key] = value;
+    }
+    rowMatch = lookupTableRowRegex.exec(content);
+  }
+
+  const lines = content.split(/\r?\n/);
+  lines.forEach((rawLine) => {
+    const line = String(rawLine || '').trim();
+    if (!line || line.startsWith('#') || line.startsWith('table ') || line.startsWith('{') || line.startsWith('}') || line.startsWith('default')) {
+      return;
+    }
+    const tupleMatch = line.match(/^\{\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]*)['"]\s*\}\s*,?$/);
+    if (tupleMatch) {
+      const key = String(tupleMatch[1] || '').trim();
+      const value = String(tupleMatch[2] || '').trim();
+      if (key) {
+        scalarEntries[key] = value;
+      }
+      return;
+    }
+
+    const split = line.match(/^(\S+)\s+(.+)$/);
+    if (!split) {
+      return;
+    }
+    const key = String(split[1] || '').trim();
+    const rest = String(split[2] || '').trim();
+    if (!key || !rest) {
+      return;
+    }
+    const columns = rest.split(/\t+/).map((part) => part.trim()).filter(Boolean);
+    if (columns.length <= 1) {
+      scalarEntries[key] = columns[0] || rest;
+      return;
+    }
+    const row: Record<string, string> = {};
+    columns.forEach((column, index) => {
+      const property = `col${index + 1}`;
+      row[property] = column;
+      knownProperties.add(property);
+    });
+    objectEntries[key] = {
+      ...(objectEntries[key] || {}),
+      ...row,
+    };
+  });
+
+  if (Object.keys(scalarEntries).length === 0 && Object.keys(objectEntries).length === 0) {
+    return {
+      tableName,
+      scalarEntries: {},
+      objectEntries: {},
+      knownProperties: [],
+      observedDynamicAssignments: defaults.length > 0,
+    };
+  }
+
+  return {
+    tableName,
+    scalarEntries,
+    objectEntries,
+    knownProperties: Array.from(knownProperties),
+    observedDynamicAssignments: false,
+  };
+};
+
+const parseLookupTableDeclarations = (content: string) => {
+  const declarations: ParsedLookupDeclaration[] = [];
+
+  const dynamicByTable = new Map<
+    string,
+    {
+      scalarEntries: Record<string, string>;
+      objectEntries: Record<string, Record<string, string>>;
+      knownProperties: Set<string>;
+      observedDynamicAssignments: boolean;
+    }
+  >();
+
+  hashAssignmentRegex.lastIndex = 0;
+  let hashAssignmentMatch = hashAssignmentRegex.exec(content);
+  while (hashAssignmentMatch) {
+    const tableName = String(hashAssignmentMatch[1] || '').trim();
+    const keyExpr = String(hashAssignmentMatch[2] || '').trim();
+    const propertyExpr = String(hashAssignmentMatch[3] || '').trim();
+    const valueExpr = String(hashAssignmentMatch[4] || '').trim();
+
+    if (tableName) {
+      const entry = dynamicByTable.get(tableName) || {
+        scalarEntries: {},
+        objectEntries: {},
+        knownProperties: new Set<string>(),
+        observedDynamicAssignments: true,
+      };
+
+      const keyToken = normalizeLookupToken(keyExpr);
+      const keyIsLiteral =
+        /^-?\d+$/.test(keyToken) ||
+        /^(true|false)$/i.test(keyToken) ||
+        (keyExpr.startsWith('"') && keyExpr.endsWith('"')) ||
+        (keyExpr.startsWith("'") && keyExpr.endsWith("'"));
+      const propertyToken = propertyExpr ? normalizeLookupToken(propertyExpr) : '';
+      const propertyIsLiteral =
+        !propertyExpr ||
+        /^-?\d+$/.test(propertyToken) ||
+        /^(true|false)$/i.test(propertyToken) ||
+        (propertyExpr.startsWith('"') && propertyExpr.endsWith('"')) ||
+        (propertyExpr.startsWith("'") && propertyExpr.endsWith("'"));
+      const valueIsLiteral =
+        /^-?\d+$/.test(valueExpr) ||
+        /^(true|false)$/i.test(valueExpr) ||
+        (valueExpr.startsWith('"') && valueExpr.endsWith('"')) ||
+        (valueExpr.startsWith("'") && valueExpr.endsWith("'"));
+      const materializedValue = valueIsLiteral ? String(parseScalarLiteral(valueExpr)) : valueExpr;
+
+      if (propertyToken) {
+        entry.knownProperties.add(propertyToken);
+      }
+
+      if (keyIsLiteral && keyToken) {
+        if (propertyToken && propertyIsLiteral) {
+          entry.objectEntries[keyToken] = {
+            ...(entry.objectEntries[keyToken] || {}),
+            [propertyToken]: materializedValue,
+          };
+        } else if (!propertyToken) {
+          entry.scalarEntries[keyToken] = materializedValue;
+        }
+      }
+
+      dynamicByTable.set(tableName, entry);
+    }
+
+    hashAssignmentMatch = hashAssignmentRegex.exec(content);
+  }
+
+  hashDeclRegex.lastIndex = 0;
+  let declarationMatch = hashDeclRegex.exec(content);
+  while (declarationMatch) {
+    const tableName = String(declarationMatch[1] || '').trim();
+    const body = String(declarationMatch[2] || '');
+    if (!tableName || !body) {
+      declarationMatch = hashDeclRegex.exec(content);
+      continue;
+    }
+
+    const objectEntries: Record<string, Record<string, string>> = {};
+    let bodyWithoutObjects = body;
+    objectLookupEntryRegex.lastIndex = 0;
+    let objectMatch = objectLookupEntryRegex.exec(body);
+    while (objectMatch) {
+      const rowKey = String(objectMatch[1] || '').trim();
+      const rowBody = String(objectMatch[2] || '');
+      if (rowKey && rowBody) {
+        const row: Record<string, string> = {};
+        scalarLookupEntryRegex.lastIndex = 0;
+        let propertyMatch = scalarLookupEntryRegex.exec(rowBody);
+        while (propertyMatch) {
+          const property = normalizeLookupToken(propertyMatch[1]);
+          const value = parseScalarLookupValue(propertyMatch[2], propertyMatch[3], propertyMatch[4]);
+          if (property) {
+            row[property] = value;
+          }
+          propertyMatch = scalarLookupEntryRegex.exec(rowBody);
+        }
+        if (Object.keys(row).length > 0) {
+          objectEntries[rowKey] = row;
+        }
+      }
+      bodyWithoutObjects = bodyWithoutObjects.replace(objectMatch[0], '');
+      objectMatch = objectLookupEntryRegex.exec(body);
+    }
+
+    const scalarEntries: Record<string, string> = {};
+    scalarLookupEntryRegex.lastIndex = 0;
+    let scalarMatch = scalarLookupEntryRegex.exec(bodyWithoutObjects);
+    while (scalarMatch) {
+      const key = normalizeLookupToken(scalarMatch[1]);
+      const value = parseScalarLookupValue(scalarMatch[2], scalarMatch[3], scalarMatch[4]);
+      if (key) {
+        scalarEntries[key] = value;
+      }
+      scalarMatch = scalarLookupEntryRegex.exec(bodyWithoutObjects);
+    }
+
+    if (Object.keys(scalarEntries).length > 0 || Object.keys(objectEntries).length > 0) {
+      declarations.push({
+        tableName,
+        scalarEntries,
+        objectEntries,
+        knownProperties: [],
+        observedDynamicAssignments: false,
+      });
+    }
+    declarationMatch = hashDeclRegex.exec(content);
+  }
+
+  dynamicByTable.forEach((dynamicEntry, tableName) => {
+    const existing = declarations.find((declaration) => declaration.tableName === tableName);
+    if (existing) {
+      existing.scalarEntries = {
+        ...existing.scalarEntries,
+        ...dynamicEntry.scalarEntries,
+      };
+      Object.entries(dynamicEntry.objectEntries).forEach(([key, value]) => {
+        existing.objectEntries[key] = {
+          ...(existing.objectEntries[key] || {}),
+          ...value,
+        };
+      });
+      existing.knownProperties = Array.from(
+        new Set<string>([...(existing.knownProperties || []), ...Array.from(dynamicEntry.knownProperties)]),
+      );
+      existing.observedDynamicAssignments =
+        existing.observedDynamicAssignments || dynamicEntry.observedDynamicAssignments;
+      return;
+    }
+
+    declarations.push({
+      tableName,
+      scalarEntries: dynamicEntry.scalarEntries,
+      objectEntries: dynamicEntry.objectEntries,
+      knownProperties: Array.from(dynamicEntry.knownProperties),
+      observedDynamicAssignments: dynamicEntry.observedDynamicAssignments,
+    });
+  });
+
+  return declarations;
+};
+
+const collectLookupCatalogFiles = (analyses: LegacyFileAnalysis[], traversal: LegacyTraversalResult) => {
+  const fileSet = new Set<string>(analyses.map((analysis) => analysis.filePath));
+  traversal.entries.forEach((entry) => {
+    if (entry.filePath) {
+      fileSet.add(entry.filePath);
+    }
+  });
+  traversal.includeEntries.forEach((entry) => {
+    if (entry.resolvedPath) {
+      fileSet.add(entry.resolvedPath);
+    }
+  });
+  const roots = new Set<string>(traversal.entries.map((entry) => entry.root).filter(Boolean));
+  roots.forEach((root) => {
+    const baseLoadPath = path.join(root, 'base.load');
+    if (fs.existsSync(baseLoadPath)) {
+      fileSet.add(baseLoadPath);
+    }
+
+    const collectLoadFiles = (current: string) => {
+      let stat: fs.Stats;
+      try {
+        stat = fs.statSync(current);
+      } catch {
+        return;
+      }
+      if (stat.isDirectory()) {
+        let children: string[] = [];
+        try {
+          children = fs.readdirSync(current);
+        } catch {
+          children = [];
+        }
+        children.forEach((child) => collectLoadFiles(path.join(current, child)));
+        return;
+      }
+      if (stat.isFile() && current.toLowerCase().endsWith('.load')) {
+        fileSet.add(current);
+      }
+    };
+
+    collectLoadFiles(root);
+  });
+  return Array.from(fileSet);
+};
+
+const mergeLookupDeclaration = (
+  catalog: Map<string, LookupCatalogEntry>,
+  declaration: ParsedLookupDeclaration,
+  sourceFile: string,
+) => {
+  const existing = catalog.get(declaration.tableName);
+  const mergedScalar = {
+    ...(existing?.scalarEntries || {}),
+    ...declaration.scalarEntries,
+  };
+  const mergedObject = {
+    ...(existing?.objectEntries || {}),
+  } as Record<string, Record<string, string>>;
+  Object.entries(declaration.objectEntries).forEach(([key, value]) => {
+    mergedObject[key] = {
+      ...(mergedObject[key] || {}),
+      ...value,
+    };
+  });
+
+  const knownProperties = new Set<string>(existing?.knownProperties || []);
+  declaration.knownProperties.forEach((property) => knownProperties.add(property));
+  Object.values(mergedObject).forEach((row) => {
+    Object.keys(row).forEach((property) => knownProperties.add(property));
+  });
+
+  const knownKeys = new Set<string>(existing?.knownKeys || []);
+  Object.keys(mergedScalar).forEach((key) => knownKeys.add(key));
+  Object.keys(mergedObject).forEach((key) => knownKeys.add(key));
+
+  const sourceFiles = Array.from(new Set([...(existing?.sourceFiles || []), sourceFile]));
+  const shape: LookupCatalogShape =
+    Object.keys(mergedObject).length > 0
+      ? 'object_map'
+      : Object.keys(mergedScalar).length > 0
+        ? 'scalar_map'
+        : 'unknown';
+  const confidence = shape === 'unknown'
+    ? (declaration.observedDynamicAssignments ? 0.55 : 0.35)
+    : 0.9;
+
+  catalog.set(declaration.tableName, {
+    tableName: declaration.tableName,
+    sourceFiles,
+    shape,
+    scalarEntries: mergedScalar,
+    objectEntries: mergedObject,
+    knownKeys: Array.from(knownKeys).sort((left, right) => left.localeCompare(right)),
+    knownProperties: Array.from(knownProperties).sort((left, right) => left.localeCompare(right)),
+    confidence,
+  });
+};
+
+const buildLookupCatalog = (analyses: LegacyFileAnalysis[], traversal: LegacyTraversalResult) => {
+  const catalog = new Map<string, LookupCatalogEntry>();
+  const lookupCatalogFiles = collectLookupCatalogFiles(analyses, traversal);
+  lookupCatalogFiles.forEach((lookupFilePath) => {
+    let content = '';
+    try {
+      content = fs.readFileSync(lookupFilePath, 'utf8');
+    } catch {
+      content = '';
+    }
+    if (!content) {
+      return;
+    }
+    const declarations = parseLookupTableDeclarations(content);
+    declarations.forEach((declaration) => {
+      mergeLookupDeclaration(catalog, declaration, lookupFilePath);
+    });
+
+    if (path.extname(lookupFilePath).toLowerCase() === '.load') {
+      const fillLookupCalls = parseFillLookupCalls(content);
+      fillLookupCalls.forEach((call) => {
+        const resolvedLookupFile = path.resolve(path.dirname(lookupFilePath), call.lookupFile);
+        if (!fs.existsSync(resolvedLookupFile)) {
+          return;
+        }
+        const declaration = parseLookupFileDeclaration(resolvedLookupFile, call.tableName, call.defaults);
+        if (!declaration) {
+          return;
+        }
+        mergeLookupDeclaration(catalog, declaration, resolvedLookupFile);
+      });
+    }
+  });
+  return catalog;
+};
+
+const parseLookupAccessIr = (targetField: string, expression: string): LookupAccessIr | null => {
+  const trimmed = String(expression || '').trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const fullMatch = trimmed.match(lookupDerefFullRegex);
+  if (fullMatch) {
+    return {
+      table: fullMatch[1],
+      keyExpr: fullMatch[2],
+      property: fullMatch[3] ? normalizeLookupToken(fullMatch[3]) : undefined,
+      targetField,
+      context: 'assign',
+      expression: trimmed,
+    };
+  }
+
+  if (!concatRegex.test(trimmed)) {
+    return null;
+  }
+
+  const parts = splitConcatExpression(trimmed);
+  const lookupParts = parts
+    .map((part) => ({ part, match: part.trim().match(lookupDerefFullRegex) }))
+    .filter((entry) => entry.match) as Array<{ part: string; match: RegExpMatchArray }>;
+  if (lookupParts.length !== 1) {
+    return null;
+  }
+
+  const match = lookupParts[0].match;
+  return {
+    table: match[1],
+    keyExpr: match[2],
+    property: match[3] ? normalizeLookupToken(match[3]) : undefined,
+    targetField,
+    context: 'concat',
+    expression: trimmed,
+  };
 };
 
 const deriveLookupName = (filePath: string) => {
@@ -883,7 +1429,7 @@ const detectFileType = (filePath: string): 'rules' | 'pl' | 'other' => {
   if (lower.endsWith('.rules')) {
     return 'rules';
   }
-  if (lower.endsWith('.pl')) {
+  if (lower.endsWith('.pl') || lower.endsWith('.pm')) {
     return 'pl';
   }
   return 'other';
@@ -893,7 +1439,7 @@ type IncludeEntry = { name: string; path: string };
 type DispatchRule = { condition: string; functions: string[] };
 type RuleFileMeta = { path: string; declaredName?: string; rulesfileLabel?: string };
 
-const traversalExtensions = new Set(['.rules', '.pl']);
+const traversalExtensions = new Set(['.rules', '.pl', '.pm']);
 
 const isPathWithinRoot = (root: string, target: string) => {
   const relative = path.relative(root, target);
@@ -998,6 +1544,25 @@ const parseBaseLoad = (filePath: string): string[] => {
     }
   });
   return calls;
+};
+
+const parseBaseLoadIncludePaths = (filePath: string): string[] => {
+  if (!fs.existsSync(filePath)) {
+    return [];
+  }
+  const content = fs.readFileSync(filePath, 'utf8');
+  const includePaths = new Set<string>();
+  const loadPathRegex = /\b(?:do|require)\s+['"]([^'"]+)['"]\s*;?/g;
+  loadPathRegex.lastIndex = 0;
+  let match = loadPathRegex.exec(content);
+  while (match) {
+    const includePath = String(match[1] || '').trim();
+    if (includePath) {
+      includePaths.add(includePath);
+    }
+    match = loadPathRegex.exec(content);
+  }
+  return Array.from(includePaths);
 };
 
 const parseRuleMetadata = (filePath: string): RuleFileMeta => {
@@ -1121,11 +1686,17 @@ const discoverForDirectory = (root: string): LegacyTraversalResult => {
   const baseRulesPath = path.join(root, 'base.rules');
   const baseLoadPath = path.join(root, 'base.load');
   const includeEntries = parseBaseIncludes(baseIncludesPath);
+  const baseLoadIncludePaths = parseBaseLoadIncludePaths(baseLoadPath);
   const dispatchRules = parseDispatchRules(baseRulesPath);
   parseBaseLoad(baseLoadPath).forEach((call) => loadCalls.add(call));
   const legacyFiles = listLegacyFiles(root, false);
   const ruleFiles = legacyFiles.filter((filePath) => filePath.toLowerCase().endsWith('.rules'));
-  const ruleMetas = ruleFiles.map((filePath) => parseRuleMetadata(filePath));
+  const ruleMetas = [
+    ...ruleFiles.map((filePath) => parseRuleMetadata(filePath)),
+    ...legacyFiles
+      .filter((filePath) => !filePath.toLowerCase().endsWith('.rules'))
+      .map((filePath) => ({ path: filePath })),
+  ];
 
   const includeMatches = new Map<string, string>();
   includeEntries.forEach((entry) => {
@@ -1165,12 +1736,39 @@ const discoverForDirectory = (root: string): LegacyTraversalResult => {
     }
   });
 
+  baseLoadIncludePaths.forEach((includePath) => {
+    const resolved = resolveIncludePath(root, includePath);
+    if (resolved && traversalExtensions.has(path.extname(resolved).toLowerCase())) {
+      includeDetails.push({
+        name: path.basename(includePath, path.extname(includePath)),
+        path: includePath,
+        resolvedPath: resolved,
+        exists: true,
+      });
+      addEntry(resolved, 'include');
+      return;
+    }
+    includeDetails.push({
+      name: path.basename(includePath, path.extname(includePath)),
+      path: includePath,
+      resolvedPath: undefined,
+      exists: false,
+    });
+    missingIncludePaths.add(includePath);
+    const ext = path.extname(includePath).toLowerCase();
+    if (ext === '.pl' || ext === '.pm') {
+      missingLookupFiles.add(includePath);
+    }
+  });
+
   if (loadCalls.size > 0) {
     loadCalls.forEach((call) => {
       const resolved = includeMatches.get(call) || matchRuleByName(call, ruleMetas);
       if (!resolved) {
         missingLoadCalls.add(call);
+        return;
       }
+      addEntry(resolved, 'include', call);
     });
   }
 
@@ -1470,6 +2068,7 @@ const buildLegacyObjects = (analysis: LegacyFileAnalysis, classification: Legacy
     ).map((eventCategory) => ({ eventCategory }));
 
     const mergedAssignments: SeverityAssignment[] = [...blockSeverities, ...blockCategories];
+    const directFieldAssignments = extractDirectEventAssignments(block.text);
 
     if (blockOids.length === 0 && blockEventFields.length === 0) {
       return;
@@ -1489,6 +2088,7 @@ const buildLegacyObjects = (analysis: LegacyFileAnalysis, classification: Legacy
       performanceHints: analysis.performanceHints,
       classificationHints,
       severityAssignments: mergedAssignments,
+      directFieldAssignments,
     });
   });
   return objects;
@@ -1522,6 +2122,17 @@ const buildOverrideProposals = (objects: LegacyObject[]) => {
       if (subNodeValue) {
         fields.SubNode = subNodeValue;
       }
+
+      Object.entries(obj.directFieldAssignments || {}).forEach(([field, expression]) => {
+        if (!field || !expression) {
+          return;
+        }
+        if (fields[field] !== undefined) {
+          return;
+        }
+        fields[field] = expression;
+      });
+
       const objectName = obj.ruleFunction !== '__global__' ? obj.ruleFunction : `legacy_${obj.oids[0] || 'unknown'}`;
       return {
         objectName,
@@ -1839,6 +2450,239 @@ const resolveVariableMapping = (
   return null;
 };
 
+const resolveLookupKeyExpr = (
+  proposal: LegacyOverrideProposal,
+  keyExpr: string,
+  analysisIndex: Map<string, LegacyFileAnalysis>,
+): LookupKeyResolution => {
+  const normalized = String(keyExpr || '').trim();
+  if (!normalized) {
+    return {
+      kind: 'unresolved',
+      token: normalized,
+      reasonCode: LOOKUP_REASON_CODES.KEY_UNRESOLVED,
+    };
+  }
+
+  if ((normalized.startsWith('"') && normalized.endsWith('"')) || (normalized.startsWith("'") && normalized.endsWith("'"))) {
+    return { kind: 'literal', value: stripOuterQuotes(normalized) };
+  }
+  if (/^-?\d+$/.test(normalized)) {
+    return { kind: 'literal', value: Number(normalized) };
+  }
+  const eventMatch = normalized.match(eventRefRegex);
+  if (eventMatch) {
+    return { kind: 'path', value: `$.event.${eventMatch[1]}` };
+  }
+  const variableMatch = normalized.match(perlVarRegex);
+  if (variableMatch) {
+    const variableName = variableMatch[1];
+    const resolved = resolveVariableMapping(proposal, variableName, analysisIndex);
+    if (!resolved) {
+      return {
+        kind: 'unresolved',
+        token: normalized,
+        reasonCode: LOOKUP_REASON_CODES.KEY_UNRESOLVED,
+        requiredMapping: variableName,
+      };
+    }
+    if (resolved.kind === 'path') {
+      return { kind: 'path', value: String(resolved.value) };
+    }
+    return { kind: 'literal', value: resolved.value };
+  }
+  return {
+    kind: 'unresolved',
+    token: normalized,
+    reasonCode: LOOKUP_REASON_CODES.EXPRESSION_UNSUPPORTED,
+  };
+};
+
+const buildLookupDrivenStubForExpression = (
+  proposal: LegacyOverrideProposal,
+  field: string,
+  expression: string,
+  analysisIndex: Map<string, LegacyFileAnalysis>,
+  lookupCatalog: Map<string, LookupCatalogEntry>,
+): LegacyProcessorStub | null => {
+  const targetField = `$.event.${field}`;
+  const ir = parseLookupAccessIr(targetField, expression);
+  if (!ir) {
+    return null;
+  }
+
+  const catalogEntry = lookupCatalog.get(ir.table);
+  const keyResolution = resolveLookupKeyExpr(proposal, ir.keyExpr, analysisIndex);
+  const requiredMappings: string[] = [];
+  const reasonCodes: string[] = [];
+
+  if (!catalogEntry) {
+    reasonCodes.push(LOOKUP_REASON_CODES.TABLE_UNKNOWN);
+  }
+  if (keyResolution.kind === 'unresolved') {
+    reasonCodes.push(keyResolution.reasonCode);
+    if (keyResolution.requiredMapping) {
+      requiredMappings.push(keyResolution.requiredMapping);
+    }
+  }
+  if (
+    ir.property &&
+    catalogEntry &&
+    catalogEntry.knownProperties.length > 0 &&
+    !catalogEntry.knownProperties.includes(ir.property)
+  ) {
+    reasonCodes.push(LOOKUP_REASON_CODES.PROPERTY_UNKNOWN);
+  }
+
+  const lookupResultPath = `$.tmp.lookup.${ir.table}`;
+  const lookupStep: Record<string, any> = {
+    source: 'catalog',
+    properties: {
+      table: ir.table,
+      key:
+        keyResolution.kind === 'path'
+          ? { path: keyResolution.value }
+          : keyResolution.kind === 'literal'
+            ? { literal: keyResolution.value }
+            : { unresolved: keyResolution.token },
+      ...(ir.property ? { property: ir.property } : {}),
+      onMiss: 'unresolved',
+    },
+    targetField: lookupResultPath,
+  };
+
+  const status: LegacyStubStatus = reasonCodes.length > 0 ? 'conditional' : 'direct';
+  const statusNotes = reasonCodes.length > 0 ? reasonCodes : ['lookup_resolved'];
+
+  if (ir.context === 'assign') {
+    const copySource = ir.property ? `${lookupResultPath}.${ir.property}` : lookupResultPath;
+    return {
+      objectName: proposal.objectName,
+      sourceFile: proposal.sourceFile,
+      ruleFunction: proposal.ruleFunction,
+      targetField,
+      expression,
+      status,
+      recommendedProcessor: 'lookup',
+      template: {
+        lookup: lookupStep,
+        copy: {
+          source: copySource,
+          targetField,
+        },
+        fallback: {
+          mode: 'unresolved',
+        },
+      },
+      requiredMappings,
+      notes: [
+        ...statusNotes,
+        'Lookup dereference converted using lookup + copy processor chain.',
+      ],
+      documentationRefs: DOC_REFS,
+    };
+  }
+
+  if (ir.context === 'concat') {
+    const parts = splitConcatExpression(expression);
+    const formatParts: string[] = [];
+    const args: string[] = [];
+    const required = new Set<string>(requiredMappings);
+    const lookupPartMatcher = lookupDerefFullRegex;
+
+    for (const rawPart of parts) {
+      const part = String(rawPart || '').trim();
+      const partLookupMatch = part.match(lookupPartMatcher);
+      if (partLookupMatch) {
+        formatParts.push('%s');
+        args.push(ir.property ? `${lookupResultPath}.${ir.property}` : lookupResultPath);
+        continue;
+      }
+      const eventMatch = part.match(eventRefRegex);
+      if (eventMatch) {
+        formatParts.push('%s');
+        args.push(`$.event.${eventMatch[1]}`);
+        continue;
+      }
+      const variableMatch = part.match(perlVarRegex);
+      if (variableMatch) {
+        const resolved = resolveVariableMapping(proposal, variableMatch[1], analysisIndex);
+        if (resolved?.kind === 'path') {
+          formatParts.push('%s');
+          args.push(String(resolved.value));
+          continue;
+        }
+        if (resolved?.kind === 'literal') {
+          formatParts.push(String(resolved.value));
+          continue;
+        }
+        formatParts.push('%s');
+        args.push(`<map:${variableMatch[1]}>`);
+        required.add(variableMatch[1]);
+        continue;
+      }
+      if ((part.startsWith('"') && part.endsWith('"')) || (part.startsWith("'") && part.endsWith("'"))) {
+        formatParts.push(stripOuterQuotes(part));
+        continue;
+      }
+      return {
+        objectName: proposal.objectName,
+        sourceFile: proposal.sourceFile,
+        ruleFunction: proposal.ruleFunction,
+        targetField,
+        expression,
+        status: 'manual',
+        recommendedProcessor: 'manual',
+        template: undefined,
+        requiredMappings: Array.from(required),
+        notes: [LOOKUP_REASON_CODES.EXPRESSION_UNSUPPORTED, 'Lookup concat expression contains unsupported token(s).'],
+        documentationRefs: DOC_REFS,
+      };
+    }
+
+    const concatStatus: LegacyStubStatus = reasonCodes.length > 0 || required.size > 0 ? 'conditional' : 'direct';
+    return {
+      objectName: proposal.objectName,
+      sourceFile: proposal.sourceFile,
+      ruleFunction: proposal.ruleFunction,
+      targetField,
+      expression,
+      status: concatStatus,
+      recommendedProcessor: 'lookup',
+      template: {
+        lookup: lookupStep,
+        set: {
+          source: formatParts.join(''),
+          args,
+          targetField,
+        },
+        fallback: {
+          mode: 'unresolved',
+        },
+      },
+      requiredMappings: Array.from(required),
+      notes: [
+        ...(reasonCodes.length > 0 ? reasonCodes : ['lookup_resolved']),
+        'Lookup composition converted using lookup + set(args) processor chain.',
+      ],
+      documentationRefs: DOC_REFS,
+    };
+  }
+
+  return {
+    objectName: proposal.objectName,
+    sourceFile: proposal.sourceFile,
+    ruleFunction: proposal.ruleFunction,
+    targetField,
+    expression,
+    status: 'manual',
+    recommendedProcessor: 'manual',
+    requiredMappings,
+    notes: [LOOKUP_REASON_CODES.EXPRESSION_UNSUPPORTED, 'Lookup expression context is not supported.'],
+    documentationRefs: DOC_REFS,
+  };
+};
+
 const buildRegexDrivenStubForExpression = (
   proposal: LegacyOverrideProposal,
   field: string,
@@ -1978,6 +2822,7 @@ const buildProcessorStubForField = (
   field: string,
   expressionInput: string,
   analysisIndex: Map<string, LegacyFileAnalysis>,
+  lookupCatalog: Map<string, LookupCatalogEntry>,
 ): LegacyProcessorStub => {
   const expression = String(expressionInput || '').trim();
   const targetField = `$.event.${field}`;
@@ -2083,6 +2928,17 @@ const buildProcessorStubForField = (
     };
   }
 
+  const lookupDrivenStub = buildLookupDrivenStubForExpression(
+    proposal,
+    field,
+    expression,
+    analysisIndex,
+    lookupCatalog,
+  );
+  if (lookupDrivenStub) {
+    return lookupDrivenStub;
+  }
+
   const regexDrivenStub = buildRegexDrivenStubForExpression(
     proposal,
     field,
@@ -2146,12 +3002,19 @@ const buildProcessorStubForField = (
 const buildProcessorStubsWithAnalysis = (
   overrides: LegacyOverrideProposal[],
   analyses: LegacyFileAnalysis[],
+  lookupCatalog: Map<string, LookupCatalogEntry>,
 ) => {
   const stubs: LegacyProcessorStub[] = [];
   const analysisIndex = buildAnalysisIndex(analyses);
   overrides.forEach((proposal) => {
     Object.entries(proposal.fields || {}).forEach(([field, expression]) => {
-      const stub = buildProcessorStubForField(proposal, field, String(expression), analysisIndex);
+      const stub = buildProcessorStubForField(
+        proposal,
+        field,
+        String(expression),
+        analysisIndex,
+        lookupCatalog,
+      );
       stubs.push({
         ...stub,
         confidence: scoreProcessorStubConfidence(stub),
@@ -2161,32 +3024,38 @@ const buildProcessorStubsWithAnalysis = (
   return stubs;
 };
 
-const buildLookupStubs = (analyses: LegacyFileAnalysis[]): LegacyLookupStub[] => {
-  return analyses
-    .filter((analysis) => {
-      const base = path.basename(analysis.filePath).toLowerCase();
-      return analysis.fileType === 'pl' && base.includes('lookup');
-    })
-    .map((analysis) => {
-      const lookupName = deriveLookupName(analysis.filePath);
-      const lookupEntries = analysis.lookupPairs.slice(0, 500).reduce<Record<string, string>>((acc, entry) => {
-        acc[entry.key] = entry.value;
-        return acc;
-      }, {});
-      const hasPairs = analysis.lookupPairs.length > 0;
+const buildLookupStubs = (lookupCatalog: Map<string, LookupCatalogEntry>): LegacyLookupStub[] => {
+  return Array.from(lookupCatalog.values())
+    .sort((left, right) => left.tableName.localeCompare(right.tableName))
+    .map((entry) => {
+      const lookup: Record<string, any> = {};
+      Object.entries(entry.scalarEntries || {}).forEach(([key, value]) => {
+        lookup[key] = value;
+      });
+      Object.entries(entry.objectEntries || {}).forEach(([key, value]) => {
+        lookup[key] = {
+          ...(lookup[key] && typeof lookup[key] === 'object' ? lookup[key] : {}),
+          ...value,
+        };
+      });
+
+      const entryCount = Object.keys(lookup).length;
+      const hasEntries = entryCount > 0;
       return {
-        sourceFile: analysis.filePath,
-        lookupName,
-        status: hasPairs ? 'direct' : 'manual',
-        entryCount: analysis.lookupPairs.length,
+        sourceFile: entry.sourceFiles[0] || '',
+        lookupName: entry.tableName,
+        status: hasEntries ? 'direct' : 'manual',
+        entryCount,
         template: {
-          name: lookupName,
+          name: entry.tableName,
           _type: 'lookup',
-          lookup: lookupEntries,
+          lookup,
         },
-        notes: hasPairs
-          ? ['Generated lookup stub from key/value pairs detected in legacy .pl file.']
-          : ['No simple key/value pairs detected. Review file for custom runtime lookup logic.'],
+        notes: hasEntries
+          ? [
+              `Generated lookup stub from generic hash-table declarations (${entry.shape}, confidence=${entry.confidence.toFixed(2)}).`,
+            ]
+          : ['Lookup catalog entry discovered but contains no materialized entries.'],
         documentationRefs: DOC_REFS,
       };
     });
@@ -2195,9 +3064,10 @@ const buildLookupStubs = (analyses: LegacyFileAnalysis[]): LegacyLookupStub[] =>
 const buildConversionStubs = (
   overrides: LegacyOverrideProposal[],
   analyses: LegacyFileAnalysis[],
+  lookupCatalog: Map<string, LookupCatalogEntry>,
 ): LegacyConversionStubs => {
-  const processorStubs = buildProcessorStubsWithAnalysis(overrides, analyses);
-  const lookupStubs = buildLookupStubs(analyses);
+  const processorStubs = buildProcessorStubsWithAnalysis(overrides, analyses, lookupCatalog);
+  const lookupStubs = buildLookupStubs(lookupCatalog);
   const processorDirect = processorStubs.filter((entry) => entry.status === 'direct').length;
   const processorConditional = processorStubs.filter((entry) => entry.status === 'conditional').length;
   const processorManual = processorStubs.filter((entry) => entry.status === 'manual').length;
@@ -2321,7 +3191,8 @@ export const convertLegacyRules = (options: LegacyConversionOptions): LegacyConv
   });
   const objectsWithTraversal = attachTraversalContext(objects, traversal);
   const overrides = buildOverrideProposals(objectsWithTraversal);
-  const stubs = buildConversionStubs(overrides, analyses);
+  const lookupCatalog = buildLookupCatalog(analyses, traversal);
+  const stubs = buildConversionStubs(overrides, analyses, lookupCatalog);
   const summaries = buildSummaries(objectsWithTraversal);
   const bundle: LegacyOverrideBundle = {
     manifest: {

@@ -233,7 +233,7 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     }
   });
   const [reviewHintText, setReviewHintText] = useState(
-    'Preview runs a dry-run and jumps to Match diffs (FCOM + Only diffs) for review.',
+    'After analysis completes, start with the review queue. Use analyst mode for deeper diagnostics.',
   );
   const [llmReviewEnabled, setLlmReviewEnabled] = useState(false);
   const [confidenceMinLevel, setConfidenceMinLevel] = useState<LegacyConfidenceLevel>('medium');
@@ -413,8 +413,17 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     setSuggestedGeneratedOnly(false);
     setSuggestedConflictOnly(false);
     setSuggestedSearch('');
-    setReviewHintText('Preview runs a dry-run and jumps to Match diffs (FCOM + Only diffs) for review.');
+    setReviewHintText('After analysis completes, start with the review queue. Use analyst mode for deeper diagnostics.');
   }, [reportRunId]);
+
+  const focusReviewQueue = (behavior: ScrollBehavior = 'smooth') => {
+    setReviewStepCollapsed(false);
+    setProductionMode(true);
+    window.setTimeout(() => {
+      reviewPanelRef.current?.scrollIntoView({ behavior, block: 'start' });
+      reviewPanelRef.current?.focus({ preventScroll: true });
+    }, 100);
+  };
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -1658,9 +1667,12 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
     const loaded = await loadPipelineReportFromRun(resp.data.runOutputDir, resp.data.runName);
     setReviewHintText(
       loaded
-        ? `Pipeline run complete and loaded: ${resp.data.runName}`
+        ? `Pipeline run complete and loaded: ${resp.data.runName}. Review queue is ready.`
         : `Pipeline run complete: ${resp.data.runName}`,
     );
+    if (loaded) {
+      focusReviewQueue('smooth');
+    }
   };
 
   const downloadPipelineManifest = () => {
@@ -1726,7 +1738,35 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
       setReviewHintText('Could not load run output. Verify run name/output root and try again.');
       return;
     }
-    setReviewHintText(`Loaded review artifacts from ${runName}.`);
+    setReviewHintText(`Loaded review artifacts from ${runName}. Review queue is ready.`);
+    focusReviewQueue('smooth');
+  };
+
+  const switchToAllReviewItems = async () => {
+    if (!reportJson) {
+      return;
+    }
+    setReviewQueueFocusMode(false);
+    await buildReviewQueueForReport(
+      reportJson,
+      buildApplyPreviewFromResult(applyOverridesResult),
+      false,
+    );
+    setReviewHintText('Showing all generated review items (not only risky/intervention-only items).');
+  };
+
+  const openAnalystDiagnostics = () => {
+    setProductionMode(false);
+    setReviewStepCollapsed(false);
+    setSectionVisibility((prev) => ({
+      ...prev,
+      traversal: true,
+      matchDiffs: true,
+    }));
+    window.setTimeout(() => {
+      reviewPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      reviewPanelRef.current?.focus({ preventScroll: true });
+    }, 80);
   };
 
   return (
@@ -1846,14 +1886,18 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                     type="button"
                     className="legacy-action-button legacy-action-button-secondary"
                     onClick={loadPipelineReportIntoPreview}
-                    disabled={loadingPipelineReport}
+                    disabled={runningPipeline || loadingPipelineReport}
                     title={
                       pipelineRunResult?.runOutputDir
                         ? `Load ${pipelineRunResult.runName}`
                         : `Load ${pipelineRunName.trim() || 'legacy-run'}`
                     }
                   >
-                    {loadingPipelineReport ? 'Loading report…' : 'Load latest run into review'}
+                    {runningPipeline
+                      ? 'Analysis running…'
+                      : loadingPipelineReport
+                        ? 'Loading report…'
+                        : 'Load latest run into review'}
                   </button>
                 </div>
                 {(runningPipeline || loadingPipelineReport || analysisProgressPct > 0) && (
@@ -2006,10 +2050,13 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                 {hasReviewData && <span className="legacy-report-hint">Ready for review</span>}
                 <button
                   type="button"
-                  className="ghost-button"
-                  onClick={() => setProductionMode((prev) => !prev)}
+                  className="legacy-action-button legacy-action-button-primary"
+                  disabled={!hasReviewData}
+                  onClick={() => focusReviewQueue('smooth')}
                 >
-                  {productionMode ? 'Switch to analyst mode' : 'Switch to production mode'}
+                  {hasReviewData
+                    ? `Start risky-item review${reviewQueueResult ? ` (${pendingReviewCount} pending)` : ''}`
+                    : 'Run analysis to enable review'}
                 </button>
                 <button
                   type="button"
@@ -2025,6 +2072,24 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
             )}
             {reviewStepCollapsed && !hasReviewData && (
               <div className="legacy-report-muted">Run full analysis to populate review results.</div>
+            )}
+            <div className="legacy-report-muted">
+              Purpose: this queue prioritizes risky or intervention-needed conversion items for human decisions.
+            </div>
+            {hasReviewData && (
+              <details className="legacy-pipeline-details">
+                <summary>Advanced diagnostics view (optional)</summary>
+                <div className="legacy-report-hint">
+                  Diagnostics mode exposes traversal details, confidence calibration, and full match-diff exploration.
+                </div>
+                <button
+                  type="button"
+                  className="ghost-button"
+                  onClick={() => setProductionMode((prev) => !prev)}
+                >
+                  {productionMode ? 'Open diagnostics view' : 'Return to review flow'}
+                </button>
+              </details>
             )}
           </div>
 
@@ -2569,9 +2634,31 @@ export default function LegacyWorkspace({ hasEditPermission }: LegacyWorkspacePr
                         )}
                       </>
                     ) : (
-                      <div className="legacy-report-muted">
-                        No intervention items visible with current defaults. Queue builds after preview/apply data is
-                        ready.
+                      <div className="legacy-report-card">
+                        <div className="legacy-report-title">No risky items currently require action</div>
+                        <div className="legacy-report-muted">
+                          The queue is in risky/intervention-only mode. This run has
+                          {reviewQueueResult
+                            ? ` hidden high confidence: ${reviewQueueResult.summary.hiddenHighConfidence}, hidden non-intervention: ${reviewQueueResult.summary.hiddenByInterventionFilter}.`
+                            : ' no visible intervention items with current defaults.'}
+                        </div>
+                        <div className="legacy-filter-row">
+                          <button
+                            type="button"
+                            className="legacy-action-button legacy-action-button-primary"
+                            disabled={!reportJson}
+                            onClick={() => void switchToAllReviewItems()}
+                          >
+                            Review all generated definitions
+                          </button>
+                          <button
+                            type="button"
+                            className="ghost-button"
+                            onClick={openAnalystDiagnostics}
+                          >
+                            Open analyst diagnostics
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>

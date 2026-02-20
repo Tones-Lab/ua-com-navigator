@@ -167,6 +167,9 @@ export default function LegacyReportPreviewPanel({
         {reportError && <InlineMessage tone="error">{reportError}</InlineMessage>}
         {lastRunLabel && !reportError && <div className="legacy-report-banner">{lastRunLabel}</div>}
         {(reportText || reportJson) && (
+          productionMode && children
+        )}
+        {(reportText || reportJson) && (
           <LegacyReportCommandBar
             productionMode={productionMode}
             reportJson={reportJson}
@@ -245,7 +248,7 @@ export default function LegacyReportPreviewPanel({
             onSortModeChange={onSuggestedSortModeChange}
           />
         )}
-        {children}
+        {!productionMode && children}
         {reportText && sectionVisibility.rawReport && (
           <pre className="code-block legacy-report-raw">{reportText}</pre>
         )}
