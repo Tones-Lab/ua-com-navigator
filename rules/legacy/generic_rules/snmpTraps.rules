@@ -1,0 +1,103 @@
+my (%oid, %iid, %val);
+
+ $oid{ifIndex} = '1.3.6.1.2.1.2.2.1.1';
+ $oid{ifDescr} = '1.3.6.1.2.1.2.2.1.2';
+ $oid{ifAdminStatus} = '1.3.6.1.2.1.2.2.1.7';
+ $oid{ifOperStatus} = '1.3.6.1.2.1.2.2.1.8';
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ifAdminStatus}\E(\.|$)(.*)/) {
+   $iid{ifAdminStatus} = $2;
+   $val{ifAdminStatus} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ifDescr}\E(\.|$)(.*)/) {
+   $iid{ifDescr} = $2;
+   $val{ifDescr} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ifIndex}\E(\.|$)(.*)/) {
+   $iid{ifIndex} = $2;
+   $val{ifIndex} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ifOperStatus}\E(\.|$)(.*)/) {
+   $iid{ifOperStatus} = $2;
+   $val{ifOperStatus} = $v;
+  }
+ }
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # coldStart
+  # OBJECTS: 
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "Restart: configuration may have been altered";
+  $Event->{'AlarmGroup'} = "coldStart";
+#  $Event->{'SubAlarmGroup'} = "coldStart";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: coldStart alarm.";
+ }
+ elsif ($specific == 2) { # warmStart
+  # OBJECTS: 
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "Restart: configuration unaltered";
+  $Event->{'AlarmGroup'} = "warmStart";
+#  $Event->{'SubAlarmGroup'} = "warmStart";
+  $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: warmStart alarm.";
+ }
+ elsif ($specific == 3) { # linkDown
+  # OBJECTS: ifIndex ifAdminStatus ifOperStatus
+  $Event->{'AlarmType'}  = 2; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "linkDown: $val{ifDescr} [$val{ifIndex}]";
+  $Event->{'AlarmGroup'} = "linkUpDown";
+  $Event->{'SubAlarmGroup'} = "$val{ifIndex}";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: linkDown alarm: $val{ifIndex}";
+ }
+ elsif ($specific == 4) { # linkUp
+  # OBJECTS: ifIndex ifAdminStatus ifOperStatus
+  $Event->{'AlarmType'}  = 1; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "linkUp: $val{ifDescr} [$val{ifIndex}]";
+  $Event->{'AlarmGroup'} = "linkUpDown";
+  $Event->{'SubAlarmGroup'} = "$val{ifIndex}";
+  $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: linkUp alarm: $val{ifIndex}";
+ }
+ elsif ($specific == 5) { # authenticationFailure
+  # OBJECTS: 
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "received message that is not properly authenticated";
+  $Event->{'AlarmGroup'} = "authenticationFailure";
+#  $Event->{'SubAlarmGroup'} = "authenticationFailure";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: authenticationFailure alarm.";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

@@ -1,0 +1,103 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.6.122.2.8.1
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwL2tpTunnelindex}      = '1.3.6.1.4.1.2011.6.122.2.7.1';
+$oid{hwL2tpSessionindex}     = '1.3.6.1.4.1.2011.6.122.2.7.2';
+$oid{hwL2tpTunnelRemoteAddr} = '1.3.6.1.4.1.2011.6.122.2.7.3';
+$oid{hwL2tpTunnelUserName}   = '1.3.6.1.4.1.2011.6.122.2.7.4';
+$oid{hwL2tpTunnelStartTime}  = '1.3.6.1.4.1.2011.6.122.2.7.5';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwL2tpSessionindex}\E(\.|$)(.*)/ ) {
+        $iid{hwL2tpSessionindex} = $2;
+        $val{hwL2tpSessionindex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwL2tpTunnelRemoteAddr}\E(\.|$)(.*)/ ) {
+        $iid{hwL2tpTunnelRemoteAddr} = $2;
+        $val{hwL2tpTunnelRemoteAddr} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwL2tpTunnelStartTime}\E(\.|$)(.*)/ ) {
+        $iid{hwL2tpTunnelStartTime} = $2;
+        $val{hwL2tpTunnelStartTime} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwL2tpTunnelUserName}\E(\.|$)(.*)/ ) {
+        $iid{hwL2tpTunnelUserName} = $2;
+        $val{hwL2tpTunnelUserName} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwL2tpTunnelindex}\E(\.|$)(.*)/ ) {
+        $iid{hwL2tpTunnelindex} = $2;
+        $val{hwL2tpTunnelindex} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwL2tpSessionStart
+
+    # ============
+    # DESCRIPTION:
+    #  "This notification is generated when an L2tp 
+    #  Tunnel is created."
+    # ============
+
+    # OBJECTS: hwL2tpTunnelindex hwL2tpSessionindex hwL2tpTunnelRemoteAddr hwL2tpTunnelUserName hwL2tpTunnelStartTime
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwL2tpSessionStart";
+    $Event->{'AlarmGroup'}    = "hwL2tpSessionStart";
+    #$Event->{'SubAlarmGroup'} = "hwL2tpSessionStart";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwL2tpSessionStart alarm.";
+}
+elsif ( $specific == 2 ) {    # hwL2tpSessionStop
+
+    # ============
+    # DESCRIPTION:
+    #  "This notification is generated when an L2tp
+    #  Tunnel is deleted."
+    # ============
+
+    # OBJECTS: hwL2tpTunnelindex hwL2tpSessionindex hwL2tpTunnelRemoteAddr hwL2tpTunnelUserName hwL2tpTunnelStartTime
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwL2tpSessionStop";
+    $Event->{'AlarmGroup'}    = "hwL2tpSessionStop";
+    #$Event->{'SubAlarmGroup'} = "hwL2tpSessionStop";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwL2tpSessionStop alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

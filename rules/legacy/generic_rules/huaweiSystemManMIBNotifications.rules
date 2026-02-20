@@ -1,0 +1,240 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.5.25.19.2
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwSysLocalClock}            = '1.3.6.1.4.1.2011.5.25.19.1.1.1';
+$oid{hwSysReloadAction}          = '1.3.6.1.4.1.2011.5.25.19.1.3.2';
+$oid{hwSysReloadPatchFile}       = '1.3.6.1.4.1.2011.5.25.19.1.3.3.1.10';
+$oid{hwSysReloadCfgFile}         = '1.3.6.1.4.1.2011.5.25.19.1.3.3.1.3';
+$oid{hwSysReloadImage}           = '1.3.6.1.4.1.2011.5.25.19.1.3.3.1.4';
+$oid{hwSysReloadReason}          = '1.3.6.1.4.1.2011.5.25.19.1.3.3.1.5';
+$oid{hwSysReloadScheduleTime}    = '1.3.6.1.4.1.2011.5.25.19.1.3.3.1.6';
+$oid{hwSysReloadPafFile}         = '1.3.6.1.4.1.2011.5.25.19.1.3.3.1.8';
+$oid{hwSysReloadLicenseFile}     = '1.3.6.1.4.1.2011.5.25.19.1.3.3.1.9';
+$oid{hwSysSlaveSwitchChassisNum} = '1.3.6.1.4.1.2011.5.25.19.1.3.7.1.2';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysLocalClock}\E(\.|$)(.*)/ ) {
+        $iid{hwSysLocalClock} = $2;
+        $val{hwSysLocalClock} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysReloadAction}\E(\.|$)(.*)/ ) {
+        $iid{hwSysReloadAction} = $2;
+        $val{hwSysReloadAction} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysReloadCfgFile}\E(\.|$)(.*)/ ) {
+        $iid{hwSysReloadCfgFile} = $2;
+        $val{hwSysReloadCfgFile} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysReloadImage}\E(\.|$)(.*)/ ) {
+        $iid{hwSysReloadImage} = $2;
+        $val{hwSysReloadImage} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysReloadLicenseFile}\E(\.|$)(.*)/ ) {
+        $iid{hwSysReloadLicenseFile} = $2;
+        $val{hwSysReloadLicenseFile} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysReloadPafFile}\E(\.|$)(.*)/ ) {
+        $iid{hwSysReloadPafFile} = $2;
+        $val{hwSysReloadPafFile} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysReloadPatchFile}\E(\.|$)(.*)/ ) {
+        $iid{hwSysReloadPatchFile} = $2;
+        $val{hwSysReloadPatchFile} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysReloadReason}\E(\.|$)(.*)/ ) {
+        $iid{hwSysReloadReason} = $2;
+        $val{hwSysReloadReason} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysReloadScheduleTime}\E(\.|$)(.*)/ ) {
+        $iid{hwSysReloadScheduleTime} = $2;
+        $val{hwSysReloadScheduleTime} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSysSlaveSwitchChassisNum}\E(\.|$)(.*)/ ) {
+        $iid{hwSysSlaveSwitchChassisNum} = $2;
+        $val{hwSysSlaveSwitchChassisNum} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwSysClockChangedNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "A clock changed notification is generated when the current
+    #  			local date and time for the system has been manually changed.
+    #  			The value of csyClockDateAndTime reflects new date and time."
+    # ============
+
+    # OBJECTS: hwSysLocalClock
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwSysClockChangedNotification";
+    $Event->{'AlarmGroup'}    = "hwSysClockChangedNotification";
+    #$Event->{'SubAlarmGroup'} = "hwSysClockChangedNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwSysClockChangedNotification alarm.";
+}
+elsif ( $specific == 2 ) {    # hwSysReloadNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "A reload action will happen when the value of hwSysReloadAction 
+    #  			is modified.If hwSysReloadAction is reloadAtOnce, This notification
+    #  			MUST be send at once before system's reload."
+    # ============
+
+    # OBJECTS: hwSysReloadImage hwSysReloadCfgFile hwSysReloadPafFile hwSysReloadLicenseFile hwSysReloadPatchFile hwSysReloadReason hwSysReloadScheduleTime hwSysReloadAction
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwSysReloadNotification";
+    $Event->{'AlarmGroup'}    = "hwSysReloadNotification";
+    #$Event->{'SubAlarmGroup'} = "hwSysReloadNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwSysReloadNotification alarm.";
+}
+elsif ( $specific == 3 ) {    # hwSysMasterHDError
+
+    # ============
+    # DESCRIPTION:
+    #  "When the hard disk on master board can't be read and written because
+    #  			of some error, the hard disk on master board will be unregistered and 
+    #  			the notification is sent.
+    #  			"
+    # ============
+
+    # OBJECTS: 
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwSysMasterHDError";
+    $Event->{'AlarmGroup'}    = "hwSysMasterHDError";
+    #$Event->{'SubAlarmGroup'} = "hwSysMasterHDError";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwSysMasterHDError alarm.";
+}
+elsif ( $specific == 4 ) {    # hwSysSlaveHDError
+
+    # ============
+    # DESCRIPTION:
+    #  "When the hard disk on slave board can't be read and written because
+    #  			of some error, the hard disk on slave board will be unregistered and 
+    #  			the notification is sent.
+    #  			"
+    # ============
+
+    # OBJECTS: 
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwSysSlaveHDError";
+    $Event->{'AlarmGroup'}    = "hwSysSlaveHDError";
+    #$Event->{'SubAlarmGroup'} = "hwSysSlaveHDError";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwSysSlaveHDError alarm.";
+}
+elsif ( $specific == 6 ) {    # hwSysMasterCfcardError
+
+    # ============
+    # DESCRIPTION:
+    #  "When the cfcard on master board can't be read and written because
+    #  			of some error, the Cfcard on master board will be unregistered and 
+    #  			the notification is sent.
+    #  			"
+    # ============
+
+    # OBJECTS: 
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwSysMasterCfcardError";
+    $Event->{'AlarmGroup'}    = "hwSysMasterCfcardError";
+    #$Event->{'SubAlarmGroup'} = "hwSysMasterCfcardError";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwSysMasterCfcardError alarm.";
+}
+elsif ( $specific == 7 ) {    # hwSysSlaveCfcardError
+
+    # ============
+    # DESCRIPTION:
+    #  "When the cfcard on slave board can't be read and written because
+    #  			of some error, the Cfcard on slave board will be unregistered and 
+    #  			the notification is sent.
+    #  			"
+    # ============
+
+    # OBJECTS: 
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwSysSlaveCfcardError";
+    $Event->{'AlarmGroup'}    = "hwSysSlaveCfcardError";
+    #$Event->{'SubAlarmGroup'} = "hwSysSlaveCfcardError";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwSysSlaveCfcardError alarm.";
+}
+elsif ( $specific == 8 ) {    # hwSysSlaveSwitchSuccessNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "When slaveswitch action happened, This notification must be send 
+    #  				after slaveswitch action complete to notify success to net manager."
+    # ============
+
+    # OBJECTS: hwSysSlaveSwitchChassisNum
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwSysSlaveSwitchSuccessNotification";
+    $Event->{'AlarmGroup'}    = "hwSysSlaveSwitchSuccessNotification";
+    #$Event->{'SubAlarmGroup'} = "hwSysSlaveSwitchSuccessNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwSysSlaveSwitchSuccessNotification alarm.";
+}
+elsif ( $specific == 9 ) {    # hwSysSlaveSwitchFailNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "When slaveswitch action happened, This notification must be send 
+    #  				after slaveswitch action complete to notify fail to net manager."
+    # ============
+
+    # OBJECTS: hwSysSlaveSwitchChassisNum
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwSysSlaveSwitchFailNotification";
+    $Event->{'AlarmGroup'}    = "hwSysSlaveSwitchFailNotification";
+    #$Event->{'SubAlarmGroup'} = "hwSysSlaveSwitchFailNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwSysSlaveSwitchFailNotification alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

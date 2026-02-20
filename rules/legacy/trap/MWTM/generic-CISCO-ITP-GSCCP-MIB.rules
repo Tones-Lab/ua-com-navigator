@@ -1,0 +1,217 @@
+###############################################################################
+# Converted from generic-CISCO-ITP-GSCCP-MIB
+###############################################################################
+
+our ($Log, $Event, $generic, $specific, $enterprise, @value, @OID);
+our ($OS_Severity, $OS_Type, $OS_ExpireTime, $OS_EventId);
+our ($DEFAULT_Severity, $DEFAULT_Type, $DEFAULT_ExpireTime);
+
+my ( $cgsccpGttMapPc, $cgsccpGttMapSsn, $cgsccpInstErrorIndicator,
+$cgspInstNetwork,
+);
+
+my ($AKey, $SEV_KEY);
+
+$Event->{Agent} = "CISCO MWTM";
+
+if (0) { # Dummy
+} elsif ($specific == "3") { ### - ciscoGsccpGttErrors
+    #######################
+    #
+    # any global title errors.
+    #
+    # $value[1] = cgsccpInstErrorIndicator
+    #
+    #      specified by the cgsccpGttErrorPeriod object.
+    #
+    # $value[2] = cgsccpGttErrorsSelectorNotFound
+    #
+    #      object.
+    #
+    # $value[3] = cgsccpGttErrorsIncorrectFormat
+    #
+    #      global title translation.  This counter is derived
+    #              from cgsccpInstInvalidGttFormat object.
+    #
+    # $value[4] = cgsccpGttErrorsGtaNotFound
+    #
+    #      not found. This counter is derived from
+    #              cgsccpGttQ752T7E2 object.
+    #
+    # $value[5] = cgsccpGttErrorsHopViolation
+    #
+    #      derived from cgsccpInstQ752T7E13 object.
+    #
+    # $value[6] = cgsccpGttErrorsMapNotFound
+    #
+    #      from cgsccpInstMapNotFound object.
+    #
+    # $value[7] = cgsccpGttErrorsUnequipedSS
+    #
+    #      unequipped subsystem (SS). This counter is derived
+    #              from cgsccpInstQ752T7E7 object.
+    #
+    # $value[8] = cgsccpGttErrorsSccpUnavailable
+    #
+    #      counter is derived from cgsccpGttMapSccpUnavail
+    #              object.
+    #
+    # $value[9] = cgsccpGttErrorsDpcUnavailable
+    #
+    #      This counter is derived from cgsccpGttMapQ752T7E3Un
+    #              object.
+    #
+    # $value[10] = cgsccpGttErrorsSsUnavailable
+    #
+    #      counter is derived from cgsccpGttMapQ752T7E5 object.
+    #
+    # $value[11] = cgsccpGttErrorsDpcCongested
+    #
+    #      counter is derived from cgsccpGttMapQ752T7E4 object.
+    #
+    # $value[12] = cgsccpGttErrorsSsCongested
+    #
+    #      is derived from cgsccpGttMapQ752T7E6 object.
+    #
+    # $value[13] = cgsccpGttErrorsRouteFailure
+    #
+    #      derived from cgsccpGttMapQ752T7E3Fail object.
+    #
+    # $value[14] = cgsccpGttErrorsSccpUnqualified
+    #
+    #      covered by other specific error types.  This counter
+    #              is derived from cgsccpInstQ752Unqualified object.
+    #
+    #######################
+
+    $cgsccpInstErrorIndicator = lookup($value[3],'generic-CISCO-ITP-GSCCP-MIB-cgsccpInstErrorIndicator');
+    #$cgsccpGttErrorsSelectorNotFound = $value[4];
+    #$cgsccpGttErrorsIncorrectFormat = $value[5];
+    #$cgsccpGttErrorsGtaNotFound = $value[6];
+    #$cgsccpGttErrorsHopViolation = $value[7];
+    #$cgsccpGttErrorsMapNotFound = $value[8];
+    #$cgsccpGttErrorsUnequipedSS = $value[9];
+    #$cgsccpGttErrorsSccpUnavailable = $value[10];
+    #$cgsccpGttErrorsDpcUnavailable = $value[11];
+    #$cgsccpGttErrorsSsUnavailable = $value[12];
+    #$cgsccpGttErrorsDpcCongested = $value[13];
+    #$cgsccpGttErrorsSsCongested = $value[14];
+    #$cgsccpGttErrorsRouteFailure = $value[15];
+    #$cgsccpGttErrorsSccpUnqualified = $value[16];
+
+    $cgspInstNetwork = extract($OID[1], '\.([0-9]+)$');
+
+    #$OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSCCP-MIB-ciscoGsccpGttErrors"
+    if ($value[3] eq "1") {
+        $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSCCP-MIB-ciscoGsccpGttErrors True";
+    } elsif ($value[3] eq "2") {
+        $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSCCP-MIB-ciscoGsccpGttErrors False";
+    }
+
+    $Event->{AlarmGroup} = "ciscoGsccpGttErrors";
+    $Event->{SubAlarmGroup} = $Event->{Node} ." ". $value[4] ." ". $value[5] ." ". $value[6] ." ". $value[7] ." ". $value[8] ." ". $value[9] ." ". $value[10] ." ". $value[11] ." ". $value[12] ." ". $value[13] ." ". $value[14] ." ". $value[15];
+    $AKey = $Event->{Node} . " " . $cgsccpInstErrorIndicator ." ". $value[4] ." ". $value[5] ." ". $value[6] ." ". $value[7] ." ". $value[8] ." ". $value[9] ." ". $value[10] ." ". $value[11] ." ". $value[12] ." ". $value[13] ." ". $value[14] ." ". $value[15] ." ". $value[16];
+    $Event->{Summary} = $Event->{Node} ." ciscoGsccpGttErrors: "."SelectorNotFound =". $value[4] ." IncorrectFormat =". $value[5] ." GtaNotFound =". $value[6] ." HopViolation =". $value[7] ." MapNotFound =". $value[8] ." UnequipedSS =". $value[9] ." SccpUnavailable =". $value[10] ." DpcUnavailable =". $value[11] ." SsUnavailable =". $value[12] ." DpcCongested =". $value[13] ." SsCongested =". $value[14] ." RouteFailure =". $value[15] ." SccpUnqualified =". $value[16];
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $AKey . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "2") { ### - ciscoGsccpGttLoadTable
+    #######################
+    #
+    # This notification is generated whenever a load
+    # operation is started or completes.
+    #
+    # $value[1] = cgsccpInstGttConfigStatus
+    #
+    #      The status of the current load or status from
+    #              the prior load operation.
+    #
+    # $value[2] = cgsccpInstLastURL
+    #
+    #      The URL used to load GTT tables.
+    #
+    #######################
+
+    #$cgsccpInstGttConfigStatus = $value[1];
+    #$cgsccpInstLastURL = $value[2];
+
+    $cgspInstNetwork = extract($OID[1], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSCCP-MIB-ciscoGsccpGttLoadTable";
+
+    $Event->{AlarmGroup} = "ciscoGsccpGttLoadTable";
+    $Event->{SubAlarmGroup} = "cgsccpInstTableEntry." . $cgspInstNetwork;
+    $Event->{Summary} = "ciscoGsccpGttLoadTable: This notification is generated whenever a load operation is started or completes.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "1") { ### - ciscoGsccpGttMapStateChange
+    #######################
+    #
+    # The value of cgsccpGttMapSsStatus indicates
+    # the new state for the subsystem.
+    #
+    # $value[1] = cgsccpGttMapDisplayPC
+    #
+    #      The MAP point code in display format.
+    #
+    # $value[2] = cgsccpGttMapDisplaySS
+    #
+    #      The MAP subsystem number in display format.
+    #
+    # $value[3] = cgsccpGttMapSsStatus
+    #
+    #      The GTT MAP subsystem status.
+    #
+    #######################
+
+    #$cgsccpGttMapDisplayPC = $value[1];
+    #$cgsccpGttMapDisplaySS = $value[2];
+    #$cgsccpGttMapSsStatus = lookup($value[3],'generic-CISCO-ITP-GSCCP-MIB-cgsccpGttMapSsStatus');
+
+    $cgspInstNetwork = extract($OID[1], '\.([0-9]+)\.[0-9]+\.[0-9]+$');
+    $cgsccpGttMapPc = extract($OID[1], '\.[0-9]+\.([0-9]+)\.[0-9]+$');
+    $cgsccpGttMapSsn = extract($OID[1], '\.[0-9]+\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSCCP-MIB-ciscoGsccpGttMapStateChange";
+
+    $Event->{AlarmGroup} = "ciscoGsccpGttMapStateChange";
+    $Event->{SubAlarmGroup} = "cgsccpGttMapTableEntry." . $cgspInstNetwork . "." . $cgsccpGttMapPc . "." . $cgsccpGttMapSsn;
+    $Event->{Summary} = "ciscoGsccpGttMapStateChange: The value of cgsccpGttMapSsStatus indicates the new state for the subsystem.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} else {
+    $Event->{Summary} = "Unknown Specific Trap Number (" . $specific . ") Received for Enterprise " . $enterprise;
+    $Event->{Severity} = 1;
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $enterprise . " " . $generic . " " . $specific;
+}
+
+##########
+# Handle Severity via Lookup.
+##########
+
+if (defined($SEV_KEY)) {
+    ($OS_Severity,$OS_Type,$OS_ExpireTime) = lookup($SEV_KEY, 'generic-CISCO-ITP-GSCCP-MIB_sev');
+} else {
+    ($OS_Severity,$OS_Type,$OS_ExpireTime) = lookup($OS_EventId, 'generic-CISCO-ITP-GSCCP-MIB_sev');
+}
+AssignSevRules();
+
+##########
+# End of Severity via Lookup.
+##########
+
+$Log->Message('DEBUG', "Leaving... generic-CISCO-ITP-GSCCP-MIB.rules");

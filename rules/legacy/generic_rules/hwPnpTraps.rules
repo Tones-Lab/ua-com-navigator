@@ -1,0 +1,86 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.5.25.31.5.2
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwHardwareCapaSequenceNo} = '1.3.6.1.4.1.2011.5.25.31.5.1.1';
+$oid{hwAlarmPnPSequenceNo}     = '1.3.6.1.4.1.2011.5.25.31.5.1.2';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwAlarmPnPSequenceNo}\E(\.|$)(.*)/ ) {
+        $iid{hwAlarmPnPSequenceNo} = $2;
+        $val{hwAlarmPnPSequenceNo} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwHardwareCapaSequenceNo}\E(\.|$)(.*)/ ) {
+        $iid{hwHardwareCapaSequenceNo} = $2;
+        $val{hwHardwareCapaSequenceNo} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwHardwareCapaChangeNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "This object indicates the change of the 'hardware capability file'. An alarm is generated if the sequence number of the 'hardware capability file' in the current startup file is different from that in the last startup file."
+    # ============
+
+    # OBJECTS: hwHardwareCapaSequenceNo
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwHardwareCapaChangeNotification";
+    $Event->{'AlarmGroup'}    = "hwHardwareCapaChangeNotification";
+    #$Event->{'SubAlarmGroup'} = "hwHardwareCapaChangeNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwHardwareCapaChangeNotification alarm.";
+}
+elsif ( $specific == 2 ) {    # hwAlarmPnPChangeNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "This object indicates the change of the 'alarm capability file'. An alarm is generated if the sequence number of the 'alarm capability file' in the current startup file is different from that in the last startup file."
+    # ============
+
+    # OBJECTS: hwAlarmPnPSequenceNo
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwAlarmPnPChangeNotification";
+    $Event->{'AlarmGroup'}    = "hwAlarmPnPChangeNotification";
+    #$Event->{'SubAlarmGroup'} = "hwAlarmPnPChangeNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwAlarmPnPChangeNotification alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

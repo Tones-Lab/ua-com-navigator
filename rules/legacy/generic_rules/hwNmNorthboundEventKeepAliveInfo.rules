@@ -1,0 +1,72 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.2.15.1.7.2.0
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwNmNorthboundKeepAlive} = '1.3.6.1.4.1.2011.2.15.1.7.2.1';
+
+# The only trap I saw has a varbind of exactly 1.3.6.1.4.1.2011.2.15.1
+# The trap was sent every minute
+$oid{hwNmAgent} = '1.3.6.1.4.1.2011.2.15.1';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k eq "$oid{hwNmAgent}" ) {
+        $val{'hwNmAgent'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwNmNorthboundKeepAlive}\E(\.|$)(.*)/ ) {
+        $iid{hwNmNorthboundKeepAlive} = $2;
+        $val{hwNmNorthboundKeepAlive} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 2 ) {    # hwNmNorthboundEventKeepAlive
+
+    # ============
+    # DESCRIPTION:
+    #  "Notification for keep alive traps."
+    # ============
+
+    # OBJECTS: hwNmNorthboundKeepAlive
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwNmNorthboundEventKeepAlive $val{hwNmAgent}/$val{hwNmNorthboundKeepAlive}";
+    $Event->{'AlarmGroup'}    = "hwNmNorthboundEventKeepAlive";
+    #$Event->{'SubAlarmGroup'} = "hwNmNorthboundEventKeepAlive";
+    $Event->{'Severity'}      = 2;
+    $Event->{'AlarmKey'}      = "$ip: hwNmNorthboundEventKeepAlive $val{hwNmAgent}/$val{hwNmNorthboundKeepAlive}";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

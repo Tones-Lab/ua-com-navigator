@@ -1,0 +1,242 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.6.122.26.6
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwIPSecIfIndex}              = '1.3.6.1.4.1.2011.6.122.26.2.1.1';
+$oid{hwIPSecTunnelPolicyNum}      = '1.3.6.1.4.1.2011.6.122.26.2.1.2';
+$oid{hwIPSecTunnelSrcIP}          = '1.3.6.1.4.1.2011.6.122.26.2.1.21';
+$oid{hwIPSecTunnelLifeSize}       = '1.3.6.1.4.1.2011.6.122.26.2.1.25';
+$oid{hwIPSecTunnelLifeTime}       = '1.3.6.1.4.1.2011.6.122.26.2.1.26';
+$oid{hwIPSecTunnelIndex}          = '1.3.6.1.4.1.2011.6.122.26.2.1.3';
+$oid{hwIPSecTunnelRuleId}         = '1.3.6.1.4.1.2011.6.122.26.2.1.4';
+$oid{hwIPSecTunnelDstIP}          = '1.3.6.1.4.1.2011.6.122.26.2.1.5';
+$oid{hwIPSecTunnelInsideIP}       = '1.3.6.1.4.1.2011.6.122.26.2.1.6';
+$oid{hwIPSecTunnelRemotePort}     = '1.3.6.1.4.1.2011.6.122.26.2.1.7';
+$oid{hwIPSecTunnelCpuID}          = '1.3.6.1.4.1.2011.6.122.26.2.1.8';
+$oid{hwIPSecTrapTunnelPolicyNum}  = '1.3.6.1.4.1.2011.6.122.26.5.1';
+$oid{hwIPSecTrapIfIndex}          = '1.3.6.1.4.1.2011.6.122.26.5.2';
+$oid{hwIPSecTrapTunnelPolicyName} = '1.3.6.1.4.1.2011.6.122.26.5.3';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecIfIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecIfIndex} = $2;
+        $val{hwIPSecIfIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTrapIfIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTrapIfIndex} = $2;
+        $val{hwIPSecTrapIfIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTrapTunnelPolicyName}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTrapTunnelPolicyName} = $2;
+        $val{hwIPSecTrapTunnelPolicyName} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTrapTunnelPolicyNum}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTrapTunnelPolicyNum} = $2;
+        $val{hwIPSecTrapTunnelPolicyNum} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelCpuID}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelCpuID} = $2;
+        $val{hwIPSecTunnelCpuID} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelDstIP}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelDstIP} = $2;
+        $val{hwIPSecTunnelDstIP} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelIndex} = $2;
+        $val{hwIPSecTunnelIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelInsideIP}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelInsideIP} = $2;
+        $val{hwIPSecTunnelInsideIP} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelLifeSize}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelLifeSize} = $2;
+        $val{hwIPSecTunnelLifeSize} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelLifeTime}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelLifeTime} = $2;
+        $val{hwIPSecTunnelLifeTime} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelPolicyNum}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelPolicyNum} = $2;
+        $val{hwIPSecTunnelPolicyNum} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelRemotePort}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelRemotePort} = $2;
+        $val{hwIPSecTunnelRemotePort} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelRuleId}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelRuleId} = $2;
+        $val{hwIPSecTunnelRuleId} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIPSecTunnelSrcIP}\E(\.|$)(.*)/ ) {
+        $iid{hwIPSecTunnelSrcIP} = $2;
+        $val{hwIPSecTunnelSrcIP} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwIPSecTunnelStart
+
+    # ============
+    # DESCRIPTION:
+    #  "Send the message when the IPSec tunnel is established."
+    # ============
+
+    # OBJECTS: hwIPSecIfIndex hwIPSecTunnelPolicyNum hwIPSecTunnelIndex hwIPSecTunnelRuleId hwIPSecTunnelDstIP hwIPSecTunnelInsideIP hwIPSecTunnelRemotePort hwIPSecTunnelCpuID hwIPSecTunnelSrcIP hwIPSecTunnelLifeSize hwIPSecTunnelLifeTime
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIPSecTunnelStart";
+    $Event->{'AlarmGroup'}    = "hwIPSecTunnelStart";
+    #$Event->{'SubAlarmGroup'} = "hwIPSecTunnelStart";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIPSecTunnelStart alarm.";
+}
+elsif ( $specific == 2 ) {    # hwIPSecTunnelStop
+
+    # ============
+    # DESCRIPTION:
+    #  "Send the message when the IPSec tunnel is deleted."
+    # ============
+
+    # OBJECTS: hwIPSecIfIndex hwIPSecTunnelPolicyNum hwIPSecTunnelIndex hwIPSecTunnelRuleId hwIPSecTunnelDstIP hwIPSecTunnelInsideIP hwIPSecTunnelRemotePort hwIPSecTunnelCpuID hwIPSecTunnelSrcIP
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIPSecTunnelStop";
+    $Event->{'AlarmGroup'}    = "hwIPSecTunnelStop";
+    #$Event->{'SubAlarmGroup'} = "hwIPSecTunnelStop";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIPSecTunnelStop alarm.";
+}
+elsif ( $specific == 3 ) {    # hwIPSecPolicyAdd
+
+    # ============
+    # DESCRIPTION:
+    #  "Send the message when an IPSec policy is added."
+    # ============
+
+    # OBJECTS: hwIPSecTrapTunnelPolicyNum hwIPSecTrapTunnelPolicyName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIPSecPolicyAdd";
+    $Event->{'AlarmGroup'}    = "hwIPSecPolicyAdd";
+    #$Event->{'SubAlarmGroup'} = "hwIPSecPolicyAdd";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIPSecPolicyAdd alarm.";
+}
+elsif ( $specific == 4 ) {    # hwIPSecPolicyDel
+
+    # ============
+    # DESCRIPTION:
+    #  "Send the message when an IPSec policy is deleted."
+    # ============
+
+    # OBJECTS: hwIPSecTrapTunnelPolicyNum hwIPSecTrapTunnelPolicyName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIPSecPolicyDel";
+    $Event->{'AlarmGroup'}    = "hwIPSecPolicyDel";
+    #$Event->{'SubAlarmGroup'} = "hwIPSecPolicyDel";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIPSecPolicyDel alarm.";
+}
+elsif ( $specific == 5 ) {    # hwIPSecPolicyAttach
+
+    # ============
+    # DESCRIPTION:
+    #  "Send the message when an IPSec policy is applied to an interface."
+    # ============
+
+    # OBJECTS: hwIPSecTrapIfIndex hwIPSecTrapTunnelPolicyName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIPSecPolicyAttach";
+    $Event->{'AlarmGroup'}    = "hwIPSecPolicyAttach";
+    #$Event->{'SubAlarmGroup'} = "hwIPSecPolicyAttach";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIPSecPolicyAttach alarm.";
+}
+elsif ( $specific == 6 ) {    # hwIPSecPolicyDetach
+
+    # ============
+    # DESCRIPTION:
+    #  "Send the message when an IPSec policy is cancelled on an interface."
+    # ============
+
+    # OBJECTS: hwIPSecTrapIfIndex hwIPSecTrapTunnelPolicyName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIPSecPolicyDetach";
+    $Event->{'AlarmGroup'}    = "hwIPSecPolicyDetach";
+    #$Event->{'SubAlarmGroup'} = "hwIPSecPolicyDetach";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIPSecPolicyDetach alarm.";
+}
+elsif ( $specific == 7 ) {    # hwIPSecIKEReset
+
+    # ============
+    # DESCRIPTION:
+    #  "Send the message when an IKE SA is reset ."
+    # ============
+
+    # OBJECTS: 
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIPSecIKEReset";
+    $Event->{'AlarmGroup'}    = "hwIPSecIKEReset";
+    #$Event->{'SubAlarmGroup'} = "hwIPSecIKEReset";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIPSecIKEReset alarm.";
+}
+elsif ( $specific == 8 ) {    # hwIPSecIPSecReset
+
+    # ============
+    # DESCRIPTION:
+    #  "Send the message when an IPSec SA is reset ."
+    # ============
+
+    # OBJECTS: 
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIPSecIPSecReset";
+    $Event->{'AlarmGroup'}    = "hwIPSecIPSecReset";
+    #$Event->{'SubAlarmGroup'} = "hwIPSecIPSecReset";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIPSecIPSecReset alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

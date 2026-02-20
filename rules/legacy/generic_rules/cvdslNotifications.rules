@@ -1,0 +1,103 @@
+my (%oid, %iid, %val);
+
+ $oid{cvdslCurrStatus} = '1.3.6.1.4.1.9.10.87.1.1.2.1.7';
+
+# cvdslCurrStatus -- This is intended to supplement ifOperStatus
+#  BITS {noDefect(0), lossOfFraming(1), lossOfSignal(2), lossOfPower(3), lossOfSignalQuality(4), lossOfLink(5), dataInitFailure(6), configInitFailure(7), protocolInitFailure(8), noPeerVtuPresent(9)}
+my %ccs = qw(0 noDefect 1 lossOfFraming 2 lossOfSignal 3 lossOfPower 4 lossOfSignalQuality 5 lossOfLink 6 dataInitFailure 7 configInitFailure 8 protocolInitFailure 9 noPeerVtuPresent);
+my $ccs;
+
+# that is expected to be an integer ("36") to be interpreted as bits (32 + 4 = bit5 + bit2 = lossOfLink + lossOfSignal)
+# most likely, it will be one of {0,1,2,4,8,16,32,64,128,256}
+# but if that's all that was allowed, they would have just used integer 0-9
+# (Any odd number apart from 1 is probably an error)
+
+# cvdslPhysEntry:
+#   INDEX         { ifIndex, cvdslPhysSide }
+# ifIndex: Integer32
+# cvdslPhysSide: INTEGER {vtuc(1), vtur(2)}
+
+my %cps = qw(1 vtuc 2 vtur);
+# phys-side, phys-side integer, ifIndex
+my ($cps, $cpsi, $ifIndex);
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cvdslCurrStatus}\E(\.|$)(.*)/) {
+   $iid{cvdslCurrStatus} = $2;
+   $val{cvdslCurrStatus} = $v;
+   ($ifIndex, $cpsi) = $iid{cvdslCurrStatus} =~ /(\d+)\.(\d+)$/;
+   $cps = $cps{$cpsi} || 'unknown';
+  }
+ }
+
+my @ccs;
+my $nv = $val{cvdslCurrStatus};
+# BITS: up to this many is expected
+my $vmax = 9;
+if ($nv >= 2<<$vmax) {
+    $Log->Message("WARN", "cvdslNotifications: cvdslCurrStatus=$val{cvdslCurrStatus}, but that's more than $vmax bits. Ignoring the extra.");
+}
+if ($nv) {
+ for (0..$vmax) {
+  my $i = 1<<$_;
+  # if BIT $i is set...
+  if ($nv & $i) {
+   # ...subtract that part, note the error, and test again if necessary
+   $nv &= ((1<<$vmax+1)-1-$i);
+   if (defined $ccs{$_}) {
+    push @ccs, $ccs{$_};
+   } else {
+    $Log->Message("WARN", "cvdslNotifications: cvdslCurrStatus=$val{cvdslCurrStatus}, which includes an unknown $i. Ignoring the unknown.");
+   }
+   last unless $nv;
+  }
+ }
+} else {
+ @ccs = $ccs{0};
+}
+$Log->Message("WARN", "cvdslNotifications: cvdslCurrStatus=$val{cvdslCurrStatus}, which includes an unknown $nv") if $nv;
+$ccs = "@ccs";
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # cvdslInitFailureNotification
+  # OBJECTS: cvdslCurrStatus
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cvdslInitFailureNotification: ifIndex $ifIndex, side $cps ($cpsi); status $ccs ($val{cvdslCurrStatus})";
+  $Event->{'AlarmGroup'} = "cvdslInitFailureNotification";
+#  $Event->{'SubAlarmGroup'} = "cvdslInitFailureNotification";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+# Need to change Severity and the like here based on $ccs
+# But first: make sure that $ccs is correct
+  $Event->{'AlarmKey'}   = "$ip: cvdslInitFailureNotification $ifIndex $cpsi";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

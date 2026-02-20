@@ -1,0 +1,34 @@
+###############################################################################
+#
+#    Eirteic FDA: this is converted from a file:
+#
+#    Copyright (C) 1994 - 2005 Micromuse Inc. and its Licensors
+#    All Rights Reserved
+#
+#    AssignSev.include.common.rules 1.0 2005/03/01 Robert Cowart
+#
+###############################################################################
+
+our ($OS_Severity, $OS_Type, $OS_ExpireTime);
+our ($DEFAULT_Severity, $DEFAULT_Type, $DEFAULT_ExpireTime);
+
+our ($Event, $Log, $discard_flag, );
+
+if (0) { # Dummy
+} elsif ($OS_Severity eq "d") {
+    $Log->Message('DEBUG', "AssignSev.rules) Discarding event.");
+    $discard_flag = 1;
+
+} elsif ($OS_Severity eq "Unknown" or $OS_Severity eq "") {
+    $Log->Message('DEBUG', "AssignSev.rules Setting Severity, Type, and ExpireTime to event's DEFAULT values.");
+    $Event->{Severity} = $DEFAULT_Severity;
+    $Event->{AlarmType} = $DEFAULT_Type;
+    $OS_ExpireTime = $DEFAULT_ExpireTime;
+
+} else {
+    $Log->Message('DEBUG', "AssignSev.rules Setting Severity, Type, and ExpireTime to values found via lookup.");
+    $Event->{Severity} = $OS_Severity;
+    $Event->{AlarmType} = $OS_Type;
+
+}
+

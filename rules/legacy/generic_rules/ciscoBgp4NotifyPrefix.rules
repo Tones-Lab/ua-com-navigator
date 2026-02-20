@@ -1,0 +1,228 @@
+my (%oid, %iid, %val);
+
+ $oid{bgpPeerLastError} = '1.3.6.1.2.1.15.3.1.14';
+ $oid{bgpPeerState} = '1.3.6.1.2.1.15.3.1.2';
+ $oid{cbgpPeerLastErrorTxt} = '1.3.6.1.4.1.9.9.187.1.2.1.1.7';
+ $oid{cbgpPeerPrevState} = '1.3.6.1.4.1.9.9.187.1.2.1.1.8';
+ $oid{cbgpPeerPrefixAdminLimit} = '1.3.6.1.4.1.9.9.187.1.2.4.1.3';
+ $oid{cbgpPeerPrefixThreshold} = '1.3.6.1.4.1.9.9.187.1.2.4.1.4';
+ $oid{cbgpPeerPrefixClearThreshold} = '1.3.6.1.4.1.9.9.187.1.2.4.1.5';
+ $oid{cbgpPeer2LastError} = '1.3.6.1.4.1.9.9.187.1.2.5.1.17';
+ $oid{cbgpPeer2LastErrorTxt} = '1.3.6.1.4.1.9.9.187.1.2.5.1.28';
+ $oid{cbgpPeer2PrevState} = '1.3.6.1.4.1.9.9.187.1.2.5.1.29';
+ $oid{cbgpPeer2State} = '1.3.6.1.4.1.9.9.187.1.2.5.1.3';
+ $oid{cbgpPeer2PrefixAdminLimit} = '1.3.6.1.4.1.9.9.187.1.2.8.1.3';
+ $oid{cbgpPeer2PrefixThreshold} = '1.3.6.1.4.1.9.9.187.1.2.8.1.4';
+ $oid{cbgpPeer2PrefixClearThreshold} = '1.3.6.1.4.1.9.9.187.1.2.8.1.5';
+
+# bgpPeerState
+#   Values: idle(1), connect(2), active(3), opensent(4), openconfirm(5), established(6)
+# cbgpPeer2State: same
+# cbgpPeerPrevState: same, but with an extra none(0)
+# cbgpPeer2PrevState: same, with extra none(0)
+my %bps = qw(0 none 1 idle 2 connect 3 active 4 opensent 5 openconfirm 6 established);
+my ($bps, $cp2s, $cpps, $cp2ps);
+my $peer;
+
+# bgpPeerLastError
+#  handle like in bgpTraps.rules: 2-octet, code.subcode (or 0)
+
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{bgpPeerLastError}\E(\.|$)(.*)/) {
+   $iid{bgpPeerLastError} = $2;
+   $val{bgpPeerLastError} = $v || 0;
+   if ($v) {
+    my @v = split (//, $v);
+    $val{bgpPeerLastError} = ord($v[0]) . ':' . ord($v[1]);
+   }
+  }
+  elsif ($k =~ /^\Q$oid{bgpPeerState}\E(\.|$)(.*)/) {
+   $iid{bgpPeerState} = $2;
+   $val{bgpPeerState} = $v;
+   $bps = $bps{$v} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeer2LastError}\E(\.|$)(.*)/) {
+   $iid{cbgpPeer2LastError} = $2;
+   $val{cbgpPeer2LastError} = $v || 0;
+   if ($v) {
+    my @v = split (//, $v);
+    $val{cbgpPeer2LastError} = ord($v[0]) . ':' . ord($v[1]);
+   }
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeer2LastErrorTxt}\E(\.|$)(.*)/) {
+   $iid{cbgpPeer2LastErrorTxt} = $2;
+   $val{cbgpPeer2LastErrorTxt} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeer2PrefixAdminLimit}\E(\.|$)(.*)/) {
+   $iid{cbgpPeer2PrefixAdminLimit} = $2;
+   $val{cbgpPeer2PrefixAdminLimit} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeer2PrefixClearThreshold}\E(\.|$)(.*)/) {
+   $iid{cbgpPeer2PrefixClearThreshold} = $2;
+   $val{cbgpPeer2PrefixClearThreshold} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeer2PrefixThreshold}\E(\.|$)(.*)/) {
+   $iid{cbgpPeer2PrefixThreshold} = $2;
+   $val{cbgpPeer2PrefixThreshold} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeer2PrevState}\E(\.|$)(.*)/) {
+   $iid{cbgpPeer2PrevState} = $2;
+   $val{cbgpPeer2PrevState} = $v;
+   $cp2ps = $bps{$v} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeer2State}\E(\.|$)(.*)/) {
+   $iid{cbgpPeer2State} = $2;
+   $val{cbgpPeer2State} = $v;
+   $cp2s = $bps{$v} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeerLastErrorTxt}\E(\.|$)(.*)/) {
+   $iid{cbgpPeerLastErrorTxt} = $2;
+   $val{cbgpPeerLastErrorTxt} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeerPrefixAdminLimit}\E(\.|$)(.*)/) {
+   $iid{cbgpPeerPrefixAdminLimit} = $2;
+   $val{cbgpPeerPrefixAdminLimit} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeerPrefixClearThreshold}\E(\.|$)(.*)/) {
+   $iid{cbgpPeerPrefixClearThreshold} = $2;
+   $val{cbgpPeerPrefixClearThreshold} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeerPrefixThreshold}\E(\.|$)(.*)/) {
+   $iid{cbgpPeerPrefixThreshold} = $2;
+   $val{cbgpPeerPrefixThreshold} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cbgpPeerPrevState}\E(\.|$)(.*)/) {
+   $iid{cbgpPeerPrevState} = $2;
+   $val{cbgpPeerPrevState} = $v;
+   $cpps = $bps{$v} || 'unknown';
+  }
+ }
+
+$peer = $iid{bgpPeerState} || $iid{cbgpPeer2State}; # add more here
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # cbgpFsmStateChange
+  # OBJECTS: bgpPeerLastError bgpPeerState cbgpPeerLastErrorTxt cbgpPeerPrevState
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpFsmStateChange: peer $peer from $cpps($val{cbgpPeerPrevState}) to $bps($val{bgpPeerState}); last error $val{bgpPeerLastError} ($val{cbgpPeerLastErrorTxt})";
+  $Event->{'AlarmGroup'} = "cbgpFsmStateChange";
+#  $Event->{'SubAlarmGroup'} = "cbgpFsmStateChange";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $val{bgpPeerState} eq 1 and $Event->{'Severity'} = 4;
+  $val{bgpPeerState} eq 6 and $Event->{'Severity'} = 0;
+  $Event->{'AlarmKey'}   = "$ip: cbgpFsmStateChange $peer";
+ }
+ elsif ($specific == 2) { # cbgpBackwardTransition
+  # OBJECTS: bgpPeerLastError bgpPeerState cbgpPeerLastErrorTxt cbgpPeerPrevState
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpBackwardTransition: peer $peer from $cpps($val{cbgpPeerPrevState}) to $bps($val{bgpPeerState}); last error $val{bgpPeerLastError} ($val{cbgpPeerLastErrorTxt})";
+  $Event->{'AlarmGroup'} = "cbgpBackwardTransition";
+#  $Event->{'SubAlarmGroup'} = "cbgpBackwardTransition";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $val{bgpPeerState} eq 1 and $Event->{'Severity'} = 4;
+  $val{bgpPeerState} eq 6 and $Event->{'Severity'} = 0;
+  $Event->{'AlarmKey'}   = "$ip: cbgpBackwardTransition $peer";
+ }
+ elsif ($specific == 3) { # cbgpPrefixThresholdExceeded
+  # OBJECTS: cbgpPeerPrefixAdminLimit cbgpPeerPrefixThreshold
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpPrefixThresholdExceeded";
+  $Event->{'AlarmGroup'} = "cbgpPrefixThresholdExceeded";
+#  $Event->{'SubAlarmGroup'} = "cbgpPrefixThresholdExceeded";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cbgpPrefixThresholdExceeded alarm.";
+ }
+ elsif ($specific == 4) { # cbgpPrefixThresholdClear
+  # OBJECTS: cbgpPeerPrefixAdminLimit cbgpPeerPrefixClearThreshold
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpPrefixThresholdClear";
+  $Event->{'AlarmGroup'} = "cbgpPrefixThresholdClear";
+#  $Event->{'SubAlarmGroup'} = "cbgpPrefixThresholdClear";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cbgpPrefixThresholdClear alarm.";
+ }
+ elsif ($specific == 5) { # cbgpPeer2EstablishedNotification
+  # OBJECTS: cbgpPeer2LastError cbgpPeer2State
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpPeer2EstablishedNotification";
+  $Event->{'AlarmGroup'} = "cbgpPeer2EstablishedNotification";
+#  $Event->{'SubAlarmGroup'} = "cbgpPeer2EstablishedNotification";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cbgpPeer2EstablishedNotification alarm.";
+ }
+ elsif ($specific == 6) { # cbgpPeer2BackwardTransNotification
+  # OBJECTS: cbgpPeer2LastError cbgpPeer2State
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpPeer2BackwardTransNotification: peer $peer to $cp2s($val{cbgpPeer2State}); last error $val{cbgpPeer2LastError}";
+  $Event->{'AlarmGroup'} = "cbgpPeer2BackwardTransNotification";
+#  $Event->{'SubAlarmGroup'} = "cbgpPeer2BackwardTransNotification";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cbgpPeer2BackwardTransNotification $peer";
+ }
+ elsif ($specific == 7) { # cbgpPeer2FsmStateChange
+  # OBJECTS: cbgpPeer2LastError cbgpPeer2State cbgpPeer2LastErrorTxt cbgpPeer2PrevState
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpPeer2FsmStateChange: peer $peer from $cp2ps($val{cbgpPeer2PrevState}) to $cp2s($val{cbgpPeer2State}); last error $val{cbgpPeer2LastError} ($val{cbgpPeer2LastErrorTxt})";
+  $Event->{'AlarmGroup'} = "cbgpPeer2FsmStateChange";
+#  $Event->{'SubAlarmGroup'} = "cbgpPeer2FsmStateChange";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cbgpPeer2FsmStateChange $peer";
+ }
+ elsif ($specific == 8) { # cbgpPeer2BackwardTransition
+  # OBJECTS: cbgpPeer2LastError cbgpPeer2State cbgpPeer2LastErrorTxt cbgpPeer2PrevState
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpPeer2BackwardTransition: peer $peer from $cp2ps($val{cbgpPeer2PrevState}) to $cp2s($val{cbgpPeer2State}); last error $val{cbgpPeer2LastError} ($val{cbgpPeer2LastErrorTxt})";
+  $Event->{'AlarmGroup'} = "cbgpPeer2BackwardTransition";
+#  $Event->{'SubAlarmGroup'} = "cbgpPeer2BackwardTransition";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cbgpPeer2BackwardTransition $peer";
+ }
+ elsif ($specific == 9) { # cbgpPeer2PrefixThresholdExceeded
+  # OBJECTS: cbgpPeer2PrefixAdminLimit cbgpPeer2PrefixThreshold
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpPeer2PrefixThresholdExceeded";
+  $Event->{'AlarmGroup'} = "cbgpPeer2PrefixThresholdExceeded";
+#  $Event->{'SubAlarmGroup'} = "cbgpPeer2PrefixThresholdExceeded";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cbgpPeer2PrefixThresholdExceeded alarm.";
+ }
+ elsif ($specific == 10) { # cbgpPeer2PrefixThresholdClear
+  # OBJECTS: cbgpPeer2PrefixAdminLimit cbgpPeer2PrefixClearThreshold
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cbgpPeer2PrefixThresholdClear";
+  $Event->{'AlarmGroup'} = "cbgpPeer2PrefixThresholdClear";
+#  $Event->{'SubAlarmGroup'} = "cbgpPeer2PrefixThresholdClear";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cbgpPeer2PrefixThresholdClear alarm.";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

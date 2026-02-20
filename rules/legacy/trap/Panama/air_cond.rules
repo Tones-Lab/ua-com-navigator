@@ -1,0 +1,28 @@
+# AIR COND Integration
+#Enterprise ID: .1.3.6.1.4.1.476.1.42.3.3
+
+our ( $Event, $specific, $node, @value );
+my ( $Description );
+
+$Event->{Class} = 85400;
+$Event->{AlarmGroup} = "ENV";
+$Event->{Node} = $node;
+$Event->{SubAlarmGroup} = $value[1];
+$Event->{Agent} = "A/C";
+$Event->{Service} = "O&M";
+
+( $Event->{Severity}, undef, $Description ) = lookup( $value[1], 'digicel-AIR-COND-ALARM' );
+$Event->{Summary} = $Description;
+$Event->{Service} = "O&M";
+
+if ( $specific == 1 ) {
+    $Event->{AlarmType} = 2;
+} elsif ( $specific == 2 ) {
+    $Event->{AlarmType} = 1;
+    $Event->{Severity} = 0;
+}
+
+# Setting field for deduplication
+
+$Event->{AlarmKey} = $Event->{SubMethod} . " " . $Event->{Node} . " " . $Event->{AlarmGroup} . " " . $Event->{SubAlarmGroup} . " -> " . $Event->{AlarmType};
+

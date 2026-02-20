@@ -1,0 +1,303 @@
+###############################################################################
+# Converted from generic-CISCO-ITP-GRT-MIB
+###############################################################################
+
+our ($Log, $Event, $generic, $specific, $enterprise, @value, @OID);
+our ($OS_EventId, );
+our ($DEFAULT_Severity, $DEFAULT_Type, $DEFAULT_ExpireTime);
+
+my ( $cgrtDestCongestion, $cgrtDestDisplay, $cgrtDestNotifChanges,
+$cgrtDestNotifSupFlag, $cgrtDestNotifSuppressed, $cgrtDestStatus,
+$cgrtIntervalNoRouteMSUs, $cgrtMgmtNotifChanges, $cgrtMgmtNotifSupFlag,
+$cgrtNoRouteMSUsInterval, $cgrtRouteAdminStatus, $cgrtRouteDestLinkset,
+$cgrtRouteDestLsCost, $cgrtRouteDisplay, $cgrtRouteDpc,
+$cgrtRouteDynamic, $cgrtRouteMask, $cgrtRouteMgmtStatus,
+$cgrtRouteNotifSuppressed, $cgrtRouteStatus, $cgspInstNetwork,
+);
+
+my $AKey;
+
+$Event->{Agent} = "CISCO MWTM";
+
+if (0) { # Dummy
+} elsif ($specific == "4") { ### - ciscoGrtDestStateChangeRev1
+    #######################
+    #
+    # This notification deprecates ciscoGrtDestStateChange.
+    #
+    # $value[1] = cgrtDestNotifSuppressed
+    #
+    #      Number of ciscoGrtDestStateChangeRev1 notifications suppressed
+    #               for the specific cgrtDestNotifWindowTimeRev1 duration.
+    #
+    # $value[2] = cgrtDestDisplay
+    #
+    #      The destination point code in display format.
+    #
+    # $value[3] = cgrtDestStatus
+    #
+    #      is unavailable or that it is impacted by some network
+    #                  event or failure of resource.
+    #
+    # $value[4] = cgrtDestCongestion
+    #
+    #      0 is the least congestion level, 3 is the highest
+    #               congestion level.
+    #
+    #######################
+
+    $cgrtDestNotifSuppressed = $value[3];
+    $cgrtDestDisplay = $value[4];
+    $cgrtDestStatus = lookup($value[5],'generic-CISCO-ITP-GRT-MIB-cgrtDestStatus');
+    $cgrtDestCongestion = $value[6];
+
+    $cgspInstNetwork = extract($OID[2], '\.([0-9]+)\.[0-9]+\.[0-9]+$');
+    $cgrtRouteDpc = extract($OID[2], '\.[0-9]+\.([0-9]+)\.[0-9]+$');
+    $cgrtRouteMask = extract($OID[2], '\.[0-9]+\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GRT-MIB-ciscoGrtDestStateChangeRev1";
+
+    $Event->{AlarmGroup} = "ciscoGrtDestStateChangeRev1";
+    $Event->{SubAlarmGroup} = "cgrtDestEntry." . $cgspInstNetwork . "." . $cgrtRouteDpc . "." . $cgrtRouteMask;
+    $AKey = $cgrtDestNotifSuppressed  . " " . $cgrtDestDisplay . " " . $cgrtDestStatus . " " . $cgrtDestCongestion;
+    $Event->{Summary} = "This notification deprecates ciscoGrtDestStateChange."  . " " . $AKey;
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+
+    if (0) { # Dummy
+    } elsif ($cgrtDestStatus eq "accessible ") {
+        $Event->{Severity} = 0;
+        $Event->{AlarmType} = 1;
+    } elsif ($cgrtDestStatus eq "inaccessible ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cgrtDestStatus eq "restricted ") {
+        $Event->{Severity} = 2;
+        $Event->{AlarmType} = 2;
+    } elsif ($cgrtDestStatus eq "unknown ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $AKey . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "3") { ### - ciscoGrtRouteTableLoad
+    #######################
+    #
+    # configuration statements.  This allows route
+    # tables to be reloaded whenever a device restarts.
+    #
+    # $value[1] = cgrtInstLoadStatus
+    #
+    #      a timestamp indicating when the load operation is
+    #               completed.
+    #
+    # $value[2] = cgrtInstTableName
+    #
+    #      The system generated name for the route table
+    #               for this signalling point instance.
+    #
+    # $value[3] = cgrtInstLastURL
+    #
+    #      The url used to load route table.
+    #
+    #######################
+
+    #$cgrtInstLoadStatus = $value[1];
+    #$cgrtInstTableName = $value[2];
+    #$cgrtInstLastURL = $value[3];
+
+    $cgspInstNetwork = extract($OID[1], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GRT-MIB-ciscoGrtRouteTableLoad";
+
+    $Event->{AlarmGroup} = "ciscoGrtRouteTableLoad";
+    $Event->{SubAlarmGroup} = "cgrtInstEntry." . $cgspInstNetwork;
+    $Event->{Summary} = "ciscoGrtRouteTableLoad: configuration statements. This allows route tables to be reloaded whenever a device restarts.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "2") { ### - ciscoGrtMgmtStateChange
+    #######################
+    #
+    # ciscoGrtMgmtStateChangeRev1.
+    #
+    # $value[1] = cgrtMgmtNotifSupFlag
+    #
+    #      the current time interval.
+    #
+    # $value[2] = cgrtMgmtNotifChanges
+    #
+    #      The maximum number of tuples is 3.
+    #
+    #######################
+
+    $cgrtMgmtNotifSupFlag = lookup($value[3],'generic-CISCO-ITP-GRT-MIB-cgrtMgmtNotifSupFlag');
+    $cgrtMgmtNotifChanges = $value[4];
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GRT-MIB-ciscoGrtMgmtStateChange";
+
+    $Event->{AlarmGroup} = "ciscoGrtMgmtStateChange";
+    $AKey = $cgrtMgmtNotifSupFlag  . " " . $cgrtMgmtNotifChanges;
+    $Event->{SubAlarmGroup} = $cgrtMgmtNotifSupFlag.$cgrtMgmtNotifChanges;
+    $Event->{Summary} = "ciscoGrtMgmtStateChange" . " " . $AKey;
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $AKey . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "6") { ### - ciscoGrtNoRouteMSUDiscards
+    #######################
+    #
+    # interval Q752/5.5.
+    #
+    # $value[1] = cgrtNoRouteMSUsInterval
+    #
+    #      will be equal to cgrtNoRouteMSUsNotifWindowTime.
+    #
+    # $value[2] = cgrtIntervalNoRouteMSUs
+    #
+    #      Number of MSUs discarded due to routing data error in
+    #               this specific cgspNoRouteMSUsInterval interval.
+    #
+    #######################
+
+    $cgrtNoRouteMSUsInterval = $value[1];
+    $cgrtIntervalNoRouteMSUs = $value[2];
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GRT-MIB-ciscoGrtNoRouteMSUDiscards";
+
+    $Event->{AlarmGroup} = "ciscoGrtNoRouteMSUDiscards";
+    $Event->{SubAlarmGroup} = $cgrtNoRouteMSUsInterval.$cgrtIntervalNoRouteMSUs;
+    #$Event->{Summary} = "ciscoGrtNoRouteMSUDiscards: interval Q752/5.5."
+    $Event->{Summary} = $Event->{Node} ." ciscoGrtNoRouteMSUDiscards: ".$cgrtNoRouteMSUsInterval." MSUs in the current monitoring interval due to a route data error";
+    $Event->{Agent} = "Cisco MWTM";
+    $DEFAULT_Severity = 4;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+    $Event->{Severity} = 4;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "1") { ### - ciscoGrtDestStateChange
+    #######################
+    #
+    # This notification is deprecated by
+    # ciscoGrtDestStateChangeRev1.
+    #
+    # $value[1] = cgrtDestNotifSupFlag
+    #
+    #      sending of ciscoGrtDestStateChange notifications in 
+    #                     the current time interval.
+    #
+    # $value[2] = cgrtDestNotifChanges
+    #
+    #      The maximum number of tuples is 7.
+    #
+    #######################
+
+    $cgrtDestNotifSupFlag = lookup($value[3],'generic-CISCO-ITP-GRT-MIB-cgrtDestNotifSupFlag');
+    $cgrtDestNotifChanges = $value[4];
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GRT-MIB-ciscoGrtDestStateChange";
+
+    $Event->{AlarmGroup} = "ciscoGrtDestStateChange";
+    $AKey = $cgrtDestNotifSupFlag  . " " . $cgrtDestNotifChanges;
+    $Event->{SubAlarmGroup} = $cgrtDestNotifSupFlag.$cgrtDestNotifChanges;
+    $Event->{Summary} = "ciscoGrtDestStateChange: "  . " " . $AKey;
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $AKey . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "5") { ### - ciscoGrtMgmtStateChangeRev1
+    #######################
+    #
+    # This notification deprecates ciscoGrtMgmtStateChange.
+    #
+    # $value[1] = cgrtRouteStatus
+    #
+    #      'deleted'     : Route has been removed.
+    #
+    # $value[2] = cgrtRouteMgmtStatus
+    #
+    #      traffic.
+    #                  'deleted'     : Route has been removed.
+    #
+    # $value[3] = cgrtRouteDynamic
+    #
+    #      'false' - static route
+    #
+    # $value[4] = cgrtRouteAdminStatus
+    #
+    #      Otherwise the cgrtRouteStatus will be set to the
+    #                value specified in cgrtRouteAdminStatus object.
+    #
+    # $value[5] = cgrtRouteNotifSuppressed
+    #
+    #      Number of ciscoGrtMgmtStateChangeRev1 notifications suppressed
+    #               for the specific cgrtRouteNotifWindowTimeRev1 duration.
+    #
+    # $value[6] = cgrtRouteDisplay
+    #
+    #      The destination point code associated with the route in
+    #               display format.
+    #
+    #######################
+
+    $cgrtRouteStatus = lookup($value[3],'generic-CISCO-ITP-GRT-MIB-cgrtRouteStatus');
+    $cgrtRouteMgmtStatus = lookup($value[4],'generic-CISCO-ITP-GRT-MIB-cgrtRouteMgmtStatus');
+    $cgrtRouteDynamic = lookup($value[5],'generic-CISCO-ITP-GRT-MIB-cgrtRouteDynamic');
+    $cgrtRouteAdminStatus = lookup($value[6],'generic-CISCO-ITP-GRT-MIB-cgrtRouteAdminStatus');
+    $cgrtRouteNotifSuppressed = $value[7];
+    $cgrtRouteDisplay = $value[8];
+
+    $cgspInstNetwork = extract($OID[1], '\.([0-9]+)\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$');
+    $cgrtRouteDpc = extract($OID[1], '\.[0-9]+\.([0-9]+)\.[0-9]+\.[0-9]+\.[0-9]+$');
+    $cgrtRouteMask = extract($OID[1], '\.[0-9]+\.[0-9]+\.([0-9]+)\.[0-9]+\.[0-9]+$');
+    $cgrtRouteDestLsCost = extract($OID[1], '\.[0-9]+\.[0-9]+\.[0-9]+\.([0-9]+)\.[0-9]+$');
+    $cgrtRouteDestLinkset = extract($OID[1], '\.[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GRT-MIB-ciscoGrtMgmtStateChangeRev1";
+
+    $Event->{AlarmGroup} = "ciscoGrtMgmtStateChangeRev1";
+    $Event->{SubAlarmGroup} = "cgrtRouteEntry." . $cgspInstNetwork . "." . $cgrtRouteDpc . "." . $cgrtRouteMask . "." . $cgrtRouteDestLsCost . "." . $cgrtRouteDestLinkset;
+    $AKey = $cgrtRouteStatus  . " " . $cgrtRouteMgmtStatus ." " . $cgrtRouteDynamic . " " . $cgrtRouteAdminStatus . " " . $cgrtRouteNotifSuppressed . " " . $cgrtRouteDisplay;
+    $Event->{Summary} = "ciscoGrtMgmtStateChange: " . " " . $AKey;
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    if (0) { # Dummy
+    } elsif ($cgrtRouteMgmtStatus eq "allowed ") {
+        $Event->{Severity} = 0;
+        $Event->{AlarmType} = 1;
+    } elsif ($cgrtRouteMgmtStatus eq "restricted ") {
+        $Event->{Severity} = 2;
+        $Event->{AlarmType} = 2;
+    } elsif ($cgrtRouteMgmtStatus eq "prohibited ") {
+        $Event->{Severity} = 2;
+        $Event->{AlarmType} = 2;
+    } elsif ($cgrtRouteMgmtStatus eq "deleted ") {
+        $Event->{Severity} = 2;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+    $Event->{AlarmKey} = $Event->{Node} . " " . $AKey . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} else {
+    $Event->{Summary} = "Unknown Specific Trap Number (" . $specific . ") Received for Enterprise " . $enterprise;
+    $Event->{Severity} = 1;
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $enterprise . " " . $generic . " " . $specific;
+}
+
+$Log->Message('DEBUG', "Leaving... generic-CISCO-ITP-GRT-MIB.rules");

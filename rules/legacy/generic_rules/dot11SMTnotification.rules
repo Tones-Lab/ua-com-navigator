@@ -1,0 +1,103 @@
+my (%oid, %iid, %val);
+
+ $oid{dot11DisassociateReason} = '1.2.840.10036.1.1.1.15';
+ $oid{dot11DisassociateStation} = '1.2.840.10036.1.1.1.16';
+ $oid{dot11DeauthenticateReason} = '1.2.840.10036.1.1.1.17';
+ $oid{dot11DeauthenticateStation} = '1.2.840.10036.1.1.1.18';
+ $oid{dot11AuthenticateFailStatus} = '1.2.840.10036.1.1.1.19';
+ $oid{dot11AuthenticateFailStation} = '1.2.840.10036.1.1.1.20';
+ $oid{ifIndex} = '1.3.6.1.2.1.2.2.1.1';
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{dot11AuthenticateFailStation}\E(\.|$)(.*)/) {
+   $iid{dot11AuthenticateFailStation} = $2;
+   $val{dot11AuthenticateFailStation} = $v;
+   $val{dot11AuthenticateFailStationX} = unpack ('H*', "$v");;
+  }
+  elsif ($k =~ /^\Q$oid{dot11AuthenticateFailStatus}\E(\.|$)(.*)/) {
+   $iid{dot11AuthenticateFailStatus} = $2;
+   $val{dot11AuthenticateFailStatus} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{dot11DeauthenticateReason}\E(\.|$)(.*)/) {
+   $iid{dot11DeauthenticateReason} = $2;
+   $val{dot11DeauthenticateReason} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{dot11DeauthenticateStation}\E(\.|$)(.*)/) {
+   $iid{dot11DeauthenticateStation} = $2;
+   $val{dot11DeauthenticateStation} = $v;
+   $val{dot11DeauthenticateStationX} = unpack ('H*', "$v");;
+  }
+  elsif ($k =~ /^\Q$oid{dot11DisassociateReason}\E(\.|$)(.*)/) {
+   $iid{dot11DisassociateReason} = $2;
+   $val{dot11DisassociateReason} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{dot11DisassociateStation}\E(\.|$)(.*)/) {
+   $iid{dot11DisassociateStation} = $2;
+   $val{dot11DisassociateStation} = $v;
+   $val{dot11DisassociateStationX} = unpack ('H*', "$v");;
+  }
+  elsif ($k =~ /^\Q$oid{ifIndex}\E(\.|$)(.*)/) {
+   $iid{ifIndex} = $2;
+   $val{ifIndex} = $v;
+  }
+ }
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # dot11Disassociate
+  # OBJECTS: ifIndex dot11DisassociateReason dot11DisassociateStation
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "dot11Disassociate, station $val{dot11DisassociateStationX}, reason $val{dot11DisassociateReason}";
+  $Event->{'AlarmGroup'} = "dot11Disassociate";
+  $Event->{'SubAlarmGroup'} = "$val{dot11DisassociateStationX}";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip/$val{ifIndex}/$val{dot11DisassociateStationX}: dot11Disassociate alarm.";
+ }
+ elsif ($specific == 2) { # dot11Deauthenticate
+  # OBJECTS: ifIndex dot11DeauthenticateReason dot11DeauthenticateStation
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "dot11Deauthenticate, station $val{dot11DeauthenticateStationX}, reason $val{dot11DeauthenticateReason}";
+  $Event->{'AlarmGroup'} = "dot11Deauthenticate";
+  $Event->{'SubAlarmGroup'} = "$val{dot11DeauthenticateStationX}";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip/$val{ifIndex}/$val{dot11DeauthenticateStationX}: dot11Deauthenticate alarm.";
+ }
+ elsif ($specific == 3) { # dot11AuthenticateFail
+  # OBJECTS: ifIndex dot11AuthenticateFailStatus dot11AuthenticateFailStation
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "dot11AuthenticateFail, station $val{dot11AuthenticateFailStationX}, status $val{dot11AuthenticateFailStatus}";
+  $Event->{'AlarmGroup'} = "dot11AuthenticateFail";
+  $Event->{'SubAlarmGroup'} = "$val{dot11AuthenticateFailStationX}";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip/$val{ifIndex}/$val{dot11AuthenticateFailStationX}: dot11AuthenticateFail alarm.";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

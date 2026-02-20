@@ -1,0 +1,400 @@
+my (%oid, %iid, %val);
+
+ $oid{adsl2LineStatusAtur} = '1.3.6.1.2.1.10.238.1.1.1.1.12';
+ $oid{adsl2LineStatusAtuc} = '1.3.6.1.2.1.10.238.1.1.1.1.13';
+ $oid{adsl2PMLCurr15MFecs} = '1.3.6.1.2.1.10.238.1.4.1.1.1.5';
+ $oid{adsl2PMLCurr15MEs} = '1.3.6.1.2.1.10.238.1.4.1.1.1.6';
+ $oid{adsl2PMLCurr15MSes} = '1.3.6.1.2.1.10.238.1.4.1.1.1.7';
+ $oid{adsl2PMLCurr15MLoss} = '1.3.6.1.2.1.10.238.1.4.1.1.1.8';
+ $oid{adsl2PMLCurr15MUas} = '1.3.6.1.2.1.10.238.1.4.1.1.1.9';
+ $oid{adsl2PMLCurrInit15MFailedFullInits} = '1.3.6.1.2.1.10.238.1.4.1.2.1.3';
+ $oid{adsl2PMLCurrInit15MFailedShortInits} = '1.3.6.1.2.1.10.238.1.4.1.2.1.5';
+ $oid{adsl2PMChCurr15MCodingViolations} = '1.3.6.1.2.1.10.238.1.4.2.1.1.5';
+ $oid{adsl2PMChCurr15MCorrectedBlocks} = '1.3.6.1.2.1.10.238.1.4.2.1.1.6';
+ $oid{adsl2LineAlarmConfProfileAturThresh15MinLoss} = '1.3.6.1.2.1.10.238.1.5.3.2.1.10';
+ $oid{adsl2LineAlarmConfProfileAturThresh15MinUas} = '1.3.6.1.2.1.10.238.1.5.3.2.1.11';
+ $oid{adsl2LineAlarmConfProfileThresh15MinFailedFullInt} = '1.3.6.1.2.1.10.238.1.5.3.2.1.12';
+ $oid{adsl2LineAlarmConfProfileThresh15MinFailedShrtInt} = '1.3.6.1.2.1.10.238.1.5.3.2.1.13';
+ $oid{adsl2LineAlarmConfProfileAtucThresh15MinFecs} = '1.3.6.1.2.1.10.238.1.5.3.2.1.2';
+ $oid{adsl2LineAlarmConfProfileAtucThresh15MinEs} = '1.3.6.1.2.1.10.238.1.5.3.2.1.3';
+ $oid{adsl2LineAlarmConfProfileAtucThresh15MinSes} = '1.3.6.1.2.1.10.238.1.5.3.2.1.4';
+ $oid{adsl2LineAlarmConfProfileAtucThresh15MinLoss} = '1.3.6.1.2.1.10.238.1.5.3.2.1.5';
+ $oid{adsl2LineAlarmConfProfileAtucThresh15MinUas} = '1.3.6.1.2.1.10.238.1.5.3.2.1.6';
+ $oid{adsl2LineAlarmConfProfileAturThresh15MinFecs} = '1.3.6.1.2.1.10.238.1.5.3.2.1.7';
+ $oid{adsl2LineAlarmConfProfileAturThresh15MinEs} = '1.3.6.1.2.1.10.238.1.5.3.2.1.8';
+ $oid{adsl2LineAlarmConfProfileAturThresh15MinSes} = '1.3.6.1.2.1.10.238.1.5.3.2.1.9';
+ $oid{adsl2ChAlarmConfProfileAtucThresh15MinCodingViolations} = '1.3.6.1.2.1.10.238.1.5.3.3.1.2';
+ $oid{adsl2ChAlarmConfProfileAtucThresh15MinCorrected} = '1.3.6.1.2.1.10.238.1.5.3.3.1.3';
+ $oid{adsl2ChAlarmConfProfileAturThresh15MinCodingViolations} = '1.3.6.1.2.1.10.238.1.5.3.3.1.4';
+ $oid{adsl2ChAlarmConfProfileAturThresh15MinCorrected} = '1.3.6.1.2.1.10.238.1.5.3.3.1.5';
+
+# adsl2LineStatusAtur and adsl2LineStatusAtuc are each BITS:
+#  {noDefect(0), lossOfFrame(1), lossOfSignal(2), lossOfPower(3), initFailure(4)}
+# so process them separately (below) to get the details
+my %lsa = qw(0 noDefect 1 lossOfFrame 2 lossOfSignal 3 lossOfPower 4 initFailure);
+my $lsa;
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2ChAlarmConfProfileAtucThresh15MinCodingViolations}\E(\.|$)(.*)/) {
+   $iid{adsl2ChAlarmConfProfileAtucThresh15MinCodingViolations} = $2;
+   $val{adsl2ChAlarmConfProfileAtucThresh15MinCodingViolations} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2ChAlarmConfProfileAtucThresh15MinCorrected}\E(\.|$)(.*)/) {
+   $iid{adsl2ChAlarmConfProfileAtucThresh15MinCorrected} = $2;
+   $val{adsl2ChAlarmConfProfileAtucThresh15MinCorrected} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2ChAlarmConfProfileAturThresh15MinCodingViolations}\E(\.|$)(.*)/) {
+   $iid{adsl2ChAlarmConfProfileAturThresh15MinCodingViolations} = $2;
+   $val{adsl2ChAlarmConfProfileAturThresh15MinCodingViolations} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2ChAlarmConfProfileAturThresh15MinCorrected}\E(\.|$)(.*)/) {
+   $iid{adsl2ChAlarmConfProfileAturThresh15MinCorrected} = $2;
+   $val{adsl2ChAlarmConfProfileAturThresh15MinCorrected} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAtucThresh15MinEs}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAtucThresh15MinEs} = $2;
+   $val{adsl2LineAlarmConfProfileAtucThresh15MinEs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAtucThresh15MinFecs}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAtucThresh15MinFecs} = $2;
+   $val{adsl2LineAlarmConfProfileAtucThresh15MinFecs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAtucThresh15MinLoss}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAtucThresh15MinLoss} = $2;
+   $val{adsl2LineAlarmConfProfileAtucThresh15MinLoss} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAtucThresh15MinSes}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAtucThresh15MinSes} = $2;
+   $val{adsl2LineAlarmConfProfileAtucThresh15MinSes} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAtucThresh15MinUas}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAtucThresh15MinUas} = $2;
+   $val{adsl2LineAlarmConfProfileAtucThresh15MinUas} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAturThresh15MinEs}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAturThresh15MinEs} = $2;
+   $val{adsl2LineAlarmConfProfileAturThresh15MinEs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAturThresh15MinFecs}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAturThresh15MinFecs} = $2;
+   $val{adsl2LineAlarmConfProfileAturThresh15MinFecs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAturThresh15MinLoss}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAturThresh15MinLoss} = $2;
+   $val{adsl2LineAlarmConfProfileAturThresh15MinLoss} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAturThresh15MinSes}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAturThresh15MinSes} = $2;
+   $val{adsl2LineAlarmConfProfileAturThresh15MinSes} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileAturThresh15MinUas}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileAturThresh15MinUas} = $2;
+   $val{adsl2LineAlarmConfProfileAturThresh15MinUas} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileThresh15MinFailedFullInt}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileThresh15MinFailedFullInt} = $2;
+   $val{adsl2LineAlarmConfProfileThresh15MinFailedFullInt} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineAlarmConfProfileThresh15MinFailedShrtInt}\E(\.|$)(.*)/) {
+   $iid{adsl2LineAlarmConfProfileThresh15MinFailedShrtInt} = $2;
+   $val{adsl2LineAlarmConfProfileThresh15MinFailedShrtInt} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineStatusAtuc}\E(\.|$)(.*)/) {
+   $iid{adsl2LineStatusAtuc} = $2;
+   $val{adsl2LineStatusAtuc} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2LineStatusAtur}\E(\.|$)(.*)/) {
+   $iid{adsl2LineStatusAtur} = $2;
+   $val{adsl2LineStatusAtur} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMChCurr15MCodingViolations}\E(\.|$)(.*)/) {
+   $iid{adsl2PMChCurr15MCodingViolations} = $2;
+   $val{adsl2PMChCurr15MCodingViolations} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMChCurr15MCorrectedBlocks}\E(\.|$)(.*)/) {
+   $iid{adsl2PMChCurr15MCorrectedBlocks} = $2;
+   $val{adsl2PMChCurr15MCorrectedBlocks} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMLCurr15MEs}\E(\.|$)(.*)/) {
+   $iid{adsl2PMLCurr15MEs} = $2;
+   $val{adsl2PMLCurr15MEs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMLCurr15MFecs}\E(\.|$)(.*)/) {
+   $iid{adsl2PMLCurr15MFecs} = $2;
+   $val{adsl2PMLCurr15MFecs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMLCurr15MLoss}\E(\.|$)(.*)/) {
+   $iid{adsl2PMLCurr15MLoss} = $2;
+   $val{adsl2PMLCurr15MLoss} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMLCurr15MSes}\E(\.|$)(.*)/) {
+   $iid{adsl2PMLCurr15MSes} = $2;
+   $val{adsl2PMLCurr15MSes} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMLCurr15MUas}\E(\.|$)(.*)/) {
+   $iid{adsl2PMLCurr15MUas} = $2;
+   $val{adsl2PMLCurr15MUas} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMLCurrInit15MFailedFullInits}\E(\.|$)(.*)/) {
+   $iid{adsl2PMLCurrInit15MFailedFullInits} = $2;
+   $val{adsl2PMLCurrInit15MFailedFullInits} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adsl2PMLCurrInit15MFailedShortInits}\E(\.|$)(.*)/) {
+   $iid{adsl2PMLCurrInit15MFailedShortInits} = $2;
+   $val{adsl2PMLCurrInit15MFailedShortInits} = $v;
+  }
+ }
+
+
+# line status value: process the BITS, if present
+my $nv = $val{adsl2LineStatusAtur};
+my $nk = 'adsl2LineStatusAtur';
+unless ($nv) {
+ $nv = $val{adsl2LineStatusAtuc};
+ $nk = 'adsl2LineStatusAtuc';
+}
+my @lsa;
+# BITS: up to this many is expected
+my $vmax = 4;
+if ($nv >= 2<<$vmax) {
+    $Log->Message("WARN", "adsl2Notifications: $nk=$val{$nk}, but that's more than $vmax bits. Ignoring the extra.");
+}
+if ($nv) {
+ for (0..$vmax) {
+  my $i = 1<<$_;
+  # if BIT $i is set...
+  if ($nv & $i) {
+   # ...subtract that part, note the error, and test again if necessary
+   $nv &= ((1<<$vmax+1)-1-$i);
+   if (defined $lsa{$_}) {
+    push @lsa, $lsa{$_};
+   } else {
+    $Log->Message("WARN", "adsl2Notifications: $nk=$val{$nk}, which includes an unknown $i. Ignoring the unknown.");
+   }
+   last unless $nv;
+  }
+ }
+} else {
+ @lsa = $lsa{0};
+}
+$Log->Message("WARN", "adsl2Notifications: $nk=$val{$nk}, which includes an unknown $nv") if $nv;
+$lsa = "@lsa";
+
+
+# index ifIndex is one of these ...
+my $ifIndex = $iid{adsl2PMLCurrInit15MFailedFullInits} ||
+              $iid{adsl2PMLCurrInit15MFailedShortInits} ||
+              $iid{adsl2LineStatusAtur} ||
+              $iid{adsl2LineStatusAtuc};
+# ...or else the second-last part of one of these
+unless ($ifIndex) {
+ $ifIndex = $iid{adsl2PMLCurr15MEs} ||
+            $iid{adsl2PMLCurr15MFecs} ||
+            $iid{adsl2PMLCurr15MLoss} ||
+            $iid{adsl2PMLCurr15MSes} ||
+            $iid{adsl2PMLCurr15MUas} ||
+            $iid{adsl2PMChCurr15MCodingViolations} ||
+            $iid{adsl2PMChCurr15MCorrectedBlocks};
+ ($ifIndex) = $ifIndex =~ m/(\d+)\.\d+$/;
+}
+
+# index adsl2PMChCurrUnit is the last part of those above, but is always atuc or atur
+
+# index adsl2ChAlarmConfProfileName is an octet string; handle later if needed.
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # adsl2LinePerfFECSThreshAtuc
+  # OBJECTS: adsl2PMLCurr15MFecs adsl2LineAlarmConfProfileAtucThresh15MinFecs
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfFECSThreshAtuc: FEC Seconds: current/threshold: $val{adsl2PMLCurr15MFecs}/$val{adsl2LineAlarmConfProfileAtucThresh15MinFecs} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfFECSThreshAtuc";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfFECSThreshAtuc";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfFECSThreshAtuc $ifIndex";
+ }
+ elsif ($specific == 2) { # adsl2LinePerfFECSThreshAtur
+  # OBJECTS: adsl2PMLCurr15MFecs adsl2LineAlarmConfProfileAturThresh15MinFecs
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfFECSThreshAtur: FEC Seconds: current/threshold: $val{adsl2PMLCurr15MFecs}/$val{adsl2LineAlarmConfProfileAturThresh15MinFecs} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfFECSThreshAtur";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfFECSThreshAtur";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfFECSThreshAtur $ifIndex";
+ }
+ elsif ($specific == 3) { # adsl2LinePerfESThreshAtuc
+  # OBJECTS: adsl2PMLCurr15MEs adsl2LineAlarmConfProfileAtucThresh15MinEs
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfESThreshAtuc: Errored Seconds: current/threshold: $val{adsl2PMLCurr15MEs}/$val{adsl2LineAlarmConfProfileAtucThresh15MinEs} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfESThreshAtuc";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfESThreshAtuc";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfESThreshAtuc $ifIndex";
+ }
+ elsif ($specific == 4) { # adsl2LinePerfESThreshAtur
+  # OBJECTS: adsl2PMLCurr15MEs adsl2LineAlarmConfProfileAturThresh15MinEs
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfESThreshAtur: Errored Seconds: current/threshold: $val{adsl2PMLCurr15MEs}/$val{adsl2LineAlarmConfProfileAturThresh15MinEs} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfESThreshAtur";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfESThreshAtur";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfESThreshAtur $ifIndex";
+ }
+ elsif ($specific == 5) { # adsl2LinePerfSESThreshAtuc
+  # OBJECTS: adsl2PMLCurr15MSes adsl2LineAlarmConfProfileAtucThresh15MinSes
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfSESThreshAtuc: Severely Errored Seconds: current/threshold: $val{adsl2PMLCurr15MSes}/$val{adsl2LineAlarmConfProfileAtucThresh15MinSes} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfSESThreshAtuc";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfSESThreshAtuc";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfSESThreshAtuc $ifIndex";
+ }
+ elsif ($specific == 6) { # adsl2LinePerfSESThreshAtur
+  # OBJECTS: adsl2PMLCurr15MSes adsl2LineAlarmConfProfileAturThresh15MinSes
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfSESThreshAtur: Severely Errored Seconds: current/threshold: $val{adsl2PMLCurr15MSes}/$val{adsl2LineAlarmConfProfileAturThresh15MinSes} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfSESThreshAtur";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfSESThreshAtur";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfSESThreshAtur $ifIndex";
+ }
+ elsif ($specific == 7) { # adsl2LinePerfLOSSThreshAtuc
+  # OBJECTS: adsl2PMLCurr15MLoss adsl2LineAlarmConfProfileAtucThresh15MinLoss
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfLOSSThreshAtuc: LOS Seconds: current/threshold: $val{adsl2PMLCurr15MLoss}/$val{adsl2LineAlarmConfProfileAtucThresh15MinLoss} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfLOSSThreshAtuc";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfLOSSThreshAtuc";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfLOSSThreshAtuc $ifIndex";
+ }
+ elsif ($specific == 8) { # adsl2LinePerfLOSSThreshAtur
+  # OBJECTS: adsl2PMLCurr15MLoss adsl2LineAlarmConfProfileAturThresh15MinLoss
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfLOSSThreshAtur: LOS Seconds: current/threshold: $val{adsl2PMLCurr15MLoss}/$val{adsl2LineAlarmConfProfileAturThresh15MinLoss} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfLOSSThreshAtur";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfLOSSThreshAtur";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfLOSSThreshAtur $ifIndex";
+ }
+ elsif ($specific == 9) { # adsl2LinePerfUASThreshAtuc
+  # OBJECTS: adsl2PMLCurr15MUas adsl2LineAlarmConfProfileAtucThresh15MinUas
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfUASThreshAtuc: Unavailable Seconds: current/threshold: $val{adsl2PMLCurr15MUas}/$val{adsl2LineAlarmConfProfileAtucThresh15MinUas} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfUASThreshAtuc";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfUASThreshAtuc";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfUASThreshAtuc $ifIndex";
+ }
+ elsif ($specific == 10) { # adsl2LinePerfUASThreshAtur
+  # OBJECTS: adsl2PMLCurr15MUas adsl2LineAlarmConfProfileAturThresh15MinUas
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfUASThreshAtur: Unavailable Seconds: current/threshold: $val{adsl2PMLCurr15MUas}/$val{adsl2LineAlarmConfProfileAturThresh15MinUas} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfUASThreshAtur";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfUASThreshAtur";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfUASThreshAtur $ifIndex";
+ }
+ elsif ($specific == 11) { # adsl2LinePerfCodingViolationsThreshAtuc
+  # OBJECTS: adsl2PMChCurr15MCodingViolations adsl2ChAlarmConfProfileAtucThresh15MinCodingViolations
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfCodingViolationsThreshAtuc: Coding Violations: current/threshold: $val{adsl2PMChCurr15MCodingViolations}/$val{adsl2ChAlarmConfProfileAtucThresh15MinCodingViolations} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfCodingViolationsThreshAtuc";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfCodingViolationsThreshAtuc";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfCodingViolationsThreshAtuc $ifIndex";
+ }
+ elsif ($specific == 12) { # adsl2LinePerfCodingViolationsThreshAtur
+  # OBJECTS: adsl2PMChCurr15MCodingViolations adsl2ChAlarmConfProfileAturThresh15MinCodingViolations
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfCodingViolationsThreshAtur: Coding Violations: current/threshold: $val{adsl2PMChCurr15MCodingViolations}/$val{adsl2ChAlarmConfProfileAtucThresh15MinCodingViolations} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfCodingViolationsThreshAtur";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfCodingViolationsThreshAtur";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfCodingViolationsThreshAtur $ifIndex";
+ }
+ elsif ($specific == 13) { # adsl2LinePerfCorrectedThreshAtuc
+  # OBJECTS: adsl2PMChCurr15MCorrectedBlocks adsl2ChAlarmConfProfileAtucThresh15MinCorrected
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfCorrectedThreshAtuc: Corrected Blocks: current/threshold: $val{adsl2PMChCurr15MCorrectedBlocks}/$val{adsl2ChAlarmConfProfileAtucThresh15MinCorrected} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfCorrectedThreshAtuc";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfCorrectedThreshAtuc";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfCorrectedThreshAtuc $ifIndex";
+ }
+ elsif ($specific == 14) { # adsl2LinePerfCorrectedThreshAtur
+  # OBJECTS: adsl2PMChCurr15MCorrectedBlocks adsl2ChAlarmConfProfileAturThresh15MinCorrected
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfCorrectedThreshAtur: Corrected Blocks: current/threshold: $val{adsl2PMChCurr15MCorrectedBlocks}/$val{adsl2ChAlarmConfProfileAturThresh15MinCorrected} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfCorrectedThreshAtur";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfCorrectedThreshAtur";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfCorrectedThreshAtur $ifIndex";
+ }
+ elsif ($specific == 15) { # adsl2LinePerfFailedFullInitThresh
+  # OBJECTS: adsl2PMLCurrInit15MFailedFullInits adsl2LineAlarmConfProfileThresh15MinFailedFullInt
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfFailedFullInitThresh: Failed Full Init: current/threshold: $val{adsl2PMLCurrInit15MFailedFullInits}/$val{adsl2LineAlarmConfProfileThresh15MinFailedFullInt} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfFailedFullInitThresh";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfFailedFullInitThresh";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfFailedFullInitThresh $ifIndex";
+ }
+ elsif ($specific == 16) { # adsl2LinePerfFailedShortInitThresh
+  # OBJECTS: adsl2PMLCurrInit15MFailedShortInits adsl2LineAlarmConfProfileThresh15MinFailedShrtInt
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LinePerfFailedShortInitThresh: Failed Short Init: current/threshold: $val{adsl2PMLCurrInit15MFailedShortInits}/$val{adsl2LineAlarmConfProfileThresh15MinFailedShrtInt} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LinePerfFailedShortInitThresh";
+#  $Event->{'SubAlarmGroup'} = "adsl2LinePerfFailedShortInitThresh";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adsl2LinePerfFailedShortInitThresh $ifIndex";
+ }
+ elsif ($specific == 17) { # adsl2LineStatusChangeAtuc
+  # OBJECTS: adsl2LineStatusAtuc
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LineStatusChangeAtuc: status $lsa ($val{adsl2LineStatusAtuc}) [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LineStatusChangeAtuc";
+#  $Event->{'SubAlarmGroup'} = "adsl2LineStatusChangeAtuc";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+# maybe change that based on $lsa
+  $Event->{'AlarmKey'}   = "$ip: adsl2LineStatusChangeAtuc $ifIndex";
+ }
+ elsif ($specific == 18) { # adsl2LineStatusChangeAtur
+  # OBJECTS: adsl2LineStatusAtur
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adsl2LineStatusChangeAtur: status $lsa ($val{adsl2LineStatusAtur}) [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adsl2LineStatusChangeAtur";
+#  $Event->{'SubAlarmGroup'} = "adsl2LineStatusChangeAtur";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+# maybe change that based on $lsa
+  $Event->{'AlarmKey'}   = "$ip: adsl2LineStatusChangeAtur $ifIndex";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

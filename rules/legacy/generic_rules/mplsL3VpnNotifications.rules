@@ -1,0 +1,153 @@
+my (%oid, %iid, %val);
+
+ $oid{mplsL3VpnIfConfRowStatus} = '1.3.6.1.2.1.10.166.11.1.2.1.1.5';
+ $oid{mplsL3VpnVrfConfHighRteThresh} = '1.3.6.1.2.1.10.166.11.1.2.2.1.10';
+ $oid{mplsL3VpnVrfOperStatus} = '1.3.6.1.2.1.10.166.11.1.2.2.1.6';
+ $oid{mplsL3VpnVrfConfMidRteThresh} = '1.3.6.1.2.1.10.166.11.1.2.2.1.9';
+ $oid{mplsL3VpnVrfSecIllegalLblVltns} = '1.3.6.1.2.1.10.166.11.1.2.6.1.1';
+ $oid{mplsL3VpnVrfPerfCurrNumRoutes} = '1.3.6.1.2.1.10.166.11.1.3.1.1.3';
+
+# mplsL3VpnIfConfRowStatus values:
+#   active(1), notInService(2), notReady(3), createAndGo(4), createAndWait(5), destroy(6)
+
+my %crs = qw(1 active 2 notInService 3 notReady 4 createAndGo 5 createAndWait 6 destroy);
+my $crs;
+
+# index of mplsL3VpnVrfTable is mplsL3VpnVrfName: OCTET STRING (0..31)
+# The human-readable name of this VPN. May be the same as mplsL3VpnVrfVpnId
+
+# final index of mplsL3VpnIfConfRowStatus is IfConfIndex, $icidx.
+
+my $Xd = '\d+'; # regex for integer
+my $Xall = '.*'; # regex for (unbounded) octet string
+my ($count, $name, $i);
+my ($vpniid, $vpnname, $icidx);
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsL3VpnIfConfRowStatus}\E(\.|$)(.*)/) {
+   $iid{mplsL3VpnIfConfRowStatus} = $2;
+   $val{mplsL3VpnIfConfRowStatus} = $v;
+   $crs = $crs{$v} || 'unknown';
+   ($icidx) = $2 =~ /\.($Xd)$/;
+  }
+  elsif ($k =~ /^\Q$oid{mplsL3VpnVrfConfHighRteThresh}\E(\.|$)(.*)/) {
+   $iid{mplsL3VpnVrfConfHighRteThresh} = $2;
+   $val{mplsL3VpnVrfConfHighRteThresh} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsL3VpnVrfConfMidRteThresh}\E(\.|$)(.*)/) {
+   $iid{mplsL3VpnVrfConfMidRteThresh} = $2;
+   $val{mplsL3VpnVrfConfMidRteThresh} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsL3VpnVrfOperStatus}\E(\.|$)(.*)/) {
+   $iid{mplsL3VpnVrfOperStatus} = $2;
+   $val{mplsL3VpnVrfOperStatus} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsL3VpnVrfPerfCurrNumRoutes}\E(\.|$)(.*)/) {
+   $iid{mplsL3VpnVrfPerfCurrNumRoutes} = $2;
+   $val{mplsL3VpnVrfPerfCurrNumRoutes} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsL3VpnVrfSecIllegalLblVltns}\E(\.|$)(.*)/) {
+   $iid{mplsL3VpnVrfSecIllegalLblVltns} = $2;
+   $val{mplsL3VpnVrfSecIllegalLblVltns} = $v;
+  }
+ }
+
+# Usually, exactly one of these is set. Pick the first.
+$vpniid = $iid{mplsL3VpnVrfOperStatus} ||
+          $iid{mplsL3VpnVrfConfMidRteThresh} ||
+          $iid{mplsL3VpnVrfConfHighRteThresh} ||
+          $iid{mplsL3VpnVrfSecIllegalLblVltns};
+($count, $name) = $vpniid =~ /($Xd)\.($Xall)/;
+$vpnname = "";
+$i = 0;
+foreach my $char (split /\./, $name) {
+ $vpnname .= chr $char;
+ last if ++$i == $count;
+}
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # mplsL3VpnVrfUp
+  # OBJECTS: mplsL3VpnIfConfRowStatus mplsL3VpnVrfOperStatus
+  $Event->{'AlarmType'}  = 1; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsL3VpnVrfUp: vpn $vpnname, IfConfIndex $icidx; RowStatus $crs ($val{mplsL3VpnIfConfRowStatus})";
+  $Event->{'AlarmGroup'} = "mplsL3VpnVrfUpDown";
+  $Event->{'SubAlarmGroup'} = "$vpnname $icidx";
+  $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsL3VpnVrfUp $vpnname $icidx";
+ }
+ elsif ($specific == 2) { # mplsL3VpnVrfDown
+  # OBJECTS: mplsL3VpnIfConfRowStatus mplsL3VpnVrfOperStatus
+  $Event->{'AlarmType'}  = 2; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsL3VpnVrfDown: vpn $vpnname, IfConfIndex $icidx; RowStatus $crs ($val{mplsL3VpnIfConfRowStatus})";
+  $Event->{'AlarmGroup'} = "mplsL3VpnVrfUpDown";
+  $Event->{'SubAlarmGroup'} = "$vpnname $icidx";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsL3VpnVrfDown $vpnname $icidx";
+ }
+ elsif ($specific == 3) { # mplsL3VpnVrfRouteMidThreshExceeded
+  # OBJECTS: mplsL3VpnVrfPerfCurrNumRoutes mplsL3VpnVrfConfMidRteThresh
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsL3VpnVrfRouteMidThreshExceeded: vpn $vpnname; current/limit = $val{mplsL3VpnVrfPerfCurrNumRoutes}/$val{mplsL3VpnVrfConfMidRteThresh}";
+  $Event->{'AlarmGroup'} = "mplsL3VpnVrfRouteMidThreshExceeded";
+#  $Event->{'SubAlarmGroup'} = "mplsL3VpnVrfRouteMidThreshExceeded";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsL3VpnVrfRouteMidThreshExceeded $vpnname";
+ }
+ elsif ($specific == 4) { # mplsL3VpnVrfNumVrfRouteMaxThreshExceeded
+  # OBJECTS: mplsL3VpnVrfPerfCurrNumRoutes mplsL3VpnVrfConfHighRteThresh
+  $Event->{'AlarmType'}  = 2; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsL3VpnVrfNumVrfRouteMaxThreshExceeded: vpn $vpnname; current/limit = $val{mplsL3VpnVrfPerfCurrNumRoutes}/$val{mplsL3VpnVrfConfHighRteThresh}";
+  $Event->{'AlarmGroup'} = "mplsL3VpnVrfNumVrfRouteMaxThreshClearExceeded";
+  $Event->{'SubAlarmGroup'} = "vpn $vpnname";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsL3VpnVrfNumVrfRouteMaxThreshExceeded $vpnname";
+ }
+ elsif ($specific == 5) { # mplsL3VpnNumVrfSecIllglLblThrshExcd
+  # OBJECTS: mplsL3VpnVrfSecIllegalLblVltns
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsL3VpnNumVrfSecIllglLblThrshExcd: vpn $vpnname; $val{mplsL3VpnVrfSecIllegalLblVltns} illegal label violations received";
+  $Event->{'AlarmGroup'} = "mplsL3VpnNumVrfSecIllglLblThrshExcd";
+#  $Event->{'SubAlarmGroup'} = "mplsL3VpnNumVrfSecIllglLblThrshExcd";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsL3VpnNumVrfSecIllglLblThrshExcd $vpnname";
+ }
+ elsif ($specific == 6) { # mplsL3VpnNumVrfRouteMaxThreshCleared
+  # OBJECTS: mplsL3VpnVrfPerfCurrNumRoutes mplsL3VpnVrfConfHighRteThresh
+  $Event->{'AlarmType'}  = 1; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsL3VpnNumVrfRouteMaxThreshCleared: vpn $vpnname; current/limit = $val{mplsL3VpnVrfPerfCurrNumRoutes}/$val{mplsL3VpnVrfConfHighRteThresh}";
+  $Event->{'AlarmGroup'} = "mplsL3VpnNumVrfRouteMaxThreshClearExceeded";
+  $Event->{'SubAlarmGroup'} = "vpn $vpnname";
+  $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsL3VpnNumVrfRouteMaxThreshCleared $vpnname";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

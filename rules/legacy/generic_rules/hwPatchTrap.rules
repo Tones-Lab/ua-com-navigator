@@ -1,0 +1,117 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.5.25.19.2.5
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwPatchOperateState}       = '1.3.6.1.4.1.2011.5.25.19.1.8.5.1.1.14';
+$oid{hwPatchErrorSlot}          = '1.3.6.1.4.1.2011.5.25.19.1.8.5.4.1.2';
+$oid{hwPatchErrorPatchFileName} = '1.3.6.1.4.1.2011.5.25.19.1.8.5.4.1.3';
+$oid{hwPatchErrorPatchIndex}    = '1.3.6.1.4.1.2011.5.25.19.1.8.5.4.1.4';
+$oid{hwPatchErrorCode}          = '1.3.6.1.4.1.2011.5.25.19.1.8.5.4.1.5';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPatchErrorCode}\E(\.|$)(.*)/ ) {
+        $iid{hwPatchErrorCode} = $2;
+        $val{hwPatchErrorCode} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPatchErrorPatchFileName}\E(\.|$)(.*)/ ) {
+        $iid{hwPatchErrorPatchFileName} = $2;
+        $val{hwPatchErrorPatchFileName} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPatchErrorPatchIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwPatchErrorPatchIndex} = $2;
+        $val{hwPatchErrorPatchIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPatchErrorSlot}\E(\.|$)(.*)/ ) {
+        $iid{hwPatchErrorSlot} = $2;
+        $val{hwPatchErrorSlot} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPatchOperateState}\E(\.|$)(.*)/ ) {
+        $iid{hwPatchOperateState} = $2;
+        $val{hwPatchOperateState} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwPatchErrorTrap
+
+    # ============
+    # DESCRIPTION:
+    #  "The trap is generated when the patch operation error occurs."
+    # ============
+
+    # OBJECTS: hwPatchErrorSlot hwPatchErrorPatchIndex hwPatchErrorCode hwPatchErrorPatchFileName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwPatchErrorTrap";
+    $Event->{'AlarmGroup'}    = "hwPatchErrorTrap";
+    #$Event->{'SubAlarmGroup'} = "hwPatchErrorTrap";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwPatchErrorTrap alarm.";
+}
+elsif ( $specific == 2 ) {    # hwPatchActiveOverTimeTrap
+
+    # ============
+    # DESCRIPTION:
+    #  "After the patch is active for 24 hour,the trap is generated because the patch is not up to the run state."
+    # ============
+
+    # OBJECTS: hwPatchOperateState
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwPatchActiveOverTimeTrap";
+    $Event->{'AlarmGroup'}    = "hwPatchActiveOverTimeTrap";
+    #$Event->{'SubAlarmGroup'} = "hwPatchActiveOverTimeTrap";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwPatchActiveOverTimeTrap alarm.";
+}
+elsif ( $specific == 3 ) {    # hwPatchMalfunctionComebackTrap
+
+    # ============
+    # DESCRIPTION:
+    #  "The trap is generated when the patch fault is removed."
+    # ============
+
+    # OBJECTS: hwPatchOperateState
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwPatchMalfunctionComebackTrap";
+    $Event->{'AlarmGroup'}    = "hwPatchMalfunctionComebackTrap";
+    #$Event->{'SubAlarmGroup'} = "hwPatchMalfunctionComebackTrap";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwPatchMalfunctionComebackTrap alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

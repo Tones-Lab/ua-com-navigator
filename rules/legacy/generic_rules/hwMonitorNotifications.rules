@@ -1,0 +1,243 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.5.25.41.4
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{ifDescr}                         = '1.3.6.1.2.1.2.2.1.2';
+$oid{hwIfMonitorOutputRatePercentage} = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.10';
+$oid{hwIfMonitorOutputRateThreshold}  = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.11';
+$oid{hwIfMonitorCrcErrorStatistics}   = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.2';
+$oid{hwIfMonitorCrcErrorThreshold}    = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.3';
+$oid{hwIfMonitorCrcErrorInterval}     = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.4';
+$oid{hwIfMonitorSdhErrorStatistics}   = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.5';
+$oid{hwIfMonitorSdhErrorThreshold}    = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.6';
+$oid{hwIfMonitorSdhErrorInterval}     = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.7';
+$oid{hwIfMonitorInputRatePercentage}  = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.8';
+$oid{hwIfMonitorInputRateThreshold}   = '1.3.6.1.4.1.2011.5.25.41.1.7.1.1.9';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorCrcErrorInterval}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorCrcErrorInterval} = $2;
+        $val{hwIfMonitorCrcErrorInterval} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorCrcErrorStatistics}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorCrcErrorStatistics} = $2;
+        $val{hwIfMonitorCrcErrorStatistics} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorCrcErrorThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorCrcErrorThreshold} = $2;
+        $val{hwIfMonitorCrcErrorThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorInputRatePercentage}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorInputRatePercentage} = $2;
+        $val{hwIfMonitorInputRatePercentage} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorInputRateThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorInputRateThreshold} = $2;
+        $val{hwIfMonitorInputRateThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorOutputRatePercentage}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorOutputRatePercentage} = $2;
+        $val{hwIfMonitorOutputRatePercentage} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorOutputRateThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorOutputRateThreshold} = $2;
+        $val{hwIfMonitorOutputRateThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorSdhErrorInterval}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorSdhErrorInterval} = $2;
+        $val{hwIfMonitorSdhErrorInterval} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorSdhErrorStatistics}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorSdhErrorStatistics} = $2;
+        $val{hwIfMonitorSdhErrorStatistics} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIfMonitorSdhErrorThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwIfMonitorSdhErrorThreshold} = $2;
+        $val{hwIfMonitorSdhErrorThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{ifDescr}\E(\.|$)(.*)/ ) {
+        $iid{ifDescr} = $2;
+        $val{ifDescr} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwIfMonitorCrcErrorRising
+
+    # ============
+    # DESCRIPTION:
+    #  " Crc error alarm notification "
+    # ============
+
+    # OBJECTS: hwIfMonitorCrcErrorStatistics hwIfMonitorCrcErrorThreshold hwIfMonitorCrcErrorInterval
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorCrcErrorRising";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorCrcErrorRising";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorCrcErrorRising";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorCrcErrorRising alarm.";
+}
+elsif ( $specific == 2 ) {    # hwIfMonitorCrcErrorResume
+
+    # ============
+    # DESCRIPTION:
+    #  " Crc error alarm resume "
+    # ============
+
+    # OBJECTS: hwIfMonitorCrcErrorStatistics hwIfMonitorCrcErrorThreshold hwIfMonitorCrcErrorInterval
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorCrcErrorResume";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorCrcErrorResume";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorCrcErrorResume";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorCrcErrorResume alarm.";
+}
+elsif ( $specific == 3 ) {    # hwIfMonitorSdhErrorRising
+
+    # ============
+    # DESCRIPTION:
+    #  " Sdh error alarm notification only for B3"
+    # ============
+
+    # OBJECTS: hwIfMonitorSdhErrorStatistics hwIfMonitorSdhErrorThreshold hwIfMonitorSdhErrorInterval
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorSdhErrorRising";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorSdhErrorRising";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorSdhErrorRising";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorSdhErrorRising alarm.";
+}
+elsif ( $specific == 4 ) {    # hwIfMonitorSdhErrorResume
+
+    # ============
+    # DESCRIPTION:
+    #  " Sdh error alarm resume only for B3"
+    # ============
+
+    # OBJECTS: hwIfMonitorSdhErrorStatistics hwIfMonitorSdhErrorThreshold hwIfMonitorSdhErrorInterval
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorSdhErrorResume";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorSdhErrorResume";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorSdhErrorResume";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorSdhErrorResume alarm.";
+}
+elsif ( $specific == 5 ) {    # hwIfMonitorInputRateRising
+
+    # ============
+    # DESCRIPTION:
+    #  " Input rate alarm notification "
+    # ============
+
+    # OBJECTS: hwIfMonitorInputRatePercentage hwIfMonitorInputRateThreshold
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorInputRateRising";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorInputRateRising";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorInputRateRising";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorInputRateRising alarm.";
+}
+elsif ( $specific == 6 ) {    # hwIfMonitorInputRateResume
+
+    # ============
+    # DESCRIPTION:
+    #  " Input rate alarm resume "
+    # ============
+
+    # OBJECTS: hwIfMonitorInputRatePercentage hwIfMonitorInputRateThreshold
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorInputRateResume";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorInputRateResume";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorInputRateResume";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorInputRateResume alarm.";
+}
+elsif ( $specific == 7 ) {    # hwIfMonitorOutputRateRising
+
+    # ============
+    # DESCRIPTION:
+    #  " Output rate alarm notification "
+    # ============
+
+    # OBJECTS: hwIfMonitorOutputRatePercentage hwIfMonitorOutputRateThreshold
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorOutputRateRising";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorOutputRateRising";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorOutputRateRising";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorOutputRateRising alarm.";
+}
+elsif ( $specific == 8 ) {    # hwIfMonitorOutputRateResume
+
+    # ============
+    # DESCRIPTION:
+    #  " Output rate alarm resume "
+    # ============
+
+    # OBJECTS: hwIfMonitorOutputRatePercentage hwIfMonitorOutputRateThreshold
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorOutputRateResume";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorOutputRateResume";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorOutputRateResume";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorOutputRateResume alarm.";
+}
+elsif ( $specific == 9 ) {    # hwIfMonitorHalfDuplexRising
+
+    # ============
+    # DESCRIPTION:
+    #  " Interface half duplex alarm norification "
+    # ============
+
+    # OBJECTS: ifDescr
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfMonitorHalfDuplexRising";
+    $Event->{'AlarmGroup'}    = "hwIfMonitorHalfDuplexRising";
+    #$Event->{'SubAlarmGroup'} = "hwIfMonitorHalfDuplexRising";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfMonitorHalfDuplexRising alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

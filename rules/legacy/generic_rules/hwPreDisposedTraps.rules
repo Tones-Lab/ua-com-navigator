@@ -1,0 +1,96 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.5.25.31.8.2
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{entPhysicalVendorType}          = '1.3.6.1.2.1.47.1.1.1.1.3';
+$oid{hwPreDisposeSequenceNo}         = '1.3.6.1.4.1.2011.5.25.31.8.1.1';
+$oid{hwDisposeEntPhysicalIndex}      = '1.3.6.1.4.1.2011.5.25.31.8.4.1.1';
+$oid{hwDisposeEntPhysicalVendorType} = '1.3.6.1.4.1.2011.5.25.31.8.4.1.3';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{entPhysicalVendorType}\E(\.|$)(.*)/ ) {
+        $iid{entPhysicalVendorType} = $2;
+        $val{entPhysicalVendorType} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwDisposeEntPhysicalIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwDisposeEntPhysicalIndex} = $2;
+        $val{hwDisposeEntPhysicalIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwDisposeEntPhysicalVendorType}\E(\.|$)(.*)/ ) {
+        $iid{hwDisposeEntPhysicalVendorType} = $2;
+        $val{hwDisposeEntPhysicalVendorType} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPreDisposeSequenceNo}\E(\.|$)(.*)/ ) {
+        $iid{hwPreDisposeSequenceNo} = $2;
+        $val{hwPreDisposeSequenceNo} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwInsertDiffFromPreDisposed
+
+    # ============
+    # DESCRIPTION:
+    #  "This object indicates the type of the inserted entity is different from that of pre-disposed entity on the slot."
+    # ============
+
+    # OBJECTS: hwDisposeEntPhysicalIndex hwDisposeEntPhysicalVendorType entPhysicalVendorType
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwInsertDiffFromPreDisposed";
+    $Event->{'AlarmGroup'}    = "hwInsertDiffFromPreDisposed";
+    #$Event->{'SubAlarmGroup'} = "hwInsertDiffFromPreDisposed";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwInsertDiffFromPreDisposed alarm.";
+}
+elsif ( $specific == 2 ) {    # hwPreDisposedChangeNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "This object indicates the change of the 'predispose capability file'. An alarm is generated if the sequence number of the 'predispose capability file' in the current startup file is different from that in the last startup file."
+    # ============
+
+    # OBJECTS: hwPreDisposeSequenceNo
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwPreDisposedChangeNotification";
+    $Event->{'AlarmGroup'}    = "hwPreDisposedChangeNotification";
+    #$Event->{'SubAlarmGroup'} = "hwPreDisposedChangeNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwPreDisposedChangeNotification alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

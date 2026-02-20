@@ -1,0 +1,339 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.5.25.31.2.0
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwEntityAdminStatus}          = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.1';
+$oid{hwEntityTemperature}          = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.11';
+$oid{hwEntityTemperatureThreshold} = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.12';
+$oid{hwEntityVoltage}              = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.13';
+$oid{hwEntityVoltageLowThreshold}  = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.14';
+$oid{hwEntityVoltageHighThreshold} = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.15';
+$oid{hwEntityAlarmLight}           = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.4';
+$oid{hwEntityCpuUsage}             = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.5';
+$oid{hwEntityCpuUsageThreshold}    = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.6';
+$oid{hwEntityMemUsage}             = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.7';
+$oid{hwEntityMemUsageThreshold}    = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.8';
+$oid{hwEntityMemSize}              = '1.3.6.1.4.1.2011.5.25.31.1.1.1.1.9';
+$oid{hwMonitorInputName}           = '1.3.6.1.4.1.2011.5.25.31.1.1.4.1.2';
+$oid{hwMonitorInputState}          = '1.3.6.1.4.1.2011.5.25.31.1.1.4.1.3';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityAdminStatus}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityAdminStatus} = $2;
+        $val{hwEntityAdminStatus} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityAlarmLight}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityAlarmLight} = $2;
+        $val{hwEntityAlarmLight} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityCpuUsage}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityCpuUsage} = $2;
+        $val{hwEntityCpuUsage} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityCpuUsageThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityCpuUsageThreshold} = $2;
+        $val{hwEntityCpuUsageThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityMemSize}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityMemSize} = $2;
+        $val{hwEntityMemSize} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityMemUsage}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityMemUsage} = $2;
+        $val{hwEntityMemUsage} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityMemUsageThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityMemUsageThreshold} = $2;
+        $val{hwEntityMemUsageThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityTemperature}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityTemperature} = $2;
+        $val{hwEntityTemperature} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityTemperatureThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityTemperatureThreshold} = $2;
+        $val{hwEntityTemperatureThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityVoltage}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityVoltage} = $2;
+        $val{hwEntityVoltage} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityVoltageHighThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityVoltageHighThreshold} = $2;
+        $val{hwEntityVoltageHighThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwEntityVoltageLowThreshold}\E(\.|$)(.*)/ ) {
+        $iid{hwEntityVoltageLowThreshold} = $2;
+        $val{hwEntityVoltageLowThreshold} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwMonitorInputName}\E(\.|$)(.*)/ ) {
+        $iid{hwMonitorInputName} = $2;
+        $val{hwMonitorInputName} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwMonitorInputState}\E(\.|$)(.*)/ ) {
+        $iid{hwMonitorInputState} = $2;
+        $val{hwMonitorInputState} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwEntityExtTemperatureThresholdNotification
+
+    # ============
+    # DESCRIPTION:
+    #  " The hwEntityEnvTemperatureThresholdNotification
+    #  indicates the temperature have been exceed the threshold.
+    #  In the condition, user should check the hardware and the 
+    #  environment of the entity, sometimes it happened because
+    #  of the failture of air-condition. Anyway, the threshold
+    #  should lower than the value that most service work fine. "
+    # ============
+
+    # OBJECTS: hwEntityTemperature hwEntityTemperatureThreshold hwEntityAdminStatus hwEntityAlarmLight
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtTemperatureThresholdNotification";
+    $Event->{'AlarmGroup'}    = "hwEntityExtTemperatureThresholdNotification";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtTemperatureThresholdNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtTemperatureThresholdNotification alarm.";
+}
+elsif ( $specific == 2 ) {    # hwEntityExtVoltageLowThresholdNotification
+
+    # ============
+    # DESCRIPTION:
+    #  " The hwEntityExtVoltageLowThresholdNotification indicates
+    #  the voltage is lower than the threshold. This may decrease
+    #  the usability of the entity. If the voltage is lower too much 
+    #  than the hardware needed, the entity will stop working. 
+    #  Anyway, the threshold should higher than the value that 
+    #  most service work fine. "
+    # ============
+
+    # OBJECTS: hwEntityVoltage hwEntityVoltageLowThreshold hwEntityAdminStatus hwEntityAlarmLight
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtVoltageLowThresholdNotification";
+    $Event->{'AlarmGroup'}    = "hwEntityExtVoltageLowThresholdNotification";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtVoltageLowThresholdNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtVoltageLowThresholdNotification alarm.";
+}
+elsif ( $specific == 3 ) {    # hwEntityExtVoltageHighThresholdNotification
+
+    # ============
+    # DESCRIPTION:
+    #  " The hwEntityExtVoltageHighThresholdNotification indicates
+    #  the voltage is higher than the threshold. This may decrease
+    #  the usability of the entity. If the voltage is higher too much 
+    #  than the hardware needed, the entity may be destroyed by the high
+    #  voltage. Anyway, the threshold should lower than the value 
+    #  that most service work fine. "
+    # ============
+
+    # OBJECTS: hwEntityVoltage hwEntityVoltageHighThreshold hwEntityAdminStatus hwEntityAlarmLight
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtVoltageHighThresholdNotification";
+    $Event->{'AlarmGroup'}    = "hwEntityExtVoltageHighThresholdNotification";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtVoltageHighThresholdNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtVoltageHighThresholdNotification alarm.";
+}
+elsif ( $specific == 4 ) {    # hwEntityExtCpuUsageThresholdNotfication
+
+    # ============
+    # DESCRIPTION:
+    #  " The hwEntityExtCpuUsageThresholdNotfication indicates
+    #  the entity is overload, and the service running in the entity
+    #  will not get the performance it should because of CPU's 
+    #  performance. Anyway, the threshold should lower than the 
+    #  value that most service work fine. "
+    # ============
+
+    # OBJECTS: hwEntityCpuUsage hwEntityCpuUsageThreshold hwEntityTemperature hwEntityTemperatureThreshold hwEntityAdminStatus hwEntityAlarmLight
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtCpuUsageThresholdNotfication";
+    $Event->{'AlarmGroup'}    = "hwEntityExtCpuUsageThresholdNotfication";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtCpuUsageThresholdNotfication";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtCpuUsageThresholdNotfication alarm.";
+}
+elsif ( $specific == 5 ) {    # hwEntityExtMemUsageThresholdNotification
+
+    # ============
+    # DESCRIPTION:
+    #  " The hwEntityExtMemUsageThresholdNotification indicates
+    #  the entity is overload, and the service running in the entity
+    #  will not get the performance it should because of lower 
+    #  memory. Anyway, the threshold should lower than the 
+    #  value that most service work fine. "
+    # ============
+
+    # OBJECTS: hwEntityMemUsage hwEntityMemUsageThreshold hwEntityMemSize hwEntityAdminStatus hwEntityAlarmLight
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtMemUsageThresholdNotification";
+    $Event->{'AlarmGroup'}    = "hwEntityExtMemUsageThresholdNotification";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtMemUsageThresholdNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtMemUsageThresholdNotification alarm.";
+}
+elsif ( $specific == 6 ) {    # hwEntityExtOperEnabled
+
+    # ============
+    # DESCRIPTION:
+    #  "The entity is operational. The entity this
+    #  notification refers can be identified by
+    #  extracting the entPhysicalIndex from one of the
+    #  variable bindings."
+    # ============
+
+    # OBJECTS: hwEntityAdminStatus hwEntityAlarmLight
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtOperEnabled";
+    $Event->{'AlarmGroup'}    = "hwEntityExtOperEnabled";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtOperEnabled";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtOperEnabled alarm.";
+}
+elsif ( $specific == 7 ) {    # hwEntityExtOperDisabled
+
+    # ============
+    # DESCRIPTION:
+    #  "The entity is operational. The entity this
+    #  notification refers can be identified by
+    #  extracting the entPhysicalIndex from one of the
+    #  variable bindings."
+    # ============
+
+    # OBJECTS: hwEntityAdminStatus hwEntityAlarmLight
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtOperDisabled";
+    $Event->{'AlarmGroup'}    = "hwEntityExtOperDisabled";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtOperDisabled";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtOperDisabled alarm.";
+}
+elsif ( $specific == 8 ) {    # hwEntityExtMonitorBoardAbnormalNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "The monitor board turns normal to abnormal."
+    # ============
+
+    # OBJECTS: 
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtMonitorBoardAbnormalNotification";
+    $Event->{'AlarmGroup'}    = "hwEntityExtMonitorBoardAbnormalNotification";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtMonitorBoardAbnormalNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtMonitorBoardAbnormalNotification alarm.";
+}
+elsif ( $specific == 9 ) {    # hwEntityExtMonitorBoardNormalNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "The monitor board turns abnormal to normal."
+    # ============
+
+    # OBJECTS: 
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtMonitorBoardNormalNotification";
+    $Event->{'AlarmGroup'}    = "hwEntityExtMonitorBoardNormalNotification";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtMonitorBoardNormalNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtMonitorBoardNormalNotification alarm.";
+}
+elsif ( $specific == 10 ) {    # hwEntityExtMonitorPortAbnormalNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "The monitor port turns normal to abnormal."
+    # ============
+
+    # OBJECTS: hwMonitorInputState hwMonitorInputName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtMonitorPortAbnormalNotification";
+    $Event->{'AlarmGroup'}    = "hwEntityExtMonitorPortAbnormalNotification";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtMonitorPortAbnormalNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtMonitorPortAbnormalNotification alarm.";
+}
+elsif ( $specific == 11 ) {    # hwEntityExtMonitorPortNormalNotification
+
+    # ============
+    # DESCRIPTION:
+    #  "The monitor port turns abnormal to normal."
+    # ============
+
+    # OBJECTS: hwMonitorInputState hwMonitorInputName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtMonitorPortNormalNotification";
+    $Event->{'AlarmGroup'}    = "hwEntityExtMonitorPortNormalNotification";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtMonitorPortNormalNotification";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtMonitorPortNormalNotification alarm.";
+}
+elsif ( $specific == 12 ) {    # hwEntityExtCpuUsageLowThresholdNotfication
+
+    # ============
+    # DESCRIPTION:
+    #  " The hwEntityExtCpuUsageThresholdNotfication indicates
+    #  the entity is overload, and the service running in the entity
+    #  will not get the performance it should because of CPU's 
+    #  performance. Anyway, the threshold should lower than the 
+    #  value that most service work fine. "
+    # ============
+
+    # OBJECTS: hwEntityCpuUsage hwEntityCpuUsageThreshold hwEntityTemperature hwEntityTemperatureThreshold hwEntityAdminStatus hwEntityAlarmLight
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtCpuUsageLowThresholdNotfication";
+    $Event->{'AlarmGroup'}    = "hwEntityExtCpuUsageLowThresholdNotfication";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtCpuUsageLowThresholdNotfication";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtCpuUsageLowThresholdNotfication alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

@@ -1,0 +1,113 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.6.10.2
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwCfgLogSrcCmd}      = '1.3.6.1.4.1.2011.6.10.1.1.7.1.3';
+$oid{hwCfgLogSrcData}     = '1.3.6.1.4.1.2011.6.10.1.1.7.1.4';
+$oid{hwCfgLogDesData}     = '1.3.6.1.4.1.2011.6.10.1.1.7.1.5';
+$oid{hwCfgOperateType}    = '1.3.6.1.4.1.2011.6.10.1.2.4.1.2';
+$oid{hwCfgOperateState}   = '1.3.6.1.4.1.2011.6.10.1.2.5.1.4';
+$oid{hwCfgOperateTime}    = '1.3.6.1.4.1.2011.6.10.1.2.5.1.5';
+$oid{hwCfgOperateEndTime} = '1.3.6.1.4.1.2011.6.10.1.2.5.1.6';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwCfgLogDesData}\E(\.|$)(.*)/ ) {
+        $iid{hwCfgLogDesData} = $2;
+        $val{hwCfgLogDesData} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwCfgLogSrcCmd}\E(\.|$)(.*)/ ) {
+        $iid{hwCfgLogSrcCmd} = $2;
+        $val{hwCfgLogSrcCmd} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwCfgLogSrcData}\E(\.|$)(.*)/ ) {
+        $iid{hwCfgLogSrcData} = $2;
+        $val{hwCfgLogSrcData} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwCfgOperateEndTime}\E(\.|$)(.*)/ ) {
+        $iid{hwCfgOperateEndTime} = $2;
+        $val{hwCfgOperateEndTime} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwCfgOperateState}\E(\.|$)(.*)/ ) {
+        $iid{hwCfgOperateState} = $2;
+        $val{hwCfgOperateState} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwCfgOperateTime}\E(\.|$)(.*)/ ) {
+        $iid{hwCfgOperateTime} = $2;
+        $val{hwCfgOperateTime} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwCfgOperateType}\E(\.|$)(.*)/ ) {
+        $iid{hwCfgOperateType} = $2;
+        $val{hwCfgOperateType} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwCfgManEventlog
+
+    # ============
+    # DESCRIPTION:
+    #  "If the system configuration is changed,
+    #  				a notification is generated."
+    # ============
+
+    # OBJECTS: hwCfgLogSrcCmd hwCfgLogSrcData hwCfgLogDesData
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwCfgManEventlog";
+    $Event->{'AlarmGroup'}    = "hwCfgManEventlog";
+    #$Event->{'SubAlarmGroup'} = "hwCfgManEventlog";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwCfgManEventlog alarm.";
+}
+elsif ( $specific == 2 ) {    # hwCfgOperateCompletion
+
+    # ============
+    # DESCRIPTION:
+    #  "When a configuration operation has been done, a 
+    #  				notification may be generated."
+    # ============
+
+    # OBJECTS: hwCfgOperateType hwCfgOperateTime hwCfgOperateState hwCfgOperateEndTime
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwCfgOperateCompletion";
+    $Event->{'AlarmGroup'}    = "hwCfgOperateCompletion";
+    #$Event->{'SubAlarmGroup'} = "hwCfgOperateCompletion";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwCfgOperateCompletion alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

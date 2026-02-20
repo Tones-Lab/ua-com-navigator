@@ -1,0 +1,80 @@
+my (%oid, %iid, %val);
+
+ $oid{clogHistFacility} = '1.3.6.1.4.1.9.9.41.1.2.3.1.2';
+ $oid{clogHistSeverity} = '1.3.6.1.4.1.9.9.41.1.2.3.1.3';
+ $oid{clogHistMsgName} = '1.3.6.1.4.1.9.9.41.1.2.3.1.4';
+ $oid{clogHistMsgText} = '1.3.6.1.4.1.9.9.41.1.2.3.1.5';
+ $oid{clogHistTimestamp} = '1.3.6.1.4.1.9.9.41.1.2.3.1.6';
+
+ # clogHistSeverity values:
+ #   emergency(1), alert(2), critical(3), error(4), warning(5), notice(6), info(7), debug(8)
+ # Map these to Monolith severities
+ my %monosev = ( 1 => 5, 2 => 4, 3 => 4, 4 => 3, 5 => 3, 6 => 2, 7 => 0, 8 => 0 );
+
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{clogHistFacility}\E(\.|$)(.*)/) {
+   $iid{clogHistFacility} = $2;
+   $val{clogHistFacility} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{clogHistMsgName}\E(\.|$)(.*)/) {
+   $iid{clogHistMsgName} = $2;
+   $val{clogHistMsgName} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{clogHistMsgText}\E(\.|$)(.*)/) {
+   $iid{clogHistMsgText} = $2;
+   $val{clogHistMsgText} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{clogHistSeverity}\E(\.|$)(.*)/) {
+   $iid{clogHistSeverity} = $2;
+   $val{clogHistSeverity} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{clogHistTimestamp}\E(\.|$)(.*)/) {
+   $iid{clogHistTimestamp} = $2;
+   $val{clogHistTimestamp} = $v;
+  }
+ }
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # clogMessageGenerated
+  # OBJECTS: clogHistFacility clogHistSeverity clogHistMsgName clogHistMsgText clogHistTimestamp
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "$val{clogHistFacility}/$val{clogHistMsgName}: $val{clogHistMsgText}";
+  $Event->{'AlarmGroup'} = "clogMessageGenerated";
+#  $Event->{'SubAlarmGroup'} = "clogMessageGenerated";
+# take the Severity from the trap. Other parts must be modified to match
+  $Event->{'Severity'}   = $monosev{$val{clogHistSeverity}};
+  $Event->{'Severity'} eq "" and $Event->{'Severity'} = 1;
+  $Event->{'AlarmKey'}   = "$ip: clogMessageGenerated $val{clogHistFacility}/$val{clogHistMsgName}";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

@@ -1,0 +1,481 @@
+###############################################################################
+# Converted from generic-CISCO-ITP-XUA-MIB
+###############################################################################
+
+our ($Log, $Event, $generic, $specific, $enterprise, @value, @OID);
+our ($OS_EventId, );
+our ($DEFAULT_Severity, $DEFAULT_Type, $DEFAULT_ExpireTime);
+
+my ( $cItpXuaAsDisplayName, $cItpXuaAspAddrNum, $cItpXuaAspAssocFailedReason,
+$cItpXuaAspAssocIdU32, $cItpXuaAspAssocState, $cItpXuaAspAsState,
+$cItpXuaAspDisplayName, $cItpXuaAspName, $cItpXuaAspRemoteIpDestState,
+$cItpXuaAsState, $cItpXuaSgmAddrNum, $cItpXuaSgmAssocId,
+$cItpXuaSgmDisplayName, $cItpXuaSgmName, $cItpXuaSgmRemoteIpDestState,
+$cItpXuaSgmState,
+);
+
+my $AlertKey;
+
+$Event->{Agent} = "CISCO MWTM";
+
+if (0) { # Dummy
+} elsif ($specific == "3") { ### - ciscoItpXuaAsStateChange
+    #######################
+    #
+    # indicates the new state for the AS.
+    #
+    # $value[1] = cItpXuaAsDisplayName
+    #
+    #      ciscoItpXuaAsStateChange notifications.
+    #
+    # $value[2] = cItpXuaAsState
+    #
+    #      The Application Server (AS) state.
+    #
+    #######################
+
+    $cItpXuaAsDisplayName = $value[2];
+    $cItpXuaAsState = lookup($value[3],'generic-CISCO-ITP-XUA-MIB-cItpXuaAsState');
+
+    #$cItpXuaAsName = extract($OID[2], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaAsStateChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaAsStateChange";
+    $Event->{SubAlarmGroup} = $cItpXuaAsDisplayName;
+    $AlertKey = $cItpXuaAsDisplayName  . " " . $cItpXuaAsState;
+    $Event->{Summary} = "ciscoItpXuaAsStateChange: indicates the new state for the AS." . " " . $AlertKey;
+
+    #    $DEFAULT_Severity = 3
+    #    $DEFAULT_Type = 2
+    if (0) { # Dummy
+    } elsif ($cItpXuaAsState eq "down ") {
+        $Event->{Severity} = 5;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAsState eq "inactive ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAsState eq "active ") {
+        $Event->{Severity} = 0;
+        $Event->{AlarmType} = 1;
+    } elsif ($cItpXuaAsState eq "pending ") {
+        $Event->{Severity} = 3;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAsState eq "undefined ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAsState eq "Unknown ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $AlertKey . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "2") { ### - ciscoItpXuaSgmStateChange
+    #######################
+    #
+    # cItpXuaSgmState indicates the new state for
+    # the SG Mate.
+    #
+    # $value[1] = cItpXuaSgmDisplayName
+    #
+    #      This object identifies the SG Mate name associated with
+    #              the ciscoItpXuaSgmStateChange notification.
+    #
+    # $value[2] = cItpXuaSgmState
+    #
+    #      The state of the SG Mate. Only active and inactive
+    #              states are applicable.
+    #
+    #######################
+
+    $cItpXuaSgmDisplayName = $value[1];
+    $cItpXuaSgmState = lookup($value[2],'generic-CISCO-ITP-XUA-MIB-cItpXuaSgmState');
+
+    $cItpXuaSgmName = extract($OID[2], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaSgmStateChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaSgmStateChange";
+    $Event->{SubAlarmGroup} = "cItpXuaSgmTableEntry." . $cItpXuaSgmName;
+    $Event->{Summary} = "ciscoItpXuaSgmStateChange: cItpXuaSgmState indicates the new state for the SG Mate.";
+
+    #    $DEFAULT_Severity = 3
+    #    $DEFAULT_Type = 2
+    $DEFAULT_ExpireTime = 0;
+    if (0) { # Dummy
+    } elsif ($cItpXuaSgmState eq "down ") {
+        $Event->{Severity} = 5;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaSgmState eq "inactive ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaSgmState eq "active ") {
+        $Event->{Severity} = 0;
+        $Event->{AlarmType} = 1;
+    } elsif ($cItpXuaSgmState eq "undefined ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaSgmState eq "Unknown ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "1") { ### - ciscoItpXuaAspStateChange
+    #######################
+    #
+    # indicates the new state for the ASP that is
+    # serving the AS specified by cItpXuaAsDisplayName.
+    #
+    # $value[1] = cItpXuaAspDisplayName
+    #
+    #      This object identifies the ASP name associated with
+    #              the ciscoItpXuaAspStateChange notification.
+    #
+    # $value[2] = cItpXuaAsDisplayName
+    #
+    #      ciscoItpXuaAsStateChange notifications.
+    #
+    # $value[3] = cItpXuaAspAsState
+    #
+    #      The state of the ASP that serves this AS.
+    #
+    #######################
+
+    $cItpXuaAspDisplayName = $value[2];
+    $cItpXuaAsDisplayName = $value[3];
+    $cItpXuaAspAsState = lookup($value[4],'generic-CISCO-ITP-XUA-MIB-cItpXuaAspAsState');
+
+    $cItpXuaAspName = extract($OID[3], '\.([0-9]+)\.[0-9]+$');
+    #$cItpXuaAspAsName = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaAspStateChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaAspStateChange";
+    $Event->{SubAlarmGroup} = $cItpXuaAspDisplayName;
+    $AlertKey = $cItpXuaAspDisplayName . " " . $cItpXuaAspAsState;
+    $Event->{Summary} = "ciscoItpXuaAspStateChange: indicates the new state for the ASP that is serving the AS specified by cItpXuaAsDisplayName. " . $AlertKey;
+
+    #    $DEFAULT_Severity = 3
+    #    $DEFAULT_Type = 2
+    $DEFAULT_ExpireTime = 0;
+    if (0) { # Dummy
+    } elsif ($cItpXuaAspAsState eq "down ") {
+        $Event->{Severity} = 5;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAspAsState eq "inactive ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAspAsState eq "active ") {
+        $Event->{Severity} = 0;
+        $Event->{AlarmType} = 1;
+    } elsif ($cItpXuaAspAsState eq "undefined ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAspAsState eq "Unknown ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $AlertKey . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "7") { ### - ciscoItpXuaAspDestAddrStateChange
+    #######################
+    #
+    # The notification is generated when a destination
+    # IP address used by ASP changes state.
+    #
+    # $value[1] = cItpXuaAspDisplayName
+    #
+    #      This object identifies the ASP name associated with
+    #              the ciscoItpXuaAspStateChange notification.
+    #
+    # $value[2] = cItpXuaAspAssocIdU32
+    #
+    #      MIB. A value greater than zero indicates a valid
+    #              association and zero indicates no association.
+    #
+    # $value[3] = cItpXuaAspRemoteIpAddr
+    #
+    #      This object contains the remote IP address used to
+    #              create the association supporting this ASP.
+    #
+    # $value[4] = cItpXuaAspRemoteIpDestState
+    #
+    #      This object contains the remote IP state used to
+    #              create the association supporting this ASP.
+    #
+    #######################
+
+    $cItpXuaAspDisplayName = $value[1];
+    $cItpXuaAspAssocIdU32 = $value[2];
+    #$cItpXuaAspRemoteIpAddr = $value[3];
+    $cItpXuaAspRemoteIpDestState = lookup($value[4],'generic-CISCO-ITP-XUA-MIB-cItpXuaAspRemoteIpDestState');
+
+    $cItpXuaAspName = extract($OID[2], '\.([0-9]+)$');
+    $cItpXuaAspAddrNum = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaAspDestAddrStateChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaAspDestAddrStateChange";
+    $Event->{SubAlarmGroup} = "cItpXuaAspTableEntry." . $cItpXuaAspName . " cItpXuaAspRemoteIpTableEntry." . $cItpXuaAspAddrNum;
+    $Event->{Summary} = "ciscoItpXuaAspDestAddrStateChange: The notification is generated when a destination IP address used by ASP changes state.";
+
+    #    $DEFAULT_Severity = 3
+    #    $DEFAULT_Type = 2
+    $DEFAULT_ExpireTime = 0;
+    if (0) { # Dummy
+    } elsif ($cItpXuaAspRemoteIpDestState eq "inactive ") {
+        $Event->{Severity} = 2;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAspRemoteIpDestState eq "active ") {
+        $Event->{Severity} = 0;
+        $Event->{AlarmType} = 1;
+    } elsif ($cItpXuaAspRemoteIpDestState eq "undefined ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaAspRemoteIpDestState eq "Unknown ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "6") { ### - ciscoItpXuaSgmDestAddrStateChange
+    #######################
+    #
+    # The notification is generated when a destination
+    # IP address used by SG Mate changes state.
+    #
+    # $value[1] = cItpXuaSgmDisplayName
+    #
+    #      This object identifies the SG Mate name associated with
+    #              the ciscoItpXuaSgmStateChange notification.
+    #
+    # $value[2] = cItpXuaSgmAssocId
+    #
+    #      MIB. A value greater than zero indicates a valid
+    #              association and zero indicates no association.
+    #
+    # $value[3] = cItpXuaSgmRemoteIpAddr
+    #
+    #      This object contains the remote IP address used to
+    #              create the association supporting this SGM.
+    #
+    # $value[4] = cItpXuaSgmRemoteIpDestState
+    #
+    #      this Signalling Gateway Mate.
+    #
+    #######################
+
+    $cItpXuaSgmDisplayName = $value[1];
+    $cItpXuaSgmAssocId = $value[2];
+    #$cItpXuaSgmRemoteIpAddr = $value[3];
+    $cItpXuaSgmRemoteIpDestState = lookup($value[4],'generic-CISCO-ITP-XUA-MIB-cItpXuaSgmRemoteIpDestState');
+
+    $cItpXuaSgmName = extract($OID[2], '\.([0-9]+)$');
+    $cItpXuaSgmAddrNum = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaSgmDestAddrStateChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaSgmDestAddrStateChange";
+    $Event->{SubAlarmGroup} = "cItpXuaSgmTableEntry." . $cItpXuaSgmName . " cItpXuaSgmRemoteIpTableEntry." . $cItpXuaSgmAddrNum;
+    $Event->{Summary} = "ciscoItpXuaSgmDestAddrStateChange: The notification is generated when a destination IP address used by SG Mate changes state.";
+
+    #    $DEFAULT_Severity = 3
+    #    $DEFAULT_Type = 2
+    $DEFAULT_ExpireTime = 0;
+
+    if (0) { # Dummy
+    } elsif ($cItpXuaSgmRemoteIpDestState eq "inactive ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaSgmRemoteIpDestState eq "active ") {
+        $Event->{Severity} = 2;
+        $Event->{AlarmType} = 1;
+    } elsif ($cItpXuaSgmRemoteIpDestState eq "undefined ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cItpXuaSgmRemoteIpDestState eq "Unknown ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "5") { ### - ciscoItpXuaSgmCongChange
+    #######################
+    #
+    # cItpXuaSgmCongLevel indicates the new congetion
+    # level for the SG Mate.
+    #
+    # $value[1] = cItpXuaSgmDisplayName
+    #
+    #      This object identifies the SG Mate name associated with
+    #              the ciscoItpXuaSgmStateChange notification.
+    #
+    # $value[2] = cItpXuaSgmCongLevel
+    #
+    #      the SCTP congestion indication and the SCON level
+    #              received from the SG Mate.
+    #
+    #######################
+
+    $cItpXuaSgmDisplayName = $value[1];
+    #$cItpXuaSgmCongLevel = $value[2];
+
+    $cItpXuaSgmName = extract($OID[2], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaSgmCongChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaSgmCongChange";
+    $Event->{SubAlarmGroup} = "cItpXuaSgmTableEntry." . $cItpXuaSgmName;
+    $Event->{Summary} = "ciscoItpXuaSgmCongChange: cItpXuaSgmCongLevel indicates the new congetion level for the SG Mate.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "4") { ### - ciscoItpXuaAspCongChange
+    #######################
+    #
+    # cItpXuaAspCongLevel indicates the new congetion
+    # level for the ASP.
+    #
+    # $value[1] = cItpXuaAspDisplayName
+    #
+    #      This object identifies the ASP name associated with
+    #              the ciscoItpXuaAspStateChange notification.
+    #
+    # $value[2] = cItpXuaAspCongLevel
+    #
+    #      the SCTP congestion indication and the SCON level
+    #              received from the ASP.
+    #
+    #######################
+
+    $cItpXuaAspDisplayName = $value[1];
+    #$cItpXuaAspCongLevel = $value[2];
+
+    $cItpXuaAspName = extract($OID[2], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaAspCongChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaAspCongChange";
+    $Event->{SubAlarmGroup} = "cItpXuaAspTableEntry." . $cItpXuaAspName;
+    $Event->{Summary} = "ciscoItpXuaAspCongChange: cItpXuaAspCongLevel indicates the new congetion level for the ASP.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "9") { ### - ciscoItpXuaSgmAssocStateChange
+    #######################
+    #
+    # This notification is generated when the association
+    # used to connect to the SG Mate changes state.
+    #
+    # $value[1] = cItpXuaSgmDisplayName
+    #
+    #      This object identifies the SG Mate name associated with
+    #              the ciscoItpXuaSgmStateChange notification.
+    #
+    # $value[2] = cItpXuaSgmAssocId
+    #
+    #      MIB. A value greater than zero indicates a valid
+    #              association and zero indicates no association.
+    #
+    # $value[3] = cItpXuaSgmAssocState
+    #
+    #      The state of the SG Mate SCTP Association.
+    #
+    # $value[4] = cItpXuaSgmAssocFailedReason
+    #
+    #      The SG Mate SCTP Association failure reason.
+    #
+    #######################
+
+    $cItpXuaSgmDisplayName = $value[1];
+    $cItpXuaSgmAssocId = $value[2];
+    #$cItpXuaSgmAssocState = lookup($value[3],'generic-CISCO-ITP-XUA-MIB-cItpXuaSgmAssocState');
+    #$cItpXuaSgmAssocFailedReason = $value[4];
+
+    $cItpXuaSgmName = extract($OID[2], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaSgmAssocStateChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaSgmAssocStateChange";
+    $Event->{SubAlarmGroup} = "cItpXuaSgmTableEntry." . $cItpXuaSgmName;
+    $Event->{Summary} = "ciscoItpXuaSgmAssocStateChange: This notification is generated when the association used to connect to the SG Mate changes state.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "8") { ### - ciscoItpXuaAspAssocStateChange
+    #######################
+    #
+    # This notification is generated when the association
+    # used to connect to the ASP changes state.
+    #
+    # $value[1] = cItpXuaAspDisplayName
+    #
+    #      This object identifies the ASP name associated with
+    #              the ciscoItpXuaAspStateChange notification.
+    #
+    # $value[2] = cItpXuaAspAssocIdU32
+    #
+    #      MIB. A value greater than zero indicates a valid
+    #              association and zero indicates no association.
+    #
+    # $value[3] = cItpXuaAspAssocState
+    #
+    #      The state of the ASP SCTP Association.
+    #
+    # $value[4] = cItpXuaAspAssocFailedReason
+    #
+    #      The ASP SCTP Association failure reason.
+    #
+    #######################
+
+    $cItpXuaAspDisplayName = $value[2];
+    $cItpXuaAspAssocIdU32 = $value[3];
+    $cItpXuaAspAssocState = lookup($value[4],'generic-CISCO-ITP-XUA-MIB-cItpXuaAspAssocState');
+    $cItpXuaAspAssocFailedReason = $value[5];
+
+    $cItpXuaAspName = extract($OID[2], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-XUA-MIB-ciscoItpXuaAspAssocStateChange";
+
+    $Event->{AlarmGroup} = "ciscoItpXuaAspAssocStateChange";
+    $Event->{SubAlarmGroup} = $cItpXuaAspDisplayName . " " . $cItpXuaAspAssocState . " " . $cItpXuaAspAssocFailedReason;
+    $Event->{Summary} = "ciscoItpXuaAspAssocStateChange: This notification is generated when the association used to connect to the ASP changes state." . " " . $Event->{SubAlarmGroup};
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} else {
+    $Event->{Summary} = "Unknown Specific Trap Number (" . $specific . ") Received for Enterprise " . $enterprise;
+    $Event->{Severity} = 1;
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $enterprise . " " . $generic . " " . $specific;
+}
+
+$Log->Message('DEBUG', "Leaving... generic-CISCO-ITP-XUA-MIB.rules");

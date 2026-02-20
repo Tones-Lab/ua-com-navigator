@@ -1,0 +1,177 @@
+my (%oid, %iid, %val);
+
+ $oid{adslAtucThresh15MinLofs} = '1.3.6.1.2.1.10.94.1.1.15.1.2';
+ $oid{adslAtucThresh15MinLoss} = '1.3.6.1.2.1.10.94.1.1.15.1.3';
+ $oid{adslAtucThresh15MinLols} = '1.3.6.1.2.1.10.94.1.1.15.1.4';
+ $oid{adslAtucThresh15MinLprs} = '1.3.6.1.2.1.10.94.1.1.15.1.5';
+ $oid{adslAtucThresh15MinESs} = '1.3.6.1.2.1.10.94.1.1.15.1.6';
+ $oid{adslAtucCurrStatus} = '1.3.6.1.2.1.10.94.1.1.2.1.6';
+ $oid{adslAtucChanCurrTxRate} = '1.3.6.1.2.1.10.94.1.1.4.1.2';
+ $oid{adslAtucChanPrevTxRate} = '1.3.6.1.2.1.10.94.1.1.4.1.3';
+ $oid{adslAtucPerfCurr15MinLofs} = '1.3.6.1.2.1.10.94.1.1.6.1.10';
+ $oid{adslAtucPerfCurr15MinLoss} = '1.3.6.1.2.1.10.94.1.1.6.1.11';
+ $oid{adslAtucPerfCurr15MinLols} = '1.3.6.1.2.1.10.94.1.1.6.1.12';
+ $oid{adslAtucPerfCurr15MinLprs} = '1.3.6.1.2.1.10.94.1.1.6.1.13';
+ $oid{adslAtucPerfCurr15MinESs} = '1.3.6.1.2.1.10.94.1.1.6.1.14';
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucChanCurrTxRate}\E(\.|$)(.*)/) {
+   $iid{adslAtucChanCurrTxRate} = $2;
+   $val{adslAtucChanCurrTxRate} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucChanPrevTxRate}\E(\.|$)(.*)/) {
+   $iid{adslAtucChanPrevTxRate} = $2;
+   $val{adslAtucChanPrevTxRate} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucCurrStatus}\E(\.|$)(.*)/) {
+   $iid{adslAtucCurrStatus} = $2;
+   $val{adslAtucCurrStatus} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucPerfCurr15MinESs}\E(\.|$)(.*)/) {
+   $iid{adslAtucPerfCurr15MinESs} = $2;
+   $val{adslAtucPerfCurr15MinESs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucPerfCurr15MinLofs}\E(\.|$)(.*)/) {
+   $iid{adslAtucPerfCurr15MinLofs} = $2;
+   $val{adslAtucPerfCurr15MinLofs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucPerfCurr15MinLols}\E(\.|$)(.*)/) {
+   $iid{adslAtucPerfCurr15MinLols} = $2;
+   $val{adslAtucPerfCurr15MinLols} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucPerfCurr15MinLoss}\E(\.|$)(.*)/) {
+   $iid{adslAtucPerfCurr15MinLoss} = $2;
+   $val{adslAtucPerfCurr15MinLoss} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucPerfCurr15MinLprs}\E(\.|$)(.*)/) {
+   $iid{adslAtucPerfCurr15MinLprs} = $2;
+   $val{adslAtucPerfCurr15MinLprs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucThresh15MinESs}\E(\.|$)(.*)/) {
+   $iid{adslAtucThresh15MinESs} = $2;
+   $val{adslAtucThresh15MinESs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucThresh15MinLofs}\E(\.|$)(.*)/) {
+   $iid{adslAtucThresh15MinLofs} = $2;
+   $val{adslAtucThresh15MinLofs} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucThresh15MinLols}\E(\.|$)(.*)/) {
+   $iid{adslAtucThresh15MinLols} = $2;
+   $val{adslAtucThresh15MinLols} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucThresh15MinLoss}\E(\.|$)(.*)/) {
+   $iid{adslAtucThresh15MinLoss} = $2;
+   $val{adslAtucThresh15MinLoss} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{adslAtucThresh15MinLprs}\E(\.|$)(.*)/) {
+   $iid{adslAtucThresh15MinLprs} = $2;
+   $val{adslAtucThresh15MinLprs} = $v;
+  }
+ }
+
+# Usually, exactly one of these is set. Pick the first.
+# (snmptranslate -Td of the "parent" of the oid says "INDEX         { ifIndex }")
+my $ifIndex = $iid{adslAtucPerfCurr15MinLofs} ||
+              $iid{adslAtucPerfCurr15MinLoss} ||
+              $iid{adslAtucPerfCurr15MinLprs} ||
+              $iid{adslAtucPerfCurr15MinESs}  ||
+              $iid{adslAtucChanCurrTxRate}    ||
+              $iid{adslAtucPerfCurr15MinLols} ||
+              $iid{adslAtucCurrStatus};
+# when we see a "live" trap, we can see if any extra processing is needed to extract ifIndex
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # adslAtucPerfLofsThreshTrap
+  # OBJECTS: adslAtucPerfCurr15MinLofs adslAtucThresh15MinLofs
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adslAtucPerfLofsThreshTrap: Loss of Framing: current/threshold: $val{adslAtucPerfCurr15MinLofs}/$val{adslAtucThresh15MinLofs} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adslAtucPerfLofsThreshTrap";
+#  $Event->{'SubAlarmGroup'} = "adslAtucPerfLofsThreshTrap";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adslAtucPerfLofsThreshTrap $ifIndex";
+ }
+ elsif ($specific == 2) { # adslAtucPerfLossThreshTrap
+  # OBJECTS: adslAtucPerfCurr15MinLoss adslAtucThresh15MinLoss
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adslAtucPerfLossThreshTrap: Loss of Signal: current/threshold: $val{adslAtucPerfCurr15MinLoss}/$val{adslAtucThresh15MinLoss} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adslAtucPerfLossThreshTrap";
+#  $Event->{'SubAlarmGroup'} = "adslAtucPerfLossThreshTrap";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adslAtucPerfLossThreshTrap $ifIndex";
+ }
+ elsif ($specific == 3) { # adslAtucPerfLprsThreshTrap
+  # OBJECTS: adslAtucPerfCurr15MinLprs adslAtucThresh15MinLprs
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adslAtucPerfLprsThreshTrap: Loss of Power: current/threshold: $val{adslAtucPerfCurr15MinLprs}/$val{adslAtucThresh15MinLprs} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adslAtucPerfLprsThreshTrap";
+#  $Event->{'SubAlarmGroup'} = "adslAtucPerfLprsThreshTrap";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adslAtucPerfLprsThreshTrap $ifIndex";
+ }
+ elsif ($specific == 4) { # adslAtucPerfESsThreshTrap
+  # OBJECTS: adslAtucPerfCurr15MinESs adslAtucThresh15MinESs
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adslAtucPerfESsThreshTrap: Errored Second: current/threshold: $val{adslAtucPerfCurr15MinESs}/$val{adslAtucThresh15MinESs} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adslAtucPerfESsThreshTrap";
+#  $Event->{'SubAlarmGroup'} = "adslAtucPerfESsThreshTrap";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adslAtucPerfESsThreshTrap $ifIndex";
+ }
+ elsif ($specific == 5) { # adslAtucRateChangeTrap
+  # OBJECTS: adslAtucChanCurrTxRate adslAtucChanPrevTxRate
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adslAtucRateChangeTrap: Transmit Rate: current/previous: $val{adslAtucChanCurrTxRate}/$val{adslAtucChanPrevTxRate} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adslAtucRateChangeTrap";
+#  $Event->{'SubAlarmGroup'} = "adslAtucRateChangeTrap";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adslAtucRateChangeTrap $ifIndex";
+ }
+ elsif ($specific == 6) { # adslAtucPerfLolsThreshTrap
+  # OBJECTS: adslAtucPerfCurr15MinLols adslAtucThresh15MinLols
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adslAtucPerfLolsThreshTrap: Loss of Link: current/threshold: $val{adslAtucPerfCurr15MinLols}/$val{adslAtucThresh15MinLols} [ifIndex $ifIndex]";
+  $Event->{'AlarmGroup'} = "adslAtucPerfLolsThreshTrap";
+#  $Event->{'SubAlarmGroup'} = "adslAtucPerfLolsThreshTrap";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adslAtucPerfLolsThreshTrap $ifIndex";
+ }
+ elsif ($specific == 7) { # adslAtucInitFailureTrap
+  # OBJECTS: adslAtucCurrStatus
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "adslAtucInitFailureTrap: Initialization: current: $val{adslAtucCurrStatus} [$ifIndex]";
+  $Event->{'AlarmGroup'} = "adslAtucInitFailureTrap";
+#  $Event->{'SubAlarmGroup'} = "adslAtucInitFailureTrap";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: adslAtucInitFailureTrap $ifIndex";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

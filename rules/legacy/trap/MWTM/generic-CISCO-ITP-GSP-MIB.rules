@@ -1,0 +1,511 @@
+###############################################################################
+# Converted from generic-CISCO-ITP-GSP-MIB
+###############################################################################
+
+our ($Log, $Event, $generic, $specific, $enterprise, @value, @OID);
+our ($OS_EventId, );
+our ($DEFAULT_Severity, $DEFAULT_Type, $DEFAULT_ExpireTime);
+
+my ( $cgspCLLICode, $cgspEventSequenceNumber, $cgspInstNetwork,
+$cgspInstUserPartDisplay, $cgspIntervalUPUs, $cgspLinkDisplayName,
+$cgspLinkReason, $cgspLinksetAdjacentDisplayPC, $cgspLinksetName,
+$cgspLinksetSourceDisplayPC, $cgspLinksetState, $cgspLinkSlc,
+$cgspLinkState, $cgspMtp3SI, $cgspUPUIntervalDuration,
+);
+
+$Event->{Agent} = "CISCO MWTM";
+
+if (0) { # Dummy
+} elsif ($specific == "3") { ### - ciscoGspCongestionChange
+    #######################
+    #
+    # by cgspLinkCongestionState object.
+    #
+    # $value[1] = cgspEventSequenceNumber
+    #
+    #      messages from a particular device are missing.  This value
+    #               will included in each SS7 notification issued by this device.
+    #
+    # $value[2] = cgspCLLICode
+    #
+    #      physical location of this device and can provide
+    #               additional informaton on the device type.
+    #
+    # $value[3] = cgspLinksetSourceDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[4] = cgspLinksetAdjacentDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[5] = cgspLinkDisplayName
+    #
+    #      or defaults to the linkset name and SLC 
+    #               formatted as an ASCII string.
+    #
+    # $value[6] = cgspLinkCongestionState
+    #
+    #      congestion level.
+    #
+    #######################
+
+    $cgspEventSequenceNumber = $value[1];
+    $cgspCLLICode = $value[2];
+    $cgspLinksetSourceDisplayPC = $value[3];
+    $cgspLinksetAdjacentDisplayPC = $value[4];
+    $cgspLinkDisplayName = $value[5];
+    #$cgspLinkCongestionState = $value[6];
+
+    $cgspInstNetwork = extract($OID[3], '\.([0-9]+)\.[0-9]+$');
+    $cgspLinksetName = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+    $cgspLinkSlc = extract($OID[5], '\.[0-9]+\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSP-MIB-ciscoGspCongestionChange";
+
+    $Event->{AlarmGroup} = "ciscoGspCongestionChange";
+    $Event->{SubAlarmGroup} = "cgspLinksetTableEntry." . $cgspInstNetwork . "." . $cgspLinksetName . " cgspLinkTableEntry." . $cgspLinkSlc;
+    $Event->{Summary} = "ciscoGspCongestionChange: by cgspLinkCongestionState object.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "2") { ### - ciscoGspLinkStateChange
+    #######################
+    #
+    # cgspLinkState  indicates the new state.
+    #
+    # $value[1] = cgspEventSequenceNumber
+    #
+    #      messages from a particular device are missing.  This value
+    #               will included in each SS7 notification issued by this device.
+    #
+    # $value[2] = cgspCLLICode
+    #
+    #      physical location of this device and can provide
+    #               additional informaton on the device type.
+    #
+    # $value[3] = cgspLinksetSourceDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[4] = cgspLinksetAdjacentDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[5] = cgspLinkDisplayName
+    #
+    #      or defaults to the linkset name and SLC 
+    #               formatted as an ASCII string.
+    #
+    # $value[6] = cgspLinkState
+    #
+    #      traffic. Activation of this linkset will 
+    #                              occur as required by protocol.
+    #
+    # $value[7] = cgspLinkReason
+    #
+    #      'linkRestored'   : Link restored.
+    #                 'linkTestFailure': Signalling Link Test failure.'
+    #
+    # $value[8] = cgspLinkTestResult
+    #
+    #      This object provides information on result from 
+    #               signalling link test received on this link.
+    #
+    #######################
+
+    $cgspEventSequenceNumber = $value[1];
+    $cgspCLLICode = $value[2];
+    $cgspLinksetSourceDisplayPC = $value[3];
+    $cgspLinksetAdjacentDisplayPC = $value[4];
+    $cgspLinkDisplayName = $value[5];
+    $cgspLinkState = lookup($value[6],'generic-CISCO-ITP-GSP-MIB-cgspLinkState');
+    $cgspLinkReason = lookup($value[7],'generic-CISCO-ITP-GSP-MIB-cgspLinkReason');
+    #$cgspLinkTestResult = lookup($value[8],'generic-CISCO-ITP-GSP-MIB-cgspLinkTestResult');
+
+    $cgspInstNetwork = extract($OID[3], '\.([0-9]+)\.[0-9]+$');
+    $cgspLinksetName = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+    $cgspLinkSlc = extract($OID[5], '\.[0-9]+\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSP-MIB-ciscoGspLinkStateChange";
+
+    $Event->{AlarmGroup} = "ciscoGspLinkStateChange";
+    $Event->{SubAlarmGroup} = $cgspLinkDisplayName . " " . $cgspLinkState . " " . $cgspLinkReason;
+    $Event->{Summary} = "ciscoGspLinkStateChange: cgspLinkState indicates the new state. " . $Event->{SubAlarmGroup};
+
+    $DEFAULT_ExpireTime = 0;
+
+    if (0) { # Dummy
+    } elsif ($cgspLinkState eq "available ") {
+        $Event->{Severity} = 0;
+        $Event->{AlarmType} = 1;
+    } elsif ($cgspLinkState eq "failed ") {
+        $Event->{Severity} = 5;
+        $Event->{AlarmType} = 2;
+    } elsif ($cgspLinkState eq "shutdown ") {
+        $Event->{Severity} = 2;
+        $Event->{AlarmType} = 2;
+    } elsif ($cgspLinkState eq "unavailable ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } elsif ($cgspLinkState eq "Unknown ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "1") { ### - ciscoGspLinksetStateChange
+    #######################
+    #
+    # cgspLinksetState  indicates the new state.
+    #
+    # $value[1] = cgspEventSequenceNumber
+    #
+    #      messages from a particular device are missing.  This value
+    #               will included in each SS7 notification issued by this device.
+    #
+    # $value[2] = cgspCLLICode
+    #
+    #      physical location of this device and can provide
+    #               additional informaton on the device type.
+    #
+    # $value[3] = cgspLinksetDisplayName
+    #
+    #      or defaults to the linkset name.
+    #
+    # $value[4] = cgspLinksetSourceDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[5] = cgspLinksetAdjacentDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[6] = cgspLinksetState
+    #
+    #      traffic. Activation of this linkset will 
+    #                              occur as required by protocol.
+    #
+    #######################
+
+    $cgspEventSequenceNumber = $value[1];
+    $cgspCLLICode = $value[2];
+    #$cgspLinksetDisplayName = $value[3];
+    $cgspLinksetSourceDisplayPC = $value[4];
+    $cgspLinksetAdjacentDisplayPC = $value[5];
+    $cgspLinksetState = lookup($value[6],'generic-CISCO-ITP-GSP-MIB-cgspLinksetState');
+
+    $cgspInstNetwork = extract($OID[3], '\.([0-9]+)\.[0-9]+$');
+    $cgspLinksetName = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSP-MIB-ciscoGspLinksetStateChange";
+
+    $Event->{AlarmGroup} = "ciscoGspLinksetStateChange";
+    $Event->{SubAlarmGroup} = "cgspLinksetTableEntry." . $cgspInstNetwork . "." . $cgspLinksetName;
+    $Event->{Summary} = "ciscoGspLinksetStateChange: cgspLinksetState indicates the new state.";
+
+    #    $DEFAULT_Severity = 3
+    #    $DEFAULT_Type = 2
+    $DEFAULT_ExpireTime = 0;
+    if (0) { # Dummy
+    } elsif ($cgspLinksetState eq "available ") {
+        $Event->{Severity} = 0;
+        $Event->{AlarmType} = 1;
+    } elsif ($cgspLinksetState eq "shutdown ") {
+        $Event->{Severity} = 2;
+        $Event->{AlarmType} = 2;
+    } elsif ($cgspLinksetState eq "unavailable ") {
+        $Event->{Severity} = 4;
+        $Event->{AlarmType} = 2;
+    } else {
+    }
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "8") { ### - ciscoGspUPUReceived
+    #######################
+    #
+    # during the entire cgspUPUNotifWindowTime interval Q752/5.6.
+    #
+    # $value[1] = cgspEventSequenceNumber
+    #
+    #      messages from a particular device are missing.  This value
+    #               will included in each SS7 notification issued by this device.
+    #
+    # $value[2] = cgspCLLICode
+    #
+    #      physical location of this device and can provide
+    #               additional informaton on the device type.
+    #
+    # $value[3] = cgspInstUserPartDisplay
+    #
+    #      y.
+    #
+    # $value[4] = cgspUPUIntervalDuration
+    #
+    #      cgspUPUNotifWindowTime.
+    #
+    # $value[5] = cgspIntervalUPUs
+    #
+    #      Number of UPU MSUs received or transmitted during this
+    #               specific cgspUPUIntervalDuration interval.
+    #
+    #######################
+
+    $cgspEventSequenceNumber = $value[1];
+    $cgspCLLICode = $value[2];
+    $cgspInstUserPartDisplay = $value[3];
+    $cgspUPUIntervalDuration = $value[4];
+    $cgspIntervalUPUs = $value[5];
+
+    $cgspInstNetwork = extract($OID[3], '\.([0-9]+)\.[0-9]+$');
+    $cgspMtp3SI = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSP-MIB-ciscoGspUPUReceived";
+
+    $Event->{AlarmGroup} = "ciscoGspUPUReceived";
+    $Event->{SubAlarmGroup} = "cgspInstUPUTableEntry." . $cgspInstNetwork . "." . $cgspMtp3SI;
+    $Event->{Summary} = "ciscoGspUPUReceived: during the entire cgspUPUNotifWindowTime interval Q752/5.6.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "6") { ### - ciscoGspIsolation
+    #######################
+    #
+    # any linkset supported by this instance reaches the
+    # active state.
+    #
+    # $value[1] = cgspEventSequenceNumber
+    #
+    #      messages from a particular device are missing.  This value
+    #               will included in each SS7 notification issued by this device.
+    #
+    # $value[2] = cgspCLLICode
+    #
+    #      physical location of this device and can provide
+    #               additional informaton on the device type.
+    #
+    # $value[3] = cgspInstDisplayName
+    #
+    #      or defaults to the local point code formatted
+    #               as an ASCII string.
+    #
+    # $value[4] = cgspInstDescription
+    #
+    #      A textual description for the Signalling point.
+    #
+    #######################
+
+    $cgspEventSequenceNumber = $value[1];
+    $cgspCLLICode = $value[2];
+    #$cgspInstDisplayName = $value[3];
+    #$cgspInstDescription = $value[4];
+
+    $cgspInstNetwork = extract($OID[3], '\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSP-MIB-ciscoGspIsolation";
+
+    $Event->{AlarmGroup} = "ciscoGspIsolation";
+    $Event->{SubAlarmGroup} = "cgspInstanceTableEntry." . $cgspInstNetwork;
+    $Event->{Summary} = "ciscoGspIsolation: any linkset supported by this instance reaches the active state.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "5") { ### - ciscoGspLinkSentUtilChange
+    #######################
+    #
+    # The notification provide is generated when
+    # the cgspLinkUtilStateSent changes states.
+    #
+    # $value[1] = cgspEventSequenceNumber
+    #
+    #      messages from a particular device are missing.  This value
+    #               will included in each SS7 notification issued by this device.
+    #
+    # $value[2] = cgspCLLICode
+    #
+    #      physical location of this device and can provide
+    #               additional informaton on the device type.
+    #
+    # $value[3] = cgspLinksetSourceDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[4] = cgspLinksetAdjacentDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[5] = cgspLinkDisplayName
+    #
+    #      or defaults to the linkset name and SLC 
+    #               formatted as an ASCII string.
+    #
+    # $value[6] = cgspLinkUtilStateSent
+    #
+    #      Link Utilization State for out bound traffic.
+    #
+    # $value[7] = cgspLinkUtilizationSent
+    #
+    #      by the cgspUtilSampleInterval object.
+    #
+    #######################
+
+    $cgspEventSequenceNumber = $value[1];
+    $cgspCLLICode = $value[2];
+    $cgspLinksetSourceDisplayPC = $value[3];
+    $cgspLinksetAdjacentDisplayPC = $value[4];
+    $cgspLinkDisplayName = $value[5];
+    #$cgspLinkUtilStateSent = lookup($value[6],'generic-CISCO-ITP-GSP-MIB-cgspLinkUtilStateSent');
+    #$cgspLinkUtilizationSent = $value[7];
+
+    $cgspInstNetwork = extract($OID[3], '\.([0-9]+)\.[0-9]+$');
+    $cgspLinksetName = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+    $cgspLinkSlc = extract($OID[5], '\.[0-9]+\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSP-MIB-ciscoGspLinkSentUtilChange";
+
+    $Event->{AlarmGroup} = "ciscoGspLinkSentUtilChange";
+    $Event->{SubAlarmGroup} = "cgspLinksetTableEntry." . $cgspInstNetwork . "." . $cgspLinksetName . " cgspLinkTableEntry." . $cgspLinkSlc;
+    $Event->{Summary} = "ciscoGspLinkSentUtilChange: The notification provide is generated when the cgspLinkUtilStateSent changes states.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "4") { ### - ciscoGspLinkRcvdUtilChange
+    #######################
+    #
+    # The notification provide is generated when
+    # the cgspLinkUtilStateRcvd changes states.
+    #
+    # $value[1] = cgspEventSequenceNumber
+    #
+    #      messages from a particular device are missing.  This value
+    #               will included in each SS7 notification issued by this device.
+    #
+    # $value[2] = cgspCLLICode
+    #
+    #      physical location of this device and can provide
+    #               additional informaton on the device type.
+    #
+    # $value[3] = cgspLinksetSourceDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[4] = cgspLinksetAdjacentDisplayPC
+    #
+    #      The point code to which this linkset is connected.
+    #
+    # $value[5] = cgspLinkDisplayName
+    #
+    #      or defaults to the linkset name and SLC 
+    #               formatted as an ASCII string.
+    #
+    # $value[6] = cgspLinkUtilStateRcvd
+    #
+    #      Link Utilization State for inbound traffic.
+    #
+    # $value[7] = cgspLinkUtilizationRcvd
+    #
+    #      by the cgspUtilSampleInterval object.
+    #
+    #######################
+
+    $cgspEventSequenceNumber = $value[1];
+    $cgspCLLICode = $value[2];
+    $cgspLinksetSourceDisplayPC = $value[3];
+    $cgspLinksetAdjacentDisplayPC = $value[4];
+    $cgspLinkDisplayName = $value[5];
+    #$cgspLinkUtilStateRcvd = lookup($value[6],'generic-CISCO-ITP-GSP-MIB-cgspLinkUtilStateRcvd');
+    #$cgspLinkUtilizationRcvd = $value[7];
+
+    $cgspInstNetwork = extract($OID[3], '\.([0-9]+)\.[0-9]+$');
+    $cgspLinksetName = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+    $cgspLinkSlc = extract($OID[5], '\.[0-9]+\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSP-MIB-ciscoGspLinkRcvdUtilChange";
+
+    $Event->{AlarmGroup} = "ciscoGspLinkRcvdUtilChange";
+    $Event->{SubAlarmGroup} = "cgspLinksetTableEntry." . $cgspInstNetwork . "." . $cgspLinksetName . " cgspLinkTableEntry." . $cgspLinkSlc;
+    $Event->{Summary} = "ciscoGspLinkRcvdUtilChange: The notification provide is generated when the cgspLinkUtilStateRcvd changes states.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} elsif ($specific == "9") { ### - ciscoGspUPUTransmitted
+    #######################
+    #
+    # during the entire cgspUPUNotifWindowTime interval Q752/5.7.
+    #
+    # $value[1] = cgspEventSequenceNumber
+    #
+    #      messages from a particular device are missing.  This value
+    #               will included in each SS7 notification issued by this device.
+    #
+    # $value[2] = cgspCLLICode
+    #
+    #      physical location of this device and can provide
+    #               additional informaton on the device type.
+    #
+    # $value[3] = cgspInstUserPartDisplay
+    #
+    #      y.
+    #
+    # $value[4] = cgspUPUIntervalDuration
+    #
+    #      cgspUPUNotifWindowTime.
+    #
+    # $value[5] = cgspIntervalUPUs
+    #
+    #      Number of UPU MSUs received or transmitted during this
+    #               specific cgspUPUIntervalDuration interval.
+    #
+    #######################
+
+    $cgspEventSequenceNumber = $value[1];
+    $cgspCLLICode = $value[2];
+    $cgspInstUserPartDisplay = $value[3];
+    $cgspUPUIntervalDuration = $value[4];
+    $cgspIntervalUPUs = $value[5];
+
+    $cgspInstNetwork = extract($OID[3], '\.([0-9]+)\.[0-9]+$');
+    $cgspMtp3SI = extract($OID[3], '\.[0-9]+\.([0-9]+)$');
+
+    $OS_EventId = "SNMPTRAP-generic-CISCO-ITP-GSP-MIB-ciscoGspUPUTransmitted";
+
+    $Event->{AlarmGroup} = "ciscoGspUPUTransmitted";
+    $Event->{SubAlarmGroup} = "cgspInstUPUTableEntry." . $cgspInstNetwork . "." . $cgspMtp3SI;
+    $Event->{Summary} = "ciscoGspUPUTransmitted: during the entire cgspUPUNotifWindowTime interval Q752/5.7.";
+
+    $DEFAULT_Severity = 3;
+    $DEFAULT_Type = 2;
+    $DEFAULT_ExpireTime = 0;
+
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{SubAlarmGroup} . " " . $Event->{AlarmGroup} . " " . $DEFAULT_Type . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $specific;
+
+} else {
+    $Event->{Summary} = "Unknown Specific Trap Number (" . $specific . ") Received for Enterprise " . $enterprise;
+    $Event->{Severity} = 1;
+    $Event->{AlarmKey} = $Event->{Node} . " " . $Event->{Agent} . " " . $Event->{SubMethod} . " " . $enterprise . " " . $generic . " " . $specific;
+}
+
+$Log->Message('DEBUG', "Leaving... generic-CISCO-ITP-GSP-MIB.rules");

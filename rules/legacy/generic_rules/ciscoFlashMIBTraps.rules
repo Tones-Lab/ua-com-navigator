@@ -1,0 +1,191 @@
+my (%oid, %iid, %val);
+
+ $oid{ciscoFlashDeviceNameExtended} = '1.3.6.1.4.1.9.9.10.1.1.2.1.15';
+ $oid{ciscoFlashDeviceMinPartitionSize} = '1.3.6.1.4.1.9.9.10.1.1.2.1.3';
+ $oid{ciscoFlashDeviceName} = '1.3.6.1.4.1.9.9.10.1.1.2.1.7';
+ $oid{ciscoFlashCopyStatus} = '1.3.6.1.4.1.9.9.10.1.2.1.1.8';
+ $oid{ciscoFlashPartitioningStatus} = '1.3.6.1.4.1.9.9.10.1.2.2.1.6';
+ $oid{ciscoFlashMiscOpStatus} = '1.3.6.1.4.1.9.9.10.1.2.3.1.4';
+
+# index in each case is an integer: ciscoFlashMiscOpSerialNumber, ciscoFlashCopySerialNumber, or ciscoFlashDeviceIndex
+
+# ciscoFlashCopyStatus: integer values
+my %fcs = qw(0 copyOperationPending 1 copyInProgress 2 copyOperationSuccess 3 copyInvalidOperation
+             4 copyInvalidProtocol 5 copyInvalidSourceName 6 copyInvalidDestName 7 copyInvalidServerAddress
+             8 copyDeviceBusy 9 copyDeviceOpenError 10 copyDeviceError 11 copyDeviceNotProgrammable
+             12 copyDeviceFull 13 copyFileOpenError 14 copyFileTransferError 15 copyFileChecksumError
+             16 copyNoMemory 17 copyUnknownFailure 18 copyInvalidSignature 19 copyProhibited);
+my $fcs;
+
+# ciscoFlashPartitioningStatus: integer values
+my %fps = qw(1 partitioningInProgress 2 partitioningOperationSuccess 3 partitioningInvalidOperation
+             4 partitioningInvalidDestName 5 partitioningInvalidPartitionCount 6 partitioningInvalidPartitionSizes
+             7 partitioningDeviceBusy 8 partitioningDeviceOpenError 9 partitioningDeviceError
+             10 partitioningNoMemory 11 partitioningUnknownFailure);
+my $fps;
+
+# ciscoFlashMiscOpStatus: integer values
+my %fms = qw(1 miscOpInProgress 2 miscOpOperationSuccess 3 miscOpInvalidOperation 4 miscOpInvalidDestName
+             5 miscOpDeviceBusy 6 miscOpDeviceOpenError 7 miscOpDeviceError 8 miscOpDeviceNotProgrammable
+             9 miscOpFileOpenError 10 miscOpFileDeleteFailure 11 miscOpFileUndeleteFailure
+             12 miscOpFileChecksumError 13 miscOpNoMemory 14 miscOpUnknownFailure 18 miscOpSqueezeFailure
+             19 miscOpNoSuchFile 20 miscOpFormatFailure);
+my $fms;
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ciscoFlashCopyStatus}\E(\.|$)(.*)/) {
+   $iid{ciscoFlashCopyStatus} = $2;
+   $val{ciscoFlashCopyStatus} = $v;
+   $fcs = $fcs{$v} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{ciscoFlashDeviceMinPartitionSize}\E(\.|$)(.*)/) {
+   $iid{ciscoFlashDeviceMinPartitionSize} = $2;
+   $val{ciscoFlashDeviceMinPartitionSize} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ciscoFlashDeviceName}\E(\.|$)(.*)/) {
+   $iid{ciscoFlashDeviceName} = $2;
+   $val{ciscoFlashDeviceName} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ciscoFlashDeviceNameExtended}\E(\.|$)(.*)/) {
+   $iid{ciscoFlashDeviceNameExtended} = $2;
+   $val{ciscoFlashDeviceNameExtended} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ciscoFlashMiscOpStatus}\E(\.|$)(.*)/) {
+   $iid{ciscoFlashMiscOpStatus} = $2;
+   $val{ciscoFlashMiscOpStatus} = $v;
+   $fms = $fms{$v} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{ciscoFlashPartitioningStatus}\E(\.|$)(.*)/) {
+   $iid{ciscoFlashPartitioningStatus} = $2;
+   $val{ciscoFlashPartitioningStatus} = $v;
+   $fps = $fps{$v} || 'unknown';
+  }
+ }
+
+my $idx = $iid{ciscoFlashDeviceNameExtended} ||
+          $iid{ciscoFlashDeviceName} ||
+          $iid{ciscoFlashCopyStatus} ||
+          $iid{ciscoFlashPartitioningStatus} ||
+          $iid{ciscoFlashMiscOpStatus};
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # ciscoFlashCopyCompletionTrap
+  # OBJECTS: ciscoFlashCopyStatus
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoFlashCopyCompletionTrap: index $idx, value $fcs ($val{ciscoFlashCopyStatus})";
+  $Event->{'AlarmGroup'} = "ciscoFlashCopyCompletionTrap";
+#  $Event->{'SubAlarmGroup'} = "ciscoFlashCopyCompletionTrap";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+# maybe change that based on $fcs
+  if ($fcs eq 'copyOperationSuccess') {
+   $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  } elsif ($fcs eq 'copyInProgress') {
+   $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  }
+  $Event->{'AlarmKey'}   = "$ip: ciscoFlashCopyCompletionTrap $idx";
+ }
+ elsif ($specific == 2) { # ciscoFlashPartitioningCompletionTrap
+  # OBJECTS: ciscoFlashPartitioningStatus
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoFlashPartitioningCompletionTrap: index $idx, value $fps ($val{ciscoFlashPartitioningStatus})";
+  $Event->{'AlarmGroup'} = "ciscoFlashPartitioningCompletionTrap";
+#  $Event->{'SubAlarmGroup'} = "ciscoFlashPartitioningCompletionTrap";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+# maybe change that based on $fps
+  if ($fps eq 'partitioningOperationSuccess') {
+   $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  } elsif ($fps eq 'partitioningInProgress') {
+   $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  }
+  $Event->{'AlarmKey'}   = "$ip: ciscoFlashPartitioningCompletionTrap $idx";
+ }
+ elsif ($specific == 3) { # ciscoFlashMiscOpCompletionTrap
+  # OBJECTS: ciscoFlashMiscOpStatus
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoFlashMiscOpCompletionTrap: index $idx, value $fms ($val{ciscoFlashMiscOpStatus})";
+  $Event->{'AlarmGroup'} = "ciscoFlashMiscOpCompletionTrap";
+#  $Event->{'SubAlarmGroup'} = "ciscoFlashMiscOpCompletionTrap";
+  $Event->{'Severity'}   = 3; # 0 = minor, 5 = major, 1 = unknown
+  if ($fms eq 'miscOpOperationSuccess') {
+   $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  } elsif ($fms eq 'miscOpInProgress') {
+   $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  }
+  $Event->{'AlarmKey'}   = "$ip: ciscoFlashMiscOpCompletionTrap $idx";
+ }
+ elsif ($specific == 4) { # ciscoFlashDeviceChangeTrap
+  # OBJECTS: ciscoFlashDeviceMinPartitionSize ciscoFlashDeviceName
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoFlashDeviceChangeTrap: index $idx, name $val{ciscoFlashDeviceName}";
+  $Event->{'AlarmGroup'} = "ciscoFlashDeviceChangeTrap";
+#  $Event->{'SubAlarmGroup'} = "ciscoFlashDeviceChangeTrap";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: ciscoFlashDeviceChangeTrap $idx";
+ }
+ elsif ($specific == 5) { # ciscoFlashDeviceInsertedNotif
+  # OBJECTS: ciscoFlashDeviceMinPartitionSize ciscoFlashDeviceName
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoFlashDeviceInsertedNotif: index $idx, name $val{ciscoFlashDeviceName}";
+  $Event->{'AlarmGroup'} = "ciscoFlashDeviceInsertedNotif";
+#  $Event->{'SubAlarmGroup'} = "ciscoFlashDeviceInsertedNotif";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: ciscoFlashDeviceInsertedNotif $idx";
+ }
+ elsif ($specific == 6) { # ciscoFlashDeviceRemovedNotif
+  # OBJECTS: ciscoFlashDeviceName
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoFlashDeviceRemovedNotif: index $idx, name $val{ciscoFlashDeviceName}";
+  $Event->{'AlarmGroup'} = "ciscoFlashDeviceRemovedNotif";
+#  $Event->{'SubAlarmGroup'} = "ciscoFlashDeviceRemovedNotif";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: ciscoFlashDeviceRemovedNotif $idx";
+ }
+ elsif ($specific == 7) { # ciscoFlashDeviceInsertedNotifRev1
+  # OBJECTS: ciscoFlashDeviceMinPartitionSize ciscoFlashDeviceNameExtended
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoFlashDeviceInsertedNotifRev1: index $idx, name $val{ciscoFlashDeviceNameExtended}";
+  $Event->{'AlarmGroup'} = "ciscoFlashDeviceInsertedNotifRev1";
+#  $Event->{'SubAlarmGroup'} = "ciscoFlashDeviceInsertedNotifRev1";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: ciscoFlashDeviceInsertedNotifRev1 $idx";
+ }
+ elsif ($specific == 8) { # ciscoFlashDeviceRemovedNotifRev1
+  # OBJECTS: ciscoFlashDeviceNameExtended
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoFlashDeviceRemovedNotifRev1: index $idx, name $val{ciscoFlashDeviceNameExtended}";
+  $Event->{'AlarmGroup'} = "ciscoFlashDeviceRemovedNotifRev1";
+#  $Event->{'SubAlarmGroup'} = "ciscoFlashDeviceRemovedNotifRev1";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: ciscoFlashDeviceRemovedNotifRev1 $idx";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

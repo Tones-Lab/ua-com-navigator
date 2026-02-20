@@ -1,0 +1,156 @@
+my (%oid, %iid, %val);
+
+ $oid{cewEventLevel} = '1.3.6.1.4.1.9.9.683.1.10.1.2';
+ $oid{cewEventImportance} = '1.3.6.1.4.1.9.9.683.1.10.1.7';
+ $oid{cewEventOccuredErrorCode} = '1.3.6.1.4.1.9.9.683.1.15';
+ $oid{cewEntEnergyLevel} = '1.3.6.1.4.1.9.9.683.1.6.1.10';
+ $oid{cewNeighborId} = '1.3.6.1.4.1.9.9.683.1.9.1.2';
+ $oid{cewNeighborType} = '1.3.6.1.4.1.9.9.683.1.9.1.3';
+
+# cewEventLevel
+# cewEntEnergyLevel - same
+#  INTEGER {shut(1), hibernate(2), sleep(3), standby(4), ready(5), low(6), frugal(7), medium(8), reduced(9), high(10), full(11)}
+my %el = qw(1 shut 2 hibernate 3 sleep 4 standby 5 ready 6 low 7 frugal 8 medium 9 reduced 10 high 11 full);
+my ($el, $enl);
+
+# cewEventOccuredErrorCode
+#  INTEGER {noerror(1), wrongtype(2), outofrange(3), swfault(4), hwfault(5)}
+my %ec = qw(1 noerror 2 wrongtype 3 outofrange 4 swfault 5 hwfault);
+my $ec;
+
+# cewNeighborType
+#  INTEGER {static(1), dynamic(2), child(3)}
+my %nt = qw(1 static 2 dynamic 3 child);
+my $nt;
+
+# What about iid? Is there anything interesting in there?
+
+# cewEventLevel, cewEventImportance: cewEventEntry
+#  Index: entPhysicalIndex, cewEventIndex
+# entPhysicalIndex: Integer32
+# cewEventIndex: Unsigned
+
+# cewEntEnergyLevel: cewEntEntry
+#  Index: entPhysicalIndex
+
+# cewNeighborId, cewNeighborType: cewNeighborEntry
+#  Index: cewNeighborIndex (Unsigned32)
+
+# physical index, neighbour index
+my ($pid, $nid);
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cewEntEnergyLevel}\E(\.|$)(.*)/) {
+   $iid{cewEntEnergyLevel} = $2;
+   $val{cewEntEnergyLevel} = $v;
+   $enl = $el{$v} || 'unknown';
+   ($pid) = $iid{cewEntEnergyLevel} =~ /(\d+)$/;
+  }
+  elsif ($k =~ /^\Q$oid{cewEventImportance}\E(\.|$)(.*)/) {
+   $iid{cewEventImportance} = $2;
+   $val{cewEventImportance} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{cewEventLevel}\E(\.|$)(.*)/) {
+   $iid{cewEventLevel} = $2;
+   $val{cewEventLevel} = $v;
+   $el = $el{$v} || 'unknown';
+   ($pid) = $iid{cewEventLevel} =~ /(\d+)\.\d+$/;
+  }
+  elsif ($k =~ /^\Q$oid{cewEventOccuredErrorCode}\E(\.|$)(.*)/) {
+   $iid{cewEventOccuredErrorCode} = $2;
+   $val{cewEventOccuredErrorCode} = $v;
+   $ec = $ec{$v} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{cewNeighborId}\E(\.|$)(.*)/) {
+   $iid{cewNeighborId} = $2;
+   $val{cewNeighborId} = $v;
+   ($nid) = $iid{cewNeighborId} =~ /(\d+)$/;
+  }
+  elsif ($k =~ /^\Q$oid{cewNeighborType}\E(\.|$)(.*)/) {
+   $iid{cewNeighborType} = $2;
+   $val{cewNeighborType} = $v;
+   $nt = $nt{$v} || 'unknown';
+  }
+ }
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+# TODO: $nid may be pointless, $pid maybe useful
+# All severities are 2 right now
+# see a "real" trap to deduce how they should be handled.
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # cewLevelChange
+  # OBJECTS: cewEntEnergyLevel
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cewLevelChange: level $enl ($val{cewEntEnergyLevel}), id $pid";
+  $Event->{'AlarmGroup'} = "cewLevelChange";
+#  $Event->{'SubAlarmGroup'} = "cewLevelChange";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cewLevelChange $pid";
+ }
+ elsif ($specific == 2) { # cewNeighborAdded
+  # OBJECTS: cewNeighborId cewNeighborType
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cewNeighborAdded: id $val{cewNeighborId}; type $nt ($val{cewNeighborType}); nid $nid";
+  $Event->{'AlarmGroup'} = "cewNeighborAdded";
+#  $Event->{'SubAlarmGroup'} = "cewNeighborAdded";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cewNeighborAdded $nid";
+ }
+ elsif ($specific == 3) { # cewNeighborDeleted
+  # OBJECTS: cewNeighborId cewNeighborType
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cewNeighborDeleted: id $val{cewNeighborId}; type $nt ($val{cewNeighborType}); nid $nid";
+  $Event->{'AlarmGroup'} = "cewNeighborDeleted";
+#  $Event->{'SubAlarmGroup'} = "cewNeighborDeleted";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cewNeighborDeleted $nid";
+ }
+ elsif ($specific == 4) { # cewEventOccured
+  # OBJECTS: cewEventLevel cewEventOccuredErrorCode
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cewEventOccured: level $enl ($val{cewEventLevel}); error $ec ($val{cewEventOccuredErrorCode}); id $pid";
+  $Event->{'AlarmGroup'} = "cewEventOccured";
+#  $Event->{'SubAlarmGroup'} = "cewEventOccured";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cewEventOccured $pid";
+ }
+ elsif ($specific == 5) { # cewEventOccuredRev1
+  # OBJECTS: cewEventLevel cewEventImportance cewEventOccuredErrorCode
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "cewEventOccuredRev1: level $enl ($val{cewEventLevel}); importance $val{cewEventImportance}; error $ec ($val{cewEventOccuredErrorCode}); id $pid";
+  $Event->{'AlarmGroup'} = "cewEventOccuredRev1";
+#  $Event->{'SubAlarmGroup'} = "cewEventOccuredRev1";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: cewEventOccuredRev1 $pid";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

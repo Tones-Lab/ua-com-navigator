@@ -1,0 +1,87 @@
+my (%oid, %iid, %val);
+
+ $oid{casState} = '1.3.6.1.4.1.9.10.56.1.2.1.1.25';
+ $oid{casPreviousStateDuration} = '1.3.6.1.4.1.9.10.56.1.2.1.1.27';
+ $oid{casTotalDeadTime} = '1.3.6.1.4.1.9.10.56.1.2.1.1.28';
+
+# casState
+#   Values: up(1), dead(2)
+my %cs = qw(1 up 2 down);
+my $cs;
+
+#   INDEX         { casProtocol, casIndex }
+# casProtocol: INTEGER {tacacsplus(1), radius(2), ldap(3), kerberos(4), ntlm(5), sdi(6), other(7)}
+# casIndex: Unsigned32
+my %cp = qw(1 tacacsplus 2 radius 3 ldap 4 kerberos 5 ntlm 6 sdi 7 other);
+# protocol, protocl integer, index:
+my ($cp, $cpi, $ci);
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{casPreviousStateDuration}\E(\.|$)(.*)/) {
+   $iid{casPreviousStateDuration} = $2;
+   $val{casPreviousStateDuration} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{casState}\E(\.|$)(.*)/) {
+   $iid{casState} = $2;
+   $val{casState} = $v;
+   $cs = $cs{$v} || 'unknown';
+   ($cpi, $ci) = $iid{casState} =~ /(\d+)\.(\d+)$/;
+   $cp = $cp{$cpi} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{casTotalDeadTime}\E(\.|$)(.*)/) {
+   $iid{casTotalDeadTime} = $2;
+   $val{casTotalDeadTime} = $v;
+  }
+ }
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # casServerStateChange
+  # OBJECTS: casState casPreviousStateDuration casTotalDeadTime
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "casServerStateChange: index $ci; state $cs ($val{casState}); dead time $val{casTotalDeadTime}; prev duration $val{casPreviousStateDuration}; protocol $cp ($cpi)";
+  $Event->{'AlarmGroup'} = "casServerStateChange";
+# Do I need $ci in SubAlarmGroup? See some live traps and decide
+  $Event->{'SubAlarmGroup'} = "casServerStateChange";
+  if ($cs eq 'up') {
+    $Event->{'AlarmType'}  = 1; # >30 = seconds to auto-clear
+    $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  } elsif ($cs eq 'down') {
+    $Event->{'AlarmType'}  = 2; # >30 = seconds to auto-clear
+    $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  } else {
+    $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+    $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  }
+  $Event->{'AlarmKey'}   = "$ip: casServerStateChange $ci $val{casState}";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

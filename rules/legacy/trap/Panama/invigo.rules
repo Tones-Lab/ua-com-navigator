@@ -1,0 +1,660 @@
+######
+# invigo include file
+######
+
+our ( $Event, $Log, @value, $enterprise, $specific, $generic );
+my ( $appName, $msgDescr, $errStatuslook, $errStatus );
+
+if (0) {    # Dummy
+} elsif ( $specific == "1" ) {    ### - connError
+                                  # SNMPv2
+        # This trap is sent when a connection error occurs
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "connError: This trap is sent when a connection error occurs";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "2" ) {    ### - dbError
+                                  # SNMPv2
+        # This trap is sent when a database error occurs
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "dbError: This trap is sent when a database error occurs";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "3" ) {    ### - smppError
+                                  # SNMPv2
+                                  # This trap is sent when an SMPP error occurs
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "smppError: This trap is sent when an SMPP error occurs";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "4" ) {    ### - configError
+                                  # SNMPv2
+        # This trap is sent when a configuration error occurs
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "configError: This trap is sent when a configuration error occurs";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "5" ) {    ### - provError
+                                  # SNMPv2
+        # This trap is sent when a provisioning error occurs
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "provError: This trap is sent when a provisioning error occurs";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "6" ) {    ### - appstateError
+                                  # SNMPv2
+     # This trap is sent when a module in the ADM has stopped working and it is cleared when the module is up again.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "appstateError: This trap is sent when a module in the ADM has stopped working and it is cleared when the module is up again.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "7" ) {    ### - filesystemError
+                                  # SNMPv2
+        # This trap is sent when a file system error occurs.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "filesystemError: This trap is sent when a file system error occurs.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "8" ) {    ### - codeError
+                                  # SNMPv2
+                                  # This trap is sent when a Code error occurs.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "codeError: This trap is sent when a Code error occurs.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "9" ) {    ### - chargError
+                                  # SNMPv2
+        # This trap is sent when a charging error occurs
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "chargError: This trap is sent when a charging error occurs";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "10" ) {    ### - largeLogSizeError
+                                   # SNMPv2
+        # This trap is sent when a log file reaches a critical size
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "largeLogSizeError: This trap is sent when a log file reaches a critical size";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "11" ) {    ### - systemUptimeError
+                                   # SNMPv2
+        # This trap is sent when the system has rebooted
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "systemUptimeError: This trap is sent when the system has rebooted";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "12" ) {    ### - diskUsageError
+                                   # SNMPv2
+        # This trap is sent when a disk usage is critical
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "diskUsageError: This trap is sent when a disk usage is critical";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "13" ) {    ### - cpuUsageError
+                                   # SNMPv2
+                                   # This trap is sent when a CPU usage is high
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "cpuUsageError: This trap is sent when a CPU usage is high";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "201" ) {    ### - dbConnError
+                                    # SNMPv2
+        # This trap is sent when connection to the DB fails.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "dbConnError: This trap is sent when connection to the DB fails.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "202" ) {    ### - dbExecError
+                                    # SNMPv2
+        # This trap is sent when a DB execution error occurs.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "dbExecError: This trap is sent when a DB execution error occurs.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "203" ) {    ### - apacheError
+                                    # SNMPv2
+        # This trap is sent when a Apache errors occur.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "apacheError: This trap is sent when a Apache errors occur.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "204" ) {    ### - cdrError
+                                    # SNMPv2
+        # This trap is sent when an app stops updating it's CDR file.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "cdrError: This trap is sent when an app stops updating it's CDR file.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "205" ) {    ### - throughputSoftWarnError
+                                    # SNMPv2
+     # This trap is sent when an app is receiving higher than 70% of max software licenses throughput.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "throughputSoftWarnError: This trap is sent when an app is receiving higher than 70% of max software licenses throughput.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "206" ) {    ### - throughputSoftError
+                                    # SNMPv2
+     # This trap is sent when an app is receiving higher the max software licenses throughput.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "throughputSoftError: This trap is sent when an app is receiving higher the max software licenses throughput.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "207" ) {    ### - throughputError
+                                    # SNMPv2
+     # This trap is sent when an app is receiving a higher than the hardware licenses throughput.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "throughputError: This trap is sent when an app is receiving a higher than the hardware licenses throughput.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "301" ) {    ### - smppConnErr
+                                    # SNMPv2
+        # This trap is sent when the connection to the SMSC fails.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "smppConnErr: This trap is sent when the connection to the SMSC fails.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "302" ) {    ### - smppExecErr
+                                    # SNMPv2
+        # This trap is sent when an SMSC operation fails.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "smppExecErr: This trap is sent when an SMSC operation fails.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "401" ) {    ### - oceanConnErr
+                                    # SNMPv2
+        # This trap is sent when the connection to Ocean fails.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "oceanConnErr: This trap is sent when the connection to Ocean fails.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "402" ) {    ### - oceanRcvErr
+                                    # SNMPv2
+        # This trap is sent when connection to Ocean is broken.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "oceanRcvErr: This trap is sent when connection to Ocean is broken.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "501" ) {    ### - mapFilterErr
+                                    # SNMPv2
+        # This trap is sent when a MAP Filter error occurs.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "mapFilterErr: This trap is sent when a MAP Filter error occurs.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "502" ) {    ### - networkStateErr
+                                    # SNMPv2
+        # This trap is sent when a node fails to notify network state module.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "networkStateErr: This trap is sent when a node fails to notify network state module.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "601" ) {    ### - smscOpErr
+                                    # SNMPv2
+        # This trap is sent when SMSC encounters an operational error.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "smscOpErr: This trap is sent when SMSC encounters an operational error.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "801" ) {    ### - sctpConnErr
+                                    # SNMPv2
+        # This trap is sent when a SCTP error occurs.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "sctpConnErr: This trap is sent when a SCTP error occurs.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "999" ) {    ### - generalError
+                                    # SNMPv2
+        # This trap is sent when a general error occurs
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "generalError: This trap is sent when a general error occurs";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "1301" ) {    ### - mmsConnErr
+                                     # SNMPv2
+        # This trap is sent when connection to MMSC server fails.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "mmsConnErr: This trap is sent when connection to MMSC server fails.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "1302" ) {    ### - mmsExecErr
+                                     # SNMPv2
+        # This trap is sent when an MMSC operation fails.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "mmsExecErr: This trap is sent when an MMSC operation fails.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "10911" ) {    ### - clearAppErr
+                                      # SNMPv2
+     # If this trap is sent, all errors associated to appName should be cleared.
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "clearAppErr: If this trap is sent, all errors associated to appName should be cleared.";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "51401" ) {    ### - eirFailSafeErr
+                                      # SNMPv2
+        # This trap is sent when EIR enters failsafe mode
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "eirFailSafeErr: This trap is sent when EIR enters failsafe mode";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} elsif ( $specific == "51402" ) {    ### - eirBufferErr
+                                      # SNMPv2
+        # This trap is sent when EIR buffer exceeds limit
+    $appName = $value[1];
+    $msgDescr = $value[2];
+    $errStatuslook = "errStatus." . $value[3];
+    $errStatus = lookup( $errStatuslook, 'VarbindValTable' );
+    if ( $errStatus eq "UNKNOWN" ) {
+        $errStatus = $value[3];
+    } else {
+        $errStatus = $errStatus . " ( " . $value[3] . " )";
+    }
+    $Event->{AlarmGroup} = "";
+    $Event->{Agent} = "INVIGO-SNMP-MIB";
+    $Event->{Summary} = "eirBufferErr: This trap is sent when EIR buffer exceeds limit";
+    $Event->{Severity} = 0;
+    $Event->{AlarmType} = 0;
+    $Event->{AlarmKey} = $Event->{Node} . $Event->{Summary};
+
+} else {
+    $Event->{Summary} = "Unknown specific trap number (" . $specific . ") received for enterprise " . $enterprise;
+    $Event->{AlarmKey} = $Event->{Node} . $enterprise . $generic . $specific . $Event->{Agent} . $Event->{SubMethod};
+    $Event->{Severity} = 1;
+}
+

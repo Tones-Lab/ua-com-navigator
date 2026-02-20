@@ -1,0 +1,86 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.5.25.31.9.1
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{entPhysicalIndex} = '1.3.6.1.2.1.47.1.1.1.1.1';
+$oid{entPhysicalName}  = '1.3.6.1.2.1.47.1.1.1.1.7';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{entPhysicalIndex}\E(\.|$)(.*)/ ) {
+        $iid{entPhysicalIndex} = $2;
+        $val{entPhysicalIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{entPhysicalName}\E(\.|$)(.*)/ ) {
+        $iid{entPhysicalName} = $2;
+        $val{entPhysicalName} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwEntityExtUnconnected
+
+    # ============
+    # DESCRIPTION:
+    #  "Board become unconnected for some reason."
+    # ============
+
+    # OBJECTS: entPhysicalIndex entPhysicalName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtUnconnected";
+    $Event->{'AlarmGroup'}    = "hwEntityExtUnconnected";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtUnconnected";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtUnconnected alarm.";
+}
+elsif ( $specific == 2 ) {    # hwEntityExtUnconnectedResume
+
+    # ============
+    # DESCRIPTION:
+    #  "Board resume from unconnected"
+    # ============
+
+    # OBJECTS: entPhysicalIndex entPhysicalName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwEntityExtUnconnectedResume";
+    $Event->{'AlarmGroup'}    = "hwEntityExtUnconnectedResume";
+    #$Event->{'SubAlarmGroup'} = "hwEntityExtUnconnectedResume";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwEntityExtUnconnectedResume alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

@@ -1,0 +1,183 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.5.25.41.3
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{sysUpTime}             = '1.3.6.1.2.1.1.3';
+$oid{ifName}                = '1.3.6.1.2.1.31.1.1.1.1';
+$oid{hwIFExtFlowStatus}     = '1.3.6.1.4.1.2011.5.25.41.1.1.1.1.8';
+$oid{hwTrunkIfWorkingState} = '1.3.6.1.4.1.2011.5.25.41.1.3.3.1.10';
+$oid{hwTrunkIfID}           = '1.3.6.1.4.1.2011.5.25.41.1.3.3.1.2';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwIFExtFlowStatus}\E(\.|$)(.*)/ ) {
+        $iid{hwIFExtFlowStatus} = $2;
+        $val{hwIFExtFlowStatus} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwTrunkIfID}\E(\.|$)(.*)/ ) {
+        $iid{hwTrunkIfID} = $2;
+        $val{hwTrunkIfID} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwTrunkIfWorkingState}\E(\.|$)(.*)/ ) {
+        $iid{hwTrunkIfWorkingState} = $2;
+        $val{hwTrunkIfWorkingState} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{ifName}\E(\.|$)(.*)/ ) {
+        $iid{ifName} = $2;
+        $val{ifName} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{sysUpTime}\E(\.|$)(.*)/ ) {
+        $iid{sysUpTime} = $2;
+        $val{sysUpTime} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # hwTrunkWorkingSwitch
+
+    # ============
+    # DESCRIPTION:
+    #  "hwTrunkWorkingSwitch.
+    #  1.hwTrunkIfID: The identification of the Trunk interface;
+    #  2.hwTrunkIfWorkingState: Current working state of backup-access trunk.
+    #  Index: hwTrunkIndex."
+    # ============
+
+    # OBJECTS: hwTrunkIfID hwTrunkIfWorkingState
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwTrunkWorkingSwitch";
+    $Event->{'AlarmGroup'}    = "hwTrunkWorkingSwitch";
+    #$Event->{'SubAlarmGroup'} = "hwTrunkWorkingSwitch";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwTrunkWorkingSwitch alarm.";
+}
+elsif ( $specific == 2 ) {    # hwLacpNegotiateFailed
+
+    # ============
+    # DESCRIPTION:
+    #  "The member of LAG neither can take over PDU nor transmit PDUs. Send this trap when LACP protocol negotiation fails.           
+    #  1.hwTrunkIfID: The identification of the Trunk interface;
+    #  2.ifName: It is the name of the trunk in the ifXTable of IF-MIB.
+    #  3.ifName: It is the name of the port in the ifXTable of IF-MIB.
+    #  Indexes: 1.hwTrunkIndex;
+    #  2.ifIndex. "
+    # ============
+
+    # OBJECTS: hwTrunkIfID ifName ifName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwLacpNegotiateFailed";
+    $Event->{'AlarmGroup'}    = "hwLacpNegotiateFailed";
+    #$Event->{'SubAlarmGroup'} = "hwLacpNegotiateFailed";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwLacpNegotiateFailed alarm.";
+}
+elsif ( $specific == 3 ) {    # hwLacpTotalLinkLoss
+
+    # ============
+    # DESCRIPTION:
+    #  "Total loss of link bandwidth: it means that there is no member in the LAG group and the trap of MNCD(Member not Collecting/Distributing) occurs.
+    #  1.hwTrunkIfID: The identification of the Trunk interface;
+    #  2.ifName: It is in the ifXTable of IF-MIB.
+    #  Index: hwTrunkIndex."
+    # ============
+
+    # OBJECTS: hwTrunkIfID ifName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwLacpTotalLinkLoss";
+    $Event->{'AlarmGroup'}    = "hwLacpTotalLinkLoss";
+    #$Event->{'SubAlarmGroup'} = "hwLacpTotalLinkLoss";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwLacpTotalLinkLoss alarm.";
+}
+elsif ( $specific == 4 ) {    # hwLacpPartialLinkLoss
+
+    # ============
+    # DESCRIPTION:
+    #  "Part loss of link bandwidth: it means that some members in the LAG group aren't in the working-state, 
+    #  making the number of ports in working-state smaller than the hwTrunkIfMinLinkNum. The trap of PLL(Partial Link Loss)
+    #  will be restrained by the trap of TLL(Total Link Loss).            
+    #  1.hwTrunkIfID: The identification of the Trunk interface;
+    #  2.ifName: It is in the ifXTable of IF-MIB.
+    #  Index: hwTrunkIndex."
+    # ============
+
+    # OBJECTS: hwTrunkIfID ifName
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwLacpPartialLinkLoss";
+    $Event->{'AlarmGroup'}    = "hwLacpPartialLinkLoss";
+    #$Event->{'SubAlarmGroup'} = "hwLacpPartialLinkLoss";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwLacpPartialLinkLoss alarm.";
+}
+elsif ( $specific == 5 ) {    # hwIfFlowDown
+
+    # ============
+    # DESCRIPTION:
+    #  "This notification indicates the time when the interface's flow status changes
+    #  	     to flow down,and the reason."
+    # ============
+
+    # OBJECTS: sysUpTime hwIFExtFlowStatus
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfFlowDown";
+    $Event->{'AlarmGroup'}    = "hwIfFlowDown";
+    #$Event->{'SubAlarmGroup'} = "hwIfFlowDown";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfFlowDown alarm.";
+}
+elsif ( $specific == 6 ) {    # hwIfFlowUp
+
+    # ============
+    # DESCRIPTION:
+    #  "This notification indicates the time when the interface's flow status changes
+    #  	     to flow up,and the reason."
+    # ============
+
+    # OBJECTS: sysUpTime hwIFExtFlowStatus
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "hwIfFlowUp";
+    $Event->{'AlarmGroup'}    = "hwIfFlowUp";
+    #$Event->{'SubAlarmGroup'} = "hwIfFlowUp";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: hwIfFlowUp alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

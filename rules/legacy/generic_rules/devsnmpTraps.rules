@@ -1,0 +1,176 @@
+####################
+# Monolith rules file created by Eirteic oid-to-rules v0.95
+####################
+# enterprise oid: 1.3.6.1.4.1.2011.6.3.8.2
+####################
+
+my ( %oid, %iid, %val );
+
+$oid{hwFrameIndex}         = '1.3.6.1.4.1.2011.6.3.3.1.1.1';
+$oid{hwFrameAdminStatus}   = '1.3.6.1.4.1.2011.6.3.3.1.1.6';
+$oid{hwSlotIndex}          = '1.3.6.1.4.1.2011.6.3.3.2.1.1';
+$oid{hwSlotAdminStatus}    = '1.3.6.1.4.1.2011.6.3.3.2.1.9';
+$oid{hwSubslotIndex}       = '1.3.6.1.4.1.2011.6.3.3.3.1.1';
+$oid{hwSubslotAdminStatus} = '1.3.6.1.4.1.2011.6.3.3.3.1.7';
+$oid{hwPortIndex}          = '1.3.6.1.4.1.2011.6.3.3.4.1.1';
+$oid{hwPortAdminStatus}    = '1.3.6.1.4.1.2011.6.3.3.4.1.6';
+$oid{hwFrameAdminResult}   = '1.3.6.1.4.1.2011.6.3.8.1.1';
+$oid{hwSlotAdminResult}    = '1.3.6.1.4.1.2011.6.3.8.1.2';
+$oid{hwSubslotAdminResult} = '1.3.6.1.4.1.2011.6.3.8.1.3';
+$oid{hwPortAdminResult}    = '1.3.6.1.4.1.2011.6.3.8.1.4';
+
+while ( my ( $k, $v ) = each(%$vars) ) {
+
+    # The first two exact keys should always be there:
+    if ( $k eq '1.3.6.1.2.1.1.3.0' ) {
+        $val{'sysUpTime'} = $v;
+    }
+    elsif ( $k eq '1.3.6.1.6.3.1.1.4.1.0' ) {
+        $val{'snmpTrapOid'} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwFrameAdminResult}\E(\.|$)(.*)/ ) {
+        $iid{hwFrameAdminResult} = $2;
+        $val{hwFrameAdminResult} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwFrameAdminStatus}\E(\.|$)(.*)/ ) {
+        $iid{hwFrameAdminStatus} = $2;
+        $val{hwFrameAdminStatus} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwFrameIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwFrameIndex} = $2;
+        $val{hwFrameIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPortAdminResult}\E(\.|$)(.*)/ ) {
+        $iid{hwPortAdminResult} = $2;
+        $val{hwPortAdminResult} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPortAdminStatus}\E(\.|$)(.*)/ ) {
+        $iid{hwPortAdminStatus} = $2;
+        $val{hwPortAdminStatus} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwPortIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwPortIndex} = $2;
+        $val{hwPortIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSlotAdminResult}\E(\.|$)(.*)/ ) {
+        $iid{hwSlotAdminResult} = $2;
+        $val{hwSlotAdminResult} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSlotAdminStatus}\E(\.|$)(.*)/ ) {
+        $iid{hwSlotAdminStatus} = $2;
+        $val{hwSlotAdminStatus} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSlotIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwSlotIndex} = $2;
+        $val{hwSlotIndex} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSubslotAdminResult}\E(\.|$)(.*)/ ) {
+        $iid{hwSubslotAdminResult} = $2;
+        $val{hwSubslotAdminResult} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSubslotAdminStatus}\E(\.|$)(.*)/ ) {
+        $iid{hwSubslotAdminStatus} = $2;
+        $val{hwSubslotAdminStatus} = $v;
+    }
+    elsif ( $k =~ /^\Q$oid{hwSubslotIndex}\E(\.|$)(.*)/ ) {
+        $iid{hwSubslotIndex} = $2;
+        $val{hwSubslotIndex} = $v;
+    }
+}
+
+# This should always be set
+$Event->{'Node'} = $node || "$ip";
+
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}     = 14400;    # > 30 = seconds to auto-clear
+#$Event->{'Summary'}       = "";
+#$Event->{'AlarmGroup'}    = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}      = 1;    # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}      = ""; # unique for de-dupe. Include $ip and $summary?
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+if (0) {    # dummy
+}
+elsif ( $specific == 1 ) {    # frameAdminResultTrap
+
+    # ============
+    # DESCRIPTION:
+    #  "
+    #  				
+    #  				机框操作结果告警"
+    # ============
+
+    # OBJECTS: hwFrameIndex hwFrameAdminStatus hwFrameAdminResult
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "frameAdminResultTrap";
+    $Event->{'AlarmGroup'}    = "frameAdminResultTrap";
+    #$Event->{'SubAlarmGroup'} = "frameAdminResultTrap";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: frameAdminResultTrap alarm.";
+}
+elsif ( $specific == 2 ) {    # slotAdminResultTrap
+
+    # ============
+    # DESCRIPTION:
+    #  "
+    #  				
+    #  				槽操作结果告警"
+    # ============
+
+    # OBJECTS: hwFrameIndex hwSlotIndex hwSlotAdminStatus hwSlotAdminResult
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "slotAdminResultTrap";
+    $Event->{'AlarmGroup'}    = "slotAdminResultTrap";
+    #$Event->{'SubAlarmGroup'} = "slotAdminResultTrap";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: slotAdminResultTrap alarm.";
+}
+elsif ( $specific == 3 ) {    # subSlotAdminResultTrap
+
+    # ============
+    # DESCRIPTION:
+    #  "
+    #  				
+    #  				子槽操作结果告警"
+    # ============
+
+    # OBJECTS: hwFrameIndex hwSlotIndex hwSubslotIndex hwSubslotAdminStatus hwSubslotAdminResult
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "subSlotAdminResultTrap";
+    $Event->{'AlarmGroup'}    = "subSlotAdminResultTrap";
+    #$Event->{'SubAlarmGroup'} = "subSlotAdminResultTrap";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: subSlotAdminResultTrap alarm.";
+}
+elsif ( $specific == 4 ) {    # portAdminResultTrap
+
+    # ============
+    # DESCRIPTION:
+    #  "
+    #  				
+    #  				端口操作结果告警"
+    # ============
+
+    # OBJECTS: hwFrameIndex hwSlotIndex hwSubslotIndex hwPortIndex hwPortAdminStatus hwPortAdminResult
+
+    #$Event->{'AlarmType'}     = 14400;
+    $Event->{'Summary'}       = "portAdminResultTrap";
+    $Event->{'AlarmGroup'}    = "portAdminResultTrap";
+    #$Event->{'SubAlarmGroup'} = "portAdminResultTrap";
+    $Event->{'Severity'}      = 1;
+    $Event->{'AlarmKey'}      = "$ip: portAdminResultTrap alarm.";
+}
+else {    # unknown
+    $Event->{'AlarmType'}  = 0;    # never auto-delete
+    $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+    $Event->{'AlarmGroup'} = 'UnknownTrap';
+    $Event->{'Severity'}   = 1;    # unknown
+    $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+    $Event->{'Custom1'}    = $traplog;
+}

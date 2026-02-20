@@ -1,0 +1,77 @@
+my (%oid, %iid, %val);
+
+ $oid{ccmHistoryEventCommandSource} = '1.3.6.1.4.1.9.9.43.1.1.6.1.3';
+ $oid{ccmHistoryEventConfigSource} = '1.3.6.1.4.1.9.9.43.1.1.6.1.4';
+ $oid{ccmHistoryEventConfigDestination} = '1.3.6.1.4.1.9.9.43.1.1.6.1.5';
+
+# ccmHistoryEventCommandSource values:
+#  commandLine(1), snmp(2)
+my %ecmd = qw(1 commandLine 2 snmp);
+my $ecmd;
+
+# ccmHistoryEventConfigSource values:
+#  erase(1), commandSource(2), running(3), startup(4), local(5), networkTftp(6), networkRcp(7)
+# same as ccmHistoryEventConfigDestination values
+my %ecfg = qw(1 erase 2 commandSource 3 running 4 startup 5 local 6 networkTftp 7 networkRcp);
+my ($ecfs, $ecfd);
+
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ccmHistoryEventCommandSource}\E(\.|$)(.*)/) {
+   $iid{ccmHistoryEventCommandSource} = $2;
+   $val{ccmHistoryEventCommandSource} = $v;
+   $ecmd = $ecmd{$v} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{ccmHistoryEventConfigDestination}\E(\.|$)(.*)/) {
+   $iid{ccmHistoryEventConfigDestination} = $2;
+   $val{ccmHistoryEventConfigDestination} = $v;
+   $ecfd = $ecfg{$v} || 'unknown';
+  }
+  elsif ($k =~ /^\Q$oid{ccmHistoryEventConfigSource}\E(\.|$)(.*)/) {
+   $iid{ccmHistoryEventConfigSource} = $2;
+   $val{ccmHistoryEventConfigSource} = $v;
+   $ecfs = $ecfg{$v} || 'unknown';
+  }
+ }
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # ciscoConfigManEvent
+  # OBJECTS: ccmHistoryEventCommandSource ccmHistoryEventConfigSource ccmHistoryEventConfigDestination
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "ciscoConfigManEvent: src $ecfs($val{ccmHistoryEventConfigSource}); dst $ecfd($val{ccmHistoryEventConfigDestination}); via $ecmd($val{ccmHistoryEventCommandSource})";
+  $Event->{'AlarmGroup'} = "ciscoConfigManEvent";
+#  $Event->{'SubAlarmGroup'} = "ciscoConfigManEvent";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: ciscoConfigManEvent alarm.";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

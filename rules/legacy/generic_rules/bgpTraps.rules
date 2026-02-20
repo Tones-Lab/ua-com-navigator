@@ -1,0 +1,96 @@
+my (%oid, %iid, %val);
+
+ $oid{bgpPeerLastError} = '1.3.6.1.2.1.15.3.1.14';
+ $oid{bgpPeerState} = '1.3.6.1.2.1.15.3.1.2';
+
+# bgpPeerState
+#   Values: idle(1), connect(2), active(3), opensent(4), openconfirm(5), established(6)
+my %bps = qw(1 idle 2 connect 3 active 4 opensent 5 openconfirm 6 established);
+my $bps;
+
+# bgpPeerLastError
+#   OCTET STRING (2); 0, or 1st byte is error code, 2nd byte is subcode
+
+# index of bgpPeerEntry is bgpPeerRemoteAddr, IpAddress
+my $Xip = '\d+\.\d+\.\d+\.\d+'; # regex for IP address
+my $peer;
+# (possibly overkill here -- it should just be $iid{bgpPeerState})
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{bgpPeerLastError}\E(\.|$)(.*)/) {
+   $iid{bgpPeerLastError} = $2;
+   $val{bgpPeerLastError} = $v || 0;
+   # 0 or 2-octet code:subcode
+   # Cisco sends ^B^H for 28 -- that looks correct
+   # Huawei sends things like 66 -- handle that specially
+   if ($v) {
+    my @v = split (//, $v);
+    if (ord($v[0]) < ord(0)) { # "correct"
+     $val{bgpPeerLastError} = ord($v[0]) . ':' . ord($v[1]);
+    } else {
+     $val{bgpPeerLastError} = $v[0] . ':' . $v[1];
+    }
+   }
+  }
+  elsif ($k =~ /^\Q$oid{bgpPeerState}\E(\.|$)(.*)/) {
+   $iid{bgpPeerState} = $2;
+   $val{bgpPeerState} = $v;
+   $bps = $bps{$v} || 'unknown';
+   ($peer) = $iid{bgpPeerState} =~ /($Xip)/;
+  }
+ }
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # bgpEstablished
+  # OBJECTS: bgpPeerLastError bgpPeerState
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "bgpEstablished: peer $peer; state $bps($val{bgpPeerState}); last error $val{bgpPeerLastError}";
+  $Event->{'AlarmGroup'} = "bgpEstablished";
+#  $Event->{'SubAlarmGroup'} = "bgpEstablished";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $val{bgpPeerState} eq 1 and $Event->{'Severity'} = 4;
+  $val{bgpPeerState} eq 6 and $Event->{'Severity'} = 0;
+  $Event->{'AlarmKey'}   = "$ip: bgpEstablished $peer";
+ }
+ elsif ($specific == 2) { # bgpBackwardTransition
+  # OBJECTS: bgpPeerLastError bgpPeerState
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "bgpBackwardTransition: peer $peer; state $bps($val{bgpPeerState}); last error $val{bgpPeerLastError}";
+  $Event->{'AlarmGroup'} = "bgpBackwardTransition";
+#  $Event->{'SubAlarmGroup'} = "bgpBackwardTransition";
+  $Event->{'Severity'}   = 2; # 0 = minor, 5 = major, 1 = unknown
+  $val{bgpPeerState} eq 1 and $Event->{'Severity'} = 4;
+  $val{bgpPeerState} eq 6 and $Event->{'Severity'} = 0;
+  $Event->{'AlarmKey'}   = "$ip: bgpBackwardTransition $peer";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }

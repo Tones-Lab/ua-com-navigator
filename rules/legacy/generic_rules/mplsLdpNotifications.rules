@@ -1,0 +1,125 @@
+my (%oid, %iid, %val);
+
+ $oid{mplsLdpEntityInitSessionThreshold} = '1.3.6.1.2.1.10.166.4.1.2.3.1.11';
+ $oid{mplsLdpEntityPathVectorLimit} = '1.3.6.1.2.1.10.166.4.1.2.3.1.14';
+ $oid{mplsLdpPeerPathVectorLimit} = '1.3.6.1.2.1.10.166.4.1.3.2.1.3';
+ $oid{mplsLdpSessionState} = '1.3.6.1.2.1.10.166.4.1.3.3.1.2';
+ $oid{mplsLdpSessionDiscontinuityTime} = '1.3.6.1.2.1.10.166.4.1.3.3.1.8';
+ $oid{mplsLdpSessionStatsUnknownMesTypeErrors} = '1.3.6.1.2.1.10.166.4.1.3.4.1.1';
+ $oid{mplsLdpSessionStatsUnknownTlvErrors} = '1.3.6.1.2.1.10.166.4.1.3.4.1.2';
+ $oid{ifName} = '1.3.6.1.2.1.31.1.1.1.1';
+
+# index of mplsLdpSessionEntry (= mplsLdpPeerEntry) is
+# mplsLdpEntityLdpId, mplsLdpEntityIndex, mplsLdpPeerLdpId
+# mplsLdpEntityLdpId is OCTET STRING (6), "1d.1d.1d.1d:2d"
+# mplsLdpPeerLdpId is the same
+# mplsLdpEntityIndex is Unsigned32
+# Overall: ip.1.2.3.ip.1.2
+ my $Xip = '\d+\.\d+\.\d+\.\d+'; # regex for IP address
+ my $Xdd = '\d+\.'; # regex for digit-dot
+ my ($entity, $peer);
+
+ while ( my ($k, $v) = each(%$vars) ) {
+# The first two exact keys should always be there:
+  if ($k eq '1.3.6.1.2.1.1.3.0') {
+   $val{'sysUpTime'} = $v;
+  }
+  elsif ($k eq '1.3.6.1.6.3.1.1.4.1.0') {
+   $val{'snmpTrapOid'} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{ifName}\E(\.|$)(.*)/) {
+   $iid{ifName} = $2;
+   $val{ifName} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsLdpEntityInitSessionThreshold}\E(\.|$)(.*)/) {
+   $iid{mplsLdpEntityInitSessionThreshold} = $2;
+   $val{mplsLdpEntityInitSessionThreshold} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsLdpEntityPathVectorLimit}\E(\.|$)(.*)/) {
+   $iid{mplsLdpEntityPathVectorLimit} = $2;
+   $val{mplsLdpEntityPathVectorLimit} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsLdpPeerPathVectorLimit}\E(\.|$)(.*)/) {
+   $iid{mplsLdpPeerPathVectorLimit} = $2;
+   $val{mplsLdpPeerPathVectorLimit} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsLdpSessionDiscontinuityTime}\E(\.|$)(.*)/) {
+   $iid{mplsLdpSessionDiscontinuityTime} = $2;
+   $val{mplsLdpSessionDiscontinuityTime} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsLdpSessionState}\E(\.|$)(.*)/) {
+   $iid{mplsLdpSessionState} = $2;
+   $val{mplsLdpSessionState} = $v;
+   ($entity, $peer) = $iid{mplsLdpSessionState} =~ /($Xip)\.(?:$Xdd){3}($Xip)/;
+  }
+  elsif ($k =~ /^\Q$oid{mplsLdpSessionStatsUnknownMesTypeErrors}\E(\.|$)(.*)/) {
+   $iid{mplsLdpSessionStatsUnknownMesTypeErrors} = $2;
+   $val{mplsLdpSessionStatsUnknownMesTypeErrors} = $v;
+  }
+  elsif ($k =~ /^\Q$oid{mplsLdpSessionStatsUnknownTlvErrors}\E(\.|$)(.*)/) {
+   $iid{mplsLdpSessionStatsUnknownTlvErrors} = $2;
+   $val{mplsLdpSessionStatsUnknownTlvErrors} = $v;
+  }
+ }
+
+
+# This should always be set
+$Event->{'Node'}       = $node || "$ip";
+# These should be set to suitable values per-trap
+$Event->{'AlarmType'}  = 14400; # > 30 = seconds to auto-clear
+#$Event->{'Summary'}    = "";
+#$Event->{'AlarmGroup'} = "";
+#$Event->{'SubAlarmGroup'} = "";
+$Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+#$Event->{'AlarmKey'}   = ""; # unique for de-dupe. Include $ip and $summary?
+
+
+# For each OBJECT, you can use $oid{OBJECT}, $iid{OBJECT}, or $val{OBJECT}
+
+ if (0) { # dummy
+ }
+ elsif ($specific == 1) { # mplsLdpInitSessionThresholdExceeded
+  # OBJECTS: mplsLdpEntityInitSessionThreshold
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsLdpInitSessionThresholdExceeded";
+  $Event->{'AlarmGroup'} = "mplsLdpInitSessionThresholdExceeded";
+#  $Event->{'SubAlarmGroup'} = "mplsLdpInitSessionThresholdExceeded";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsLdpInitSessionThresholdExceeded alarm.";
+ }
+ elsif ($specific == 2) { # mplsLdpPathVectorLimitMismatch
+  # OBJECTS: mplsLdpEntityPathVectorLimit mplsLdpPeerPathVectorLimit
+#  $Event->{'AlarmType'}  = 14400; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsLdpPathVectorLimitMismatch";
+  $Event->{'AlarmGroup'} = "mplsLdpPathVectorLimitMismatch";
+#  $Event->{'SubAlarmGroup'} = "mplsLdpPathVectorLimitMismatch";
+  $Event->{'Severity'}   = 1; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsLdpPathVectorLimitMismatch alarm.";
+ }
+ elsif ($specific == 3) { # mplsLdpSessionUp
+  # OBJECTS: mplsLdpSessionState mplsLdpSessionDiscontinuityTime mplsLdpSessionStatsUnknownMesTypeErrors mplsLdpSessionStatsUnknownTlvErrors
+  $Event->{'AlarmType'}  = 1; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsLdpSessionUp, $val{ifName}: $entity/$peer";
+  $Event->{'AlarmGroup'} = "mplsLdpSessionUpDown";
+  $Event->{'SubAlarmGroup'} = "$val{ifName}: $entity/$peer";
+  $Event->{'Severity'}   = 0; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsLdpSessionUp $val{ifName}: $entity/$peer";
+ }
+ elsif ($specific == 4) { # mplsLdpSessionDown
+  # OBJECTS: mplsLdpSessionState mplsLdpSessionDiscontinuityTime mplsLdpSessionStatsUnknownMesTypeErrors mplsLdpSessionStatsUnknownTlvErrors
+  $Event->{'AlarmType'}  = 2; # >30 = seconds to auto-clear
+  $Event->{'Summary'}    = "mplsLdpSessionDown, $val{ifName}: $entity/$peer";
+  $Event->{'AlarmGroup'} = "mplsLdpSessionUpDown";
+  $Event->{'SubAlarmGroup'} = "$val{ifName}: $entity/$peer";
+  $Event->{'Severity'}   = 4; # 0 = minor, 5 = major, 1 = unknown
+  $Event->{'AlarmKey'}   = "$ip: mplsLdpSessionDown $val{ifName}: $entity/$peer";
+ }
+ else { # unknown
+  $Event->{'AlarmType'}  = 0; # never auto-delete
+  $Event->{'Summary'}    = "Unknown Trap Specific: $enterprise.$specific";
+  $Event->{'AlarmGroup'} = 'UnknownTrap';
+  $Event->{'Severity'}   = 1; # unknown
+  $Event->{'AlarmKey'}   = "Unknown Trap from [$ip]: $enterprise.$specific";
+
+  $Event->{'Custom1'}    = $traplog;
+ }
